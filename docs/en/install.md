@@ -5,7 +5,7 @@
 - [Python](https://www.python.org/) ≥ 3.9, recommended version 3.11.1.
 - [Windows Terminal](https://aka.ms/terminal) Terminal, accessed through the command line interface (CLI).
 - Text editor with [Python](https://en.wikipedia.org/wiki/python) syntax support.
-  - VSCode](https://code.visualstudio.com/) or [VSCode Online](https://vscode.dev) is recommended.
+  - [VSCode](https://code.visualstudio.com/) or [VSCode Online](https://vscode.dev) is recommended.
 
 `F2` can be used alone or installed into an existing project. In both cases, you can select a different version to install using the following command:
 
