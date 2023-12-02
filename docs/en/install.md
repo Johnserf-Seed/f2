@@ -53,6 +53,6 @@ $ pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple f2
 
 ``F2`` is an asynchronous library, and developers should carefully ``read the documentation`` before calling methods.
 
-For more details, see [advance-guide](/advance-guide).
+For more details, see [advance-guide](./advance-guide).
 
 :::
