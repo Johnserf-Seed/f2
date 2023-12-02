@@ -53,6 +53,6 @@ $ pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple f2
 
 `F2` 是一个异步库，开发者在调用方法前请仔细`阅读相关文档`。
 
-更多详情，请参阅 [高级指南](/advance-guide)。
+更多详情，请参阅 [高级指南](./advance-guide)。
 
 :::
