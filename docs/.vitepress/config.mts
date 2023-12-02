@@ -20,7 +20,7 @@ export default defineConfig({
   ],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
-	  logo: { src: '/f2-logo.ico', width: 256, height: 256 },
+	  logo: { src: '/f2-logo.ico', width: 24, height: 24 },
     socialLinks: [
       { icon: 'github', link: 'https://github.com/Johnserf-Seed/f2' },
       { icon: 'discord', link: 'https://discord.gg/3PhtPmgHf8' },
