@@ -127,3 +127,19 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Node
+cache/
+node_modules/
+package-lock.json
+
+# Download
+Download/
+
+# DataBase
+.db
+
+# Compress
+.zip
+.rar
+.7z
