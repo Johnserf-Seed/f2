@@ -12,7 +12,7 @@ const version = "v0.0.1-pw.1"
 export default defineConfig({
   title: "F2",
   description: "Fast 2 Every",
-  base: "/",
+  base: "/f2/",
   lastUpdated: true,
 
   head: [
