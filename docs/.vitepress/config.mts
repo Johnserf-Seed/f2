@@ -17,6 +17,7 @@ export default defineConfig({
 
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/f2-logo.ico' }],
+    ['link', { rel: 'icon', type: 'image/png', href: '/f2-logo.png' }],
   ],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
