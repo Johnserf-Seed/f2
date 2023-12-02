@@ -49,10 +49,13 @@ jobs:
           pwd
           ls
           cd docs
+          pwd
           ls
           cd .vitepress
+          pwd
           ls
           cd dist
+          pwd
           ls
           
           # touch docs/.vitepress/dist/.nojekyll
