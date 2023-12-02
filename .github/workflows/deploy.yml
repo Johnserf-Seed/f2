@@ -34,14 +34,6 @@ jobs:
           fetch-depth: 0 # Not needed if lastUpdated is not enabled
       # - uses: pnpm/action-setup@v2 # Uncomment this if you're using pnpm
       # - uses: oven-sh/setup-bun@v1 # Uncomment this if you're using Bun
-
-      - name: Print current directory
-        run: pwd
-      - name: Change to project directory
-        run: |
-          cd docs
-          pwd
-
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
@@ -54,8 +46,8 @@ jobs:
       - name: Build with VitePress
         run: |
           npm run docs:build # or pnpm docs:build / yarn docs:build / bun run docs:build
-          cd dist
           pwd
+          ls
           # touch docs/.vitepress/dist/.nojekyll
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
