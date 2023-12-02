@@ -34,6 +34,8 @@ jobs:
           fetch-depth: 0 # Not needed if lastUpdated is not enabled
       # - uses: pnpm/action-setup@v2 # Uncomment this if you're using pnpm
       # - uses: oven-sh/setup-bun@v1 # Uncomment this if you're using Bun
+      - name: Change to project directory
+        run: cd docs
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
