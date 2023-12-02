@@ -6,7 +6,7 @@ outline: deep
 
 本页演示了 F2 提供的一些运行时 API 的用法。
 
-使用前请先确保完成了 F2 配置，[快速使用](/quick-start)
+使用前请先确保完成了 F2 配置，[快速使用](./quick-start)
 
 ::: details 提取作品id
 ```python
