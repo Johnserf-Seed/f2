@@ -135,3 +135,6 @@ package-lock.json
 
 # Download
 Download/
+
+# DataBase
+.db
