@@ -171,6 +171,6 @@ For more detailed information on the "Jitterbug" CLI commands, see [CLI referenc
 
 - To learn more about what F2 can do, such as asynchronous data generators, see this document's "[guide](./guide/what-is-f2)" section of this document. Learn more about the developer's approach.
 
-- If you want to further customize the parsed data explore how to [extend the default data model](./extending-default-model) or [build custom model](./custom-model) (to be updated in the next release).
+- If you want to further customize the parsed data explore how to [extend the default data model]() or [build custom model]() (to be updated in the next release).
 
 - If you're a developer be sure to read this [guide](./guide/what-is-f2).
