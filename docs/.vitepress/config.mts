@@ -121,7 +121,7 @@ function cn_nav(): DefaultTheme.NavItem[] {
         },
         {
           text: '贡献指南',
-          link: 'https://github.com/Johnserf-Seed/f2/blob/main/.github/contributing.md'
+          link: 'https://github.com/Johnserf-Seed/f2/blob/main/.github/CONTRIBUTING.md'
         }
       ]
     }
@@ -150,7 +150,7 @@ function en_nav(): DefaultTheme.NavItem[] {
         },
         {
           text: 'Contributing',
-          link: 'https://github.com/Johnserf-Seed/f2/blob/main/.github/contributing.md'
+          link: 'https://github.com/Johnserf-Seed/f2/blob/main/.github/CONTRIBUTING.md'
         }
       ]
     }
