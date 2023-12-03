@@ -144,3 +144,4 @@ Download/
 *.rar
 *.7z
 
+.pypirc
