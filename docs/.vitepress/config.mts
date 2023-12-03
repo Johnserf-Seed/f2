@@ -16,7 +16,7 @@ export default defineConfig({
   lastUpdated: true,
 
   head: [
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/f2-logo.ico' }],
+    ['link', { rel: 'icon', type: 'image/x-icon', href: '/f2-logo.ico' }],
     ['link', { rel: 'icon', type: 'image/png', href: '/f2-logo.png' }],
   ],
   themeConfig: {
