@@ -1,0 +1,58 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "f2"
+dynamic = ["version"]
+description = "🚀Asynchronous based full-platform download tool"
+readme = "README.md"
+license = "Apache-2.0"
+repository = "https://github.com/Johnserf-Seed/f2"
+requires-python = ">=3.9"
+authors = [
+    { name = "Johnserf-Seed", email = "johnserf-seed@foxmail.com" },
+]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Customer Service",
+    "License :: OSI Approved :: Apache Software License"
+]
+
+dependencies = [
+    "click==8.1.7",
+    "rich==13.6.0",
+    "httpx==0.25.0",
+    "aiofiles==22.1.0",
+    "aiosqlite==0.19.0",
+    "pyyaml==6.0",
+    "jsonpath-ng==1.6.0",
+    "importlib_resources==6.1.0",
+    "m3u8==3.6.0",
+    "pytest==7.4.2",
+    "pytest-asyncio==0.21.1"
+]
+
+[project.scripts]
+f2 = "f2.cli.cli_commands:main"
+
+[project.urls]
+Homepage = "https://github.com/Johnserf-Seed/f2"
+Documentation = "https://johnserf-seed.github.io/f2/"
+Chat = "https://discord.gg//3PhtPmgHf8"
+"Source Code" = "https://github.com/Johnserf-Seed/f2"
+"Issue Tracker" = "https://github.com/Johnserf-Seed/f2/issues"
+
+[tool.hatch.version]
+path = "f2/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/f2",
+]
