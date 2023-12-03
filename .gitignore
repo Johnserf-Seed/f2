@@ -140,6 +140,7 @@ Download/
 .db
 
 # Compress
-.zip
-.rar
-.7z
+*.zip
+*.rar
+*.7z
+
