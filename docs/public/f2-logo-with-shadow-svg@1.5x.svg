@@ -1,0 +1,138 @@
+<svg id="svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="960" height="960" viewBox="0 0 640 640">
+  <title>F2-LOGO-WITH_SHADOW</title>
+<metadata><?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 9.0-c001 79.14ecb42, 2022/12/02-19:12:44        ">
+   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about=""
+            xmlns:dc="http://purl.org/dc/elements/1.1/"
+            xmlns:photoshop="http://ns.adobe.com/photoshop/1.0/"
+            xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+            xmlns:xmpRights="http://ns.adobe.com/xap/1.0/rights/">
+         <dc:creator>
+            <rdf:Seq>
+               <rdf:li>JohnserfSeed</rdf:li>
+            </rdf:Seq>
+         </dc:creator>
+         <dc:title>
+            <rdf:Alt>
+               <rdf:li xml:lang="x-default">F2-LOGO-WITH_SHADOW</rdf:li>
+            </rdf:Alt>
+         </dc:title>
+         <photoshop:AuthorsPosition>Developer</photoshop:AuthorsPosition>
+         <xmp:CreatorTool>Adobe Photoshop 24.2 (Windows)</xmp:CreatorTool>
+         <xmpRights:Marked>True</xmpRights:Marked>
+      </rdf:Description>
+   </rdf:RDF>
+</x:xmpmeta>
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                           
+<?xpacket end="w"?></metadata>
+<defs>
+    <style>
+      .cls-1, .cls-2, .cls-3, .cls-4, .cls-5 {
+        fill-rule: evenodd;
+      }
+
+      .cls-1 {
+        fill: url(#linear-gradient);
+        filter: url(#filter);
+      }
+
+      .cls-2 {
+        fill: url(#linear-gradient-2);
+        filter: url(#filter-2);
+      }
+
+      .cls-3 {
+        fill: url(#linear-gradient-3);
+        filter: url(#filter-3);
+      }
+
+      .cls-4 {
+        fill: url(#linear-gradient-4);
+        filter: url(#filter-4);
+      }
+
+      .cls-5 {
+        fill: url(#linear-gradient-5);
+        filter: url(#filter-5);
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="181.56" y1="346" x2="434.44" y2="492" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#b93cfe"/>
+      <stop offset="1" stop-color="#4ccbfe"/>
+    </linearGradient>
+    <filter id="filter" x="0" y="254" width="576" height="330" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-14.142" dy="14.142" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="9.487"/>
+      <feFlood result="flood" flood-color="#6f6f6f" flood-opacity="0.4"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+    </filter>
+    <linearGradient id="linear-gradient-2" x1="155.257" y1="146" x2="503.399" y2="347" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2cc1fe"/>
+      <stop offset="1" stop-color="#b530ff"/>
+    </linearGradient>
+    <filter id="filter-2" x="22" y="54" width="574" height="385" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-14.142" dy="14.142" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="9.487"/>
+      <feFlood result="flood" flood-color="#6f6f6f" flood-opacity="0.4"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+    </filter>
+    <linearGradient id="linear-gradient-3" x1="206.771" x2="412.885" y2="465" xlink:href="#linear-gradient"/>
+    <filter id="filter-3" x="38" y="244" width="524" height="323" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-7.071" dy="7.071" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="10"/>
+      <feFlood result="flood" flood-color="#6f6f6f" flood-opacity="0.4"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+    </filter>
+    <linearGradient id="linear-gradient-4" x1="185.357" y1="183" x2="469.143" y2="346.844" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#52cdff"/>
+      <stop offset="1" stop-color="#b93cfe"/>
+    </linearGradient>
+    <filter id="filter-4" x="56" y="81" width="522" height="368" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-7.071" dy="7.071" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="10"/>
+      <feFlood result="flood" flood-color="#6f6f6f" flood-opacity="0.4"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+    </filter>
+    <linearGradient id="linear-gradient-5" x1="339" y1="80" x2="339" y2="523" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fde053"/>
+      <stop offset="1" stop-color="#ffa800"/>
+    </linearGradient>
+    <filter id="filter-5" x="125" y="-12" width="388" height="627" filterUnits="userSpaceOnUse">
+      <feOffset result="offset" dx="-14.142" dy="14.142" in="SourceAlpha"/>
+      <feGaussianBlur result="blur" stdDeviation="9.487"/>
+      <feFlood result="flood" flood-color="#6f6f6f" flood-opacity="0.4"/>
+      <feComposite result="composite" operator="in" in2="blur"/>
+      <feBlend result="blend" in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <path id="Bottom_2" data-name="Bottom 2" class="cls-1" d="M495.023,346s8.934,0.59,8.934,7.734v132.08S504.79,492,495.476,492H112s14.7-146,138.178-146H495.023Z"/>
+  <path id="Top_2" data-name="Top 2" class="cls-2" d="M423.262,146H144.073c-9.408,0-9.055,9.028-9.055,9.028s0.274,173.237.274,182.612,9.332,9.306,9.332,9.306H423.1v-0.032l0.166,0C478.9,346.916,524,301.941,524,246.459S478.9,146,423.262,146Z"/>
+  <path id="Bottom_2_small" data-name="Bottom 2 small" class="cls-3" d="M462.369,346.005s7.286,0.481,7.286,6.3V459.958S470.333,465,462.738,465H150S161.988,346.005,262.69,346.005H462.369Z"/>
+  <path id="Top_2_small" data-name="Top 2 small" class="cls-4" d="M403.844,183H176.157c-7.673,0-7.385,7.358-7.385,7.358S169,331.551,169,339.192s7.611,7.585,7.611,7.585h227.1v-0.026l0.134,0A81.877,81.877,0,1,0,403.844,183Z"/>
+  <path id="lightning" class="cls-5" d="M411.215,80.378c4.347-.607,6.582-0.607,9,1,1.154,1.126.982,2.872,1,4-2.568,13.432-23.248,79.609-27,95.939-1.842,8.011-13.208,30.542-5,36.976,20.662-2.269,31.878-5.915,46-7,4.377-.249,7.232,4.021,5,8.994-8.146,19.112-29.032,60.44-39,82.947-35.33,72.947-71.671,144.916-107,217.862-1.831,3.662-6.662,1.442-7-2-0.65-6.036,2.651-18.351,4-23.984,3.586-14.99,20.944-97.168,21-101.936-0.016-1,.375-5.509-3-5-10.333,1.666-17.668,4.331-28,6a5.119,5.119,0,0,1-6-4c-1.62-18.146,23.225-91.873,12-89.943-16.053,2.457-48.284,12.435-50,6-2.281-5.546,14.506-131.85,16.472-151.875,4.369-46.737,5.493-51.807,13-53.966C315.016,93.4,362.886,87.373,411.215,80.378Z"/>
+</svg>
