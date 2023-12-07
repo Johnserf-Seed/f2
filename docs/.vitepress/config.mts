@@ -16,12 +16,11 @@ export default defineConfig({
   lastUpdated: true,
 
   head: [
-    ['link', { rel: 'icon', type: 'image/x-icon', href: '/f2-logo.ico' }],
-    ['link', { rel: 'icon', type: 'image/png', href: '/f2-logo.png' }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/f2-logo-with-shadow-svg@0.25x.svg' }],
   ],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
-	  logo: { src: '/f2-logo.ico', width: 24, height: 24 },
+	  logo: { src: '/f2-logo-with-shadow-svg@1.0x.svg', width: 24, height: 24 },
     socialLinks: [
       { icon: 'github', link: 'https://github.com/Johnserf-Seed/f2' },
       { icon: 'discord', link: 'https://discord.gg/3PhtPmgHf8' },
@@ -122,7 +121,7 @@ function cn_nav(): DefaultTheme.NavItem[] {
         },
         {
           text: '贡献指南',
-          link: 'https://github.com/Johnserf-Seed/f2/blob/main/.github/contributing.md'
+          link: 'https://github.com/Johnserf-Seed/f2/blob/main/.github/CONTRIBUTING.md'
         }
       ]
     }
@@ -151,7 +150,7 @@ function en_nav(): DefaultTheme.NavItem[] {
         },
         {
           text: 'Contributing',
-          link: 'https://github.com/Johnserf-Seed/f2/blob/main/.github/contributing.md'
+          link: 'https://github.com/Johnserf-Seed/f2/blob/main/.github/CONTRIBUTING.md'
         }
       ]
     }
