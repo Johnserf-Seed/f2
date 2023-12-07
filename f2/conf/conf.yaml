@@ -1,0 +1,5 @@
+f2:
+  languages: zh_CN
+  proxies:
+    http:
+    https:

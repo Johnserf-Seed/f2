@@ -52,8 +52,8 @@ coverage.xml
 .pytest_cache/
 
 # Translations
-*.mo
-*.pot
+# *.mo
+# *.pot
 
 # Django stuff:
 *.log
@@ -140,6 +140,8 @@ Download/
 .db
 
 # Compress
-.zip
-.rar
-.7z
+*.zip
+*.rar
+*.7z
+
+.pypirc
