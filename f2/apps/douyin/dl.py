@@ -36,7 +36,7 @@ class DouyinDownloader(BaseDownloader):
             aweme_id (int): 作品id (aweme_id)
         """
 
-        async with AsyncUserDB("users.db") as db:
+        async with AsyncUserDB("douyin_users.db") as db:
             await db.update_user_info(sec_user_id=sec_user_id, last_aweme_id=aweme_id)
 
     async def create_download_tasks(
