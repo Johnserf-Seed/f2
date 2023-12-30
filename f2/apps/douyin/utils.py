@@ -144,22 +144,53 @@ class TokenManager:
 
 class VerifyFpManager:
     base_str = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-    placeholders = [8, 13, 18, 23]
+    # placeholders = [8, 13, 18, 23]
+
+    # @classmethod
+    # def gen_verify_fp(cls) -> str:
+    #     """
+    #     生成verifyFp 与 s_v_web_id (Generate verifyFp)
+    #     """
+
+    #     base36 = num_to_base36(int(round(time.time() * 1000)))
+
+    #     random_part = [cls.base_str[random.randint(0, 35)] for _ in range(36)]
+    #     for idx in cls.placeholders:
+    #         random_part[idx] = "_"
+    #     random_part[14] = "4"
+
+    #     return f"verify_{base36}_" + "".join(random_part)
 
     @classmethod
     def gen_verify_fp(cls) -> str:
         """
         生成verifyFp 与 s_v_web_id (Generate verifyFp)
         """
+        base_str = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+        t = len(base_str)
+        milliseconds = int(round(time.time() * 1000))
+        base36 = ""
+        while milliseconds > 0:
+            remainder = milliseconds % 36
+            if remainder < 10:
+                base36 = str(remainder) + base36
+            else:
+                base36 = chr(ord("a") + remainder - 10) + base36
+            milliseconds = int(milliseconds / 36)
+        r = base36
+        o = [""] * 36
+        o[8] = o[13] = o[18] = o[23] = "_"
+        o[14] = "4"
 
-        base36 = num_to_base36(int(round(time.time() * 1000)))
+        for i in range(36):
+            if not o[i]:
+                n = 0 or int(random.random() * t)
+                if i == 19:
+                    n = 3 & n | 8
+                o[i] = base_str[n]
 
-        random_part = [cls.base_str[random.randint(0, 35)] for _ in range(36)]
-        for idx in cls.placeholders:
-            random_part[idx] = "_"
-        random_part[14] = "4"
+        return "verify_" + r + "_" + "".join(o)
 
-        return f"verify_{base36}_" + "".join(random_part)
 
 
 class XBogusManager:
