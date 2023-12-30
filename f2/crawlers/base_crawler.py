@@ -98,7 +98,7 @@ class BaseCrawler:
                 return response.json()
             except json.JSONDecodeError as e:
                 # JSON 解析失败，处理异常 (JSON parsing failed, handling exceptions)
-                logger.error(_("解析 {0} 接口 JSON 失败： {1}").format(endpoint, e))
+                logger.error(_("解析 {0} 接口 JSON 失败： {1}").format(response.url, e))
         else:
             # 处理响应为 None 或者状态码异常的情况
             if isinstance(response, Response):
@@ -176,23 +176,17 @@ class BaseCrawler:
                             attempt + 1, response.status_code
                         )
                     )
-                    logger.warning(
-                        _("第 {0} 次响应内容为空, 状态码: {1}").format(
-                            attempt + 1, response.status_code
-                        )
-                    )  # Response content is empty, please check whether the url is automatically escaped
+
+                    print(error_message)
+                    logger.warning(error_message)
 
                     if attempt == self._max_retries - 1:
-                        raise APIRetryExhaustedError(
-                            _("获取端点数据失败, 次数达到上限")
-                        )  # Failed to get endpoint data, number of times reached the upper limit
+                        raise APIRetryExhaustedError(_("获取端点数据失败, 次数达到上限"))
 
                     await asyncio.sleep(self._timeout)
                     continue
 
-                logger.debug(
-                    _("响应状态码: {0}").format(response.status_code)
-                )  # Status code
+                logger.debug(_("响应状态码: {0}").format(response.status_code))
                 response.raise_for_status()
                 return response
 
@@ -218,15 +212,13 @@ class BaseCrawler:
         """
         try:
             response = await self.aclient.head(url)
-            logger.debug(_("响应状态码: {0}").format(response.status_code))  # Status code
+            logger.debug(_("响应状态码: {0}").format(response.status_code))
             response.raise_for_status()
             return response
 
         except httpx.RequestError:
             logger.error(_("连接端点失败: {0}").format(url))
-            raise APIConnectionError(
-                _("连接端点失败: {0}").format(url)
-            )  # Failed to connect to endpoint
+            raise APIConnectionError(_("连接端点失败: {0}").format(url))
 
         except httpx.HTTPStatusError as http_error:
             self.handle_http_status_error(http_error, url, 1)
@@ -259,9 +251,7 @@ class BaseCrawler:
             logger.error(
                 _("HTTP状态错误: {0}, URL: {1}, 尝试次数: {2}").format(http_error, url, attempt)
             )
-            raise APIResponseError(
-                f"处理HTTP错误时遇到意外情况: {http_error}"
-            )  # An unexpected situation occurred while processing the HTTP error
+            raise APIResponseError(f"处理HTTP错误时遇到意外情况: {http_error}")
 
         if status_code == 404:
             raise APINotFoundError(f"HTTP Status Code {status_code}")
@@ -279,7 +269,7 @@ class BaseCrawler:
                     status_code, url, attempt
                 )
             )
-            raise APIResponseError(f"HTTP状态错误: {status_code}")  # HTTP status error
+            raise APIResponseError(f"HTTP状态错误: {status_code}")
 
     async def close(self):
         await self.aclient.aclose()
