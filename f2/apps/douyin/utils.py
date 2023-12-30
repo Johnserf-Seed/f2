@@ -5,6 +5,7 @@ import re
 import json
 import time
 import httpx
+import qrcode
 import random
 import asyncio
 
@@ -644,3 +645,24 @@ def extract_desc_from_share_desc(desc: str, share_desc: str) -> str:
         extracted = extracted[:end_index].strip()
 
     return extracted
+
+
+def show_qrcode(qrcode_url: str, show_image: bool = False) -> None:
+    """
+    显示二维码
+
+    Args:
+        qrcode_url (str): 登录二维码链接
+        show_image (bool): 是否显示图像，True 表示显示，False 表示在控制台显示
+    """
+    if show_image:
+        # 创建并显示QR码图像
+        qr_code_img = qrcode.make(qrcode_url)
+        qr_code_img.show()
+    else:
+        # 在控制台以 ASCII 形式打印二维码
+        qr = qrcode.QRCode()
+        qr.add_data(qrcode_url)
+        qr.make(fit=True)
+        # 在控制台以 ASCII 形式打印二维码
+        qr.print_ascii(invert=True)
