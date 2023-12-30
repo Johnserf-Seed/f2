@@ -141,8 +141,7 @@ class BaseCrawler:
         """
         for attempt in range(self._max_retries):
             try:
-                response = await self.aclient.get(url)
-
+                response = await self.aclient.get(url, follow_redirects=True)
                 if not response.text.strip() or not response.content:
                     print(
                         _("第 {0} 次响应内容为空, 状态码: {1}").format(
@@ -190,7 +189,9 @@ class BaseCrawler:
         """
         for attempt in range(self._max_retries):
             try:
-                response = await self.aclient.post(url, content=dict(params))
+                response = await self.aclient.post(
+                    url, content=dict(params), follow_redirects=True
+                )
                 if not response.text.strip() or not response.content:
                     print(
                         _("第 {0} 次响应内容为空, 状态码: {1}").format(
