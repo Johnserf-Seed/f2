@@ -1,10 +1,11 @@
 # path: f2/apps/douyin/handler.py
 
 # import time
-
+import asyncio
 from f2.log.logger import logger
 from f2.i18n.translator import _
 from f2.utils.mode_handler import mode_handler, mode_function_map
+from f2.utils.utils import split_set_cookie
 from f2.apps.douyin.db import AsyncUserDB, AsyncVideoDB
 from f2.apps.douyin.crawler import DouyinCrawler
 from f2.apps.douyin.dl import DouyinDownloader
@@ -17,6 +18,8 @@ from f2.apps.douyin.model import (
     PostDetail,
     UserLive,
     UserLive2,
+    LoginGetQr,
+    LoginCheckQr,
 )
 from f2.apps.douyin.filter import (
     UserPostFilter,
@@ -26,9 +29,13 @@ from f2.apps.douyin.filter import (
     PostDetailFilter,
     UserLiveFilter,
     UserLive2Filter,
+    GetQrcodeFilter,
+    CheckQrcodeFilter,
 )
 from f2.apps.douyin.utils import SecUserIdFetcher, AwemeIdFetcher, WebCastIdFetcher
-from f2.apps.douyin.utils import create_or_rename_user_folder
+from f2.apps.douyin.utils import create_or_rename_user_folder, show_qrcode
+from f2.apps.douyin.utils import TokenManager, VerifyFpManager
+
 from f2.cli.cli_console import RichConsoleManager
 
 downloader = DouyinDownloader()
@@ -754,6 +761,109 @@ async def fetch_user_feed_videos(
             max_cursor = video.max_cursor
 
     logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
+
+
+async def handle_sso_login():
+    """
+    用于处理用户登录 (Used to process user login)
+    """
+
+    async def get_qrcode() -> str:
+        params = LoginGetQr(verifyFp=verify_fp, fp=verify_fp)
+        response = await crawler.fetch_login_qrcode(params)
+        sso = GetQrcodeFilter(response)
+        show_qrcode(sso.qrcode_index_url)
+        return await check_qrcode(sso.token)
+
+    async def check_qrcode(token: str) -> bool:
+        """
+        检查二维码状态
+
+        Args:
+            token (str): 二维码token
+
+        Returns:
+            bool: 是否成功登录
+        """
+        logger.info(f"check_qrcode token:{token}")
+
+        status_mapping = {
+            "1": {"message": _("[  登录  ]:等待二维码扫描！\r"), "log": logger.info},
+            "2": {"message": _("[  登录  ]:扫描二维码成功！\r"), "log": logger.info},
+            "3": {"message": _("[  登录  ]:确认二维码登录！\r"), "log": logger.info},
+            "4": {"message": _("[  登录  ]:访问频繁，请检查参数！\r"), "log": logger.warning},
+            "5": {"message": _("[  登录  ]:二维码过期，重新获取！\r"), "log": logger.warning},
+            "2046": {
+                "messages": _("[  登录  ]:扫码环境异常，请前往app验证！\r"),
+                "log": logger.warning,
+            },
+        }
+
+        while True:
+            params = LoginCheckQr(token=token, verifyFp=verify_fp, fp=verify_fp)
+            check_response = await crawler.fetch_check_qrcode(params)
+            check = CheckQrcodeFilter(check_response.json())
+            check_status = check.status
+            check_status = "2046" if check_status is None else check_status
+
+            status_info = status_mapping.get(check_status, {})
+            message = status_info.get("message", "")
+            log_func = status_info.get("log", logger.info)
+            logger.info(message)
+            rich_console.print(message)
+            log_func(message)
+
+            if check_status == "3":
+                login_cookies = split_set_cookie(
+                    check_response.headers.get("set-cookie", "")
+                )
+                is_login, login_cookie = await login_redirect(
+                    check.redirect_url, login_cookies
+                )
+                return is_login, login_cookie
+            elif check_status == "5":
+                get_qrcode()
+                break
+            elif check_status is None:
+                break
+
+            await asyncio.sleep(5)
+
+    async def login_redirect(redirect_url: str, login_cookies: str):
+        """
+        登录重定向，获取登录后Cookie
+
+        Args:
+            redirect_url (str): 重定向url
+            login_cookies (str): 登录cookie
+
+        Returns:
+            bool: 是否成功登录
+            str: 登录cookie
+        """
+        crawler.crawler_headers["Cookie"] = login_cookies
+        redirect_response = await crawler.get_fetch_data(redirect_url)
+
+        if redirect_response.history and len(redirect_response.history) > 1:
+            # 获取重最后一个重定向里的Cookie
+            login_cookie = split_set_cookie(
+                redirect_response.history[1].headers.get("set-cookie", "")
+            )
+            logger.info(f"login_cookie:{login_cookie}")
+            return True, login_cookie
+        else:
+            rich_console.print("[  登录  ]:自动重定向登录失败\r")
+            if redirect_response:
+                error_message = f"网络异常: 自动重定向登录失败。 状态码: {redirect_response.status_code}, 响应体: {redirect_response.text}"
+            else:
+                error_message = f"网络异常: 自动重定向登录失败。 无法连接到服务器。"
+            logger.warning(error_message)
+            rich_console.print(error_message)
+            return False, ""
+
+    async with DouyinCrawler() as crawler:
+        verify_fp = VerifyFpManager.gen_verify_fp()
+        return await get_qrcode()
 
 
 async def main(kwargs):
