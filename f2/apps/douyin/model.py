@@ -3,7 +3,7 @@
 from typing import Any
 from pydantic import BaseModel
 
-from f2.apps.douyin.utils import TokenManager
+from f2.apps.douyin.utils import TokenManager, VerifyFpManager
 
 
 # Base Model
@@ -54,6 +54,14 @@ class BaseLiveModel(BaseModel):
     # _signature: str = ''
 
 
+class BaseLiveModel2(BaseModel):
+    verifyFp: str = VerifyFpManager.gen_verify_fp()
+    type_id: str = "0"
+    live_id: str = "1"
+    sec_user_id: str = ""
+    version_code: str = "99.99.99"
+    app_id: str = "1128"
+    msToken: str = TokenManager.gen_real_msToken()
 # Model
 class UserProfile(BaseRequestModel):
     sec_user_id: str
@@ -154,6 +162,9 @@ class PostLocate(BaseRequestModel):
 class UserLive(BaseLiveModel):
     web_rid: str
     room_id_str: str
+
+class UserLive2(BaseLiveModel2):
+    room_id: str
 
 
 class FollowUserLive(BaseRequestModel):

@@ -923,3 +923,104 @@ class UserLiveFilter(JSONModel):
                 d[key] = attr_values[index] if index < len(attr_values) else None
             list_dicts.append(d)
         return list_dicts
+
+
+class UserLive2Filter(JSONModel):
+
+    # live
+    @property
+    def api_status_code(self):
+        return self._get_attr_value("$.status_code")
+
+    @property
+    def room_id(self):
+        return self._get_attr_value("$.data.room.id")
+
+    @property
+    def web_rid(self):
+        return self._get_attr_value("$.data.room.owner.web_rid")
+
+    @property
+    def live_status(self):
+        return self._get_attr_value("$.data.room.status")
+
+    @property
+    def live_title(self):
+        return replaceT(self._get_attr_value("$.data.room.title"))
+
+    @property
+    def user_count(self):
+        return self._get_attr_value("$.data.room.user_count")
+
+    @property
+    def create_time(self):
+        return timestamp_2_str(self._get_attr_value("$.data.room.create_time"))
+
+    @property
+    def finish_time(self):
+        return timestamp_2_str(self._get_attr_value("$.data.room.finish_time"))
+
+    @property
+    def cover(self):
+        return self._get_attr_value("$.data.room.cover.url_list[0]")
+
+    @property
+    def stream_id(self):
+        return self._get_attr_value("$.data.room.stream_id")
+
+    @property
+    def resolution_name(self):
+        return self._get_attr_value("$.data.room.stream_url.resolution_name")
+
+    @property
+    def flv_pull_url(self):
+        return self._get_attr_value("$.data.room.stream_url.flv_pull_url")
+
+    @property
+    def hls_pull_url(self):
+        return self._get_attr_value("$.data.room.stream_url.hls_pull_url_map")
+
+    #user
+    @property
+    def nickname(self):
+        return replaceT(self._get_attr_value("$.data.room.owner.nickname"))
+
+    @property
+    def gender(self):
+        return replaceT(self._get_attr_value("$.data.room.owner.gender"))
+
+    @property
+    def signature(self):
+        return replaceT(self._get_attr_value("$.data.room.owner.signature"))
+
+    @property
+    def avatar_large(self):
+        return self._get_attr_value("$.data.room.owner.avatar_large.url_list[0]")
+
+    @property
+    def verified(self):
+        return self._get_attr_value("$.data.room.owner.verified")
+
+    @property
+    def city(self):
+        return self._get_attr_value("$.data.room.owner.city")
+
+    @property
+    def following_count(self):
+        return self._get_attr_value("$.data.room.owner.follow_info.following_count")
+
+    @property
+    def follower_count(self):
+        return self._get_attr_value("$.data.room.owner.follow_info.follower_count")
+
+    @property
+    def sec_uid(self):
+        return self._get_attr_value("$.data.room.owner.sec_uid")
+
+    def _to_dict(self) -> dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
