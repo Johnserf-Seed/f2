@@ -81,6 +81,8 @@ class DouyinDownloader(BaseDownloader):
 
         Args:
             kwargs (dict): 命令行参数
+            aweme_data_dict (dict): 作品数据字典
+            user_path (Any): 用户目录路径
         """
 
         # 构建文件夹路径
@@ -219,7 +221,7 @@ class DouyinDownloader(BaseDownloader):
         Args:
             kwargs (dict): 命令行参数
             aweme_datas (list, dict): 作品数据列表或字典
-            user_path (str): 用户目录路径
+            user_path (Any): 用户目录路径
         """
 
         if (
@@ -247,6 +249,8 @@ class DouyinDownloader(BaseDownloader):
 
         Args:
             kwargs (dict): 命令行参数
+            aweme_data_dict (dict): 直播数据字典
+            user_path (Any): 用户目录路径
         """
         custom_fields = {
             "create": timestamp_2_str(timestamp=get_timestamp(unit="sec")),
