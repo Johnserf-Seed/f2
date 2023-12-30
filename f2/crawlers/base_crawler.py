@@ -275,7 +275,9 @@ class BaseCrawler:
             )
             raise APIResponseError(f"处理HTTP错误时遇到意外情况: {http_error}")
 
-        if status_code == 404:
+        if status_code == 302:
+            pass
+        elif status_code == 404:
             raise APINotFoundError(f"HTTP Status Code {status_code}")
         elif status_code == 503:
             raise APIUnavailableError(f"HTTP Status Code {status_code}")
