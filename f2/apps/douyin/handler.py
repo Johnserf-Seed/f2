@@ -2,7 +2,6 @@
 
 # import time
 import asyncio
-from typing import Any, Union
 from f2.log.logger import logger
 from f2.i18n.translator import _
 from f2.utils.mode_handler import mode_handler, mode_function_map
@@ -84,7 +83,9 @@ async def get_user_nickname(sec_user_id: str, db: AsyncUserDB) -> str:
     return user_data.get("nickname")
 
 
-async def get_or_add_user_data(kwargs: dict, sec_user_id: str, db: AsyncUserDB) -> Any:
+async def get_or_add_user_data(
+    kwargs: dict, sec_user_id: str, db: AsyncUserDB
+) -> tuple:
     """
     获取或创建用户数据同时创建用户目录
     (Get or create user data and create user directory)
@@ -841,8 +842,8 @@ async def handle_sso_login():
             login_cookies (str): 登录cookie
 
         Returns:
-            is_login (bool): 是否成功登录
-            login_cookie (str): 登录cookie
+            bool: 是否成功登录
+            str: 登录cookie
         """
         crawler.crawler_headers["Cookie"] = login_cookies
         redirect_response = await crawler.get_fetch_data(redirect_url)
