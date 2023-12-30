@@ -62,6 +62,18 @@ class BaseLiveModel2(BaseModel):
     version_code: str = "99.99.99"
     app_id: str = "1128"
     msToken: str = TokenManager.gen_real_msToken()
+
+class BaseLoginModel(BaseModel):
+    service: str = "https://www.douyin.com"
+    need_logo: str = "false"
+    need_short_url: str = "true"
+    device_platform: str = "web_app"
+    aid: str = "6383"
+    account_sdk_source: str = "sso"
+    sdk_version: str = "2.2.7-beta.6"
+    language: str = "zh"
+
+
 # Model
 class UserProfile(BaseRequestModel):
     sec_user_id: str
@@ -191,3 +203,15 @@ class PostSearch(BaseRequestModel):
     from_group_id: str = ""
     offset: int = 0
     count: int = 15
+
+
+class LoginGetQr(BaseLoginModel):
+    verifyFp: str = ""
+    fp: str = ""
+    # msToken: str = TokenManager.gen_real_msToken()
+
+class LoginCheckQr(BaseLoginModel):
+    token: str = ""
+    verifyFp: str = ""
+    fp: str = ""
+    # msToken: str = TokenManager.gen_real_msToken()
