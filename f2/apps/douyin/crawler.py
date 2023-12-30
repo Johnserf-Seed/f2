@@ -145,6 +145,9 @@ class DouyinCrawler(BaseCrawler):
         )
         logger.debug(_("直播接口地址:" + endpoint))
         return await self._fetch_json(endpoint)
+
+    async def fetch_live_room_id(self, params: UserLive2):
+        original_headers = self.aclient.headers.copy()
         try:
             self.aclient.headers.update({"Cookie": ""})  # 避免invalid session
             endpoint = XBogusManager.to_complete_endpoint(
