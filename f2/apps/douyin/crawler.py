@@ -17,6 +17,8 @@ from f2.apps.douyin.model import (
     UserLive,
     UserLive2,
     FollowUserLive,
+    LoginGetQr,
+    LoginCheckQr,
 )
 from f2.apps.douyin.utils import XBogusManager
 
@@ -166,6 +168,27 @@ class DouyinCrawler(BaseCrawler):
         )
         logger.debug(_("定位上一次作品接口地址:" + endpoint))
         return await self._fetch(endpoint)
+
+    async def fetch_login_qrcode(self, parms: LoginGetQr):
+        endpoint = XBogusManager.to_complete_endpoint(
+            dyendpoint.SSO_LOGIN_GET_QR, parms.dict()
+        )
+        logger.debug(_("SSO获取二维码接口地址:" + endpoint))
+        return await self._fetch_json(endpoint)
+
+    async def fetch_check_qrcode(self, parms: LoginCheckQr):
+        endpoint = XBogusManager.to_complete_endpoint(
+            dyendpoint.SSO_LOGIN_CHECK_QR, parms.dict()
+        )
+        logger.info(_("SSO检查扫码状态接口地址:" + endpoint))
+        return await self._fetch_response(endpoint)
+
+    async def fetch_check_login(self, parms: LoginCheckQr):
+        endpoint = XBogusManager.to_complete_endpoint(
+            dyendpoint.SSO_LOGIN_CHECK_LOGIN, parms.dict()
+        )
+        logger.debug(_("SSO检查登录状态接口地址:" + endpoint))
+        return await self._fetch_json(endpoint)
 
     async def __aenter__(self):
         return self
