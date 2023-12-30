@@ -143,16 +143,12 @@ class BaseCrawler:
             try:
                 response = await self.aclient.get(url, follow_redirects=True)
                 if not response.text.strip() or not response.content:
-                    print(
-                        _("第 {0} 次响应内容为空, 状态码: {1}").format(
-                            attempt + 1, response.status_code
-                        )
+                    error_message = _("第 {0} 次响应内容为空, 状态码: {1}, URL:{2}").format(
+                        attempt + 1, response.status_code, response.url
                     )
-                    logger.warning(
-                        _("第 {0} 次响应内容为空, 状态码: {1}").format(
-                            attempt + 1, response.status_code
-                        )
-                    )
+
+                    print(error_message)
+                    logger.warning(error_message)
 
                     if attempt == self._max_retries - 1:
                         raise APIRetryExhaustedError(_("获取端点数据失败, 次数达到上限"))
@@ -165,9 +161,7 @@ class BaseCrawler:
                 return response
 
             except httpx.RequestError:
-                logger.error(
-                    _("连接端点失败: {0}").format(url)
-                )  #  (Failed to connect to endpoint)
+                logger.error(_("连接端点失败: {0}").format(url))
                 raise APIConnectionError(_("连接端点失败: {0}").format(url))
 
             except httpx.HTTPStatusError as http_error:
@@ -193,10 +187,8 @@ class BaseCrawler:
                     url, content=dict(params), follow_redirects=True
                 )
                 if not response.text.strip() or not response.content:
-                    print(
-                        _("第 {0} 次响应内容为空, 状态码: {1}").format(
-                            attempt + 1, response.status_code
-                        )
+                    error_message = _("第 {0} 次响应内容为空, 状态码: {1}, URL:{2}").format(
+                        attempt + 1, response.status_code, response.url
                     )
 
                     print(error_message)
