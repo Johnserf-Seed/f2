@@ -61,9 +61,16 @@ export default defineConfig({
           ],
           '/guide/': [
             {
-              text: '指南',
+              text: '开发者指南',
               items: [
-                {text: '使用示例', link: '/api-examples'}
+                {text: '使用示例', link: '/guide/api-examples'}
+              ]
+            },
+            {
+              text: '开发者接口',
+              items: [
+                {text: 'DouYin', link: '/guide/apps/douyin/index'},
+                {text: 'TikTok', link: '/guide/apps/tiktok/index'}
               ]
             }
           ],
