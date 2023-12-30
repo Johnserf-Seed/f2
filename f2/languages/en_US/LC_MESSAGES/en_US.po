@@ -2,21 +2,22 @@ msgid ""
 msgstr ""
 "Project-Id-Version: f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-12-04 00:25+0800\n"
-"PO-Revision-Date: 2023-12-03 16:34\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2023-12-31 00:14+0800\n"
+"PO-Revision-Date: 2023-12-31 00:45+0800\n"
+"Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language-Team: English, United States\n"
+"Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.13.0\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Generated-By: Babel 2.13.0\n"
 "X-Crowdin-Project: f2-translate\n"
 "X-Crowdin-Project-ID: 631650\n"
 "X-Crowdin-Language: en-US\n"
 "X-Crowdin-File: messages.pot\n"
 "X-Crowdin-File-ID: 2\n"
-"Language: en_US\n"
+"X-Generator: Poedit 3.3.2\n"
 
 #: f2/helps.py:32
 msgid "在 {0} 应用里没有找到帮助文件"
@@ -122,483 +123,568 @@ msgstr "- Export the app's debug information to /logs When submitting an Issue, 
 msgid "欢迎提交PR适配更多网站"
 msgstr "Welcome to submit PR to adapt more websites"
 
-#: f2/apps/douyin/cli.py:69 f2/apps/tiktok/cli.py:67
+#: f2/apps/douyin/cli.py:70 f2/apps/tiktok/cli.py:67
 msgid "请关闭所有已打开的浏览器重试, 并且你有适当的权限访问浏览器 !"
 msgstr "Please close all open browsers and try again, and you have the proper permissions to access the browser !"
 
-#: f2/apps/douyin/cli.py:74
+#: f2/apps/douyin/cli.py:75
 msgid "自动获取Cookie失败: {0}"
 msgstr "handler auto cookie error: {0}"
 
-#: f2/apps/douyin/cli.py:99 f2/apps/tiktok/cli.py:97
+#: f2/apps/douyin/cli.py:100 f2/apps/tiktok/cli.py:97
 msgid "不支持的浏览器选项, 输入f2 dy --help查看更多帮助!"
 msgstr "Unsupported browser options, type f2 dy --help for more help!"
 
-#: f2/apps/douyin/cli.py:107 f2/apps/tiktok/cli.py:105
+#: f2/apps/douyin/cli.py:108 f2/apps/tiktok/cli.py:105
 msgid "无法从{0}浏览器中获取cookie"
 msgstr "Unable to get cookies from {0} browser"
 
-#: f2/apps/douyin/cli.py:171 f2/apps/tiktok/cli.py:169
+#: f2/apps/douyin/cli.py:172 f2/apps/tiktok/cli.py:169
 msgid "`{0}` 中的 `{1}` 不符合命名模式"
 msgstr "`{1}` in `{0}` does not conform to naming patterns"
 
-#: f2/apps/douyin/cli.py:177
+#: f2/apps/douyin/cli.py:195
+msgid "SSO登录失败，请重试！"
+msgstr "SSO login failed, please try again！"
+
+#: f2/apps/douyin/cli.py:198
 msgid "抖音无水印解析"
 msgstr "Douyin de-watermark"
 
-#: f2/apps/douyin/cli.py:182 f2/apps/douyin/help.py:19
+#: f2/apps/douyin/cli.py:203 f2/apps/douyin/help.py:19
 #: f2/apps/tiktok/cli.py:180 f2/apps/tiktok/help.py:19
+#: f2/apps/twitter/help.py:19
 msgid "配置文件的路径，最高优先"
 msgstr "Path to configuration file, highest priority"
 
-#: f2/apps/douyin/cli.py:184 f2/apps/tiktok/cli.py:182
+#: f2/apps/douyin/cli.py:205 f2/apps/tiktok/cli.py:182
 msgid "需要解析的URL"
 msgstr "URL to be parsed"
 
-#: f2/apps/douyin/cli.py:185 f2/apps/tiktok/cli.py:183
+#: f2/apps/douyin/cli.py:206 f2/apps/tiktok/cli.py:183
 msgid "是否保存视频原声"
 msgstr "Whether to save video soundtrack"
 
-#: f2/apps/douyin/cli.py:186 f2/apps/tiktok/cli.py:184
+#: f2/apps/douyin/cli.py:207 f2/apps/tiktok/cli.py:184
 msgid "是否保存视频封面"
 msgstr "Whether to save the video cover"
 
-#: f2/apps/douyin/cli.py:187 f2/apps/tiktok/cli.py:185
+#: f2/apps/douyin/cli.py:208 f2/apps/tiktok/cli.py:185
 msgid "是否保存视频文案"
 msgstr "Whether to save video desc"
 
-#: f2/apps/douyin/cli.py:188 f2/apps/tiktok/cli.py:186
+#: f2/apps/douyin/cli.py:209 f2/apps/tiktok/cli.py:186
 msgid "作品保存位置"
 msgstr "Where to save your video"
 
-#: f2/apps/douyin/cli.py:189 f2/apps/tiktok/cli.py:187
+#: f2/apps/douyin/cli.py:210 f2/apps/tiktok/cli.py:187
 msgid "是否将作品保存到单独的文件夹"
 msgstr "Whether to save your video in a separate folder"
 
-#: f2/apps/douyin/cli.py:198 f2/apps/tiktok/cli.py:196
+#: f2/apps/douyin/cli.py:219 f2/apps/tiktok/cli.py:196
 msgid "下载模式：单个作品(one), 主页作品(post), 点赞作品(like), 收藏作品(collect), 合集作品(mix), 直播(live),  推荐作品(feed), 搜索作品(search)"
 msgstr "Download Mode: post, like, collect, live, feed, search"
 
-#: f2/apps/douyin/cli.py:208 f2/apps/douyin/help.py:33
+#: f2/apps/douyin/cli.py:229 f2/apps/douyin/help.py:33
 #: f2/apps/tiktok/cli.py:206 f2/apps/tiktok/help.py:33
+#: f2/apps/twitter/help.py:33
 msgid "全局作品文件命名方式"
 msgstr "Global video file naming convention"
 
-#: f2/apps/douyin/cli.py:216 f2/apps/douyin/help.py:34
+#: f2/apps/douyin/cli.py:237 f2/apps/douyin/help.py:34
 #: f2/apps/tiktok/cli.py:214 f2/apps/tiktok/help.py:34
+#: f2/apps/twitter/help.py:34
 msgid "是否自动从浏览器获取cookie，以及从哪个浏览器获取"
 msgstr "Whether cookies are automatically fetched from browsers, and from which browsers"
 
-#: f2/apps/douyin/cli.py:219 f2/apps/douyin/help.py:35
+#: f2/apps/douyin/cli.py:240 f2/apps/douyin/help.py:35
 #: f2/apps/tiktok/cli.py:217 f2/apps/tiktok/help.py:35
+#: f2/apps/twitter/help.py:35
 msgid "登录后的cookie"
 msgstr "Cookie after login"
 
-#: f2/apps/douyin/cli.py:220 f2/apps/tiktok/cli.py:218
+#: f2/apps/douyin/cli.py:241 f2/apps/tiktok/cli.py:218
 msgid "根据作品发布日期区间下载作品"
 msgstr "Download the video according to the date range of the work's release"
 
-#: f2/apps/douyin/cli.py:221 f2/apps/tiktok/cli.py:219
+#: f2/apps/douyin/cli.py:242 f2/apps/tiktok/cli.py:219
 msgid "网络请求超时等待时间"
 msgstr "Network request timeout wait time"
 
-#: f2/apps/douyin/cli.py:222 f2/apps/tiktok/cli.py:220
+#: f2/apps/douyin/cli.py:243 f2/apps/tiktok/cli.py:220
 msgid "网络请求超时重试数"
 msgstr "Number of network request timeout retries"
 
-#: f2/apps/douyin/cli.py:223 f2/apps/tiktok/cli.py:221
+#: f2/apps/douyin/cli.py:244 f2/apps/tiktok/cli.py:221
 msgid "网络请求并发连接数"
 msgstr "Number of concurrent connections for network requests"
 
-#: f2/apps/douyin/cli.py:224 f2/apps/tiktok/cli.py:222
+#: f2/apps/douyin/cli.py:245 f2/apps/tiktok/cli.py:222
 msgid "异步的任务数"
 msgstr "Number of asynchronous tasks"
 
-#: f2/apps/douyin/cli.py:225 f2/apps/tiktok/cli.py:223
+#: f2/apps/douyin/cli.py:246 f2/apps/tiktok/cli.py:223
 msgid "最大作品下载数"
 msgstr "Maximum number of downloads"
 
-#: f2/apps/douyin/cli.py:226 f2/apps/tiktok/cli.py:224
+#: f2/apps/douyin/cli.py:247 f2/apps/tiktok/cli.py:224
 msgid "每页作品数"
 msgstr "Number of works per page"
 
-#: f2/apps/douyin/cli.py:227 f2/apps/douyin/help.py:44
+#: f2/apps/douyin/cli.py:248 f2/apps/douyin/help.py:44
 #: f2/apps/tiktok/cli.py:225 f2/apps/tiktok/help.py:44
+#: f2/apps/twitter/help.py:44
 msgid "使用命令行选项更新配置文件"
 msgstr "Use the command line option to update the configuration file"
 
-#: f2/apps/douyin/cli.py:228 f2/apps/tiktok/cli.py:226
+#: f2/apps/douyin/cli.py:249 f2/apps/tiktok/cli.py:226
 msgid "初始化生成配置文件"
 msgstr "Initialize Generation Configuration File"
 
-#: f2/apps/douyin/cli.py:234 f2/apps/tiktok/cli.py:232
+#: f2/apps/douyin/cli.py:253
+msgid "使用SSO扫码登录获取Cookie"
+msgstr "Getting Cookies with SSO Sweep Login"
+
+#: f2/apps/douyin/cli.py:261 f2/apps/tiktok/cli.py:232
 msgid "语言设置"
 msgstr "Language Settings"
 
-#: f2/apps/douyin/cli.py:250 f2/apps/tiktok/cli.py:248
+#: f2/apps/douyin/cli.py:277 f2/apps/tiktok/cli.py:248
 msgid "不能同时初始化和更新配置文件"
 msgstr "Cannot initialize and update configuration files at the same time"
 
-#: f2/apps/douyin/cli.py:254 f2/apps/tiktok/cli.py:252
+#: f2/apps/douyin/cli.py:281 f2/apps/tiktok/cli.py:252
 msgid "要更新配置, 首先需要使用'-c'选项提供一个配置文件路径"
 msgstr "To update the configuration, you first need to provide a configuration file path using the '-c' option"
 
-#: f2/apps/douyin/crawler.py:40
-msgid "Cookie不能为空。请提供有效的 Cookie 参数，或使用自动从浏览器获取  f2 -d dy --help"
-msgstr "Cookies cannot be empty. Please provide valid cookie parameters, or use the automatic f2 -d dy --help from browser"
+#: f2/apps/douyin/crawler.py:53 f2/apps/douyin/dl.py:30
+msgid "Cookie不能为空。请提供有效的 Cookie 参数，或自动从浏览器获取 f2 -d dy --help，如扫码登录请保留双引号cookie: ，再使用--sso-login命令。"
+msgstr "Cookie cannot be empty. Please provide valid cookie parameters, or automatically get f2 -d dy --help from your browser, e.g., to scan for login please keep the double quotes cookie: and then use the --sso-login command。"
 
-#: f2/apps/douyin/crawler.py:66 f2/apps/tiktok/crawler.py:66
+#: f2/apps/douyin/crawler.py:69 f2/apps/tiktok/crawler.py:66
 msgid "用户信息接口地址:"
 msgstr "User detail interface address:"
 
-#: f2/apps/douyin/crawler.py:73 f2/apps/tiktok/crawler.py:73
+#: f2/apps/douyin/crawler.py:76 f2/apps/tiktok/crawler.py:73
 msgid "主页作品接口地址:"
 msgstr "Post interface address:"
 
-#: f2/apps/douyin/crawler.py:80 f2/apps/tiktok/crawler.py:80
+#: f2/apps/douyin/crawler.py:83 f2/apps/tiktok/crawler.py:80
 msgid "喜欢作品接口地址:"
 msgstr "Like interface address:"
 
-#: f2/apps/douyin/crawler.py:87 f2/apps/tiktok/crawler.py:87
+#: f2/apps/douyin/crawler.py:90 f2/apps/tiktok/crawler.py:87
 msgid "收藏作品接口地址:"
 msgstr "Collect interface address:"
 
-#: f2/apps/douyin/crawler.py:94
+#: f2/apps/douyin/crawler.py:97
 msgid "合集作品接口地址:"
 msgstr "Mix interface address:"
 
-#: f2/apps/douyin/crawler.py:101 f2/apps/tiktok/crawler.py:108
+#: f2/apps/douyin/crawler.py:104 f2/apps/tiktok/crawler.py:108
 msgid "作品详情接口地址:"
 msgstr "Post details interface address:"
 
-#: f2/apps/douyin/crawler.py:108 f2/apps/tiktok/crawler.py:115
+#: f2/apps/douyin/crawler.py:111 f2/apps/tiktok/crawler.py:115
 msgid "作品评论接口地址:"
 msgstr "Post comment interface address:"
 
-#: f2/apps/douyin/crawler.py:115
+#: f2/apps/douyin/crawler.py:118
 msgid "首页推荐作品接口地址:"
 msgstr "Home Feed interface address:"
 
-#: f2/apps/douyin/crawler.py:122
+#: f2/apps/douyin/crawler.py:125
 msgid "关注作品接口地址:"
 msgstr "Follow the works interface address:"
 
-#: f2/apps/douyin/crawler.py:129
+#: f2/apps/douyin/crawler.py:132
 msgid "朋友作品接口地址:"
 msgstr "Friend's work interface address:"
 
-#: f2/apps/douyin/crawler.py:136
+#: f2/apps/douyin/crawler.py:139
 msgid "相关推荐作品接口地址:"
 msgstr "Related address:"
 
-#: f2/apps/douyin/crawler.py:143
+#: f2/apps/douyin/crawler.py:146
 msgid "直播接口地址:"
 msgstr "Live Streaming address:"
 
-#: f2/apps/douyin/crawler.py:150
+#: f2/apps/douyin/crawler.py:156
+msgid "直播接口地址（room_id）:"
+msgstr "Live streaming interface address (room_id):"
+
+#: f2/apps/douyin/crawler.py:165
 msgid "关注用户直播接口地址:"
 msgstr "Follow user live interface address:"
 
-#: f2/apps/douyin/crawler.py:157
+#: f2/apps/douyin/crawler.py:172
 msgid "定位上一次作品接口地址:"
 msgstr "Locate the last work interface address:"
 
-#: f2/apps/douyin/dl.py:109 f2/apps/tiktok/dl.py:100
+#: f2/apps/douyin/crawler.py:179
+msgid "SSO获取二维码接口地址:"
+msgstr "SSO get QR code interface address:"
+
+#: f2/apps/douyin/crawler.py:186
+msgid "SSO检查扫码状态接口地址:"
+msgstr "SSO Check Sweep Status Interface Address:"
+
+#: f2/apps/douyin/crawler.py:193
+msgid "SSO检查登录状态接口地址:"
+msgstr "SSO Check Login Status interface address:"
+
+#: f2/apps/douyin/dl.py:116 f2/apps/tiktok/dl.py:100
 msgid "{0} 该作品已被屏蔽，无法下载"
 msgstr "{0} This work has been blocked from being downloaded"
 
-#: f2/apps/douyin/dl.py:128 f2/apps/tiktok/dl.py:132
+#: f2/apps/douyin/dl.py:135 f2/apps/tiktok/dl.py:132
 msgid "原声"
 msgstr "Music"
 
-#: f2/apps/douyin/dl.py:132 f2/apps/tiktok/dl.py:135
+#: f2/apps/douyin/dl.py:139 f2/apps/tiktok/dl.py:135
 msgid "{0} 该原声已被屏蔽，无法下载"
 msgstr "{0} The soundtrack has been blocked from download"
 
-#: f2/apps/douyin/dl.py:147 f2/apps/douyin/dl.py:154 f2/apps/tiktok/dl.py:149
+#: f2/apps/douyin/dl.py:154 f2/apps/douyin/dl.py:161 f2/apps/tiktok/dl.py:149
 #: f2/apps/tiktok/dl.py:154
 msgid "封面"
 msgstr "Cover"
 
-#: f2/apps/douyin/dl.py:151 f2/apps/tiktok/dl.py:152
+#: f2/apps/douyin/dl.py:158 f2/apps/tiktok/dl.py:152
 msgid "{0} 该作品没有动态封面"
 msgstr "{0} There is no dynamic cover for this work"
 
-#: f2/apps/douyin/dl.py:158 f2/apps/tiktok/dl.py:157
+#: f2/apps/douyin/dl.py:165 f2/apps/tiktok/dl.py:157
 msgid "{0} 该作品没有封面"
 msgstr "{0} There is no cover for this work"
 
-#: f2/apps/douyin/dl.py:171 f2/apps/tiktok/dl.py:169
+#: f2/apps/douyin/dl.py:178 f2/apps/tiktok/dl.py:169
 msgid "文案"
 msgstr "Desc"
 
-#: f2/apps/douyin/dl.py:186 f2/apps/tiktok/dl.py:115
+#: f2/apps/douyin/dl.py:193 f2/apps/tiktok/dl.py:115
 msgid "视频"
 msgstr "Video"
 
-#: f2/apps/douyin/dl.py:190 f2/apps/tiktok/dl.py:118
+#: f2/apps/douyin/dl.py:197 f2/apps/tiktok/dl.py:118
 msgid "{0} 该作品没有视频链接，无法下载"
 msgstr "{0} There is no video link for this work to download"
 
-#: f2/apps/douyin/dl.py:198
+#: f2/apps/douyin/dl.py:205
 msgid "图集"
 msgstr "IMG"
 
-#: f2/apps/douyin/dl.py:202
+#: f2/apps/douyin/dl.py:209
 msgid "{0} 该图集没有图片链接，无法下载"
 msgstr "{0} The atlas has no image link and cannot be downloaded"
 
-#: f2/apps/douyin/dl.py:267 f2/apps/tiktok/dl.py:234
+#: f2/apps/douyin/dl.py:276 f2/apps/tiktok/dl.py:234
 msgid "直播"
 msgstr "LIVE"
 
-#: f2/apps/douyin/handler.py:156 f2/apps/tiktok/handler.py:231
+#: f2/apps/douyin/handler.py:164 f2/apps/tiktok/handler.py:231
 msgid "单个视频数据: {0}"
 msgstr "Single video data: {0}"
 
-#: f2/apps/douyin/handler.py:170
+#: f2/apps/douyin/handler.py:178
 msgid "开始爬取视频: {0}"
 msgstr "Start crawling video: {0}"
 
-#: f2/apps/douyin/handler.py:178 f2/apps/douyin/handler.py:271
-#: f2/apps/douyin/handler.py:373 f2/apps/douyin/handler.py:454
-#: f2/apps/douyin/handler.py:543 f2/apps/douyin/handler.py:697
+#: f2/apps/douyin/handler.py:186 f2/apps/douyin/handler.py:279
+#: f2/apps/douyin/handler.py:380 f2/apps/douyin/handler.py:461
+#: f2/apps/douyin/handler.py:550 f2/apps/douyin/handler.py:753
 #: f2/apps/tiktok/handler.py:255 f2/apps/tiktok/handler.py:336
 #: f2/apps/tiktok/handler.py:416 f2/apps/tiktok/handler.py:511
 #: f2/apps/tiktok/handler.py:624
 msgid "视频ID: {0} 视频文案: {1} 作者: {2}"
 msgstr "Video ID: {0} Video Copy: {1} Author: {2}"
 
-#: f2/apps/douyin/handler.py:240 f2/apps/tiktok/handler.py:309
+#: f2/apps/douyin/handler.py:248 f2/apps/tiktok/handler.py:309
 msgid "开始爬取用户: {0} 发布的视频"
 msgstr "Start crawling videos posted by user: {0}"
 
-#: f2/apps/douyin/handler.py:248 f2/apps/douyin/handler.py:350
-#: f2/apps/douyin/handler.py:444 f2/apps/douyin/handler.py:531
-#: f2/apps/douyin/handler.py:674 f2/apps/tiktok/handler.py:317
+#: f2/apps/douyin/handler.py:256 f2/apps/douyin/handler.py:357
+#: f2/apps/douyin/handler.py:451 f2/apps/douyin/handler.py:538
+#: f2/apps/douyin/handler.py:730 f2/apps/tiktok/handler.py:317
 #: f2/apps/tiktok/handler.py:405 f2/apps/tiktok/handler.py:500
 #: f2/apps/tiktok/handler.py:613
 msgid "最大数量: {0} 每次请求数量: {1}"
 msgstr "Maximum number: {0} Number per request: {1}"
 
-#: f2/apps/douyin/handler.py:250 f2/apps/douyin/handler.py:352
-#: f2/apps/douyin/handler.py:446 f2/apps/douyin/handler.py:533
-#: f2/apps/douyin/handler.py:676 f2/apps/tiktok/handler.py:319
+#: f2/apps/douyin/handler.py:258 f2/apps/douyin/handler.py:359
+#: f2/apps/douyin/handler.py:453 f2/apps/douyin/handler.py:540
+#: f2/apps/douyin/handler.py:732 f2/apps/tiktok/handler.py:319
 #: f2/apps/tiktok/handler.py:407 f2/apps/tiktok/handler.py:502
 #: f2/apps/tiktok/handler.py:615
 msgid "开始爬取第 {0} 页"
 msgstr "Start crawling page {0}"
 
-#: f2/apps/douyin/handler.py:261 f2/apps/douyin/handler.py:363
-#: f2/apps/douyin/handler.py:687 f2/apps/tiktok/handler.py:326
+#: f2/apps/douyin/handler.py:269 f2/apps/douyin/handler.py:370
+#: f2/apps/douyin/handler.py:743 f2/apps/tiktok/handler.py:326
 #: f2/apps/tiktok/handler.py:433 f2/apps/tiktok/handler.py:528
 #: f2/apps/tiktok/handler.py:641
 msgid "{0} 页没有找到作品"
 msgstr "{0} Page not found"
 
-#: f2/apps/douyin/handler.py:263 f2/apps/douyin/handler.py:365
-#: f2/apps/douyin/handler.py:689 f2/apps/tiktok/handler.py:328
+#: f2/apps/douyin/handler.py:271 f2/apps/douyin/handler.py:372
+#: f2/apps/douyin/handler.py:745 f2/apps/tiktok/handler.py:328
 #: f2/apps/tiktok/handler.py:429 f2/apps/tiktok/handler.py:436
 #: f2/apps/tiktok/handler.py:524 f2/apps/tiktok/handler.py:531
 msgid "用户: {0} 所有作品采集完毕"
 msgstr "User: {0} All works have been captured"
 
-#: f2/apps/douyin/handler.py:269 f2/apps/douyin/handler.py:371
-#: f2/apps/douyin/handler.py:452 f2/apps/douyin/handler.py:541
-#: f2/apps/douyin/handler.py:695
+#: f2/apps/douyin/handler.py:277 f2/apps/douyin/handler.py:378
+#: f2/apps/douyin/handler.py:459 f2/apps/douyin/handler.py:548
+#: f2/apps/douyin/handler.py:751
 msgid "当前请求的max_cursor: {0}"
 msgstr "max_cursor of the current request: {0}"
 
-#: f2/apps/douyin/handler.py:287 f2/apps/douyin/handler.py:386
-#: f2/apps/douyin/handler.py:560 f2/apps/douyin/handler.py:710
+#: f2/apps/douyin/handler.py:294 f2/apps/douyin/handler.py:393
+#: f2/apps/douyin/handler.py:567 f2/apps/douyin/handler.py:766
 #: f2/apps/tiktok/handler.py:348 f2/apps/tiktok/handler.py:443
 #: f2/apps/tiktok/handler.py:538 f2/apps/tiktok/handler.py:651
 msgid "爬取结束，共爬取{0}个视频"
 msgstr "End of crawl, total {0} videos crawled"
 
-#: f2/apps/douyin/handler.py:342
+#: f2/apps/douyin/handler.py:349
 msgid "开始爬取用户: {0} 喜欢的视频"
 msgstr "Start crawling user: {0} like video"
 
-#: f2/apps/douyin/handler.py:436
+#: f2/apps/douyin/handler.py:443
 msgid "开始爬取用户收藏的视频"
 msgstr "Start crawling user collect videos"
 
-#: f2/apps/douyin/handler.py:464
+#: f2/apps/douyin/handler.py:471
 msgid "用户收藏的视频采集完毕"
 msgstr "User's collect videos are captured"
 
-#: f2/apps/douyin/handler.py:523
+#: f2/apps/douyin/handler.py:530
 msgid "开始爬取合集: {0} 的视频"
 msgstr "Start crawling the videos of the mix: {0}"
 
-#: f2/apps/douyin/handler.py:557
+#: f2/apps/douyin/handler.py:564
 msgid "合集: {0} 所有作品采集完毕"
 msgstr "Mix: {0} All works have been collected"
 
-#: f2/apps/douyin/handler.py:598
+#: f2/apps/douyin/handler.py:587
+msgid "直播已结束"
+msgstr "The live broadcast has ended"
+
+#: f2/apps/douyin/handler.py:610
 msgid "开始爬取直播: {0} 的数据"
 msgstr "Start crawling live: {0}"
 
-#: f2/apps/douyin/handler.py:608
+#: f2/apps/douyin/handler.py:620 f2/apps/douyin/handler.py:658
 msgid "直播ID: {0} 直播标题: {1} 直播状态: {2} 观看人数: {3}"
 msgstr "Live ID: {0} Live Title: {1} Live Status: {2} Viewers: {3}"
 
-#: f2/apps/douyin/handler.py:613
+#: f2/apps/douyin/handler.py:625
 msgid "子分区: {0} 主播昵称: {1}"
 msgstr "Subpartition: {0} Anchor Nickname: {1}"
 
-#: f2/apps/douyin/handler.py:616
+#: f2/apps/douyin/handler.py:628 f2/apps/douyin/handler.py:672
 msgid "直播信息爬取结束"
 msgstr "End of live feed crawling"
 
-#: f2/apps/douyin/handler.py:666
+#: f2/apps/douyin/handler.py:648
+msgid "开始爬取房间号: {0} 的数据"
+msgstr "Start crawling for room number: {0}"
+
+#: f2/apps/douyin/handler.py:663
+msgid "主播昵称: {0} 开播时间: {1} 直播流清晰度: {2}"
+msgstr "Nickname: {0} Start Time: {1} Streaming Clarity: {2}"
+
+#: f2/apps/douyin/handler.py:722
 msgid "开始爬取用户: {0} feed的视频"
 msgstr "Start crawling videos from user: {0} feed"
 
-#: f2/apps/douyin/handler.py:718 f2/apps/douyin/handler.py:719
+#: f2/apps/douyin/handler.py:794
+msgid "[  登录  ]:等待二维码扫描！"
+msgstr "[  Login  ]:Waiting for QR code scanning！"
+
+#: f2/apps/douyin/handler.py:795
+msgid "[  登录  ]:扫描二维码成功！"
+msgstr "[  Login  ]:Successful scanning of QR code！"
+
+#: f2/apps/douyin/handler.py:796
+msgid "[  登录  ]:确认二维码登录！"
+msgstr "[  Login  ]:Confirm the QR code to login！"
+
+#: f2/apps/douyin/handler.py:797
+msgid "[  登录  ]:访问频繁，请检查参数！"
+msgstr "[  Login  ]:Access is frequent, check the parameters！"
+
+#: f2/apps/douyin/handler.py:798
+msgid "[  登录  ]:二维码过期，重新获取！"
+msgstr "[  Login  ]:QR code expired, re-fetch！"
+
+#: f2/apps/douyin/handler.py:800
+msgid "[  登录  ]:扫码环境异常，请前往app验证！"
+msgstr "[  Login  ]:The scanning environment is abnormal, please go to the app to verify！"
+
+#: f2/apps/douyin/handler.py:877 f2/apps/douyin/handler.py:878
 #: f2/apps/tiktok/handler.py:659 f2/apps/tiktok/handler.py:660
 msgid "不存在该模式: {0}"
 msgstr "This mode does not exist: {0}"
 
 #: f2/apps/douyin/help.py:20 f2/apps/tiktok/help.py:20
+#: f2/apps/twitter/help.py:20
 msgid "除了单个作品外，其他URL都需要用户主页URL"
 msgstr "User homepage URLs are required for all URLs except one video"
 
 #: f2/apps/douyin/help.py:21 f2/apps/tiktok/help.py:21
+#: f2/apps/twitter/help.py:21
 msgid "是否保存视频原声，默认为 'yes'"
 msgstr "Whether to save the original sound of the video, default is 'yes'."
 
 #: f2/apps/douyin/help.py:22 f2/apps/tiktok/help.py:22
+#: f2/apps/twitter/help.py:22
 msgid "是否保存视频封面，默认为 'yes'"
 msgstr "Whether to save the video cover, default is 'yes'"
 
 #: f2/apps/douyin/help.py:23 f2/apps/tiktok/help.py:23
+#: f2/apps/twitter/help.py:23
 msgid "是否保存视频文案，默认为 'yes'"
 msgstr "Whether or not to save the video copy, default is 'yes'"
 
 #: f2/apps/douyin/help.py:24 f2/apps/tiktok/help.py:24
+#: f2/apps/twitter/help.py:24
 msgid "作品保存位置，默认为 'Download'"
 msgstr "Where to save your work, default is 'Download'"
 
 #: f2/apps/douyin/help.py:25 f2/apps/tiktok/help.py:25
+#: f2/apps/twitter/help.py:25
 msgid "是否将作品保存到单独的文件夹，默认为 'yes'"
 msgstr "Whether or not to save the work to a separate folder, default is 'yes'"
 
 #: f2/apps/douyin/help.py:29 f2/apps/tiktok/help.py:29
+#: f2/apps/twitter/help.py:29
 msgid "下载模式：主页作品(post), 点赞作品(like), 收藏作品(collect), 合辑(mix), 直播(live), 推荐作品(feed), 搜索作品(search)"
 msgstr "Download Mode: post, like, collect, mix, live, feed, search"
 
 #: f2/apps/douyin/help.py:36 f2/apps/tiktok/help.py:36
+#: f2/apps/twitter/help.py:36
 msgid "根据作品发布日期区间下载作品，默认为 '0'"
 msgstr "Download works according to the work release date interval, default is '0'"
 
 #: f2/apps/douyin/help.py:37 f2/apps/tiktok/help.py:37
+#: f2/apps/twitter/help.py:37
 msgid "网络请求超时时间，默认为 10"
 msgstr "Network request timeout, default is 10"
 
 #: f2/apps/douyin/help.py:38 f2/apps/tiktok/help.py:38
+#: f2/apps/twitter/help.py:38
 msgid "网络请求超时重试数，默认为 5"
 msgstr "Network request timeout retries, default is 5"
 
 #: f2/apps/douyin/help.py:39 f2/apps/tiktok/help.py:39
+#: f2/apps/twitter/help.py:39
 msgid "网络请求并发连接数，默认为 5"
 msgstr "Number of concurrent connections for network requests, default is 5"
 
 #: f2/apps/douyin/help.py:40 f2/apps/tiktok/help.py:40
+#: f2/apps/twitter/help.py:40
 msgid "异步的任务数，默认为 10"
 msgstr "The number of asynchronous tasks, default is 10"
 
 #: f2/apps/douyin/help.py:41 f2/apps/tiktok/help.py:41
+#: f2/apps/twitter/help.py:41
 msgid "最大作品下载数 默认为 0，表示无限制"
 msgstr "Maximum number of artwork downloads Default is 0, which means no limitation"
 
 #: f2/apps/douyin/help.py:42 f2/apps/tiktok/help.py:42
+#: f2/apps/twitter/help.py:42
 msgid "每页作品数，默认为 20个作品/页"
 msgstr "The default number of entries per page is 20 entries per page"
 
 #: f2/apps/douyin/help.py:43 f2/apps/tiktok/help.py:43
+#: f2/apps/twitter/help.py:43
 msgid "语言设置，默认为 'zh_CN'"
 msgstr "Language setting, default is 'zh_CN'"
 
 #: f2/apps/douyin/help.py:45 f2/apps/tiktok/help.py:45
+#: f2/apps/twitter/help.py:45
 msgid "初始化配置文件"
 msgstr "Initializing configuration files"
 
-#: f2/apps/douyin/utils.py:74 f2/apps/tiktok/utils.py:75
+#: f2/apps/douyin/utils.py:75 f2/apps/tiktok/utils.py:75
 msgid "由于某些错误, 无法获取msToken"
 msgstr "Unauthorized request,Unable to get msToken"
 
-#: f2/apps/douyin/utils.py:76 f2/apps/douyin/utils.py:124
+#: f2/apps/douyin/utils.py:77 f2/apps/douyin/utils.py:125
 #: f2/apps/tiktok/utils.py:78
 msgid "无法找到API端点"
 msgstr "API endpoint not found"
 
-#: f2/apps/douyin/utils.py:85 f2/apps/douyin/utils.py:131
+#: f2/apps/douyin/utils.py:86 f2/apps/douyin/utils.py:132
 #: f2/apps/tiktok/utils.py:91 f2/apps/tiktok/utils.py:140
 #: f2/apps/tiktok/utils.py:181 f2/apps/tiktok/utils.py:270
 #: f2/apps/tiktok/utils.py:320 f2/apps/tiktok/utils.py:376
-#: f2/crawlers/base_crawler.py:149 f2/crawlers/base_crawler.py:151
-#: f2/crawlers/base_crawler.py:200 f2/crawlers/base_crawler.py:201
-#: f2/crawlers/base_crawler.py:226 f2/crawlers/base_crawler.py:228
+#: f2/crawlers/base_crawler.py:164 f2/crawlers/base_crawler.py:165
+#: f2/crawlers/base_crawler.py:208 f2/crawlers/base_crawler.py:209
+#: f2/crawlers/base_crawler.py:234 f2/crawlers/base_crawler.py:235
 msgid "连接端点失败: {0}"
 msgstr "Failed to connect to endpoint: {0}"
 
-#: f2/apps/douyin/utils.py:97 f2/apps/tiktok/utils.py:102
+#: f2/apps/douyin/utils.py:98 f2/apps/tiktok/utils.py:102
 msgid "生成虚假的msToken"
 msgstr "Generate a fake msToken"
 
-#: f2/apps/douyin/utils.py:121
+#: f2/apps/douyin/utils.py:122
 msgid "由于某些错误, 无法获取ttwid"
 msgstr "Due to some error, the ttwid could not be retrieved"
 
-#: f2/apps/douyin/utils.py:169 f2/apps/tiktok/utils.py:201
+#: f2/apps/douyin/utils.py:204 f2/apps/tiktok/utils.py:201
 msgid "参数必须是字典类型"
 msgstr "Arguments must be of dictionary type"
 
-#: f2/apps/douyin/utils.py:177 f2/apps/tiktok/utils.py:209
+#: f2/apps/douyin/utils.py:212 f2/apps/tiktok/utils.py:209
 msgid "生成X-Bogus失败: {0})"
 msgstr "Generating X-Bogus failed: {0})"
 
-#: f2/apps/douyin/utils.py:206 f2/apps/douyin/utils.py:293
-#: f2/apps/douyin/utils.py:370
+#: f2/apps/douyin/utils.py:241 f2/apps/douyin/utils.py:322
+#: f2/apps/douyin/utils.py:402
 msgid "参数必须是字符串类型"
 msgstr "Arguments must be of string type"
 
-#: f2/apps/douyin/utils.py:230
+#: f2/apps/douyin/utils.py:264
 msgid "未在响应的地址中找到sec_user_id, 检查链接是否为用户主页"
 msgstr "No sec_user_id found in the response, check if the link is to the user's homepage"
 
-#: f2/apps/douyin/utils.py:234
+#: f2/apps/douyin/utils.py:267
 msgid "未授权的请求"
 msgstr "Unauthorized requests"
 
-#: f2/apps/douyin/utils.py:236
+#: f2/apps/douyin/utils.py:269
 msgid "未找到API端点"
 msgstr "API endpoint not found"
 
-#: f2/apps/douyin/utils.py:239
+#: f2/apps/douyin/utils.py:271
 msgid "API服务不可用"
 msgstr "API service is not available"
 
-#: f2/apps/douyin/utils.py:242
+#: f2/apps/douyin/utils.py:273
 msgid "API错误码：{0}"
 msgstr "API error code: {0}"
 
-#: f2/apps/douyin/utils.py:250
-msgid "连接到API时发生错误"
-msgstr "Error connecting to the API"
+#: f2/apps/douyin/utils.py:280
+msgid "连接到API时发生错误，请检查链接"
+msgstr "An error occurred while connecting to the API, please check the link"
 
-#: f2/apps/douyin/utils.py:266 f2/apps/douyin/utils.py:335
-#: f2/apps/douyin/utils.py:410
+#: f2/apps/douyin/utils.py:295 f2/apps/douyin/utils.py:364
+#: f2/apps/douyin/utils.py:446
 msgid "参数必须是列表类型"
 msgstr "Arguments must be of type list"
 
-#: f2/apps/douyin/utils.py:313
+#: f2/apps/douyin/utils.py:342
 msgid "未在响应的地址中找到aweme_id, 检查链接是否为作品页"
 msgstr "Aweme_id not found in the response address, check if the link is a post page"
 
-#: f2/apps/douyin/utils.py:389
+#: f2/apps/douyin/utils.py:423
+msgid "该链接返回的是room_id，请使用fetch_user_live_videos_by_room_id接口"
+msgstr "This link returns the room_id, use the fetch_user_live_videos_by_room_id interface"
+
+#: f2/apps/douyin/utils.py:425
 msgid "未在响应的地址中找到webcast_id, 检查链接是否为直播页"
 msgstr "Webcast_id not found in response address, check if link is a live page"
 
@@ -712,29 +798,28 @@ msgstr "No aweme_id found in the address of the response"
 msgid "获取aweme_id失败, {0}"
 msgstr "Failed to get aweme_id, {0}"
 
-#: f2/crawlers/base_crawler.py:101
+#: f2/crawlers/base_crawler.py:122
 msgid "解析 {0} 接口 JSON 失败： {1}"
 msgstr "Parsing {0} interface JSON failed: {1}"
 
-#: f2/crawlers/base_crawler.py:105
+#: f2/crawlers/base_crawler.py:126
 msgid "获取数据失败。状态码: {0}"
 msgstr "Failed to get data. Status code: {0}"
 
-#: f2/crawlers/base_crawler.py:127 f2/crawlers/base_crawler.py:132
-#: f2/crawlers/base_crawler.py:175 f2/crawlers/base_crawler.py:180
-msgid "第 {0} 次响应内容为空, 状态码: {1}"
-msgstr "The {0}th response was null, status code: {1}"
+#: f2/crawlers/base_crawler.py:146 f2/crawlers/base_crawler.py:190
+msgid "第 {0} 次响应内容为空, 状态码: {1}, URL:{2}"
+msgstr "The {0}th response is empty, status code: {1}, URL:{2}"
 
-#: f2/crawlers/base_crawler.py:138 f2/crawlers/base_crawler.py:187
+#: f2/crawlers/base_crawler.py:154 f2/crawlers/base_crawler.py:198
 msgid "获取端点数据失败, 次数达到上限"
 msgstr "Failed to get endpoint data, number of times reached the upper limit"
 
-#: f2/crawlers/base_crawler.py:143 f2/crawlers/base_crawler.py:194
-#: f2/crawlers/base_crawler.py:221
+#: f2/crawlers/base_crawler.py:159 f2/crawlers/base_crawler.py:203
+#: f2/crawlers/base_crawler.py:229
 msgid "响应状态码: {0}"
 msgstr "Status code: {0}"
 
-#: f2/crawlers/base_crawler.py:260 f2/crawlers/base_crawler.py:278
+#: f2/crawlers/base_crawler.py:266 f2/crawlers/base_crawler.py:284
 msgid "HTTP状态错误: {0}, URL: {1}, 尝试次数: {2}"
 msgstr "HTTP status error: {0}, URL: {1}, attempt: {2}"
 
@@ -856,4 +941,3 @@ msgstr "Configuration files have been updated!"
 #: tests/test_i18n.py:8 tests/test_i18n.py:12
 msgid "Hello, World!"
 msgstr "Hello, World!"
-
