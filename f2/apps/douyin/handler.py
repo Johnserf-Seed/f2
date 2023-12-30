@@ -582,6 +582,11 @@ async def handle_user_live(kwargs):
 
     # 然后下载直播推流
     webcast_data = await fetch_user_live_videos(webcast_id)
+    live_status = webcast_data.get("live_status")
+    # 是否正在直播
+    if live_status != 2:
+        logger.debug(_("直播已结束"))
+        return
     sec_user_id = webcast_data.get("sec_user_id")
 
     async with AsyncUserDB("douyin_users.db") as db:
