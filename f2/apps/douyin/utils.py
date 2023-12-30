@@ -237,7 +237,7 @@ class SecUserIdFetcher:
         """
 
         if not isinstance(url, str):
-            raise TypeError(_("参数必须是字符串类型"))  # (The parameter must be a string)
+            raise TypeError(_("参数必须是字符串类型"))
 
         # 提取有效URL
         url = str(extract_valid_urls(url))
@@ -260,18 +260,14 @@ class SecUserIdFetcher:
                     if match:
                         return match.group(1)
                     else:
-                        raise APIResponseError(
-                            _("未在响应的地址中找到sec_user_id, 检查链接是否为用户主页")
-                        )  # (sec_user_id not found in the response address, check if the link is the user homepage)
+                        raise APIResponseError(_("未在响应的地址中找到sec_user_id, 检查链接是否为用户主页"))
 
                 elif response.status_code == 401:
-                    raise APIUnauthorizedError(_("未授权的请求"))  # (Unauthorized requests)
+                    raise APIUnauthorizedError(_("未授权的请求"))
                 elif response.status_code == 404:
-                    raise APINotFoundError(_("未找到API端点"))  # (API endpoint not found)
+                    raise APINotFoundError(_("未找到API端点"))
                 elif response.status_code == 503:
-                    raise APIUnavailableError(
-                        _("API服务不可用")
-                    )  # (API service unavailable)
+                    raise APIUnavailableError(_("API服务不可用"))
                 else:
                     raise APIError(_("API错误码：{0}").format(response.status_code))
 
@@ -280,9 +276,7 @@ class SecUserIdFetcher:
             logger.error(str(e))
 
         except httpx.RequestError:
-            raise APIConnectionError(
-                _("连接到API时发生错误")
-            )  # (Error occurred when connecting to API)
+            raise APIConnectionError(_("连接到API时发生错误，请检查链接"))
 
     @classmethod
     async def get_all_sec_user_id(cls, urls: list) -> list:
