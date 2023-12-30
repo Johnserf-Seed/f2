@@ -280,7 +280,6 @@ class UserPostFilter(JSONModel):
         }
 
     def _to_list(self):
-        # 定义不需要的属性列表
         exclude_list = [
             "has_more",
             "max_cursor",
@@ -288,7 +287,7 @@ class UserPostFilter(JSONModel):
             "has_aweme",
             "locate_item_cursor",
         ]
-        # 生成属性名称列表，然后过滤掉不需要的属性
+
         keys = [
             prop_name
             for prop_name in dir(self)
@@ -300,8 +299,6 @@ class UserPostFilter(JSONModel):
         aweme_entries = self._get_attr_value("$.aweme_list") or []
 
         list_dicts = []
-        # 遍历每个条目并创建一个字典
-        # (Iterate through each entry and create a dict)
         for entry in aweme_entries:
             d = {
                 "has_more": self.has_more,
@@ -310,11 +307,7 @@ class UserPostFilter(JSONModel):
             }
             for key in keys:
                 attr_values = getattr(self, key)
-                print(f"key: {key}, attr_values: {attr_values}")  # 添加调试语句
-                # 当前aweme_entry在属性列表中的索引
                 index = aweme_entries.index(entry)
-                # 如果属性值的长度足够则赋值，否则赋None
-                # (Assign value if the length of the attribute value is sufficient, otherwise assign None)
                 d[key] = attr_values[index] if index < len(attr_values) else None
             list_dicts.append(d)
         return list_dicts

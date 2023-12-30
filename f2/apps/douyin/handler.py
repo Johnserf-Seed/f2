@@ -122,7 +122,7 @@ async def get_or_add_video_data(
     aweme_data: dict, db: AsyncVideoDB, ignore_fields: list = None
 ):
     """
-    获取或创建作品数据同时创建用户目录
+    获取或创建作品数据库数据
     (Get or create user data and create user directory)
 
     Args:
@@ -285,7 +285,6 @@ async def fetch_user_post_videos(
 
             # 主页接口和作品详情的选择
             # await fetch_one_video(video.aweme_id)
-            logger.debug(video)
             aweme_data_list = video._to_list()
             yield aweme_data_list
 
@@ -872,4 +871,4 @@ async def main(kwargs):
         await mode_function_map[mode](kwargs)
     else:
         logger.error(_("不存在该模式: {0}").format(mode))
-        print(_("不存在该模式: {0}").format(mode))  # (The mode does not exist)
+        rich_console.print(_("不存在该模式: {0}").format(mode))
