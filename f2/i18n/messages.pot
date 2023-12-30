@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-12-31 00:09+0800\n"
+"POT-Creation-Date: 2023-12-31 00:14+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -501,27 +501,27 @@ msgid "开始爬取用户: {0} feed的视频"
 msgstr ""
 
 #: f2/apps/douyin/handler.py:794
-msgid "[  登录  ]:等待二维码扫描！\r"
+msgid "[  登录  ]:等待二维码扫描！"
 msgstr ""
 
 #: f2/apps/douyin/handler.py:795
-msgid "[  登录  ]:扫描二维码成功！\r"
+msgid "[  登录  ]:扫描二维码成功！"
 msgstr ""
 
 #: f2/apps/douyin/handler.py:796
-msgid "[  登录  ]:确认二维码登录！\r"
+msgid "[  登录  ]:确认二维码登录！"
 msgstr ""
 
 #: f2/apps/douyin/handler.py:797
-msgid "[  登录  ]:访问频繁，请检查参数！\r"
+msgid "[  登录  ]:访问频繁，请检查参数！"
 msgstr ""
 
 #: f2/apps/douyin/handler.py:798
-msgid "[  登录  ]:二维码过期，重新获取！\r"
+msgid "[  登录  ]:二维码过期，重新获取！"
 msgstr ""
 
 #: f2/apps/douyin/handler.py:800
-msgid "[  登录  ]:扫码环境异常，请前往app验证！\r"
+msgid "[  登录  ]:扫码环境异常，请前往app验证！"
 msgstr ""
 
 #: f2/apps/douyin/handler.py:877 f2/apps/douyin/handler.py:878
