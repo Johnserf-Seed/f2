@@ -280,7 +280,6 @@ class UserPostFilter(JSONModel):
         }
 
     def _to_list(self):
-        # 定义不需要的属性列表
         exclude_list = [
             "has_more",
             "max_cursor",
@@ -288,7 +287,7 @@ class UserPostFilter(JSONModel):
             "has_aweme",
             "locate_item_cursor",
         ]
-        # 生成属性名称列表，然后过滤掉不需要的属性
+
         keys = [
             prop_name
             for prop_name in dir(self)
@@ -300,8 +299,6 @@ class UserPostFilter(JSONModel):
         aweme_entries = self._get_attr_value("$.aweme_list") or []
 
         list_dicts = []
-        # 遍历每个条目并创建一个字典
-        # (Iterate through each entry and create a dict)
         for entry in aweme_entries:
             d = {
                 "has_more": self.has_more,
@@ -310,11 +307,7 @@ class UserPostFilter(JSONModel):
             }
             for key in keys:
                 attr_values = getattr(self, key)
-                print(f"key: {key}, attr_values: {attr_values}")  # 添加调试语句
-                # 当前aweme_entry在属性列表中的索引
                 index = aweme_entries.index(entry)
-                # 如果属性值的长度足够则赋值，否则赋None
-                # (Assign value if the length of the attribute value is sufficient, otherwise assign None)
                 d[key] = attr_values[index] if index < len(attr_values) else None
             list_dicts.append(d)
         return list_dicts
@@ -923,3 +916,205 @@ class UserLiveFilter(JSONModel):
                 d[key] = attr_values[index] if index < len(attr_values) else None
             list_dicts.append(d)
         return list_dicts
+
+
+class UserLive2Filter(JSONModel):
+
+    # live
+    @property
+    def api_status_code(self):
+        return self._get_attr_value("$.status_code")
+
+    @property
+    def room_id(self):
+        return self._get_attr_value("$.data.room.id")
+
+    @property
+    def web_rid(self):
+        return self._get_attr_value("$.data.room.owner.web_rid")
+
+    @property
+    def live_status(self):
+        return self._get_attr_value("$.data.room.status")
+
+    @property
+    def live_title(self):
+        return replaceT(self._get_attr_value("$.data.room.title"))
+
+    @property
+    def user_count(self):
+        return self._get_attr_value("$.data.room.user_count")
+
+    @property
+    def create_time(self):
+        return timestamp_2_str(self._get_attr_value("$.data.room.create_time"))
+
+    @property
+    def finish_time(self):
+        return timestamp_2_str(self._get_attr_value("$.data.room.finish_time"))
+
+    @property
+    def cover(self):
+        return self._get_attr_value("$.data.room.cover.url_list[0]")
+
+    @property
+    def stream_id(self):
+        return self._get_attr_value("$.data.room.stream_id")
+
+    @property
+    def resolution_name(self):
+        return self._get_attr_value("$.data.room.stream_url.resolution_name")
+
+    @property
+    def flv_pull_url(self):
+        return self._get_attr_value("$.data.room.stream_url.flv_pull_url")
+
+    @property
+    def hls_pull_url(self):
+        return self._get_attr_value("$.data.room.stream_url.hls_pull_url_map")
+
+    #user
+    @property
+    def nickname(self):
+        return replaceT(self._get_attr_value("$.data.room.owner.nickname"))
+
+    @property
+    def gender(self):
+        return replaceT(self._get_attr_value("$.data.room.owner.gender"))
+
+    @property
+    def signature(self):
+        return replaceT(self._get_attr_value("$.data.room.owner.signature"))
+
+    @property
+    def avatar_large(self):
+        return self._get_attr_value("$.data.room.owner.avatar_large.url_list[0]")
+
+    @property
+    def verified(self):
+        return self._get_attr_value("$.data.room.owner.verified")
+
+    @property
+    def city(self):
+        return self._get_attr_value("$.data.room.owner.city")
+
+    @property
+    def following_count(self):
+        return self._get_attr_value("$.data.room.owner.follow_info.following_count")
+
+    @property
+    def follower_count(self):
+        return self._get_attr_value("$.data.room.owner.follow_info.follower_count")
+
+    @property
+    def sec_uid(self):
+        return self._get_attr_value("$.data.room.owner.sec_uid")
+
+    def _to_dict(self) -> dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
+
+class GetQrcodeFilter(JSONModel):
+    @property
+    def app_name(self):
+        return self._get_attr_value("$.data.app_name")
+
+    @property
+    def access_key(self):
+        return self._get_attr_value("$.data.frontier_params.access_key")
+
+    @property
+    def frontier_device(self):
+        return self._get_attr_value("$.data.frontier_params.frontier_device")
+
+    @property
+    def method(self):
+        return self._get_attr_value("$.data.frontier_params.method")
+
+    @property
+    def product_id(self):
+        return self._get_attr_value("$.data.frontier_params.product_id")
+
+    @property
+    def service_id(self):
+        return self._get_attr_value("$.data.frontier_params.service_id")
+
+    @property
+    def is_frontier(self):
+        return self._get_attr_value("$.data.is_frontier")
+
+    @property
+    def qrcode(self):
+        return self._get_attr_value("$.data.qrcode")  # base64
+
+    @property
+    def qrcode_index_url(self):
+        return self._get_attr_value("$.data.qrcode_index_url")
+
+    @property
+    def token(self):
+        return self._get_attr_value("$.data.token")
+
+    @property
+    def web_name(self):
+        return self._get_attr_value("$.data.web_name")
+
+    @property
+    def description(self):
+        return self._get_attr_value("$.description")
+
+    @property
+    def error_code(self):
+        return self._get_attr_value("$.error_code")
+
+    @property
+    def message(self):
+        return self._get_attr_value("$.message")
+
+    def _to_dict(self) -> dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
+
+class CheckQrcodeFilter(JSONModel):
+    @property
+    def extra(self):
+        return self._get_attr_value("$.data.extra")
+
+    @property
+    def status(self):
+        return self._get_attr_value("$.data.status")
+
+    @property
+    def redirect_url(self):
+        return self._get_attr_value("$.data.redirect_url")
+
+    @property
+    def description(self):
+        return self._get_attr_value("$.description")
+
+    @property
+    def error_code(self):
+        return self._get_attr_value("$.error_code")
+
+    @property
+    def message(self):
+        return self._get_attr_value("$.message")
+
+    @property
+    def verify_ticket(self):
+        return self._get_attr_value("$.verify_ticket")
+
+    def _to_dict(self) -> dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }

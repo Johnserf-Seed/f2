@@ -25,6 +25,11 @@ class DouyinDownloader(BaseDownloader):
             "Referer": douyin_conf["headers"]["Referer"],
             "Cookie": douyin_conf["cookie"],
         }
+        if self.headers["Cookie"] is None:
+            raise ValueError(
+                _("Cookie不能为空。请提供有效的 Cookie 参数，或自动从浏览器获取 f2 -d dy --help，如扫码登录请保留双引号cookie: ""，再使用--sso-login命令。")
+            )
+
         super().__init__(proxies=proxies, headers=self.headers)
 
     async def save_last_aweme_id(self, sec_user_id: str, aweme_id: int) -> None:
@@ -36,7 +41,7 @@ class DouyinDownloader(BaseDownloader):
             aweme_id (int): 作品id (aweme_id)
         """
 
-        async with AsyncUserDB("users.db") as db:
+        async with AsyncUserDB("douyin_users.db") as db:
             await db.update_user_info(sec_user_id=sec_user_id, last_aweme_id=aweme_id)
 
     async def create_download_tasks(
@@ -76,6 +81,8 @@ class DouyinDownloader(BaseDownloader):
 
         Args:
             kwargs (dict): 命令行参数
+            aweme_data_dict (dict): 作品数据字典
+            user_path (Any): 用户目录路径
         """
 
         # 构建文件夹路径
@@ -214,7 +221,7 @@ class DouyinDownloader(BaseDownloader):
         Args:
             kwargs (dict): 命令行参数
             aweme_datas (list, dict): 作品数据列表或字典
-            user_path (str): 用户目录路径
+            user_path (Any): 用户目录路径
         """
 
         if (
@@ -242,6 +249,8 @@ class DouyinDownloader(BaseDownloader):
 
         Args:
             kwargs (dict): 命令行参数
+            aweme_data_dict (dict): 直播数据字典
+            user_path (Any): 用户目录路径
         """
         custom_fields = {
             "create": timestamp_2_str(timestamp=get_timestamp(unit="sec")),

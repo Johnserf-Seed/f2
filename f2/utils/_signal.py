@@ -4,7 +4,7 @@ import asyncio
 
 # from f2.crawlers.base_crawler import BaseCrawler
 from f2.utils._singleton import Singleton
-
+from f2.cli.cli_console import RichConsoleManager
 
 class SignalManager(metaclass=Singleton):
     def __init__(self):
@@ -21,7 +21,7 @@ class SignalManager(metaclass=Singleton):
     def _handle_signal(self, received_signal, frame):
         """内部处理接收到的信号"""
         self._shutdown_event.set()
-        print("exiting f2...")
+        RichConsoleManager().rich_console.print("exiting f2...")
         # 取消所有运行中的asyncio任务
         for task in asyncio.all_tasks():
             task.cancel()

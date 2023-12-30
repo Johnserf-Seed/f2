@@ -3,7 +3,7 @@
 from typing import Any
 from pydantic import BaseModel
 
-from f2.apps.douyin.utils import TokenManager
+from f2.apps.douyin.utils import TokenManager, VerifyFpManager
 
 
 # Base Model
@@ -52,6 +52,26 @@ class BaseLiveModel(BaseModel):
     is_need_double_stream: str = "false"
     # msToken: str = TokenManager.gen_real_msToken()
     # _signature: str = ''
+
+
+class BaseLiveModel2(BaseModel):
+    verifyFp: str = VerifyFpManager.gen_verify_fp()
+    type_id: str = "0"
+    live_id: str = "1"
+    sec_user_id: str = ""
+    version_code: str = "99.99.99"
+    app_id: str = "1128"
+    msToken: str = TokenManager.gen_real_msToken()
+
+class BaseLoginModel(BaseModel):
+    service: str = "https://www.douyin.com"
+    need_logo: str = "false"
+    need_short_url: str = "true"
+    device_platform: str = "web_app"
+    aid: str = "6383"
+    account_sdk_source: str = "sso"
+    sdk_version: str = "2.2.7-beta.6"
+    language: str = "zh"
 
 
 # Model
@@ -155,6 +175,9 @@ class UserLive(BaseLiveModel):
     web_rid: str
     room_id_str: str
 
+class UserLive2(BaseLiveModel2):
+    room_id: str
+
 
 class FollowUserLive(BaseRequestModel):
     scene: str = "aweme_pc_follow_top"
@@ -180,3 +203,15 @@ class PostSearch(BaseRequestModel):
     from_group_id: str = ""
     offset: int = 0
     count: int = 15
+
+
+class LoginGetQr(BaseLoginModel):
+    verifyFp: str = ""
+    fp: str = ""
+    # msToken: str = TokenManager.gen_real_msToken()
+
+class LoginCheckQr(BaseLoginModel):
+    token: str = ""
+    verifyFp: str = ""
+    fp: str = ""
+    # msToken: str = TokenManager.gen_real_msToken()

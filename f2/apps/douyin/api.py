@@ -15,6 +15,9 @@ class DouyinAPIEndpoints:
     # 直播域名 (Live Domain)
     LIVE_DOMAIN = "https://live.douyin.com"
 
+    # 直播域名2 (Live Domain 2)
+    LIVE_DOMAIN2 = "https://webcast.amemv.com"
+
     # SSO域名 (SSO Domain)
     SSO_DOMAIN = "https://sso.douyin.com"
 
@@ -74,6 +77,9 @@ class DouyinAPIEndpoints:
 
     # 直播信息接口 (Live Info)
     LIVE_INFO = f"{LIVE_DOMAIN}/webcast/room/web/enter/"
+
+    # 直播信息接口2 (Live Info 2)
+    LIVE_INFO_ROOM_ID = f"{LIVE_DOMAIN2}/webcast/room/reflow/info/"
 
     # 直播用户信息 (Live User Info)
     LIVE_USER_INFO = f"{LIVE_DOMAIN}/webcast/user/me/"

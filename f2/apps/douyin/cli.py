@@ -3,6 +3,7 @@
 import f2
 import click
 import typing
+import asyncio
 import browser_cookie3
 from f2 import helps
 from f2.cli.cli_commands import set_cli_config
@@ -13,7 +14,7 @@ from f2.i18n.translator import TranslationManager
 
 # 先导入默认翻译函数，随后由cli配置去修改 (The default translation is imported first and then modified by the cli)
 from f2.i18n.translator import _
-
+from f2.apps.douyin.handler import handle_sso_login
 
 def handle_help(
     ctx: click.Context,
@@ -174,6 +175,26 @@ def handler_naming(
     return value
 
 
+def handler_sso_login(
+    ctx: click.Context,
+    param: typing.Union[click.Option, click.Parameter],
+    value: typing.Any,
+):
+    if not value or ctx.resilient_parsing:
+        return
+
+    if ctx.params.get("cookie"):
+        return
+
+    is_login, login_cookie = asyncio.run(handle_sso_login())
+
+    if is_login:
+        manager = ConfigManager(ctx.params.get("config", "conf/app.yaml"))
+        manager.update_config_with_args("douyin", cookie=login_cookie)
+    else:
+        raise click.UsageError(_("SSO登录失败，请重试！"))
+
+
 @click.command(name="douyin", help=_("抖音无水印解析"))
 @click.option(
     "--config",
@@ -226,6 +247,12 @@ def handler_naming(
 @click.option("--page-counts", "-s", type=int, default=20, help=_("每页作品数"))
 @click.option("--update-config", type=bool, is_flag=True, help=_("使用命令行选项更新配置文件"))
 @click.option("--init-config", type=str, help=_("初始化生成配置文件"))
+@click.option(
+    "--sso-login",
+    is_flag=True,
+    help=_("使用SSO扫码登录获取Cookie"),
+    callback=handler_sso_login,
+)
 @click.option(
     "--languages",
     "-l",

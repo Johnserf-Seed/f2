@@ -118,7 +118,8 @@ def main(**kwargs):
 @click.pass_context
 def set_cli_config(ctx, **kwargs):
     """
-    设置CLI的配置参数, 使其可以在后续的命令或操作中使用 (Set the conf of the CLI so that it can be used in subsequent commands)
+    设置CLI的配置参数, 使其可以在后续的命令或操作中使用
+    (Set the conf of the CLI so that it can be used in subsequent commands)
 
     Args:
     - ctx: click的上下文对象
