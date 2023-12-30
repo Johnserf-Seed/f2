@@ -78,7 +78,7 @@ class LogManager(metaclass=Singleton):
         time.sleep(1)  # 确保文件被释放
 
 
-def log_setup():
+def log_setup(log_to_console=False):
     logger = logging.getLogger("f2")
     if logger.hasHandlers():
         # logger已经被设置，不做任何操作
@@ -91,7 +91,7 @@ def log_setup():
     # 初始化日志管理器
     log_manager = LogManager()
     log_manager.setup_logging(
-        level=logging.INFO, log_to_console=False, log_path=temp_log_dir
+        level=logging.INFO, log_to_console=log_to_console, log_path=temp_log_dir
     )
 
     # 只保留99个日志文件
