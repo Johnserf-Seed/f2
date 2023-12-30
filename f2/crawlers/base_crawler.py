@@ -76,8 +76,19 @@ class BaseCrawler:
             transport=self.atransport,
         )
 
-    async def _fetch(self, endpoint: str) -> dict:
+    async def _fetch_response(self, endpoint: str) -> Response:
         """获取数据 (Get data)
+
+        Args:
+            endpoint (str): 接口地址 (Endpoint URL)
+
+        Returns:
+            Response: 原始响应对象 (Raw response object)
+        """
+        return await self.get_fetch_data(endpoint)
+
+    async def _fetch_json(self, endpoint: str) -> dict:
+        """获取 JSON 数据 (Get JSON data)
 
         Args:
             endpoint (str): 接口地址 (Endpoint URL)
@@ -86,7 +97,17 @@ class BaseCrawler:
             dict: 解析后的JSON数据 (Parsed JSON data)
         """
         response = await self.get_fetch_data(endpoint)
+        return self.parse_response(response)
 
+    def parse_response(self, response: Response) -> dict:
+        """解析响应对象 (Parse response object)
+
+        Args:
+            response (Response): 原始响应对象 (Raw response object)
+
+        Returns:
+            dict: 解析后的JSON数据 (Parsed JSON data)
+        """
         # 检查响应是否成功 (Check if the response is successful)
         if (
             response is not None

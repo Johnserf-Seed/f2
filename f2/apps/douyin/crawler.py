@@ -67,84 +67,84 @@ class DouyinCrawler(BaseCrawler):
             dyendpoint.USER_DETAIL, params.dict()
         )
         logger.debug(_("用户信息接口地址:" + endpoint))
-        return await self._fetch(endpoint)
+        return await self._fetch_json(endpoint)
 
     async def fetch_user_post(self, params: UserPost):
         endpoint = XBogusManager.to_complete_endpoint(
             dyendpoint.USER_POST, params.dict()
         )
         logger.debug(_("主页作品接口地址:" + endpoint))
-        return await self._fetch(endpoint)
+        return await self._fetch_json(endpoint)
 
     async def fetch_user_like(self, params: UserLike):
         endpoint = XBogusManager.to_complete_endpoint(
             dyendpoint.USER_FAVORITE_A, params.dict()
         )
         logger.debug(_("喜欢作品接口地址:" + endpoint))
-        return await self._fetch(endpoint)
+        return await self._fetch_json(endpoint)
 
     async def fetch_user_collect(self, params: UserCollect):
         endpoint = XBogusManager.to_complete_endpoint(
             dyendpoint.USER_COLLECTION, params.dict()
         )
         logger.debug(_("收藏作品接口地址:" + endpoint))
-        return await self._fetch(endpoint)
+        return await self._fetch_json(endpoint)
 
     async def fetch_user_mix(self, params: UserMix):
         endpoint = XBogusManager.to_complete_endpoint(
             dyendpoint.MIX_AWEME, params.dict()
         )
         logger.debug(_("合集作品接口地址:" + endpoint))
-        return await self._fetch(endpoint)
+        return await self._fetch_json(endpoint)
 
     async def fetch_post_detail(self, params: PostDetail):
         endpoint = XBogusManager.to_complete_endpoint(
             dyendpoint.POST_DETAIL, params.dict()
         )
         logger.debug(_("作品详情接口地址:" + endpoint))
-        return await self._fetch(endpoint)
+        return await self._fetch_json(endpoint)
 
     async def fetch_post_comment(self, params: PostDetail):
         endpoint = XBogusManager.to_complete_endpoint(
             dyendpoint.POST_COMMENT, params.dict()
         )
         logger.debug(_("作品评论接口地址:" + endpoint))
-        return await self._fetch(endpoint)
+        return await self._fetch_json(endpoint)
 
     async def fetch_post_feed(self, params: PostDetail):
         endpoint = XBogusManager.to_complete_endpoint(
             dyendpoint.TAB_FEED, params.dict()
         )
         logger.debug(_("首页推荐作品接口地址:" + endpoint))
-        return await self._fetch(endpoint)
+        return await self._fetch_json(endpoint)
 
     async def fetch_follow_feed(self, params: PostDetail):
         endpoint = XBogusManager.to_complete_endpoint(
             dyendpoint.FOLLOW_FEED, params.dict()
         )
         logger.debug(_("关注作品接口地址:" + endpoint))
-        return await self._fetch(endpoint)
+        return await self._fetch_json(endpoint)
 
     async def fetch_friend_feed(self, params: PostDetail):
         endpoint = XBogusManager.to_complete_endpoint(
             dyendpoint.FRIEND_FEED, params.dict()
         )
         logger.debug(_("朋友作品接口地址:" + endpoint))
-        return await self._fetch(endpoint)
+        return await self._fetch_json(endpoint)
 
     async def fetch_post_related(self, params: PostDetail):
         endpoint = XBogusManager.to_complete_endpoint(
             dyendpoint.POST_RELATED, params.dict()
         )
         logger.debug(_("相关推荐作品接口地址:" + endpoint))
-        return await self._fetch(endpoint)
+        return await self._fetch_json(endpoint)
 
     async def fetch_live(self, params: UserLive):
         endpoint = XBogusManager.to_complete_endpoint(
             dyendpoint.LIVE_INFO, params.dict()
         )
         logger.debug(_("直播接口地址:" + endpoint))
-        return await self._fetch(endpoint)
+        return await self._fetch_json(endpoint)
         try:
             self.aclient.headers.update({"Cookie": ""})  # 避免invalid session
             endpoint = XBogusManager.to_complete_endpoint(
@@ -160,14 +160,14 @@ class DouyinCrawler(BaseCrawler):
             dyendpoint.FOLLOW_USER_LIVE, params.dict()
         )
         logger.debug(_("关注用户直播接口地址:" + endpoint))
-        return await self._fetch(endpoint)
+        return await self._fetch_json(endpoint)
 
     async def fetch_locate_post(self, params: UserPost):
         endpoint = XBogusManager.to_complete_endpoint(
             dyendpoint.LOCATE_POST, params.dict()
         )
         logger.debug(_("定位上一次作品接口地址:" + endpoint))
-        return await self._fetch(endpoint)
+        return await self._fetch_json(endpoint)
 
     async def fetch_login_qrcode(self, parms: LoginGetQr):
         endpoint = XBogusManager.to_complete_endpoint(
