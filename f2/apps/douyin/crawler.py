@@ -38,11 +38,6 @@ class DouyinCrawler(BaseCrawler):
     }
 
     def __init__(self, cli_params=None):
-        if self.douyin_conf["cookie"] is None:
-            raise ValueError(
-                _("Cookie不能为空。请提供有效的 Cookie 参数，或使用自动从浏览器获取  f2 -d dy --help")
-            )
-
         self.crawler_headers = {
             "User-Agent": self.douyin_conf["headers"]["User-Agent"],
             "Referer": self.douyin_conf["headers"]["Referer"],
@@ -52,6 +47,11 @@ class DouyinCrawler(BaseCrawler):
         # 如果提供了命令行参数，并且其中有cookie参数，则更新cookie
         if cli_params and "cookie" in cli_params:
             self.crawler_headers["Cookie"] = cli_params["cookie"]
+
+        if self.crawler_headers["Cookie"] is None:
+            raise ValueError(
+                _("Cookie不能为空。请提供有效的 Cookie 参数，或自动从浏览器获取 f2 -d dy --help，如扫码登录请保留双引号cookie: ""，再使用--sso-login命令。")
+            )
 
         super().__init__(
             max_retries=self.max_retries,

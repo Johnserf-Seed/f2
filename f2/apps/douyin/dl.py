@@ -25,6 +25,11 @@ class DouyinDownloader(BaseDownloader):
             "Referer": douyin_conf["headers"]["Referer"],
             "Cookie": douyin_conf["cookie"],
         }
+        if self.headers["Cookie"] is None:
+            raise ValueError(
+                _("Cookie不能为空。请提供有效的 Cookie 参数，或自动从浏览器获取 f2 -d dy --help，如扫码登录请保留双引号cookie: ""，再使用--sso-login命令。")
+            )
+
         super().__init__(proxies=proxies, headers=self.headers)
 
     async def save_last_aweme_id(self, sec_user_id: str, aweme_id: int) -> None:
