@@ -16,11 +16,11 @@ class LogManager(metaclass=Singleton):
             return
 
         self.logger = logging.getLogger("f2")
-        self.logger.setLevel(logging.ERROR)
+        self.logger.setLevel(logging.WARNING)
         self.log_dir = None
         self._initialized = True
 
-    def setup_logging(self, level=logging.ERROR, log_to_console=False, log_path=None):
+    def setup_logging(self, level=logging.WARNING, log_to_console=False, log_path=None):
         self.logger.handlers.clear()
         self.logger.setLevel(level)
 
