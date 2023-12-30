@@ -16,6 +16,7 @@ from f2.apps.douyin.model import (
     UserMix,
     PostDetail,
     UserLive,
+    UserLive2,
 )
 from f2.apps.douyin.filter import (
     UserPostFilter,
@@ -24,6 +25,7 @@ from f2.apps.douyin.filter import (
     UserMixFilter,
     PostDetailFilter,
     UserLiveFilter,
+    UserLive2Filter,
 )
 from f2.apps.douyin.utils import SecUserIdFetcher, AwemeIdFetcher, WebCastIdFetcher
 from f2.apps.douyin.utils import create_or_rename_user_folder
@@ -611,6 +613,50 @@ async def fetch_user_live_videos(webcast_id: str):
         )
         logger.debug(
             _("子分区: {0} 主播昵称: {1}").format(live.sub_partition_title, live.nickname)
+        )
+        logger.debug("=====================================")
+        logger.debug(_("直播信息爬取结束"))
+
+        webcast_data = live._to_dict()
+        return webcast_data
+
+
+async def fetch_user_live_videos_by_room_id(room_id: str):
+    """
+    使用room_id获取指定用户直播列表。
+    (Used to get the list of videos collected by the specified user)
+
+    Args:
+        room_id: str: 直播ID (Live ID)
+
+    Return:
+        webcast_data: dict: 直播数据字典，包含直播ID、直播标题、直播状态、观看人数、主播昵称
+        (Live data dict, including live ID, live title, live status, number of viewers,
+        anchor nickname)
+    """
+
+    logger.debug(_("开始爬取房间号: {0} 的数据").format(room_id))
+
+    async with DouyinCrawler() as crawler:
+        logger.debug("=====================================")
+
+        params = UserLive2(room_id=room_id)
+        response = await crawler.fetch_live_room_id(params)
+        live = UserLive2Filter(response)
+
+        logger.debug(
+            _("直播ID: {0} 直播标题: {1} 直播状态: {2} 观看人数: {3}").format(
+                live.web_rid, live.live_title, live.live_status, live.user_count
+            )
+        )
+        logger.debug(
+            _("主播昵称: {0} 开播时间: {1} 直播流清晰度: {2}").format(
+                live.nickname,
+                live.create_time,
+                "、".join(
+                    [f"{key}: {value}" for key, value in live.resolution_name.items()]
+                ),
+            )
         )
         logger.debug("=====================================")
         logger.debug(_("直播信息爬取结束"))

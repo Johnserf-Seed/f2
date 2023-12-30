@@ -15,6 +15,7 @@ from f2.apps.douyin.model import (
     PostDetail,
     UserMix,
     UserLive,
+    UserLive2,
     FollowUserLive,
 )
 from f2.apps.douyin.utils import XBogusManager
@@ -142,6 +143,15 @@ class DouyinCrawler(BaseCrawler):
         )
         logger.debug(_("直播接口地址:" + endpoint))
         return await self._fetch(endpoint)
+        try:
+            self.aclient.headers.update({"Cookie": ""})  # 避免invalid session
+            endpoint = XBogusManager.to_complete_endpoint(
+                dyendpoint.LIVE_INFO_ROOM_ID, params.dict()
+            )
+            logger.debug(_("直播接口地址（room_id）:" + endpoint))
+            return await self._fetch_json(endpoint)
+        finally:
+            self.aclient.headers = original_headers
 
     async def fetch_follow_live(self, params: FollowUserLive):
         endpoint = XBogusManager.to_complete_endpoint(
