@@ -657,4 +657,4 @@ async def main(kwargs):
         await mode_function_map[mode](kwargs)
     else:
         logger.error(_("不存在该模式: {0}").format(mode))
-        print(_("不存在该模式: {0}").format(mode))  # (The mode does not exist)
+        print(_("不存在该模式: {0}").format(mode))

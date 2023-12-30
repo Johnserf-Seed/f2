@@ -5,6 +5,7 @@ import re
 import json
 import time
 import httpx
+import qrcode
 import random
 import asyncio
 
@@ -144,22 +145,56 @@ class TokenManager:
 
 class VerifyFpManager:
     base_str = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-    placeholders = [8, 13, 18, 23]
+    # placeholders = [8, 13, 18, 23]
+
+    # @classmethod
+    # def gen_verify_fp(cls) -> str:
+    #     """
+    #     生成verifyFp 与 s_v_web_id (Generate verifyFp)
+    #     """
+
+    #     base36 = num_to_base36(int(round(time.time() * 1000)))
+
+    #     random_part = [cls.base_str[random.randint(0, 35)] for _ in range(36)]
+    #     for idx in cls.placeholders:
+    #         random_part[idx] = "_"
+    #     random_part[14] = "4"
+
+    #     return f"verify_{base36}_" + "".join(random_part)
 
     @classmethod
     def gen_verify_fp(cls) -> str:
         """
         生成verifyFp 与 s_v_web_id (Generate verifyFp)
         """
+        base_str = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+        t = len(base_str)
+        milliseconds = int(round(time.time() * 1000))
+        base36 = ""
+        while milliseconds > 0:
+            remainder = milliseconds % 36
+            if remainder < 10:
+                base36 = str(remainder) + base36
+            else:
+                base36 = chr(ord("a") + remainder - 10) + base36
+            milliseconds = int(milliseconds / 36)
+        r = base36
+        o = [""] * 36
+        o[8] = o[13] = o[18] = o[23] = "_"
+        o[14] = "4"
 
-        base36 = num_to_base36(int(round(time.time() * 1000)))
+        for i in range(36):
+            if not o[i]:
+                n = 0 or int(random.random() * t)
+                if i == 19:
+                    n = 3 & n | 8
+                o[i] = base_str[n]
 
-        random_part = [cls.base_str[random.randint(0, 35)] for _ in range(36)]
-        for idx in cls.placeholders:
-            random_part[idx] = "_"
-        random_part[14] = "4"
+        return "verify_" + r + "_" + "".join(o)
 
-        return f"verify_{base36}_" + "".join(random_part)
+    @classmethod
+    def gen_s_v_web_id(cls) -> str:
+        return cls.gen_verify_fp()
 
 
 class XBogusManager:
@@ -203,7 +238,7 @@ class SecUserIdFetcher:
         """
 
         if not isinstance(url, str):
-            raise TypeError(_("参数必须是字符串类型"))  # (The parameter must be a string)
+            raise TypeError(_("参数必须是字符串类型"))
 
         # 提取有效URL
         url = str(extract_valid_urls(url))
@@ -226,18 +261,14 @@ class SecUserIdFetcher:
                     if match:
                         return match.group(1)
                     else:
-                        raise APIResponseError(
-                            _("未在响应的地址中找到sec_user_id, 检查链接是否为用户主页")
-                        )  # (sec_user_id not found in the response address, check if the link is the user homepage)
+                        raise APIResponseError(_("未在响应的地址中找到sec_user_id, 检查链接是否为用户主页"))
 
                 elif response.status_code == 401:
-                    raise APIUnauthorizedError(_("未授权的请求"))  # (Unauthorized requests)
+                    raise APIUnauthorizedError(_("未授权的请求"))
                 elif response.status_code == 404:
-                    raise APINotFoundError(_("未找到API端点"))  # (API endpoint not found)
+                    raise APINotFoundError(_("未找到API端点"))
                 elif response.status_code == 503:
-                    raise APIUnavailableError(
-                        _("API服务不可用")
-                    )  # (API service unavailable)
+                    raise APIUnavailableError(_("API服务不可用"))
                 else:
                     raise APIError(_("API错误码：{0}").format(response.status_code))
 
@@ -246,9 +277,7 @@ class SecUserIdFetcher:
             logger.error(str(e))
 
         except httpx.RequestError:
-            raise APIConnectionError(
-                _("连接到API时发生错误")
-            )  # (Error occurred when connecting to API)
+            raise APIConnectionError(_("连接到API时发生错误，请检查链接"))
 
     @classmethod
     async def get_all_sec_user_id(cls, urls: list) -> list:
@@ -353,6 +382,9 @@ class WebCastIdFetcher:
     # https://live.douyin.com/766545142636?cover_type=0&enter_from_merge=web_live&enter_method=web_card&game_name=&is_recommend=1&live_type=game&more_detail=&request_id=20231110224012D47CD00C18B4AE4BFF9B&room_id=7299828646049827596&stream_type=vertical&title_type=1&web_live_page=hot_live&web_live_tab=all
     # https://live.douyin.com/766545142636
     _DOUYIN_LIVE_URL_PATTERN2 = re.compile(r"https://live.douyin.com/(\d+)")
+    # https://webcast.amemv.com/douyin/webcast/reflow/7318296342189919011?u_code=l1j9bkbd&did=MS4wLjABAAAAEs86TBQPNwAo-RGrcxWyCdwKhI66AK3Pqf3ieo6HaxI&iid=MS4wLjABAAAA0ptpM-zzoliLEeyvWOCUt-_dQza4uSjlIvbtIazXnCY&with_sec_did=1&use_link_command=1&ecom_share_track_params=&extra_params={"from_request_id":"20231230162057EC005772A8EAA0199906","im_channel_invite_id":"0"}&user_id=3644207898042206&liveId=7318296342189919011&from=share&style=share&enter_method=click_share&roomId=7318296342189919011&activity_info={}
+    _DOUYIN_LIVE_URL_PATTERN3 = re.compile(r"reflow/([^/?]*)")
+
 
     @classmethod
     async def get_webcast_id(cls, url: str) -> str:
@@ -379,12 +411,16 @@ class WebCastIdFetcher:
 
         live_pattern = cls._DOUYIN_LIVE_URL_PATTERN
         live_pattern2 = cls._DOUYIN_LIVE_URL_PATTERN2
+        live_pattern3 = cls._DOUYIN_LIVE_URL_PATTERN3
 
         try:
             if live_pattern.search(url):
                 match = live_pattern.search(url)
             elif live_pattern2.search(url):
                 match = live_pattern2.search(url)
+            elif live_pattern3.search(url):
+                match = live_pattern3.search(url)
+                logger.debug(_("该链接返回的是room_id，请使用fetch_user_live_videos_by_room_id接口"))
             else:
                 raise APIResponseError(_("未在响应的地址中找到webcast_id, 检查链接是否为直播页"))
 
@@ -616,3 +652,24 @@ def extract_desc_from_share_desc(desc: str, share_desc: str) -> str:
         extracted = extracted[:end_index].strip()
 
     return extracted
+
+
+def show_qrcode(qrcode_url: str, show_image: bool = False) -> None:
+    """
+    显示二维码
+
+    Args:
+        qrcode_url (str): 登录二维码链接
+        show_image (bool): 是否显示图像，True 表示显示，False 表示在控制台显示
+    """
+    if show_image:
+        # 创建并显示QR码图像
+        qr_code_img = qrcode.make(qrcode_url)
+        qr_code_img.show()
+    else:
+        # 在控制台以 ASCII 形式打印二维码
+        qr = qrcode.QRCode()
+        qr.add_data(qrcode_url)
+        qr.make(fit=True)
+        # 在控制台以 ASCII 形式打印二维码
+        qr.print_ascii(invert=True)
