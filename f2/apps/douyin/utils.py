@@ -191,6 +191,9 @@ class VerifyFpManager:
 
         return "verify_" + r + "_" + "".join(o)
 
+    @classmethod
+    def gen_s_v_web_id(cls) -> str:
+        return cls.gen_verify_fp()
 
 
 class XBogusManager:
