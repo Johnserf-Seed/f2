@@ -1,5 +1,7 @@
 
-![Logo](https://github.com/Johnserf-Seed/f2/raw/main/docs/public/f2-logo-with-shadow-svg@1.0x.svg)
+<p align="center">
+  <img src="https://github.com/Johnserf-Seed/f2/raw/main/docs/public/f2-logo-with-shadow-svg@0.5x.svg" alt="Logo">
+</p>
 
 [![Downloads](https://pepy.tech/badge/f2/month)](https://pepy.tech/project/f2)
 [![PyPI version](https://badge.fury.io/py/f2.svg)](https://badge.fury.io/py/f2)
