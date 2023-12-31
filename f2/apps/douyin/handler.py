@@ -791,13 +791,13 @@ async def handle_sso_login():
         logger.info(f"check_qrcode token:{token}")
 
         status_mapping = {
-            "1": {"message": _("[  登录  ]:等待二维码扫描！\r"), "log": logger.info},
-            "2": {"message": _("[  登录  ]:扫描二维码成功！\r"), "log": logger.info},
-            "3": {"message": _("[  登录  ]:确认二维码登录！\r"), "log": logger.info},
-            "4": {"message": _("[  登录  ]:访问频繁，请检查参数！\r"), "log": logger.warning},
-            "5": {"message": _("[  登录  ]:二维码过期，重新获取！\r"), "log": logger.warning},
+            "1": {"message": _("[  登录  ]:等待二维码扫描！"), "log": logger.info},
+            "2": {"message": _("[  登录  ]:扫描二维码成功！"), "log": logger.info},
+            "3": {"message": _("[  登录  ]:确认二维码登录！"), "log": logger.info},
+            "4": {"message": _("[  登录  ]:访问频繁，请检查参数！"), "log": logger.warning},
+            "5": {"message": _("[  登录  ]:二维码过期，重新获取！"), "log": logger.warning},
             "2046": {
-                "messages": _("[  登录  ]:扫码环境异常，请前往app验证！\r"),
+                "messages": _("[  登录  ]:扫码环境异常，请前往app验证！"),
                 "log": logger.warning,
             },
         }
@@ -855,7 +855,7 @@ async def handle_sso_login():
             logger.info(f"login_cookie:{login_cookie}")
             return True, login_cookie
         else:
-            rich_console.print("[  登录  ]:自动重定向登录失败\r")
+            rich_console.print("[  登录  ]:自动重定向登录失败")
             if redirect_response:
                 error_message = f"网络异常: 自动重定向登录失败。 状态码: {redirect_response.status_code}, 响应体: {redirect_response.text}"
             else:
