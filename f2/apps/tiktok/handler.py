@@ -48,9 +48,7 @@ async def handler_user_profile(secUid: str, uniqueId: str = "") -> dict:
     """
 
     if not secUid and not uniqueId:
-        raise ValueError(
-            _("至少提供 secUid 或 uniqueId 中的一个参数")
-        )  # At least one of secUid or uniqueId must be provided
+        raise ValueError(_("至少提供 secUid 或 uniqueId 中的一个参数"))
 
     async with TiktokCrawler() as crawler:
         params = UserProfile(region="SG", secUid=secUid, uniqueId=uniqueId)
@@ -59,7 +57,7 @@ async def handler_user_profile(secUid: str, uniqueId: str = "") -> dict:
         return user._to_dict()
 
 
-async def get_user_nick_name(secUid: str, db: AsyncUserDB) -> str:
+async def get_user_nickname(secUid: str, db: AsyncUserDB) -> str:
     """
     用于获取指定用户的昵称
     (Used to get nickname of specified users)
@@ -558,11 +556,11 @@ async def handler_user_mix(kwargs):
 
     selected_index = await select_playlist(playlist)
 
+    async with AsyncUserDB("tiktok_users.db") as audb:
+        user_path = await get_or_add_user_data(kwargs, secUid, audb)
+
     if selected_index == 0:
         for mixId in playlist.get("mixId", []):
-            async with AsyncUserDB("tiktok_users.db") as udb:
-                user_path = await get_or_add_user_data(kwargs, mixId, udb)
-
             async for aweme_data_list in fetch_user_mix_videos(
                 mixId, cursor, page_counts, max_counts
             ):
@@ -572,9 +570,6 @@ async def handler_user_mix(kwargs):
                 )
     else:
         mixId = playlist.get("mixId", [])[selected_index - 1]
-        async with AsyncUserDB("tiktok_users.db") as udb:
-            user_path = await get_or_add_user_data(kwargs, secUid, udb)
-
         async for aweme_data_list in fetch_user_mix_videos(
             mixId, cursor, page_counts, max_counts
         ):

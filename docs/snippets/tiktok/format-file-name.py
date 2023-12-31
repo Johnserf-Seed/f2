@@ -1,12 +1,12 @@
 import asyncio
-from f2.apps.douyin.handler import fetch_one_video
-from f2.apps.douyin.utils import format_file_name
+from f2.apps.tiktok.handler tiktok fetch_one_video
+from f2.apps.tiktok.utils tiktok format_file_name
 
 async def main():
     # 文件名模板
     kwargs = {"naming": "{create}_{desc}_{aweme_id}"}
     # 单作品的数据
-    aweme_data = await fetch_one_video("7294994585925848359")
+    aweme_data = await fetch_one_video("7316948869764484384")
     # 格式化后的文件名
     print(format_file_name(kwargs.get("naming"), aweme_data) + "_video")
  
