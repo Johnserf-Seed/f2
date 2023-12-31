@@ -199,18 +199,25 @@ class VerifyFpManager:
 
 class XBogusManager:
     @classmethod
-    def to_complete_endpoint(cls, base_endpoint: str, params: dict) -> str:
+    def str_2_endpoint(cls, endpoint: str) -> str:
+        try:
+            final_endpoint = XB().getXBogus(endpoint)
+        except Exception as e:
+            raise RuntimeError(_("生成X-Bogus失败: {0})").format(e))
+
+        return final_endpoint[0]
+
+    @classmethod
+    def model_2_endpoint(cls, base_endpoint: str, params: dict) -> str:
         if not isinstance(params, dict):
-            raise TypeError(_("参数必须是字典类型"))  # (The parameter must be a dict)
+            raise TypeError(_("参数必须是字典类型"))
 
         param_str = "&".join([f"{k}={v}" for k, v in params.items()])
 
         try:
             xb_value = XB().getXBogus(param_str)
         except Exception as e:
-            raise RuntimeError(
-                _("生成X-Bogus失败: {0})").format(e)
-            )  # (Failed to generate X-Bogus)
+            raise RuntimeError(_("生成X-Bogus失败: {0})").format(e))
 
         # 检查base_endpoint是否已有查询参数 (Check if base_endpoint already has query parameters)
         separator = "&" if "?" in base_endpoint else "?"
@@ -288,7 +295,7 @@ class SecUserIdFetcher:
             urls: list: 用户url列表 (User url list)
 
         Return:
-            sec_user_id: list: 用户sec_user_id列表 (User sec_user_id list)
+            sec_user_ids: list: 用户sec_user_id列表 (User sec_user_id list)
         """
 
         if not isinstance(urls, list):
@@ -297,8 +304,8 @@ class SecUserIdFetcher:
         # 提取有效URL
         urls = extract_valid_urls(urls)
 
-        tasks = [cls.get_sec_user_id(url) for url in urls]
-        return await asyncio.gather(*tasks)
+        sec_user_ids = [cls.get_sec_user_id(url) for url in urls]
+        return await asyncio.gather(*sec_user_ids)
 
 
 class AwemeIdFetcher:
@@ -357,7 +364,7 @@ class AwemeIdFetcher:
             urls: list: 列表url (list url)
 
         Return:
-            aweme_id: list: 视频的唯一标识，返回列表 (The unique identifier of the video, return list)
+            aweme_ids: list: 视频的唯一标识，返回列表 (The unique identifier of the video, return list)
         """
 
         if not isinstance(urls, list):
@@ -366,8 +373,8 @@ class AwemeIdFetcher:
         # 提取有效URL
         urls = extract_valid_urls(urls)
 
-        tasks = [cls.get_aweme_id(url) for url in urls]
-        return await asyncio.gather(*tasks)
+        aweme_ids = [cls.get_aweme_id(url) for url in urls]
+        return await asyncio.gather(*aweme_ids)
 
 
 class MixIdFetcher:
@@ -384,7 +391,6 @@ class WebCastIdFetcher:
     _DOUYIN_LIVE_URL_PATTERN2 = re.compile(r"https://live.douyin.com/(\d+)")
     # https://webcast.amemv.com/douyin/webcast/reflow/7318296342189919011?u_code=l1j9bkbd&did=MS4wLjABAAAAEs86TBQPNwAo-RGrcxWyCdwKhI66AK3Pqf3ieo6HaxI&iid=MS4wLjABAAAA0ptpM-zzoliLEeyvWOCUt-_dQza4uSjlIvbtIazXnCY&with_sec_did=1&use_link_command=1&ecom_share_track_params=&extra_params={"from_request_id":"20231230162057EC005772A8EAA0199906","im_channel_invite_id":"0"}&user_id=3644207898042206&liveId=7318296342189919011&from=share&style=share&enter_method=click_share&roomId=7318296342189919011&activity_info={}
     _DOUYIN_LIVE_URL_PATTERN3 = re.compile(r"reflow/([^/?]*)")
-
 
     @classmethod
     async def get_webcast_id(cls, url: str) -> str:
@@ -439,7 +445,7 @@ class WebCastIdFetcher:
             urls: list: 列表url (   list url)
 
         Return:
-            webcast_id: list: 直播的唯一标识，返回列表 (The unique identifier of the live, return list)
+            webcast_ids: list: 直播的唯一标识，返回列表 (The unique identifier of the live, return list)
         """
 
         if not isinstance(urls, list):
@@ -448,11 +454,11 @@ class WebCastIdFetcher:
         # 提取有效URL
         urls = extract_valid_urls(urls)
 
-        tasks = [cls.get_webcast_id(url) for url in urls]
-        return await asyncio.gather(*tasks)
+        webcast_ids = [cls.get_webcast_id(url) for url in urls]
+        return await asyncio.gather(*webcast_ids)
 
 
-def get_request_sizes(page_counts, max_counts):
+def get_request_sizes(page_counts: int, max_counts: int) -> list[int]:
     """
     用于获取请求大小列表 (Used to get request size list)
 
@@ -461,7 +467,7 @@ def get_request_sizes(page_counts, max_counts):
         max_counts: int: 最大视频数 (Maximum number of videos)
 
     Return:
-        requests: list: 请求大小列表 (Request size list)
+        requests: list[int]: 请求大小列表 (Request size list)
     """
 
     full_requests = max_counts // page_counts
@@ -544,8 +550,8 @@ def create_user_folder(kwargs: dict, nickname: Union[str, int]) -> Path:
     Note:
         如果未在配置文件中指定路径，则默认为 "Download"。
         (If the path is not specified in the conf file, it defaults to "Download".)
-        仅支持相对路径。
-        (Only relative paths are supported.)
+        支持绝对与相对路径。
+        (Support absolute and relative paths)
 
     Raises:
         TypeError: 如果 kwargs 不是字典格式，将引发 TypeError。
@@ -554,7 +560,7 @@ def create_user_folder(kwargs: dict, nickname: Union[str, int]) -> Path:
 
     # 确定函数参数是否正确
     if not isinstance(kwargs, dict):
-        raise TypeError("kwargs 参数必须是字典")  # (The kwargs parameter must be a dict)
+        raise TypeError("kwargs 参数必须是字典")
 
     # 创建基础路径
     base_path = Path(kwargs.get("path", "Download"))

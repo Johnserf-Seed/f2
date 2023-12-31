@@ -195,7 +195,7 @@ class TokenManager:
 
 class XBogusManager:
     @classmethod
-    def to_complete_endpoint(cls, base_endpoint: str, params: dict) -> str:
+    def model_2_endpoint(cls, base_endpoint: str, params: dict) -> str:
         # 检查params是否是一个字典 (Check if params is a dict)
         if not isinstance(params, dict):
             raise TypeError(_("参数必须是字典类型"))  # (The parameter must be a dict)
