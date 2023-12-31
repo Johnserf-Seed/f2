@@ -550,8 +550,8 @@ def create_user_folder(kwargs: dict, nickname: Union[str, int]) -> Path:
     Note:
         如果未在配置文件中指定路径，则默认为 "Download"。
         (If the path is not specified in the conf file, it defaults to "Download".)
-        仅支持相对路径。
-        (Only relative paths are supported.)
+        支持绝对与相对路径。
+        (Support absolute and relative paths)
 
     Raises:
         TypeError: 如果 kwargs 不是字典格式，将引发 TypeError。
