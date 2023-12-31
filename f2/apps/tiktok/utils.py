@@ -195,6 +195,15 @@ class TokenManager:
 
 class XBogusManager:
     @classmethod
+    def str_2_endpoint(cls, endpoint: str) -> str:
+        try:
+            final_endpoint = XB().getXBogus(endpoint)
+        except Exception as e:
+            raise RuntimeError(_("生成X-Bogus失败: {0})").format(e))
+
+        return final_endpoint[0]
+
+    @classmethod
     def model_2_endpoint(cls, base_endpoint: str, params: dict) -> str:
         # 检查params是否是一个字典 (Check if params is a dict)
         if not isinstance(params, dict):
