@@ -295,7 +295,7 @@ class SecUserIdFetcher:
             urls: list: 用户url列表 (User url list)
 
         Return:
-            sec_user_id: list: 用户sec_user_id列表 (User sec_user_id list)
+            sec_user_ids: list: 用户sec_user_id列表 (User sec_user_id list)
         """
 
         if not isinstance(urls, list):
@@ -304,8 +304,8 @@ class SecUserIdFetcher:
         # 提取有效URL
         urls = extract_valid_urls(urls)
 
-        tasks = [cls.get_sec_user_id(url) for url in urls]
-        return await asyncio.gather(*tasks)
+        sec_user_ids = [cls.get_sec_user_id(url) for url in urls]
+        return await asyncio.gather(*sec_user_ids)
 
 
 class AwemeIdFetcher:
