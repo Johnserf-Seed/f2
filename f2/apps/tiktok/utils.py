@@ -71,9 +71,7 @@ class TokenManager:
                 )
 
                 if response.status_code == 401:
-                    raise APIUnauthorizedError(
-                        _("由于某些错误, 无法获取msToken")
-                    )  # (Unauthorized request,Unable to get msToken)
+                    raise APIUnauthorizedError(_("由于某些错误, 无法获取msToken"))
                 elif response.status_code == 404:
                     raise APINotFoundError(_("无法找到API端点"))
 
@@ -136,9 +134,7 @@ class TokenManager:
 
             except httpx.RequestError:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
-                raise APIConnectionError(
-                    _("连接端点失败: {0}").format(cls.ttwid_conf["url"])
-                )  # (Failed to connect to endpoint)
+                raise APIConnectionError(_("连接端点失败: {0}").format(cls.ttwid_conf["url"]))
 
             except httpx.HTTPStatusError as e:
                 # 捕获 httpx 的状态代码错误 (captures specific status code errors from httpx)
@@ -329,9 +325,7 @@ class SecUserIdFetcher:
                 if response.status_code in {200, 444}:
                     match = cls._TIKTOK_UNIQUEID_PARREN.search(str(response.url))
                     if not match:
-                        raise APIResponseError(
-                            _("未在响应中找到unique_id")
-                        )  # (No unique_id found in the address of the response)
+                        raise APIResponseError(_("未在响应中找到unique_id"))
 
                     unique_id = match.group(1)
 
