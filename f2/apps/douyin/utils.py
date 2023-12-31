@@ -445,7 +445,7 @@ class WebCastIdFetcher:
             urls: list: 列表url (   list url)
 
         Return:
-            webcast_id: list: 直播的唯一标识，返回列表 (The unique identifier of the live, return list)
+            webcast_ids: list: 直播的唯一标识，返回列表 (The unique identifier of the live, return list)
         """
 
         if not isinstance(urls, list):
@@ -454,8 +454,8 @@ class WebCastIdFetcher:
         # 提取有效URL
         urls = extract_valid_urls(urls)
 
-        tasks = [cls.get_webcast_id(url) for url in urls]
-        return await asyncio.gather(*tasks)
+        webcast_ids = [cls.get_webcast_id(url) for url in urls]
+        return await asyncio.gather(*webcast_ids)
 
 
 def get_request_sizes(page_counts, max_counts):
