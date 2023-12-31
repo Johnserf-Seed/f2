@@ -429,6 +429,27 @@ class AwemeIdFetcher:
                 await asyncio.sleep(2)
                 exit(0)
 
+    @classmethod
+    async def get_all_aweme_id(cls, urls: list) -> list:
+        """
+        获取视频aweme_id,传入列表url都可以解析出aweme_id (Get video aweme_id, pass in the list url can parse out aweme_id)
+
+        Args:
+            urls: list: 列表url (list url)
+
+        Return:
+            aweme_ids: list: 视频的唯一标识，返回列表 (The unique identifier of the video, return list)
+        """
+
+        if not isinstance(urls, list):
+            raise TypeError(_("参数必须是列表类型"))
+
+        # 提取有效URL
+        urls = extract_valid_urls(urls)
+
+        aweme_ids = [cls.get_aweme_id(url) for url in urls]
+        return await asyncio.gather(*aweme_ids)
+
 
 def format_file_name(
     naming_template: str,
