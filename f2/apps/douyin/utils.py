@@ -560,7 +560,7 @@ def create_user_folder(kwargs: dict, nickname: Union[str, int]) -> Path:
 
     # 确定函数参数是否正确
     if not isinstance(kwargs, dict):
-        raise TypeError("kwargs 参数必须是字典")  # (The kwargs parameter must be a dict)
+        raise TypeError("kwargs 参数必须是字典")
 
     # 创建基础路径
     base_path = Path(kwargs.get("path", "Download"))
