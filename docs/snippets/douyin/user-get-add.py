@@ -1,5 +1,6 @@
 import asyncio
 from f2.apps.douyin.handler import get_or_add_user_data
+from f2.apps.douyin.db import AsyncUserDB
 
 async def main():
     kwargs = {"path": "Download"}
