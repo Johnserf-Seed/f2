@@ -30,5 +30,5 @@ if __name__ == "__main__":
     # 提取有效URL
     urls = extract_valid_urls(raw_urls)
 
-    print(asyncio.run(WebCastIdFetcher.get_webcast_id(raw_urls[0])))
-    print(asyncio.run(WebCastIdFetcher.get_all_webcast_id(raw_urls)))
+    print(asyncio.run(WebCastIdFetcher.get_webcast_id(urls[0])))
+    print(asyncio.run(WebCastIdFetcher.get_all_webcast_id(urls)))
