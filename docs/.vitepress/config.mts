@@ -55,11 +55,18 @@ export default defineConfig({
               items: [
                 {text: '安装', link: '/install'},
                 {text: '快速使用', link: '/quick-start'},
+                {text: '配置文件', link: '/site-config'},
                 {text: '进阶用法', link: '/advance-guide'},
               ]
             },
           ],
           '/guide/': [
+            {
+              text: '什么是F2',
+              items: [
+                {text: '开发者必看', link: '/guide/what-is-f2'}
+              ]
+            },
             {
               text: '开发者指南',
               items: [
@@ -117,7 +124,7 @@ function cn_nav(): DefaultTheme.NavItem[] {
     },
     {
       text: '参考',
-      link: '/reference/site-config',
+      link: '/reference/cli',
       activeMatch: '/reference/'
     },
     {
@@ -146,7 +153,7 @@ function en_nav(): DefaultTheme.NavItem[] {
     },
     {
       text: 'reference',
-      link: '/en/reference/site-config',
+      link: '/en/site-config',
       activeMatch: '/reference/'
     },
     {
