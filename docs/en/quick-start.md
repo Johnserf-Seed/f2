@@ -71,7 +71,7 @@ You can get help information about them from the CLI:
 $ f2 apps -h
 ```
 
-Where `f2/conf/app.yaml` is the default configuration file for F2, if you need to use a customized configuration file please follow the [Configuration Reference](./reference/site-config).
+Where `f2/conf/app.yaml` is the default configuration file for F2, if you need to use a customized configuration file please follow the [Configuration Reference](/site-config).
 
 
 :::
