@@ -364,7 +364,7 @@ class AwemeIdFetcher:
             urls: list: 列表url (list url)
 
         Return:
-            aweme_id: list: 视频的唯一标识，返回列表 (The unique identifier of the video, return list)
+            aweme_ids: list: 视频的唯一标识，返回列表 (The unique identifier of the video, return list)
         """
 
         if not isinstance(urls, list):
@@ -373,8 +373,8 @@ class AwemeIdFetcher:
         # 提取有效URL
         urls = extract_valid_urls(urls)
 
-        tasks = [cls.get_aweme_id(url) for url in urls]
-        return await asyncio.gather(*tasks)
+        aweme_ids = [cls.get_aweme_id(url) for url in urls]
+        return await asyncio.gather(*aweme_ids)
 
 
 class MixIdFetcher:
