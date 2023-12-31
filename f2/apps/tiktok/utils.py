@@ -282,6 +282,27 @@ class SecUserIdFetcher:
                 exit(0)
 
     @classmethod
+    async def get_all_secuid(cls, urls: list) -> list:
+        """
+        获取列表secuid列表 (Get list sec_user_id list)
+
+        Args:
+            urls: list: 用户url列表 (User url list)
+
+        Return:
+            secuids: list: 用户secuid列表 (User secuid list)
+        """
+
+        if not isinstance(urls, list):
+            raise TypeError(_("参数必须是列表类型"))
+
+        # 提取有效URL
+        urls = extract_valid_urls(urls)
+
+        secuids = [cls.get_secuid(url) for url in urls]
+        return await asyncio.gather(*secuids)
+
+    @classmethod
     async def get_uniqueid(cls, url: str) -> str:
         """
         获取TikTok用户unique_id
