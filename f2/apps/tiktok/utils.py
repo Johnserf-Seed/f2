@@ -71,9 +71,7 @@ class TokenManager:
                 )
 
                 if response.status_code == 401:
-                    raise APIUnauthorizedError(
-                        _("由于某些错误, 无法获取msToken")
-                    )  # (Unauthorized request,Unable to get msToken)
+                    raise APIUnauthorizedError(_("由于某些错误, 无法获取msToken"))
                 elif response.status_code == 404:
                     raise APINotFoundError(_("无法找到API端点"))
 
@@ -136,9 +134,7 @@ class TokenManager:
 
             except httpx.RequestError:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
-                raise APIConnectionError(
-                    _("连接端点失败: {0}").format(cls.ttwid_conf["url"])
-                )  # (Failed to connect to endpoint)
+                raise APIConnectionError(_("连接端点失败: {0}").format(cls.ttwid_conf["url"]))
 
             except httpx.HTTPStatusError as e:
                 # 捕获 httpx 的状态代码错误 (captures specific status code errors from httpx)
@@ -195,19 +191,26 @@ class TokenManager:
 
 class XBogusManager:
     @classmethod
+    def str_2_endpoint(cls, endpoint: str) -> str:
+        try:
+            final_endpoint = XB().getXBogus(endpoint)
+        except Exception as e:
+            raise RuntimeError(_("生成X-Bogus失败: {0})").format(e))
+
+        return final_endpoint[0]
+
+    @classmethod
     def model_2_endpoint(cls, base_endpoint: str, params: dict) -> str:
         # 检查params是否是一个字典 (Check if params is a dict)
         if not isinstance(params, dict):
-            raise TypeError(_("参数必须是字典类型"))  # (The parameter must be a dict)
+            raise TypeError(_("参数必须是字典类型"))
 
         param_str = "&".join([f"{k}={v}" for k, v in params.items()])
 
         try:
             xb_value = XB().getXBogus(param_str)
         except Exception as e:
-            raise RuntimeError(
-                _("生成X-Bogus失败: {0})").format(e)
-            )  # (Failed to generate X-Bogus)
+            raise RuntimeError(_("生成X-Bogus失败: {0})").format(e))
 
         # 检查base_endpoint是否已有查询参数 (Check if base_endpoint already has query parameters)
         separator = "&" if "?" in base_endpoint else "?"
@@ -275,6 +278,27 @@ class SecUserIdFetcher:
                 exit(0)
 
     @classmethod
+    async def get_all_secuid(cls, urls: list) -> list:
+        """
+        获取列表secuid列表 (Get list sec_user_id list)
+
+        Args:
+            urls: list: 用户url列表 (User url list)
+
+        Return:
+            secuids: list: 用户secuid列表 (User secuid list)
+        """
+
+        if not isinstance(urls, list):
+            raise TypeError(_("参数必须是列表类型"))
+
+        # 提取有效URL
+        urls = extract_valid_urls(urls)
+
+        secuids = [cls.get_secuid(url) for url in urls]
+        return await asyncio.gather(*secuids)
+
+    @classmethod
     async def get_uniqueid(cls, url: str) -> str:
         """
         获取TikTok用户unique_id
@@ -301,9 +325,7 @@ class SecUserIdFetcher:
                 if response.status_code in {200, 444}:
                     match = cls._TIKTOK_UNIQUEID_PARREN.search(str(response.url))
                     if not match:
-                        raise APIResponseError(
-                            _("未在响应中找到unique_id")
-                        )  # (No unique_id found in the address of the response)
+                        raise APIResponseError(_("未在响应中找到unique_id"))
 
                     unique_id = match.group(1)
 
@@ -323,6 +345,27 @@ class SecUserIdFetcher:
                 e.display_error()
                 await asyncio.sleep(2)
                 exit(0)
+
+    @classmethod
+    async def get_all_uniqueid(cls, urls: list) -> list:
+        """
+        获取列表unique_id列表 (Get list sec_user_id list)
+
+        Args:
+            urls: list: 用户url列表 (User url list)
+
+        Return:
+            unique_ids: list: 用户unique_id列表 (User unique_id list)
+        """
+
+        if not isinstance(urls, list):
+            raise TypeError(_("参数必须是列表类型"))
+
+        # 提取有效URL
+        urls = extract_valid_urls(urls)
+
+        unique_ids = [cls.get_uniqueid(url) for url in urls]
+        return await asyncio.gather(*unique_ids)
 
 
 class AwemeIdFetcher:
@@ -379,6 +422,27 @@ class AwemeIdFetcher:
                 e.display_error()
                 await asyncio.sleep(2)
                 exit(0)
+
+    @classmethod
+    async def get_all_aweme_id(cls, urls: list) -> list:
+        """
+        获取视频aweme_id,传入列表url都可以解析出aweme_id (Get video aweme_id, pass in the list url can parse out aweme_id)
+
+        Args:
+            urls: list: 列表url (list url)
+
+        Return:
+            aweme_ids: list: 视频的唯一标识，返回列表 (The unique identifier of the video, return list)
+        """
+
+        if not isinstance(urls, list):
+            raise TypeError(_("参数必须是列表类型"))
+
+        # 提取有效URL
+        urls = extract_valid_urls(urls)
+
+        aweme_ids = [cls.get_aweme_id(url) for url in urls]
+        return await asyncio.gather(*aweme_ids)
 
 
 def format_file_name(

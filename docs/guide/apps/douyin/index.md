@@ -241,7 +241,7 @@ outline: deep
 | :--- | :--- | :--- |
 | user_nickname | str | 用户昵称 |
 
-<<< @/snippets/douyin/user-nickname.py{5-7}
+<<< @/snippets/douyin/user-nickname.py{6-8}
 
 ### 创建用户记录与目录 🟡
 
@@ -258,7 +258,7 @@ outline: deep
 | :--- | :--- | :--- |
 | user_path | Path | 用户目录路径对象 |
 
-<<< @/snippets/douyin/user-get-add.py{5-8}
+<<< @/snippets/douyin/user-get-add.py{6-9}
 
 ::: tip 提示
 此为cli模式的接口，开发者可自行定义创建用户目录的功能。
@@ -278,7 +278,7 @@ outline: deep
 | :--- | :--- | :--- |
 |None | None | 无 |
 
-<<< @/snippets/douyin/video-get-add.py{5,8-10}
+<<< @/snippets/douyin/video-get-add.py{6,9-11}
 
 ### SSO登录 🟢
 

@@ -1,5 +1,6 @@
 import asyncio
 from f2.apps.douyin.handler import get_user_nickname
+from f2.apps.douyin.db import AsyncUserDB
 
 async def main():
     async with AsyncUserDB("douyin_users.db") as audb:
