@@ -299,7 +299,7 @@ class SecUserIdFetcher:
         """
 
         if not isinstance(urls, list):
-            raise TypeError(_("参数必须是列表类型"))  # (The parameter must be a list)
+            raise TypeError(_("参数必须是列表类型"))
 
         # 提取有效URL
         urls = extract_valid_urls(urls)

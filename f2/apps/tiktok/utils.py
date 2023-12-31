@@ -198,16 +198,14 @@ class XBogusManager:
     def model_2_endpoint(cls, base_endpoint: str, params: dict) -> str:
         # 检查params是否是一个字典 (Check if params is a dict)
         if not isinstance(params, dict):
-            raise TypeError(_("参数必须是字典类型"))  # (The parameter must be a dict)
+            raise TypeError(_("参数必须是字典类型"))
 
         param_str = "&".join([f"{k}={v}" for k, v in params.items()])
 
         try:
             xb_value = XB().getXBogus(param_str)
         except Exception as e:
-            raise RuntimeError(
-                _("生成X-Bogus失败: {0})").format(e)
-            )  # (Failed to generate X-Bogus)
+            raise RuntimeError(_("生成X-Bogus失败: {0})").format(e))
 
         # 检查base_endpoint是否已有查询参数 (Check if base_endpoint already has query parameters)
         separator = "&" if "?" in base_endpoint else "?"
