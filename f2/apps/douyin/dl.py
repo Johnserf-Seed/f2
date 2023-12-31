@@ -27,7 +27,10 @@ class DouyinDownloader(BaseDownloader):
         }
         if self.headers["Cookie"] is None:
             raise ValueError(
-                _("Cookie不能为空。请提供有效的 Cookie 参数，或自动从浏览器获取 f2 -d dy --help，如扫码登录请保留双引号cookie: ""，再使用--sso-login命令。")
+                _(
+                    "Cookie不能为空。请提供有效的 Cookie 参数，或自动从浏览器获取 f2 -d dy --help，如扫码登录请保留双引号cookie: "
+                    "，再使用--sso-login命令。"
+                )
             )
 
         super().__init__(proxies=proxies, headers=self.headers)
@@ -112,9 +115,7 @@ class DouyinDownloader(BaseDownloader):
 
         # 检查作品是否被屏蔽
         if aweme_prohibited:
-            logger.warning(
-                _("{0} 该作品已被屏蔽，无法下载").format(aweme_id)
-            )  # This work has been blocked and cannot be downloaded
+            logger.warning(_("{0} 该作品已被屏蔽，无法下载").format(aweme_id))
             return
 
         # 检查作品是否可见
@@ -135,9 +136,7 @@ class DouyinDownloader(BaseDownloader):
                             _("原声"), music_url, base_path, music_name, ".mp3"
                         )
                 else:
-                    logger.warning(
-                        _("{0} 该原声已被屏蔽，无法下载").format(aweme_id)
-                    )  # This original sound has been blocked and cannot be downloaded
+                    logger.warning(_("{0} 该原声已被屏蔽，无法下载").format(aweme_id))
 
             # 处理封面下载任务
             if kwargs.get("cover"):
@@ -154,16 +153,12 @@ class DouyinDownloader(BaseDownloader):
                         _("封面"), animated_cover_url, base_path, cover_name, ".webp"
                     )
                 elif cover_url != None:
-                    logger.warning(
-                        _("{0} 该作品没有动态封面").format(aweme_id)
-                    )  # This video has no dynamic cover
+                    logger.warning(_("{0} 该作品没有动态封面").format(aweme_id))
                     await self.initiate_download(
                         _("封面"), cover_url, base_path, cover_name, ".jpeg"
                     )
                 else:
-                    logger.warning(
-                        _("{0} 该作品没有封面").format(aweme_id)
-                    )  # This video has no cover
+                    logger.warning(_("{0} 该作品没有封面").format(aweme_id))
 
             # 处理文案下载任务
             if kwargs.get("desc"):
@@ -193,9 +188,7 @@ class DouyinDownloader(BaseDownloader):
                         _("视频"), video_url, base_path, video_name, ".mp4"
                     )
                 else:
-                    logger.warning(
-                        _("{0} 该作品没有视频链接，无法下载").format(aweme_id)
-                    )  # This video has no video link and cannot be downloaded
+                    logger.warning(_("{0} 该作品没有视频链接，无法下载").format(aweme_id))
 
             elif aweme_type in [68]:
                 for i, image_url in enumerate(aweme_data_dict.get("images", None)):
@@ -205,9 +198,7 @@ class DouyinDownloader(BaseDownloader):
                             _("图集"), image_url, base_path, image_name, ".jpg"
                         )
                     else:
-                        logger.warning(
-                            _("{0} 该图集没有图片链接，无法下载").format(aweme_id)
-                        )  # This atlas has no picture link and cannot be downloaded
+                        logger.warning(_("{0} 该图集没有图片链接，无法下载").format(aweme_id))
 
         # 保存最后一个aweme_id
         await self.save_last_aweme_id(sec_user_id, aweme_id)
