@@ -352,6 +352,27 @@ class SecUserIdFetcher:
                 await asyncio.sleep(2)
                 exit(0)
 
+    @classmethod
+    async def get_all_uniqueid(cls, urls: list) -> list:
+        """
+        获取列表unique_id列表 (Get list sec_user_id list)
+
+        Args:
+            urls: list: 用户url列表 (User url list)
+
+        Return:
+            unique_ids: list: 用户unique_id列表 (User unique_id list)
+        """
+
+        if not isinstance(urls, list):
+            raise TypeError(_("参数必须是列表类型"))
+
+        # 提取有效URL
+        urls = extract_valid_urls(urls)
+
+        unique_ids = [cls.get_uniqueid(url) for url in urls]
+        return await asyncio.gather(*unique_ids)
+
 
 class AwemeIdFetcher:
     # https://www.tiktok.com/@scarlettjonesuk/video/7255716763118226715
