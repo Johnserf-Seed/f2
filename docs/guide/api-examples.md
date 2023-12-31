@@ -31,4 +31,4 @@ if __name__ == '__main__':
 
 ## More
 
-请查看 [API 完整列表](./reference/runtime-api).
+请查看 [API 完整列表](../reference/runtime-api).
