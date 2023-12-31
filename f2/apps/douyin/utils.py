@@ -199,7 +199,6 @@ class VerifyFpManager:
 
 class XBogusManager:
     @classmethod
-    def to_complete_endpoint(cls, base_endpoint: str, params: dict) -> str:
     def str_2_endpoint(cls, endpoint: str) -> str:
         try:
             final_endpoint = XB().getXBogus(endpoint)
@@ -208,6 +207,8 @@ class XBogusManager:
 
         return final_endpoint[0]
 
+    @classmethod
+    def model_2_endpoint(cls, base_endpoint: str, params: dict) -> str:
         if not isinstance(params, dict):
             raise TypeError(_("参数必须是字典类型"))  # (The parameter must be a dict)
 

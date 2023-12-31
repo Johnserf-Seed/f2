@@ -11,7 +11,7 @@ def test_xbogus_manager():
         sec_user_id="MS4wLjABAAAA5OCaznf4ihGfC65u0imbLzmBOuWDpUMo58CdnVTcX_R8bD9HZQknOJ4ZX9FdZnIq",
     )
 
-    final_endpoint = XBogusManager.to_complete_endpoint(
+    final_endpoint = XBogusManager.model_2_endpoint(
         dyendpoint.USER_DETAIL, params.dict()
     )
 
