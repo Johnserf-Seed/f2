@@ -210,16 +210,14 @@ class XBogusManager:
     @classmethod
     def model_2_endpoint(cls, base_endpoint: str, params: dict) -> str:
         if not isinstance(params, dict):
-            raise TypeError(_("参数必须是字典类型"))  # (The parameter must be a dict)
+            raise TypeError(_("参数必须是字典类型"))
 
         param_str = "&".join([f"{k}={v}" for k, v in params.items()])
 
         try:
             xb_value = XB().getXBogus(param_str)
         except Exception as e:
-            raise RuntimeError(
-                _("生成X-Bogus失败: {0})").format(e)
-            )  # (Failed to generate X-Bogus)
+            raise RuntimeError(_("生成X-Bogus失败: {0})").format(e))
 
         # 检查base_endpoint是否已有查询参数 (Check if base_endpoint already has query parameters)
         separator = "&" if "?" in base_endpoint else "?"
@@ -393,7 +391,6 @@ class WebCastIdFetcher:
     _DOUYIN_LIVE_URL_PATTERN2 = re.compile(r"https://live.douyin.com/(\d+)")
     # https://webcast.amemv.com/douyin/webcast/reflow/7318296342189919011?u_code=l1j9bkbd&did=MS4wLjABAAAAEs86TBQPNwAo-RGrcxWyCdwKhI66AK3Pqf3ieo6HaxI&iid=MS4wLjABAAAA0ptpM-zzoliLEeyvWOCUt-_dQza4uSjlIvbtIazXnCY&with_sec_did=1&use_link_command=1&ecom_share_track_params=&extra_params={"from_request_id":"20231230162057EC005772A8EAA0199906","im_channel_invite_id":"0"}&user_id=3644207898042206&liveId=7318296342189919011&from=share&style=share&enter_method=click_share&roomId=7318296342189919011&activity_info={}
     _DOUYIN_LIVE_URL_PATTERN3 = re.compile(r"reflow/([^/?]*)")
-
 
     @classmethod
     async def get_webcast_id(cls, url: str) -> str:
