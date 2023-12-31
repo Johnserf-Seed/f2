@@ -59,7 +59,7 @@ async def handler_user_profile(secUid: str, uniqueId: str = "") -> dict:
         return user._to_dict()
 
 
-async def get_user_nick_name(secUid: str, db: AsyncUserDB) -> str:
+async def get_user_nickname(secUid: str, db: AsyncUserDB) -> str:
     """
     用于获取指定用户的昵称
     (Used to get nickname of specified users)
