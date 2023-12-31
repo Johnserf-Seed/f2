@@ -1,6 +1,6 @@
 import asyncio
 from f2.apps.douyin.handler import fetch_one_video
-from f2.apps.tiktok.utils import format_file_name
+from f2.apps.douyin.utils import format_file_name
 
 async def main():
     # 文件名模板
