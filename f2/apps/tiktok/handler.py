@@ -558,11 +558,11 @@ async def handler_user_mix(kwargs):
 
     selected_index = await select_playlist(playlist)
 
+    async with AsyncUserDB("tiktok_users.db") as audb:
+        user_path = await get_or_add_user_data(kwargs, secUid, audb)
+
     if selected_index == 0:
         for mixId in playlist.get("mixId", []):
-            async with AsyncUserDB("tiktok_users.db") as udb:
-                user_path = await get_or_add_user_data(kwargs, mixId, udb)
-
             async for aweme_data_list in fetch_user_mix_videos(
                 mixId, cursor, page_counts, max_counts
             ):
@@ -572,9 +572,6 @@ async def handler_user_mix(kwargs):
                 )
     else:
         mixId = playlist.get("mixId", [])[selected_index - 1]
-        async with AsyncUserDB("tiktok_users.db") as udb:
-            user_path = await get_or_add_user_data(kwargs, secUid, udb)
-
         async for aweme_data_list in fetch_user_mix_videos(
             mixId, cursor, page_counts, max_counts
         ):
