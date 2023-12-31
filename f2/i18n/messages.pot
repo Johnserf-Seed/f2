@@ -1,14 +1,14 @@
 # Translations template for PROJECT.
-# Copyright (C) 2023 ORGANIZATION
+# Copyright (C) 2024 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-12-31 00:14+0800\n"
+"POT-Creation-Date: 2024-01-01 01:46+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -263,83 +263,83 @@ msgid ""
 "，再使用--sso-login命令。"
 msgstr ""
 
-#: f2/apps/douyin/crawler.py:69 f2/apps/tiktok/crawler.py:66
+#: f2/apps/douyin/crawler.py:70 f2/apps/tiktok/crawler.py:64
 msgid "用户信息接口地址:"
 msgstr ""
 
-#: f2/apps/douyin/crawler.py:76 f2/apps/tiktok/crawler.py:73
+#: f2/apps/douyin/crawler.py:75 f2/apps/tiktok/crawler.py:69
 msgid "主页作品接口地址:"
 msgstr ""
 
-#: f2/apps/douyin/crawler.py:83 f2/apps/tiktok/crawler.py:80
+#: f2/apps/douyin/crawler.py:82 f2/apps/tiktok/crawler.py:74
 msgid "喜欢作品接口地址:"
 msgstr ""
 
-#: f2/apps/douyin/crawler.py:90 f2/apps/tiktok/crawler.py:87
+#: f2/apps/douyin/crawler.py:89 f2/apps/tiktok/crawler.py:81
 msgid "收藏作品接口地址:"
 msgstr ""
 
-#: f2/apps/douyin/crawler.py:97
+#: f2/apps/douyin/crawler.py:94
 msgid "合集作品接口地址:"
 msgstr ""
 
-#: f2/apps/douyin/crawler.py:104 f2/apps/tiktok/crawler.py:108
+#: f2/apps/douyin/crawler.py:99 f2/apps/tiktok/crawler.py:100
 msgid "作品详情接口地址:"
 msgstr ""
 
-#: f2/apps/douyin/crawler.py:111 f2/apps/tiktok/crawler.py:115
+#: f2/apps/douyin/crawler.py:106 f2/apps/tiktok/crawler.py:107
 msgid "作品评论接口地址:"
 msgstr ""
 
-#: f2/apps/douyin/crawler.py:118
+#: f2/apps/douyin/crawler.py:111
 msgid "首页推荐作品接口地址:"
 msgstr ""
 
-#: f2/apps/douyin/crawler.py:125
+#: f2/apps/douyin/crawler.py:116
 msgid "关注作品接口地址:"
 msgstr ""
 
-#: f2/apps/douyin/crawler.py:132
+#: f2/apps/douyin/crawler.py:121
 msgid "朋友作品接口地址:"
 msgstr ""
 
-#: f2/apps/douyin/crawler.py:139
+#: f2/apps/douyin/crawler.py:128
 msgid "相关推荐作品接口地址:"
 msgstr ""
 
-#: f2/apps/douyin/crawler.py:146
+#: f2/apps/douyin/crawler.py:133
 msgid "直播接口地址:"
 msgstr ""
 
-#: f2/apps/douyin/crawler.py:156
+#: f2/apps/douyin/crawler.py:143
 msgid "直播接口地址（room_id）:"
 msgstr ""
 
-#: f2/apps/douyin/crawler.py:165
+#: f2/apps/douyin/crawler.py:152
 msgid "关注用户直播接口地址:"
 msgstr ""
 
-#: f2/apps/douyin/crawler.py:172
+#: f2/apps/douyin/crawler.py:157
 msgid "定位上一次作品接口地址:"
 msgstr ""
 
-#: f2/apps/douyin/crawler.py:179
+#: f2/apps/douyin/crawler.py:164
 msgid "SSO获取二维码接口地址:"
 msgstr ""
 
-#: f2/apps/douyin/crawler.py:186
+#: f2/apps/douyin/crawler.py:171
 msgid "SSO检查扫码状态接口地址:"
 msgstr ""
 
-#: f2/apps/douyin/crawler.py:193
+#: f2/apps/douyin/crawler.py:178
 msgid "SSO检查登录状态接口地址:"
 msgstr ""
 
-#: f2/apps/douyin/dl.py:116 f2/apps/tiktok/dl.py:100
+#: f2/apps/douyin/dl.py:118 f2/apps/tiktok/dl.py:100
 msgid "{0} 该作品已被屏蔽，无法下载"
 msgstr ""
 
-#: f2/apps/douyin/dl.py:135 f2/apps/tiktok/dl.py:132
+#: f2/apps/douyin/dl.py:136 f2/apps/tiktok/dl.py:132
 msgid "原声"
 msgstr ""
 
@@ -347,44 +347,44 @@ msgstr ""
 msgid "{0} 该原声已被屏蔽，无法下载"
 msgstr ""
 
-#: f2/apps/douyin/dl.py:154 f2/apps/douyin/dl.py:161 f2/apps/tiktok/dl.py:149
+#: f2/apps/douyin/dl.py:153 f2/apps/douyin/dl.py:158 f2/apps/tiktok/dl.py:149
 #: f2/apps/tiktok/dl.py:154
 msgid "封面"
 msgstr ""
 
-#: f2/apps/douyin/dl.py:158 f2/apps/tiktok/dl.py:152
+#: f2/apps/douyin/dl.py:156 f2/apps/tiktok/dl.py:152
 msgid "{0} 该作品没有动态封面"
 msgstr ""
 
-#: f2/apps/douyin/dl.py:165 f2/apps/tiktok/dl.py:157
+#: f2/apps/douyin/dl.py:161 f2/apps/tiktok/dl.py:157
 msgid "{0} 该作品没有封面"
 msgstr ""
 
-#: f2/apps/douyin/dl.py:178 f2/apps/tiktok/dl.py:169
+#: f2/apps/douyin/dl.py:173 f2/apps/tiktok/dl.py:169
 msgid "文案"
 msgstr ""
 
-#: f2/apps/douyin/dl.py:193 f2/apps/tiktok/dl.py:115
+#: f2/apps/douyin/dl.py:188 f2/apps/tiktok/dl.py:115
 msgid "视频"
 msgstr ""
 
-#: f2/apps/douyin/dl.py:197 f2/apps/tiktok/dl.py:118
+#: f2/apps/douyin/dl.py:191 f2/apps/tiktok/dl.py:118
 msgid "{0} 该作品没有视频链接，无法下载"
 msgstr ""
 
-#: f2/apps/douyin/dl.py:205
+#: f2/apps/douyin/dl.py:198
 msgid "图集"
 msgstr ""
 
-#: f2/apps/douyin/dl.py:209
+#: f2/apps/douyin/dl.py:201
 msgid "{0} 该图集没有图片链接，无法下载"
 msgstr ""
 
-#: f2/apps/douyin/dl.py:276 f2/apps/tiktok/dl.py:234
+#: f2/apps/douyin/dl.py:267 f2/apps/tiktok/dl.py:234
 msgid "直播"
 msgstr ""
 
-#: f2/apps/douyin/handler.py:164 f2/apps/tiktok/handler.py:231
+#: f2/apps/douyin/handler.py:164 f2/apps/tiktok/handler.py:229
 msgid "单个视频数据: {0}"
 msgstr ""
 
@@ -395,43 +395,43 @@ msgstr ""
 #: f2/apps/douyin/handler.py:186 f2/apps/douyin/handler.py:279
 #: f2/apps/douyin/handler.py:380 f2/apps/douyin/handler.py:461
 #: f2/apps/douyin/handler.py:550 f2/apps/douyin/handler.py:753
-#: f2/apps/tiktok/handler.py:255 f2/apps/tiktok/handler.py:336
-#: f2/apps/tiktok/handler.py:416 f2/apps/tiktok/handler.py:511
-#: f2/apps/tiktok/handler.py:624
+#: f2/apps/tiktok/handler.py:253 f2/apps/tiktok/handler.py:334
+#: f2/apps/tiktok/handler.py:414 f2/apps/tiktok/handler.py:509
+#: f2/apps/tiktok/handler.py:619
 msgid "视频ID: {0} 视频文案: {1} 作者: {2}"
 msgstr ""
 
-#: f2/apps/douyin/handler.py:248 f2/apps/tiktok/handler.py:309
+#: f2/apps/douyin/handler.py:248 f2/apps/tiktok/handler.py:307
 msgid "开始爬取用户: {0} 发布的视频"
 msgstr ""
 
 #: f2/apps/douyin/handler.py:256 f2/apps/douyin/handler.py:357
 #: f2/apps/douyin/handler.py:451 f2/apps/douyin/handler.py:538
-#: f2/apps/douyin/handler.py:730 f2/apps/tiktok/handler.py:317
-#: f2/apps/tiktok/handler.py:405 f2/apps/tiktok/handler.py:500
-#: f2/apps/tiktok/handler.py:613
+#: f2/apps/douyin/handler.py:730 f2/apps/tiktok/handler.py:315
+#: f2/apps/tiktok/handler.py:403 f2/apps/tiktok/handler.py:498
+#: f2/apps/tiktok/handler.py:608
 msgid "最大数量: {0} 每次请求数量: {1}"
 msgstr ""
 
 #: f2/apps/douyin/handler.py:258 f2/apps/douyin/handler.py:359
 #: f2/apps/douyin/handler.py:453 f2/apps/douyin/handler.py:540
-#: f2/apps/douyin/handler.py:732 f2/apps/tiktok/handler.py:319
-#: f2/apps/tiktok/handler.py:407 f2/apps/tiktok/handler.py:502
-#: f2/apps/tiktok/handler.py:615
+#: f2/apps/douyin/handler.py:732 f2/apps/tiktok/handler.py:317
+#: f2/apps/tiktok/handler.py:405 f2/apps/tiktok/handler.py:500
+#: f2/apps/tiktok/handler.py:610
 msgid "开始爬取第 {0} 页"
 msgstr ""
 
 #: f2/apps/douyin/handler.py:269 f2/apps/douyin/handler.py:370
-#: f2/apps/douyin/handler.py:743 f2/apps/tiktok/handler.py:326
-#: f2/apps/tiktok/handler.py:433 f2/apps/tiktok/handler.py:528
-#: f2/apps/tiktok/handler.py:641
+#: f2/apps/douyin/handler.py:743 f2/apps/tiktok/handler.py:324
+#: f2/apps/tiktok/handler.py:431 f2/apps/tiktok/handler.py:526
+#: f2/apps/tiktok/handler.py:636
 msgid "{0} 页没有找到作品"
 msgstr ""
 
 #: f2/apps/douyin/handler.py:271 f2/apps/douyin/handler.py:372
-#: f2/apps/douyin/handler.py:745 f2/apps/tiktok/handler.py:328
-#: f2/apps/tiktok/handler.py:429 f2/apps/tiktok/handler.py:436
-#: f2/apps/tiktok/handler.py:524 f2/apps/tiktok/handler.py:531
+#: f2/apps/douyin/handler.py:745 f2/apps/tiktok/handler.py:326
+#: f2/apps/tiktok/handler.py:427 f2/apps/tiktok/handler.py:434
+#: f2/apps/tiktok/handler.py:522 f2/apps/tiktok/handler.py:529
 msgid "用户: {0} 所有作品采集完毕"
 msgstr ""
 
@@ -443,8 +443,8 @@ msgstr ""
 
 #: f2/apps/douyin/handler.py:294 f2/apps/douyin/handler.py:393
 #: f2/apps/douyin/handler.py:567 f2/apps/douyin/handler.py:766
-#: f2/apps/tiktok/handler.py:348 f2/apps/tiktok/handler.py:443
-#: f2/apps/tiktok/handler.py:538 f2/apps/tiktok/handler.py:651
+#: f2/apps/tiktok/handler.py:346 f2/apps/tiktok/handler.py:441
+#: f2/apps/tiktok/handler.py:536 f2/apps/tiktok/handler.py:646
 msgid "爬取结束，共爬取{0}个视频"
 msgstr ""
 
@@ -525,7 +525,7 @@ msgid "[  登录  ]:扫码环境异常，请前往app验证！"
 msgstr ""
 
 #: f2/apps/douyin/handler.py:877 f2/apps/douyin/handler.py:878
-#: f2/apps/tiktok/handler.py:659 f2/apps/tiktok/handler.py:660
+#: f2/apps/tiktok/handler.py:654 f2/apps/tiktok/handler.py:655
 msgid "不存在该模式: {0}"
 msgstr ""
 
@@ -611,26 +611,26 @@ msgstr ""
 msgid "初始化配置文件"
 msgstr ""
 
-#: f2/apps/douyin/utils.py:75 f2/apps/tiktok/utils.py:75
+#: f2/apps/douyin/utils.py:75 f2/apps/tiktok/utils.py:74
 msgid "由于某些错误, 无法获取msToken"
 msgstr ""
 
 #: f2/apps/douyin/utils.py:77 f2/apps/douyin/utils.py:125
-#: f2/apps/tiktok/utils.py:78
+#: f2/apps/tiktok/utils.py:76
 msgid "无法找到API端点"
 msgstr ""
 
 #: f2/apps/douyin/utils.py:86 f2/apps/douyin/utils.py:132
-#: f2/apps/tiktok/utils.py:91 f2/apps/tiktok/utils.py:140
-#: f2/apps/tiktok/utils.py:181 f2/apps/tiktok/utils.py:270
-#: f2/apps/tiktok/utils.py:320 f2/apps/tiktok/utils.py:376
+#: f2/apps/tiktok/utils.py:89 f2/apps/tiktok/utils.py:137
+#: f2/apps/tiktok/utils.py:177 f2/apps/tiktok/utils.py:273
+#: f2/apps/tiktok/utils.py:342 f2/apps/tiktok/utils.py:419
 #: f2/crawlers/base_crawler.py:164 f2/crawlers/base_crawler.py:165
 #: f2/crawlers/base_crawler.py:208 f2/crawlers/base_crawler.py:209
 #: f2/crawlers/base_crawler.py:234 f2/crawlers/base_crawler.py:235
 msgid "连接端点失败: {0}"
 msgstr ""
 
-#: f2/apps/douyin/utils.py:98 f2/apps/tiktok/utils.py:102
+#: f2/apps/douyin/utils.py:98 f2/apps/tiktok/utils.py:100
 msgid "生成虚假的msToken"
 msgstr ""
 
@@ -638,57 +638,59 @@ msgstr ""
 msgid "由于某些错误, 无法获取ttwid"
 msgstr ""
 
-#: f2/apps/douyin/utils.py:204 f2/apps/tiktok/utils.py:201
-msgid "参数必须是字典类型"
-msgstr ""
-
-#: f2/apps/douyin/utils.py:212 f2/apps/tiktok/utils.py:209
+#: f2/apps/douyin/utils.py:206 f2/apps/douyin/utils.py:220
+#: f2/apps/tiktok/utils.py:198 f2/apps/tiktok/utils.py:213
 msgid "生成X-Bogus失败: {0})"
 msgstr ""
 
-#: f2/apps/douyin/utils.py:241 f2/apps/douyin/utils.py:322
-#: f2/apps/douyin/utils.py:402
+#: f2/apps/douyin/utils.py:213 f2/apps/tiktok/utils.py:206
+msgid "参数必须是字典类型"
+msgstr ""
+
+#: f2/apps/douyin/utils.py:248 f2/apps/douyin/utils.py:329
+#: f2/apps/douyin/utils.py:408
 msgid "参数必须是字符串类型"
 msgstr ""
 
-#: f2/apps/douyin/utils.py:264
+#: f2/apps/douyin/utils.py:271
 msgid "未在响应的地址中找到sec_user_id, 检查链接是否为用户主页"
 msgstr ""
 
-#: f2/apps/douyin/utils.py:267
+#: f2/apps/douyin/utils.py:274
 msgid "未授权的请求"
 msgstr ""
 
-#: f2/apps/douyin/utils.py:269
+#: f2/apps/douyin/utils.py:276
 msgid "未找到API端点"
 msgstr ""
 
-#: f2/apps/douyin/utils.py:271
+#: f2/apps/douyin/utils.py:278
 msgid "API服务不可用"
 msgstr ""
 
-#: f2/apps/douyin/utils.py:273
+#: f2/apps/douyin/utils.py:280
 msgid "API错误码：{0}"
 msgstr ""
 
-#: f2/apps/douyin/utils.py:280
+#: f2/apps/douyin/utils.py:287
 msgid "连接到API时发生错误，请检查链接"
 msgstr ""
 
-#: f2/apps/douyin/utils.py:295 f2/apps/douyin/utils.py:364
-#: f2/apps/douyin/utils.py:446
+#: f2/apps/douyin/utils.py:302 f2/apps/douyin/utils.py:371
+#: f2/apps/douyin/utils.py:452 f2/apps/tiktok/utils.py:293
+#: f2/apps/tiktok/utils.py:362 f2/apps/tiktok/utils.py:439
 msgid "参数必须是列表类型"
 msgstr ""
 
-#: f2/apps/douyin/utils.py:342
+#: f2/apps/douyin/utils.py:349
 msgid "未在响应的地址中找到aweme_id, 检查链接是否为作品页"
 msgstr ""
 
-#: f2/apps/douyin/utils.py:423
+#: f2/apps/douyin/utils.py:429
 msgid "该链接返回的是room_id，请使用fetch_user_live_videos_by_room_id接口"
 msgstr ""
 
-#: f2/apps/douyin/utils.py:425
+#: f2/apps/douyin/utils.py:431
 msgid "未在响应的地址中找到webcast_id, 检查链接是否为直播页"
 msgstr ""
 
@@ -700,105 +702,105 @@ msgstr ""
 msgid "Cookie不能为空。请提供有效的 Cookie 参数，或使用自动从浏览器获取  f2 -d tk --help"
 msgstr ""
 
-#: f2/apps/tiktok/crawler.py:94
+#: f2/apps/tiktok/crawler.py:88
 msgid "合辑列表接口地址:"
 msgstr ""
 
-#: f2/apps/tiktok/crawler.py:101
+#: f2/apps/tiktok/crawler.py:93
 msgid "合辑作品接口地址:"
 msgstr ""
 
-#: f2/apps/tiktok/crawler.py:122
+#: f2/apps/tiktok/crawler.py:114
 msgid "首页推荐接口地址:"
 msgstr ""
 
-#: f2/apps/tiktok/handler.py:52
+#: f2/apps/tiktok/handler.py:51
 msgid "至少提供 secUid 或 uniqueId 中的一个参数"
 msgstr ""
 
-#: f2/apps/tiktok/handler.py:162
+#: f2/apps/tiktok/handler.py:160
 msgid "开始爬取用户: {0} 的视频合集列表"
 msgstr ""
 
-#: f2/apps/tiktok/handler.py:170
+#: f2/apps/tiktok/handler.py:168
 msgid "用户: {0} 没有视频合集"
 msgstr ""
 
-#: f2/apps/tiktok/handler.py:173 f2/apps/tiktok/handler.py:334
-#: f2/apps/tiktok/handler.py:414 f2/apps/tiktok/handler.py:509
-#: f2/apps/tiktok/handler.py:622
+#: f2/apps/tiktok/handler.py:171 f2/apps/tiktok/handler.py:332
+#: f2/apps/tiktok/handler.py:412 f2/apps/tiktok/handler.py:507
+#: f2/apps/tiktok/handler.py:617
 msgid "当前请求的cursor: {0}"
 msgstr ""
 
-#: f2/apps/tiktok/handler.py:175
+#: f2/apps/tiktok/handler.py:173
 msgid "视频合集ID: {0} 视频合集标题: {1}"
 msgstr ""
 
-#: f2/apps/tiktok/handler.py:397
+#: f2/apps/tiktok/handler.py:395
 msgid "开始爬取用户: {0} 点赞的视频"
 msgstr ""
 
-#: f2/apps/tiktok/handler.py:492
+#: f2/apps/tiktok/handler.py:490
 msgid "开始爬取用户: {0} 收藏的视频"
 msgstr ""
 
-#: f2/apps/tiktok/handler.py:605
+#: f2/apps/tiktok/handler.py:600
 msgid "开始爬取用户: {0} 合集的视频"
 msgstr ""
 
-#: f2/apps/tiktok/handler.py:637 f2/apps/tiktok/handler.py:644
+#: f2/apps/tiktok/handler.py:632 f2/apps/tiktok/handler.py:639
 msgid "合辑: {0} 所有作品采集完毕"
 msgstr ""
 
-#: f2/apps/tiktok/utils.py:84
+#: f2/apps/tiktok/utils.py:82
 msgid "msToken: 检查没有通过, 请更新tiktok配置文件中msToken的url里的msToken"
 msgstr ""
 
-#: f2/apps/tiktok/utils.py:126 f2/apps/tiktok/utils.py:166
+#: f2/apps/tiktok/utils.py:124 f2/apps/tiktok/utils.py:162
 msgid "401 由于某些错误, 无法获取ttwid"
 msgstr ""
 
-#: f2/apps/tiktok/utils.py:128 f2/apps/tiktok/utils.py:169
+#: f2/apps/tiktok/utils.py:126 f2/apps/tiktok/utils.py:165
 msgid "404 无法找到API端点"
 msgstr ""
 
-#: f2/apps/tiktok/utils.py:133
+#: f2/apps/tiktok/utils.py:131
 msgid "ttwid: 检查没有通过, 请更新配置文件中的ttwid"
 msgstr ""
 
-#: f2/apps/tiktok/utils.py:174
+#: f2/apps/tiktok/utils.py:170
 msgid "odin_tt: 检查没有通过, 请更新配置文件中的odin_tt"
 msgstr ""
 
-#: f2/apps/tiktok/utils.py:253
+#: f2/apps/tiktok/utils.py:256
 msgid "未在响应中找到sec_uid"
 msgstr ""
 
-#: f2/apps/tiktok/utils.py:263
+#: f2/apps/tiktok/utils.py:266
 msgid "获取sec_uid失败, {0}"
 msgstr ""
 
-#: f2/apps/tiktok/utils.py:267
+#: f2/apps/tiktok/utils.py:270
 msgid "接口状态码异常, 请检查重试"
 msgstr ""
 
-#: f2/apps/tiktok/utils.py:305
+#: f2/apps/tiktok/utils.py:328
 msgid "未在响应中找到unique_id"
 msgstr ""
 
-#: f2/apps/tiktok/utils.py:311
+#: f2/apps/tiktok/utils.py:333
 msgid "获取unique_id失败, {0}"
 msgstr ""
 
-#: f2/apps/tiktok/utils.py:316 f2/apps/tiktok/utils.py:372
+#: f2/apps/tiktok/utils.py:338 f2/apps/tiktok/utils.py:415
 msgid "接口状态码异常 {0}, 请检查重试"
 msgstr ""
 
-#: f2/apps/tiktok/utils.py:362
+#: f2/apps/tiktok/utils.py:405
 msgid "未在响应中找到aweme_id"
 msgstr ""
 
-#: f2/apps/tiktok/utils.py:367
+#: f2/apps/tiktok/utils.py:410
 msgid "获取aweme_id失败, {0}"
 msgstr ""
 
