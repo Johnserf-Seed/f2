@@ -116,7 +116,7 @@ outline: deep
 | :--- | :--- | :--- |
 | video_data | dict | 视频数据字典，包含视频ID、视频文案、作者昵称等 |
 
-<<< @/snippets/douyin/one-video.py{4,6}
+<<< @/snippets/douyin/one-video.py{5,7}
 
 ### 用户发布作品数据
 
@@ -133,7 +133,7 @@ outline: deep
 | :--- | :--- | :--- |
 | video_data | dict | 视频数据字典，包含视频ID、视频文案、作者昵称、页码等 |
 
-<<< @/snippets/douyin/user-post.py{6,11}
+<<< @/snippets/douyin/user-post.py{5,7,12}
 
 ### 用户喜欢作品数据
 
@@ -150,7 +150,7 @@ outline: deep
 | :--- | :--- | :--- |
 | aweme_data | dict | 视频数据字典，包含视频ID、视频文案、作者昵称、页码等 |
 
-<<< @/snippets/douyin/user-like.py{6,11}
+<<< @/snippets/douyin/user-like.py{5,7,12}
 
 ### 用户收藏作品数据
 
@@ -166,7 +166,7 @@ outline: deep
 | :--- | :--- | :--- |
 | aweme_data | dict | 视频数据字典，包含视频ID、视频文案、作者昵称、页码等 |
 
-<<< @/snippets/douyin/user-collect.py{5,10}
+<<< @/snippets/douyin/user-collect.py{6,11}
 
 ### 用户合辑作品数据
 
@@ -183,7 +183,7 @@ outline: deep
 | :--- | :--- | :--- |
 | aweme_data | dict | 视频数据字典，包含视频ID、视频文案、作者昵称、页码等 |
 
-<<< @/snippets/douyin/user-mix.py{4,6,11}
+<<< @/snippets/douyin/user-mix.py{5,7,12}
 
 ### 用户直播流数据
 
@@ -197,7 +197,7 @@ outline: deep
 | :--- | :--- | :--- |
 | webcast_data | dict | 直播数据字典，包含直播ID、直播标题、直播状态、观看人数、子分区、主播昵称等 |
 
-<<< @/snippets/douyin/user-live.py{4}
+<<< @/snippets/douyin/user-live.py{5}
 
 ### 用户直播流数据2
 
@@ -211,7 +211,7 @@ outline: deep
 | :--- | :--- | :--- |
 | webcast_data | dict | 直播数据字典，包含直播ID、直播标题、直播状态、观看人数、子分区、主播昵称等 |
 
-<<< @/snippets/douyin/user-live-room-id.py{4}
+<<< @/snippets/douyin/user-live-room-id.py{5}
 
 ### 用户信息
 
@@ -225,7 +225,7 @@ outline: deep
 | :--- | :--- | :--- |
 | UserProfileFilter | _to_dict() | 自定义的接口数据过滤器 | 用户数据字典，包含用户ID、用户昵称、用户签名、用户头像等 |
 
-<<< @/snippets/douyin/user-profile.py{6}
+<<< @/snippets/douyin/user-profile.py{5,6}
 
 ### 获取指定用户名
 
