@@ -48,9 +48,7 @@ async def handler_user_profile(secUid: str, uniqueId: str = "") -> dict:
     """
 
     if not secUid and not uniqueId:
-        raise ValueError(
-            _("至少提供 secUid 或 uniqueId 中的一个参数")
-        )  # At least one of secUid or uniqueId must be provided
+        raise ValueError(_("至少提供 secUid 或 uniqueId 中的一个参数"))
 
     async with TiktokCrawler() as crawler:
         params = UserProfile(region="SG", secUid=secUid, uniqueId=uniqueId)
