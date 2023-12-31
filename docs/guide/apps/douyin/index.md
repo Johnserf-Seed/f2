@@ -388,7 +388,7 @@ outline: deep
 | :--- | :--- | :--- |
 | final_endpoint | str | 带Xbogus参数的完整地址 |
 
-<<< @/snippets/douyin/xbogus.py#str-2-endpoint-snippet
+<<< @/snippets/douyin/xbogus.py#str-2-endpoint-snippet{7}
 
 ### 使用接口模型生成Xb参数 🟢
 
@@ -406,11 +406,11 @@ outline: deep
 
 使用模型生成接口地址，需要先创建一个模型对象，然后调用`model_2_endpoint`方法。
 
-<<< @/snippets/douyin/xbogus.py#model-2-endpoint-snippet
+<<< @/snippets/douyin/xbogus.py#model-2-endpoint-snippet{8-10,13-15}
 
 还可以使用爬虫引擎与过滤器采集数据。
 
-<<< @/snippets/douyin/xbogus.py#model-2-endpoint-2-filter-snippet
+<<< @/snippets/douyin/xbogus.py#model-2-endpoint-2-filter-snippet{10-16}
 
 更加抽象的高级方法可以直接调用handler接口的`handler_user_profile`。
 
@@ -431,7 +431,7 @@ outline: deep
 | :--- | :--- | :--- |
 | sec_user_id | str | 用户ID |
 
-<<< @/snippets/douyin/sec-user-id.py#single-user-id-snippet
+<<< @/snippets/douyin/sec-user-id.py#single-user-id-snippet{7}
 
 ### 提取列表用户id 🟢
 
@@ -445,7 +445,7 @@ outline: deep
 | :--- | :--- | :--- |
 | sec_user_ids | list | 用户ID列表 |
 
-<<< @/snippets/douyin/sec-user-id.py#multi-user-id-snippet
+<<< @/snippets/douyin/sec-user-id.py#multi-user-id-snippet{14,17}
 
 ### 提取单个作品id 🟢
 
@@ -459,7 +459,7 @@ outline: deep
 | :--- | :--- | :--- |
 | aweme_id | str | 作品ID |
 
-<<< @/snippets/douyin/aweme-id.py#single-aweme-id-snippet
+<<< @/snippets/douyin/aweme-id.py#single-aweme-id-snippet{6}
 
 ### 提取列表作品id 🟢
 
@@ -473,7 +473,7 @@ outline: deep
 | :--- | :--- | :--- |
 | aweme_ids | list | 作品ID列表 |
 
-<<< @/snippets/douyin/aweme-id.py#multi-aweme-id-snippet
+<<< @/snippets/douyin/aweme-id.py#multi-aweme-id-snippet{15,18}
 
 ### 提取合辑id 🟤
 
@@ -493,7 +493,7 @@ outline: deep
 | webcast_id | str | 直播间RID |
 
 
-<<< @/snippets/douyin/webcast-id.py#single-webcast-id-snippet
+<<< @/snippets/douyin/webcast-id.py#single-webcast-id-snippet{6}
 
 ### 提取列表直播间号 🟢
 
@@ -507,7 +507,7 @@ outline: deep
 | :--- | :--- | :--- |
 | webcast_ids | list | 直播间RID列表 |
 
-<<< @/snippets/douyin/webcast-id.py#multi-webcast-id-snippet
+<<< @/snippets/douyin/webcast-id.py#multi-webcast-id-snippet{15,18}
 
 ::: tip 如何分辨Rid与room_id
 Rid是直播间的短链标识，room_id是直播间的唯一标识。
@@ -532,7 +532,7 @@ Rid是直播间的短链标识，room_id是直播间的唯一标识。
 | :--- | :--- | :--- |
 | request_sizes | list | 请求大小列表 |
 
-<<< @/snippets/douyin/request-sizes.py
+<<< @/snippets/douyin/request-sizes.py{4,6}
 
 ::: warning 将会弃用
 该接口将会在下个版本中弃用。
@@ -566,7 +566,7 @@ while videos_collected < max_counts:
 | :--- | :--- | :--- |
 | file_name | str | 格式化后的文件名 |
 
-<<< @/snippets/douyin/format-file-name.py
+<<< @/snippets/douyin/format-file-name.py{7-11,13-18}
 
 ### 创建用户目录 🟢
 
@@ -598,7 +598,7 @@ while videos_collected < max_counts:
 | :--- | :--- | :--- |
 | user_path | Path | 用户目录路径对象 |
 
-<<< @/snippets/douyin/user-folder.py#create-user-folder
+<<< @/snippets/douyin/user-folder.py#create-user-folder{4-6,9-10}
 
 ### 重命名用户目录 🟢
 
@@ -613,7 +613,7 @@ while videos_collected < max_counts:
 | :--- | :--- | :--- |
 | new_path | Path | 新的用户目录路径对象 |
 
-<<< @/snippets/douyin/user-folder.py#rename-user-folder
+<<< @/snippets/douyin/user-folder.py#rename-user-folder{7-8,10-11,15-16}
 
 ::: tip 提示
 如果目录不存在会先创建该用户目录再重命名。
@@ -669,7 +669,7 @@ while videos_collected < max_counts:
 | :--- | :--- | :--- |
 | None | None | 无 |
 
-<<< @/snippets/douyin/show-qrcode.py
+<<< @/snippets/douyin/show-qrcode.py{4,5}
 
 ::: tip 提示
 show_image (bool): 是否显示图像，True 表示显示，False 表示在控制台显示
