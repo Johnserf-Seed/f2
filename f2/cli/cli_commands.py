@@ -81,7 +81,8 @@ class DynamicGroup(click.Group):
                 logger.info("App: %s" % app_name)
                 command = getattr(module, app_name)
                 return command
-        except (ImportError, AttributeError):
+        except (ImportError, AttributeError) as e:
+            logger.error("Error: %s" % e)
             return None
 
 
