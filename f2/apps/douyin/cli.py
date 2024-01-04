@@ -162,14 +162,12 @@ def handler_naming(
 
     # 检查连续的无效模式或分隔符 (Check for consecutive invalid patterns or separators)
     for pattern in ALLOWED_PATTERNS:
-        if (
-            pattern + pattern in value
-        ):  # 检查像"{aid}{aid}"这样的模式 (Check for patterns like "{aid}{aid}")
+        # 检查像"{aid}{aid}"这样的模式 (Check for patterns like "{aid}{aid}")
+        if pattern + pattern in value:
             invalid_patterns.append(pattern + pattern)
         for sep in ALLOWED_SEPARATORS:
-            if (
-                pattern + sep + pattern in value
-            ):  # 检查像"{aid}-{aid}"这样的模式 (Check for patterns like "{aid}-{aid}")
+            # 检查像"{aid}-{aid}"这样的模式 (Check for patterns like "{aid}-{aid}")
+            if pattern + sep + pattern in value:
                 invalid_patterns.append(pattern + sep + pattern)
 
     if invalid_patterns:
