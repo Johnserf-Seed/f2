@@ -232,8 +232,8 @@ def handler_sso_login(
 # @click.confirmation_option(prompt='是否要使用命令行的参数更新配置文件?')
 @click.option(
     "--auto-cookie",
-    type=click.Choice(["none", "chrome", "firefox", "edge", "opera"]),
-    default="none",
+    type=click.Choice(["chrome", "firefox", "edge", "opera"]),
+    default="edge",
     help=_("是否自动从浏览器获取cookie，以及从哪个浏览器获取"),
     callback=handler_auto_cookie,
 )
