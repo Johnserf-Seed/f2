@@ -107,7 +107,11 @@ def get_cookie_from_browser(browser_choice: str):
     return cookie_value
 
 
-def handler_language(ctx, param, value):
+def handler_language(
+    ctx: click.Context,
+    param: typing.Union[click.Option, click.Parameter],
+    value: typing.Any,
+) -> typing.Any:
     """用于设置语言 (For setting the language)"""
 
     TranslationManager.get_instance().set_language(value)
