@@ -64,7 +64,7 @@ def f2() -> None:
     # 使用方法
     table = Table.grid(padding=1, pad_edge=True)
     table.add_column("Usage", no_wrap=True, justify="left", style="bold")
-    table.add_row("[b]f2[/b] [magenta]<apps> [/magenta][cyan][COMMANDS]")
+    table.add_row("[b]f2[/b] [magenta]<apps> [/magenta][cyan][MODE]")
     table.add_row(_("例： f2 dy -h 来获取douyin的下载参数帮助"))
     console.print(
         Panel(table, border_style="bold", title="使用方法 | Usage", title_align="left")
@@ -77,30 +77,19 @@ def f2() -> None:
     table.add_column("Status", no_wrap=True, justify="left", style="bold")
 
     table.add_row(_("weibo 或 wb"), _("- 获取微博"))
-    table.add_row(
-        _("douyin 或 dy"), _("- 单个作品，主页作品，点赞作品，收藏作品，合辑作品，图文，文案，封面，直播，原声。"), _("✔")
-    )
-    table.add_row(
-        _("tiktok 或 tk"), _("- 单个作品，主页作品，点赞作品，收藏作品，播放列表（合辑）作品，文案，封面，原声。"), _("✔")
-    )
-    table.add_row(_("instagram 或 ig"), _("- 获取ig的作品"), _("⏳"))
+    table.add_row(_("douyin 或 dy"), _("- 单个作品，主页作品，点赞作品，收藏作品，合辑作品，图文，原声。"), _("✔"))
+    table.add_row(_("tiktok 或 tk"), _("- 单个作品，主页作品，点赞作品，收藏作品，播放列表（合辑）作品，原声。"), _("✔"))
+    table.add_row(_("instagram 或 ig"), _("- 获取ig的作品"))
     table.add_row(_("twitch 或 tv"), _("- 获取Twitch直播"))
-    table.add_row(_("twitter 或 x"), _("- 获取Twitter作品"), _("⏳"))
+    table.add_row(_("twitter 或 x"), _("- 获取Twitter作品"))
     table.add_row(_("youtube 或 ytb"), _("- 获取YouTube的作品"))
     table.add_row(_("bilibili 或 bili"), _("- 获取BiliBili的作品"))
     table.add_row(_("neteasy_music 或 nem"), _("- 获取网易云音乐作品"))
     table.add_row(_("little_red_book 或 lrb"), _("- 获取小红书的作品"))
     table.add_row("\n")
+    table.add_row("f2 -d <apps>", _("- 输出该app的debug信息到/logs 提交Issue时请附带该文件并删除敏感信息"))
     table.add_row(
-        "f2 -d <apps>",
-        _("- 记录app的debug到/logs下，如遇BUG提交Issue时请附带该文件并[red]删除个人敏感信息[/red]"),
-        _("⚠"),
-    )
-    table.add_row(
-        "Issues❓", "[link=https://github.com/Johnserf-Seed/f2/issues]Click Here[/]"
-    ),
-    table.add_row(
-        "Document📕", "[link=https://johnserf-seed.github.io/f2/]Click Here[/]"
+        "Issues?", "[link=https://github.com/Johnserf-Seed/f2/issues]Click Here[/]"
     )
     console.print(
         Panel(
