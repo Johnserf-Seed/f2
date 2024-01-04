@@ -296,7 +296,7 @@ def handler_sso_login(
     "-l",
     type=click.Choice(["zh_CN", "en_US"]),
     default="zh_CN",
-    help=_("显示语言。默认为 'zh_CN'。可选：'zh_CN'、'en'"),
+    help=_("显示语言。默认为 'zh_CN'。可选：'zh_CN'、'en_US'"),
     callback=handler_language,
 )
 @click.option(
