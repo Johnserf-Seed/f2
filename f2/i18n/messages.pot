@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-01-01 01:49+0800\n"
+"POT-Creation-Date: 2024-01-05 00:28+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,7 +26,7 @@ msgid "没有找到 {0} 应用"
 msgstr ""
 
 #: f2/helps.py:68
-msgid "例： f2 dy -h 来获取douyin的下载参数帮助"
+msgid "例： f2 dy -h 来获取douyin的命令帮助"
 msgstr ""
 
 #: f2/helps.py:79
@@ -37,223 +37,242 @@ msgstr ""
 msgid "- 获取微博"
 msgstr ""
 
-#: f2/helps.py:80
+#: f2/helps.py:81
 msgid "douyin 或 dy"
 msgstr ""
 
-#: f2/helps.py:80
-msgid "- 单个作品，主页作品，点赞作品，收藏作品，合辑作品，图文，原声。"
+#: f2/helps.py:81
+msgid "- 单个作品，主页作品，点赞作品，收藏作品，合辑作品，图文，文案，封面，直播，原声。"
 msgstr ""
 
-#: f2/helps.py:80 f2/helps.py:81
+#: f2/helps.py:81 f2/helps.py:84
 msgid "✔"
 msgstr ""
 
-#: f2/helps.py:81
+#: f2/helps.py:84
 msgid "tiktok 或 tk"
 msgstr ""
 
-#: f2/helps.py:81
-msgid "- 单个作品，主页作品，点赞作品，收藏作品，播放列表（合辑）作品，原声。"
+#: f2/helps.py:84
+msgid "- 单个作品，主页作品，点赞作品，收藏作品，播放列表（合辑）作品，文案，封面，原声。"
 msgstr ""
 
-#: f2/helps.py:82
+#: f2/helps.py:86
 msgid "instagram 或 ig"
 msgstr ""
 
-#: f2/helps.py:82
+#: f2/helps.py:86
 msgid "- 获取ig的作品"
 msgstr ""
 
-#: f2/helps.py:83
+#: f2/helps.py:86 f2/helps.py:88
+msgid "⏳"
+msgstr ""
+
+#: f2/helps.py:87
 msgid "twitch 或 tv"
 msgstr ""
 
-#: f2/helps.py:83
+#: f2/helps.py:87
 msgid "- 获取Twitch直播"
 msgstr ""
 
-#: f2/helps.py:84
+#: f2/helps.py:88
 msgid "twitter 或 x"
 msgstr ""
 
-#: f2/helps.py:84
+#: f2/helps.py:88
 msgid "- 获取Twitter作品"
 msgstr ""
 
-#: f2/helps.py:85
+#: f2/helps.py:89
 msgid "youtube 或 ytb"
 msgstr ""
 
-#: f2/helps.py:85
+#: f2/helps.py:89
 msgid "- 获取YouTube的作品"
 msgstr ""
 
-#: f2/helps.py:86
+#: f2/helps.py:90
 msgid "bilibili 或 bili"
 msgstr ""
 
-#: f2/helps.py:86
+#: f2/helps.py:90
 msgid "- 获取BiliBili的作品"
 msgstr ""
 
-#: f2/helps.py:87
+#: f2/helps.py:91
 msgid "neteasy_music 或 nem"
 msgstr ""
 
-#: f2/helps.py:87
+#: f2/helps.py:91
 msgid "- 获取网易云音乐作品"
 msgstr ""
 
-#: f2/helps.py:88
+#: f2/helps.py:92
 msgid "little_red_book 或 lrb"
 msgstr ""
 
-#: f2/helps.py:88
+#: f2/helps.py:92
 msgid "- 获取小红书的作品"
 msgstr ""
 
-#: f2/helps.py:90
-msgid "- 输出该app的debug信息到/logs 提交Issue时请附带该文件并删除敏感信息"
+#: f2/helps.py:96
+msgid "- 记录app的debug到/logs下，如遇BUG提交Issue时请附带该文件并[red]删除个人敏感信息[/red]"
 msgstr ""
 
-#: f2/helps.py:100
+#: f2/helps.py:97
+msgid "⚠"
+msgstr ""
+
+#: f2/helps.py:111
 msgid "欢迎提交PR适配更多网站"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:70 f2/apps/tiktok/cli.py:67
+#: f2/apps/douyin/cli.py:71 f2/apps/tiktok/cli.py:67
 msgid "请关闭所有已打开的浏览器重试, 并且你有适当的权限访问浏览器 !"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:75
+#: f2/apps/douyin/cli.py:76 f2/apps/tiktok/cli.py:72
 msgid "自动获取Cookie失败: {0}"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:100 f2/apps/tiktok/cli.py:97
+#: f2/apps/douyin/cli.py:101 f2/apps/tiktok/cli.py:97
 msgid "不支持的浏览器选项, 输入f2 dy --help查看更多帮助!"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:108 f2/apps/tiktok/cli.py:105
+#: f2/apps/douyin/cli.py:109 f2/apps/tiktok/cli.py:105
 msgid "无法从{0}浏览器中获取cookie"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:172 f2/apps/tiktok/cli.py:169
+#: f2/apps/douyin/cli.py:175 f2/apps/tiktok/cli.py:171
 msgid "`{0}` 中的 `{1}` 不符合命名模式"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:195
+#: f2/apps/douyin/cli.py:211
 msgid "SSO登录失败，请重试！"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:198
+#: f2/apps/douyin/cli.py:214
 msgid "抖音无水印解析"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:203 f2/apps/douyin/help.py:19
-#: f2/apps/tiktok/cli.py:180 f2/apps/tiktok/help.py:19
+#: f2/apps/douyin/cli.py:219 f2/apps/tiktok/cli.py:182
 #: f2/apps/twitter/help.py:19
-msgid "配置文件的路径，最高优先"
+msgid "配置文件的路径，最低优先"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:205 f2/apps/tiktok/cli.py:182
-msgid "需要解析的URL"
+#: f2/apps/douyin/cli.py:226 f2/apps/douyin/help.py:23
+#: f2/apps/tiktok/cli.py:189 f2/apps/tiktok/help.py:23
+msgid "根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合辑与直播同上"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:206 f2/apps/tiktok/cli.py:183
-msgid "是否保存视频原声"
+#: f2/apps/douyin/cli.py:233 f2/apps/douyin/help.py:25
+#: f2/apps/tiktok/cli.py:196 f2/apps/tiktok/help.py:25
+msgid "是否保存视频原声。默认为 'yes'，可选：'yes'、'no'"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:207 f2/apps/tiktok/cli.py:184
-msgid "是否保存视频封面"
+#: f2/apps/douyin/cli.py:240 f2/apps/douyin/help.py:26
+#: f2/apps/tiktok/cli.py:203 f2/apps/tiktok/help.py:26
+msgid "是否保存视频封面。默认为 'yes'，可选：'yes'、'no'"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:208 f2/apps/tiktok/cli.py:185
-msgid "是否保存视频文案"
+#: f2/apps/douyin/cli.py:243 f2/apps/douyin/help.py:27
+#: f2/apps/tiktok/cli.py:206 f2/apps/tiktok/help.py:27
+msgid "是否保存视频文案。默认为 'yes'，可选：'yes'、'no'"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:209 f2/apps/tiktok/cli.py:186
-msgid "作品保存位置"
+#: f2/apps/douyin/cli.py:246 f2/apps/douyin/help.py:28
+#: f2/apps/tiktok/cli.py:209 f2/apps/tiktok/help.py:28
+#: f2/apps/twitter/help.py:24
+msgid "作品保存位置，默认为 'Download'"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:210 f2/apps/tiktok/cli.py:187
-msgid "是否将作品保存到单独的文件夹"
+#: f2/apps/douyin/cli.py:253 f2/apps/douyin/help.py:32
+#: f2/apps/tiktok/cli.py:216 f2/apps/tiktok/help.py:32
+msgid "是否将作品保存到单独的文件夹，默认为 'yes'。可选：'yes'、'no'"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:219 f2/apps/tiktok/cli.py:196
-msgid ""
-"下载模式：单个作品(one), 主页作品(post), 点赞作品(like), 收藏作品(collect), 合集作品(mix), "
-"直播(live),  推荐作品(feed), 搜索作品(search)"
+#: f2/apps/douyin/cli.py:261 f2/apps/douyin/help.py:37
+msgid "下载模式：单个作品(one)，主页作品(post)，点赞作品(like)，收藏作品(collect)，合辑(mix)，直播(live)"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:229 f2/apps/douyin/help.py:33
-#: f2/apps/tiktok/cli.py:206 f2/apps/tiktok/help.py:33
-#: f2/apps/twitter/help.py:33
-msgid "全局作品文件命名方式"
+#: f2/apps/douyin/cli.py:269 f2/apps/douyin/help.py:39
+#: f2/apps/tiktok/cli.py:232 f2/apps/tiktok/help.py:39
+msgid "全局作品文件命名方式，前往文档查看更多帮助"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:237 f2/apps/douyin/help.py:34
-#: f2/apps/tiktok/cli.py:214 f2/apps/tiktok/help.py:34
-#: f2/apps/twitter/help.py:34
-msgid "是否自动从浏览器获取cookie，以及从哪个浏览器获取"
+#: f2/apps/douyin/cli.py:277
+msgid "登录后的cookie，如果使用未登录的cookie，则无法持久稳定下载作品"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:240 f2/apps/douyin/help.py:35
-#: f2/apps/tiktok/cli.py:217 f2/apps/tiktok/help.py:35
-#: f2/apps/twitter/help.py:35
-msgid "登录后的cookie"
+#: f2/apps/douyin/cli.py:284 f2/apps/douyin/help.py:50
+#: f2/apps/tiktok/cli.py:247 f2/apps/tiktok/help.py:50
+msgid "下载日期区间发布的作品，格式：2022-01-01|2023-01-01，默认为 'all'下载所有作品"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:241 f2/apps/tiktok/cli.py:218
-msgid "根据作品发布日期区间下载作品"
+#: f2/apps/douyin/cli.py:286 f2/apps/douyin/help.py:52
+#: f2/apps/tiktok/cli.py:249 f2/apps/tiktok/help.py:52
+msgid "网络请求超时时间。默认为 10"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:242 f2/apps/tiktok/cli.py:219
-msgid "网络请求超时等待时间"
+#: f2/apps/douyin/cli.py:287 f2/apps/douyin/help.py:53
+#: f2/apps/tiktok/cli.py:250 f2/apps/tiktok/help.py:53
+msgid "网络请求超时重试数。默认为 5"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:243 f2/apps/tiktok/cli.py:220
-msgid "网络请求超时重试数"
+#: f2/apps/douyin/cli.py:288 f2/apps/douyin/help.py:54
+#: f2/apps/tiktok/cli.py:251 f2/apps/tiktok/help.py:54
+msgid "网络请求并发连接数。默认为 5"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:244 f2/apps/tiktok/cli.py:221
-msgid "网络请求并发连接数"
+#: f2/apps/douyin/cli.py:289 f2/apps/douyin/help.py:55
+#: f2/apps/tiktok/cli.py:252 f2/apps/tiktok/help.py:55
+msgid "异步的任务数。默认为 10"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:245 f2/apps/tiktok/cli.py:222
-msgid "异步的任务数"
+#: f2/apps/douyin/cli.py:290 f2/apps/douyin/help.py:56
+#: f2/apps/tiktok/cli.py:253 f2/apps/tiktok/help.py:56
+msgid "最大作品下载数。默认为 0，表示无限制"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:246 f2/apps/tiktok/cli.py:223
-msgid "最大作品下载数"
+#: f2/apps/douyin/cli.py:291 f2/apps/douyin/help.py:57
+#: f2/apps/tiktok/cli.py:254 f2/apps/tiktok/help.py:57
+msgid "每页作品数。默认为 20"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:247 f2/apps/tiktok/cli.py:224
-msgid "每页作品数"
+#: f2/apps/douyin/cli.py:297 f2/apps/douyin/help.py:61
+#: f2/apps/tiktok/cli.py:260 f2/apps/tiktok/help.py:61
+msgid "显示语言。默认为 'zh_CN'。可选：'zh_CN'、'en_US'"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:248 f2/apps/douyin/help.py:44
-#: f2/apps/tiktok/cli.py:225 f2/apps/tiktok/help.py:44
-#: f2/apps/twitter/help.py:44
-msgid "使用命令行选项更新配置文件"
+#: f2/apps/douyin/cli.py:304 f2/apps/douyin/help.py:66
+#: f2/apps/tiktok/cli.py:267 f2/apps/tiktok/help.py:66
+msgid "使用命令行选项更新配置文件。需要先使用'-c'选项提供一个配置文件路径"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:249 f2/apps/tiktok/cli.py:226
-msgid "初始化生成配置文件"
+#: f2/apps/douyin/cli.py:306 f2/apps/douyin/help.py:68
+#: f2/apps/tiktok/cli.py:269 f2/apps/tiktok/help.py:71
+msgid "初始化配置文件。不能同时初始化和更新配置文件"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:253
-msgid "使用SSO扫码登录获取Cookie"
+#: f2/apps/douyin/cli.py:312
+msgid "自动从浏览器获取[yellow]cookie[/yellow]。可选项：chrome、firefox、edge、opera。使用该命令前请确保关闭所选的浏览器"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:261 f2/apps/tiktok/cli.py:232
-msgid "语言设置"
+#: f2/apps/douyin/cli.py:320
+msgid "使用SSO扫码登录获取cookie，直接保存到默认配置文件"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:277 f2/apps/tiktok/cli.py:248
+#: f2/apps/douyin/cli.py:328
+msgid "显示富文本帮助"
+msgstr ""
+
+#: f2/apps/douyin/cli.py:341 f2/apps/tiktok/cli.py:296
 msgid "不能同时初始化和更新配置文件"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:281 f2/apps/tiktok/cli.py:252
+#: f2/apps/douyin/cli.py:345 f2/apps/tiktok/cli.py:300
 msgid "要更新配置, 首先需要使用'-c'选项提供一个配置文件路径"
 msgstr ""
 
@@ -529,86 +548,31 @@ msgstr ""
 msgid "不存在该模式: {0}"
 msgstr ""
 
-#: f2/apps/douyin/help.py:20 f2/apps/tiktok/help.py:20
-#: f2/apps/twitter/help.py:20
-msgid "除了单个作品外，其他URL都需要用户主页URL"
+#: f2/apps/douyin/help.py:19 f2/apps/tiktok/help.py:19
+msgid "配置文件的路径，[red]最低优先[/red]"
 msgstr ""
 
-#: f2/apps/douyin/help.py:21 f2/apps/tiktok/help.py:21
-#: f2/apps/twitter/help.py:21
-msgid "是否保存视频原声，默认为 'yes'"
+#: f2/apps/douyin/help.py:43 f2/apps/tiktok/cli.py:240
+#: f2/apps/tiktok/help.py:43
+msgid "登录后的[yellow]cookie[/yellow]，如果使用未登录的[yellow]cookie[/yellow]，则无法持久稳定下载作品"
 msgstr ""
 
-#: f2/apps/douyin/help.py:22 f2/apps/tiktok/help.py:22
-#: f2/apps/twitter/help.py:22
-msgid "是否保存视频封面，默认为 'yes'"
+#: f2/apps/douyin/help.py:72 f2/apps/tiktok/help.py:76
+msgid "自动从浏览器获取[yellow]cookie[/yellow]。可选项：chrome、firefox、edge（默认）、opera。使用该命令前请确保关闭所选的浏览器"
 msgstr ""
 
-#: f2/apps/douyin/help.py:23 f2/apps/tiktok/help.py:23
-#: f2/apps/twitter/help.py:23
-msgid "是否保存视频文案，默认为 'yes'"
+#: f2/apps/douyin/help.py:79
+msgid "使用SSO扫码单点登录获取[yellow]cookie[/yellow]，直接保存到默认配置文件"
 msgstr ""
 
-#: f2/apps/douyin/help.py:24 f2/apps/tiktok/help.py:24
-#: f2/apps/twitter/help.py:24
-msgid "作品保存位置，默认为 'Download'"
+#: f2/apps/douyin/help.py:81 f2/apps/tiktok/help.py:80
+msgid "显示经典帮助信息"
 msgstr ""
 
-#: f2/apps/douyin/help.py:25 f2/apps/tiktok/help.py:25
-#: f2/apps/twitter/help.py:25
-msgid "是否将作品保存到单独的文件夹，默认为 'yes'"
-msgstr ""
-
-#: f2/apps/douyin/help.py:29 f2/apps/tiktok/help.py:29
-#: f2/apps/twitter/help.py:29
+#: f2/apps/douyin/help.py:85 f2/apps/tiktok/help.py:84
 msgid ""
-"下载模式：主页作品(post), 点赞作品(like), 收藏作品(collect), 合辑(mix), 直播(live), "
-"推荐作品(feed), 搜索作品(search)"
-msgstr ""
-
-#: f2/apps/douyin/help.py:36 f2/apps/tiktok/help.py:36
-#: f2/apps/twitter/help.py:36
-msgid "根据作品发布日期区间下载作品，默认为 '0'"
-msgstr ""
-
-#: f2/apps/douyin/help.py:37 f2/apps/tiktok/help.py:37
-#: f2/apps/twitter/help.py:37
-msgid "网络请求超时时间，默认为 10"
-msgstr ""
-
-#: f2/apps/douyin/help.py:38 f2/apps/tiktok/help.py:38
-#: f2/apps/twitter/help.py:38
-msgid "网络请求超时重试数，默认为 5"
-msgstr ""
-
-#: f2/apps/douyin/help.py:39 f2/apps/tiktok/help.py:39
-#: f2/apps/twitter/help.py:39
-msgid "网络请求并发连接数，默认为 5"
-msgstr ""
-
-#: f2/apps/douyin/help.py:40 f2/apps/tiktok/help.py:40
-#: f2/apps/twitter/help.py:40
-msgid "异步的任务数，默认为 10"
-msgstr ""
-
-#: f2/apps/douyin/help.py:41 f2/apps/tiktok/help.py:41
-#: f2/apps/twitter/help.py:41
-msgid "最大作品下载数 默认为 0，表示无限制"
-msgstr ""
-
-#: f2/apps/douyin/help.py:42 f2/apps/tiktok/help.py:42
-#: f2/apps/twitter/help.py:42
-msgid "每页作品数，默认为 20个作品/页"
-msgstr ""
-
-#: f2/apps/douyin/help.py:43 f2/apps/tiktok/help.py:43
-#: f2/apps/twitter/help.py:43
-msgid "语言设置，默认为 'zh_CN'"
-msgstr ""
-
-#: f2/apps/douyin/help.py:45 f2/apps/tiktok/help.py:45
-#: f2/apps/twitter/help.py:45
-msgid "初始化配置文件"
+"更加详细的参数说明请点击[link=https://johnserf-seed.github.io/f2/site-"
+"config.html][dark_violet]前往文档[/dark_violet][/]查看"
 msgstr ""
 
 #: f2/apps/douyin/utils.py:75 f2/apps/tiktok/utils.py:74
@@ -694,8 +658,16 @@ msgstr ""
 msgid "未在响应的地址中找到webcast_id, 检查链接是否为直播页"
 msgstr ""
 
-#: f2/apps/tiktok/cli.py:175
+#: f2/apps/tiktok/cli.py:177
 msgid "TikTok无水印解析"
+msgstr ""
+
+#: f2/apps/tiktok/cli.py:224 f2/apps/tiktok/help.py:37
+msgid "下载模式：单个作品(one)，主页作品(post), 点赞作品(like), 收藏作品(collect), 合辑播放列表(mix)"
+msgstr ""
+
+#: f2/apps/tiktok/cli.py:275
+msgid "自动从浏览器获取cookie。可选项：chrome、firefox、edge、opera。使用该命令前请确保关闭所选的浏览器"
 msgstr ""
 
 #: f2/apps/tiktok/crawler.py:40
@@ -802,6 +774,84 @@ msgstr ""
 
 #: f2/apps/tiktok/utils.py:410
 msgid "获取aweme_id失败, {0}"
+msgstr ""
+
+#: f2/apps/twitter/help.py:20
+msgid "除了单个作品外，其他URL都需要用户主页URL"
+msgstr ""
+
+#: f2/apps/twitter/help.py:21
+msgid "是否保存视频原声，默认为 'yes'"
+msgstr ""
+
+#: f2/apps/twitter/help.py:22
+msgid "是否保存视频封面，默认为 'yes'"
+msgstr ""
+
+#: f2/apps/twitter/help.py:23
+msgid "是否保存视频文案，默认为 'yes'"
+msgstr ""
+
+#: f2/apps/twitter/help.py:25
+msgid "是否将作品保存到单独的文件夹，默认为 'yes'"
+msgstr ""
+
+#: f2/apps/twitter/help.py:29
+msgid ""
+"下载模式：主页作品(post), 点赞作品(like), 收藏作品(collect), 合辑(mix), 直播(live), "
+"推荐作品(feed), 搜索作品(search)"
+msgstr ""
+
+#: f2/apps/twitter/help.py:33
+msgid "全局作品文件命名方式"
+msgstr ""
+
+#: f2/apps/twitter/help.py:34
+msgid "是否自动从浏览器获取cookie，以及从哪个浏览器获取"
+msgstr ""
+
+#: f2/apps/twitter/help.py:35
+msgid "登录后的cookie"
+msgstr ""
+
+#: f2/apps/twitter/help.py:36
+msgid "根据作品发布日期区间下载作品，默认为 '0'"
+msgstr ""
+
+#: f2/apps/twitter/help.py:37
+msgid "网络请求超时时间，默认为 10"
+msgstr ""
+
+#: f2/apps/twitter/help.py:38
+msgid "网络请求超时重试数，默认为 5"
+msgstr ""
+
+#: f2/apps/twitter/help.py:39
+msgid "网络请求并发连接数，默认为 5"
+msgstr ""
+
+#: f2/apps/twitter/help.py:40
+msgid "异步的任务数，默认为 10"
+msgstr ""
+
+#: f2/apps/twitter/help.py:41
+msgid "最大作品下载数 默认为 0，表示无限制"
+msgstr ""
+
+#: f2/apps/twitter/help.py:42
+msgid "每页作品数，默认为 20个作品/页"
+msgstr ""
+
+#: f2/apps/twitter/help.py:43
+msgid "语言设置，默认为 'zh_CN'"
+msgstr ""
+
+#: f2/apps/twitter/help.py:44
+msgid "使用命令行选项更新配置文件"
+msgstr ""
+
+#: f2/apps/twitter/help.py:45
+msgid "初始化配置文件"
 msgstr ""
 
 #: f2/crawlers/base_crawler.py:122
@@ -932,15 +982,15 @@ msgstr ""
 msgid "'{0}' 应用配置路径不存在"
 msgstr ""
 
-#: f2/utils/conf_manager.py:92
+#: f2/utils/conf_manager.py:95
 msgid "{0} 应用配置文件生成成功,保存至 {1}"
 msgstr ""
 
-#: f2/utils/conf_manager.py:94
+#: f2/utils/conf_manager.py:97
 msgid "{0} 应用配置未找到"
 msgstr ""
 
-#: f2/utils/conf_manager.py:123
+#: f2/utils/conf_manager.py:126
 msgid "配置文件已更新!"
 msgstr ""
 
