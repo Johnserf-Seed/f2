@@ -238,7 +238,7 @@ def handler_sso_login(
     callback=handler_auto_cookie,
 )
 @click.option("--cookie", "-k", type=str, help=_("登录后的cookie"), default="")
-@click.option("--interval", "-i", type=str, default="0", help=_("根据作品发布日期区间下载作品"))
+@click.option("--interval", "-i", type=str, default="all", help=_("根据作品发布日期区间下载作品"))
 @click.option("--timeout", "-e", type=int, default=10, help=_("网络请求超时等待时间"))
 @click.option("--max_retries", "-r", type=int, default=5, help=_("网络请求超时重试数"))
 @click.option("--max-connections", "-x", type=int, default=5, help=_("网络请求并发连接数"))
