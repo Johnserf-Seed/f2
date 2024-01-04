@@ -111,7 +111,11 @@ def get_cookie_from_browser(browser_choice):
     return cookie_value
 
 
-def handler_language(ctx, param, value):
+def handler_language(
+    ctx: click.Context,
+    param: typing.Union[click.Option, click.Parameter],
+    value: typing.Any,
+) -> typing.Any:
     """用于设置语言 (For setting the language)"""
 
     TranslationManager.get_instance().set_language(value)
@@ -124,7 +128,7 @@ def handler_naming(
     ctx: click.Context,
     param: typing.Union[click.Option, click.Parameter],
     value: typing.Any,
-):
+) -> str:
     """处理命名模式 (Handle naming patterns)
 
     Args:
@@ -136,7 +140,7 @@ def handler_naming(
         click.BadParameter: 如果命名模式无效 (If the naming pattern is invalid)
 
     Returns:
-        value: 参数或选项的值 (The value of the parameter or option)
+        value: 命名模式模板 (Naming pattern template)
     """
 
     # 允许的模式和分隔符 (Allowed patterns and separators)
@@ -180,7 +184,20 @@ def handler_sso_login(
     ctx: click.Context,
     param: typing.Union[click.Option, click.Parameter],
     value: typing.Any,
-):
+) -> None:
+    """处理SSO登录 (Handle SSO login)
+
+    Args:
+        ctx (click.Context): click的上下文对象 (Click's context object)
+        param (typing.Union[click.Option, click.Parameter]): 提供的参数或选项 (The provided parameter or option)
+        value (typing.Any): 参数或选项的值 (The value of the parameter or option)
+
+    Raises:
+        click.UsageError: 如果SSO登录失败 (If SSO login failed)
+
+    Returns:
+        更新配置文件 (Update the configuration file)
+    """
     if not value or ctx.resilient_parsing:
         return
 
