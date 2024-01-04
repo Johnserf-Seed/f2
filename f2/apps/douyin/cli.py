@@ -16,6 +16,7 @@ from f2.i18n.translator import TranslationManager
 from f2.i18n.translator import _
 from f2.apps.douyin.handler import handle_sso_login
 
+
 def handle_help(
     ctx: click.Context,
     param: typing.Union[click.Option, click.Parameter],
