@@ -79,7 +79,7 @@ def handler_auto_cookie(
             ctx.abort()
 
 
-def get_cookie_from_browser(browser_choice):
+def get_cookie_from_browser(browser_choice: str):
     """
     根据用户选择的浏览器获取douyin.com的cookie。
 
