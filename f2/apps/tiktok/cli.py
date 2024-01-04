@@ -58,10 +58,10 @@ def handler_auto_cookie(
         return
 
     # 根据浏览器选择获取cookie (Get cookies based on browser selection)
-    if value != "none":
+    if value not in ["chrome", "firefox", "edge", "opera"]:
         try:
             cookie_value = split_dict_cookie(get_cookie_from_browser(value))
-            manager = ConfigManager(ctx.params.get("config", "conf/conf.yaml"))
+            manager = ConfigManager(ctx.params.get("config", "conf/app.yaml"))
             manager.update_config_with_args("tiktok", cookie=cookie_value)
         except PermissionError:
             message = _("请关闭所有已打开的浏览器重试, 并且你有适当的权限访问浏览器 !")
