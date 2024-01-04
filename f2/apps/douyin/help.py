@@ -70,7 +70,7 @@ def help() -> None:
             "--auto-cookie",
             "[dark_cyan]Choice",
             _(
-                "自动从浏览器获取[yellow]cookie[/yellow]。可选项：chrome、firefox、edge（默认）、opera。使用该命令前请确保关闭所选的浏览器"
+                "自动从浏览器获取[yellow]cookie[/yellow]。可选项：chrome、firefox、edge、opera。使用该命令前请确保关闭所选的浏览器"
             ),
         ),
         (
