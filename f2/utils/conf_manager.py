@@ -87,8 +87,11 @@ class ConfigManager:
         default_config = yaml.safe_load(self.filepath.read_text(encoding="utf-8")) or {}
 
         if app_name in default_config:
+            # 将app_name作为外层键 # https://github.com/Johnserf-Seed/TikTokDownload/issues/626  #629
+            app_config = {app_name: default_config[app_name]}
+
             # 写入应用程序特定配置
-            save_path.write_text(yaml.dump(default_config[app_name]), encoding="utf-8")
+            save_path.write_text(yaml.dump(app_config), encoding="utf-8")
             print(_("{0} 应用配置文件生成成功,保存至 {1}").format(app_name, save_path))
         else:
             print(_("{0} 应用配置未找到").format(app_name))
