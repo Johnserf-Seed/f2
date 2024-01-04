@@ -55,7 +55,11 @@ def help() -> None:
         ("-t --max-tasks", "[dark_cyan]int", _("异步的任务数。默认为 10")),
         ("-o --max-counts", "[dark_cyan]int", _("最大作品下载数。默认为 0，表示无限制")),
         ("-s --page-counts", "[dark_cyan]int", _("每页作品数。默认为 20")),
-        ("-l --languages", "[dark_cyan]Choice", _("显示语言。默认为 'zh_CN'。可选：'zh_CN'、'en_US'")),
+        (
+            "-l --languages",
+            "[dark_cyan]Choice",
+            _("显示语言。默认为 'zh_CN'。可选：'zh_CN'、'en_US'"),
+        ),
         (
             "--update-config",
             "[dark_cyan]Flag",
