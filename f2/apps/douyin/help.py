@@ -34,7 +34,7 @@ def help() -> None:
         (
             "-M --mode",
             "[dark_cyan]Choice",
-            _("下载模式：主页作品(post)，点赞作品(like)，收藏作品(collect)，合辑(mix)，直播(live)"),
+            _("下载模式：单个作品(one)，主页作品(post)，点赞作品(like)，收藏作品(collect)，合辑(mix)，直播(live)"),
         ),
         ("-n --naming", "[dark_cyan]str", _("全局作品文件命名方式，前往文档查看更多帮助")),
         (
@@ -70,8 +70,14 @@ def help() -> None:
             ),
         ),
         (
-            "-",
-            "[dark_cyan]-",
+            "--sso-login",
+            "[dark_cyan]Flag",
+            _("使用SSO扫码单点登录获取[yellow]cookie[/yellow]，直接保存到默认配置文件"),
+        ),
+        ("--help", "[dark_cyan]Flag", _("显示经典帮助信息")),
+        (
+            "",
+            "",
             _(
                 "更加详细的参数说明请点击[link=https://johnserf-seed.github.io/f2/site-config.html][dark_violet]前往文档[/dark_violet][/]查看"
             ),
