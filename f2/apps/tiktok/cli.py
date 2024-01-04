@@ -58,10 +58,10 @@ def handler_auto_cookie(
         return
 
     # 根据浏览器选择获取cookie (Get cookies based on browser selection)
-    if value != "none":
+    if value in ["chrome", "firefox", "edge", "opera"]:
         try:
             cookie_value = split_dict_cookie(get_cookie_from_browser(value))
-            manager = ConfigManager(ctx.params.get("config", "conf/conf.yaml"))
+            manager = ConfigManager(ctx.params.get("config", "conf/app.yaml"))
             manager.update_config_with_args("tiktok", cookie=cookie_value)
         except PermissionError:
             message = _("请关闭所有已打开的浏览器重试, 并且你有适当的权限访问浏览器 !")
@@ -69,13 +69,13 @@ def handler_auto_cookie(
             click.echo(message)
             ctx.abort()
         except Exception as e:
-            message = "自动获取Cookie失败: {0}".format(str(e))
+            message = _("自动获取Cookie失败: {0}".format(str(e)))
             logger.error(message)
             click.echo(message)
             ctx.abort()
 
 
-def get_cookie_from_browser(browser_choice):
+def get_cookie_from_browser(browser_choice: str):
     """
     根据用户选择的浏览器获取tiktok.com的cookie。
 
@@ -107,7 +107,11 @@ def get_cookie_from_browser(browser_choice):
     return cookie_value
 
 
-def handler_language(ctx, param, value):
+def handler_language(
+    ctx: click.Context,
+    param: typing.Union[click.Option, click.Parameter],
+    value: typing.Any,
+) -> typing.Any:
     """用于设置语言 (For setting the language)"""
 
     TranslationManager.get_instance().set_language(value)
@@ -120,7 +124,7 @@ def handler_naming(
     ctx: click.Context,
     param: typing.Union[click.Option, click.Parameter],
     value: typing.Any,
-):
+) -> str:
     """处理命名模式 (Handle naming patterns)
 
     Args:
@@ -132,7 +136,7 @@ def handler_naming(
         click.BadParameter: 如果命名模式无效 (If the naming pattern is invalid)
 
     Returns:
-        value: 参数或选项的值 (The value of the parameter or option)
+        value: 命名模式模板 (Naming pattern template)
     """
 
     # 允许的模式和分隔符 (Allowed patterns and separators)
@@ -154,20 +158,18 @@ def handler_naming(
 
     # 检查连续的无效模式或分隔符 (Check for consecutive invalid patterns or separators)
     for pattern in ALLOWED_PATTERNS:
-        if (
-            pattern + pattern in value
-        ):  # 检查像"{aid}{aid}"这样的模式 (Check for patterns like "{aid}{aid}")
+        # 检查像"{aid}{aid}"这样的模式 (Check for patterns like "{aid}{aid}")
+        if pattern + pattern in value:
             invalid_patterns.append(pattern + pattern)
         for sep in ALLOWED_SEPARATORS:
-            if (
-                pattern + sep + pattern in value
-            ):  # 检查像"{aid}-{aid}"这样的模式 (Check for patterns like "{aid}-{aid}")
+            # 检查像"{aid}-{aid}"这样的模式 (Check for patterns like "{aid}-{aid}")
+            if pattern + sep + pattern in value:
                 invalid_patterns.append(pattern + sep + pattern)
 
     if invalid_patterns:
         raise click.BadParameter(
             _("`{0}` 中的 `{1}` 不符合命名模式".format(value, "".join(invalid_patterns)))
-        )  # (`{1}` in `{0}` does not conform to naming patterns)
+        )
 
     return value
 
@@ -177,25 +179,49 @@ def handler_naming(
     "--config",
     "-c",
     type=click.Path(file_okay=True, dir_okay=False, readable=True),  # exists=True
-    help=_("配置文件的路径，最高优先"),
+    help=_("配置文件的路径，最低优先"),
 )
-@click.option("--url", "-u", type=str, help=_("需要解析的URL"), default="")
-@click.option("--music", "-m", type=bool, default="yes", help=_("是否保存视频原声"))
-@click.option("--cover", "-v", type=bool, default="yes", help=_("是否保存视频封面"))
-@click.option("--desc", "-d", type=bool, default="yes", help=_("是否保存视频文案"))
-@click.option("--path", "-p", type=str, default="Download", help=_("作品保存位置"))
-@click.option("--folderize", "-f", type=bool, default="yes", help=_("是否将作品保存到单独的文件夹"))
+@click.option(
+    "--url",
+    "-u",
+    type=str,
+    default="",
+    help=_("根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合辑与直播同上"),
+)
+@click.option(
+    "--music",
+    "-m",
+    type=bool,
+    default="yes",
+    help=_("是否保存视频原声。默认为 'yes'，可选：'yes'、'no'"),
+)
+@click.option(
+    "--cover",
+    "-v",
+    type=bool,
+    default="yes",
+    help=_("是否保存视频封面。默认为 'yes'，可选：'yes'、'no'"),
+)
+@click.option(
+    "--desc", "-d", type=bool, default="yes", help=_("是否保存视频文案。默认为 'yes'，可选：'yes'、'no'")
+)
+@click.option(
+    "--path", "-p", type=str, default="Download", help=_("作品保存位置，默认为 'Download'")
+)
+@click.option(
+    "--folderize",
+    "-f",
+    type=bool,
+    default="yes",
+    help=_("是否将作品保存到单独的文件夹，默认为 'yes'。可选：'yes'、'no'"),
+)
 @click.option(
     "--mode",
     "-M",
-    type=click.Choice(
-        ["one", "post", "like", "collect", "mix", "live", "feed", "search"]
-    ),
+    type=click.Choice(["one", "post", "like", "collect", "mix"]),
     default="post",
     required=True,
-    help=_(
-        "下载模式：单个作品(one), 主页作品(post), 点赞作品(like), 收藏作品(collect), 合集作品(mix), 直播(live),  推荐作品(feed), 搜索作品(search)"
-    ),
+    help=_("下载模式：单个作品(one)，主页作品(post), 点赞作品(like), 收藏作品(collect), 合辑播放列表(mix)"),
 )
 @click.option(
     "--naming",
@@ -203,37 +229,59 @@ def handler_naming(
     type=str,
     # default = '{nickname}_{create}_{aid}_{desc}'
     default="{create}_{desc}",
-    help=_("全局作品文件命名方式"),
+    help=_("全局作品文件命名方式，前往文档查看更多帮助"),
     callback=handler_naming,
 )
-# @click.confirmation_option(prompt='是否要使用命令行的参数更新配置文件?')
 @click.option(
-    "--auto-cookie",
-    type=click.Choice(["none", "chrome", "firefox", "edge", "opera"]),
-    default="none",
-    help=_("是否自动从浏览器获取cookie，以及从哪个浏览器获取"),
-    callback=handler_auto_cookie,
+    "--cookie",
+    "-k",
+    type=str,
+    default="",
+    help=_("登录后的[yellow]cookie[/yellow]，如果使用未登录的[yellow]cookie[/yellow]，则无法持久稳定下载作品"),
 )
-@click.option("--cookie", "-k", type=str, help=_("登录后的cookie"), default="")
-@click.option("--interval", "-i", type=str, default="0", help=_("根据作品发布日期区间下载作品"))
-@click.option("--timeout", "-e", type=int, default=10, help=_("网络请求超时等待时间"))
-@click.option("--max_retries", "-r", type=int, default=5, help=_("网络请求超时重试数"))
-@click.option("--max-connections", "-x", type=int, default=5, help=_("网络请求并发连接数"))
-@click.option("--max-tasks", "-t", type=int, default=10, help=_("异步的任务数"))
-@click.option("--max-counts", "-o", type=int, default=0, help=_("最大作品下载数"))
-@click.option("--page-counts", "-s", type=int, default=20, help=_("每页作品数"))
-@click.option("--update-config", type=bool, is_flag=True, help=_("使用命令行选项更新配置文件"))
-@click.option("--init-config", type=str, help=_("初始化生成配置文件"))
+@click.option(
+    "--interval",
+    "-i",
+    type=str,
+    default="all",
+    help=_("下载日期区间发布的作品，格式：2022-01-01|2023-01-01，默认为 'all'下载所有作品"),
+)
+@click.option("--timeout", "-e", type=int, default=10, help=_("网络请求超时时间。默认为 10"))
+@click.option("--max_retries", "-r", type=int, default=5, help=_("网络请求超时重试数。默认为 5"))
+@click.option("--max-connections", "-x", type=int, default=5, help=_("网络请求并发连接数。默认为 5"))
+@click.option("--max-tasks", "-t", type=int, default=10, help=_("异步的任务数。默认为 10"))
+@click.option("--max-counts", "-o", type=int, default=0, help=_("最大作品下载数。默认为 0，表示无限制"))
+@click.option("--page-counts", "-s", type=int, default=20, help=_("每页作品数。默认为 20"))
 @click.option(
     "--languages",
     "-l",
     type=click.Choice(["zh_CN", "en_US"]),
     default="zh_CN",
-    help=_("语言设置"),
+    help=_("显示语言。默认为 'zh_CN'。可选：'zh_CN'、'en_US'"),
     callback=handler_language,
 )
 @click.option(
-    "-h", is_flag=True, is_eager=True, expose_value=False, callback=handle_help
+    "--update-config",
+    type=bool,
+    is_flag=True,
+    help=_("使用命令行选项更新配置文件。需要先使用'-c'选项提供一个配置文件路径"),
+)
+@click.option("--init-config", type=str, help=_("初始化配置文件。不能同时初始化和更新配置文件"))
+# @click.confirmation_option(prompt='是否要使用命令行的参数更新配置文件?')
+@click.option(
+    "--auto-cookie",
+    type=click.Choice(["none", "chrome", "firefox", "edge", "opera"]),
+    default="none",
+    help=_("自动从浏览器获取cookie。可选项：chrome、firefox、edge、opera。使用该命令前请确保关闭所选的浏览器"),
+    callback=handler_auto_cookie,
+)
+@click.option(
+    "-h",
+    is_flag=True,
+    is_eager=True,
+    expose_value=False,
+    help="显示富文本帮助",
+    callback=handle_help,
 )
 @click.pass_context
 def tiktok(ctx, config, init_config, update_config, **kwargs):
@@ -242,7 +290,7 @@ def tiktok(ctx, config, init_config, update_config, **kwargs):
         manager = ConfigManager("conf/app.yaml")
         manager.generate_config("tiktok", init_config)
         return
-    elif not init_config and not update_config:
+    elif not init_config:
         pass
     else:
         raise click.UsageError(_("不能同时初始化和更新配置文件"))
