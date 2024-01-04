@@ -290,7 +290,7 @@ def tiktok(ctx, config, init_config, update_config, **kwargs):
         manager = ConfigManager("conf/app.yaml")
         manager.generate_config("tiktok", init_config)
         return
-    elif not init_config and not update_config:
+    elif not init_config:
         pass
     else:
         raise click.UsageError(_("不能同时初始化和更新配置文件"))
