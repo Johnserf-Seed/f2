@@ -16,7 +16,7 @@ def help() -> None:
     table.add_column("Description", no_wrap=True)
 
     options = [
-        ("-c --config", "[dark_cyan]Path", _("配置文件的路径，[red]最高优先[/red]")),
+        ("-c --config", "[dark_cyan]Path", _("配置文件的路径，[red]最低优先[/red]")),
         (
             "-u --url",
             "[dark_cyan]str",

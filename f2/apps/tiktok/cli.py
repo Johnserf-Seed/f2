@@ -179,7 +179,7 @@ def handler_naming(
     "--config",
     "-c",
     type=click.Path(file_okay=True, dir_okay=False, readable=True),  # exists=True
-    help=_("配置文件的路径，最高优先"),
+    help=_("配置文件的路径，最低优先"),
 )
 @click.option(
     "--url",
