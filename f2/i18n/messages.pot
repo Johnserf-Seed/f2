@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-01-05 00:28+0800\n"
+"POT-Creation-Date: 2024-01-05 00:36+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -256,7 +256,8 @@ msgstr ""
 msgid "初始化配置文件。不能同时初始化和更新配置文件"
 msgstr ""
 
-#: f2/apps/douyin/cli.py:312
+#: f2/apps/douyin/cli.py:312 f2/apps/douyin/help.py:72
+#: f2/apps/tiktok/help.py:76
 msgid "自动从浏览器获取[yellow]cookie[/yellow]。可选项：chrome、firefox、edge、opera。使用该命令前请确保关闭所选的浏览器"
 msgstr ""
 
@@ -555,10 +556,6 @@ msgstr ""
 #: f2/apps/douyin/help.py:43 f2/apps/tiktok/cli.py:240
 #: f2/apps/tiktok/help.py:43
 msgid "登录后的[yellow]cookie[/yellow]，如果使用未登录的[yellow]cookie[/yellow]，则无法持久稳定下载作品"
-msgstr ""
-
-#: f2/apps/douyin/help.py:72 f2/apps/tiktok/help.py:76
-msgid "自动从浏览器获取[yellow]cookie[/yellow]。可选项：chrome、firefox、edge（默认）、opera。使用该命令前请确保关闭所选的浏览器"
 msgstr ""
 
 #: f2/apps/douyin/help.py:79
