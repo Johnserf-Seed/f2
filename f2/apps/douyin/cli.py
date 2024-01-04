@@ -62,7 +62,7 @@ def handler_auto_cookie(
         return
 
     # 根据浏览器选择获取cookie (Get cookies based on browser selection)
-    if value not in ["chrome", "firefox", "edge", "opera"]:
+    if value in ["chrome", "firefox", "edge", "opera"]:
         try:
             cookie_value = split_dict_cookie(get_cookie_from_browser(value))
             manager = ConfigManager(ctx.params.get("config", "conf/app.yaml"))
@@ -307,10 +307,10 @@ def handler_sso_login(
 # @click.confirmation_option(prompt='是否要使用命令行的参数更新配置文件?')
 @click.option(
     "--auto-cookie",
-    type=click.Choice(["chrome", "firefox", "edge", "opera"]),
-    default="edge",
+    type=click.Choice(["none", "chrome", "firefox", "edge", "opera"]),
+    default="none",
     help=_(
-        "自动从浏览器获取[yellow]cookie[/yellow]。可选项：chrome、firefox、edge（默认）、opera。使用该命令前请确保关闭所选的浏览器"
+        "自动从浏览器获取[yellow]cookie[/yellow]。可选项：chrome、firefox、edge、opera。使用该命令前请确保关闭所选的浏览器"
     ),
     callback=handler_auto_cookie,
 )
