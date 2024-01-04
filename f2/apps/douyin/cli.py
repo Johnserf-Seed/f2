@@ -62,7 +62,7 @@ def handler_auto_cookie(
         return
 
     # 根据浏览器选择获取cookie (Get cookies based on browser selection)
-    if value not in ['chrome', 'firefox', 'edge', 'opera']:
+    if value not in ["chrome", "firefox", "edge", "opera"]:
         try:
             cookie_value = split_dict_cookie(get_cookie_from_browser(value))
             manager = ConfigManager(ctx.params.get("config", "conf/app.yaml"))
