@@ -1,6 +1,7 @@
 import pytest
 from f2.apps.douyin.utils import extract_desc_from_share_desc
 
+
 @pytest.mark.parametrize(
     "desc, share_desc, expected_output",
     [
