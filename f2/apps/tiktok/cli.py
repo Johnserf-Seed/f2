@@ -69,13 +69,13 @@ def handler_auto_cookie(
             click.echo(message)
             ctx.abort()
         except Exception as e:
-            message = "自动获取Cookie失败: {0}".format(str(e))
+            message = _("自动获取Cookie失败: {0}".format(str(e)))
             logger.error(message)
             click.echo(message)
             ctx.abort()
 
 
-def get_cookie_from_browser(browser_choice):
+def get_cookie_from_browser(browser_choice: str):
     """
     根据用户选择的浏览器获取tiktok.com的cookie。
 
@@ -120,7 +120,7 @@ def handler_naming(
     ctx: click.Context,
     param: typing.Union[click.Option, click.Parameter],
     value: typing.Any,
-):
+) -> str:
     """处理命名模式 (Handle naming patterns)
 
     Args:
@@ -132,7 +132,7 @@ def handler_naming(
         click.BadParameter: 如果命名模式无效 (If the naming pattern is invalid)
 
     Returns:
-        value: 参数或选项的值 (The value of the parameter or option)
+        value: 命名模式模板 (Naming pattern template)
     """
 
     # 允许的模式和分隔符 (Allowed patterns and separators)
@@ -154,20 +154,18 @@ def handler_naming(
 
     # 检查连续的无效模式或分隔符 (Check for consecutive invalid patterns or separators)
     for pattern in ALLOWED_PATTERNS:
-        if (
-            pattern + pattern in value
-        ):  # 检查像"{aid}{aid}"这样的模式 (Check for patterns like "{aid}{aid}")
+        # 检查像"{aid}{aid}"这样的模式 (Check for patterns like "{aid}{aid}")
+        if pattern + pattern in value:
             invalid_patterns.append(pattern + pattern)
         for sep in ALLOWED_SEPARATORS:
-            if (
-                pattern + sep + pattern in value
-            ):  # 检查像"{aid}-{aid}"这样的模式 (Check for patterns like "{aid}-{aid}")
+            # 检查像"{aid}-{aid}"这样的模式 (Check for patterns like "{aid}-{aid}")
+            if pattern + sep + pattern in value:
                 invalid_patterns.append(pattern + sep + pattern)
 
     if invalid_patterns:
         raise click.BadParameter(
             _("`{0}` 中的 `{1}` 不符合命名模式".format(value, "".join(invalid_patterns)))
-        )  # (`{1}` in `{0}` does not conform to naming patterns)
+        )
 
     return value
 
