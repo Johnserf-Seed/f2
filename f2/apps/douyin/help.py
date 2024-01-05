@@ -22,14 +22,14 @@ def help() -> None:
             "[dark_cyan]str",
             _("根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合辑与直播同上"),
         ),
-        ("-m --music", "[dark_cyan]Choice", _("是否保存视频原声。默认为 'yes'，可选：'yes'、'no'")),
-        ("-v --cover", "[dark_cyan]Choice", _("是否保存视频封面。默认为 'yes'，可选：'yes'、'no'")),
-        ("-d --desc", "[dark_cyan]Choice", _("是否保存视频文案。默认为 'yes'，可选：'yes'、'no'")),
+        ("-m --music", "[dark_cyan]Choice", _("是否保存视频原声。可选：'yes'、'no'")),
+        ("-v --cover", "[dark_cyan]Choice", _("是否保存视频封面。可选：'yes'、'no'")),
+        ("-d --desc", "[dark_cyan]Choice", _("是否保存视频文案。可选：'yes'、'no'")),
         ("-p --path", "[dark_cyan]str", _("作品保存位置，默认为 'Download'")),
         (
             "-f --folderize",
             "[dark_cyan]Choice",
-            _("是否将作品保存到单独的文件夹，默认为 'yes'。可选：'yes'、'no'"),
+            _("是否将作品保存到单独的文件夹。可选：'yes'、'no'"),
         ),
         (
             "-M --mode",
