@@ -308,13 +308,19 @@ def tiktok(ctx, config, init_config, update_config, **kwargs):
         app_config = manager.get_config("tiktok", {})
 
         # 合并配置文件的值到kwargs
-        for key, value in app_config.items():
+        for config_key, config_value in app_config.items():
             # 在命令的参数列表中找到当前的键
-            param = next((p for p in ctx.command.params if p.name == key), None)
+            param = next((p for p in ctx.command.params if p.name == config_key), None)
             if param:
-                default_value = param.default  # 获取默认值
-                if ctx.params[key] == default_value:  # 如果命令行参数等于默认值
-                    kwargs[key] = value  # 使用配置文件的值覆盖默认值
+                # 如果命令行参数没有提供值，则使用配置文件的值
+                if ctx.params[config_key] is None or ctx.params[config_key] == "":
+                    kwargs[config_key] = config_value
+                else:
+                    kwargs[config_key] = ctx.params[config_key]
+
+        logger.info(_("配置文件路径： {0}".format(config)))
+        logger.debug(_("配置文件参数： {0}".format(app_config)))
+        logger.debug(_("配置文件与CLI合并后的参数： {0}".format(kwargs)))
 
         # 如果指定了update_config，更新配置文件
         if update_config:
