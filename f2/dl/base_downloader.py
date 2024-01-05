@@ -93,7 +93,7 @@ class BaseDownloader(BaseCrawler):
             # 获取文件内容大小 (Get the size of the file content)
             content_length = await get_content_length(url, self.headers, self.proxies)
 
-            logger.info(_("{0}在服务器上的总内容长度为：{1} 字节".format(url, content_length)))
+            logger.debug(_("{0}在服务器上的总内容长度为：{1} 字节".format(url, content_length)))
             logger.debug(_("请求头headers:{0}".format(self.headers)))
 
             # 如果文件内容大小为0, 则不下载 (If file content size is 0, skip download)

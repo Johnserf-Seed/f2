@@ -788,7 +788,7 @@ async def handle_sso_login():
         Returns:
             bool: 是否成功登录
         """
-        logger.info(f"check_qrcode token:{token}")
+        logger.debug(f"check_qrcode token:{token}")
 
         status_mapping = {
             "1": {"message": _("[  登录  ]:等待二维码扫描！"), "log": logger.info},
@@ -852,7 +852,7 @@ async def handle_sso_login():
             login_cookie = split_set_cookie(
                 redirect_response.history[1].headers.get("set-cookie", "")
             )
-            logger.info(f"login_cookie:{login_cookie}")
+            logger.debug(f"login_cookie:{login_cookie}")
             return True, login_cookie
         else:
             rich_console.print("[  登录  ]:自动重定向登录失败")

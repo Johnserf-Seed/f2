@@ -168,7 +168,7 @@ class DouyinCrawler(BaseCrawler):
         endpoint = XBogusManager.model_2_endpoint(
             dyendpoint.SSO_LOGIN_CHECK_QR, parms.dict()
         )
-        logger.info(_("SSO检查扫码状态接口地址:" + endpoint))
+        logger.debug(_("SSO检查扫码状态接口地址:" + endpoint))
         return await self._fetch_response(endpoint)
 
     async def fetch_check_login(self, parms: LoginCheckQr):
