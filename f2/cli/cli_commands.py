@@ -127,9 +127,6 @@ def set_cli_config(ctx, **kwargs):
     - **kwargs: 关键字参数，代表CLI的各种设置选项
     """
 
-    # logger.debug(kwargs)
-    # logger.debug(_('命令行配置'))
-
     SignalManager().register_shutdown_signal()
 
     with RichConsoleManager().progress:
