@@ -229,18 +229,22 @@ def handler_sso_login(
     "--music",
     "-m",
     type=bool,
-    default="yes",
-    help=_("是否保存视频原声。默认为 'yes'，可选：'yes'、'no'"),
+    # default="yes",
+    help=_("是否保存视频原声。可选：'yes'、'no'"),
 )
 @click.option(
     "--cover",
     "-v",
     type=bool,
-    default="yes",
-    help=_("是否保存视频封面。默认为 'yes'，可选：'yes'、'no'"),
+    # default="yes",
+    help=_("是否保存视频封面。可选：'yes'、'no'"),
 )
 @click.option(
-    "--desc", "-d", type=bool, default="yes", help=_("是否保存视频文案。默认为 'yes'，可选：'yes'、'no'")
+    "--desc",
+    "-d",
+    type=bool,
+    # default="yes",
+    help=_("是否保存视频文案。可选：'yes'、'no'"),
 )
 @click.option(
     "--path", "-p", type=str, default="Download", help=_("作品保存位置，默认为 'Download'")
@@ -249,8 +253,8 @@ def handler_sso_login(
     "--folderize",
     "-f",
     type=bool,
-    default="yes",
-    help=_("是否将作品保存到单独的文件夹，默认为 'yes'。可选：'yes'、'no'"),
+    # default="yes",
+    help=_("是否将作品保存到单独的文件夹。可选：'yes'、'no'"),
 )
 @click.option(
     "--mode",
