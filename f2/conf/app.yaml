@@ -1,30 +1,29 @@
 douyin:
-  headers:
-    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36
-    Referer: https://www.douyin.com/
 
   cookie: ""
   desc: yes
+  cover: yes
   folderize: yes
+  music: yes
+  naming: '{create}_{desc}'
+  path: Download
+  mode: post
+  url:
   interval: all
-  languages: zh_CN
   timeout: 10
   max_retries: 5
   max_connections: 5
   max_tasks: 5
   page_counts: 20
   max_counts: 0
-  # 采集模式
-  mode: post
-  music: yes
-  naming: '{create}_{desc}'
-  path: Download
-  update: yes
-  url: https://www.douyin.com/user/MS4wLjABAAAA35iXl5qqCbLKY99pUvxkXzvpSXi8jgUbJ0zR4EuTpcHcS8PHaEb6G9yB6iKR0dNl?vid=7240082457372937511
 
   proxies:
     http:
     https:
+
+  headers:
+    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36
+    Referer: https://www.douyin.com/
 
   msToken:
     url: https://mssdk.bytedance.com/web/report
@@ -39,36 +38,32 @@ douyin:
     data: '{"region":"cn","aid":1768,"needFid":false,"service":"www.ixigua.com","migrate_info":{"ticket":"","source":"node"},"cbUrlProtocol":"https","union":true}'
 
 
-
 tiktok:
-
-  headers:
-    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36
-    Referer: https://www.tiktok.com/
 
   cookie: ""
   cover: yes
   desc: yes
   folderize: yes
+  music: yes
+  naming: '{create}_{desc}'
+  path: Download
+  mode: post
+  url:
   interval: all
-  languages: zh_CN
   timeout: 10
   max_retries: 5
   max_connections: 5
   max_tasks: 5
   page_counts: 5
   max_counts: 0
-  # 采集模式
-  mode: post
-  music: yes
-  naming: '{create}_{desc}'
-  path: Download
-  update: yes
-  url: https://www.tiktok.com/@sophia.ilysm
 
   proxies:
     http:
     https:
+
+  headers:
+    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36
+    Referer: https://www.tiktok.com/
 
   msToken:
     url: https://mssdk-sg.tiktok.com/web/common?msToken=1Ab-7YxR9lUHSem0PraI_XzdKmpHb6j50L8AaXLAd2aWTdoJCYLfX_67rVQFE4UwwHVHmyG_NfIipqrlLT3kCXps-5PYlNAqtdwEg7TrDyTAfCKyBrOLmhMUjB55oW8SPZ4_EkNxNFUdV7MquA==
