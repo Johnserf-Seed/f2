@@ -483,7 +483,7 @@ def format_file_name(
         fields.update(custom_fields)
     else:
         fields = {
-            "create": aweme_data.get("create_time", ""),
+            "create": aweme_data.get("createTime", ""),
             "nickname": aweme_data.get("nickname", ""),
             "aweme_id": aweme_data.get("aweme_id", ""),
             "desc": aweme_data.get("desc", ""),
