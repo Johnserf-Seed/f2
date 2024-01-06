@@ -289,10 +289,12 @@ def handler_naming(
 )
 @click.pass_context
 def tiktok(ctx, config, init_config, update_config, **kwargs):
+    # 读取默认配置文件
+    default_manager = ConfigManager(f2.APP_CONFIG_FILE_PATH)
+
     # 如果用户想初始化新配置文件
     if init_config and not update_config:
-        manager = ConfigManager("conf/app.yaml")
-        manager.generate_config("tiktok", init_config)
+        default_manager.generate_config("tiktok", init_config)
         return
     elif not init_config:
         pass
@@ -303,15 +305,12 @@ def tiktok(ctx, config, init_config, update_config, **kwargs):
     if update_config and not config:
         raise click.UsageError(_("要更新配置, 首先需要使用'-c'选项提供一个配置文件路径"))
 
-    # 如果提供了自定义配置文件的路径，则加载配置
-    if config:
-        f2.APP_CONFIG_FILE_PATH = config
-        manager = ConfigManager(config)
+    def load_config(config_manager, ctx):
+        nonlocal kwargs
+        # 读取配置文件
+        app_config = config_manager.get_config("tiktok", {})
 
-        # 提取特定应用的配置
-        app_config = manager.get_config("tiktok", {})
-
-        # 合并配置文件的值到kwargs
+        # 合并配置文件的值到 app_config
         for config_key, config_value in app_config.items():
             # 在命令的参数列表中找到当前的键
             param = next((p for p in ctx.command.params if p.name == config_key), None)
@@ -322,13 +321,24 @@ def tiktok(ctx, config, init_config, update_config, **kwargs):
                 else:
                     kwargs[config_key] = ctx.params[config_key]
 
-        logger.info(_("配置文件路径： {0}".format(config)))
         logger.debug(_("配置文件参数： {0}".format(app_config)))
         logger.debug(_("配置文件与CLI合并后的参数： {0}".format(kwargs)))
 
-        # 如果指定了update_config，更新配置文件
+    # 用户指定自定义配置文件
+    if config:
+        load_config(default_manager, ctx)
+
+        # 读取用户自定义配置文件
+        user_manager = ConfigManager(config)
+        load_config(user_manager, ctx)
+
+        # 如果指定了 update_config，更新配置文件
         if update_config:
-            manager.update_config_with_args("tiktok", **kwargs)
+            default_manager.update_config_with_args("tiktok", **kwargs)
+    else:
+        # 用户没有指定配置文件，使用默认配置文件
+        load_config(default_manager, ctx)
+        logger.info(_("使用默认配置文件： {0}".format(f2.APP_CONFIG_FILE_PATH)))
 
     # 尝试从命令行参数或kwargs中获取URL
     if not kwargs.get("url"):
