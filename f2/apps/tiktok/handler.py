@@ -27,6 +27,8 @@ from f2.apps.tiktok.filter import (
 )
 from f2.apps.tiktok.utils import SecUserIdFetcher, AwemeIdFetcher
 from f2.apps.tiktok.utils import create_or_rename_user_folder
+from f2.apps.tiktok.utils import TokenManager
+
 from f2.cli.cli_console import RichConsoleManager
 
 

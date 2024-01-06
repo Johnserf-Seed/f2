@@ -53,7 +53,8 @@ def handler_auto_cookie(
     if not value or ctx.resilient_parsing:
         return
 
-    # 如果用户明确设置了 --cookie，那么跳过自动获取过程 (Skip the automatic acquisition process if the user explicitly sets --cookie)
+    # 如果用户明确设置了 --cookie，那么跳过自动获取过程
+    # (Skip the automatic acquisition process if the user explicitly sets --cookie)
     if ctx.params.get("cookie"):
         return
 
@@ -100,7 +101,7 @@ def get_cookie_from_browser(browser_choice: str):
 
     # cookie_value = next((c.value for c in cj if c.name == 'ttwid'), None)
     cookie_value = {c.name: c.value for c in cj if c.domain.endswith("tiktok.com")}
-    # print(cj)
+
     if not cookie_value:
         raise ValueError(_("无法从{0}浏览器中获取cookie").format(browser_choice))
 

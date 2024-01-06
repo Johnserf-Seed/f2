@@ -8,12 +8,9 @@ import httpx
 import random
 import asyncio
 
-from typing import Union
+from typing import Union, Dict, Optional
 from pathlib import Path
 from urllib.parse import quote, unquote
-from typing import Dict, Optional, Union
-from httpx import URL, Proxy
-
 
 from f2.i18n.translator import _
 from f2.log.logger import logger
