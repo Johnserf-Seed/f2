@@ -4,7 +4,6 @@ from typing import Any
 from pydantic import BaseModel
 from urllib.parse import quote, unquote
 
-from f2.apps.douyin.utils import VerifyFpManager
 from f2.apps.tiktok.utils import TokenManager
 from f2.utils.utils import get_timestamp
 
@@ -43,7 +42,7 @@ class BaseRequestModel(BaseModel):
     webcast_language: str = "zh-Hans"
     tz_name: str = quote("Asia/Hong_Kong", safe="")
     # verifyFp: str = VerifyFpManager.gen_verify_fp()
-    # msToken: str = TokenManager.gen_real_msToken()
+    msToken: str = TokenManager.gen_real_msToken()
 
 
 # router model
