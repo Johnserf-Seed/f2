@@ -326,9 +326,9 @@ def tiktok(ctx, config, init_config, update_config, **kwargs):
             # 在命令的参数列表中找到当前的键
             param = next((p for p in ctx.command.params if p.name == config_key), None)
             if param:
-                # 如果命令行参数没有提供值，则使用配置文件的值
-                if ctx.params[config_key] is None or ctx.params[config_key] == "":
-                    kwargs[config_key] = config_value
+                # 如果配置文件中的值为空，则跳过
+                if config_value is None or config_value == "":
+                    pass
                 else:
                     # 如果命令行参数没有提供值，则使用配置文件的值
                     if ctx.params[config_key] is None or ctx.params[config_key] == "":
