@@ -21,43 +21,20 @@ from f2.apps.tiktok.utils import XBogusManager
 
 
 class TiktokCrawler(BaseCrawler):
-    app_manager = ConfigManager(f2.APP_CONFIG_FILE_PATH)
-    tiktok_conf = app_manager.get_config("tiktok")
-
-    max_retries = tiktok_conf["max_retries"]
-    max_connections = tiktok_conf["max_connections"]
-    timeout = tiktok_conf["timeout"]
-    max_tasks = tiktok_conf["max_tasks"]
-    proxies_conf = tiktok_conf.get("proxies", None)
-    proxies = {
-        "http://": proxies_conf.get("http", None),
-        "https://": proxies_conf.get("https", None),
-    }
-
-    def __init__(self, cli_params=None):
-        if self.tiktok_conf["cookie"] is None:
-            raise ValueError(
-                _("Cookie不能为空。请提供有效的 Cookie 参数，或使用自动从浏览器获取  f2 -d tk --help")
-            )
-
-        self.crawler_headers = {
-            "User-Agent": self.tiktok_conf["headers"]["User-Agent"],
-            "Referer": self.tiktok_conf["headers"]["Referer"],
-            "Cookie": self.tiktok_conf["cookie"],
+    def __init__(self, kwargs: dict = {}):
+        proxies_conf = kwargs.get("proxies")
+        proxies = {
+            "http://": proxies_conf.get("http", None),
+            "https://": proxies_conf.get("https", None),
         }
 
-        # 如果提供了命令行参数，并且其中有cookie参数，则更新cookie
-        if cli_params and "cookie" in cli_params:
-            self.crawler_headers["Cookie"] = cli_params["cookie"]
+        self.headers = {
+            "User-Agent": kwargs["headers"]["User-Agent"],
+            "Referer": kwargs["headers"]["Referer"],
+            "Cookie": kwargs["cookie"],
+        }
 
-        super().__init__(
-            max_retries=self.max_retries,
-            max_connections=self.max_connections,
-            timeout=self.timeout,
-            max_tasks=self.max_tasks,
-            proxies=self.proxies,
-            crawler_headers=self.crawler_headers,
-        )
+        super().__init__(proxies=proxies, crawler_headers=self.headers)
 
     async def fetch_user_profile(self, params: UserProfile):
         endpoint = XBogusManager.model_2_endpoint(
