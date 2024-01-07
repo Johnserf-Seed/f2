@@ -919,7 +919,6 @@ class UserLiveFilter(JSONModel):
 
 
 class UserLive2Filter(JSONModel):
-
     # live
     @property
     def api_status_code(self):
@@ -973,7 +972,7 @@ class UserLive2Filter(JSONModel):
     def hls_pull_url(self):
         return self._get_attr_value("$.data.room.stream_url.hls_pull_url_map")
 
-    #user
+    # user
     @property
     def nickname(self):
         return replaceT(self._get_attr_value("$.data.room.owner.nickname"))

@@ -1,4 +1,4 @@
-# path: f2/utils/algorithm.py
+# path: f2/utils/utils.py
 
 import re
 import random
