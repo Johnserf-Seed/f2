@@ -83,7 +83,11 @@ class TokenManager:
 
             except httpx.RequestError:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
-                raise APIConnectionError(_("连接端点失败: {0}").format(cls.token_conf["url"]))
+                raise APIConnectionError(
+                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
+                        cls.token_conf["url"], cls.proxies
+                    )
+                )
 
             except httpx.HTTPStatusError as e:
                 # 捕获 httpx 的状态代码错误 (captures specific status code errors from httpx)
@@ -131,7 +135,11 @@ class TokenManager:
 
             except httpx.RequestError:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
-                raise APIConnectionError(_("连接端点失败: {0}").format(cls.ttwid_conf["url"]))
+                raise APIConnectionError(
+                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
+                        cls.ttwid_conf["url"], cls.proxies
+                    )
+                )
 
             except httpx.HTTPStatusError as e:
                 # 捕获 httpx 的状态代码错误 (captures specific status code errors from httpx)
@@ -171,8 +179,10 @@ class TokenManager:
             except httpx.RequestError:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
                 raise APIConnectionError(
-                    _("连接端点失败: {0}").format(cls.odin_tt_conf["url"])
-                )  # (Failed to connect to endpoint)
+                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
+                        cls.odin_tt_conf["url"], cls.proxies
+                    )
+                )
 
             except httpx.HTTPStatusError as e:
                 # 捕获 httpx 的状态代码错误 (captures specific status code errors from httpx)
@@ -267,7 +277,9 @@ class SecUserIdFetcher:
                     raise ConnectionError(_("接口状态码异常, 请检查重试"))
 
             except httpx.RequestError:
-                raise APIConnectionError(_("连接端点失败: {0}").format(url))
+                raise APIConnectionError(
+                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(url), TokenManager.proxies
+                )
 
             except APIError as e:
                 e.display_error()
@@ -336,7 +348,9 @@ class SecUserIdFetcher:
                     )
 
             except httpx.RequestError:
-                raise APIConnectionError(_("连接端点失败: {0}").format(url))
+                raise APIConnectionError(
+                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(url), TokenManager.proxies
+                )
 
             except APIError as e:
                 e.display_error()
@@ -413,7 +427,9 @@ class AwemeIdFetcher:
                     )
 
             except httpx.RequestError:
-                raise APIConnectionError(_("连接端点失败: {0}").format(url))
+                raise APIConnectionError(
+                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(url), TokenManager.proxies
+                )
 
             except APIError as e:
                 e.display_error()

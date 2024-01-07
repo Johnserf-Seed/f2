@@ -11,6 +11,9 @@ class APIError(Exception):
     def __init__(self, message, status_code=None):
         super().__init__(message)
         self.status_code = status_code
+        exception_console.print(
+            "请前往QA文档 https://johnserf-seed.github.io/f2/question-answer/qa.html 查看相关帮助"
+        )
 
     def display_error(self):
         """显示错误信息和状态码（如果有的话）"""

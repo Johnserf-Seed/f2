@@ -124,7 +124,8 @@ class DouyinCrawler(BaseCrawler):
     async def fetch_live_room_id(self, params: UserLive2):
         original_headers = self.aclient.headers.copy()
         try:
-            self.aclient.headers.update({"Cookie": ""})  # 避免invalid session
+            # 避免invalid session
+            self.aclient.headers.update({"Cookie": ""})
             endpoint = XBogusManager.model_2_endpoint(
                 dyendpoint.LIVE_INFO_ROOM_ID, params.dict()
             )

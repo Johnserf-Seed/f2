@@ -80,6 +80,7 @@ async def get_user_nickname(sec_user_id: str, db: AsyncUserDB) -> str:
     Returns:
         user_nickname: (str): 用户昵称 (User nickname)
     """
+
     user_data = await db.get_user_info(sec_user_id)
     if not user_data:
         user_data = await handler_user_profile(sec_user_id)
@@ -152,6 +153,7 @@ async def handle_one_video(kwargs):
     Args:
         kwargs: dict: 参数字典 (Parameter dictionary)
     """
+
     aweme_id = await AwemeIdFetcher.get_aweme_id(kwargs.get("url"))
 
     aweme_data = await fetch_one_video(aweme_id)
@@ -178,6 +180,7 @@ async def fetch_one_video(aweme_id: str) -> dict:
     Return:
         video_data: dict: 视频数据字典，包含视频ID、视频文案、作者昵称
     """
+
     logger.debug(_("开始爬取视频: {0}").format(aweme_id))
 
     params = PostDetail(aweme_id=aweme_id)
@@ -212,8 +215,6 @@ async def handle_user_post(kwargs):
     async with AsyncUserDB("douyin_users.db") as udb:
         user_path = await get_or_add_user_data(kwargs, sec_user_id, udb)
 
-    # start_time = time.time()
-
     async for aweme_data_list in fetch_user_post_videos(
         sec_user_id, max_cursor, page_counts, max_counts
     ):
@@ -223,9 +224,6 @@ async def handle_user_post(kwargs):
         # # 一次性批量插入视频数据到数据库
         # async with AsyncVideoDB("douyin_videos.db") as db:
         #     await db.batch_insert_videos(aweme_data_list, ignore_fields)
-
-    # end_time = time.time()
-    # print(f"总共执行时间: {end_time - start_time} 秒")
 
 
 async def fetch_user_post_videos(

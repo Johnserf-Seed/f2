@@ -94,7 +94,6 @@ class BaseDownloader(BaseCrawler):
             content_length = await get_content_length(url, self.headers, self.proxies)
 
             logger.debug(_("{0}在服务器上的总内容长度为：{1} 字节".format(url, content_length)))
-            logger.debug(_("请求头headers:{0}".format(self.headers)))
 
             # 如果文件内容大小为0, 则不下载 (If file content size is 0, skip download)
             if content_length == 0:
@@ -423,6 +422,7 @@ class BaseDownloader(BaseCrawler):
 
     async def execute_tasks(self):
         """执行所有下载任务 (Execute all download tasks)"""
+        logger.debug(_("开始执行下载任务，本次共有 {0} 个任务".format(len(self.download_tasks))))
         await asyncio.gather(*self.download_tasks)
         self.download_tasks.clear()
 
