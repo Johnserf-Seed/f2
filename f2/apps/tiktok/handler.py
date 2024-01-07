@@ -31,8 +31,9 @@ from f2.apps.tiktok.utils import TokenManager
 
 from f2.cli.cli_console import RichConsoleManager
 
+downloader = None
+crawler = None
 
-downloader = TiktokDownloader()
 rich_console = RichConsoleManager().rich_console
 rich_prompt = RichConsoleManager().rich_prompt
 
@@ -52,11 +53,10 @@ async def handler_user_profile(secUid: str, uniqueId: str = "") -> dict:
     if not secUid and not uniqueId:
         raise ValueError(_("至少提供 secUid 或 uniqueId 中的一个参数"))
 
-    async with TiktokCrawler() as crawler:
-        params = UserProfile(region="SG", secUid=secUid, uniqueId=uniqueId)
-        response = await crawler.fetch_user_profile(params)
-        user = UserProfileFilter(response)
-        return user._to_dict()
+    params = UserProfile(region="SG", secUid=secUid, uniqueId=uniqueId)
+    response = await crawler.fetch_user_profile(params)
+    user = UserProfileFilter(response)
+    return user._to_dict()
 
 
 async def get_user_nickname(secUid: str, db: AsyncUserDB) -> str:
@@ -161,21 +161,18 @@ async def fetch_play_list(
 
     logger.debug(_("开始爬取用户: {0} 的视频合集列表").format(secUid))
 
-    async with TiktokCrawler() as crawler:
-        params = UserPlayList(secUid=secUid, cursor=cursor, count=page_counts)
-        response = await crawler.fetch_user_play_list(params)
-        playlist = UserPlayListFilter(response)
+    params = UserPlayList(secUid=secUid, cursor=cursor, count=page_counts)
+    response = await crawler.fetch_user_play_list(params)
+    playlist = UserPlayListFilter(response)
 
-        if not playlist.hasPlayList:
-            logger.debug(_("用户: {0} 没有视频合集").format(secUid))
-            return {}
+    if not playlist.hasPlayList:
+        logger.debug(_("用户: {0} 没有视频合集").format(secUid))
+        return {}
 
-        logger.debug(_("当前请求的cursor: {0}").format(cursor))
-        logger.debug(
-            _("视频合集ID: {0} 视频合集标题: {1}").format(playlist.mixId, playlist.mixName)
-        )
-        logger.debug("=====================================")
-        return playlist._to_dict()
+    logger.debug(_("当前请求的cursor: {0}").format(cursor))
+    logger.debug(_("视频合集ID: {0} 视频合集标题: {1}").format(playlist.mixId, playlist.mixName))
+    logger.debug("=====================================")
+    return playlist._to_dict()
 
 
 async def select_playlist(playlists: dict) -> int:
@@ -189,6 +186,7 @@ async def select_playlist(playlists: dict) -> int:
     Return:
         selected_index: str: 选择的视频合辑序号 (Selected video mix index)
     """
+
     rich_console.print("[bold]请选择要下载的合辑:[/bold]")
 
     for i, mix_id in enumerate(playlists.get("mixId", [])):
@@ -246,10 +244,9 @@ async def fetch_one_video(itemId: str) -> dict:
         post: dict: 视频信息 (Video info)
     """
 
-    async with TiktokCrawler() as crawler:
-        params = PostDetail(itemId=itemId)
-        response = await crawler.fetch_post_detail(params)
-        video = PostDetailFilter(response)
+    params = PostDetail(itemId=itemId)
+    response = await crawler.fetch_post_detail(params)
+    video = PostDetailFilter(response)
 
     logger.debug(
         _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
@@ -308,42 +305,41 @@ async def fetch_user_post_videos(
 
     logger.debug(_("开始爬取用户: {0} 发布的视频").format(secUid))
 
-    async with TiktokCrawler() as crawler:
-        while videos_collected < max_counts:
-            current_request_size = min(page_counts, max_counts - videos_collected)
+    while videos_collected < max_counts:
+        current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
-            logger.debug(
-                _("最大数量: {0} 每次请求数量: {1}").format(max_counts, current_request_size)
+        logger.debug("=====================================")
+        logger.debug(
+            _("最大数量: {0} 每次请求数量: {1}").format(max_counts, current_request_size)
+        )
+        logger.debug(_("开始爬取第 {0} 页").format(cursor))
+
+        params = UserPost(secUid=secUid, cursor=cursor, count=page_counts)
+        response = await crawler.fetch_user_post(params)
+        video = UserPostFilter(response)
+
+        if not video.has_aweme:
+            logger.debug(_("{0} 页没有找到作品".format(cursor)))
+            if not video.hasMore and str(video.api_status_code) == "0":
+                logger.debug(_("用户: {0} 所有作品采集完毕".format(secUid)))
+                break
+            else:
+                cursor = video.cursor
+                continue
+
+        logger.debug(_("当前请求的cursor: {0}").format(cursor))
+        logger.debug(
+            _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
+                video.aweme_id, video.desc, video.nickname
             )
-            logger.debug(_("开始爬取第 {0} 页").format(cursor))
+        )
+        logger.debug("=====================================")
 
-            params = UserPost(secUid=secUid, cursor=cursor, count=page_counts)
-            response = await crawler.fetch_user_post(params)
-            video = UserPostFilter(response)
+        yield video._to_list()
 
-            if not video.has_aweme:
-                logger.debug(_("{0} 页没有找到作品".format(cursor)))
-                if not video.hasMore and str(video.api_status_code) == "0":
-                    logger.debug(_("用户: {0} 所有作品采集完毕".format(secUid)))
-                    break
-                else:
-                    cursor = video.cursor
-                    continue
-
-            logger.debug(_("当前请求的cursor: {0}").format(cursor))
-            logger.debug(
-                _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
-                    video.aweme_id, video.desc, video.nickname
-                )
-            )
-            logger.debug("=====================================")
-
-            yield video._to_list()
-
-            # 更新已经处理的视频数量 (Update the number of videos processed)
-            videos_collected += len(video.aweme_id)
-            cursor = video.cursor
+        # 更新已经处理的视频数量 (Update the number of videos processed)
+        videos_collected += len(video.aweme_id)
+        cursor = video.cursor
 
     logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
 
@@ -396,49 +392,48 @@ async def fetch_user_like_videos(
 
     logger.debug(_("开始爬取用户: {0} 点赞的视频").format(secUid))
 
-    async with TiktokCrawler() as crawler:
-        while videos_collected < max_counts:
-            current_request_size = min(page_counts, max_counts - videos_collected)
+    while videos_collected < max_counts:
+        current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
+        logger.debug("=====================================")
+        logger.debug(
+            _("最大数量: {0} 每次请求数量: {1}").format(max_counts, current_request_size)
+        )
+        logger.debug(_("开始爬取第 {0} 页").format(cursor))
+
+        params = UserLike(secUid=secUid, cursor=cursor, count=page_counts)
+        response = await crawler.fetch_user_like(params)
+        video = UserPostFilter(response)
+
+        if video.has_aweme:
+            logger.debug(_("当前请求的cursor: {0}").format(cursor))
             logger.debug(
-                _("最大数量: {0} 每次请求数量: {1}").format(max_counts, current_request_size)
-            )
-            logger.debug(_("开始爬取第 {0} 页").format(cursor))
-
-            params = UserLike(secUid=secUid, cursor=cursor, count=page_counts)
-            response = await crawler.fetch_user_like(params)
-            video = UserPostFilter(response)
-
-            if video.has_aweme:
-                logger.debug(_("当前请求的cursor: {0}").format(cursor))
-                logger.debug(
-                    _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
-                        video.aweme_id, video.desc, video.nickname
-                    )
+                _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
+                    video.aweme_id, video.desc, video.nickname
                 )
-                logger.debug("=====================================")
+            )
+            logger.debug("=====================================")
 
-                aweme_data_list = video._to_list()
-                yield aweme_data_list
-
-                # 更新已经处理的视频数量 (Update the number of videos processed)
-                videos_collected += len(video.aweme_id)
-
-                if not video.hasMore and str(video.api_status_code) == "0":
-                    logger.debug(_("用户: {0} 所有作品采集完毕").format(secUid))
-                    break
-
-            else:
-                logger.debug(_("{0} 页没有找到作品").format(cursor))
-
-                if not video.hasMore and str(video.api_status_code) == "0":
-                    logger.debug(_("用户: {0} 所有作品采集完毕").format(secUid))
-                    break
+            aweme_data_list = video._to_list()
+            yield aweme_data_list
 
             # 更新已经处理的视频数量 (Update the number of videos processed)
             videos_collected += len(video.aweme_id)
-            cursor = video.cursor
+
+            if not video.hasMore and str(video.api_status_code) == "0":
+                logger.debug(_("用户: {0} 所有作品采集完毕").format(secUid))
+                break
+
+        else:
+            logger.debug(_("{0} 页没有找到作品").format(cursor))
+
+            if not video.hasMore and str(video.api_status_code) == "0":
+                logger.debug(_("用户: {0} 所有作品采集完毕").format(secUid))
+                break
+
+        # 更新已经处理的视频数量 (Update the number of videos processed)
+        videos_collected += len(video.aweme_id)
+        cursor = video.cursor
 
     logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
 
@@ -491,49 +486,48 @@ async def fetch_user_collect_videos(
 
     logger.debug(_("开始爬取用户: {0} 收藏的视频").format(secUid))
 
-    async with TiktokCrawler() as crawler:
-        while videos_collected < max_counts:
-            current_request_size = min(page_counts, max_counts - videos_collected)
+    while videos_collected < max_counts:
+        current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
+        logger.debug("=====================================")
+        logger.debug(
+            _("最大数量: {0} 每次请求数量: {1}").format(max_counts, current_request_size)
+        )
+        logger.debug(_("开始爬取第 {0} 页").format(cursor))
+
+        params = UserCollect(secUid=secUid, cursor=cursor, count=page_counts)
+        response = await crawler.fetch_user_collect(params)
+        video = UserPostFilter(response)
+
+        if video.has_aweme:
+            logger.debug(_("当前请求的cursor: {0}").format(cursor))
             logger.debug(
-                _("最大数量: {0} 每次请求数量: {1}").format(max_counts, current_request_size)
-            )
-            logger.debug(_("开始爬取第 {0} 页").format(cursor))
-
-            params = UserCollect(secUid=secUid, cursor=cursor, count=page_counts)
-            response = await crawler.fetch_user_collect(params)
-            video = UserPostFilter(response)
-
-            if video.has_aweme:
-                logger.debug(_("当前请求的cursor: {0}").format(cursor))
-                logger.debug(
-                    _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
-                        video.aweme_id, video.desc, video.nickname
-                    )
+                _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
+                    video.aweme_id, video.desc, video.nickname
                 )
-                logger.debug("=====================================")
+            )
+            logger.debug("=====================================")
 
-                aweme_data_list = video._to_list()
-                yield aweme_data_list
-
-                # 更新已经处理的视频数量 (Update the number of videos processed)
-                videos_collected += len(video.aweme_id)
-
-                if not video.hasMore and str(video.api_status_code) == "0":
-                    logger.debug(_("用户: {0} 所有作品采集完毕").format(secUid))
-                    break
-
-            else:
-                logger.debug(_("{0} 页没有找到作品").format(cursor))
-
-                if not video.hasMore and str(video.api_status_code) == "0":
-                    logger.debug(_("用户: {0} 所有作品采集完毕").format(secUid))
-                    break
+            aweme_data_list = video._to_list()
+            yield aweme_data_list
 
             # 更新已经处理的视频数量 (Update the number of videos processed)
             videos_collected += len(video.aweme_id)
-            cursor = video.cursor
+
+            if not video.hasMore and str(video.api_status_code) == "0":
+                logger.debug(_("用户: {0} 所有作品采集完毕").format(secUid))
+                break
+
+        else:
+            logger.debug(_("{0} 页没有找到作品").format(cursor))
+
+            if not video.hasMore and str(video.api_status_code) == "0":
+                logger.debug(_("用户: {0} 所有作品采集完毕").format(secUid))
+                break
+
+        # 更新已经处理的视频数量 (Update the number of videos processed)
+        videos_collected += len(video.aweme_id)
+        cursor = video.cursor
 
     logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
 
@@ -601,57 +595,60 @@ async def fetch_user_mix_videos(
 
     logger.debug(_("开始爬取用户: {0} 合集的视频").format(mixId))
 
-    async with TiktokCrawler() as crawler:
-        while videos_collected < max_counts:
-            current_request_size = min(page_counts, max_counts - videos_collected)
+    while videos_collected < max_counts:
+        current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
+        logger.debug("=====================================")
+        logger.debug(
+            _("最大数量: {0} 每次请求数量: {1}").format(max_counts, current_request_size)
+        )
+        logger.debug(_("开始爬取第 {0} 页").format(cursor))
+
+        params = UserMix(mixId=mixId, cursor=cursor, count=page_counts)
+        response = await crawler.fetch_user_mix(params)
+        video = UserMixFilter(response)
+
+        if video.has_aweme:
+            logger.debug(_("当前请求的cursor: {0}").format(cursor))
             logger.debug(
-                _("最大数量: {0} 每次请求数量: {1}").format(max_counts, current_request_size)
-            )
-            logger.debug(_("开始爬取第 {0} 页").format(cursor))
-
-            params = UserMix(mixId=mixId, cursor=cursor, count=page_counts)
-            response = await crawler.fetch_user_mix(params)
-            video = UserMixFilter(response)
-
-            if video.has_aweme:
-                logger.debug(_("当前请求的cursor: {0}").format(cursor))
-                logger.debug(
-                    _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
-                        video.aweme_id, video.desc, video.nickname
-                    )
+                _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
+                    video.aweme_id, video.desc, video.nickname
                 )
-                logger.debug("=====================================")
+            )
+            logger.debug("=====================================")
 
-                aweme_data_list = video._to_list()
-                yield aweme_data_list
-
-                # 更新已经处理的视频数量 (Update the number of videos processed)
-                videos_collected += len(video.aweme_id)
-
-                if not video.hasMore and str(video.api_status_code) == "0":
-                    logger.debug(_("合辑: {0} 所有作品采集完毕").format(mixId))
-                    break
-
-            else:
-                logger.debug(_("{0} 页没有找到作品").format(cursor))
-
-                if not video.hasMore and str(video.api_status_code) == "0":
-                    logger.debug(_("合辑: {0} 所有作品采集完毕").format(mixId))
-                    break
+            aweme_data_list = video._to_list()
+            yield aweme_data_list
 
             # 更新已经处理的视频数量 (Update the number of videos processed)
             videos_collected += len(video.aweme_id)
-            cursor = video.cursor
+
+            if not video.hasMore and str(video.api_status_code) == "0":
+                logger.debug(_("合辑: {0} 所有作品采集完毕").format(mixId))
+                break
+
+        else:
+            logger.debug(_("{0} 页没有找到作品").format(cursor))
+
+            if not video.hasMore and str(video.api_status_code) == "0":
+                logger.debug(_("合辑: {0} 所有作品采集完毕").format(mixId))
+                break
+
+        # 更新已经处理的视频数量 (Update the number of videos processed)
+        videos_collected += len(video.aweme_id)
+        cursor = video.cursor
 
     logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
 
 
 async def main(kwargs):
+    global downloader, crawler
+
     mode = kwargs.get("mode")
-    if mode in mode_function_map:
-        await mode_function_map[mode](kwargs)
-    else:
-        logger.error(_("不存在该模式: {0}").format(mode))
-        print(_("不存在该模式: {0}").format(mode))
+    downloader = TiktokDownloader(kwargs)
+    async with TiktokCrawler(kwargs) as crawler:
+        if mode in mode_function_map:
+            await mode_function_map[mode](kwargs)
+        else:
+            logger.error(_("不存在该模式: {0}").format(mode))
+            rich_console.print(_("不存在该模式: {0}").format(mode))
