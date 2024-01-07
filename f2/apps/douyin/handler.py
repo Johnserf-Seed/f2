@@ -40,7 +40,9 @@ from f2.apps.douyin.utils import TokenManager, VerifyFpManager
 
 from f2.cli.cli_console import RichConsoleManager
 
-downloader = DouyinDownloader()
+downloader = None
+crawler = None
+
 rich_console = RichConsoleManager().rich_console
 rich_prompt = RichConsoleManager().rich_prompt
 
@@ -59,11 +61,11 @@ async def handler_user_profile(sec_user_id: str) -> UserProfileFilter:
     Return:
         user: UserProfileFilter: 用户信息过滤器 (User info filter)
     """
-    async with DouyinCrawler() as crawler:
-        params = UserProfile(sec_user_id=sec_user_id)
-        response = await crawler.fetch_user_profile(params)
-        user = UserProfileFilter(response)
-        return user._to_dict()
+
+    params = UserProfile(sec_user_id=sec_user_id)
+    response = await crawler.fetch_user_profile(params)
+    user = UserProfileFilter(response)
+    return user._to_dict()
 
 
 async def get_user_nickname(sec_user_id: str, db: AsyncUserDB) -> str:
@@ -178,10 +180,9 @@ async def fetch_one_video(aweme_id: str) -> dict:
     """
     logger.debug(_("开始爬取视频: {0}").format(aweme_id))
 
-    async with DouyinCrawler() as crawler:
-        params = PostDetail(aweme_id=aweme_id)
-        response = await crawler.fetch_post_detail(params)
-        video = PostDetailFilter(response)
+    params = PostDetail(aweme_id=aweme_id)
+    response = await crawler.fetch_post_detail(params)
+    video = PostDetailFilter(response)
 
     logger.debug(
         _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
@@ -248,49 +249,46 @@ async def fetch_user_post_videos(
 
     logger.debug(_("开始爬取用户: {0} 发布的视频").format(sec_user_id))
 
-    async with DouyinCrawler() as crawler:
-        while videos_collected < max_counts:
-            current_request_size = min(page_counts, max_counts - videos_collected)
+    while videos_collected < max_counts:
+        current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
-            logger.debug(
-                _("最大数量: {0} 每次请求数量: {1}").format(max_counts, current_request_size)
-            )
-            logger.debug(_("开始爬取第 {0} 页").format(max_cursor))
+        logger.debug("=====================================")
+        logger.debug(
+            _("最大数量: {0} 每次请求数量: {1}").format(max_counts, current_request_size)
+        )
+        logger.debug(_("开始爬取第 {0} 页").format(max_cursor))
 
-            params = UserPost(
-                max_cursor=max_cursor,
-                count=current_request_size,
-                sec_user_id=sec_user_id,
-            )
-            response = await crawler.fetch_user_post(params)
-            video = UserPostFilter(response)
+        params = UserPost(
+            max_cursor=max_cursor,
+            count=current_request_size,
+            sec_user_id=sec_user_id,
+        )
+        response = await crawler.fetch_user_post(params)
+        video = UserPostFilter(response)
 
-            if not video.has_aweme:
-                logger.debug(_("{0} 页没有找到作品".format(max_cursor)))
-                if not video.has_more:
-                    logger.debug(_("用户: {0} 所有作品采集完毕".format(sec_user_id)))
-                    break
+        if not video.has_aweme:
+            logger.debug(_("{0} 页没有找到作品".format(max_cursor)))
+            if not video.has_more:
+                logger.debug(_("用户: {0} 所有作品采集完毕".format(sec_user_id)))
+                break
 
-                max_cursor = video.max_cursor
-                continue
-
-            logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
-            logger.debug(
-                _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
-                    video.aweme_id, video.desc, video.nickname
-                )
-            )
-            logger.debug("=====================================")
-
-            # 主页接口和作品详情的选择
-            # await fetch_one_video(video.aweme_id)
-            aweme_data_list = video._to_list()
-            yield aweme_data_list
-
-            # 更新已经处理的视频数量 (Update the number of videos processed)
-            videos_collected += len(video.aweme_id)
             max_cursor = video.max_cursor
+            continue
+
+        logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
+        logger.debug(
+            _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
+                video.aweme_id, video.desc, video.nickname
+            )
+        )
+        logger.debug("=====================================")
+
+        aweme_data_list = video._to_list()
+        yield aweme_data_list
+
+        # 更新已经处理的视频数量 (Update the number of videos processed)
+        videos_collected += len(video.aweme_id)
+        max_cursor = video.max_cursor
 
     logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
 
@@ -349,47 +347,46 @@ async def fetch_user_like_videos(
 
     logger.debug(_("开始爬取用户: {0} 喜欢的视频").format(sec_user_id))
 
-    async with DouyinCrawler() as crawler:
-        while videos_collected < max_counts:
-            current_request_size = min(page_counts, max_counts - videos_collected)
+    while videos_collected < max_counts:
+        current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
-            logger.debug(
-                _("最大数量: {0} 每次请求数量: {1}").format(max_counts, current_request_size)
-            )
-            logger.debug(_("开始爬取第 {0} 页").format(max_cursor))
+        logger.debug("=====================================")
+        logger.debug(
+            _("最大数量: {0} 每次请求数量: {1}").format(max_counts, current_request_size)
+        )
+        logger.debug(_("开始爬取第 {0} 页").format(max_cursor))
 
-            params = UserLike(
-                max_cursor=max_cursor,
-                count=current_request_size,
-                sec_user_id=sec_user_id,
-            )
-            response = await crawler.fetch_user_like(params)
-            video = UserPostFilter(response)
+        params = UserLike(
+            max_cursor=max_cursor,
+            count=current_request_size,
+            sec_user_id=sec_user_id,
+        )
+        response = await crawler.fetch_user_like(params)
+        video = UserPostFilter(response)
 
-            if not video.has_aweme:
-                logger.debug(_("{0} 页没有找到作品".format(max_cursor)))
-                if not video.has_more:
-                    logger.debug(_("用户: {0} 所有作品采集完毕".format(sec_user_id)))
-                    break
+        if not video.has_aweme:
+            logger.debug(_("{0} 页没有找到作品".format(max_cursor)))
+            if not video.has_more:
+                logger.debug(_("用户: {0} 所有作品采集完毕".format(sec_user_id)))
+                break
 
-                max_cursor = video.max_cursor
-                continue
-
-            logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
-            logger.debug(
-                _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
-                    video.aweme_id, video.desc, video.nickname
-                )
-            )
-            logger.debug("=====================================")
-
-            aweme_data_list = video._to_list()
-            yield aweme_data_list
-
-            # 更新已经处理的视频数量 (Update the number of videos processed)
-            videos_collected += len(aweme_data_list)
             max_cursor = video.max_cursor
+            continue
+
+        logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
+        logger.debug(
+            _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
+                video.aweme_id, video.desc, video.nickname
+            )
+        )
+        logger.debug("=====================================")
+
+        aweme_data_list = video._to_list()
+        yield aweme_data_list
+
+        # 更新已经处理的视频数量 (Update the number of videos processed)
+        videos_collected += len(aweme_data_list)
+        max_cursor = video.max_cursor
 
     logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
 
@@ -443,38 +440,37 @@ async def fetch_user_collect_videos(
 
     logger.debug(_("开始爬取用户收藏的视频"))
 
-    async with DouyinCrawler() as crawler:
-        while videos_collected < max_counts:
-            current_request_size = min(page_counts, max_counts - videos_collected)
+    while videos_collected < max_counts:
+        current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
-            logger.debug(
-                _("最大数量: {0} 每次请求数量: {1}").format(max_counts, current_request_size)
+        logger.debug("=====================================")
+        logger.debug(
+            _("最大数量: {0} 每次请求数量: {1}").format(max_counts, current_request_size)
+        )
+        logger.debug(_("开始爬取第 {0} 页").format(max_cursor))
+
+        params = UserCollect(cursor=max_cursor, count=current_request_size)
+        response = await crawler.fetch_user_collect(params)
+        video = UserCollectFilter(response)
+
+        logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
+        logger.debug(
+            _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
+                video.aweme_id, video.desc, video.nickname
             )
-            logger.debug(_("开始爬取第 {0} 页").format(max_cursor))
+        )
+        logger.debug("=====================================")
 
-            params = UserCollect(cursor=max_cursor, count=current_request_size)
-            response = await crawler.fetch_user_collect(params)
-            video = UserCollectFilter(response)
+        aweme_data_list = video._to_list()
+        yield aweme_data_list
 
-            logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
-            logger.debug(
-                _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
-                    video.aweme_id, video.desc, video.nickname
-                )
-            )
-            logger.debug("=====================================")
+        if not video.has_more:
+            logger.debug(_("用户收藏的视频采集完毕"))
+            break
 
-            aweme_data_list = video._to_list()
-            yield aweme_data_list
-
-            if not video.has_more:
-                logger.debug(_("用户收藏的视频采集完毕"))
-                break
-
-            # 更新已经处理的视频数量 (Update the number of videos processed)
-            videos_collected += len(aweme_data_list)
-            max_cursor = video.max_cursor
+        # 更新已经处理的视频数量 (Update the number of videos processed)
+        videos_collected += len(aweme_data_list)
+        max_cursor = video.max_cursor
 
 
 @mode_handler("mix")
@@ -530,40 +526,37 @@ async def fetch_user_mix_videos(
 
     logger.debug(_("开始爬取合集: {0} 的视频").format(mix_id))
 
-    async with DouyinCrawler() as crawler:
-        while videos_collected < max_counts:
-            current_request_size = min(page_counts, max_counts - videos_collected)
+    while videos_collected < max_counts:
+        current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
-            logger.debug(
-                _("最大数量: {0} 每次请求数量: {1}").format(max_counts, current_request_size)
+        logger.debug("=====================================")
+        logger.debug(
+            _("最大数量: {0} 每次请求数量: {1}").format(max_counts, current_request_size)
+        )
+        logger.debug(_("开始爬取第 {0} 页").format(max_cursor))
+
+        params = UserMix(cursor=max_cursor, count=current_request_size, mix_id=mix_id)
+        response = await crawler.fetch_user_mix(params)
+        video = UserMixFilter(response)
+
+        logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
+        logger.debug(
+            _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
+                video.aweme_id, video.desc, video.nickname
             )
-            logger.debug(_("开始爬取第 {0} 页").format(max_cursor))
+        )
+        logger.debug("=====================================")
 
-            params = UserMix(
-                cursor=max_cursor, count=current_request_size, mix_id=mix_id
-            )
-            response = await crawler.fetch_user_mix(params)
-            video = UserMixFilter(response)
+        aweme_data_list = video._to_list()
+        yield aweme_data_list
 
-            logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
-            logger.debug(
-                _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
-                    video.aweme_id, video.desc, video.nickname
-                )
-            )
-            logger.debug("=====================================")
+        # 更新已经处理的视频数量 (Update the number of videos processed)
+        videos_collected += len(aweme_data_list)
+        max_cursor = video.max_cursor
 
-            aweme_data_list = video._to_list()
-            yield aweme_data_list
-
-            # 更新已经处理的视频数量 (Update the number of videos processed)
-            videos_collected += len(aweme_data_list)
-            max_cursor = video.max_cursor
-
-            if not video.has_more:
-                logger.debug(_("合集: {0} 所有作品采集完毕").format(mix_id))
-                break
+        if not video.has_more:
+            logger.debug(_("合集: {0} 所有作品采集完毕").format(mix_id))
+            break
 
     logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
 
@@ -609,27 +602,25 @@ async def fetch_user_live_videos(webcast_id: str):
     """
 
     logger.debug(_("开始爬取直播: {0} 的数据").format(webcast_id))
+    logger.debug("=====================================")
 
-    async with DouyinCrawler() as crawler:
-        logger.debug("=====================================")
+    params = UserLive(web_rid=webcast_id, room_id_str="")
+    response = await crawler.fetch_live(params)
+    live = UserLiveFilter(response)
 
-        params = UserLive(web_rid=webcast_id, room_id_str="")
-        response = await crawler.fetch_live(params)
-        live = UserLiveFilter(response)
-
-        logger.debug(
-            _("直播ID: {0} 直播标题: {1} 直播状态: {2} 观看人数: {3}").format(
-                live.room_id, live.live_title, live.live_status, live.user_count
-            )
+    logger.debug(
+        _("直播ID: {0} 直播标题: {1} 直播状态: {2} 观看人数: {3}").format(
+            live.room_id, live.live_title, live.live_status, live.user_count
         )
-        logger.debug(
-            _("子分区: {0} 主播昵称: {1}").format(live.sub_partition_title, live.nickname)
-        )
-        logger.debug("=====================================")
-        logger.debug(_("直播信息爬取结束"))
+    )
+    logger.debug(
+        _("子分区: {0} 主播昵称: {1}").format(live.sub_partition_title, live.nickname)
+    )
+    logger.debug("=====================================")
+    logger.debug(_("直播信息爬取结束"))
 
-        webcast_data = live._to_dict()
-        return webcast_data
+    webcast_data = live._to_dict()
+    return webcast_data
 
 
 async def fetch_user_live_videos_by_room_id(room_id: str):
@@ -647,33 +638,31 @@ async def fetch_user_live_videos_by_room_id(room_id: str):
     """
 
     logger.debug(_("开始爬取房间号: {0} 的数据").format(room_id))
+    logger.debug("=====================================")
 
-    async with DouyinCrawler() as crawler:
-        logger.debug("=====================================")
+    params = UserLive2(room_id=room_id)
+    response = await crawler.fetch_live_room_id(params)
+    live = UserLive2Filter(response)
 
-        params = UserLive2(room_id=room_id)
-        response = await crawler.fetch_live_room_id(params)
-        live = UserLive2Filter(response)
-
-        logger.debug(
-            _("直播ID: {0} 直播标题: {1} 直播状态: {2} 观看人数: {3}").format(
-                live.web_rid, live.live_title, live.live_status, live.user_count
-            )
+    logger.debug(
+        _("直播ID: {0} 直播标题: {1} 直播状态: {2} 观看人数: {3}").format(
+            live.web_rid, live.live_title, live.live_status, live.user_count
         )
-        logger.debug(
-            _("主播昵称: {0} 开播时间: {1} 直播流清晰度: {2}").format(
-                live.nickname,
-                live.create_time,
-                "、".join(
-                    [f"{key}: {value}" for key, value in live.resolution_name.items()]
-                ),
-            )
+    )
+    logger.debug(
+        _("主播昵称: {0} 开播时间: {1} 直播流清晰度: {2}").format(
+            live.nickname,
+            live.create_time,
+            "、".join(
+                [f"{key}: {value}" for key, value in live.resolution_name.items()]
+            ),
         )
-        logger.debug("=====================================")
-        logger.debug(_("直播信息爬取结束"))
+    )
+    logger.debug("=====================================")
+    logger.debug(_("直播信息爬取结束"))
 
-        webcast_data = live._to_dict()
-        return webcast_data
+    webcast_data = live._to_dict()
+    return webcast_data
 
 
 @mode_handler("feed")
@@ -722,47 +711,46 @@ async def fetch_user_feed_videos(
 
     logger.debug(_("开始爬取用户: {0} feed的视频").format(sec_user_id))
 
-    async with DouyinCrawler() as crawler:
-        while videos_collected < max_counts:
-            current_request_size = min(page_counts, max_counts - videos_collected)
+    while videos_collected < max_counts:
+        current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
-            logger.debug(
-                _("最大数量: {0} 每次请求数量: {1}").format(max_counts, current_request_size)
-            )
-            logger.debug(_("开始爬取第 {0} 页").format(max_cursor))
+        logger.debug("=====================================")
+        logger.debug(
+            _("最大数量: {0} 每次请求数量: {1}").format(max_counts, current_request_size)
+        )
+        logger.debug(_("开始爬取第 {0} 页").format(max_cursor))
 
-            params = UserPost(
-                max_cursor=max_cursor,
-                count=current_request_size,
-                sec_user_id=sec_user_id,
-            )
-            response = await crawler.fetch_user_post(params)
-            video = UserPostFilter(response)
+        params = UserPost(
+            max_cursor=max_cursor,
+            count=current_request_size,
+            sec_user_id=sec_user_id,
+        )
+        response = await crawler.fetch_user_post(params)
+        video = UserPostFilter(response)
 
-            if not video.has_aweme:
-                logger.debug(_("{0} 页没有找到作品".format(max_cursor)))
-                if not video.has_more:
-                    logger.debug(_("用户: {0} 所有作品采集完毕".format(sec_user_id)))
-                    break
+        if not video.has_aweme:
+            logger.debug(_("{0} 页没有找到作品".format(max_cursor)))
+            if not video.has_more:
+                logger.debug(_("用户: {0} 所有作品采集完毕".format(sec_user_id)))
+                break
 
-                max_cursor = video.max_cursor
-                continue
-
-            logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
-            logger.debug(
-                _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
-                    video.aweme_id, video.desc, video.nickname
-                )
-            )
-            logger.debug("=====================================")
-
-            aweme_data_list = video._to_list()
-            yield aweme_data_list
-
-            # 更新已经处理的视频数量 (Update the number of videos processed)
-            videos_collected += len(video.aweme_id)
             max_cursor = video.max_cursor
+            continue
+
+        logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
+        logger.debug(
+            _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
+                video.aweme_id, video.desc, video.nickname
+            )
+        )
+        logger.debug("=====================================")
+
+        aweme_data_list = video._to_list()
+        yield aweme_data_list
+
+        # 更新已经处理的视频数量 (Update the number of videos processed)
+        videos_collected += len(video.aweme_id)
+        max_cursor = video.max_cursor
 
     logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
 
@@ -865,15 +853,18 @@ async def handle_sso_login():
             rich_console.print(error_message)
             return False, ""
 
-    async with DouyinCrawler() as crawler:
-        verify_fp = VerifyFpManager.gen_verify_fp()
-        return await get_qrcode()
+    verify_fp = VerifyFpManager.gen_verify_fp()
+    return await get_qrcode()
 
 
 async def main(kwargs):
+    global downloader, crawler
+
     mode = kwargs.get("mode")
-    if mode in mode_function_map:
-        await mode_function_map[mode](kwargs)
-    else:
-        logger.error(_("不存在该模式: {0}").format(mode))
-        rich_console.print(_("不存在该模式: {0}").format(mode))
+    downloader = DouyinDownloader(kwargs)
+    async with DouyinCrawler(kwargs) as crawler:
+        if mode in mode_function_map:
+            await mode_function_map[mode](kwargs)
+        else:
+            logger.error(_("不存在该模式: {0}").format(mode))
+            rich_console.print(_("不存在该模式: {0}").format(mode))
