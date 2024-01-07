@@ -391,7 +391,6 @@ def douyin(ctx, config, init_config, update_config, **kwargs):
         # 用户没有指定配置文件，使用主配置文件
         kwargs = load_config(main_manager, ctx, kwargs)
 
-    # 如果用户想更新配置，但没有提供-c参数
     # 检查是否提供了代理参数
     if cli_proxies:
         # 解析tuple代理参数
@@ -407,6 +406,7 @@ def douyin(ctx, config, init_config, update_config, **kwargs):
         "https": https_proxy if https_proxy else None,
     }
 
+    # 如果用户想更新配置，但没有提供 -c 参数
     if update_config and not config:
         raise click.UsageError(_("要更新配置, 首先需要使用'-c'选项提供一个配置文件路径"))
 

@@ -16,9 +16,10 @@ from f2.apps.douyin.utils import format_file_name
 
 class DouyinDownloader(BaseDownloader):
     def __init__(self, kwargs: dict = {}):
+        if kwargs["cookie"] is None:
             raise ValueError(
                 _(
-                    "Cookie不能为空。请提供有效的 Cookie 参数，或自动从浏览器获取 f2 -d dy --help，如扫码登录请保留双引号cookie: "
+                    "cookie不能为空。请提供有效的 cookie 参数，或自动从浏览器获取 f2 -d dy --help，如扫码登录请保留双引号cookie: "
                     "，再使用--sso-login命令。"
                 )
             )
