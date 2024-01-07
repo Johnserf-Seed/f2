@@ -120,9 +120,7 @@ class TokenManager:
                 )
 
                 if response.status_code == 401:
-                    raise APIUnauthorizedError(
-                        _("由于某些错误, 无法获取ttwid")
-                    )  # (Unauthorized request,Unable to get ttwid)
+                    raise APIUnauthorizedError(_("由于某些错误, 无法获取ttwid"))
                 elif response.status_code == 404:
                     raise APINotFoundError(_("无法找到API端点"))
 

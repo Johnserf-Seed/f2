@@ -163,9 +163,7 @@ class TokenManager:
                 response = client.get(cls.odin_tt_conf["url"])
 
                 if response.status_code == 401:
-                    raise APIUnauthorizedError(
-                        _("401 由于某些错误, 无法获取ttwid")
-                    )  # (Unauthorized request,Unable to get ttwid)
+                    raise APIUnauthorizedError(_("401 由于某些错误, 无法获取ttwid"))
                 elif response.status_code == 404:
                     raise APINotFoundError(_("404 无法找到API端点"))
 
@@ -538,7 +536,7 @@ def create_user_folder(kwargs: dict, nickname: Union[str, int]) -> Path:
 
     # 确定函数参数是否正确
     if not isinstance(kwargs, dict):
-        raise TypeError("kwargs 参数必须是字典")  # (The kwargs parameter must be a dict)
+        raise TypeError("kwargs 参数必须是字典")
 
     # 创建基础路径
     base_path = Path(kwargs.get("path", "Download"))
