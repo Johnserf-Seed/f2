@@ -66,9 +66,9 @@ def timestamp_2_str(
     Args:
         timestamp (int): 要转换的 UNIX 时间戳 (The UNIX timestamp to be converted)
         format (str, optional): 返回的日期时间字符串的格式。
-                                默认为 '%Y-%m-%d %H:%M:%S'。
+                                默认为 '%Y-%m-%d %H-%M-%S'。
                                 (The format for the returned date-time string
-                                Defaults to '%Y-%m-%d %H:%M:%S')
+                                Defaults to '%Y-%m-%d %H-%M-%S')
 
     Returns:
         str: 格式化的日期时间字符串 (The formatted date-time string)
