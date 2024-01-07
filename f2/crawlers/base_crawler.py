@@ -42,7 +42,7 @@ class BaseCrawler:
             self.proxies = proxies
             # [f"{k}://{v}" for k, v in proxies.items()]
         else:
-            self.proxies = proxies or None
+            self.proxies = None
 
         # 爬虫请求头 / Crawler request header
         self.crawler_headers = crawler_headers or {}
