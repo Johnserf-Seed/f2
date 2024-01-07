@@ -26,15 +26,22 @@ from f2.utils._dl import (
 class BaseDownloader(BaseCrawler):
     """基础下载器 (Base Downloader Class)"""
 
-    def __init__(
-        self,
-        proxies: dict = {},
-        headers: dict = {},
-    ):
-        super().__init__(proxies=proxies, crawler_headers=headers)
+    def __init__(self, kwargs: dict = {}):
+        proxies_conf = kwargs.get("proxies")
+        proxies = {
+            "http://": proxies_conf.get("http", None),
+            "https://": proxies_conf.get("https", None),
+        }
+
+        self.headers = {
+            "User-Agent": kwargs["headers"]["User-Agent"],
+            "Referer": kwargs["headers"]["Referer"],
+            "Cookie": kwargs["cookie"],
+        }
+
+        super().__init__(proxies=proxies, crawler_headers=self.headers)
         self.progress = RichConsoleManager().progress
         self.download_tasks = []
-        self.headers = headers
 
     @staticmethod
     def _ensure_path(path: Union[str, Path]) -> Path:
