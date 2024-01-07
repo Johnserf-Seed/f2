@@ -66,12 +66,16 @@ class DouyinCrawler(BaseCrawler):
         )
 
     async def fetch_user_profile(self, params: UserProfile):
-        endpoint = XBogusManager.model_2_endpoint(dyendpoint.USER_DETAIL, params.dict())
+        endpoint = XBogusManager.model_2_endpoint(
+            dyendpoint.USER_DETAIL, params.dict()
+        )  # fmt: off
         logger.debug(_("用户信息接口地址:" + endpoint))
         return await self._fetch_json(endpoint)
 
     async def fetch_user_post(self, params: UserPost):
-        endpoint = XBogusManager.model_2_endpoint(dyendpoint.USER_POST, params.dict())
+        endpoint = XBogusManager.model_2_endpoint(
+            dyendpoint.USER_POST, params.dict()
+        )  # fmt: off
         logger.debug(_("主页作品接口地址:" + endpoint))
         return await self._fetch_json(endpoint)
 
@@ -90,12 +94,16 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_json(endpoint)
 
     async def fetch_user_mix(self, params: UserMix):
-        endpoint = XBogusManager.model_2_endpoint(dyendpoint.MIX_AWEME, params.dict())
+        endpoint = XBogusManager.model_2_endpoint(
+            dyendpoint.MIX_AWEME, params.dict()
+        )  # fmt: off
         logger.debug(_("合集作品接口地址:" + endpoint))
         return await self._fetch_json(endpoint)
 
     async def fetch_post_detail(self, params: PostDetail):
-        endpoint = XBogusManager.model_2_endpoint(dyendpoint.POST_DETAIL, params.dict())
+        endpoint = XBogusManager.model_2_endpoint(
+            dyendpoint.POST_DETAIL, params.dict()
+        )  # fmt: off
         logger.debug(_("作品详情接口地址:" + endpoint))
         return await self._fetch_json(endpoint)
 
@@ -107,17 +115,23 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_json(endpoint)
 
     async def fetch_post_feed(self, params: PostDetail):
-        endpoint = XBogusManager.model_2_endpoint(dyendpoint.TAB_FEED, params.dict())
+        endpoint = XBogusManager.model_2_endpoint(
+            dyendpoint.TAB_FEED, params.dict()
+        )  # fmt: off
         logger.debug(_("首页推荐作品接口地址:" + endpoint))
         return await self._fetch_json(endpoint)
 
     async def fetch_follow_feed(self, params: PostDetail):
-        endpoint = XBogusManager.model_2_endpoint(dyendpoint.FOLLOW_FEED, params.dict())
+        endpoint = XBogusManager.model_2_endpoint(
+            dyendpoint.FOLLOW_FEED, params.dict()
+        )  # fmt: off
         logger.debug(_("关注作品接口地址:" + endpoint))
         return await self._fetch_json(endpoint)
 
     async def fetch_friend_feed(self, params: PostDetail):
-        endpoint = XBogusManager.model_2_endpoint(dyendpoint.FRIEND_FEED, params.dict())
+        endpoint = XBogusManager.model_2_endpoint(
+            dyendpoint.FRIEND_FEED, params.dict()
+        )  # fmt: off
         logger.debug(_("朋友作品接口地址:" + endpoint))
         return await self._fetch_json(endpoint)
 
@@ -129,7 +143,9 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_json(endpoint)
 
     async def fetch_live(self, params: UserLive):
-        endpoint = XBogusManager.model_2_endpoint(dyendpoint.LIVE_INFO, params.dict())
+        endpoint = XBogusManager.model_2_endpoint(
+            dyendpoint.LIVE_INFO, params.dict()
+        )  # fmt: off
         logger.debug(_("直播接口地址:" + endpoint))
         return await self._fetch_json(endpoint)
 
@@ -153,7 +169,9 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_json(endpoint)
 
     async def fetch_locate_post(self, params: UserPost):
-        endpoint = XBogusManager.model_2_endpoint(dyendpoint.LOCATE_POST, params.dict())
+        endpoint = XBogusManager.model_2_endpoint(
+            dyendpoint.LOCATE_POST, params.dict()
+        )  # fmt: off
         logger.debug(_("定位上一次作品接口地址:" + endpoint))
         return await self._fetch_json(endpoint)
 

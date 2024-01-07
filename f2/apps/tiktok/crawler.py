@@ -60,17 +60,23 @@ class TiktokCrawler(BaseCrawler):
         )
 
     async def fetch_user_profile(self, params: UserProfile):
-        endpoint = XBogusManager.model_2_endpoint(tkendpoint.USER_DETAIL, params.dict())
+        endpoint = XBogusManager.model_2_endpoint(
+            tkendpoint.USER_DETAIL, params.dict()
+        )  # fmt: off
         logger.debug(_("用户信息接口地址:" + endpoint))
         return await self._fetch_json(endpoint)
 
     async def fetch_user_post(self, params: UserPost):
-        endpoint = XBogusManager.model_2_endpoint(tkendpoint.USER_POST, params.dict())
+        endpoint = XBogusManager.model_2_endpoint(
+            tkendpoint.USER_POST, params.dict()
+        )  # fmt: off
         logger.debug(_("主页作品接口地址:" + endpoint))
         return await self._fetch_json(endpoint)
 
     async def fetch_user_like(self, params: UserLike):
-        endpoint = XBogusManager.model_2_endpoint(tkendpoint.USER_LIKE, params.dict())
+        endpoint = XBogusManager.model_2_endpoint(
+            tkendpoint.USER_LIKE, params.dict()
+        )  # fmt: off
         logger.debug(_("喜欢作品接口地址:" + endpoint))
         return await self._fetch_json(endpoint)
 
@@ -89,7 +95,9 @@ class TiktokCrawler(BaseCrawler):
         return await self._fetch_json(endpoint)
 
     async def fetch_user_mix(self, params: UserMix):
-        endpoint = XBogusManager.model_2_endpoint(tkendpoint.USER_MIX, params.dict())
+        endpoint = XBogusManager.model_2_endpoint(
+            tkendpoint.USER_MIX, params.dict()
+        )  # fmt: off
         logger.debug(_("合辑作品接口地址:" + endpoint))
         return await self._fetch_json(endpoint)
 
