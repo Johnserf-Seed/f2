@@ -302,6 +302,13 @@ def handler_sso_login(
     callback=handler_language,
 )
 @click.option(
+    "--proxies",
+    "-P",
+    type=str,
+    nargs=2,
+    help=_("代理服务器，最多 2 个参数，http与https。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"),
+)
+@click.option(
     "--update-config",
     type=bool,
     is_flag=True,
