@@ -82,7 +82,7 @@ class TiktokDownloader(BaseDownloader):
                 )
                 return aweme_datas
             else:
-                logger.warning(_("作品发布时间不在指定区间内：%s"), aweme_date_str)
+                logger.warning(_("作品发布时间不在指定区间内：{0}").format(aweme_date_str))
                 return None
 
         elif isinstance(aweme_datas, list):
