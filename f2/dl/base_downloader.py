@@ -42,6 +42,7 @@ class BaseDownloader(BaseCrawler):
         super().__init__(proxies=proxies, crawler_headers=self.headers)
         self.progress = RichConsoleManager().progress
         self.download_tasks = []
+        logger.debug(_("BaseDownloader 请求头headers:{0}".format(self.headers)))
 
     @staticmethod
     def _ensure_path(path: Union[str, Path]) -> Path:
