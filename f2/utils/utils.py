@@ -73,7 +73,7 @@ def timestamp_2_str(
     Returns:
         str: 格式化的日期时间字符串 (The formatted date-time string)
     """
-    if timestamp is None:
+    if timestamp is None or timestamp == "None":
         return ""
 
     return datetime.datetime.fromtimestamp(float(timestamp)).strftime(format)
