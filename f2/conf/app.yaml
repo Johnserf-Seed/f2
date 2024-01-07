@@ -8,7 +8,7 @@ douyin:
   naming: '{create}_{desc}'
   path: Download
   mode: post
-  url:
+  url: ""
   interval: all
   timeout: 10
   max_retries: 5
@@ -48,7 +48,7 @@ tiktok:
   naming: '{create}_{desc}'
   path: Download
   mode: post
-  url:
+  url: ""
   interval: all
   timeout: 10
   max_retries: 5
