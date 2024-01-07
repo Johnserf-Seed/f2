@@ -1,7 +1,5 @@
 # path: f2/apps/douyin/crawler.py
 
-import f2
-
 from f2.log.logger import logger
 from f2.i18n.translator import _
 from f2.utils.conf_manager import ConfigManager
@@ -24,46 +22,20 @@ from f2.apps.douyin.utils import XBogusManager
 
 
 class DouyinCrawler(BaseCrawler):
-    app_manager = ConfigManager(f2.APP_CONFIG_FILE_PATH)
-    douyin_conf = app_manager.get_config("douyin")
-
-    max_retries = douyin_conf["max_retries"]
-    max_connections = douyin_conf["max_connections"]
-    timeout = douyin_conf["timeout"]
-    max_tasks = douyin_conf["max_tasks"]
-    proxies_conf = douyin_conf.get("proxies", None)
-    proxies = {
-        "http://": proxies_conf.get("http", None),
-        "https://": proxies_conf.get("https", None),
-    }
-
-    def __init__(self, cli_params=None):
-        self.crawler_headers = {
-            "User-Agent": self.douyin_conf["headers"]["User-Agent"],
-            "Referer": self.douyin_conf["headers"]["Referer"],
-            "Cookie": self.douyin_conf["cookie"],
+    def __init__(self, kwargs: dict = {}):
+        proxies_conf = kwargs.get("proxies")
+        proxies = {
+            "http://": proxies_conf.get("http", None),
+            "https://": proxies_conf.get("https", None),
         }
 
-        # 如果提供了命令行参数，并且其中有cookie参数，则更新cookie
-        if cli_params and "cookie" in cli_params:
-            self.crawler_headers["Cookie"] = cli_params["cookie"]
+        self.headers = {
+            "User-Agent": kwargs["headers"]["User-Agent"],
+            "Referer": kwargs["headers"]["Referer"],
+            "Cookie": kwargs["cookie"],
+        }
 
-        if self.crawler_headers["Cookie"] is None:
-            raise ValueError(
-                _(
-                    "Cookie不能为空。请提供有效的 Cookie 参数，或自动从浏览器获取 f2 -d dy --help，如扫码登录请保留双引号cookie: "
-                    "，再使用--sso-login命令。"
-                )
-            )
-
-        super().__init__(
-            max_retries=self.max_retries,
-            max_connections=self.max_connections,
-            timeout=self.timeout,
-            max_tasks=self.max_tasks,
-            crawler_headers=self.crawler_headers,
-            proxies=self.proxies,
-        )
+        super().__init__(proxies=proxies, crawler_headers=self.headers)
 
     async def fetch_user_profile(self, params: UserProfile):
         endpoint = XBogusManager.model_2_endpoint(
