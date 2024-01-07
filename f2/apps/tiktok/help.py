@@ -68,9 +68,9 @@ def help() -> None:
         (
             "--update-config",
             "[dark_cyan]Flag",
-            _("初始化配置文件。不能同时初始化和更新配置文件"),
             _("使用命令行选项更新配置文件。需要先使用'-c'选项提供一个配置文件路径"),
         ),
+        ("--init-config", "[dark_cyan]Flag", _("初始化配置文件。不能同时初始化和更新配置文件")),
         (
             "--auto-cookie",
             "[dark_cyan]Choice",

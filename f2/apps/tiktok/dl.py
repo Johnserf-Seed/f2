@@ -1,6 +1,5 @@
 # path: f2/apps/tiktok/dl.py
 
-import f2
 import sys
 from datetime import datetime
 from typing import Any, Union
@@ -8,7 +7,6 @@ from typing import Any, Union
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.dl.base_downloader import BaseDownloader
-from f2.utils.conf_manager import ConfigManager
 from f2.utils.utils import get_timestamp, timestamp_2_str
 from f2.apps.tiktok.db import AsyncUserDB
 from f2.apps.tiktok.utils import format_file_name
