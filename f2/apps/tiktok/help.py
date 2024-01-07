@@ -61,14 +61,15 @@ def help() -> None:
             _("显示语言。默认为 'zh_CN'。可选：'zh_CN'、'en_US'"),
         ),
         (
-            "--update-config",
-            "[dark_cyan]Flag",
-            _("使用命令行选项更新配置文件。需要先使用'-c'选项提供一个配置文件路径"),
+            "-P --proxies",
+            "[dark_cyan]str",
+            _("代理服务器，最多 2 个参数，http与https。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"),
         ),
         (
-            "--init-config",
+            "--update-config",
             "[dark_cyan]Flag",
             _("初始化配置文件。不能同时初始化和更新配置文件"),
+            _("使用命令行选项更新配置文件。需要先使用'-c'选项提供一个配置文件路径"),
         ),
         (
             "--auto-cookie",
