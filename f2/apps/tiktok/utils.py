@@ -8,12 +8,9 @@ import httpx
 import random
 import asyncio
 
-from typing import Union
+from typing import Union, Dict, Optional
 from pathlib import Path
 from urllib.parse import quote, unquote
-from typing import Dict, Optional, Union
-from httpx import URL, Proxy
-
 
 from f2.i18n.translator import _
 from f2.log.logger import logger
@@ -86,7 +83,11 @@ class TokenManager:
 
             except httpx.RequestError:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
-                raise APIConnectionError(_("连接端点失败: {0}").format(cls.token_conf["url"]))
+                raise APIConnectionError(
+                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
+                        cls.token_conf["url"], cls.proxies
+                    )
+                )
 
             except httpx.HTTPStatusError as e:
                 # 捕获 httpx 的状态代码错误 (captures specific status code errors from httpx)
@@ -134,7 +135,11 @@ class TokenManager:
 
             except httpx.RequestError:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
-                raise APIConnectionError(_("连接端点失败: {0}").format(cls.ttwid_conf["url"]))
+                raise APIConnectionError(
+                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
+                        cls.ttwid_conf["url"], cls.proxies
+                    )
+                )
 
             except httpx.HTTPStatusError as e:
                 # 捕获 httpx 的状态代码错误 (captures specific status code errors from httpx)
@@ -158,9 +163,7 @@ class TokenManager:
                 response = client.get(cls.odin_tt_conf["url"])
 
                 if response.status_code == 401:
-                    raise APIUnauthorizedError(
-                        _("401 由于某些错误, 无法获取ttwid")
-                    )  # (Unauthorized request,Unable to get ttwid)
+                    raise APIUnauthorizedError(_("401 由于某些错误, 无法获取ttwid"))
                 elif response.status_code == 404:
                     raise APINotFoundError(_("404 无法找到API端点"))
 
@@ -174,8 +177,10 @@ class TokenManager:
             except httpx.RequestError:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
                 raise APIConnectionError(
-                    _("连接端点失败: {0}").format(cls.odin_tt_conf["url"])
-                )  # (Failed to connect to endpoint)
+                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
+                        cls.odin_tt_conf["url"], cls.proxies
+                    )
+                )
 
             except httpx.HTTPStatusError as e:
                 # 捕获 httpx 的状态代码错误 (captures specific status code errors from httpx)
@@ -270,7 +275,9 @@ class SecUserIdFetcher:
                     raise ConnectionError(_("接口状态码异常, 请检查重试"))
 
             except httpx.RequestError:
-                raise APIConnectionError(_("连接端点失败: {0}").format(url))
+                raise APIConnectionError(
+                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(url), TokenManager.proxies
+                )
 
             except APIError as e:
                 e.display_error()
@@ -339,7 +346,9 @@ class SecUserIdFetcher:
                     )
 
             except httpx.RequestError:
-                raise APIConnectionError(_("连接端点失败: {0}").format(url))
+                raise APIConnectionError(
+                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(url), TokenManager.proxies
+                )
 
             except APIError as e:
                 e.display_error()
@@ -416,7 +425,9 @@ class AwemeIdFetcher:
                     )
 
             except httpx.RequestError:
-                raise APIConnectionError(_("连接端点失败: {0}").format(url))
+                raise APIConnectionError(
+                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(url), TokenManager.proxies
+                )
 
             except APIError as e:
                 e.display_error()
@@ -486,7 +497,7 @@ def format_file_name(
         fields.update(custom_fields)
     else:
         fields = {
-            "create": aweme_data.get("create_time", ""),
+            "create": aweme_data.get("createTime", ""),
             "nickname": aweme_data.get("nickname", ""),
             "aweme_id": aweme_data.get("aweme_id", ""),
             "desc": aweme_data.get("desc", ""),
@@ -525,7 +536,7 @@ def create_user_folder(kwargs: dict, nickname: Union[str, int]) -> Path:
 
     # 确定函数参数是否正确
     if not isinstance(kwargs, dict):
-        raise TypeError("kwargs 参数必须是字典")  # (The kwargs parameter must be a dict)
+        raise TypeError("kwargs 参数必须是字典")
 
     # 创建基础路径
     base_path = Path(kwargs.get("path", "Download"))

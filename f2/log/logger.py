@@ -16,11 +16,11 @@ class LogManager(metaclass=Singleton):
             return
 
         self.logger = logging.getLogger("f2")
-        self.logger.setLevel(logging.WARNING)
+        self.logger.setLevel(logging.INFO)
         self.log_dir = None
         self._initialized = True
 
-    def setup_logging(self, level=logging.WARNING, log_to_console=False, log_path=None):
+    def setup_logging(self, level=logging.INFO, log_to_console=False, log_path=None):
         self.logger.handlers.clear()
         self.logger.setLevel(level)
 
@@ -78,7 +78,7 @@ class LogManager(metaclass=Singleton):
         time.sleep(1)  # 确保文件被释放
 
 
-def log_setup(log_to_console=False):
+def log_setup(log_to_console=True):
     logger = logging.getLogger("f2")
     if logger.hasHandlers():
         # logger已经被设置，不做任何操作

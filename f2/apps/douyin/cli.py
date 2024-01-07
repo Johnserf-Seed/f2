@@ -229,18 +229,22 @@ def handler_sso_login(
     "--music",
     "-m",
     type=bool,
-    default="yes",
-    help=_("是否保存视频原声。默认为 'yes'，可选：'yes'、'no'"),
+    # default="yes",
+    help=_("是否保存视频原声。可选：'yes'、'no'"),
 )
 @click.option(
     "--cover",
     "-v",
     type=bool,
-    default="yes",
-    help=_("是否保存视频封面。默认为 'yes'，可选：'yes'、'no'"),
+    # default="yes",
+    help=_("是否保存视频封面。可选：'yes'、'no'"),
 )
 @click.option(
-    "--desc", "-d", type=bool, default="yes", help=_("是否保存视频文案。默认为 'yes'，可选：'yes'、'no'")
+    "--desc",
+    "-d",
+    type=bool,
+    # default="yes",
+    help=_("是否保存视频文案。可选：'yes'、'no'"),
 )
 @click.option(
     "--path", "-p", type=str, default="Download", help=_("作品保存位置，默认为 'Download'")
@@ -249,8 +253,8 @@ def handler_sso_login(
     "--folderize",
     "-f",
     type=bool,
-    default="yes",
-    help=_("是否将作品保存到单独的文件夹，默认为 'yes'。可选：'yes'、'no'"),
+    # default="yes",
+    help=_("是否将作品保存到单独的文件夹。可选：'yes'、'no'"),
 )
 @click.option(
     "--mode",
@@ -298,6 +302,13 @@ def handler_sso_login(
     callback=handler_language,
 )
 @click.option(
+    "--proxies",
+    "-P",
+    type=str,
+    nargs=2,
+    help=_("代理服务器，最多 2 个参数，http与https。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"),
+)
+@click.option(
     "--update-config",
     type=bool,
     is_flag=True,
@@ -330,40 +341,84 @@ def handler_sso_login(
 )
 @click.pass_context
 def douyin(ctx, config, init_config, update_config, **kwargs):
+    # 读取主配置文件
+    main_manager = ConfigManager(f2.APP_CONFIG_FILE_PATH)
+
+    # CLI代理配置
+    cli_proxies = kwargs.get("proxies")
+
+    # 从主配置读取固定User-Agent与Referer值
+    kwargs.setdefault("headers", {})
+    kwargs["headers"]["User-Agent"] = (
+        main_manager.get_config("douyin").get("headers").get("User-Agent")
+    )
+    kwargs["headers"]["Referer"] = (
+        main_manager.get_config("douyin").get("headers").get("Referer")
+    )
+
     # 如果用户想初始化新配置文件
     if init_config and not update_config:
-        manager = ConfigManager("conf/app.yaml")
-        manager.generate_config("douyin", init_config)
+        main_manager.generate_config("douyin", init_config)
         return
-    elif not init_config:
-        pass
-    else:
+    elif init_config:
         raise click.UsageError(_("不能同时初始化和更新配置文件"))
 
-    # 如果用户想更新配置，但没有提供-c参数
+    def load_config(config_manager, ctx, kwargs):
+        app_config = config_manager.get_config("douyin", {})
+
+        for config_key, config_value in app_config.items():
+            # 在命令的参数列表中找到当前的键
+            param = next((p for p in ctx.command.params if p.name == config_key), None)
+            if param:
+                # 如果配置文件中的值为空，则跳过
+                if config_value is None or config_value == "":
+                    pass
+                else:
+                    # 如果命令行参数没有提供值，则使用配置文件的值
+                    if ctx.params[config_key] is None or ctx.params[config_key] == "":
+                        kwargs[config_key] = config_value
+                    else:
+                        kwargs[config_key] = ctx.params[config_key]
+
+        return kwargs
+
+    # 用户指定自定义配置文件
+    if config:
+        # 读取主配置文件并合并
+        kwargs = load_config(main_manager, ctx, kwargs)
+        # 读取用户自定义配置文件并合并
+        user_manager = ConfigManager(config)
+        kwargs = load_config(user_manager, ctx, kwargs)
+    else:
+        # 用户没有指定配置文件，使用主配置文件
+        kwargs = load_config(main_manager, ctx, kwargs)
+
+    # 检查是否提供了代理参数
+    if cli_proxies:
+        # 解析tuple代理参数
+        http_proxy, https_proxy = cli_proxies
+    else:
+        # 解析dict代理参数
+        http_proxy = kwargs.get("proxies").get("http")
+        https_proxy = kwargs.get("proxies").get("https")
+
+    # 更新kwargs中的proxies参数
+    kwargs["proxies"] = {
+        "http": http_proxy if http_proxy else None,
+        "https": https_proxy if https_proxy else None,
+    }
+
+    # 如果用户想更新配置，但没有提供 -c 参数
     if update_config and not config:
         raise click.UsageError(_("要更新配置, 首先需要使用'-c'选项提供一个配置文件路径"))
 
-    # 如果提供了自定义配置文件的路径，则加载配置
-    if config:
-        f2.APP_CONFIG_FILE_PATH = config
-        manager = ConfigManager(config)
+    # 如果指定了 update_config，更新配置文件
+    if update_config:
+        main_manager.update_config_with_args("douyin", **kwargs)
 
-        # 提取特定应用的配置
-        app_config = manager.get_config("douyin", {})
-
-        # 合并配置文件的值到kwargs
-        for key, value in app_config.items():
-            # 在命令的参数列表中找到当前的键
-            param = next((p for p in ctx.command.params if p.name == key), None)
-            if param:
-                default_value = param.default  # 获取默认值
-                if ctx.params[key] == default_value:  # 如果命令行参数等于默认值
-                    kwargs[key] = value  # 使用配置文件的值覆盖默认值
-
-        # 如果指定了update_config，更新配置文件
-        if update_config:
-            manager.update_config_with_args("douyin", **kwargs)
+    logger.info(_("主配置： {0}".format(f2.APP_CONFIG_FILE_PATH)))
+    logger.info(_("自定义配置： {0}".format(config)))
+    logger.debug(_("CLI参数：{0}").format(kwargs))
 
     # 尝试从命令行参数或kwargs中获取URL
     if not kwargs.get("url"):

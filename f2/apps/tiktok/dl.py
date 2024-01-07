@@ -1,31 +1,28 @@
 # path: f2/apps/tiktok/dl.py
 
-import f2
+import sys
+from datetime import datetime
 from typing import Any, Union
+
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.dl.base_downloader import BaseDownloader
-from f2.utils.conf_manager import ConfigManager
 from f2.utils.utils import get_timestamp, timestamp_2_str
 from f2.apps.tiktok.db import AsyncUserDB
 from f2.apps.tiktok.utils import format_file_name
 
 
 class TiktokDownloader(BaseDownloader):
-    def __init__(self):
-        app_manager = ConfigManager(f2.APP_CONFIG_FILE_PATH)
-        tiktok_conf = app_manager.get_config("tiktok")
-        proxies_conf = tiktok_conf.get("proxies", None)
-        proxies = {
-            "http://": proxies_conf.get("http", None),
-            "https://": proxies_conf.get("https", None),
-        }
-        self.headers = {
-            "User-Agent": tiktok_conf["headers"]["User-Agent"],
-            "Referer": tiktok_conf["headers"]["Referer"],
-            "Cookie": tiktok_conf["cookie"],
-        }
-        super().__init__(proxies=proxies, headers=self.headers)
+    def __init__(self, kwargs: dict = {}):
+        if kwargs["cookie"] is None:
+            raise ValueError(
+                _(
+                    "cookie不能为空。请提供有效的 cookie 参数，或自动从浏览器获取 f2 -d dy --help，如扫码登录请保留双引号cookie: "
+                    "，再使用--sso-login命令。"
+                )
+            )
+
+        super().__init__(kwargs)
 
     async def save_last_aweme_id(self, secUid: str, aweme_id: str) -> None:
         """
@@ -38,6 +35,66 @@ class TiktokDownloader(BaseDownloader):
 
         async with AsyncUserDB("tiktok_users.db") as db:
             await db.update_user_info(secUid=secUid, last_aweme_id=aweme_id)
+
+    async def filter_aweme_datas_by_interval(
+        self, aweme_datas: Union[list, dict], interval: str
+    ) -> Union[list[dict], dict, None]:
+        """
+        筛选指定日期区间内的作品
+
+        Args:
+            aweme_datas (Union[list, dict]): 作品数据列表
+            interval (str): 日期区间，格式：2022-01-01|2023-01-01
+
+        Returns:
+            filtered_aweme_datas (Union[list, dict]): 筛选后的作品数据列表
+        """
+
+        if not aweme_datas or not interval:
+            return None
+
+        start_str, end_str = interval.split("|")
+
+        try:
+            start_date = datetime.strptime(start_str + " 00-00-00", "%Y-%m-%d %H-%M-%S")
+            end_date = datetime.strptime(end_str + " 23-59-59", "%Y-%m-%d %H-%M-%S")
+            logger.info(_("筛选日期区间：{0} 至 {1}").format(start_date, end_date))
+        except ValueError:
+            logger.error(_("日期区间参数格式错误，请查阅文档后重试"))
+            return None
+
+        logger.info(aweme_datas)
+
+        if isinstance(aweme_datas, dict):
+            aweme_date_str = aweme_datas.get("createTime")
+            try:
+                aweme_date = datetime.strptime(aweme_date_str, "%Y-%m-%d %H-%M-%S")
+            except ValueError:
+                logger.warning(_("无法解析作品发布时间：{0}").format(aweme_date_str))
+                return None
+
+            # 检查作品发布时间是否在指定区间内
+            if start_date <= aweme_date <= end_date:
+                logger.info(
+                    _("作品发布时间在指定区间内：作品id {0} 发布时间 {1}").format(
+                        aweme_datas.get("aweme_id"), aweme_date_str
+                    )
+                )
+                return aweme_datas
+            else:
+                logger.warning(_("作品发布时间不在指定区间内：{0}").format(aweme_date_str))
+                return None
+
+        elif isinstance(aweme_datas, list):
+            # 遍历列表中的每个字典
+            filtered_list = []
+            for aweme_data in aweme_datas:
+                filtered_data = await self.filter_aweme_datas_by_interval(
+                    aweme_data, interval
+                )
+                if filtered_data:
+                    filtered_list.append(filtered_data)
+            return filtered_list
 
     async def create_download_tasks(
         self, kwargs: dict, aweme_datas: Union[list, dict], user_path: Any
@@ -59,11 +116,26 @@ class TiktokDownloader(BaseDownloader):
         ):
             return
 
-        if isinstance(aweme_datas, dict):
-            await self.handler_download(kwargs, aweme_datas, user_path)
-        else:
-            for aweme_data in aweme_datas:
-                await self.handler_download(kwargs, aweme_data, user_path)
+        # 统一处理，将 aweme_datas 转为列表
+        aweme_datas_list = (
+            [aweme_datas] if isinstance(aweme_datas, dict) else aweme_datas
+        )
+
+        # 筛选指定日期区间内的作品
+        if kwargs.get("interval") != "all":
+            aweme_datas_list = await self.filter_aweme_datas_by_interval(
+                aweme_datas_list, kwargs.get("interval")
+            )
+
+        # 检查是否有符合条件的作品
+        if not aweme_datas_list:
+            logger.warning(_("没有找到符合条件的作品"))
+            await self.close()
+            sys.exit(0)
+
+        # 创建下载任务
+        for aweme_data in aweme_datas_list:
+            await self.handler_download(kwargs, aweme_data, user_path)
 
         # 执行下载任务
         await self.execute_tasks()
