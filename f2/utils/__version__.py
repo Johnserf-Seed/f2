@@ -4,7 +4,7 @@
 @Description:__version__.py
 @Date       :2023/01/15 23:42:17
 @Author     :JohnserfSeed
-@version    :0.0.1.2
+@version    :0.0.1.3
 @License    :(C)Copyright 2019-2022, Liugroup-NLPR-CASIA
 @Github     :https://github.com/johnserf-seed
 @Mail       :johnserf-seed@foxmail.com
@@ -19,7 +19,7 @@ _description_cn = "基于[red]异步[/red]的[green]全平台下载工具."
 _description_en = "[yellow]Asynchronous based [/yellow]full-platform download tool."
 _reponame = "f2"
 _repourl = "https://github.com/Johnserf-Seed/f2"
-_version = "0.0.1.2"
+_version = "0.0.1.3"
 
 __all__ = [
     "_author",

@@ -26,15 +26,23 @@ from f2.utils._dl import (
 class BaseDownloader(BaseCrawler):
     """基础下载器 (Base Downloader Class)"""
 
-    def __init__(
-        self,
-        proxies: dict = {},
-        headers: dict = {},
-    ):
-        super().__init__(proxies=proxies, crawler_headers=headers)
+    def __init__(self, kwargs: dict = {}):
+        proxies_conf = kwargs.get("proxies")
+        proxies = {
+            "http://": proxies_conf.get("http", None),
+            "https://": proxies_conf.get("https", None),
+        }
+
+        self.headers = {
+            "User-Agent": kwargs["headers"]["User-Agent"],
+            "Referer": kwargs["headers"]["Referer"],
+            "Cookie": kwargs["cookie"],
+        }
+
+        super().__init__(proxies=proxies, crawler_headers=self.headers)
         self.progress = RichConsoleManager().progress
         self.download_tasks = []
-        self.headers = headers
+        logger.debug(_("BaseDownloader 请求头headers:{0}".format(self.headers)))
 
     @staticmethod
     def _ensure_path(path: Union[str, Path]) -> Path:
@@ -93,8 +101,7 @@ class BaseDownloader(BaseCrawler):
             # 获取文件内容大小 (Get the size of the file content)
             content_length = await get_content_length(url, self.headers, self.proxies)
 
-            logger.info(_("{0}在服务器上的总内容长度为：{1} 字节".format(url, content_length)))
-            logger.debug(_("请求头headers:{0}".format(self.headers)))
+            logger.debug(_("{0}在服务器上的总内容长度为：{1} 字节".format(url, content_length)))
 
             # 如果文件内容大小为0, 则不下载 (If file content size is 0, skip download)
             if content_length == 0:
@@ -423,6 +430,7 @@ class BaseDownloader(BaseCrawler):
 
     async def execute_tasks(self):
         """执行所有下载任务 (Execute all download tasks)"""
+        logger.debug(_("开始执行下载任务，本次共有 {0} 个任务".format(len(self.download_tasks))))
         await asyncio.gather(*self.download_tasks)
         self.download_tasks.clear()
 

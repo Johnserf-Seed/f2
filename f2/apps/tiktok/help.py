@@ -22,14 +22,14 @@ def help() -> None:
             "[dark_cyan]str",
             _("根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合辑与直播同上"),
         ),
-        ("-m --music", "[dark_cyan]Choice", _("是否保存视频原声。默认为 'yes'，可选：'yes'、'no'")),
-        ("-v --cover", "[dark_cyan]Choice", _("是否保存视频封面。默认为 'yes'，可选：'yes'、'no'")),
-        ("-d --desc", "[dark_cyan]Choice", _("是否保存视频文案。默认为 'yes'，可选：'yes'、'no'")),
+        ("-m --music", "[dark_cyan]Choice", _("是否保存视频原声。可选：'yes'、'no'")),
+        ("-v --cover", "[dark_cyan]Choice", _("是否保存视频封面。可选：'yes'、'no'")),
+        ("-d --desc", "[dark_cyan]Choice", _("是否保存视频文案。可选：'yes'、'no'")),
         ("-p --path", "[dark_cyan]str", _("作品保存位置，默认为 'Download'")),
         (
             "-f --folderize",
             "[dark_cyan]Choice",
-            _("是否将作品保存到单独的文件夹，默认为 'yes'。可选：'yes'、'no'"),
+            _("是否将作品保存到单独的文件夹。可选：'yes'、'no'"),
         ),
         (
             "-M --mode",
@@ -61,15 +61,16 @@ def help() -> None:
             _("显示语言。默认为 'zh_CN'。可选：'zh_CN'、'en_US'"),
         ),
         (
+            "-P --proxies",
+            "[dark_cyan]str",
+            _("代理服务器，最多 2 个参数，http与https。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"),
+        ),
+        (
             "--update-config",
             "[dark_cyan]Flag",
             _("使用命令行选项更新配置文件。需要先使用'-c'选项提供一个配置文件路径"),
         ),
-        (
-            "--init-config",
-            "[dark_cyan]Flag",
-            _("初始化配置文件。不能同时初始化和更新配置文件"),
-        ),
+        ("--init-config", "[dark_cyan]Flag", _("初始化配置文件。不能同时初始化和更新配置文件")),
         (
             "--auto-cookie",
             "[dark_cyan]Choice",
