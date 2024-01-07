@@ -15,20 +15,16 @@ from f2.apps.tiktok.utils import format_file_name
 
 
 class TiktokDownloader(BaseDownloader):
-    def __init__(self):
-        app_manager = ConfigManager(f2.APP_CONFIG_FILE_PATH)
-        tiktok_conf = app_manager.get_config("tiktok")
-        proxies_conf = tiktok_conf.get("proxies", None)
-        proxies = {
-            "http://": proxies_conf.get("http", None),
-            "https://": proxies_conf.get("https", None),
-        }
-        self.headers = {
-            "User-Agent": tiktok_conf["headers"]["User-Agent"],
-            "Referer": tiktok_conf["headers"]["Referer"],
-            "Cookie": tiktok_conf["cookie"],
-        }
-        super().__init__(proxies=proxies, headers=self.headers)
+    def __init__(self, kwargs: dict = {}):
+        if kwargs["cookie"] is None:
+            raise ValueError(
+                _(
+                    "cookie不能为空。请提供有效的 cookie 参数，或自动从浏览器获取 f2 -d dy --help，如扫码登录请保留双引号cookie: "
+                    "，再使用--sso-login命令。"
+                )
+            )
+
+        super().__init__(kwargs)
 
     async def save_last_aweme_id(self, secUid: str, aweme_id: str) -> None:
         """
