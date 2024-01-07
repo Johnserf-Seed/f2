@@ -370,11 +370,15 @@ def douyin(ctx, config, init_config, update_config, **kwargs):
             # 在命令的参数列表中找到当前的键
             param = next((p for p in ctx.command.params if p.name == config_key), None)
             if param:
-                # 如果命令行参数没有提供值，则使用配置文件的值
-                if ctx.params[config_key] is None or ctx.params[config_key] == "":
-                    kwargs[config_key] = config_value
+                # 如果配置文件中的值为空，则跳过
+                if config_value is None or config_value == "":
+                    pass
                 else:
-                    kwargs[config_key] = ctx.params[config_key]
+                    # 如果命令行参数没有提供值，则使用配置文件的值
+                    if ctx.params[config_key] is None or ctx.params[config_key] == "":
+                        kwargs[config_key] = config_value
+                    else:
+                        kwargs[config_key] = ctx.params[config_key]
 
         return kwargs
 
@@ -382,11 +386,9 @@ def douyin(ctx, config, init_config, update_config, **kwargs):
     if config:
         # 读取主配置文件并合并
         kwargs = load_config(main_manager, ctx, kwargs)
-
         # 读取用户自定义配置文件并合并
         user_manager = ConfigManager(config)
         kwargs = load_config(user_manager, ctx, kwargs)
-
     else:
         # 用户没有指定配置文件，使用主配置文件
         kwargs = load_config(main_manager, ctx, kwargs)
