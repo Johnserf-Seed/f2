@@ -344,8 +344,8 @@ def douyin(ctx, config, init_config, update_config, **kwargs):
     # 读取主配置文件
     main_manager = ConfigManager(f2.APP_CONFIG_FILE_PATH)
 
-    # 代理配置
-    proxies = kwargs.get("proxies")
+    # CLI代理配置
+    cli_proxies = kwargs.get("proxies")
 
     # 从主配置读取固定User-Agent与Referer值
     kwargs.setdefault("headers", {})
@@ -392,6 +392,21 @@ def douyin(ctx, config, init_config, update_config, **kwargs):
         kwargs = load_config(main_manager, ctx, kwargs)
 
     # 如果用户想更新配置，但没有提供-c参数
+    # 检查是否提供了代理参数
+    if cli_proxies:
+        # 解析tuple代理参数
+        http_proxy, https_proxy = cli_proxies
+    else:
+        # 解析dict代理参数
+        http_proxy = kwargs.get("proxies").get("http")
+        https_proxy = kwargs.get("proxies").get("https")
+
+    # 更新kwargs中的proxies参数
+    kwargs["proxies"] = {
+        "http": http_proxy if http_proxy else None,
+        "https": https_proxy if https_proxy else None,
+    }
+
     if update_config and not config:
         raise click.UsageError(_("要更新配置, 首先需要使用'-c'选项提供一个配置文件路径"))
 
