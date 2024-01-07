@@ -15,20 +15,7 @@ from f2.apps.douyin.utils import format_file_name
 
 
 class DouyinDownloader(BaseDownloader):
-    def __init__(self):
-        app_manager = ConfigManager(f2.APP_CONFIG_FILE_PATH)
-        douyin_conf = app_manager.get_config("douyin")
-        proxies_conf = douyin_conf.get("proxies", None)
-        proxies = {
-            "http://": proxies_conf.get("http", None),
-            "https://": proxies_conf.get("https", None),
-        }
-        self.headers = {
-            "User-Agent": douyin_conf["headers"]["User-Agent"],
-            "Referer": douyin_conf["headers"]["Referer"],
-            "Cookie": douyin_conf["cookie"],
-        }
-        if self.headers["Cookie"] is None:
+    def __init__(self, kwargs: dict = {}):
             raise ValueError(
                 _(
                     "Cookie不能为空。请提供有效的 Cookie 参数，或自动从浏览器获取 f2 -d dy --help，如扫码登录请保留双引号cookie: "
@@ -36,7 +23,7 @@ class DouyinDownloader(BaseDownloader):
                 )
             )
 
-        super().__init__(proxies=proxies, headers=self.headers)
+        super().__init__(kwargs)
 
     async def save_last_aweme_id(self, sec_user_id: str, aweme_id: int) -> None:
         """
