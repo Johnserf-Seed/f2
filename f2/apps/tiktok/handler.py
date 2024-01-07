@@ -37,6 +37,9 @@ crawler = None
 rich_console = RichConsoleManager().rich_console
 rich_prompt = RichConsoleManager().rich_prompt
 
+# 需要忽略的字段（需过滤掉有时效性的字段）
+ignore_fields = ["video_play_addr", "images", "video_bit_rate", "cover"]
+
 
 async def handler_user_profile(secUid: str, uniqueId: str = "") -> dict:
     """
