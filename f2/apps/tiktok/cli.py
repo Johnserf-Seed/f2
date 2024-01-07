@@ -297,28 +297,31 @@ def handler_naming(
 )
 @click.pass_context
 def tiktok(ctx, config, init_config, update_config, **kwargs):
-    # 读取默认配置文件
-    default_manager = ConfigManager(f2.APP_CONFIG_FILE_PATH)
+    # 读取主配置文件
+    main_manager = ConfigManager(f2.APP_CONFIG_FILE_PATH)
+
+    # CLI代理配置
+    cli_proxies = kwargs.get("proxies")
+
+    # 从主配置读取固定User-Agent与Referer值
+    kwargs.setdefault("headers", {})
+    kwargs["headers"]["User-Agent"] = (
+        main_manager.get_config("tiktok").get("headers").get("User-Agent")
+    )
+    kwargs["headers"]["Referer"] = (
+        main_manager.get_config("tiktok").get("headers").get("Referer")
+    )
 
     # 如果用户想初始化新配置文件
     if init_config and not update_config:
-        default_manager.generate_config("tiktok", init_config)
+        main_manager.generate_config("tiktok", init_config)
         return
-    elif not init_config:
-        pass
-    else:
+    elif init_config:
         raise click.UsageError(_("不能同时初始化和更新配置文件"))
 
-    # 如果用户想更新配置，但没有提供-c参数
-    if update_config and not config:
-        raise click.UsageError(_("要更新配置, 首先需要使用'-c'选项提供一个配置文件路径"))
-
-    def load_config(config_manager, ctx):
-        nonlocal kwargs
-        # 读取配置文件
+    def load_config(config_manager, ctx, kwargs):
         app_config = config_manager.get_config("tiktok", {})
 
-        # 合并配置文件的值到 app_config
         for config_key, config_value in app_config.items():
             # 在命令的参数列表中找到当前的键
             param = next((p for p in ctx.command.params if p.name == config_key), None)
@@ -327,26 +330,40 @@ def tiktok(ctx, config, init_config, update_config, **kwargs):
                 if ctx.params[config_key] is None or ctx.params[config_key] == "":
                     kwargs[config_key] = config_value
                 else:
-                    kwargs[config_key] = ctx.params[config_key]
+                    # 如果命令行参数没有提供值，则使用配置文件的值
+                    if ctx.params[config_key] is None or ctx.params[config_key] == "":
+                        kwargs[config_key] = config_value
+                    else:
+                        kwargs[config_key] = ctx.params[config_key]
 
-        logger.debug(_("配置文件参数： {0}".format(app_config)))
-        logger.debug(_("配置文件与CLI合并后的参数： {0}".format(kwargs)))
+        return kwargs
 
     # 用户指定自定义配置文件
     if config:
-        load_config(default_manager, ctx)
-
-        # 读取用户自定义配置文件
+        # 读取主配置文件并合并
+        kwargs = load_config(main_manager, ctx, kwargs)
+        # 读取用户自定义配置文件并合并
         user_manager = ConfigManager(config)
-        load_config(user_manager, ctx)
+        kwargs = load_config(user_manager, ctx, kwargs)
+    else:
+        # 用户没有指定配置文件，使用主配置文件
+        kwargs = load_config(main_manager, ctx, kwargs)
 
-        # 如果指定了 update_config，更新配置文件
-        if update_config:
-            default_manager.update_config_with_args("tiktok", **kwargs)
     else:
         # 用户没有指定配置文件，使用默认配置文件
         load_config(default_manager, ctx)
         logger.info(_("使用默认配置文件： {0}".format(f2.APP_CONFIG_FILE_PATH)))
+    # 如果用户想更新配置，但没有提供 -c 参数
+    if update_config and not config:
+        raise click.UsageError(_("要更新配置, 首先需要使用'-c'选项提供一个配置文件路径"))
+
+    # 如果指定了 update_config，更新配置文件
+    if update_config:
+        main_manager.update_config_with_args("tiktok", **kwargs)
+
+    logger.info(_("主配置： {0}".format(f2.APP_CONFIG_FILE_PATH)))
+    logger.info(_("自定义配置： {0}".format(config)))
+    logger.debug(_("CLI参数：{0}").format(kwargs))
 
     # 尝试从命令行参数或kwargs中获取URL
     if not kwargs.get("url"):
