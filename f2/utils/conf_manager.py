@@ -1,6 +1,5 @@
 # path: f2/utils/conf_manager.py
 
-import f2
 import time
 import yaml
 import click
@@ -9,8 +8,6 @@ from pathlib import Path
 from f2.exceptions.file_exceptions import (
     FileNotFound,
     FilePermissionError,
-    FileReadError,
-    FileWriteError,
 )
 from f2.utils.utils import get_resource_path
 from f2.i18n.translator import _
