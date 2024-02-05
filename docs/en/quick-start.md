@@ -162,7 +162,7 @@ $ f2 dy -M one -u '7.64 gOX:/ w@f.oD 05/14 世界这本书 又多读了一页。
 :::
 
 The CLI parameter has the highest priority and allows you to set different download modes and links without modifying the configuration file.
-For more detailed information on the "Jitterbug" CLI commands, see [CLI reference](./reference/cli).
+For more detailed information on the "Jitterbug" CLI commands, see [CLI reference](./cli).
 
 
 ## What's next?
