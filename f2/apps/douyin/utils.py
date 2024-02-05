@@ -78,6 +78,13 @@ class TokenManager:
 
                 msToken = str(httpx.Cookies(response.cookies).get("msToken"))
 
+                if len(msToken) not in [120, 128]:
+                    raise APIResponseError(
+                        _(
+                            "msToken: 请检查并更新 f2 中 conf.yaml 配置文件中的 msToken，以匹配 douyin 新规则。"
+                        )
+                    )
+
                 return msToken
 
             except httpx.RequestError:
