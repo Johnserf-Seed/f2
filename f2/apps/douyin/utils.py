@@ -65,7 +65,7 @@ class TokenManager:
         }
 
         transport = httpx.HTTPTransport(retries=5)
-        with httpx.Client(transport=transport, proxies=dict(cls.proxies)) as client:
+        with httpx.Client(transport=transport, proxies=cls.proxies) as client:
             try:
                 response = client.post(
                     cls.token_conf["url"], headers=headers, content=payload
@@ -83,9 +83,9 @@ class TokenManager:
             except httpx.RequestError:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
                 raise APIConnectionError(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
-                        cls.token_conf["url"], cls.proxies
-                    )
+                    _(
+                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 状态码：{2}"
+                    ).format(cls.token_conf["url"], cls.proxies, response.status_code)
                 )
 
             except httpx.HTTPStatusError as e:
@@ -130,9 +130,9 @@ class TokenManager:
             except httpx.RequestError:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
                 raise APIConnectionError(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
-                        cls.ttwid_conf["url"], cls.proxies
-                    )
+                    _(
+                        "连接端点失败，检查网络环境或代理: {0} 代理：{1} 状态码：{2}"
+                    ).format(cls.ttwid_conf["url"], cls.proxies, response.status_code)
                 )
 
             except httpx.HTTPStatusError as e:
@@ -263,7 +263,7 @@ class SecUserIdFetcher:
         try:
             transport = httpx.AsyncHTTPTransport(retries=5)
             async with httpx.AsyncClient(
-                transport=transport, proxies=dict(TokenManager.proxies), timeout=10
+                transport=transport, proxies=TokenManager.proxies, timeout=10
             ) as client:
                 response = await client.get(url, follow_redirects=True)
 
@@ -272,7 +272,9 @@ class SecUserIdFetcher:
                     if match:
                         return match.group(1)
                     else:
-                        raise APIResponseError(_("未在响应的地址中找到sec_user_id, 检查链接是否为用户主页"))
+                        raise APIResponseError(
+                            _("未在响应的地址中找到sec_user_id, 检查链接是否为用户主页")
+                        )
 
                 elif response.status_code == 401:
                     raise APIUnauthorizedError(_("未授权的请求"))
@@ -351,7 +353,7 @@ class AwemeIdFetcher:
             else:
                 raise APIResponseError(
                     _("未在响应的地址中找到aweme_id, 检查链接是否为作品页")
-                )  # (aweme_id not found in the response address, check if the link is the work page)
+                )
 
             return match.group(1)
 
@@ -430,9 +432,15 @@ class WebCastIdFetcher:
                 match = live_pattern2.search(url)
             elif live_pattern3.search(url):
                 match = live_pattern3.search(url)
-                logger.debug(_("该链接返回的是room_id，请使用fetch_user_live_videos_by_room_id接口"))
+                logger.debug(
+                    _(
+                        "该链接返回的是room_id，请使用fetch_user_live_videos_by_room_id接口"
+                    )
+                )
             else:
-                raise APIResponseError(_("未在响应的地址中找到webcast_id, 检查链接是否为直播页"))
+                raise APIResponseError(
+                    _("未在响应的地址中找到webcast_id, 检查链接是否为直播页")
+                )
 
             return match.group(1)
 
@@ -446,7 +454,7 @@ class WebCastIdFetcher:
         获取直播webcast_id,传入列表url都可以解析出webcast_id (Get live webcast_id, pass in the list url can parse out webcast_id)
 
         Args:
-            urls: list: 列表url (   list url)
+            urls: list: 列表url (list url)
 
         Return:
             webcast_ids: list: 直播的唯一标识，返回列表 (The unique identifier of the live, return list)
@@ -535,9 +543,9 @@ def format_file_name(
     # 处理 'desc' 字段的长度限制
     if desc_length_limit is not None and len(fields["desc"]) > desc_length_limit:
         half_limit = desc_length_limit // 2 - 6
-        fields[
-            "desc"
-        ] = f"{fields['desc'][:half_limit]}......{fields['desc'][-half_limit:]}"
+        fields["desc"] = (
+            f"{fields['desc'][:half_limit]}......{fields['desc'][-half_limit:]}"
+        )
 
     return naming_template.format(**fields)
 
