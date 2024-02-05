@@ -28,14 +28,14 @@ from f2.exceptions.api_exceptions import (
 
 
 class TokenManager:
-    tk_manager = ConfigManager(f2.APP_CONFIG_FILE_PATH)
-    token_conf = tk_manager.get_config("tiktok").get("msToken", None)
-    ttwid_conf = tk_manager.get_config("tiktok").get("ttwid", None)
-    odin_tt_conf = tk_manager.get_config("tiktok").get("odin_tt", None)
-    proxies_conf = tk_manager.get_config("tiktok").get("proxies", None)
+    f2_manager = ConfigManager(f2.F2_CONFIG_FILE_PATH).get_config("f2")
+    token_conf = f2_manager.get_config("msToken").get("tiktok", None)
+    ttwid_conf = f2_manager.get_config("ttwid").get("tiktok", None)
+    odin_tt_conf = f2_manager.get_config("odin_tt").get("tiktok", None)
+    proxies_conf = f2_manager.get_config("proxies").get("tiktok", None)
     proxies = {
-        "http://": proxies_conf.get("http"),
-        "https://": proxies_conf.get("https"),
+        "http://": proxies_conf.get("http", None),
+        "https://": proxies_conf.get("https", None),
     }
 
     @classmethod
