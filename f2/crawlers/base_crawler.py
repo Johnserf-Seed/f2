@@ -125,7 +125,7 @@ class BaseCrawler:
             if isinstance(response, Response):
                 logger.error(_("获取数据失败。状态码: {0}").format(response.status_code))
             else:
-                logger.error("Invalid response type.")
+                logger.error(_("无效响应类型。响应类型: {0}").format(type(response)))
 
         return {}
 

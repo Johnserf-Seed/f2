@@ -30,7 +30,7 @@ class ConfigManager:
 
         try:
             if not self.filepath.exists():
-                raise FileNotFound(_("'{0}' 应用配置路径不存在").format(self.filepath))
+                raise FileNotFound(_("'{0}' 配置文件路径不存在").format(self.filepath))
             return yaml.safe_load(self.filepath.read_text(encoding="utf-8")) or {}
         except FileNotFound as e:
             e.display_error()
@@ -71,6 +71,8 @@ class ConfigManager:
         self.filepath.rename(backup_path)
 
     def generate_config(self, app_name: str, save_path: Path):
+        """生成应用程序特定配置文件 (Generate application-specific conf file)"""
+
         if not isinstance(app_name, str):
             return
 
@@ -123,4 +125,4 @@ class ConfigManager:
 
         # 保存更新的配置 (Save the updated conf)
         self.save_config(self.config)
-        click.echo(_("配置文件已更新!"))  # (The conf file has been updated!)
+        click.echo(_("配置文件已更新!"))
