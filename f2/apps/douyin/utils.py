@@ -34,10 +34,10 @@ from f2.exceptions.api_exceptions import (
 
 
 class TokenManager:
-    dy_manager = ConfigManager(f2.APP_CONFIG_FILE_PATH)
-    token_conf = dy_manager.get_config("douyin").get("msToken", None)
-    ttwid_conf = dy_manager.get_config("douyin").get("ttwid", None)
-    proxies_conf = dy_manager.get_config("douyin").get("proxies", None)
+    f2_manager = ConfigManager(f2.F2_CONFIG_FILE_PATH).get_config("f2")
+    token_conf = f2_manager.get_config("msToken").get("douyin", None)
+    ttwid_conf = f2_manager.get_config("ttwid").get("douyin", None)
+    proxies_conf = f2_manager.get_config("proxies").get("douyin", None)
     proxies = {
         "http://": proxies_conf.get("http", None),
         "https://": proxies_conf.get("https", None),
