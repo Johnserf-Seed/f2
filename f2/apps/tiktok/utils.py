@@ -61,7 +61,7 @@ class TokenManager:
         }
 
         transport = httpx.HTTPTransport(retries=5)
-        with httpx.Client(transport=transport, proxies=dict(cls.proxies)) as client:
+        with httpx.Client(transport=transport, proxies=cls.proxies) as client:
             try:
                 response = client.post(
                     cls.token_conf["url"], headers=headers, content=payload
@@ -76,7 +76,9 @@ class TokenManager:
 
                 if len(msToken) != 148:
                     raise APIResponseError(
-                        _("msToken: 检查没有通过, 请更新tiktok配置文件中msToken的url里的msToken")
+                        _(
+                            "msToken: 请检查并更新 f2 中 conf.yaml 配置文件中的 msToken，以匹配 tiktok 新规则。"
+                        )
                     )
 
                 return msToken
@@ -84,9 +86,9 @@ class TokenManager:
             except httpx.RequestError:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
                 raise APIConnectionError(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
-                        cls.token_conf["url"], cls.proxies
-                    )
+                    _(
+                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 状态码：{2}"
+                    ).format(cls.token_conf["url"], cls.proxies, response.status_code)
                 )
 
             except httpx.HTTPStatusError as e:
@@ -111,13 +113,15 @@ class TokenManager:
         """
         生成请求必带的ttwid (Generate the essential ttwid for requests)
         """
-        headers = {"Cookie": cls.ttwid_conf.get("cookie"), "Content-Type": "text/plain"}
         transport = httpx.HTTPTransport(retries=5)
-        with httpx.Client(transport=transport, proxies=dict(cls.proxies)) as client:
+        with httpx.Client(transport=transport, proxies=cls.proxies) as client:
             try:
                 response = client.post(
                     cls.ttwid_conf["url"],
-                    headers=headers,
+                    headers={
+                        "Cookie": cls.ttwid_conf.get("cookie"),
+                        "Content-Type": "text/plain",
+                    },
                     content=cls.ttwid_conf["data"],
                 )
 
@@ -129,16 +133,18 @@ class TokenManager:
                 ttwid = httpx.Cookies(response.cookies).get("ttwid")
 
                 if ttwid is None:
-                    raise APIResponseError(_("ttwid: 检查没有通过, 请更新配置文件中的ttwid"))
+                    raise APIResponseError(
+                        _("ttwid: 检查没有通过, 请更新配置文件中的ttwid")
+                    )
 
                 return ttwid
 
             except httpx.RequestError:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
                 raise APIConnectionError(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
-                        cls.ttwid_conf["url"], cls.proxies
-                    )
+                    _(
+                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 状态码：{2}"
+                    ).format(cls.ttwid_conf["url"], cls.proxies, response.status_code)
                 )
 
             except httpx.HTTPStatusError as e:
@@ -158,7 +164,7 @@ class TokenManager:
         生成请求必带的odin_tt (Generate the essential odin_tt for requests)
         """
         transport = httpx.HTTPTransport(retries=5)
-        with httpx.Client(transport=transport, proxies=dict(cls.proxies)) as client:
+        with httpx.Client(transport=transport, proxies=cls.proxies) as client:
             try:
                 response = client.get(cls.odin_tt_conf["url"])
 
@@ -170,16 +176,18 @@ class TokenManager:
                 odin_tt = httpx.Cookies(response.cookies).get("odin_tt")
 
                 if odin_tt is None:
-                    raise APIResponseError(_("odin_tt: 检查没有通过, 请更新配置文件中的odin_tt"))
+                    raise APIResponseError(
+                        _("odin_tt: 检查没有通过, 请更新配置文件中的odin_tt")
+                    )
 
                 return odin_tt
 
             except httpx.RequestError:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
                 raise APIConnectionError(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
-                        cls.odin_tt_conf["url"], cls.proxies
-                    )
+                    _(
+                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 状态码：{2}"
+                    ).format(cls.odin_tt_conf["url"], cls.proxies, response.status_code)
                 )
 
             except httpx.HTTPStatusError as e:
@@ -250,7 +258,7 @@ class SecUserIdFetcher:
 
         transport = httpx.AsyncHTTPTransport(retries=5)
         async with httpx.AsyncClient(
-            transport=transport, proxies=dict(TokenManager.proxies), timeout=10
+            transport=transport, proxies=TokenManager.proxies, timeout=10
         ) as client:
             try:
                 response = await client.get(url, follow_redirects=True)
@@ -276,7 +284,9 @@ class SecUserIdFetcher:
 
             except httpx.RequestError:
                 raise APIConnectionError(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(url), TokenManager.proxies
+                    _(
+                        "连接端点失败，检查网络环境或代理: {0} 代理：{1} 状态码：{2}"
+                    ).format(url, TokenManager.proxies, response.status_code)
                 )
 
             except APIError as e:
@@ -324,7 +334,7 @@ class SecUserIdFetcher:
 
         transport = httpx.AsyncHTTPTransport(retries=5)
         async with httpx.AsyncClient(
-            transport=transport, proxies=dict(TokenManager.proxies), timeout=10
+            transport=transport, proxies=TokenManager.proxies, timeout=10
         ) as client:
             try:
                 response = await client.get(url, follow_redirects=True)
@@ -337,7 +347,9 @@ class SecUserIdFetcher:
                     unique_id = match.group(1)
 
                     if unique_id is None:
-                        raise RuntimeError(_("获取unique_id失败, {0}".format(response.url)))
+                        raise RuntimeError(
+                            _("获取unique_id失败, {0}".format(response.url))
+                        )
 
                     return unique_id
                 else:
@@ -347,7 +359,9 @@ class SecUserIdFetcher:
 
             except httpx.RequestError:
                 raise APIConnectionError(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(url), TokenManager.proxies
+                    _(
+                        "连接端点失败，检查网络环境或代理: {0} 代理：{1} 状态码：{2}"
+                    ).format(url, TokenManager.proxies, response.status_code),
                 )
 
             except APIError as e:
@@ -403,7 +417,7 @@ class AwemeIdFetcher:
 
         transport = httpx.AsyncHTTPTransport(retries=5)
         async with httpx.AsyncClient(
-            transport=transport, proxies=dict(TokenManager.proxies), timeout=10
+            transport=transport, proxies=TokenManager.proxies, timeout=10
         ) as client:
             try:
                 response = await client.get(url, follow_redirects=True)
@@ -416,7 +430,9 @@ class AwemeIdFetcher:
                     aweme_id = match.group(1)
 
                     if aweme_id is None:
-                        raise RuntimeError(_("获取aweme_id失败, {0}".format(response.url)))
+                        raise RuntimeError(
+                            _("获取aweme_id失败, {0}".format(response.url))
+                        )
 
                     return aweme_id
                 else:
@@ -426,7 +442,8 @@ class AwemeIdFetcher:
 
             except httpx.RequestError:
                 raise APIConnectionError(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(url), TokenManager.proxies
+                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(url),
+                    TokenManager.proxies,
                 )
 
             except APIError as e:
@@ -507,9 +524,9 @@ def format_file_name(
     # 处理 'desc' 字段的长度限制
     if desc_length_limit is not None and len(fields["desc"]) > desc_length_limit:
         half_limit = desc_length_limit // 2 - 6
-        fields[
-            "desc"
-        ] = f"{fields['desc'][:half_limit]}......{fields['desc'][-half_limit:]}"
+        fields["desc"] = (
+            f"{fields['desc'][:half_limit]}......{fields['desc'][-half_limit:]}"
+        )
 
     return naming_template.format(**fields)
 
