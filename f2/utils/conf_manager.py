@@ -56,8 +56,10 @@ class ConfigManager:
         Args:
             config: dict: 配置字典 (conf dict)
         """
-
-        self.filepath.write_text(yaml.dump(config), encoding="utf-8")
+        try:
+            self.filepath.write_text(yaml.dump(config), encoding="utf-8")
+        except PermissionError:
+            raise FilePermissionError(_("'{0}' 配置文件路径无写权限").format(self.filepath))
 
     def backup_config(self):
         """在进行更改前备份配置文件 (Backup the conf file before making changes)"""
