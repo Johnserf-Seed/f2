@@ -1,10 +1,7 @@
 # path: f2/apps/tiktok/crawler.py
 
-import f2
-
 from f2.log.logger import logger
 from f2.i18n.translator import _
-from f2.utils.conf_manager import ConfigManager
 from f2.crawlers.base_crawler import BaseCrawler
 from f2.apps.tiktok.api import TiktokAPIEndpoints as tkendpoint
 from f2.apps.tiktok.model import (
