@@ -81,6 +81,14 @@ export default defineConfig({
               ]
             }
           ],
+          '/question-answer/': [
+            {
+              text: 'QA',
+              items: [
+                {text: 'Issue里经常反馈的问题', link: '/question-answer/qa'}
+              ]
+            },
+          ]
         }
       }
     },
@@ -123,9 +131,9 @@ function cn_nav(): DefaultTheme.NavItem[] {
       activeMatch: '/guide/'
     },
     {
-      text: '参考',
-      link: '/reference/cli',
-      activeMatch: '/reference/'
+      text: 'QA',
+      link: '/question-answer/qa',
+      activeMatch: '/question-answer/'
     },
     {
       //text: pkg.version,
