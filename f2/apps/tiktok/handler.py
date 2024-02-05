@@ -665,7 +665,6 @@ class TiktokHandler:
 async def main(kwargs):
     mode = kwargs.get("mode")
     if mode in mode_function_map:
-        print(mode, mode_function_map)
         await mode_function_map[mode](TiktokHandler(kwargs))
     else:
         logger.error(_("不存在该模式: {0}").format(mode))

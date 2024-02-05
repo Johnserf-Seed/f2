@@ -85,8 +85,8 @@ class DouyinHandler:
 
         user_dict = await db.get_user_info(sec_user_id)
         if not user_dict:
-            user_data = await self.handler_user_profile(sec_user_id)
-            await db.add_user_info(**user_data._to_dict())
+            user_dict = await self.handler_user_profile(sec_user_id)
+            await db.add_user_info(**user_dict._to_dict())
         return user_dict.get("nickname")
 
     async def get_or_add_user_data(
@@ -921,7 +921,6 @@ async def handle_sso_login():
 async def main(kwargs):
     mode = kwargs.get("mode")
     if mode in mode_function_map:
-        print(mode, mode_function_map)
         await mode_function_map[mode](DouyinHandler(kwargs))
     else:
         logger.error(_("不存在该模式: {0}").format(mode))
