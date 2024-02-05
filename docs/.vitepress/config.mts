@@ -56,6 +56,7 @@ export default defineConfig({
                 {text: '安装', link: '/install'},
                 {text: '快速使用', link: '/quick-start'},
                 {text: '配置文件', link: '/site-config'},
+                {text: '命令行', link: '/cli'},
                 {text: '进阶用法', link: '/advance-guide'},
               ]
             },
@@ -79,7 +80,8 @@ export default defineConfig({
                 {text: 'DouYin', link: '/guide/apps/douyin/index'},
                 {text: 'TikTok', link: '/guide/apps/tiktok/index'}
               ]
-            }
+            },
+
           ],
           '/question-answer/': [
             {
@@ -158,11 +160,6 @@ function en_nav(): DefaultTheme.NavItem[] {
       text: 'guide',
       link: '/en/guide/what-is-f2',
       activeMatch: '/guide/'
-    },
-    {
-      text: 'reference',
-      link: '/en/site-config',
-      activeMatch: '/reference/'
     },
     {
       //text: pkg.version,

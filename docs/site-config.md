@@ -211,7 +211,7 @@ $ f2 -d dy -c C:\Users\JohnserfSeed\Desktop\C.yaml -M like
 
 ::: tip 说明
 之后的版本会简化操作。不需要再指定该用户的直播间就可以切换下载该用户直播的模式。
-更多的 CLI 命令请查阅 [CLI 参考](/reference/cli)。
+更多的 CLI 命令请查阅 [CLI 参考](/cli)。
 :::
 
 ::: warning 重要
@@ -293,4 +293,4 @@ $ f2 dy -M one -u '7.64 gOX:/ w@f.oD 05/14 世界这本书 又多读了一页。
 
 ## 下一步是什么？
 
-- 更多 CLI 命令的详细信息，请查阅 [CLI 参考](/reference/cli)。
+- 更多 CLI 命令的详细信息，请查阅 [CLI 参考](/cli)。
