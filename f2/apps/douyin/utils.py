@@ -644,41 +644,6 @@ def create_or_rename_user_folder(
     return user_path
 
 
-def extract_desc_from_share_desc(desc: str, share_desc: str) -> str:
-    """
-    从share_desc中提取desc (Extract desc from share_desc)
-
-    Args:
-        desc (str): 作品的desc (desc of the work)
-        share_desc (str): 作品的share_desc (share_desc of the work)
-
-    Note:
-        只针对由于接口参数构建存在低版本的情况适用
-        (Only applicable to the case where the interface parameter construction exists in the low version)
-    Returns:
-        extracted (str): 提取的desc (Extracted desc)
-    """
-    # 如果desc只是空格（无论多少），直接返回
-    if desc.strip() == "":
-        return desc
-
-    # 如果多次匹配说明desc在share_desc中出现多次，我们只需要最后一次匹配的结果
-    indices = [i for i in range(len(share_desc)) if share_desc.startswith(desc, i)]
-    if not indices:
-        return desc
-
-    # 取最后一次匹配的位置
-    last_index = indices[-1]
-    # 从找到的desc开始，提取之后的所有内容
-    extracted = share_desc[last_index:]
-    # 假设URL或其他不需要的内容都在 'https' 之前
-    end_index = extracted.find("https")
-    if end_index != -1:
-        extracted = extracted[:end_index].strip()
-
-    return extracted
-
-
 def show_qrcode(qrcode_url: str, show_image: bool = False) -> None:
     """
     显示二维码
