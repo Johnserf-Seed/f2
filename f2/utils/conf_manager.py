@@ -11,6 +11,7 @@ from f2.exceptions.file_exceptions import (
 )
 from f2.utils.utils import get_resource_path
 from f2.i18n.translator import _
+from f2.log.logger import logger
 
 
 class ConfigManager:
@@ -93,9 +94,11 @@ class ConfigManager:
 
             # 写入应用程序特定配置
             save_path.write_text(yaml.dump(app_config), encoding="utf-8")
-            print(_("{0} 应用配置文件生成成功,保存至 {1}").format(app_name, save_path))
+            logger.info(
+                _("{0} 应用配置文件生成成功，保存至 {1}").format(app_name, save_path)
+            )
         else:
-            print(_("{0} 应用配置未找到").format(app_name))
+            logger.info(_("{0} 应用配置未找到").format(app_name))
 
     def update_config_with_args(self, app_name: str, **kwargs):
         """
