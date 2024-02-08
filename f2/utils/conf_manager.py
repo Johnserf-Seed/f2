@@ -1,5 +1,6 @@
 # path: f2/utils/conf_manager.py
 
+import f2
 import time
 import yaml
 import click
@@ -16,7 +17,7 @@ from f2.log.logger import logger
 
 class ConfigManager:
     # 如果不传入应用配置路径，则返回项目配置 (If the application conf path is not passed in, the project conf is returned)
-    def __init__(self, filepath: str = "conf/conf.yaml"):
+    def __init__(self, filepath: str = f2.F2_CONFIG_FILE_PATH):
         if Path(filepath).exists():
             self.filepath = Path(filepath)
         else:
@@ -86,7 +87,15 @@ class ConfigManager:
         # 确保目录存在，如果不存在则创建
         save_path.parent.mkdir(parents=True, exist_ok=True)
 
-        default_config = yaml.safe_load(self.filepath.read_text(encoding="utf-8")) or {}
+        # 读取默认配置
+        default_config = (
+            yaml.safe_load(
+                Path(get_resource_path(f2.F2_DEFAULTS_FILE_PATH)).read_text(
+                    encoding="utf-8"
+                )
+            )
+            or {}
+        )
 
         if app_name in default_config:
             # 将app_name作为外层键 # https://github.com/Johnserf-Seed/TikTokDownload/issues/626  #629
