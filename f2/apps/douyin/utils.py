@@ -259,7 +259,12 @@ class SecUserIdFetcher:
             raise TypeError(_("参数必须是字符串类型"))
 
         # 提取有效URL
-        url = str(extract_valid_urls(url))
+        url = extract_valid_urls(url)
+
+        if url is None:
+            raise (
+                APINotFoundError(_("输入的URL不合法。类名：{0}".format(cls.__name__)))
+            )
 
         pattern = (
             cls._REDIRECT_URL_PATTERN
@@ -317,6 +322,13 @@ class SecUserIdFetcher:
         # 提取有效URL
         urls = extract_valid_urls(urls)
 
+        if urls == []:
+            raise (
+                APINotFoundError(
+                    _("输入的URL List不合法。类名：{0}".format(cls.__name__))
+                )
+            )
+
         sec_user_ids = [cls.get_sec_user_id(url) for url in urls]
         return await asyncio.gather(*sec_user_ids)
 
@@ -342,7 +354,12 @@ class AwemeIdFetcher:
             raise TypeError(_("参数必须是字符串类型"))
 
         # 提取有效URL
-        url = str(extract_valid_urls(url))
+        url = extract_valid_urls(url)
+
+        if url is None:
+            raise (
+                APINotFoundError(_("输入的URL不合法。类名：{0}".format(cls.__name__)))
+            )
 
         # 重定向到完整链接
         async with httpx.AsyncClient(timeout=10) as client:
@@ -422,6 +439,11 @@ class WebCastIdFetcher:
 
         # 提取有效URL
         url = extract_valid_urls(url)
+
+        if url is None:
+            raise (
+                APINotFoundError(_("输入的URL不合法。类名：{0}".format(cls.__name__)))
+            )
 
         # 重定向到完整链接
         async with httpx.AsyncClient(timeout=10) as client:
