@@ -51,8 +51,9 @@ def handle_debug(
     from rich.traceback import install
 
     install()
-    logger.setLevel("DEBUG")
-    logger.debug("开启调试模式 (Debug on)")
+
+    logger.setLevel(value)
+    logger.debug("开启调试模式 (Debug mode on)")
 
 
 # 应用映射
@@ -107,7 +108,7 @@ class DynamicGroup(click.Group):
 @click.option(
     "--debug",
     "-d",
-    is_flag=True,
+    type=click.Choice(["DEBUG", "INFO", "ERROR", "WARNING"]),
     is_eager=True,
     expose_value=False,
     callback=handle_debug,
