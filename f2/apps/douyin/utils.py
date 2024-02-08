@@ -20,7 +20,6 @@ from f2.utils.conf_manager import ConfigManager
 from f2.utils.utils import (
     gen_random_str,
     get_timestamp,
-    num_to_base36,
     extract_valid_urls,
 )
 from f2.exceptions.api_exceptions import (
@@ -155,24 +154,6 @@ class TokenManager:
 
 
 class VerifyFpManager:
-    base_str = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-    # placeholders = [8, 13, 18, 23]
-
-    # @classmethod
-    # def gen_verify_fp(cls) -> str:
-    #     """
-    #     生成verifyFp 与 s_v_web_id (Generate verifyFp)
-    #     """
-
-    #     base36 = num_to_base36(int(round(time.time() * 1000)))
-
-    #     random_part = [cls.base_str[random.randint(0, 35)] for _ in range(36)]
-    #     for idx in cls.placeholders:
-    #         random_part[idx] = "_"
-    #     random_part[14] = "4"
-
-    #     return f"verify_{base36}_" + "".join(random_part)
-
     @classmethod
     def gen_verify_fp(cls) -> str:
         """
