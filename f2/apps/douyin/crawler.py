@@ -1,7 +1,10 @@
 # path: f2/apps/douyin/crawler.py
 
+import f2
+
 from f2.log.logger import logger
 from f2.i18n.translator import _
+from f2.utils.conf_manager import ConfigManager
 from f2.crawlers.base_crawler import BaseCrawler
 from f2.apps.douyin.api import DouyinAPIEndpoints as dyendpoint
 from f2.apps.douyin.model import (
@@ -22,6 +25,8 @@ from f2.apps.douyin.utils import XBogusManager
 
 class DouyinCrawler(BaseCrawler):
     def __init__(self, kwargs: dict = {}):
+        f2_manager = ConfigManager(f2.F2_CONFIG_FILE_PATH)
+        f2_conf = f2_manager.get_config("f2").get("douyin")
         proxies_conf = kwargs.get("proxies")
         proxies = {
             "http://": proxies_conf.get("http", None),
@@ -29,8 +34,8 @@ class DouyinCrawler(BaseCrawler):
         }
 
         self.headers = {
-            "User-Agent": kwargs["headers"]["User-Agent"],
-            "Referer": kwargs["headers"]["Referer"],
+            "User-Agent": f2_conf["headers"]["User-Agent"],
+            "Referer": f2_conf["headers"]["Referer"],
             "Cookie": kwargs["cookie"],
         }
 
