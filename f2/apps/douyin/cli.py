@@ -11,8 +11,6 @@ from f2.log.logger import logger
 from f2.utils.utils import split_dict_cookie
 from f2.utils.conf_manager import ConfigManager
 from f2.i18n.translator import TranslationManager
-
-# 先导入默认翻译函数，随后由cli配置去修改 (The default translation is imported first and then modified by the cli)
 from f2.i18n.translator import _
 from f2.apps.douyin.handler import handle_sso_login
 
@@ -57,11 +55,10 @@ def handler_auto_cookie(
         return
 
     # 如果用户明确设置了 --cookie，那么跳过自动获取过程
-    # (Skip the automatic acquisition process if the user explicitly sets --cookie)
     if ctx.params.get("cookie"):
         return
 
-    # 根据浏览器选择获取cookie (Get cookies based on browser selection)
+    # 根据浏览器选择获取cookie
     if value in ["chrome", "firefox", "edge", "opera"]:
         try:
             cookie_value = split_dict_cookie(get_cookie_from_browser(value))
@@ -143,30 +140,30 @@ def handler_naming(
         value: 命名模式模板 (Naming pattern template)
     """
 
-    # 允许的模式和分隔符 (Allowed patterns and separators)
+    # 允许的模式和分隔符
     ALLOWED_PATTERNS = ["{nickname}", "{create}", "{aid}", "{desc}"]
     ALLOWED_SEPARATORS = ["-", "_"]
 
     temp_naming = value
     invalid_patterns = []
 
-    # 检查提供的模式是否有效 (Check if provided patterns are valid)
+    # 检查提供的模式是否有效
     for pattern in ALLOWED_PATTERNS:
         if pattern in temp_naming:
             temp_naming = temp_naming.replace(pattern, "")
 
-    # 此时，temp_naming应只包含分隔符 (Now, temp_naming should only contain separators)
+    # 此时，temp_naming应只包含分隔符
     for char in temp_naming:
         if char not in ALLOWED_SEPARATORS:
             invalid_patterns.append(char)
 
-    # 检查连续的无效模式或分隔符 (Check for consecutive invalid patterns or separators)
+    # 检查连续的无效模式或分隔符
     for pattern in ALLOWED_PATTERNS:
-        # 检查像"{aid}{aid}"这样的模式 (Check for patterns like "{aid}{aid}")
+        # 检查像"{aid}{aid}"这样的模式
         if pattern + pattern in value:
             invalid_patterns.append(pattern + pattern)
         for sep in ALLOWED_SEPARATORS:
-            # 检查像"{aid}-{aid}"这样的模式 (Check for patterns like "{aid}-{aid}")
+            # 检查像"{aid}-{aid}"这样的模式
             if pattern + sep + pattern in value:
                 invalid_patterns.append(pattern + sep + pattern)
 
