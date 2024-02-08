@@ -477,28 +477,6 @@ class WebCastIdFetcher:
         return await asyncio.gather(*webcast_ids)
 
 
-def get_request_sizes(page_counts: int, max_counts: int) -> list[int]:
-    """
-    用于获取请求大小列表 (Used to get request size list)
-
-    Args:
-        page_counts: int: 每页视频数 (Number of videos per page)
-        max_counts: int: 最大视频数 (Maximum number of videos)
-
-    Return:
-        requests: list[int]: 请求大小列表 (Request size list)
-    """
-
-    full_requests = max_counts // page_counts
-    remainder = max_counts % page_counts
-
-    requests = [page_counts] * full_requests
-    if remainder:
-        requests.append(remainder)
-
-    return requests
-
-
 def format_file_name(
     naming_template: str,
     aweme_data: dict = {},
