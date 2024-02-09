@@ -13,8 +13,6 @@ from f2.cli.cli_commands import set_cli_config
 from f2.log.logger import logger
 from f2.utils.utils import split_dict_cookie, get_resource_path
 from f2.utils.conf_manager import ConfigManager
-from f2.i18n.translator import TranslationManager
-from f2.i18n.translator import _
 from f2.i18n.translator import TranslationManager, _
 from f2.apps.douyin.handler import handle_sso_login
 
@@ -107,7 +105,6 @@ def get_cookie_from_browser(browser_choice: str):
     cookie_value = {c.name: c.value for c in cj if c.domain.endswith("douyin.com")}
 
     if not cookie_value:
-        raise ValueError(_("无法从{0}浏览器中获取cookie").format(browser_choice))
         raise ValueError(_("无法从 {0} 浏览器中获取cookie").format(browser_choice))
 
     return cookie_value
@@ -174,7 +171,6 @@ def handler_naming(
 
     if invalid_patterns:
         raise click.BadParameter(
-            _("`{0}` 中的 `{1}` 不符合命名模式".format(value, "".join(invalid_patterns)))
             _(
                 "`{0}` 中的 `{1}` 不符合命名模式".format(
                     value, "".join(invalid_patterns)
@@ -259,7 +255,6 @@ def merge_config(main_conf, custom_conf, **kwargs):
     "-u",
     type=str,
     default="",
-    help=_("根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合辑与直播同上"),
     help=_(
         "根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合辑与直播同上"
     ),
@@ -286,7 +281,11 @@ def merge_config(main_conf, custom_conf, **kwargs):
     help=_("是否保存视频文案。可选：'yes'、'no'"),
 )
 @click.option(
-    "--path", "-p", type=str, default="Download", help=_("作品保存位置，默认为 'Download'")
+    "--path",
+    "-p",
+    type=str,
+    default="Download",
+    help=_("作品保存位置，默认为 'Download'"),
 )
 @click.option(
     "--folderize",
@@ -301,7 +300,9 @@ def merge_config(main_conf, custom_conf, **kwargs):
     type=click.Choice(["one", "post", "like", "collect", "mix", "live"]),
     default="post",
     required=True,
-    help=_("下载模式：单个作品(one)，主页作品(post)，点赞作品(like)，收藏作品(collect)，合辑(mix)，直播(live)"),
+    help=_(
+        "下载模式：单个作品(one)，主页作品(post)，点赞作品(like)，收藏作品(collect)，合辑(mix)，直播(live)"
+    ),
 )
 @click.option(
     "--naming",
@@ -324,7 +325,6 @@ def merge_config(main_conf, custom_conf, **kwargs):
     "-i",
     type=str,
     default="all",
-    help=_("下载日期区间发布的作品，格式：2022-01-01|2023-01-01，默认为 'all'下载所有作品"),
     help=_(
         "下载日期区间发布的作品，格式：2022-01-01|2023-01-01，默认为 'all'下载所有作品"
     ),
@@ -355,12 +355,6 @@ def merge_config(main_conf, custom_conf, **kwargs):
 @click.option(
     "--page-counts", "-s", type=int, default=20, help=_("每页作品数。默认为 20")
 )
-@click.option("--timeout", "-e", type=int, default=10, help=_("网络请求超时时间。默认为 10"))
-@click.option("--max_retries", "-r", type=int, default=5, help=_("网络请求超时重试数。默认为 5"))
-@click.option("--max-connections", "-x", type=int, default=5, help=_("网络请求并发连接数。默认为 5"))
-@click.option("--max-tasks", "-t", type=int, default=10, help=_("异步的任务数。默认为 10"))
-@click.option("--max-counts", "-o", type=int, default=0, help=_("最大作品下载数。默认为 0，表示无限制"))
-@click.option("--page-counts", "-s", type=int, default=20, help=_("每页作品数。默认为 20"))
 @click.option(
     "--languages",
     "-l",
@@ -374,7 +368,6 @@ def merge_config(main_conf, custom_conf, **kwargs):
     "-P",
     type=str,
     nargs=2,
-    help=_("代理服务器，最多 2 个参数，http与https。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"),
     help=_(
         "代理服务器，最多 2 个参数，http与https。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"
     ),
@@ -385,8 +378,6 @@ def merge_config(main_conf, custom_conf, **kwargs):
     is_flag=True,
     help=_("使用命令行选项更新配置文件。需要先使用'-c'选项提供一个配置文件路径"),
 )
-@click.option("--init-config", type=str, help=_("初始化配置文件。不能同时初始化和更新配置文件"))
-# @click.confirmation_option(prompt='是否要使用命令行的参数更新配置文件?')
 @click.option(
     "--init-config", type=str, help=_("初始化配置文件。不能同时初始化和更新配置文件")
 )
@@ -415,7 +406,20 @@ def merge_config(main_conf, custom_conf, **kwargs):
 )
 @click.pass_context
 def douyin(ctx, config, init_config, update_config, **kwargs):
-    # 读取主配置文件
+
+    # f2 存在2个主配置文件，分别是app低频配置和f2低频配置
+    # app低频配置存放app相关的参数
+    # f2低频配置存放计算值所需的参数
+
+    # 其中cli参数具有最高优先，cli <= 自定义 <= 低频
+
+    # 在低频的配置中设置好代理，重试次数，下载路径，ck等低频的参数。
+
+    # 在自定义配置中可以存放不同用户的高频参数，如用户主页，原声下载，封面下载，文案下载，下载线程，下载模式等
+
+    # cli参数为不想修改配置的热修改，可以随时修改每一个参数。
+
+    # 读取低频主配置文件
     main_manager = ConfigManager(f2.APP_CONFIG_FILE_PATH)
     main_conf_path = get_resource_path(f2.APP_CONFIG_FILE_PATH)
     main_conf = main_manager.get_config("douyin")
@@ -440,7 +444,6 @@ def douyin(ctx, config, init_config, update_config, **kwargs):
     # 如果初始化配置文件，则与更新配置文件互斥
     if init_config and not update_config:
         main_manager.generate_config("douyin", init_config)
-        return
         # return
     elif init_config:
         raise click.UsageError(_("不能同时初始化和更新配置文件"))
@@ -473,12 +476,15 @@ def douyin(ctx, config, init_config, update_config, **kwargs):
     # 从低频配置开始到高频配置再到cli参数，逐级覆盖，如果键值不存在使用父级的键值
     kwargs = merge_config(main_conf, custom_conf, **kwargs)
 
-    logger.info(_("主配置： {0}".format(f2.APP_CONFIG_FILE_PATH)))
-    logger.info(_("自定义配置： {0}".format(config)))
-    logger.debug(_("CLI参数：{0}").format(kwargs))
+    logger.info(_("主配置路径： {0}".format(main_conf_path)))
+    logger.info(_("自定义配置路径： {0}".format(Path.cwd() / config)))
+    logger.debug(_("主配置参数：{0}".format(main_conf)))
+    logger.debug(_("自定义配置参数：{0}".format(custom_conf)))
+    logger.debug(_("CLI参数：{0}".format(kwargs)))
 
     # 尝试从命令行参数或kwargs中获取URL
     if not kwargs.get("url"):
+        logger.error("缺乏URL参数，详情看命令帮助")
         handle_help(ctx, None, True)
 
     # 添加app_name到kwargs
