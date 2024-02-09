@@ -15,6 +15,7 @@ from f2.utils.utils import split_dict_cookie, get_resource_path
 from f2.utils.conf_manager import ConfigManager
 from f2.i18n.translator import TranslationManager
 from f2.i18n.translator import _
+from f2.i18n.translator import TranslationManager, _
 from f2.apps.douyin.handler import handle_sso_login
 
 
@@ -107,6 +108,7 @@ def get_cookie_from_browser(browser_choice: str):
 
     if not cookie_value:
         raise ValueError(_("无法从{0}浏览器中获取cookie").format(browser_choice))
+        raise ValueError(_("无法从 {0} 浏览器中获取cookie").format(browser_choice))
 
     return cookie_value
 
@@ -173,6 +175,11 @@ def handler_naming(
     if invalid_patterns:
         raise click.BadParameter(
             _("`{0}` 中的 `{1}` 不符合命名模式".format(value, "".join(invalid_patterns)))
+            _(
+                "`{0}` 中的 `{1}` 不符合命名模式".format(
+                    value, "".join(invalid_patterns)
+                )
+            )
         )
 
     return value
@@ -253,6 +260,9 @@ def merge_config(main_conf, custom_conf, **kwargs):
     type=str,
     default="",
     help=_("根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合辑与直播同上"),
+    help=_(
+        "根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合辑与直播同上"
+    ),
 )
 @click.option(
     "--music",
@@ -315,6 +325,35 @@ def merge_config(main_conf, custom_conf, **kwargs):
     type=str,
     default="all",
     help=_("下载日期区间发布的作品，格式：2022-01-01|2023-01-01，默认为 'all'下载所有作品"),
+    help=_(
+        "下载日期区间发布的作品，格式：2022-01-01|2023-01-01，默认为 'all'下载所有作品"
+    ),
+)
+@click.option(
+    "--timeout", "-e", type=int, default=10, help=_("网络请求超时时间。默认为 10")
+)
+@click.option(
+    "--max_retries", "-r", type=int, default=5, help=_("网络请求超时重试数。默认为 5")
+)
+@click.option(
+    "--max-connections",
+    "-x",
+    type=int,
+    default=5,
+    help=_("网络请求并发连接数。默认为 5"),
+)
+@click.option(
+    "--max-tasks", "-t", type=int, default=10, help=_("异步的任务数。默认为 10")
+)
+@click.option(
+    "--max-counts",
+    "-o",
+    type=int,
+    default=0,
+    help=_("最大作品下载数。默认为 0，表示无限制"),
+)
+@click.option(
+    "--page-counts", "-s", type=int, default=20, help=_("每页作品数。默认为 20")
 )
 @click.option("--timeout", "-e", type=int, default=10, help=_("网络请求超时时间。默认为 10"))
 @click.option("--max_retries", "-r", type=int, default=5, help=_("网络请求超时重试数。默认为 5"))
@@ -336,6 +375,9 @@ def merge_config(main_conf, custom_conf, **kwargs):
     type=str,
     nargs=2,
     help=_("代理服务器，最多 2 个参数，http与https。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"),
+    help=_(
+        "代理服务器，最多 2 个参数，http与https。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"
+    ),
 )
 @click.option(
     "--update-config",
@@ -345,6 +387,9 @@ def merge_config(main_conf, custom_conf, **kwargs):
 )
 @click.option("--init-config", type=str, help=_("初始化配置文件。不能同时初始化和更新配置文件"))
 # @click.confirmation_option(prompt='是否要使用命令行的参数更新配置文件?')
+@click.option(
+    "--init-config", type=str, help=_("初始化配置文件。不能同时初始化和更新配置文件")
+)
 @click.option(
     "--auto-cookie",
     type=click.Choice(["none", "chrome", "firefox", "edge", "opera"]),
@@ -396,6 +441,7 @@ def douyin(ctx, config, init_config, update_config, **kwargs):
     if init_config and not update_config:
         main_manager.generate_config("douyin", init_config)
         return
+        # return
     elif init_config:
         raise click.UsageError(_("不能同时初始化和更新配置文件"))
     # 如果没有初始化配置文件，但是更新配置文件，则需要提供配置文件路径

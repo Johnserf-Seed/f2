@@ -101,7 +101,9 @@ class BaseDownloader(BaseCrawler):
             # 获取文件内容大小 (Get the size of the file content)
             content_length = await get_content_length(url, self.headers, self.proxies)
 
-            logger.debug(_("{0}在服务器上的总内容长度为：{1} 字节".format(url, content_length)))
+            logger.debug(
+                _("{0}在服务器上的总内容长度为：{1} 字节".format(url, content_length))
+            )
 
             # 如果文件内容大小为0, 则不下载 (If file content size is 0, skip download)
             if content_length == 0:
@@ -121,7 +123,13 @@ class BaseDownloader(BaseCrawler):
             # 获取临时文件的大小 (Get the size of the temporary file)
             start_byte = 0 if not tmp_path.exists() else tmp_path.stat().st_size
 
-            logger.debug(_("找到了未下载完的文件 {0}, 大小为 {1} 字节".format(tmp_path, start_byte)))
+            logger.debug(
+                _(
+                    "找到了未下载完的文件 {0}, 大小为 {1} 字节".format(
+                        tmp_path, start_byte
+                    )
+                )
+            )
 
             if start_byte in [0, content_length]:
                 if start_byte:
@@ -430,7 +438,9 @@ class BaseDownloader(BaseCrawler):
 
     async def execute_tasks(self):
         """执行所有下载任务 (Execute all download tasks)"""
-        logger.debug(_("开始执行下载任务，本次共有 {0} 个任务".format(len(self.download_tasks))))
+        logger.debug(
+            _("开始执行下载任务，本次共有 {0} 个任务".format(len(self.download_tasks)))
+        )
         await asyncio.gather(*self.download_tasks)
         self.download_tasks.clear()
 
