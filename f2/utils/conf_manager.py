@@ -130,10 +130,15 @@ class ConfigManager:
         self.config[app_name] = app_config
 
         # 在保存前询问用户确认 (Ask the user for confirmation before saving)
-        # click.echo(_('是否要使用命令行的参数更新配置文件?') + (f' =====> `{self.filepath}`')) #(Should I update the conf file using parameters from the cli?)
-        # 备份原始配置文件
-        self.backup_config()
-
-        # 保存更新的配置 (Save the updated conf)
-        self.save_config(self.config)
-        click.echo(_("配置文件已更新!"))
+        if click.confirm(
+            _("是否要使用命令行的参数更新配置文件？")
+            + (f"`{Path.cwd() / self.filepath}`"),
+            default=True,
+        ):
+            # 备份原始配置文件
+            self.backup_config()
+            # 保存更新的配置 (Save the updated conf)
+            self.save_config(self.config)
+            click.echo(_("配置文件已更新!"))
+        else:
+            click.echo(_("已取消更新配置文件!"))
