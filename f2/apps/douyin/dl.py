@@ -80,7 +80,9 @@ class DouyinDownloader(BaseDownloader):
                 )
                 return aweme_datas
             else:
-                logger.warning(_("作品发布时间不在指定区间内：{0}").format(aweme_date_str))
+                logger.warning(
+                    _("作品发布时间不在指定区间内：{0}").format(aweme_date_str)
+                )
                 return None
 
         elif isinstance(aweme_datas, list):
@@ -250,7 +252,9 @@ class DouyinDownloader(BaseDownloader):
                         _("视频"), video_url, base_path, video_name, ".mp4"
                     )
                 else:
-                    logger.warning(_("{0} 该作品没有视频链接，无法下载").format(aweme_id))
+                    logger.warning(
+                        _("{0} 该作品没有视频链接，无法下载").format(aweme_id)
+                    )
 
             elif aweme_type in [68]:
                 for i, image_url in enumerate(aweme_data_dict.get("images", None)):
@@ -260,7 +264,9 @@ class DouyinDownloader(BaseDownloader):
                             _("图集"), image_url, base_path, image_name, ".jpg"
                         )
                     else:
-                        logger.warning(_("{0} 该图集没有图片链接，无法下载").format(aweme_id))
+                        logger.warning(
+                            _("{0} 该图集没有图片链接，无法下载").format(aweme_id)
+                        )
 
         # 保存最后一个aweme_id
         await self.save_last_aweme_id(sec_user_id, aweme_id)

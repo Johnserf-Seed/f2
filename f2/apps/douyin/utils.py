@@ -392,7 +392,7 @@ class AwemeIdFetcher:
 class MixIdFetcher:
     @classmethod
     async def get_mix_id(cls, url: str) -> str:
-        pass
+        return
 
 
 class WebCastIdFetcher:
