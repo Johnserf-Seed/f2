@@ -1,6 +1,7 @@
 # path: f2/utils/utils.py
 
 import re
+import sys
 import random
 import secrets
 import datetime
@@ -196,6 +197,55 @@ def replaceT(obj: Union[str, Any]) -> Union[str, Any]:
         return re.sub(reSub, "_", obj)
 
     # raise TypeError("输入应为字符串或字符串列表")
+
+
+def split_filename(text: str, os_limit: dict, desc_length_limit: int = None) -> str:
+    """
+    根据操作系统的字符限制分割文件名，并用 '......' 代替。
+
+    Args:
+        text (str): 要计算的文本
+        os_limit (dict): 操作系统的字符限制字典
+        desc_length_limit (int): 手动控制 'desc' 字段的长度限制
+
+    Returns:
+        str: 分割后的文本
+    """
+    # 统计中文字符数并过滤下划线
+    chinese_length = sum(1 for char in text if "\u4e00" <= char <= "\u9fff")
+    num_underscores = text.count("_")
+
+    # 获取操作系统名称和文件名长度限制
+    os_name = sys.platform
+    filename_length_limit = os_limit.get(os_name, 200)
+
+    # 如果 desc_length_limit 有值，则用它替代 filename_length_limit
+    if desc_length_limit:
+        filename_length_limit = desc_length_limit
+
+    # 中文字符长度减去下划线数量
+    chinese_length -= num_underscores
+
+    # 根据操作系统的字符限制进行分割
+    if chinese_length > filename_length_limit:
+        chinese_length = min(
+            chinese_length, filename_length_limit
+        )  # 保证中文字符长度不超过操作系统限制
+        split_index, current_length = 0, 0
+        for index, char in enumerate(text):
+            if "\u4e00" <= char <= "\u9fff":
+                current_length += 3  # 中文字符长度为3
+            else:
+                current_length += 1  # 非中文字符长度为1
+            if current_length > chinese_length:
+                split_index = index
+                break
+
+        # 构建分割后的文本
+        split_text = text[:split_index] + "......" + text[-split_index:]
+        return split_text
+    else:
+        return text
 
 
 def ensure_path(path: Union[str, Path]) -> Path:
