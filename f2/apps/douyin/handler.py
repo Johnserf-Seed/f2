@@ -2,7 +2,7 @@
 
 # import time
 import asyncio
-from typing import Any, Union
+from typing import AsyncGenerator, Dict, Any, List
 
 from f2.log.logger import logger
 from f2.i18n.translator import _
@@ -340,7 +340,7 @@ class DouyinHandler:
         max_cursor: int = 0,
         page_counts: int = 20,
         max_counts: int = None,
-    ) -> list:
+    ) -> AsyncGenerator[List[Dict[str, Any]], None]:
         """
         用于获取指定用户喜欢的视频列表。
 
@@ -434,7 +434,7 @@ class DouyinHandler:
 
     async def fetch_user_collect_videos(
         self, max_cursor: int = 0, page_counts: int = 20, max_counts: int = None
-    ) -> list:
+    ) -> AsyncGenerator[List[Dict[str, Any]], None]:
         """
         用于获取指定用户收藏的视频列表。
         (Used to get the list of videos collected by the specified user.)
@@ -531,7 +531,7 @@ class DouyinHandler:
         max_cursor: int = 0,
         page_counts: int = 20,
         max_counts: int = None,
-    ) -> list:
+    ) -> AsyncGenerator[List[Dict[str, Any]], None]:
         """
         用于获取指定用户合集的视频列表。
 
@@ -726,7 +726,7 @@ class DouyinHandler:
         max_cursor: int = 0,
         page_counts: int = 20,
         max_counts: int = None,
-    ) -> list:
+    ) -> AsyncGenerator[List[Dict[str, Any]], None]:
         """
         用于获取指定用户feed的视频列表。
 
