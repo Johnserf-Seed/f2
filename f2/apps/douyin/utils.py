@@ -11,7 +11,6 @@ import asyncio
 
 from typing import Union
 from pathlib import Path
-from urllib.parse import quote, unquote
 
 from f2.i18n.translator import _
 from f2.log.logger import logger
@@ -267,24 +266,41 @@ class SecUserIdFetcher:
                         return match.group(1)
                     else:
                         raise APIResponseError(
-                            _("未在响应的地址中找到sec_user_id, 检查链接是否为用户主页")
+                            _(
+                                "未在响应的地址中找到sec_user_id, 检查链接是否为用户主页类名: {0}".format(
+                                    cls.__name__
+                                )
+                            )
                         )
 
                 elif response.status_code == 401:
-                    raise APIUnauthorizedError(_("未授权的请求"))
+                    raise APIUnauthorizedError(
+                        _("未授权的请求。类名: {0}".format(cls.__name__))
+                    )
                 elif response.status_code == 404:
-                    raise APINotFoundError(_("未找到API端点"))
+                    raise APINotFoundError(
+                        _("未找到API端点。类名: {0}".format(cls.__name__))
+                    )
                 elif response.status_code == 503:
-                    raise APIUnavailableError(_("API服务不可用"))
+                    raise APIUnavailableError(
+                        _("API服务不可用。类名: {0}".format(cls.__name__))
+                    )
                 else:
-                    raise APIError(_("API错误码：{0}").format(response.status_code))
-
-        except APIError as e:
-            e.display_error()
-            logger.error(str(e))
+                    raise APIError(
+                        _("API错误码：{0}。类名: {1}").format(
+                            response.status_code, cls.__name__
+                        )
+                    )
 
         except httpx.RequestError:
-            raise APIConnectionError(_("连接到API时发生错误，请检查链接"))
+            raise APIConnectionError(
+                _(
+                    "连接到API时发生错误，请检查URL或网络情况。类名: {0}".format(
+                        cls.__name__
+                    )
+                ),
+                url,
+            )
 
     @classmethod
     async def get_all_sec_user_id(cls, urls: list) -> list:
