@@ -21,6 +21,7 @@ from f2.utils.utils import (
     gen_random_str,
     get_timestamp,
     extract_valid_urls,
+    split_filename,
 )
 from f2.exceptions.api_exceptions import (
     APIError,
@@ -484,7 +485,7 @@ def format_file_name(
     naming_template: str,
     aweme_data: dict = {},
     custom_fields: dict = {},
-    desc_length_limit: int = 200,
+    desc_length_limit: int = None,
 ) -> str:
     """
     根据配置文件的全局格式化文件名
@@ -501,41 +502,41 @@ def format_file_name(
         (Windows file name length limit is 255 characters, 32,767 characters after long file name support is enabled)
         Unix 文件名长度限制为 255 个字符
         (Unix file name length limit is 255 characters)
-        取去除后的20个字符, 加上后缀, 一般不会超过255个字符
-        (Take the removed 20 characters, add the suffix, and generally not exceed 255 characters)
+        取去除后的50个字符, 加上后缀, 一般不会超过255个字符
+        (Take the removed 50 characters, add the suffix, and generally not exceed 255 characters)
+        详细信息请参考: https://en.wikipedia.org/wiki/Filename#Length
+        (For more information, please refer to: https://en.wikipedia.org/wiki/Filename#Length)
 
     Returns:
         str: 格式化的文件名 (Formatted file name)
     """
-    # 如果字典中没有对应的键，则使用用户自定义的字段
-    # (If there is no corresponding key in the dictionary, use the user-defined field)
+
+    # 为不同系统设置不同的文件名长度限制
+    os_limit = {
+        "win32": 200,
+        "cygwin": 60,
+        "darwin": 60,
+        "linux": 60,
+    }
+
     fields = {
-        "create": "",
-        "nickname": "",
-        "aweme_id": "",
-        "desc": "",
-        "uid": "",
+        "create": aweme_data.get("create_time", ""),  # 长度固定19
+        "nickname": aweme_data.get("nickname", ""),  # 最长30
+        "aweme_id": aweme_data.get("aweme_id", ""),  # 长度固定19
+        "desc": split_filename(
+            aweme_data.get("desc", ""), os_limit, desc_length_limit
+        ),# 分割 'desc' 字段
+        "uid": aweme_data.get("uid", ""),  # 固定11
     }
 
     if custom_fields:
+        # 更新自定义字段
         fields.update(custom_fields)
-    else:
-        fields = {
-            "create": aweme_data.get("create_time", ""),
-            "nickname": aweme_data.get("nickname", ""),
-            "aweme_id": aweme_data.get("aweme_id", ""),
-            "desc": aweme_data.get("desc", ""),
-            "uid": aweme_data.get("uid", ""),
-        }
 
-    # 处理 'desc' 字段的长度限制
-    if desc_length_limit is not None and len(fields["desc"]) > desc_length_limit:
-        half_limit = desc_length_limit // 2 - 6
-        fields["desc"] = (
-            f"{fields['desc'][:half_limit]}......{fields['desc'][-half_limit:]}"
-        )
-
-    return naming_template.format(**fields)
+    try:
+        return naming_template.format(**fields)
+    except KeyError as e:
+        raise KeyError(_("文件名模板字段 {0} 不存在，请检查".format(e)))
 
 
 def create_user_folder(kwargs: dict, nickname: Union[str, int]) -> Path:
