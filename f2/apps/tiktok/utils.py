@@ -3,14 +3,11 @@
 import f2
 import re
 import json
-import time
 import httpx
-import random
 import asyncio
 
-from typing import Union, Dict, Optional
+from typing import Union
 from pathlib import Path
-from urllib.parse import quote, unquote
 
 from f2.i18n.translator import _
 from f2.log.logger import logger
@@ -26,7 +23,6 @@ from f2.exceptions.api_exceptions import (
     APIError,
     APIConnectionError,
     APIResponseError,
-    APIUnavailableError,
     APIUnauthorizedError,
     APINotFoundError,
 )
@@ -103,9 +99,8 @@ class TokenManager:
                 )
 
             except APIError as e:
-                e.display_error()
                 # 返回虚假的msToken (Return a fake msToken)
-                logger.debug(_("生成虚假的msToken"))
+                logger.info(_("生成虚假的msToken"))
                 return cls.gen_false_msToken()
 
     @classmethod
@@ -158,11 +153,6 @@ class TokenManager:
                     f"HTTP Status Code {e.response.status_code}: {e.response.text}"
                 )
 
-            except APIError as e:
-                e.display_error()
-                time.sleep(2)
-                exit(0)
-
     @classmethod
     def gen_odin_tt(cls):
         """
@@ -200,11 +190,6 @@ class TokenManager:
                 raise APIResponseError(
                     f"HTTP Status Code {e.response.status_code}: {e.response.text}"
                 )
-
-            except APIError as e:
-                e.display_error()
-                time.sleep(2)
-                exit(0)
 
 
 class XBogusManager:
@@ -294,11 +279,6 @@ class SecUserIdFetcher:
                     ).format(url, TokenManager.proxies, response.status_code)
                 )
 
-            except APIError as e:
-                e.display_error()
-                await asyncio.sleep(2)
-                exit(0)
-
     @classmethod
     async def get_all_secuid(cls, urls: list) -> list:
         """
@@ -368,11 +348,6 @@ class SecUserIdFetcher:
                         "连接端点失败，检查网络环境或代理: {0} 代理：{1} 状态码：{2}"
                     ).format(url, TokenManager.proxies, response.status_code),
                 )
-
-            except APIError as e:
-                e.display_error()
-                await asyncio.sleep(2)
-                exit(0)
 
     @classmethod
     async def get_all_uniqueid(cls, urls: list) -> list:
@@ -450,11 +425,6 @@ class AwemeIdFetcher:
                     _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(url),
                     TokenManager.proxies,
                 )
-
-            except APIError as e:
-                e.display_error()
-                await asyncio.sleep(2)
-                exit(0)
 
     @classmethod
     async def get_all_aweme_id(cls, urls: list) -> list:
