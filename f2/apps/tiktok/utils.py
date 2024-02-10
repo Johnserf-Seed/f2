@@ -246,6 +246,11 @@ class SecUserIdFetcher:
         # 提取有效URL
         url = extract_valid_urls(url)
 
+        if url is None:
+            raise (
+                APINotFoundError(_("输入的URL不合法。类名：{0}".format(cls.__name__)))
+            )
+
         transport = httpx.AsyncHTTPTransport(retries=5)
         async with httpx.AsyncClient(
             transport=transport, proxies=TokenManager.proxies, timeout=10
@@ -256,7 +261,13 @@ class SecUserIdFetcher:
                 if response.status_code in {200, 444}:
                     match = cls._TIKTOK_SECUID_PARREN.search(str(response.text))
                     if not match:
-                        raise APIResponseError(_("未在响应中找到sec_uid"))
+                        raise APIResponseError(
+                            _(
+                                "未在响应的地址中找到sec_uid, 检查链接是否为用户主页类名: {0}".format(
+                                    cls.__name__
+                                )
+                            )
+                        )
 
                     # 提取SIGI_STATE对象中的sec_uid
                     data = json.loads(match.group(1))
@@ -275,8 +286,10 @@ class SecUserIdFetcher:
             except httpx.RequestError:
                 raise APIConnectionError(
                     _(
-                        "连接端点失败，检查网络环境或代理: {0} 代理：{1} 状态码：{2}"
-                    ).format(url, TokenManager.proxies, response.status_code)
+                        "连接端点失败，检查网络环境或代理: {0} 代理：{1} 状态码：{2} 类名: {3}"
+                    ).format(
+                        url, TokenManager.proxies, response.status_code, cls.__name__
+                    )
                 )
 
     @classmethod
@@ -296,6 +309,13 @@ class SecUserIdFetcher:
 
         # 提取有效URL
         urls = extract_valid_urls(urls)
+
+        if urls == []:
+            raise (
+                APINotFoundError(
+                    _("输入的URL List不合法。类名：{0}".format(cls.__name__))
+                )
+            )
 
         secuids = [cls.get_secuid(url) for url in urls]
         return await asyncio.gather(*secuids)
@@ -393,7 +413,12 @@ class AwemeIdFetcher:
             raise TypeError("输入参数必须是字符串")
 
         # 提取有效URL
-        url = str(extract_valid_urls(url))
+        url = extract_valid_urls(url)
+
+        if url is None:
+            raise (
+                APINotFoundError(_("输入的URL不合法。类名：{0}".format(cls.__name__)))
+            )
 
         transport = httpx.AsyncHTTPTransport(retries=5)
         async with httpx.AsyncClient(
