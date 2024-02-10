@@ -353,7 +353,10 @@ class AwemeIdFetcher:
             )
 
         # 重定向到完整链接
-        async with httpx.AsyncClient(timeout=10) as client:
+        transport = httpx.AsyncHTTPTransport(retries=5)
+        async with httpx.AsyncClient(
+            transport=transport, proxies=TokenManager.proxies, timeout=10
+        ) as client:
             response = await client.get(url, follow_redirects=True)
             url = str(response.url)
 
@@ -434,7 +437,10 @@ class WebCastIdFetcher:
             )
 
         # 重定向到完整链接
-        async with httpx.AsyncClient(timeout=10) as client:
+        transport = httpx.AsyncHTTPTransport(retries=5)
+        async with httpx.AsyncClient(
+            transport=transport, proxies=TokenManager.proxies, timeout=10
+        ) as client:
             response = await client.get(url, follow_redirects=True)
             url = str(response.url)
 
