@@ -29,11 +29,11 @@ from f2.exceptions.api_exceptions import (
 
 
 class TokenManager:
-    f2_manager = ConfigManager(f2.F2_CONFIG_FILE_PATH).get_config("f2")
-    token_conf = f2_manager.get("msToken").get("tiktok", None)
-    ttwid_conf = f2_manager.get("ttwid").get("tiktok", None)
-    odin_tt_conf = f2_manager.get("odin_tt").get("tiktok", None)
-    proxies_conf = f2_manager.get("proxies").get("tiktok", None)
+    f2_manager = ConfigManager(f2.F2_CONFIG_FILE_PATH).get_config("f2").get("tiktok")
+    token_conf = f2_manager.get("msToken", None)
+    ttwid_conf = f2_manager.get("ttwid", None)
+    odin_tt_conf = f2_manager.get("odin_tt", None)
+    proxies_conf = f2_manager.get("proxies", None)
     proxies = {
         "http://": proxies_conf.get("http", None),
         "https://": proxies_conf.get("https", None),
