@@ -100,3 +100,9 @@ class TiktokCrawler(BaseCrawler):
         )
         logger.debug(_("首页推荐接口地址:" + endpoint))
         return await self._fetch_json(endpoint)
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.close()
