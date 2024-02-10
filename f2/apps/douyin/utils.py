@@ -363,17 +363,17 @@ class AwemeIdFetcher:
         video_pattern = cls._DOUYIN_VIDEO_URL_PATTERN
         note_pattern = cls._DOUYIN_NOTE_URL_PATTERN
 
-        try:
-            if video_pattern.search(url):
-                match = video_pattern.search(url)
-            elif note_pattern.search(url):
-                match = note_pattern.search(url)
-            else:
-                raise APIResponseError(
-                    _("未在响应的地址中找到aweme_id, 检查链接是否为作品页")
-                )
 
-            return match.group(1)
+        if video_pattern.search(url):
+            match = video_pattern.search(url)
+        elif note_pattern.search(url):
+            match = note_pattern.search(url)
+        else:
+            raise APIResponseError(
+                _("未在响应的地址中找到aweme_id, 检查链接是否为作品页")
+            )
+
+        return match.group(1)
 
 
     @classmethod
@@ -448,24 +448,23 @@ class WebCastIdFetcher:
         live_pattern2 = cls._DOUYIN_LIVE_URL_PATTERN2
         live_pattern3 = cls._DOUYIN_LIVE_URL_PATTERN3
 
-        try:
-            if live_pattern.search(url):
-                match = live_pattern.search(url)
-            elif live_pattern2.search(url):
-                match = live_pattern2.search(url)
-            elif live_pattern3.search(url):
-                match = live_pattern3.search(url)
-                logger.debug(
-                    _(
-                        "该链接返回的是room_id，请使用fetch_user_live_videos_by_room_id接口"
-                    )
+        if live_pattern.search(url):
+            match = live_pattern.search(url)
+        elif live_pattern2.search(url):
+            match = live_pattern2.search(url)
+        elif live_pattern3.search(url):
+            match = live_pattern3.search(url)
+            logger.debug(
+                _(
+                    "该链接返回的是room_id，请使用fetch_user_live_videos_by_room_id接口"
                 )
-            else:
-                raise APIResponseError(
-                    _("未在响应的地址中找到webcast_id, 检查链接是否为直播页")
-                )
+            )
+        else:
+            raise APIResponseError(
+                _("未在响应的地址中找到webcast_id, 检查链接是否为直播页")
+            )
 
-            return match.group(1)
+        return match.group(1)
 
 
     @classmethod
