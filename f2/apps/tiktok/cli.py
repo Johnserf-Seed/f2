@@ -371,16 +371,11 @@ def tiktok(ctx, config, init_config, update_config, **kwargs):
     # CLI代理配置
     cli_proxies = kwargs.get("proxies")
 
-    # 从主配置读取固定User-Agent与Referer值
+    # 更新主配置文件中的headers参数
     kwargs.setdefault("headers", {})
-    kwargs["headers"]["User-Agent"] = (
-        main_manager.get_config("tiktok").get("headers").get("User-Agent")
-    )
-    kwargs["headers"]["Referer"] = (
-        main_manager.get_config("tiktok").get("headers").get("Referer")
-    )
+    kwargs["headers"]["User-Agent"] = f2_conf["headers"].get("User-Agent", "")
+    kwargs["headers"]["Referer"] = f2_conf["headers"].get("Referer", "")
 
-    # 如果用户想初始化新配置文件
     if init_config and not update_config:
         main_manager.generate_config("tiktok", init_config)
         # return
