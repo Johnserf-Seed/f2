@@ -101,9 +101,7 @@ class TokenManager:
                 )
 
             except APIError as e:
-                e.display_error()
-                # 返回虚假的msToken (Return a fake msToken)
-                print(_("生成虚假的msToken"))
+                logger.info(_("生成虚假的msToken"))
                 return cls.gen_false_msToken()
 
     @classmethod
@@ -146,11 +144,6 @@ class TokenManager:
                 raise APIResponseError(
                     f"HTTP Status Code {e.response.status_code}: {e.response.text}"
                 )
-
-            except APIError as e:
-                e.display_error()
-                time.sleep(2)
-                exit(0)
 
 
 class VerifyFpManager:
@@ -379,9 +372,6 @@ class AwemeIdFetcher:
 
             return match.group(1)
 
-        except APIError as e:
-            e.display_error()
-            logger.error(str(e))
 
     @classmethod
     async def get_all_aweme_id(cls, urls: list) -> list:
@@ -471,9 +461,6 @@ class WebCastIdFetcher:
 
             return match.group(1)
 
-        except APIError as e:
-            e.display_error()
-            logger.error(str(e))
 
     @classmethod
     async def get_all_webcast_id(cls, urls: list) -> list:
@@ -541,7 +528,7 @@ def format_file_name(
         "aweme_id": aweme_data.get("aweme_id", ""),  # 长度固定19
         "desc": split_filename(
             aweme_data.get("desc", ""), os_limit, desc_length_limit
-        ),# 分割 'desc' 字段
+        ),  # 分割 'desc' 字段
         "uid": aweme_data.get("uid", ""),  # 固定11
     }
 

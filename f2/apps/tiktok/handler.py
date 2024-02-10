@@ -107,21 +107,16 @@ class TiktokHandler:
         # 获取当前用户最新昵称
         current_nickname = current_user_data._to_dict().get("nickname")
 
-        # 在调用前添加类型检查
-        if current_nickname is not None and isinstance(current_nickname, str):
-            # 设置用户目录
-            user_path = create_or_rename_user_folder(
-                self.kwargs, local_user_data, current_nickname
-            )
+        # 设置用户目录
+        user_path = create_or_rename_user_folder(
+            self.kwargs, local_user_data, current_nickname
+        )
 
-            # 如果用户不在数据库中，将其添加到数据库
-            if not local_user_data:
-                await db.add_user_info(**current_user_data)
+        # 如果用户不在数据库中，将其添加到数据库
+        if not local_user_data:
+            await db.add_user_info(**current_user_data)
 
-            return user_path
-        else:
-            # 处理当前昵称为 None 或者不是字符串的情况，可以抛出异常或者返回默认值
-            raise ValueError("Invalid or missing nickname for user.")
+        return user_path
 
     @classmethod
     async def get_or_add_video_data(
@@ -254,6 +249,7 @@ class TiktokHandler:
             post: dict: 视频信息 (Video info)
         """
 
+        logger.debug(_("开始爬取视频: {0}").format(itemId))
         async with TiktokCrawler(self.kwargs) as crawler:
             params = PostDetail(itemId=itemId)
             response = await crawler.fetch_post_detail(params)
