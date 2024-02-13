@@ -199,14 +199,13 @@ def replaceT(obj: Union[str, Any]) -> Union[str, Any]:
     # raise TypeError("输入应为字符串或字符串列表")
 
 
-def split_filename(text: str, os_limit: dict, desc_length_limit: int = None) -> str:
+def split_filename(text: str, os_limit: dict) -> str:
     """
     根据操作系统的字符限制分割文件名，并用 '......' 代替。
 
     Args:
         text (str): 要计算的文本
         os_limit (dict): 操作系统的字符限制字典
-        desc_length_limit (int): 手动控制 'desc' 字段的长度限制
 
     Returns:
         str: 分割后的文本
@@ -219,9 +218,6 @@ def split_filename(text: str, os_limit: dict, desc_length_limit: int = None) -> 
     os_name = sys.platform
     filename_length_limit = os_limit.get(os_name, 200)
 
-    # 如果 desc_length_limit 有值，则用它替代 filename_length_limit
-    if desc_length_limit:
-        filename_length_limit = desc_length_limit
 
     # 中文字符长度减去下划线数量
     chinese_length -= num_underscores
