@@ -421,9 +421,7 @@ class DouyinHandler:
         sec_user_id = await SecUserIdFetcher.get_sec_user_id(self.kwargs.get("url"))
 
         async with AsyncUserDB("douyin_users.db") as db:
-            user_path, user_data = await self.get_or_add_user_data(
-                self.kwargs, sec_user_id, db
-            )
+            user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, db)
 
         async for aweme_data_list in self.fetch_user_collect_videos(
             max_cursor, page_counts, max_counts
