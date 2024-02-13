@@ -87,7 +87,7 @@ class BaseCrawler:
         """
         return await self.get_fetch_data(endpoint)
 
-    async def _fetch_json(self, endpoint: str) -> dict:
+    async def _fetch_get_json(self, endpoint: str) -> dict:
         """获取 JSON 数据 (Get JSON data)
 
         Args:
