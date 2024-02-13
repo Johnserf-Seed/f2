@@ -81,7 +81,8 @@ class BaseDownloader(BaseCrawler):
         except Exception as e:
             logger.error(_("文件区块下载失败: {0}".format(e)))
         finally:
-            await response.aclose()
+            if response:
+                await response.aclose()
 
     async def download_file(
         self, task_id: TaskID, url: str, full_path: Union[str, Path]
