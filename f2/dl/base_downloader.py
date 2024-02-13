@@ -67,9 +67,8 @@ class BaseDownloader(BaseCrawler):
             task_id (TaskID): 任务ID (Task ID)
         """
 
-        response = await client.send(request, stream=True)
-
         try:
+            response = await client.send(request, stream=True)
             async for chunk in response.aiter_bytes(get_chunk_size(content_length)):
                 if SignalManager.is_shutdown_signaled():
                     break
