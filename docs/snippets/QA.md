@@ -12,9 +12,14 @@
 
 // #region api-rate-limit-snippet
 如果出现`API Rate Limit Error`时只需等待一会后重试即可。
+继续频繁出现该错误需在网页端中重新登录并获取`cookie`。
+仍无效后请切换网络环境和账号。
 
-如果频繁出现该错误只需在网页端中重新登录并获取`cookie`。
-// #endregion api-rate-limit-snippethttps://zh.wikipedia.org/wiki/HTTP%E7%8A%B6%E6%80%81%E7%A0%81
+https://zh.wikipedia.org/wiki/HTTP%E7%8A%B6%E6%80%81%E7%A0%81
+https://datatracker.ietf.org/doc/html/rfc6585#section-7.2
+// #endregion api-rate-limit-snippet
+
+
 // #region urlopen-errno-11001
 该问题为本地网络连接问题，请检查你的网络连接是否正常。需要排查代理是否可以正常访问。
 // #endregion urlopen-errno-11001
