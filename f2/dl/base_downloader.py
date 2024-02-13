@@ -207,6 +207,7 @@ class BaseDownloader(BaseCrawler):
         async with self.semaphore:
             full_path = self._ensure_path(full_path)
             total_downloaded = 1024000
+            default_chunks = 409600
 
             while not SignalManager.is_shutdown_signaled():
                 try:
@@ -233,6 +234,13 @@ class BaseDownloader(BaseCrawler):
                             ts_content_length = await get_content_length(
                                 ts_url, self.headers
                             )
+                            if ts_content_length == 0:
+                                ts_content_length = default_chunks
+                                logger.warning(
+                                    _(
+                                        "无法读取该TS文件字节长度，将使用默认400kb块大小处理数据"
+                                    )
+                                )
                             ts_request = self.aclient.build_request(
                                 "GET", ts_url, headers=self.headers
                             )
