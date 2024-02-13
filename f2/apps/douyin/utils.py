@@ -493,7 +493,6 @@ def format_file_name(
     naming_template: str,
     aweme_data: dict = {},
     custom_fields: dict = {},
-    desc_length_limit: int = None,
 ) -> str:
     """
     根据配置文件的全局格式化文件名
@@ -503,7 +502,6 @@ def format_file_name(
         aweme_data (dict): 抖音数据的字典 (dict of douyin data)
         naming_template (str): 文件的命名模板, 如 "{create}_{desc}" (Naming template for files, such as "{create}_{desc}")
         custom_fields (dict): 用户自定义字段, 用于替代默认的字段值 (Custom fields for replacing default field values)
-        desc_length_limit (int): 控制 'desc' 字段的长度限制 (Control the length limit of the 'desc' field)
 
     Note:
         windows 文件名长度限制为 255 个字符, 开启了长文件名支持后为 32,767 个字符
@@ -532,7 +530,7 @@ def format_file_name(
         "nickname": aweme_data.get("nickname", ""),  # 最长30
         "aweme_id": aweme_data.get("aweme_id", ""),  # 长度固定19
         "desc": split_filename(
-            aweme_data.get("desc", ""), os_limit, desc_length_limit
+            aweme_data.get("desc", ""), os_limit
         ),  # 分割 'desc' 字段
         "uid": aweme_data.get("uid", ""),  # 固定11
     }
