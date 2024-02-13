@@ -7,3 +7,7 @@
 ## API Rate Limit Error
 
 <<< @/snippets/QA.md#api-rate-limit-snippet
+
+## <urlopen error [Errno 11001] getaddrinfo failed>
+
+<<< @/snippets/QA.md#urlopen-errno-11001
