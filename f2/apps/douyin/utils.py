@@ -363,7 +363,6 @@ class AwemeIdFetcher:
         video_pattern = cls._DOUYIN_VIDEO_URL_PATTERN
         note_pattern = cls._DOUYIN_NOTE_URL_PATTERN
 
-
         if video_pattern.search(url):
             match = video_pattern.search(url)
         elif note_pattern.search(url):
@@ -374,7 +373,6 @@ class AwemeIdFetcher:
             )
 
         return match.group(1)
-
 
     @classmethod
     async def get_all_aweme_id(cls, urls: list) -> list:
@@ -455,9 +453,7 @@ class WebCastIdFetcher:
         elif live_pattern3.search(url):
             match = live_pattern3.search(url)
             logger.debug(
-                _(
-                    "该链接返回的是room_id，请使用fetch_user_live_videos_by_room_id接口"
-                )
+                _("该链接返回的是room_id，请使用fetch_user_live_videos_by_room_id接口")
             )
         else:
             raise APIResponseError(
@@ -465,7 +461,6 @@ class WebCastIdFetcher:
             )
 
         return match.group(1)
-
 
     @classmethod
     async def get_all_webcast_id(cls, urls: list) -> list:
