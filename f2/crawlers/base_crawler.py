@@ -135,7 +135,9 @@ class BaseCrawler:
         else:
             # 处理响应为 None 或者状态码异常的情况
             if isinstance(response, Response):
-                logger.error(_("获取数据失败。状态码: {0}").format(response.status_code))
+                logger.error(
+                    _("获取数据失败。状态码: {0}").format(response.status_code)
+                )
             else:
                 logger.error(_("无效响应类型。响应类型: {0}").format(type(response)))
 
@@ -155,15 +157,17 @@ class BaseCrawler:
             try:
                 response = await self.aclient.get(url, follow_redirects=True)
                 if not response.text.strip() or not response.content:
-                    error_message = _("第 {0} 次响应内容为空, 状态码: {1}, URL:{2}").format(
-                        attempt + 1, response.status_code, response.url
-                    )
+                    error_message = _(
+                        "第 {0} 次响应内容为空, 状态码: {1}, URL:{2}"
+                    ).format(attempt + 1, response.status_code, response.url)
 
                     print(error_message)
                     logger.warning(error_message)
 
                     if attempt == self._max_retries - 1:
-                        raise APIRetryExhaustedError(_("获取端点数据失败, 次数达到上限"))
+                        raise APIRetryExhaustedError(
+                            _("获取端点数据失败, 次数达到上限")
+                        )
 
                     await asyncio.sleep(self._timeout)
                     continue
@@ -174,10 +178,14 @@ class BaseCrawler:
 
             except httpx.RequestError:
                 logger.error(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(url, self.proxies)
+                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
+                        url, self.proxies
+                    )
                 )
                 raise APIConnectionError(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(url, self.proxies)
+                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
+                        url, self.proxies
+                    )
                 )
 
             except httpx.HTTPStatusError as http_error:
@@ -203,15 +211,17 @@ class BaseCrawler:
                     url, json=dict(params), follow_redirects=True
                 )
                 if not response.text.strip() or not response.content:
-                    error_message = _("第 {0} 次响应内容为空, 状态码: {1}, URL:{2}").format(
-                        attempt + 1, response.status_code, response.url
-                    )
+                    error_message = _(
+                        "第 {0} 次响应内容为空, 状态码: {1}, URL:{2}"
+                    ).format(attempt + 1, response.status_code, response.url)
 
                     print(error_message)
                     logger.warning(error_message)
 
                     if attempt == self._max_retries - 1:
-                        raise APIRetryExhaustedError(_("获取端点数据失败, 次数达到上限"))
+                        raise APIRetryExhaustedError(
+                            _("获取端点数据失败, 次数达到上限")
+                        )
 
                     await asyncio.sleep(self._timeout)
                     continue
@@ -222,10 +232,14 @@ class BaseCrawler:
 
             except httpx.RequestError:
                 logger.error(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(url, self.proxies)
+                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
+                        url, self.proxies
+                    )
                 )
                 raise APIConnectionError(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(url, self.proxies)
+                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
+                        url, self.proxies
+                    )
                 )
 
             except httpx.HTTPStatusError as http_error:
@@ -251,9 +265,15 @@ class BaseCrawler:
             return response
 
         except httpx.RequestError:
-            logger.error(_("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(url, self.proxies))
+            logger.error(
+                _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
+                    url, self.proxies
+                )
+            )
             raise APIConnectionError(
-                _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(url, self.proxies)
+                _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
+                    url, self.proxies
+                )
             )
 
         except httpx.HTTPStatusError as http_error:
@@ -285,7 +305,9 @@ class BaseCrawler:
 
         if response is None or status_code is None:
             logger.error(
-                _("HTTP状态错误: {0}, URL: {1}, 尝试次数: {2}").format(http_error, url, attempt)
+                _("HTTP状态错误: {0}, URL: {1}, 尝试次数: {2}").format(
+                    http_error, url, attempt
+                )
             )
             raise APIResponseError(f"处理HTTP错误时遇到意外情况: {http_error}")
 
