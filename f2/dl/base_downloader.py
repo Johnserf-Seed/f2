@@ -4,7 +4,7 @@ import sys
 import httpx
 import asyncio
 import aiofiles
-
+import traceback
 from pathlib import Path
 from rich.progress import TaskID
 from typing import Union, Optional, Any
@@ -269,6 +269,7 @@ class BaseDownloader(BaseCrawler):
                                 logger.warning(_("TS文件下载超时: {0}".format(e)))
                             except Exception as e:
                                 logger.error(_("TS文件下载失败: {0}".format(e)))
+                                logger.error(traceback.format_exc())
                             finally:
                                 await ts_response.aclose()
                     # 等待一段时间后再次请求更新 (Request update again after waiting for a while)
@@ -296,6 +297,7 @@ class BaseDownloader(BaseCrawler):
 
                 except Exception as e:
                     logger.error(_("m3u8文件解析失败: {0}".format(e)))
+                    logger.error(traceback.format_exc())
                     await self.progress.update(
                         task_id,
                         description=_("[  失败  ]:"),
