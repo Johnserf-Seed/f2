@@ -84,12 +84,16 @@ class TokenManager:
 
                 return msToken
 
-            except httpx.RequestError:
+            except httpx.RequestError as e:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
+                if hasattr(e, "response"):
+                    status_code = e.response.status_code
+                else:
+                    status_code = "N/A"
                 raise APIConnectionError(
                     _(
                         "连接端点失败，检查网络环境或代理：{0} 代理：{1} 状态码：{2}"
-                    ).format(cls.token_conf["url"], cls.proxies, response.status_code)
+                    ).format(cls.token_conf["url"], cls.proxies, status_code)
                 )
 
             except httpx.HTTPStatusError as e:
