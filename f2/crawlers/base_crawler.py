@@ -3,9 +3,8 @@
 import httpx
 import json
 import asyncio
-from urllib.parse import quote, unquote
-from httpx import Response
 
+from httpx import Response
 
 from f2.i18n.translator import _
 from f2.log.logger import logger
@@ -114,20 +113,16 @@ class BaseCrawler:
         Returns:
             dict: 解析后的JSON数据 (Parsed JSON data)
         """
-        # 检查响应是否成功 (Check if the response is successful)
         if (
             response is not None
             and isinstance(response, Response)
             and response.status_code == 200
         ):
             try:
-                # 尝试解析 JSON 数据 (Try to parse JSON data)
                 return response.json()
             except json.JSONDecodeError as e:
-                # JSON 解析失败，处理异常 (JSON parsing failed, handling exceptions)
                 logger.error(_("解析 {0} 接口 JSON 失败： {1}").format(response.url, e))
         else:
-            # 处理响应为 None 或者状态码异常的情况
             if isinstance(response, Response):
                 logger.error(
                     _("获取数据失败。状态码: {0}").format(response.status_code)
