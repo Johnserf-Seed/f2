@@ -473,7 +473,9 @@ class WebCastIdFetcher:
         elif live_pattern3.search(url):
             match = live_pattern3.search(url)
             logger.debug(
-                _("该链接返回的是room_id，请使用fetch_user_live_videos_by_room_id接口")
+                _(
+                    "该链接返回的是room_id，请使用`fetch_user_live_videos_by_room_id`接口"
+                )
             )
         else:
             raise APIResponseError(
@@ -551,9 +553,7 @@ def format_file_name(
         "create": aweme_data.get("create_time", ""),  # 长度固定19
         "nickname": aweme_data.get("nickname", ""),  # 最长30
         "aweme_id": aweme_data.get("aweme_id", ""),  # 长度固定19
-        "desc": split_filename(
-            aweme_data.get("desc", ""), os_limit
-        ),  # 分割 'desc' 字段
+        "desc": split_filename(aweme_data.get("desc", ""), os_limit),
         "uid": aweme_data.get("uid", ""),  # 固定11
     }
 

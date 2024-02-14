@@ -544,9 +544,7 @@ def format_file_name(
         "create": aweme_data.get("createTime", ""),  # 长度固定19
         "nickname": aweme_data.get("nickname", ""),  # 最长30
         "aweme_id": aweme_data.get("aweme_id", ""),  # 长度固定19
-        "desc": split_filename(
-            aweme_data.get("desc", ""), os_limit
-        ),  # 分割 'desc' 字段
+        "desc": split_filename(aweme_data.get("desc", ""), os_limit),
         "uid": aweme_data.get("uid", ""),  # 固定11
     }
 
