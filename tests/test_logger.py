@@ -1,3 +1,5 @@
+# path: tests/test_logger.py
+
 import pytest
 import logging
 from pathlib import Path

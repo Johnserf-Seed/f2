@@ -1,3 +1,5 @@
+# path: tests/test_xbogus.py
+
 from f2.utils.xbogus import XBogus
 
 xb = XBogus().getXBogus(

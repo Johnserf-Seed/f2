@@ -1,4 +1,4 @@
-# path: f2/tests/test_dl.py
+# path: tests/test_dl.py
 
 import asyncio
 

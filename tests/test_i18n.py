@@ -1,5 +1,6 @@
 from f2.i18n.translator import TranslationManager
 from f2.i18n.translator import _
+# path: tests/test_i18n.py
 
 
 def test_translation():
