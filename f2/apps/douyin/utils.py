@@ -86,16 +86,12 @@ class TokenManager:
 
                 return msToken
 
-            except httpx.RequestError as e:
+            except httpx.RequestError:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
-                if hasattr(e, "response"):
-                    status_code = e.response.status_code
-                else:
-                    status_code = "N/A"
                 raise APIConnectionError(
                     _(
-                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 状态码：{2}"
-                    ).format(cls.token_conf["url"], cls.proxies, status_code)
+                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
+                    ).format(cls.token_conf["url"], cls.proxies, cls.__name__)
                 )
 
             except httpx.HTTPStatusError as e:
@@ -139,8 +135,8 @@ class TokenManager:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
                 raise APIConnectionError(
                     _(
-                        "连接端点失败，检查网络环境或代理: {0} 代理：{1} 状态码：{2}"
-                    ).format(cls.ttwid_conf["url"], cls.proxies, response.status_code)
+                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
+                    ).format(cls.ttwid_conf["url"], cls.proxies, cls.__name__)
                 )
 
             except httpx.HTTPStatusError as e:
@@ -377,6 +373,16 @@ class AwemeIdFetcher:
             )
 
         return match.group(1)
+            except httpx.RequestError:
+                raise APIConnectionError(
+                    _(
+                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
+                    ).format(
+                        url,
+                        TokenManager.proxies,
+                        cls.__name__,
+                    )
+                )
 
     @classmethod
     async def get_all_aweme_id(cls, urls: list) -> list:
