@@ -117,7 +117,7 @@ outline: deep
 | :--- | :--- | :--- |
 | video_data | dict | 视频数据字典，包含视频ID、视频文案、作者昵称等 |
 
-<<< @/snippets/douyin/one-video.py{6,8}
+<<< @/snippets/douyin/one-video.py{15,17}
 
 ### 用户发布作品数据 🟢
 
@@ -134,7 +134,7 @@ outline: deep
 | :--- | :--- | :--- |
 | video_data | dict | 视频数据字典，包含视频ID、视频文案、作者昵称、页码等 |
 
-<<< @/snippets/douyin/user-post.py{6,8,13,14}
+<<< @/snippets/douyin/user-post.py{15,17-20,25-28}
 
 ### 用户喜欢作品数据 🟢
 
@@ -151,7 +151,7 @@ outline: deep
 | :--- | :--- | :--- |
 | aweme_data | dict | 视频数据字典，包含视频ID、视频文案、作者昵称、页码等 |
 
-<<< @/snippets/douyin/user-like.py{6,8,13,14}
+<<< @/snippets/douyin/user-like.py{15,17-20,25-28}
 
 ### 用户收藏作品数据 🟢
 
@@ -167,7 +167,7 @@ outline: deep
 | :--- | :--- | :--- |
 | aweme_data | dict | 视频数据字典，包含视频ID、视频文案、作者昵称、页码等 |
 
-<<< @/snippets/douyin/user-collect.py{6,10,11}
+<<< @/snippets/douyin/user-collect.py{16-17,22-25}
 
 ### 用户合辑作品数据 🟢
 
@@ -184,7 +184,7 @@ outline: deep
 | :--- | :--- | :--- |
 | aweme_data | dict | 视频数据字典，包含视频ID、视频文案、作者昵称、页码等 |
 
-<<< @/snippets/douyin/user-mix.py{6,8,13,14}
+<<< @/snippets/douyin/user-mix.py{16-18,21-24,29-32}
 
 ### 用户直播流数据 🟢
 
@@ -198,7 +198,7 @@ outline: deep
 | :--- | :--- | :--- |
 | webcast_data | dict | 直播数据字典，包含直播ID、直播标题、直播状态、观看人数、子分区、主播昵称等 |
 
-<<< @/snippets/douyin/user-live.py{6}
+<<< @/snippets/douyin/user-live.py{15}
 
 ### 用户直播流数据2 🟢
 
@@ -212,7 +212,7 @@ outline: deep
 | :--- | :--- | :--- |
 | webcast_data | dict | 直播数据字典，包含直播ID、直播标题、直播状态、观看人数、子分区、主播昵称等 |
 
-<<< @/snippets/douyin/user-live-room-id.py{6}
+<<< @/snippets/douyin/user-live-room-id.py{16-18}
 
 ### 用户信息 🟢
 
@@ -226,7 +226,7 @@ outline: deep
 | :--- | :--- | :--- |
 | UserProfileFilter | _to_dict() | 自定义的接口数据过滤器 | 用户数据字典，包含用户ID、用户昵称、用户签名、用户头像等 |
 
-<<< @/snippets/douyin/user-profile.py{6-7}
+<<< @/snippets/douyin/user-profile.py{15-16}
 
 ### 获取指定用户名 🔴
 
@@ -241,7 +241,7 @@ outline: deep
 | :--- | :--- | :--- |
 | user_nickname | str | 用户昵称 |
 
-<<< @/snippets/douyin/user-nickname.py{7-9}
+<<< @/snippets/douyin/user-nickname.py{17,19-21}
 
 ### 创建用户记录与目录 🟡
 
@@ -258,7 +258,7 @@ outline: deep
 | :--- | :--- | :--- |
 | user_path | Path | 用户目录路径对象 |
 
-<<< @/snippets/douyin/user-get-add.py{7-12}
+<<< @/snippets/douyin/user-get-add.py{18,20-22}
 
 ::: tip 提示
 此为cli模式的接口，开发者可自行定义创建用户目录的功能。
@@ -278,7 +278,7 @@ outline: deep
 | :--- | :--- | :--- |
 |None | None | 无 |
 
-<<< @/snippets/douyin/video-get-add.py{6,10-12}
+<<< @/snippets/douyin/video-get-add.py{6,23-25}
 
 ### SSO登录 🟢
 
@@ -294,7 +294,7 @@ outline: deep
 | is_login | bool | 是否登录成功 |
 | login_cookie | str | 登录cookie |
 
-<<< @/snippets/douyin/sso-login.py
+<<< @/snippets/douyin/sso-login.py{5}
 
 ::: danger 警告
 由于扫码登录受风控影响较大,多数cookie都无法使用。为了保障体验，建议使用--auto-cookie命令自动从浏览器获取cookie，更多使用帮助参考cli命令。
@@ -388,7 +388,7 @@ outline: deep
 | :--- | :--- | :--- |
 | final_endpoint | str | 带Xbogus参数的完整地址 |
 
-<<< @/snippets/douyin/xbogus.py#str-2-endpoint-snippet{7}
+<<< @/snippets/douyin/xbogus.py#str-2-endpoint-snippet{6,7}
 
 ### 使用接口模型生成Xb参数 🟢
 
@@ -410,7 +410,7 @@ outline: deep
 
 还可以使用爬虫引擎与过滤器采集数据。
 
-<<< @/snippets/douyin/xbogus.py#model-2-endpoint-2-filter-snippet{10-16}
+<<< @/snippets/douyin/xbogus.py#model-2-endpoint-2-filter-snippet{22-27}
 
 更加抽象的高级方法可以直接调用handler接口的`handler_user_profile`。
 
@@ -459,7 +459,7 @@ outline: deep
 | :--- | :--- | :--- |
 | aweme_id | str | 作品ID |
 
-<<< @/snippets/douyin/aweme-id.py#single-aweme-id-snippet{6}
+<<< @/snippets/douyin/aweme-id.py#single-aweme-id-snippet{5,6}
 
 ### 提取列表作品id 🟢
 
@@ -493,7 +493,7 @@ outline: deep
 | webcast_id | str | 直播间RID |
 
 
-<<< @/snippets/douyin/webcast-id.py#single-webcast-id-snippet{6}
+<<< @/snippets/douyin/webcast-id.py#single-webcast-id-snippet{5,6}
 
 ### 提取列表直播间号 🟢
 
@@ -519,33 +519,6 @@ Rid是直播间的短链标识，room_id是直播间的唯一标识。
 短链无法使用该接口返回Rid，如raw_urls中的第3和第4条链接只会返回room_id。需要搭配使用`fetch_user_live_videos_by_room_id`接口获取数据。
 :::
 
-### 获取请求count数列表 🔴
-
-用于获取请求大小列表，根据请求页数与最大请求数计算每次请求数量。
-
-| 参数 | 类型 | 说明 |
-| :--- | :--- | :--- |
-| page_counts | int | 请求页数 |
-| max_counts | int | 最大请求数 |
-
-| 返回 | 类型 | 说明 |
-| :--- | :--- | :--- |
-| request_sizes | list | 请求大小列表 |
-
-<<< @/snippets/douyin/request-sizes.py{4,6}
-
-::: warning 将会弃用
-该接口将会在下个版本中弃用。
-```python
-max_counts = max_counts or float("inf")
-videos_collected = 0
-while videos_collected < max_counts:
-    current_request_size = min(page_counts, max_counts - videos_collected)
-    ......
-    videos_collected += len(video.aweme_id)
-```
-:::
-
 ### 全局格式化文件名 🟢
 
 根据配置文件的全局格式化文件名。
@@ -560,13 +533,12 @@ while videos_collected < max_counts:
 | naming_template | str | 文件的命名模板 |
 | aweme_data | dict | 作品数据的字典 |
 | custom_fields | dict | 用户自定义字段, 用于替代默认的字段值 |
-| desc_length_limit | int | 控制 'desc' 字段的长度限制，默认200 |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | file_name | str | 格式化后的文件名 |
 
-<<< @/snippets/douyin/format-file-name.py{7-10,14-22}
+<<< @/snippets/douyin/format-file-name.py{13,19,28,32,34,36-39}
 
 ### 创建用户目录 🟢
 
@@ -598,7 +570,7 @@ while videos_collected < max_counts:
 | :--- | :--- | :--- |
 | user_path | Path | 用户目录路径对象 |
 
-<<< @/snippets/douyin/user-folder.py#create-user-folder{4-6,9-10}
+<<< @/snippets/douyin/user-folder.py#create-user-folder{17-19}
 
 ### 重命名用户目录 🟢
 
@@ -613,7 +585,7 @@ while videos_collected < max_counts:
 | :--- | :--- | :--- |
 | new_path | Path | 新的用户目录路径对象 |
 
-<<< @/snippets/douyin/user-folder.py#rename-user-folder{7-8,10-11,15-16}
+<<< @/snippets/douyin/user-folder.py#rename-user-folder{23-27,29-32}
 
 ::: tip 提示
 如果目录不存在会先创建该用户目录再重命名。
@@ -637,24 +609,6 @@ while videos_collected < max_counts:
 该接口很好的解决了用户改名之后重复重新下载的问题。集合在hanlder接口的`get_or_add_user_data`中，开发者无需关心直接调用hanlder的数据接口即可。
 :::
 
-### 提取低版本接口的desc 🔴
-
-帮助解决desc字段出现版本过低提示的开发者提取desc的问题。
-
-| 参数 | 类型 | 说明 |
-| :--- | :--- | :--- |
-| desc | str | 作品的desc |
-| share_desc | str | 作品的share_desc |
-
-| 返回 | 类型 | 说明 |
-| :--- | :--- | :--- |
-| extracted | str | 提取后的desc |
-
-<<< @/snippets/douyin/extract-desc.py
-
-::: tip 提示
-出现版本过低的问题是接口携带的参数版本过低如`version_code` `version_name` 等，开发者可以直接使用接口数据模型创建完整的参数。
-:::
 
 ### 显示二维码 🟢
 
