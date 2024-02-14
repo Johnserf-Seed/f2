@@ -211,7 +211,9 @@ def handler_sso_login(
     is_login, login_cookie = asyncio.run(handle_sso_login())
 
     if is_login:
-        manager = ConfigManager(ctx.params.get("config", "conf/app.yaml"))
+        manager = ConfigManager(
+            ctx.params.get("config", get_resource_path(f2.APP_CONFIG_FILE_PATH))
+        )
         manager.update_config_with_args("douyin", cookie=login_cookie)
     else:
         raise click.UsageError(_("SSO登录失败，请重试！"))
