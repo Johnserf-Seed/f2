@@ -357,22 +357,25 @@ class AwemeIdFetcher:
         async with httpx.AsyncClient(
             transport=transport, proxies=TokenManager.proxies, timeout=10
         ) as client:
-            response = await client.get(url, follow_redirects=True)
-            url = str(response.url)
+            try:
+                response = await client.get(url, follow_redirects=True)
 
-        video_pattern = cls._DOUYIN_VIDEO_URL_PATTERN
-        note_pattern = cls._DOUYIN_NOTE_URL_PATTERN
+                video_pattern = cls._DOUYIN_VIDEO_URL_PATTERN
+                note_pattern = cls._DOUYIN_NOTE_URL_PATTERN
 
-        if video_pattern.search(url):
-            match = video_pattern.search(url)
-        elif note_pattern.search(url):
-            match = note_pattern.search(url)
-        else:
-            raise APIResponseError(
-                _("未在响应的地址中找到aweme_id, 检查链接是否为作品页")
-            )
+                video_match = video_pattern.search(str(response.url))
+                note_pattern = video_pattern.search(str(response.url))
 
-        return match.group(1)
+                if video_match:
+                    aweme_id = video_match.group(1)
+                elif note_pattern:
+                    aweme_id = note_pattern.group(1)
+                else:
+                    raise APIResponseError(
+                        _("未在响应的地址中找到aweme_id, 检查链接是否为作品页")
+                    )
+                return aweme_id
+
             except httpx.RequestError:
                 raise APIConnectionError(
                     _(
