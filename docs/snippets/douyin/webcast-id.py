@@ -1,6 +1,6 @@
 // #region single-webcast-id-snippet
 import asyncio
-from f2.apps.douyin.utils import AwemeIdFetcher
+from f2.apps.douyin.utils import WebCastIdFetcher
 
 async def main():
     raw_url = "https://live.douyin.com/775841227732"
