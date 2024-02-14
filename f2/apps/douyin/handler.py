@@ -1,6 +1,5 @@
 # path: f2/apps/douyin/handler.py
 
-# import time
 import asyncio
 from typing import AsyncGenerator, Dict, Any, List
 
@@ -34,10 +33,14 @@ from f2.apps.douyin.filter import (
     GetQrcodeFilter,
     CheckQrcodeFilter,
 )
-from f2.apps.douyin.utils import SecUserIdFetcher, AwemeIdFetcher, WebCastIdFetcher
-from f2.apps.douyin.utils import create_or_rename_user_folder, show_qrcode
-from f2.apps.douyin.utils import TokenManager, VerifyFpManager
-
+from f2.apps.douyin.utils import (
+    SecUserIdFetcher,
+    AwemeIdFetcher,
+    WebCastIdFetcher,
+    VerifyFpManager,
+    create_or_rename_user_folder,
+    show_qrcode,
+)
 from f2.cli.cli_console import RichConsoleManager
 
 rich_console = RichConsoleManager().rich_console

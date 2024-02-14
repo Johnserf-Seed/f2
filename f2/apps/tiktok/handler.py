@@ -1,7 +1,7 @@
 # path: f2/apps/tiktok/handler.py
 
 from pathlib import Path
-from typing import AsyncGenerator, List, Any
+from typing import AsyncGenerator
 
 from f2.i18n.translator import _
 from f2.log.logger import logger
@@ -25,10 +25,11 @@ from f2.apps.tiktok.filter import (
     UserMixFilter,
     UserPlayListFilter,
 )
-from f2.apps.tiktok.utils import SecUserIdFetcher, AwemeIdFetcher
-from f2.apps.tiktok.utils import create_or_rename_user_folder
-from f2.apps.tiktok.utils import TokenManager
-
+from f2.apps.tiktok.utils import (
+    SecUserIdFetcher,
+    AwemeIdFetcher,
+    create_or_rename_user_folder,
+)
 from f2.cli.cli_console import RichConsoleManager
 
 rich_console = RichConsoleManager().rich_console
