@@ -138,6 +138,9 @@ def handler_naming(
     Returns:
         value: 命名模式模板 (Naming pattern template)
     """
+    # 避免和配置文件参数冲突
+    if value is None:
+        return
 
     # 允许的模式和分隔符
     ALLOWED_PATTERNS = ["{nickname}", "{create}", "{aid}", "{desc}"]
@@ -218,7 +221,7 @@ def merge_config(main_conf, custom_conf, **kwargs):
     "--url",
     "-u",
     type=str,
-    default="",
+    # default="",
     help=_(
         "根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合辑与直播同上"
     ),
@@ -228,42 +231,42 @@ def merge_config(main_conf, custom_conf, **kwargs):
     "-m",
     type=bool,
     # default="yes",
-    help=_("是否保存视频原声。默认为 'yes'，可选：'yes'、'no'"),
+    help=_("是否保存视频原声。可选：'yes'、'no'"),
 )
 @click.option(
     "--cover",
     "-v",
     type=bool,
     # default="yes",
-    help=_("是否保存视频封面。默认为 'yes'，可选：'yes'、'no'"),
+    help=_("是否保存视频封面。可选：'yes'、'no'"),
 )
 @click.option(
     "--desc",
     "-d",
     type=bool,
     # default="yes",
-    help=_("是否保存视频文案。默认为 'yes'，可选：'yes'、'no'"),
+    help=_("是否保存视频文案。可选：'yes'、'no'"),
 )
 @click.option(
     "--path",
     "-p",
     type=str,
-    default="Download",
-    help=_("作品保存位置，默认为 'Download'"),
+    # default="Download",
+    help=_("作品保存位置，支持绝对与相对路径。"),
 )
 @click.option(
     "--folderize",
     "-f",
     type=bool,
     # default="yes",
-    help=_("是否将作品保存到单独的文件夹，默认为 'yes'。可选：'yes'、'no'"),
+    help=_("是否将作品保存到单独的文件夹。可选：'yes'、'no'"),
 )
 @click.option(
     "--mode",
     "-M",
     type=click.Choice(["one", "post", "like", "collect", "mix"]),
-    default="post",
-    required=True,
+    # default="post",
+    # required=True,
     help=_(
         "下载模式：单个作品(one)，主页作品(post), 点赞作品(like), 收藏作品(collect), 合辑播放列表(mix)"
     ),
@@ -273,7 +276,7 @@ def merge_config(main_conf, custom_conf, **kwargs):
     "-n",
     type=str,
     # default = '{nickname}_{create}_{aid}_{desc}'
-    default="{create}_{desc}",
+    # default="{create}_{desc}",
     help=_("全局作品文件命名方式，前往文档查看更多帮助"),
     callback=handler_naming,
 )
@@ -281,7 +284,7 @@ def merge_config(main_conf, custom_conf, **kwargs):
     "--cookie",
     "-k",
     type=str,
-    default="",
+    # default="",
     help=_(
         "登录后的[yellow]cookie[/yellow]，如果使用未登录的[yellow]cookie[/yellow]，则无法持久稳定下载作品"
     ),
@@ -290,43 +293,57 @@ def merge_config(main_conf, custom_conf, **kwargs):
     "--interval",
     "-i",
     type=str,
-    default="all",
-    help=_(
-        "下载日期区间发布的作品，格式：2022-01-01|2023-01-01，默认为 'all'下载所有作品"
-    ),
+    # default="all",
+    help=_("下载日期区间发布的作品，格式：2022-01-01|2023-01-01，'all' 为下载所有作品"),
 )
 @click.option(
-    "--timeout", "-e", type=int, default=10, help=_("网络请求超时时间。默认为 10")
+    "--timeout",
+    "-e",
+    type=int,
+    # default=10
+    help=_("网络请求超时时间。"),
 )
 @click.option(
-    "--max_retries", "-r", type=int, default=5, help=_("网络请求超时重试数。默认为 5")
+    "--max_retries",
+    "-r",
+    type=int,
+    # default=5,
+    help=_("网络请求超时重试数。"),
 )
 @click.option(
     "--max-connections",
     "-x",
     type=int,
-    default=5,
-    help=_("网络请求并发连接数。默认为 5"),
+    # default=5,
+    help=_("网络请求并发连接数。"),
 )
 @click.option(
-    "--max-tasks", "-t", type=int, default=10, help=_("异步的任务数。默认为 10")
+    "--max-tasks",
+    "-t",
+    type=int,
+    # default=10,
+    help=_("异步的任务数。"),
 )
 @click.option(
     "--max-counts",
     "-o",
     type=int,
-    default=0,
-    help=_("最大作品下载数。默认为 0，表示无限制"),
+    # default=0,
+    help=_("最大作品下载数。0 表示无限制"),
 )
 @click.option(
-    "--page-counts", "-s", type=int, default=20, help=_("每页作品数。默认为 20")
+    "--page-counts",
+    "-s",
+    type=int,
+    # default=20,
+    help=_("每页作品数。"),
 )
 @click.option(
     "--languages",
     "-l",
     type=click.Choice(["zh_CN", "en_US"]),
     default="zh_CN",
-    help=_("显示语言。默认为 'zh_CN'。可选：'zh_CN'、'en_US'"),
+    help=_("显示语言。默认为 'zh_CN'。可选：'zh_CN'、'en_US'。不支持配置文件修改。"),
     callback=handler_language,
 )
 @click.option(
@@ -351,7 +368,7 @@ def merge_config(main_conf, custom_conf, **kwargs):
 @click.option(
     "--auto-cookie",
     type=click.Choice(["none", "chrome", "firefox", "edge", "opera"]),
-    default="none",
+    # default="none",
     help=_(
         "自动从浏览器获取cookie。可选项：chrome、firefox、edge、opera。使用该命令前请确保关闭所选的浏览器"
     ),
