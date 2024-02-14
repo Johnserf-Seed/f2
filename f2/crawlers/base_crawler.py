@@ -2,8 +2,6 @@
 
 import httpx
 import json
-
-# import random
 import asyncio
 from urllib.parse import quote, unquote
 from httpx import Response
@@ -59,10 +57,6 @@ class BaseCrawler:
         self._max_retries = max_retries
         # 底层连接重试次数 / Underlying connection retry count
         self.atransport = httpx.AsyncHTTPTransport(retries=max_retries)
-
-        # 代理 / Proxy
-        # proxy = random.choice(self.proxies)
-        # proxies={"http": proxy, "https": proxy}
 
         # 超时等待时间 / Timeout waiting time
         self._timeout = timeout
