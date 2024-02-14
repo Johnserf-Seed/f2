@@ -6,9 +6,12 @@ from f2.apps.douyin.utils import format_file_name
 async def main():
     # 文件名模板
     kwargs = {
-        "proxies": {"http": None, "https": None},
+        "headers": {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
+            "Referer": "https://www.douyin.com/",
+        },
         "naming": "{create}_{desc}_{aweme_id}",
-        "cookie": "",
+        "cookie": "YOUR_COOKIE_HERE",
     }
     # 单作品的数据
     aweme_data = await DouyinHandler(kwargs).fetch_one_video("7218193198328433954")
@@ -17,6 +20,10 @@ async def main():
 
     # 文件名模板
     kwargs = {
+        "headers": {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
+            "Referer": "https://www.douyin.com/",
+        },
         "proxies": {"http": None, "https": None},
         "naming": "{create}_{desc}_{aweme_id}_{location}",
         "cookie": "",
