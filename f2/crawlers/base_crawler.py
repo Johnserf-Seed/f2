@@ -166,15 +166,10 @@ class BaseCrawler:
                 return response
 
             except httpx.RequestError:
-                logger.error(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
-                        url, self.proxies
-                    )
-                )
                 raise APIConnectionError(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
-                        url, self.proxies
-                    )
+                    _(
+                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
+                    ).format(url, self.proxies, self.__class__.__name__)
                 )
 
             except httpx.HTTPStatusError as http_error:
@@ -220,15 +215,10 @@ class BaseCrawler:
                 return response
 
             except httpx.RequestError:
-                logger.error(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
-                        url, self.proxies
-                    )
-                )
                 raise APIConnectionError(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
-                        url, self.proxies
-                    )
+                    _(
+                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
+                    ).format(url, self.proxies, self.__class__.__name__)
                 )
 
             except httpx.HTTPStatusError as http_error:
@@ -254,14 +244,9 @@ class BaseCrawler:
             return response
 
         except httpx.RequestError:
-            logger.error(
-                _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
-                    url, self.proxies
-                )
-            )
             raise APIConnectionError(
-                _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
-                    url, self.proxies
+                _("连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}").format(
+                    url, self.proxies, self.__class__.__name__
                 )
             )
 
