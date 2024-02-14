@@ -91,10 +91,10 @@ class BaseCrawler:
             dict: 解析后的JSON数据 (Parsed JSON data)
         """
         response = await self.get_fetch_data(endpoint)
-        return self.parse_response(response)
+        return self.parse_json(response)
 
     async def _fetch_post_json(self, endpoint: str, params: dict = {}) -> dict:
-        """获取 JSON 数据 (Get JSON data)
+        """获取 JSON 数据 (Post JSON data)
 
         Args:
             endpoint (str): 接口地址 (Endpoint URL)
@@ -103,10 +103,10 @@ class BaseCrawler:
             dict: 解析后的JSON数据 (Parsed JSON data)
         """
         response = await self.post_fetch_data(endpoint, params)
-        return self.parse_response(response)
+        return self.parse_json(response)
 
-    def parse_response(self, response: Response) -> dict:
-        """解析响应对象 (Parse response object)
+    def parse_json(self, response: Response) -> dict:
+        """解析JSON响应对象 (Parse JSON response object)
 
         Args:
             response (Response): 原始响应对象 (Raw response object)
