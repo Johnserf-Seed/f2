@@ -1,5 +1,6 @@
 douyin:
 
+  cookie:
   naming: '{create}_{desc}'
   path: Download
   timeout: 10
@@ -11,6 +12,7 @@ douyin:
 
 tiktok:
 
+  cookie:
   max_connections: 5
   max_counts: 0
   max_retries: 5
