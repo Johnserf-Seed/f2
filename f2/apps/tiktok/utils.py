@@ -342,7 +342,12 @@ class SecUserIdFetcher:
             raise TypeError("输入参数必须是字符串")
 
         # 提取有效URL
-        url = str(extract_valid_urls(url))
+        url = extract_valid_urls(url)
+
+        if url is None:
+            raise (
+                APINotFoundError(_("输入的URL不合法。类名：{0}".format(cls.__name__)))
+            )
 
         transport = httpx.AsyncHTTPTransport(retries=5)
         async with httpx.AsyncClient(
@@ -393,6 +398,13 @@ class SecUserIdFetcher:
 
         # 提取有效URL
         urls = extract_valid_urls(urls)
+
+        if urls == []:
+            raise (
+                APINotFoundError(
+                    _("输入的URL List不合法。类名：{0}".format(cls.__name__))
+                )
+            )
 
         unique_ids = [cls.get_uniqueid(url) for url in urls]
         return await asyncio.gather(*unique_ids)
@@ -480,6 +492,13 @@ class AwemeIdFetcher:
 
         # 提取有效URL
         urls = extract_valid_urls(urls)
+
+        if urls == []:
+            raise (
+                APINotFoundError(
+                    _("输入的URL List不合法。类名：{0}".format(cls.__name__))
+                )
+            )
 
         aweme_ids = [cls.get_aweme_id(url) for url in urls]
         return await asyncio.gather(*aweme_ids)
