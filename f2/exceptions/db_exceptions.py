@@ -8,7 +8,7 @@ exception_console = RichConsoleManager().exception_console
 class DatabaseError(Exception):
     """基本数据库异常类，其他数据库异常都会继承这个类"""
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         exception_console.print(
             "请前往QA文档 https://johnserf-seed.github.io/f2/question-answer/qa.html 查看相关帮助"
         )
