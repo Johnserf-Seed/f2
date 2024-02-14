@@ -1,13 +1,21 @@
 import asyncio
-from f2.apps.tiktok.handler import fetch_one_video
+from f2.apps.tiktok.handler import TiktokHandler
 from f2.apps.tiktok.utils import format_file_name
+
+kwargs = {
+    "headers": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
+        "Referer": "https://www.tiktok.com/",
+    },
+    "proxies": {"http": None, "https": None},
+    "cookie": "YOUR_COOKIE_HERE",
+    "naming": "{create}_{desc}_{aweme_id}",
+}
 
 
 async def main():
-    # 文件名模板
-    kwargs = {"naming": "{create}_{desc}_{aweme_id}"}
     # 单作品的数据
-    aweme_data = await fetch_one_video("7316948869764484384")
+    aweme_data = await TiktokHandler(kwargs).fetch_one_video("7316948869764484384")
     # 格式化后的文件名
     print(format_file_name(kwargs.get("naming"), aweme_data) + "_video")
 
