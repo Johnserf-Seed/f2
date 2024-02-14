@@ -232,6 +232,7 @@ class SecUserIdFetcher:
         r"<script id=\"__UNIVERSAL_DATA_FOR_REHYDRATION__\" type=\"application/json\">(.*?)</script>"
     )
     _TIKTOK_UNIQUEID_PARREN = re.compile(r"/@([^/?]*)")
+    _TIKTOK_NOTFOUND_PARREN = re.compile(r"notfound")
 
     @classmethod
     async def get_secuid(cls, url: str) -> str:
@@ -263,6 +264,14 @@ class SecUserIdFetcher:
                 response = await client.get(url, follow_redirects=True)
 
                 if response.status_code in {200, 444}:
+                    if cls._TIKTOK_NOTFOUND_PARREN.search(str(response.url)):
+                        raise APINotFoundError(
+                            _(
+                                "页面不可用，可能是由于区域限制（代理）造成的。类名: {0}".format(
+                                    cls.__name__
+                                )
+                            )
+                        )
                     match = cls._TIKTOK_SECUID_PARREN.search(str(response.text))
                     if not match:
                         raise APIResponseError(
