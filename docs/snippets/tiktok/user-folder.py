@@ -1,13 +1,21 @@
 // #region create-user-folder
 from f2.apps.tiktok.utils import create_user_folder
 
-if __name__ == "__main__":
-    kwargs = {"path": "Download"}
-    current_nickname = "New Nickname"
-    print(create_user_folder(kwargs, current_nickname))
-    # X:\......\Download\tiktok\PLEASE_SETUP_MODE\New Nickname
 
-    kwargs = {"path": "Download", "mode": "post"}
+kwargs = {
+    "headers": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
+        "Referer": "https://www.tiktok.com/",
+    },
+    "proxies": {"http": None, "https": None},
+    "cookie": "YOUR_COOKIE_HERE",
+    "path": "Download",
+    "mode": "post",
+}
+
+
+if __name__ == "__main__":
+    current_nickname = "New Nickname"
     print(create_user_folder(kwargs, current_nickname))
     # X:\......\Download\tiktok\post\New Nickname
 
