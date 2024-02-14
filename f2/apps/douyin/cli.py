@@ -288,7 +288,7 @@ def merge_config(main_conf, custom_conf, **kwargs):
     "-p",
     type=str,
     # default="Download",
-    help=_("作品保存位置，默认为 'Download'"),
+    help=_("作品保存位置，支持绝对与相对路径。"),
 )
 @click.option(
     "--folderize",
@@ -327,9 +327,7 @@ def merge_config(main_conf, custom_conf, **kwargs):
     "-i",
     type=str,
     # default="all",
-    help=_(
-        "下载日期区间发布的作品，格式：2022-01-01|2023-01-01，默认为 'all'下载所有作品"
-    ),
+    help=_("下载日期区间发布的作品，格式：2022-01-01|2023-01-01，'all' 为下载所有作品"),
 )
 @click.option(
     "--timeout",
