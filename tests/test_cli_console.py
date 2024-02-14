@@ -3,15 +3,6 @@
 import pytest
 import time
 from f2.cli.cli_console import CustomSpinnerColumn, ProgressManager
-from rich.progress import (
-    TaskID,
-    BarColumn,
-    TextColumn,
-    TimeElapsedColumn,
-    TimeRemainingColumn,
-    DownloadColumn,
-    TransferSpeedColumn,
-)
 from rich.spinner import Spinner
 
 
