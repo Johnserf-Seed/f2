@@ -853,7 +853,6 @@ async def handle_sso_login():
             message = status_info.get("message", "")
             log_func = status_info.get("log", logger.info)
             logger.info(message)
-            rich_console.print(message)
             log_func(message)
 
             if check_status == "3":
@@ -888,12 +887,12 @@ async def handle_sso_login():
         redirect_response = await crawler.get_fetch_data(redirect_url)
 
         if redirect_response.history and len(redirect_response.history) > 1:
-            logger.info(f"login_redirect headers:{redirect_response.headers}")
-            logger.info(f"login_redirect history:{redirect_response.history}")
-            logger.info(
+            logger.debug(f"login_redirect headers:{redirect_response.headers}")
+            logger.debug(f"login_redirect history:{redirect_response.history}")
+            logger.debug(
                 f"login_redirect history[0] headers:{redirect_response.history[0].headers}"
             )
-            logger.info(
+            logger.debug(
                 f"login_redirect history[1] headers:{redirect_response.history[1].headers}"
             )
             # 获取重最后一个重定向里的Cookie
@@ -903,13 +902,12 @@ async def handle_sso_login():
             logger.debug(f"login_cookie:{login_cookie}")
             return True, login_cookie
         else:
-            rich_console.print("[  登录  ]:自动重定向登录失败")
+            logger.warning("[  登录  ]:自动重定向登录失败")
             if redirect_response:
                 error_message = f"网络异常: 自动重定向登录失败。 状态码: {redirect_response.status_code}, 响应体: {redirect_response.text}"
             else:
                 error_message = f"网络异常: 自动重定向登录失败。 无法连接到服务器。"
             logger.warning(error_message)
-            rich_console.print(error_message)
             return False, ""
 
     verify_fp = VerifyFpManager.gen_verify_fp()
@@ -922,4 +920,3 @@ async def main(kwargs):
         await mode_function_map[mode](DouyinHandler(kwargs))
     else:
         logger.error(_("不存在该模式: {0}").format(mode))
-        rich_console.print(_("不存在该模式: {0}").format(mode))
