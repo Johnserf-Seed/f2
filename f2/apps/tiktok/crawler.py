@@ -24,7 +24,7 @@ class TiktokCrawler(BaseCrawler):
     def __init__(self, kwargs: dict = {}):
         f2_manager = ConfigManager(f2.F2_CONFIG_FILE_PATH)
         f2_conf = f2_manager.get_config("f2").get("tiktok")
-        proxies_conf = kwargs.get("proxies")
+        proxies_conf = kwargs.get("proxies", {"http": None, "https": None})
         proxies = {
             "http://": proxies_conf.get("http", None),
             "https://": proxies_conf.get("https", None),
