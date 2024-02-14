@@ -9,11 +9,11 @@ kwargs = {
     },
     "proxies": {"http": None, "https": None},
     "cookie": "YOUR_COOKIE_HERE",
+    "path": "Download",
 }
 
 
 async def main():
-    kwargs = {"path": "Download"}
     async with AsyncUserDB("tiktok_users.db") as audb:
         secUid = "MS4wLjABAAAAQhcYf_TjRKUku-aF8oqngAfzrYksgGLRz8CKMciBFdfR54HQu3qGs-WoJ-KO7hO8"
         print(
