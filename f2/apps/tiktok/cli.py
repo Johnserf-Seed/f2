@@ -384,6 +384,18 @@ def merge_config(main_conf, custom_conf, **kwargs):
 )
 @click.pass_context
 def tiktok(ctx, config, init_config, update_config, **kwargs):
+    ##################
+    # f2 存在2个主配置文件，分别是app低频配置(app.yaml)和f2低频配置(conf.yaml)
+    # app低频配置存放app相关的参数
+    # f2低频配置存放计算值所需的参数
+
+    # 其中cli参数具有最高优先，cli >= 自定义 >= 低频
+    # 在f2低频配置中设置代理参数
+    # 在app低频配置中设置好重试次数，超时时间，下载路径，下载线程，cookie等低频的参数
+    # 在自定义配置中可以设置不同用户的高频参数，如用户主页，原声下载，封面下载，文案下载，下载模式等
+    # cli参数为配置文件的热修改，可以随时修改每一个参数。
+    ##################
+
     # 读取低频主配置文件
     main_manager = ConfigManager(f2.APP_CONFIG_FILE_PATH)
     main_conf_path = get_resource_path(f2.APP_CONFIG_FILE_PATH)
