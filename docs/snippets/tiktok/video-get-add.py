@@ -19,7 +19,7 @@ async def main():
     aweme_data = await TiktokHandler(kwargs).fetch_one_video(
         itemId="7095819783324601605"
     )
-    async with AsyncVideoDB("douyin_videos.db") as avdb:
+    async with AsyncVideoDB("tiktok_videos.db") as avdb:
         await TiktokHandler(kwargs).get_or_add_video_data(
             aweme_data, avdb, ignore_fields
         )
