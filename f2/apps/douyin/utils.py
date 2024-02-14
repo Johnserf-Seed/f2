@@ -402,6 +402,13 @@ class AwemeIdFetcher:
         # 提取有效URL
         urls = extract_valid_urls(urls)
 
+        if urls == []:
+            raise (
+                APINotFoundError(
+                    _("输入的URL List不合法。类名：{0}".format(cls.__name__))
+                )
+            )
+
         aweme_ids = [cls.get_aweme_id(url) for url in urls]
         return await asyncio.gather(*aweme_ids)
 
@@ -489,6 +496,13 @@ class WebCastIdFetcher:
 
         # 提取有效URL
         urls = extract_valid_urls(urls)
+
+        if urls == []:
+            raise (
+                APINotFoundError(
+                    _("输入的URL List不合法。类名：{0}".format(cls.__name__))
+                )
+            )
 
         webcast_ids = [cls.get_webcast_id(url) for url in urls]
         return await asyncio.gather(*webcast_ids)
