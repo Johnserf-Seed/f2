@@ -11,3 +11,7 @@
 ## <urlopen error [Errno 11001] getaddrinfo failed>
 
 <<< @/snippets/QA.md#urlopen-errno-11001
+
+## f2: command not found
+
+<<< @/snippets/QA.md#f2-command-not-found
