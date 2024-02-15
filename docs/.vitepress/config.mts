@@ -28,8 +28,8 @@ export default defineConfig({
       { icon: 'discord', link: 'https://discord.gg/3PhtPmgHf8' },
     ],
     algolia: {
-      appId: '',
-      apiKey: '',
+      appId: 'KKYI8Z7LEP',
+      apiKey: '8f27043df972a4e8eb009a3195f2042b',
       indexName: 'f2'
     },
     footer: {
