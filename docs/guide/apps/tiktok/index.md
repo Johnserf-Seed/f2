@@ -98,7 +98,7 @@ outline: deep
 | :--- | :--- | :--- |
 | video_data | dict | 视频数据字典，包含视频ID、视频文案、作者昵称等 |
 
-<<< @/snippets/tiktok/one-video.py{5,7}
+<<< @/snippets/tiktok/one-video.py{15,17}
 
 ### 用户发布作品数据 🟢
 
@@ -115,7 +115,7 @@ outline: deep
 | :--- | :--- | :--- |
 | aweme_data | dict | 视频数据字典，包含视频ID、视频文案、作者昵称、页码等 |
 
-<<< @/snippets/tiktok/user-post.py{6,8,12}
+<<< @/snippets/tiktok/user-post.py{16,19-22}
 
 ### 用户喜欢作品数据 🟢
 
@@ -132,7 +132,7 @@ outline: deep
 | :--- | :--- | :--- |
 | aweme_data | dict | 视频数据字典，包含视频ID、视频文案、作者昵称、页码等 |
 
-<<< @/snippets/tiktok/user-like.py{5,7,11}
+<<< @/snippets/tiktok/user-like.py{16-18,21-25}
 
 ### 用户收藏作品数据 🟢
 
@@ -149,7 +149,7 @@ outline: deep
 | :--- | :--- | :--- |
 | aweme_data | dict | 视频数据字典，包含视频ID、视频文案、作者昵称、页码等 |
 
-<<< @/snippets/tiktok/user-collect.py{6,8,12}
+<<< @/snippets/tiktok/user-collect.py{16-18,21-24}
 
 ### 用户播放列表作品数据 🟢
 
@@ -165,7 +165,7 @@ outline: deep
 | :--- | :--- | :--- |
 | aweme_data | dict | 视频数据字典，包含视频ID、视频文案、作者昵称、页码等 |
 
-<<< @/snippets/tiktok/user-playlist.py{6,8,12}
+<<< @/snippets/tiktok/user-playlist.py{16-17,21}
 
 ### 用户合辑作品数据 🟢
 
@@ -182,13 +182,13 @@ outline: deep
 | :--- | :--- | :--- |
 | aweme_data | dict | 视频数据字典，包含视频ID、视频文案、作者昵称、页码等 |
 
-<<< @/snippets/tiktok/user-mix.py#playlist-sinppet{5,6,8-11}
+<<< @/snippets/tiktok/user-mix.py#playlist-sinppet{17-18,21-23}
 
 ::: tip 注意
-多个播放列表会包含多个mix_id，使用`select_playlist`方法来返回用户输入的合辑下标。
+多个播放列表会包含多个`mix_id`，使用`select_playlist`方法来返回用户输入的合辑下标。
 :::
 
-<<< @/snippets/tiktok/user-mix.py#select-playlist-sinppet{5,6,13}
+<<< @/snippets/tiktok/user-mix.py#select-playlist-sinppet{19-21}
 
 ### 用户信息 🟢
 
@@ -203,10 +203,10 @@ outline: deep
 | :--- | :--- | :--- |
 | UserProfileFilter | _to_dict() | 自定义的接口数据过滤器 | 用户数据字典，包含用户ID、用户昵称、用户签名、用户头像等 |
 
-<<< @/snippets/tiktok/user-profile.py{7,9}
+<<< @/snippets/tiktok/user-profile.py{16,18-19,21}
 
 ::: tip 提示
-TikTok的用户接口支持secUid和uniqueId两种用户ID。
+TikTok的用户接口支持`secUid`和`uniqueId`两种用户ID。
 :::
 
 ### 获取指定用户名 🔴
@@ -222,7 +222,7 @@ TikTok的用户接口支持secUid和uniqueId两种用户ID。
 | :--- | :--- | :--- |
 | user_nickname | str | 用户昵称 |
 
-<<< @/snippets/tiktok/user-nickname.py{6-8}
+<<< @/snippets/tiktok/user-nickname.py{17-20}
 
 ### 创建用户记录与目录 🟡
 
@@ -239,7 +239,7 @@ TikTok的用户接口支持secUid和uniqueId两种用户ID。
 | :--- | :--- | :--- |
 | user_path | Path | 用户目录路径对象 |
 
-<<< @/snippets/tiktok/user-get-add.py{6-9}
+<<< @/snippets/tiktok/user-get-add.py{18-22}
 
 ::: tip 提示
 此为cli模式的接口，开发者可自行定义创建用户目录的功能。
@@ -259,7 +259,7 @@ TikTok的用户接口支持secUid和uniqueId两种用户ID。
 | :--- | :--- | :--- |
 |None | None | 无 |
 
-<<< @/snippets/tiktok/video-get-add.py{6,9-11}
+<<< @/snippets/tiktok/video-get-add.py{6,23-25}
 
 ## utils接口列表
 
@@ -292,7 +292,7 @@ TikTok的用户接口支持secUid和uniqueId两种用户ID。
 <<< @/snippets/tiktok/token-manager.py#mstoken-false-sinppest{4}
 
 ::: tip 提示
-默认为126位，也可调用`from f2.utils.utils import gen_random_str`，生成不同长度的虚假msToken。
+默认为`126位`，也可调用`from f2.utils.utils import gen_random_str`，生成不同长度的虚假msToken。
 :::
 
 ### 生成ttwid 🟢
@@ -310,7 +310,7 @@ TikTok的用户接口支持secUid和uniqueId两种用户ID。
 <<< @/snippets/tiktok/token-manager.py#ttwid-sinppest{4}
 
 ::: warning 注意
-配置文件中ttwid的cookie参数是一个新的ttwid值。失效后更换新的ttwid值即可。
+配置文件中`ttwid`的`cookie`参数是一个新的`ttwid`值。失效后更换新的`ttwid`值即可。
 :::
 
 ### 生成odin_tt 🟢
@@ -328,12 +328,12 @@ TikTok的用户接口支持secUid和uniqueId两种用户ID。
 <<< @/snippets/tiktok/token-manager.py#odin_tt-sinppest{4}
 
 ::: warning 注意
-配置文件中的odin_tt参数是固定的，不可更改。
+配置文件中的`odin_tt`参数是固定的，不可更改。
 :::
 
 ### 使用接口地址生成Xb参数 🟢
 
-静态方法，用于直接使用接口地址生成Xbogus参数，部分接口不校验。
+静态方法，用于直接使用接口地址生成`Xbogus`参数，部分接口不校验。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -347,7 +347,7 @@ TikTok的用户接口支持secUid和uniqueId两种用户ID。
 
 ### 使用接口模型生成Xb参数 🟢
 
-静态方法，用于使用不同接口数据模型生成Xbogus参数，部分接口不校验。
+静态方法，用于使用不同接口数据模型生成`Xbogus`参数，部分接口不校验。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -364,7 +364,7 @@ TikTok的用户接口支持secUid和uniqueId两种用户ID。
 
 还可以使用爬虫引擎与过滤器采集数据。
 
-<<< @/snippets/tiktok/xbogus.py#model-2-endpoint-2-filter-snippet{10-16}
+<<< @/snippets/tiktok/xbogus.py#model-2-endpoint-2-filter-snippet{21-26}
 
 更加抽象的高级方法可以直接调用handler接口的`handler_user_profile`。
 
@@ -475,13 +475,12 @@ TikTok的用户接口支持secUid和uniqueId两种用户ID。
 | naming_template | str | 文件的命名模板 |
 | aweme_data | dict | 作品数据的字典 |
 | custom_fields | dict | 用户自定义字段, 用于替代默认的字段值 |
-| desc_length_limit | int | 控制 'desc' 字段的长度限制，默认200 |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | file_name | str | 格式化后的文件名 |
 
-<<< @/snippets/tiktok/format-file-name.py{7-11,13-18}
+<<< @/snippets/tiktok/format-file-name.py{18,20,23,25,27-30}
 
 ### 创建用户目录 🟢
 
@@ -513,7 +512,7 @@ TikTok的用户接口支持secUid和uniqueId两种用户ID。
 | :--- | :--- | :--- |
 | user_path | Path | 用户目录路径对象 |
 
-<<< @/snippets/tiktok/user-folder.py#create-user-folder{4-6,9-10}
+<<< @/snippets/tiktok/user-folder.py#create-user-folder{17-19}
 
 ### 重命名用户目录 🟢
 
@@ -528,7 +527,7 @@ TikTok的用户接口支持secUid和uniqueId两种用户ID。
 | :--- | :--- | :--- |
 | new_path | Path | 新的用户目录路径对象 |
 
-<<< @/snippets/tiktok/user-folder.py#rename-user-folder{7-8,10-11,15-16}
+<<< @/snippets/tiktok/user-folder.py#rename-user-folder{22-24,26-29}
 
 ::: tip 提示
 如果目录不存在会先创建该用户目录再重命名。

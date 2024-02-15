@@ -40,13 +40,23 @@ if __name__ == "__main__":
 # 使用用户信息模型生成请求链接，请求接口并使用自定义过滤器输出所需接口数据
 import asyncio
 from f2.apps.tiktok.api import TiktokAPIEndpoints as tkendpoint
-from f2.apps.tiktok.crawler import DouyinCrawler
+from f2.apps.tiktok.crawler import TiktokCrawler
 from f2.apps.tiktok.model import UserProfile
 from f2.apps.tiktok.filter import UserProfileFilter
 from f2.apps.tiktok.utils import XBogusManager
 
+kwargs = {
+    "headers": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
+        "Referer": "https://www.tiktok.com/",
+    },
+    "proxies": {"http": None, "https": None},
+    "cookie": "YOUR_COOKIE_HERE",
+}
+
+
 async def main():
-    async with DouyinCrawler() as crawler:
+    async with TiktokCrawler(kwargs) as crawler:
         secUid="MS4wLjABAAAAQhcYf_TjRKUku-aF8oqngAfzrYksgGLRz8CKMciBFdfR54HQu3qGs-WoJ-KO7hO8"
         params = UserProfile(secUid=secUid)
         response = await crawler.fetch_user_profile(params)

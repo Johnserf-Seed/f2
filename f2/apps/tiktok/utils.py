@@ -3,39 +3,40 @@
 import f2
 import re
 import json
-import time
 import httpx
-import random
 import asyncio
 
-from typing import Union, Dict, Optional
+from typing import Union
 from pathlib import Path
-from urllib.parse import quote, unquote
 
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.xbogus import XBogus as XB
 from f2.utils.conf_manager import ConfigManager
-from f2.utils.utils import gen_random_str, get_timestamp, extract_valid_urls
+from f2.utils.utils import (
+    gen_random_str,
+    get_timestamp,
+    extract_valid_urls,
+    split_filename,
+)
 from f2.exceptions.api_exceptions import (
     APIError,
     APIConnectionError,
     APIResponseError,
-    APIUnavailableError,
     APIUnauthorizedError,
     APINotFoundError,
 )
 
 
 class TokenManager:
-    tk_manager = ConfigManager(f2.APP_CONFIG_FILE_PATH)
-    token_conf = tk_manager.get_config("tiktok").get("msToken", None)
-    ttwid_conf = tk_manager.get_config("tiktok").get("ttwid", None)
-    odin_tt_conf = tk_manager.get_config("tiktok").get("odin_tt", None)
-    proxies_conf = tk_manager.get_config("tiktok").get("proxies", None)
+    f2_manager = ConfigManager(f2.F2_CONFIG_FILE_PATH).get_config("f2").get("tiktok")
+    token_conf = f2_manager.get("msToken", None)
+    ttwid_conf = f2_manager.get("ttwid", None)
+    odin_tt_conf = f2_manager.get("odin_tt", None)
+    proxies_conf = f2_manager.get("proxies", None)
     proxies = {
-        "http://": proxies_conf.get("http"),
-        "https://": proxies_conf.get("https"),
+        "http://": proxies_conf.get("http", None),
+        "https://": proxies_conf.get("https", None),
     }
 
     @classmethod
@@ -61,7 +62,7 @@ class TokenManager:
         }
 
         transport = httpx.HTTPTransport(retries=5)
-        with httpx.Client(transport=transport, proxies=dict(cls.proxies)) as client:
+        with httpx.Client(transport=transport, proxies=cls.proxies) as client:
             try:
                 response = client.post(
                     cls.token_conf["url"], headers=headers, content=payload
@@ -74,9 +75,11 @@ class TokenManager:
 
                 msToken = str(httpx.Cookies(response.cookies).get("msToken"))
 
-                if len(msToken) != 148:
+                if len(msToken) not in [148]:
                     raise APIResponseError(
-                        _("msToken: 检查没有通过, 请更新tiktok配置文件中msToken的url里的msToken")
+                        _(
+                            "msToken: 请检查并更新 f2 中 conf.yaml 配置文件中的 msToken，以匹配 tiktok 新规则。"
+                        )
                     )
 
                 return msToken
@@ -84,9 +87,9 @@ class TokenManager:
             except httpx.RequestError:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
                 raise APIConnectionError(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
-                        cls.token_conf["url"], cls.proxies
-                    )
+                    _(
+                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
+                    ).format(cls.token_conf["url"], cls.proxies, cls.__name__)
                 )
 
             except httpx.HTTPStatusError as e:
@@ -96,9 +99,8 @@ class TokenManager:
                 )
 
             except APIError as e:
-                e.display_error()
                 # 返回虚假的msToken (Return a fake msToken)
-                logger.debug(_("生成虚假的msToken"))
+                logger.info(_("生成虚假的msToken"))
                 return cls.gen_false_msToken()
 
     @classmethod
@@ -111,13 +113,15 @@ class TokenManager:
         """
         生成请求必带的ttwid (Generate the essential ttwid for requests)
         """
-        headers = {"Cookie": cls.ttwid_conf.get("cookie"), "Content-Type": "text/plain"}
         transport = httpx.HTTPTransport(retries=5)
-        with httpx.Client(transport=transport, proxies=dict(cls.proxies)) as client:
+        with httpx.Client(transport=transport, proxies=cls.proxies) as client:
             try:
                 response = client.post(
                     cls.ttwid_conf["url"],
-                    headers=headers,
+                    headers={
+                        "Cookie": cls.ttwid_conf.get("cookie"),
+                        "Content-Type": "text/plain",
+                    },
                     content=cls.ttwid_conf["data"],
                 )
 
@@ -129,16 +133,18 @@ class TokenManager:
                 ttwid = httpx.Cookies(response.cookies).get("ttwid")
 
                 if ttwid is None:
-                    raise APIResponseError(_("ttwid: 检查没有通过, 请更新配置文件中的ttwid"))
+                    raise APIResponseError(
+                        _("ttwid: 检查没有通过, 请更新配置文件中的ttwid")
+                    )
 
                 return ttwid
 
             except httpx.RequestError:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
                 raise APIConnectionError(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
-                        cls.ttwid_conf["url"], cls.proxies
-                    )
+                    _(
+                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
+                    ).format(cls.ttwid_conf["url"], cls.proxies, cls.__name__)
                 )
 
             except httpx.HTTPStatusError as e:
@@ -147,18 +153,13 @@ class TokenManager:
                     f"HTTP Status Code {e.response.status_code}: {e.response.text}"
                 )
 
-            except APIError as e:
-                e.display_error()
-                time.sleep(2)
-                exit(0)
-
     @classmethod
     def gen_odin_tt(cls):
         """
         生成请求必带的odin_tt (Generate the essential odin_tt for requests)
         """
         transport = httpx.HTTPTransport(retries=5)
-        with httpx.Client(transport=transport, proxies=dict(cls.proxies)) as client:
+        with httpx.Client(transport=transport, proxies=cls.proxies) as client:
             try:
                 response = client.get(cls.odin_tt_conf["url"])
 
@@ -170,16 +171,18 @@ class TokenManager:
                 odin_tt = httpx.Cookies(response.cookies).get("odin_tt")
 
                 if odin_tt is None:
-                    raise APIResponseError(_("odin_tt: 检查没有通过, 请更新配置文件中的odin_tt"))
+                    raise APIResponseError(
+                        _("odin_tt: 检查没有通过, 请更新配置文件中的odin_tt")
+                    )
 
                 return odin_tt
 
             except httpx.RequestError:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
                 raise APIConnectionError(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
-                        cls.odin_tt_conf["url"], cls.proxies
-                    )
+                    _(
+                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
+                    ).format(cls.odin_tt_conf["url"], cls.proxies, cls.__name__)
                 )
 
             except httpx.HTTPStatusError as e:
@@ -187,11 +190,6 @@ class TokenManager:
                 raise APIResponseError(
                     f"HTTP Status Code {e.response.status_code}: {e.response.text}"
                 )
-
-            except APIError as e:
-                e.display_error()
-                time.sleep(2)
-                exit(0)
 
 
 class XBogusManager:
@@ -230,6 +228,7 @@ class SecUserIdFetcher:
         r"<script id=\"__UNIVERSAL_DATA_FOR_REHYDRATION__\" type=\"application/json\">(.*?)</script>"
     )
     _TIKTOK_UNIQUEID_PARREN = re.compile(r"/@([^/?]*)")
+    _TIKTOK_NOTFOUND_PARREN = re.compile(r"notfound")
 
     @classmethod
     async def get_secuid(cls, url: str) -> str:
@@ -248,17 +247,36 @@ class SecUserIdFetcher:
         # 提取有效URL
         url = extract_valid_urls(url)
 
+        if url is None:
+            raise (
+                APINotFoundError(_("输入的URL不合法。类名：{0}".format(cls.__name__)))
+            )
+
         transport = httpx.AsyncHTTPTransport(retries=5)
         async with httpx.AsyncClient(
-            transport=transport, proxies=dict(TokenManager.proxies), timeout=10
+            transport=transport, proxies=TokenManager.proxies, timeout=10
         ) as client:
             try:
                 response = await client.get(url, follow_redirects=True)
 
                 if response.status_code in {200, 444}:
+                    if cls._TIKTOK_NOTFOUND_PARREN.search(str(response.url)):
+                        raise APINotFoundError(
+                            _(
+                                "页面不可用，可能是由于区域限制（代理）造成的。类名: {0}".format(
+                                    cls.__name__
+                                )
+                            )
+                        )
                     match = cls._TIKTOK_SECUID_PARREN.search(str(response.text))
                     if not match:
-                        raise APIResponseError(_("未在响应中找到sec_uid"))
+                        raise APIResponseError(
+                            _(
+                                "未在响应的地址中找到sec_uid, 检查链接是否为用户主页类名: {0}".format(
+                                    cls.__name__
+                                )
+                            )
+                        )
 
                     # 提取SIGI_STATE对象中的sec_uid
                     data = json.loads(match.group(1))
@@ -276,13 +294,10 @@ class SecUserIdFetcher:
 
             except httpx.RequestError:
                 raise APIConnectionError(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(url), TokenManager.proxies
+                    _(
+                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
+                    ).format(url, TokenManager.proxies, cls.__name__)
                 )
-
-            except APIError as e:
-                e.display_error()
-                await asyncio.sleep(2)
-                exit(0)
 
     @classmethod
     async def get_all_secuid(cls, urls: list) -> list:
@@ -302,6 +317,13 @@ class SecUserIdFetcher:
         # 提取有效URL
         urls = extract_valid_urls(urls)
 
+        if urls == []:
+            raise (
+                APINotFoundError(
+                    _("输入的URL List不合法。类名：{0}".format(cls.__name__))
+                )
+            )
+
         secuids = [cls.get_secuid(url) for url in urls]
         return await asyncio.gather(*secuids)
 
@@ -320,11 +342,16 @@ class SecUserIdFetcher:
             raise TypeError("输入参数必须是字符串")
 
         # 提取有效URL
-        url = str(extract_valid_urls(url))
+        url = extract_valid_urls(url)
+
+        if url is None:
+            raise (
+                APINotFoundError(_("输入的URL不合法。类名：{0}".format(cls.__name__)))
+            )
 
         transport = httpx.AsyncHTTPTransport(retries=5)
         async with httpx.AsyncClient(
-            transport=transport, proxies=dict(TokenManager.proxies), timeout=10
+            transport=transport, proxies=TokenManager.proxies, timeout=10
         ) as client:
             try:
                 response = await client.get(url, follow_redirects=True)
@@ -337,7 +364,9 @@ class SecUserIdFetcher:
                     unique_id = match.group(1)
 
                     if unique_id is None:
-                        raise RuntimeError(_("获取unique_id失败, {0}".format(response.url)))
+                        raise RuntimeError(
+                            _("获取unique_id失败, {0}".format(response.url))
+                        )
 
                     return unique_id
                 else:
@@ -347,13 +376,10 @@ class SecUserIdFetcher:
 
             except httpx.RequestError:
                 raise APIConnectionError(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(url), TokenManager.proxies
+                    _(
+                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
+                    ).format(url, TokenManager.proxies, cls.__name__),
                 )
-
-            except APIError as e:
-                e.display_error()
-                await asyncio.sleep(2)
-                exit(0)
 
     @classmethod
     async def get_all_uniqueid(cls, urls: list) -> list:
@@ -372,6 +398,13 @@ class SecUserIdFetcher:
 
         # 提取有效URL
         urls = extract_valid_urls(urls)
+
+        if urls == []:
+            raise (
+                APINotFoundError(
+                    _("输入的URL List不合法。类名：{0}".format(cls.__name__))
+                )
+            )
 
         unique_ids = [cls.get_uniqueid(url) for url in urls]
         return await asyncio.gather(*unique_ids)
@@ -399,11 +432,16 @@ class AwemeIdFetcher:
             raise TypeError("输入参数必须是字符串")
 
         # 提取有效URL
-        url = str(extract_valid_urls(url))
+        url = extract_valid_urls(url)
+
+        if url is None:
+            raise (
+                APINotFoundError(_("输入的URL不合法。类名：{0}".format(cls.__name__)))
+            )
 
         transport = httpx.AsyncHTTPTransport(retries=5)
         async with httpx.AsyncClient(
-            transport=transport, proxies=dict(TokenManager.proxies), timeout=10
+            transport=transport, proxies=TokenManager.proxies, timeout=10
         ) as client:
             try:
                 response = await client.get(url, follow_redirects=True)
@@ -416,7 +454,9 @@ class AwemeIdFetcher:
                     aweme_id = match.group(1)
 
                     if aweme_id is None:
-                        raise RuntimeError(_("获取aweme_id失败, {0}".format(response.url)))
+                        raise RuntimeError(
+                            _("获取aweme_id失败, {0}".format(response.url))
+                        )
 
                     return aweme_id
                 else:
@@ -426,13 +466,14 @@ class AwemeIdFetcher:
 
             except httpx.RequestError:
                 raise APIConnectionError(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(url), TokenManager.proxies
+                    _(
+                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
+                    ).format(
+                        url,
+                        TokenManager.proxies,
+                        cls.__name__,
+                    )
                 )
-
-            except APIError as e:
-                e.display_error()
-                await asyncio.sleep(2)
-                exit(0)
 
     @classmethod
     async def get_all_aweme_id(cls, urls: list) -> list:
@@ -452,6 +493,13 @@ class AwemeIdFetcher:
         # 提取有效URL
         urls = extract_valid_urls(urls)
 
+        if urls == []:
+            raise (
+                APINotFoundError(
+                    _("输入的URL List不合法。类名：{0}".format(cls.__name__))
+                )
+            )
+
         aweme_ids = [cls.get_aweme_id(url) for url in urls]
         return await asyncio.gather(*aweme_ids)
 
@@ -460,7 +508,6 @@ def format_file_name(
     naming_template: str,
     aweme_data: dict = {},
     custom_fields: dict = {},
-    desc_length_limit: int = 200,
 ) -> str:
     """
     根据配置文件的全局格式化文件名
@@ -470,48 +517,45 @@ def format_file_name(
         aweme_data (dict): 抖音数据的字典 (dict of douyin data)
         naming_template (str): 文件的命名模板, 如 "{create}_{desc}" (Naming template for files, such as "{create}_{desc}")
         custom_fields (dict): 用户自定义字段, 用于替代默认的字段值 (Custom fields for replacing default field values)
-        desc_length_limit (int): 控制 'desc' 字段的长度限制 (Control the length limit of the 'desc' field)
 
     Note:
         windows 文件名长度限制为 255 个字符, 开启了长文件名支持后为 32,767 个字符
         (Windows file name length limit is 255 characters, 32,767 characters after long file name support is enabled)
         Unix 文件名长度限制为 255 个字符
         (Unix file name length limit is 255 characters)
-        取去除后的20个字符, 加上后缀, 一般不会超过255个字符
-        (Take the removed 20 characters, add the suffix, and generally not exceed 255 characters)
+        取去除后的50个字符, 加上后缀, 一般不会超过255个字符
+        (Take the removed 50 characters, add the suffix, and generally not exceed 255 characters)
+        详细信息请参考: https://en.wikipedia.org/wiki/Filename#Length
+        (For more information, please refer to: https://en.wikipedia.org/wiki/Filename#Length)
 
     Returns:
         str: 格式化的文件名 (Formatted file name)
     """
-    # 如果字典中没有对应的键，则使用用户自定义的字段
-    # (If there is no corresponding key in the dictionary, use the user-defined field)
+
+    # 为不同系统设置不同的文件名长度限制
+    os_limit = {
+        "win32": 200,
+        "cygwin": 60,
+        "darwin": 60,
+        "linux": 60,
+    }
+
     fields = {
-        "create": "",
-        "nickname": "",
-        "aweme_id": "",
-        "desc": "",
-        "uid": "",
+        "create": aweme_data.get("createTime", ""),  # 长度固定19
+        "nickname": aweme_data.get("nickname", ""),  # 最长30
+        "aweme_id": aweme_data.get("aweme_id", ""),  # 长度固定19
+        "desc": split_filename(aweme_data.get("desc", ""), os_limit),
+        "uid": aweme_data.get("uid", ""),  # 固定11
     }
 
     if custom_fields:
+        # 更新自定义字段
         fields.update(custom_fields)
-    else:
-        fields = {
-            "create": aweme_data.get("createTime", ""),
-            "nickname": aweme_data.get("nickname", ""),
-            "aweme_id": aweme_data.get("aweme_id", ""),
-            "desc": aweme_data.get("desc", ""),
-            "uid": aweme_data.get("uid", ""),
-        }
 
-    # 处理 'desc' 字段的长度限制
-    if desc_length_limit is not None and len(fields["desc"]) > desc_length_limit:
-        half_limit = desc_length_limit // 2 - 6
-        fields[
-            "desc"
-        ] = f"{fields['desc'][:half_limit]}......{fields['desc'][-half_limit:]}"
-
-    return naming_template.format(**fields)
+    try:
+        return naming_template.format(**fields)
+    except KeyError as e:
+        raise KeyError(_("文件名模板字段 {0} 不存在，请检查".format(e)))
 
 
 def create_user_folder(kwargs: dict, nickname: Union[str, int]) -> Path:

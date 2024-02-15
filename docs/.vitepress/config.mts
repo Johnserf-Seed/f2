@@ -28,8 +28,8 @@ export default defineConfig({
       { icon: 'discord', link: 'https://discord.gg/3PhtPmgHf8' },
     ],
     algolia: {
-      appId: '',
-      apiKey: '',
+      appId: 'KKYI8Z7LEP',
+      apiKey: '8f27043df972a4e8eb009a3195f2042b',
       indexName: 'f2'
     },
     footer: {
@@ -56,6 +56,7 @@ export default defineConfig({
                 {text: '安装', link: '/install'},
                 {text: '快速使用', link: '/quick-start'},
                 {text: '配置文件', link: '/site-config'},
+                {text: '命令行', link: '/cli'},
                 {text: '进阶用法', link: '/advance-guide'},
               ]
             },
@@ -79,8 +80,17 @@ export default defineConfig({
                 {text: 'DouYin', link: '/guide/apps/douyin/index'},
                 {text: 'TikTok', link: '/guide/apps/tiktok/index'}
               ]
-            }
+            },
+
           ],
+          '/question-answer/': [
+            {
+              text: 'QA',
+              items: [
+                {text: 'Issue里经常反馈的问题', link: '/question-answer/qa'}
+              ]
+            },
+          ]
         }
       }
     },
@@ -123,9 +133,9 @@ function cn_nav(): DefaultTheme.NavItem[] {
       activeMatch: '/guide/'
     },
     {
-      text: '参考',
-      link: '/reference/cli',
-      activeMatch: '/reference/'
+      text: 'QA',
+      link: '/question-answer/qa',
+      activeMatch: '/question-answer/'
     },
     {
       //text: pkg.version,
@@ -150,11 +160,6 @@ function en_nav(): DefaultTheme.NavItem[] {
       text: 'guide',
       link: '/en/guide/what-is-f2',
       activeMatch: '/guide/'
-    },
-    {
-      text: 'reference',
-      link: '/en/site-config',
-      activeMatch: '/reference/'
     },
     {
       //text: pkg.version,

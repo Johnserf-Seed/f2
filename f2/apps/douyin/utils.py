@@ -11,7 +11,6 @@ import asyncio
 
 from typing import Union
 from pathlib import Path
-from urllib.parse import quote, unquote
 
 from f2.i18n.translator import _
 from f2.log.logger import logger
@@ -20,8 +19,8 @@ from f2.utils.conf_manager import ConfigManager
 from f2.utils.utils import (
     gen_random_str,
     get_timestamp,
-    num_to_base36,
     extract_valid_urls,
+    split_filename,
 )
 from f2.exceptions.api_exceptions import (
     APIError,
@@ -34,10 +33,10 @@ from f2.exceptions.api_exceptions import (
 
 
 class TokenManager:
-    dy_manager = ConfigManager(f2.APP_CONFIG_FILE_PATH)
-    token_conf = dy_manager.get_config("douyin").get("msToken", None)
-    ttwid_conf = dy_manager.get_config("douyin").get("ttwid", None)
-    proxies_conf = dy_manager.get_config("douyin").get("proxies", None)
+    f2_manager = ConfigManager(f2.F2_CONFIG_FILE_PATH).get_config("f2").get("douyin")
+    token_conf = f2_manager.get("msToken", None)
+    ttwid_conf = f2_manager.get("ttwid", None)
+    proxies_conf = f2_manager.get("proxies", None)
     proxies = {
         "http://": proxies_conf.get("http", None),
         "https://": proxies_conf.get("https", None),
@@ -65,7 +64,7 @@ class TokenManager:
         }
 
         transport = httpx.HTTPTransport(retries=5)
-        with httpx.Client(transport=transport, proxies=dict(cls.proxies)) as client:
+        with httpx.Client(transport=transport, proxies=cls.proxies) as client:
             try:
                 response = client.post(
                     cls.token_conf["url"], headers=headers, content=payload
@@ -78,14 +77,21 @@ class TokenManager:
 
                 msToken = str(httpx.Cookies(response.cookies).get("msToken"))
 
+                if len(msToken) not in [120, 128]:
+                    raise APIResponseError(
+                        _(
+                            "msToken: 请检查并更新 f2 中 conf.yaml 配置文件中的 msToken，以匹配 douyin 新规则。"
+                        )
+                    )
+
                 return msToken
 
             except httpx.RequestError:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
                 raise APIConnectionError(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
-                        cls.token_conf["url"], cls.proxies
-                    )
+                    _(
+                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
+                    ).format(cls.token_conf["url"], cls.proxies, cls.__name__)
                 )
 
             except httpx.HTTPStatusError as e:
@@ -95,9 +101,7 @@ class TokenManager:
                 )
 
             except APIError as e:
-                e.display_error()
-                # 返回虚假的msToken (Return a fake msToken)
-                print(_("生成虚假的msToken"))
+                logger.info(_("生成虚假的msToken"))
                 return cls.gen_false_msToken()
 
     @classmethod
@@ -130,9 +134,9 @@ class TokenManager:
             except httpx.RequestError:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
                 raise APIConnectionError(
-                    _("连接端点失败，检查网络环境或代理: {0} 代理：{1}").format(
-                        cls.ttwid_conf["url"], cls.proxies
-                    )
+                    _(
+                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
+                    ).format(cls.ttwid_conf["url"], cls.proxies, cls.__name__)
                 )
 
             except httpx.HTTPStatusError as e:
@@ -141,31 +145,8 @@ class TokenManager:
                     f"HTTP Status Code {e.response.status_code}: {e.response.text}"
                 )
 
-            except APIError as e:
-                e.display_error()
-                time.sleep(2)
-                exit(0)
-
 
 class VerifyFpManager:
-    base_str = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-    # placeholders = [8, 13, 18, 23]
-
-    # @classmethod
-    # def gen_verify_fp(cls) -> str:
-    #     """
-    #     生成verifyFp 与 s_v_web_id (Generate verifyFp)
-    #     """
-
-    #     base36 = num_to_base36(int(round(time.time() * 1000)))
-
-    #     random_part = [cls.base_str[random.randint(0, 35)] for _ in range(36)]
-    #     for idx in cls.placeholders:
-    #         random_part[idx] = "_"
-    #     random_part[14] = "4"
-
-    #     return f"verify_{base36}_" + "".join(random_part)
-
     @classmethod
     def gen_verify_fp(cls) -> str:
         """
@@ -252,7 +233,12 @@ class SecUserIdFetcher:
             raise TypeError(_("参数必须是字符串类型"))
 
         # 提取有效URL
-        url = str(extract_valid_urls(url))
+        url = extract_valid_urls(url)
+
+        if url is None:
+            raise (
+                APINotFoundError(_("输入的URL不合法。类名：{0}".format(cls.__name__)))
+            )
 
         pattern = (
             cls._REDIRECT_URL_PATTERN
@@ -263,7 +249,7 @@ class SecUserIdFetcher:
         try:
             transport = httpx.AsyncHTTPTransport(retries=5)
             async with httpx.AsyncClient(
-                transport=transport, proxies=dict(TokenManager.proxies), timeout=10
+                transport=transport, proxies=TokenManager.proxies, timeout=10
             ) as client:
                 response = await client.get(url, follow_redirects=True)
 
@@ -272,23 +258,42 @@ class SecUserIdFetcher:
                     if match:
                         return match.group(1)
                     else:
-                        raise APIResponseError(_("未在响应的地址中找到sec_user_id, 检查链接是否为用户主页"))
+                        raise APIResponseError(
+                            _(
+                                "未在响应的地址中找到sec_user_id, 检查链接是否为用户主页类名: {0}".format(
+                                    cls.__name__
+                                )
+                            )
+                        )
 
                 elif response.status_code == 401:
-                    raise APIUnauthorizedError(_("未授权的请求"))
+                    raise APIUnauthorizedError(
+                        _("未授权的请求。类名: {0}".format(cls.__name__))
+                    )
                 elif response.status_code == 404:
-                    raise APINotFoundError(_("未找到API端点"))
+                    raise APINotFoundError(
+                        _("未找到API端点。类名: {0}".format(cls.__name__))
+                    )
                 elif response.status_code == 503:
-                    raise APIUnavailableError(_("API服务不可用"))
+                    raise APIUnavailableError(
+                        _("API服务不可用。类名: {0}".format(cls.__name__))
+                    )
                 else:
-                    raise APIError(_("API错误码：{0}").format(response.status_code))
-
-        except APIError as e:
-            e.display_error()
-            logger.error(str(e))
+                    raise APIError(
+                        _("API错误码：{0}。类名: {1}").format(
+                            response.status_code, cls.__name__
+                        )
+                    )
 
         except httpx.RequestError:
-            raise APIConnectionError(_("连接到API时发生错误，请检查链接"))
+            raise APIConnectionError(
+                _(
+                    "连接到API时发生错误，请检查URL或网络情况。类名: {0}".format(
+                        cls.__name__
+                    )
+                ),
+                url,
+            )
 
     @classmethod
     async def get_all_sec_user_id(cls, urls: list) -> list:
@@ -307,6 +312,13 @@ class SecUserIdFetcher:
 
         # 提取有效URL
         urls = extract_valid_urls(urls)
+
+        if urls == []:
+            raise (
+                APINotFoundError(
+                    _("输入的URL List不合法。类名：{0}".format(cls.__name__))
+                )
+            )
 
         sec_user_ids = [cls.get_sec_user_id(url) for url in urls]
         return await asyncio.gather(*sec_user_ids)
@@ -333,31 +345,47 @@ class AwemeIdFetcher:
             raise TypeError(_("参数必须是字符串类型"))
 
         # 提取有效URL
-        url = str(extract_valid_urls(url))
+        url = extract_valid_urls(url)
+
+        if url is None:
+            raise (
+                APINotFoundError(_("输入的URL不合法。类名：{0}".format(cls.__name__)))
+            )
 
         # 重定向到完整链接
-        async with httpx.AsyncClient(timeout=10) as client:
-            response = await client.get(url, follow_redirects=True)
-            url = str(response.url)
+        transport = httpx.AsyncHTTPTransport(retries=5)
+        async with httpx.AsyncClient(
+            transport=transport, proxies=TokenManager.proxies, timeout=10
+        ) as client:
+            try:
+                response = await client.get(url, follow_redirects=True)
 
-        video_pattern = cls._DOUYIN_VIDEO_URL_PATTERN
-        note_pattern = cls._DOUYIN_NOTE_URL_PATTERN
+                video_pattern = cls._DOUYIN_VIDEO_URL_PATTERN
+                note_pattern = cls._DOUYIN_NOTE_URL_PATTERN
 
-        try:
-            if video_pattern.search(url):
-                match = video_pattern.search(url)
-            elif note_pattern.search(url):
-                match = note_pattern.search(url)
-            else:
-                raise APIResponseError(
-                    _("未在响应的地址中找到aweme_id, 检查链接是否为作品页")
-                )  # (aweme_id not found in the response address, check if the link is the work page)
+                match = video_pattern.search(str(response.url))
+                if match:
+                    aweme_id = match.group(1)
+                else:
+                    match = note_pattern.search(str(response.url))
+                    if match:
+                        aweme_id = match.group(1)
+                    else:
+                        raise APIResponseError(
+                            _("未在响应的地址中找到aweme_id, 检查链接是否为作品页")
+                        )
+                return aweme_id
 
-            return match.group(1)
-
-        except APIError as e:
-            e.display_error()
-            logger.error(str(e))
+            except httpx.RequestError:
+                raise APIConnectionError(
+                    _(
+                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
+                    ).format(
+                        url,
+                        TokenManager.proxies,
+                        cls.__name__,
+                    )
+                )
 
     @classmethod
     async def get_all_aweme_id(cls, urls: list) -> list:
@@ -377,6 +405,13 @@ class AwemeIdFetcher:
         # 提取有效URL
         urls = extract_valid_urls(urls)
 
+        if urls == []:
+            raise (
+                APINotFoundError(
+                    _("输入的URL List不合法。类名：{0}".format(cls.__name__))
+                )
+            )
+
         aweme_ids = [cls.get_aweme_id(url) for url in urls]
         return await asyncio.gather(*aweme_ids)
 
@@ -384,7 +419,7 @@ class AwemeIdFetcher:
 class MixIdFetcher:
     @classmethod
     async def get_mix_id(cls, url: str) -> str:
-        pass
+        return
 
 
 class WebCastIdFetcher:
@@ -414,8 +449,16 @@ class WebCastIdFetcher:
         # 提取有效URL
         url = extract_valid_urls(url)
 
+        if url is None:
+            raise (
+                APINotFoundError(_("输入的URL不合法。类名：{0}".format(cls.__name__)))
+            )
+
         # 重定向到完整链接
-        async with httpx.AsyncClient(timeout=10) as client:
+        transport = httpx.AsyncHTTPTransport(retries=5)
+        async with httpx.AsyncClient(
+            transport=transport, proxies=TokenManager.proxies, timeout=10
+        ) as client:
             response = await client.get(url, follow_redirects=True)
             url = str(response.url)
 
@@ -423,22 +466,23 @@ class WebCastIdFetcher:
         live_pattern2 = cls._DOUYIN_LIVE_URL_PATTERN2
         live_pattern3 = cls._DOUYIN_LIVE_URL_PATTERN3
 
-        try:
-            if live_pattern.search(url):
-                match = live_pattern.search(url)
-            elif live_pattern2.search(url):
-                match = live_pattern2.search(url)
-            elif live_pattern3.search(url):
-                match = live_pattern3.search(url)
-                logger.debug(_("该链接返回的是room_id，请使用fetch_user_live_videos_by_room_id接口"))
-            else:
-                raise APIResponseError(_("未在响应的地址中找到webcast_id, 检查链接是否为直播页"))
+        if live_pattern.search(url):
+            match = live_pattern.search(url)
+        elif live_pattern2.search(url):
+            match = live_pattern2.search(url)
+        elif live_pattern3.search(url):
+            match = live_pattern3.search(url)
+            logger.debug(
+                _(
+                    "该链接返回的是room_id，请使用`fetch_user_live_videos_by_room_id`接口"
+                )
+            )
+        else:
+            raise APIResponseError(
+                _("未在响应的地址中找到webcast_id, 检查链接是否为直播页")
+            )
 
-            return match.group(1)
-
-        except APIError as e:
-            e.display_error()
-            logger.error(str(e))
+        return match.group(1)
 
     @classmethod
     async def get_all_webcast_id(cls, urls: list) -> list:
@@ -446,7 +490,7 @@ class WebCastIdFetcher:
         获取直播webcast_id,传入列表url都可以解析出webcast_id (Get live webcast_id, pass in the list url can parse out webcast_id)
 
         Args:
-            urls: list: 列表url (   list url)
+            urls: list: 列表url (list url)
 
         Return:
             webcast_ids: list: 直播的唯一标识，返回列表 (The unique identifier of the live, return list)
@@ -458,37 +502,21 @@ class WebCastIdFetcher:
         # 提取有效URL
         urls = extract_valid_urls(urls)
 
+        if urls == []:
+            raise (
+                APINotFoundError(
+                    _("输入的URL List不合法。类名：{0}".format(cls.__name__))
+                )
+            )
+
         webcast_ids = [cls.get_webcast_id(url) for url in urls]
         return await asyncio.gather(*webcast_ids)
-
-
-def get_request_sizes(page_counts: int, max_counts: int) -> list[int]:
-    """
-    用于获取请求大小列表 (Used to get request size list)
-
-    Args:
-        page_counts: int: 每页视频数 (Number of videos per page)
-        max_counts: int: 最大视频数 (Maximum number of videos)
-
-    Return:
-        requests: list[int]: 请求大小列表 (Request size list)
-    """
-
-    full_requests = max_counts // page_counts
-    remainder = max_counts % page_counts
-
-    requests = [page_counts] * full_requests
-    if remainder:
-        requests.append(remainder)
-
-    return requests
 
 
 def format_file_name(
     naming_template: str,
     aweme_data: dict = {},
     custom_fields: dict = {},
-    desc_length_limit: int = 200,
 ) -> str:
     """
     根据配置文件的全局格式化文件名
@@ -498,48 +526,45 @@ def format_file_name(
         aweme_data (dict): 抖音数据的字典 (dict of douyin data)
         naming_template (str): 文件的命名模板, 如 "{create}_{desc}" (Naming template for files, such as "{create}_{desc}")
         custom_fields (dict): 用户自定义字段, 用于替代默认的字段值 (Custom fields for replacing default field values)
-        desc_length_limit (int): 控制 'desc' 字段的长度限制 (Control the length limit of the 'desc' field)
 
     Note:
         windows 文件名长度限制为 255 个字符, 开启了长文件名支持后为 32,767 个字符
         (Windows file name length limit is 255 characters, 32,767 characters after long file name support is enabled)
         Unix 文件名长度限制为 255 个字符
         (Unix file name length limit is 255 characters)
-        取去除后的20个字符, 加上后缀, 一般不会超过255个字符
-        (Take the removed 20 characters, add the suffix, and generally not exceed 255 characters)
+        取去除后的50个字符, 加上后缀, 一般不会超过255个字符
+        (Take the removed 50 characters, add the suffix, and generally not exceed 255 characters)
+        详细信息请参考: https://en.wikipedia.org/wiki/Filename#Length
+        (For more information, please refer to: https://en.wikipedia.org/wiki/Filename#Length)
 
     Returns:
         str: 格式化的文件名 (Formatted file name)
     """
-    # 如果字典中没有对应的键，则使用用户自定义的字段
-    # (If there is no corresponding key in the dictionary, use the user-defined field)
+
+    # 为不同系统设置不同的文件名长度限制
+    os_limit = {
+        "win32": 200,
+        "cygwin": 60,
+        "darwin": 60,
+        "linux": 60,
+    }
+
     fields = {
-        "create": "",
-        "nickname": "",
-        "aweme_id": "",
-        "desc": "",
-        "uid": "",
+        "create": aweme_data.get("create_time", ""),  # 长度固定19
+        "nickname": aweme_data.get("nickname", ""),  # 最长30
+        "aweme_id": aweme_data.get("aweme_id", ""),  # 长度固定19
+        "desc": split_filename(aweme_data.get("desc", ""), os_limit),
+        "uid": aweme_data.get("uid", ""),  # 固定11
     }
 
     if custom_fields:
+        # 更新自定义字段
         fields.update(custom_fields)
-    else:
-        fields = {
-            "create": aweme_data.get("create_time", ""),
-            "nickname": aweme_data.get("nickname", ""),
-            "aweme_id": aweme_data.get("aweme_id", ""),
-            "desc": aweme_data.get("desc", ""),
-            "uid": aweme_data.get("uid", ""),
-        }
 
-    # 处理 'desc' 字段的长度限制
-    if desc_length_limit is not None and len(fields["desc"]) > desc_length_limit:
-        half_limit = desc_length_limit // 2 - 6
-        fields[
-            "desc"
-        ] = f"{fields['desc'][:half_limit]}......{fields['desc'][-half_limit:]}"
-
-    return naming_template.format(**fields)
+    try:
+        return naming_template.format(**fields)
+    except KeyError as e:
+        raise KeyError(_("文件名模板字段 {0} 不存在，请检查".format(e)))
 
 
 def create_user_folder(kwargs: dict, nickname: Union[str, int]) -> Path:
@@ -627,41 +652,6 @@ def create_or_rename_user_folder(
         user_path = rename_user_folder(user_path, current_nickname)
 
     return user_path
-
-
-def extract_desc_from_share_desc(desc: str, share_desc: str) -> str:
-    """
-    从share_desc中提取desc (Extract desc from share_desc)
-
-    Args:
-        desc (str): 作品的desc (desc of the work)
-        share_desc (str): 作品的share_desc (share_desc of the work)
-
-    Note:
-        只针对由于接口参数构建存在低版本的情况适用
-        (Only applicable to the case where the interface parameter construction exists in the low version)
-    Returns:
-        extracted (str): 提取的desc (Extracted desc)
-    """
-    # 如果desc只是空格（无论多少），直接返回
-    if desc.strip() == "":
-        return desc
-
-    # 如果多次匹配说明desc在share_desc中出现多次，我们只需要最后一次匹配的结果
-    indices = [i for i in range(len(share_desc)) if share_desc.startswith(desc, i)]
-    if not indices:
-        return desc
-
-    # 取最后一次匹配的位置
-    last_index = indices[-1]
-    # 从找到的desc开始，提取之后的所有内容
-    extracted = share_desc[last_index:]
-    # 假设URL或其他不需要的内容都在 'https' 之前
-    end_index = extracted.find("https")
-    if end_index != -1:
-        extracted = extracted[:end_index].strip()
-
-    return extracted
 
 
 def show_qrcode(qrcode_url: str, show_image: bool = False) -> None:

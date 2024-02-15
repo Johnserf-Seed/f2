@@ -45,8 +45,19 @@ from f2.apps.douyin.model import UserProfile
 from f2.apps.douyin.filter import UserProfileFilter
 from f2.apps.douyin.utils import XBogusManager
 
+
+kwargs = {
+    "headers": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
+        "Referer": "https://www.douyin.com/",
+    },
+    "proxies": {"http": None, "https": None},
+    "cookie": "YOUR_COOKIE_HERE",
+}
+
+
 async def main():
-    async with DouyinCrawler() as crawler:
+    async with DouyinCrawler(kwargs) as crawler:
         sec_user_id="MS4wLjABAAAANXSltcLCzDGmdNFI2Q_QixVTr67NiYzjKOIP5s03CAE"
         params = UserProfile(sec_user_id=sec_user_id)
         response = await crawler.fetch_user_profile(params)

@@ -11,8 +11,3 @@ outline: deep
 ::: details 提取作品id
 <<< @/snippets/douyin/sec-user-id.py#multi-user-id-snippet{14,17}
 :::
-
-
-## More
-
-请查看 [API 完整列表](../reference/runtime-api).

@@ -31,7 +31,7 @@ dependencies = [
     "httpx==0.25.0",
     "aiofiles==22.1.0",
     "aiosqlite==0.19.0",
-    "pyyaml==6.0",
+    "pyyaml==6.0.1",
     "jsonpath-ng==1.6.0",
     "importlib_resources==6.1.0",
     "m3u8==3.6.0",
