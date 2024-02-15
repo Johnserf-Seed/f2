@@ -95,7 +95,7 @@ class ProgressManager:
             chosen_columns_dict["bar"], BarColumn
         ):
             bar_column = chosen_columns_dict["bar"]
-            bar_column.bar_width = bar_width or 45
+            bar_column.bar_width = bar_width or 40
         self._progress = RichProgress(
             *chosen_columns_dict.values(), transient=False, expand=expand
         )
