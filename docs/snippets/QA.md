@@ -23,3 +23,14 @@ https://datatracker.ietf.org/doc/html/rfc6585#section-7.2
 // #region urlopen-errno-11001
 该问题为本地网络连接问题，请检查你的网络连接是否正常。需要排查代理是否可以正常访问。
 // #endregion urlopen-errno-11001
+
+
+// #region f2-command-not-found
+在非Windows系统中，如果出现`f2: command not found`错误，说明你的系统环境变量中没有添加`f2`命令的路径。
+
+运行`which f2`命令查看`f2`命令的路径，然后将该路径添加到环境变量中。
+
+添加环境变量的方法：
+1. 编辑`~/.bashrc`文件，添加`export PATH="$PATH:/home/YOUR_NAME/.local/bin"`。
+2. 运行`source ~/.bashrc`命令使环境变量生效。
+// #endregion f2-command-not-found
