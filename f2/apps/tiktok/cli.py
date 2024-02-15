@@ -336,7 +336,7 @@ def merge_config(main_conf, custom_conf, **kwargs):
     "-s",
     type=int,
     # default=20,
-    help=_("每页作品数。"),
+    help=_("从接口每页可获取作品数，不建议超过20。"),
 )
 @click.option(
     "--languages",
