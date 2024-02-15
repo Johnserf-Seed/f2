@@ -363,17 +363,17 @@ class AwemeIdFetcher:
                 video_pattern = cls._DOUYIN_VIDEO_URL_PATTERN
                 note_pattern = cls._DOUYIN_NOTE_URL_PATTERN
 
-                video_match = video_pattern.search(str(response.url))
-                note_pattern = video_pattern.search(str(response.url))
-
-                if video_match:
-                    aweme_id = video_match.group(1)
-                elif note_pattern:
-                    aweme_id = note_pattern.group(1)
+                match = video_pattern.search(str(response.url))
+                if match:
+                    aweme_id = match.group(1)
                 else:
-                    raise APIResponseError(
-                        _("未在响应的地址中找到aweme_id, 检查链接是否为作品页")
-                    )
+                    match = note_pattern.search(str(response.url))
+                    if match:
+                        aweme_id = match.group(1)
+                    else:
+                        raise APIResponseError(
+                            _("未在响应的地址中找到aweme_id, 检查链接是否为作品页")
+                        )
                 return aweme_id
 
             except httpx.RequestError:
