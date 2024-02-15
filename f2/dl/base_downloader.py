@@ -4,7 +4,7 @@ import sys
 import httpx
 import asyncio
 import aiofiles
-
+import traceback
 from pathlib import Path
 from rich.progress import TaskID
 from typing import Union, Optional, Any
@@ -27,7 +27,7 @@ class BaseDownloader(BaseCrawler):
     """基础下载器 (Base Downloader Class)"""
 
     def __init__(self, kwargs: dict = {}):
-        proxies_conf = kwargs.get("proxies")
+        proxies_conf = kwargs.get("proxies", {"http": None, "https": None})
         proxies = {
             "http://": proxies_conf.get("http", None),
             "https://": proxies_conf.get("https", None),
@@ -67,9 +67,8 @@ class BaseDownloader(BaseCrawler):
             task_id (TaskID): 任务ID (Task ID)
         """
 
-        response = await client.send(request, stream=True)
-
         try:
+            response = await client.send(request, stream=True)
             async for chunk in response.aiter_bytes(get_chunk_size(content_length)):
                 if SignalManager.is_shutdown_signaled():
                     break
@@ -81,8 +80,6 @@ class BaseDownloader(BaseCrawler):
             logger.warning(_("文件区块下载超时: {0}".format(e)))
         except Exception as e:
             logger.error(_("文件区块下载失败: {0}".format(e)))
-        finally:
-            await response.aclose()
 
     async def download_file(
         self, task_id: TaskID, url: str, full_path: Union[str, Path]
@@ -101,7 +98,9 @@ class BaseDownloader(BaseCrawler):
             # 获取文件内容大小 (Get the size of the file content)
             content_length = await get_content_length(url, self.headers, self.proxies)
 
-            logger.debug(_("{0}在服务器上的总内容长度为：{1} 字节".format(url, content_length)))
+            logger.debug(
+                _("{0}在服务器上的总内容长度为：{1} 字节".format(url, content_length))
+            )
 
             # 如果文件内容大小为0, 则不下载 (If file content size is 0, skip download)
             if content_length == 0:
@@ -121,7 +120,13 @@ class BaseDownloader(BaseCrawler):
             # 获取临时文件的大小 (Get the size of the temporary file)
             start_byte = 0 if not tmp_path.exists() else tmp_path.stat().st_size
 
-            logger.debug(_("找到了未下载完的文件 {0}, 大小为 {1} 字节".format(tmp_path, start_byte)))
+            logger.debug(
+                _(
+                    "找到了未下载完的文件 {0}, 大小为 {1} 字节".format(
+                        tmp_path, start_byte
+                    )
+                )
+            )
 
             if start_byte in [0, content_length]:
                 if start_byte:
@@ -199,6 +204,7 @@ class BaseDownloader(BaseCrawler):
         async with self.semaphore:
             full_path = self._ensure_path(full_path)
             total_downloaded = 1024000
+            default_chunks = 409600
 
             while not SignalManager.is_shutdown_signaled():
                 try:
@@ -225,6 +231,13 @@ class BaseDownloader(BaseCrawler):
                             ts_content_length = await get_content_length(
                                 ts_url, self.headers
                             )
+                            if ts_content_length == 0:
+                                ts_content_length = default_chunks
+                                logger.warning(
+                                    _(
+                                        "无法读取该TS文件字节长度，将使用默认400kb块大小处理数据"
+                                    )
+                                )
                             ts_request = self.aclient.build_request(
                                 "GET", ts_url, headers=self.headers
                             )
@@ -253,6 +266,7 @@ class BaseDownloader(BaseCrawler):
                                 logger.warning(_("TS文件下载超时: {0}".format(e)))
                             except Exception as e:
                                 logger.error(_("TS文件下载失败: {0}".format(e)))
+                                logger.error(traceback.format_exc())
                             finally:
                                 await ts_response.aclose()
                     # 等待一段时间后再次请求更新 (Request update again after waiting for a while)
@@ -280,6 +294,7 @@ class BaseDownloader(BaseCrawler):
 
                 except Exception as e:
                     logger.error(_("m3u8文件解析失败: {0}".format(e)))
+                    logger.error(traceback.format_exc())
                     await self.progress.update(
                         task_id,
                         description=_("[  失败  ]:"),
@@ -430,7 +445,9 @@ class BaseDownloader(BaseCrawler):
 
     async def execute_tasks(self):
         """执行所有下载任务 (Execute all download tasks)"""
-        logger.debug(_("开始执行下载任务，本次共有 {0} 个任务".format(len(self.download_tasks))))
+        logger.debug(
+            _("开始执行下载任务，本次共有 {0} 个任务".format(len(self.download_tasks)))
+        )
         await asyncio.gather(*self.download_tasks)
         self.download_tasks.clear()
 

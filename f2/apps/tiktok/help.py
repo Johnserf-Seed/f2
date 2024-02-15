@@ -20,12 +20,14 @@ def help() -> None:
         (
             "-u --url",
             "[dark_cyan]str",
-            _("根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合辑与直播同上"),
+            _(
+                "根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合辑与直播同上"
+            ),
         ),
         ("-m --music", "[dark_cyan]Choice", _("是否保存视频原声。可选：'yes'、'no'")),
         ("-v --cover", "[dark_cyan]Choice", _("是否保存视频封面。可选：'yes'、'no'")),
         ("-d --desc", "[dark_cyan]Choice", _("是否保存视频文案。可选：'yes'、'no'")),
-        ("-p --path", "[dark_cyan]str", _("作品保存位置，默认为 'Download'")),
+        ("-p --path", "[dark_cyan]str", _("作品保存位置，支持绝对与相对路径。")),
         (
             "-f --folderize",
             "[dark_cyan]Choice",
@@ -34,9 +36,15 @@ def help() -> None:
         (
             "-M --mode",
             "[dark_cyan]Choice",
-            _("下载模式：单个作品(one)，主页作品(post), 点赞作品(like), 收藏作品(collect), 合辑播放列表(mix)"),
+            _(
+                "下载模式：单个作品(one)，主页作品(post), 点赞作品(like), 收藏作品(collect), 合辑播放列表(mix)"
+            ),
         ),
-        ("-n --naming", "[dark_cyan]str", _("全局作品文件命名方式，前往文档查看更多帮助")),
+        (
+            "-n --naming",
+            "[dark_cyan]str",
+            _("全局作品文件命名方式，前往文档查看更多帮助"),
+        ),
         (
             "-k --cookie",
             "[dark_cyan]str",
@@ -47,14 +55,24 @@ def help() -> None:
         (
             "-i --interval",
             "[dark_cyan]str",
-            _("下载日期区间发布的作品，格式：2022-01-01|2023-01-01，默认为 'all'下载所有作品"),
+            _(
+                "下载日期区间发布的作品，格式：2022-01-01|2023-01-01，'all' 为下载所有作品"
+            ),
         ),
-        ("-e --timeout", "[dark_cyan]int", _("网络请求超时时间。默认为 10")),
-        ("-r --max-retries", "[dark_cyan]int", _("网络请求超时重试数。默认为 5")),
-        ("-x --max-connections", "[dark_cyan]int", _("网络请求并发连接数。默认为 5")),
-        ("-t --max-tasks", "[dark_cyan]int", _("异步的任务数。默认为 10")),
-        ("-o --max-counts", "[dark_cyan]int", _("最大作品下载数。默认为 0，表示无限制")),
-        ("-s --page-counts", "[dark_cyan]int", _("每页作品数。默认为 20")),
+        ("-e --timeout", "[dark_cyan]int", _("网络请求超时时间。")),
+        ("-r --max-retries", "[dark_cyan]int", _("网络请求超时重试数。")),
+        ("-x --max-connections", "[dark_cyan]int", _("网络请求并发连接数。")),
+        ("-t --max-tasks", "[dark_cyan]int", _("异步的任务数。")),
+        (
+            "-o --max-counts",
+            "[dark_cyan]int",
+            _("最大作品下载数。0 表示无限制"),
+        ),
+        (
+            "-s --page-counts",
+            "[dark_cyan]int",
+            _("从接口每页可获取作品数，不建议超过20。"),
+        ),
         (
             "-l --languages",
             "[dark_cyan]Choice",
@@ -63,14 +81,20 @@ def help() -> None:
         (
             "-P --proxies",
             "[dark_cyan]str",
-            _("代理服务器，最多 2 个参数，http与https。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"),
+            _(
+                "代理服务器，最多 2 个参数，http与https。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"
+            ),
         ),
         (
             "--update-config",
             "[dark_cyan]Flag",
             _("使用命令行选项更新配置文件。需要先使用'-c'选项提供一个配置文件路径"),
         ),
-        ("--init-config", "[dark_cyan]Flag", _("初始化配置文件。不能同时初始化和更新配置文件")),
+        (
+            "--init-config",
+            "[dark_cyan]Flag",
+            _("初始化配置文件。不能同时初始化和更新配置文件"),
+        ),
         (
             "--auto-cookie",
             "[dark_cyan]Choice",

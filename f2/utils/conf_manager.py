@@ -9,16 +9,15 @@ from pathlib import Path
 from f2.exceptions.file_exceptions import (
     FileNotFound,
     FilePermissionError,
-    FileReadError,
-    FileWriteError,
 )
 from f2.utils.utils import get_resource_path
 from f2.i18n.translator import _
+from f2.log.logger import logger
 
 
 class ConfigManager:
     # 如果不传入应用配置路径，则返回项目配置 (If the application conf path is not passed in, the project conf is returned)
-    def __init__(self, filepath: str = "conf/conf.yaml"):
+    def __init__(self, filepath: str = f2.F2_CONFIG_FILE_PATH):
         if Path(filepath).exists():
             self.filepath = Path(filepath)
         else:
@@ -30,7 +29,7 @@ class ConfigManager:
 
         try:
             if not self.filepath.exists():
-                raise FileNotFound(_("'{0}' 应用配置路径不存在").format(self.filepath))
+                raise FileNotFound(_("'{0}' 配置文件路径不存在").format(self.filepath))
             return yaml.safe_load(self.filepath.read_text(encoding="utf-8")) or {}
         except FileNotFound as e:
             e.display_error()
@@ -56,8 +55,12 @@ class ConfigManager:
         Args:
             config: dict: 配置字典 (conf dict)
         """
-
-        self.filepath.write_text(yaml.dump(config), encoding="utf-8")
+        try:
+            self.filepath.write_text(yaml.dump(config), encoding="utf-8")
+        except PermissionError:
+            raise FilePermissionError(
+                _("'{0}' 配置文件路径无写权限").format(self.filepath)
+            )
 
     def backup_config(self):
         """在进行更改前备份配置文件 (Backup the conf file before making changes)"""
@@ -71,6 +74,8 @@ class ConfigManager:
         self.filepath.rename(backup_path)
 
     def generate_config(self, app_name: str, save_path: Path):
+        """生成应用程序特定配置文件 (Generate application-specific conf file)"""
+
         if not isinstance(app_name, str):
             return
 
@@ -84,7 +89,15 @@ class ConfigManager:
         # 确保目录存在，如果不存在则创建
         save_path.parent.mkdir(parents=True, exist_ok=True)
 
-        default_config = yaml.safe_load(self.filepath.read_text(encoding="utf-8")) or {}
+        # 读取默认配置
+        default_config = (
+            yaml.safe_load(
+                Path(get_resource_path(f2.F2_DEFAULTS_FILE_PATH)).read_text(
+                    encoding="utf-8"
+                )
+            )
+            or {}
+        )
 
         if app_name in default_config:
             # 将app_name作为外层键 # https://github.com/Johnserf-Seed/TikTokDownload/issues/626  #629
@@ -92,9 +105,11 @@ class ConfigManager:
 
             # 写入应用程序特定配置
             save_path.write_text(yaml.dump(app_config), encoding="utf-8")
-            print(_("{0} 应用配置文件生成成功,保存至 {1}").format(app_name, save_path))
+            logger.info(
+                _("{0} 应用配置文件生成成功，保存至 {1}").format(app_name, save_path)
+            )
         else:
-            print(_("{0} 应用配置未找到").format(app_name))
+            logger.info(_("{0} 应用配置未找到").format(app_name))
 
     def update_config_with_args(self, app_name: str, **kwargs):
         """
@@ -117,10 +132,15 @@ class ConfigManager:
         self.config[app_name] = app_config
 
         # 在保存前询问用户确认 (Ask the user for confirmation before saving)
-        # click.echo(_('是否要使用命令行的参数更新配置文件?') + (f' =====> `{self.filepath}`')) #(Should I update the conf file using parameters from the cli?)
-        # 备份原始配置文件
-        self.backup_config()
-
-        # 保存更新的配置 (Save the updated conf)
-        self.save_config(self.config)
-        click.echo(_("配置文件已更新!"))  # (The conf file has been updated!)
+        if click.confirm(
+            _("是否要使用命令行的参数更新配置文件？")
+            + (f"`{Path.cwd() / self.filepath}`"),
+            default=True,
+        ):
+            # 备份原始配置文件
+            self.backup_config()
+            # 保存更新的配置 (Save the updated conf)
+            self.save_config(self.config)
+            click.echo(_("配置文件已更新!"))
+        else:
+            click.echo(_("已取消更新配置文件!"))

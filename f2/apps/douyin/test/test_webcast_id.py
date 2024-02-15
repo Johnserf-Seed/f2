@@ -17,13 +17,13 @@ raw_urls = [
 async def test_get_webcast_id():
     raw_url = "https://live.douyin.com/775841227732"
     result = await WebCastIdFetcher.get_webcast_id(raw_url)
-    assert result is not None  # 在这里添加你的具体断言
+    assert result is not None
 
 
 @pytest.mark.asyncio
 async def test_get_all_webcast_id():
     result = await WebCastIdFetcher.get_all_webcast_id(raw_urls)
-    assert result is not None  # 在这里添加你的具体断言
+    assert result is not None
 
 
 if __name__ == "__main__":

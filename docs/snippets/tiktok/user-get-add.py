@@ -1,13 +1,26 @@
 import asyncio
-from f2.apps.tiktok.handler import get_or_add_user_data
+from f2.apps.tiktok.handler import TiktokHandler
 from f2.apps.tiktok.db import AsyncUserDB
+
+kwargs = {
+    "headers": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
+        "Referer": "https://www.tiktok.com/",
+    },
+    "proxies": {"http": None, "https": None},
+    "cookie": "YOUR_COOKIE_HERE",
+    "path": "Download",
+}
 
 
 async def main():
-    kwargs = {"path": "Download"}
-    async with AsyncUserDB("douyin_users.db") as audb:
+    async with AsyncUserDB("tiktok_users.db") as audb:
         secUid = "MS4wLjABAAAAQhcYf_TjRKUku-aF8oqngAfzrYksgGLRz8CKMciBFdfR54HQu3qGs-WoJ-KO7hO8"
-        print(await get_or_add_user_data(kwargs=kwargs, secUid=secUid, db=audb))
+        print(
+            await TiktokHandler(kwargs).get_or_add_user_data(
+                kwargs=kwargs, secUid=secUid, db=audb
+            )
+        )
 
 
 if __name__ == "__main__":

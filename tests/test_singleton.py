@@ -1,3 +1,5 @@
+# path: tests/test_singleton.py
+
 from f2.utils._singleton import Singleton
 
 

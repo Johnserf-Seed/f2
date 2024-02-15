@@ -1,3 +1,5 @@
+# path: tests/test_signal.py
+
 import asyncio
 import pytest
 from f2.utils._signal import SignalManager

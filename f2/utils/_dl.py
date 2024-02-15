@@ -47,12 +47,20 @@ async def get_content_length(url: str, headers: dict = {}, proxies: dict = {}) -
                     response.raise_for_status()
                 except Exception as e:
                     logger.error(
-                        _("HTTP状态错误, 尝试GET请求失败: {0}, 错误详情: {1}".format(url, e))
+                        _(
+                            "HTTP状态错误, 尝试GET请求失败: {0}, 错误详情: {1}".format(
+                                url, e
+                            )
+                        )
                     )
                     return 0
             else:
                 logger.error(
-                    _("HTTP状态错误: {0}, 状态码: {1}".format(url, exc.response.status_code))
+                    _(
+                        "HTTP状态错误: {0}, 状态码: {1}".format(
+                            url, exc.response.status_code
+                        )
+                    )
                 )
                 return 0
         except httpx.RequestError as e:
@@ -61,7 +69,11 @@ async def get_content_length(url: str, headers: dict = {}, proxies: dict = {}) -
         except Exception as e:
             # 处理未知错误 (Handling unknown errors)
             logger.error(
-                _("f2 请求 Content-Length 时发生未知错误: {0}, 错误详情: {1}".format(url, e))
+                _(
+                    "f2 请求 Content-Length 时发生未知错误: {0}, 错误详情: {1}".format(
+                        url, e
+                    )
+                )
             )
             return 0
 
@@ -119,7 +131,7 @@ def get_chunk_size(file_size: int) -> int:
         return 1 * 1024 * 1024  # 使用1MB的块大小 (Use a chunk size of 1MB)
 
 
-async def get_segments_from_m3u8(url: str) -> list[dict]:
+async def get_segments_from_m3u8(url: str):
     """
     从给定的m3u8文件中获取segments
 
@@ -127,7 +139,7 @@ async def get_segments_from_m3u8(url: str) -> list[dict]:
         url (str): m3u8文件的URL
 
     Returns:
-        list: m3u8文件中的segments列表
+        m3u8文件中的segments列表
     """
     m3u8_obj = m3u8.load(url)
     segments = m3u8_obj.segments
@@ -142,6 +154,9 @@ async def get_segments_from_m3u8(url: str) -> list[dict]:
         segments = await get_segments_from_m3u8(nested_m3u8_url)
         # 再次检查segments是否存在 (Check again if segments exist)
         if not segments:
-            logger.error(_("未找到嵌套m3u8文件的segments, 可能直播结束或该主播无法使用m3u8方法解析"))
-
+            logger.error(
+                _(
+                    "未找到嵌套m3u8文件的segments, 可能直播结束或该主播无法使用m3u8方法解析"
+                )
+            )
     return segments
