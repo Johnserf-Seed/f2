@@ -36,6 +36,8 @@ $ f2 apps -h
 
 ![cli-start](/douyin/cli-start.png)
 
+![cli-start-2](/douyin/cli-start-2.png)
+
 ### 接口调用
 
 ![code-start](/douyin/code-start.png)
