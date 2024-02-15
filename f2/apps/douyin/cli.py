@@ -371,7 +371,7 @@ def merge_config(main_conf, custom_conf, **kwargs):
     "-s",
     type=int,
     # default=20,
-    help=_("每页作品数。"),
+    help=_("从接口每页可获取作品数，不建议超过20。"),
 )
 @click.option(
     "--languages",
@@ -411,7 +411,7 @@ def merge_config(main_conf, custom_conf, **kwargs):
 @click.option(
     "--sso-login",
     is_flag=True,
-    help=_("使用SSO扫码登录获取cookie，直接保存到默认配置文件"),
+    help=_("使用SSO扫码登录获取[yellow]cookie[/yellow]，保存低频主配置文件"),
     callback=handler_sso_login,
 )
 @click.option(
