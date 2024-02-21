@@ -146,7 +146,7 @@ def handler_naming(
         return
 
     # 允许的模式和分隔符
-    ALLOWED_PATTERNS = ["{nickname}", "{create}", "{aid}", "{desc}"]
+    ALLOWED_PATTERNS = ["{nickname}", "{create}", "{aweme_id}", "{desc}", "{uid}"]
     ALLOWED_SEPARATORS = ["-", "_"]
 
     temp_naming = value
@@ -164,11 +164,11 @@ def handler_naming(
 
     # 检查连续的无效模式或分隔符
     for pattern in ALLOWED_PATTERNS:
-        # 检查像"{aid}{aid}"这样的模式
+        # 检查像"{aweme_id}{aweme_id}"这样的模式
         if pattern + pattern in value:
             invalid_patterns.append(pattern + pattern)
         for sep in ALLOWED_SEPARATORS:
-            # 检查像"{aid}-{aid}"这样的模式
+            # 检查像"{aweme_id}-{aweme_id}"这样的模式
             if pattern + sep + pattern in value:
                 invalid_patterns.append(pattern + sep + pattern)
 
