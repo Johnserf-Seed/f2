@@ -34,3 +34,18 @@ https://datatracker.ietf.org/doc/html/rfc6585#section-7.2
 1. 编辑`~/.bashrc`文件，添加`export PATH="$PATH:/home/YOUR_NAME/.local/bin"`。
 2. 运行`source ~/.bashrc`命令使环境变量生效。
 // #endregion f2-command-not-found
+
+
+// #region no-matching-videos-found
+如果出现`WARNING  没有找到符合条件的作品`，请检查你是否配置了`interval`参数，该参数是用来设置作品发布时间的筛选条件。
+
+解决办法：
+1. 检查你的配置文件中是否有`interval`参数。如果没有，请添加为`interval: all`。
+2. 如果你的配置文件中有`interval`参数，请检查你的`interval`参数是否设置正确。
+3. `cli`命令中的`-i`参数也是用来设置作品发布时间的筛选条件 你可以设置为`-i all`。
+4. 如果你使用了`-i`参数，请检查你的`-i`参数是否设置正确。
+
+可参考的issue：
+https://github.com/Johnserf-Seed/f2/issues/42
+https://github.com/Johnserf-Seed/TikTokDownload/issues/660
+// #endregion no-matching-videos-found
