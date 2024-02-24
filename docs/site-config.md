@@ -188,30 +188,6 @@ $ f2 -d dy -c C:\Users\JohnserfSeed\Desktop\C.yaml
 
 是不是非常方便且容易管理🤭，你可以随时添加喜欢的用户配置文件并设置你所需的下载模式。
 
-### CLI临时配置
-
-CLI 参数命令优先级最高，所以在不修改配置文件的情况下就可以使用 CLI 参数更改为下载「抖音」用户`喜欢`的所有作品。因此也可以在 CLI 中临时下载A的直播，B的作品与C的喜欢。
-
-::: code-group
-
-```bash [用户A]
-$ f2 -d dy -c C:\Users\JohnserfSeed\Desktop\A.yaml -M live -u https://live.douyin.com/xxxxxxxxx
-```
-
-```bash [用户B]
-$ f2 -d dy -c C:\Users\JohnserfSeed\Desktop\B.yaml -M post
-```
-
-```bash [用户C]
-$ f2 -d dy -c C:\Users\JohnserfSeed\Desktop\C.yaml -M like
-```
-:::
-
-赶快试试吧！
-
-::: tip 说明
-之后的版本会简化操作。不需要再指定该用户的直播间就可以切换下载该用户直播的模式。
-更多的 CLI 命令请查阅 [CLI 参考](/cli)。
 :::
 
 ::: warning 重要
