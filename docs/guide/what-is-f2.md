@@ -11,11 +11,7 @@ f2 -d dy -c conf/app.yaml
 ```
 也可以在代码中指定配置文件的路径，例如：
 
-```python
-import f2
-
-f2.APP_CONFIG_FILE_PATH = "conf/app.yaml"
-```
+<<< @/snippets/set-debug.py#set-config-snippet{3}
 
 ## 调试日志级别
 
