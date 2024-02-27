@@ -174,15 +174,15 @@ douyin:
 ::: code-group
 
 ```bash [用户A]
-$ f2 -d dy -c C:\Users\JohnserfSeed\Desktop\A.yaml
+$ f2 dy -c C:\Users\JohnserfSeed\Desktop\A.yaml
 ```
 
 ```bash [用户B]
-$ f2 -d dy -c C:\Users\JohnserfSeed\Desktop\B.yaml
+$ f2 dy -c C:\Users\JohnserfSeed\Desktop\B.yaml
 ```
 
 ```bash [用户C]
-$ f2 -d dy -c C:\Users\JohnserfSeed\Desktop\C.yaml
+$ f2 dy -c C:\Users\JohnserfSeed\Desktop\C.yaml
 ```
 :::
 
@@ -195,15 +195,15 @@ CLI 参数命令优先级最高，所以在不修改配置文件的情况下就�
 ::: code-group
 
 ```bash [用户A]
-$ f2 -d dy -c C:\Users\JohnserfSeed\Desktop\A.yaml -M live -u https://live.douyin.com/xxxxxxxxx
+$ f2 dy -c C:\Users\JohnserfSeed\Desktop\A.yaml -M live -u https://live.douyin.com/xxxxxxxxx
 ```
 
 ```bash [用户B]
-$ f2 -d dy -c C:\Users\JohnserfSeed\Desktop\B.yaml -M post
+$ f2 dy -c C:\Users\JohnserfSeed\Desktop\B.yaml -M post
 ```
 
 ```bash [用户C]
-$ f2 -d dy -c C:\Users\JohnserfSeed\Desktop\C.yaml -M like
+$ f2 dy -c C:\Users\JohnserfSeed\Desktop\C.yaml -M like
 ```
 :::
 
