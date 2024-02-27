@@ -17,9 +17,13 @@ import f2
 f2.APP_CONFIG_FILE_PATH = "conf/app.yaml"
 ```
 
-## 调试日志级别
+## 设置调试日志级别
 
 <<< @/snippets/set-debug.py#set-debug-snippet{5}
+
+支持代码`接口`模式的同时也支持在`CLI`模式中加上`-d`来指定记录日志级别。可选的参数`DEBUG`，`INFO`，`WARNING`，`ERROR`。
+
+<<< @/snippets/set-debug.py#cli-debug-snippet
 
 ![set-debug](/douyin/set-debug.png)
 
