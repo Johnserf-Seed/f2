@@ -7,15 +7,19 @@
 开发者可以直接定义自己的配置文件，然后在测试时通过`-c`参数指定配置文件的路径，例如：
 
 ```bash
-f2 -d DEBUG dy -c app.yaml
+f2 dy -c conf/app.yaml
 ```
 也可以在代码中指定配置文件的路径，例如：
 
 <<< @/snippets/set-debug.py#set-config-snippet{3}
 
-## 调试日志级别
+## 设置调试日志级别
 
 <<< @/snippets/set-debug.py#set-debug-snippet{5}
+
+支持代码`接口`模式的同时也支持在`CLI`模式中加上`-d`来指定记录日志级别。可选的参数`DEBUG`，`INFO`，`WARNING`，`ERROR`。
+
+<<< @/snippets/set-debug.py#cli-debug-snippet
 
 ![set-debug](/douyin/set-debug.png)
 

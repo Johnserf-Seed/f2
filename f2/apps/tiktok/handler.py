@@ -121,7 +121,7 @@ class TiktokHandler:
 
     @classmethod
     async def get_or_add_video_data(
-        aweme_data: dict, db: AsyncVideoDB, ignore_fields: list = []
+        cls, aweme_data: dict, db: AsyncVideoDB, ignore_fields: list = []
     ):
         """
         获取或创建作品数据同时创建用户目录
