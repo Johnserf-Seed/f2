@@ -150,7 +150,6 @@ class BaseCrawler:
                         "第 {0} 次响应内容为空, 状态码: {1}, URL:{2}"
                     ).format(attempt + 1, response.status_code, response.url)
 
-                    print(error_message)
                     logger.warning(error_message)
 
                     if attempt == self._max_retries - 1:
@@ -199,7 +198,6 @@ class BaseCrawler:
                         "第 {0} 次响应内容为空, 状态码: {1}, URL:{2}"
                     ).format(attempt + 1, response.status_code, response.url)
 
-                    print(error_message)
                     logger.warning(error_message)
 
                     if attempt == self._max_retries - 1:
