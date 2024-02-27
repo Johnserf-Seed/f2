@@ -1,3 +1,11 @@
+// #region set-config-snippet
+import f2
+
+f2.APP_CONFIG_FILE_PATH = "app.yaml"
+
+// #endregion set-config-snippet
+
+
 // #region set-debug-snippet
 import asyncio
 from f2.apps.douyin.handler import DouyinHandler

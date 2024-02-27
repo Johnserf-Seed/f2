@@ -6,19 +6,28 @@
 
 ## 主配置文件
 
-`F2` 是一个灵活的异步下载库。你可以使用默认的配置文件，同时也能指定个性化的配置文件。
-
-`F2` 默认的配置文件(`f2/conf/app.yaml`)是一个yaml文件。它非常重要，用来保存各个app基础的配置。
+`F2`配置文件由三部分组成，`应用低频配置文件(app.yaml)`，`F2配置文件(conf.yaml)`，`应用默认配置文件(defaults.yaml)`。
 
 ::: info 什么是yaml？
-用类似大纲的缩进方式呈现数据序列化的格式文件，[yaml](https://zh.wikipedia.org/wiki/YAML)。
+用类似大纲的缩进方式呈现数据序列化的格式文件，[what is yaml?](https://zh.wikipedia.org/wiki/YAML)。
 :::
 
+**应用低频配置文件(app.yaml)**：用来保存所有应用不常变动的配置，例如的`cookie`、`文件名模板`、`下载路径`、`连接超时时间`、`超时重试次数`等。
+
+**F2配置文件(conf.yaml)**：用来保存`F2`的配置，例如不同应用的`计算参数`和`代理`。
+
+**应用默认配置文件(defaults.yaml)**：用来保存各个app的初始化默认配置模板，<font color=red><u>**_请不要修改与使用它_**</u></font>。
 ::: code-group
 <<< @../../f2/conf/app.yaml
+<<< @../../f2/conf/conf.yaml
+<<< @../../f2/conf/defaults.yaml
 :::
 
-F2 配置文件独立于 CLI 命令参数且具有`最低优先`。这意味只需要一个主配置存`cookie`再用 CLI 命令或者用户的自定义配置即可下载不同的用户作品。
+
+高低频参数分离意味着当创建的自定义配置文件比较多的情况下无需修改每一个自定义配置文件中的`cookie`，只需要修改**应用低频配置文件(app.yaml)** 中的`cookie`即可。
+
+将高频修改的参数`主页链接`、`下载模式`等，设置在你的自定义配置中，即可灵活调用下载不同用户的不同类型作品。
+
 
 - 如何初始化配置文件？请查阅[初始化配置文件](#初始化配置文件)。
 
@@ -36,22 +45,24 @@ F2 配置文件独立于 CLI 命令参数且具有`最低优先`。这意味只�
 $ f2 -h
 ```
 
-F2 安装完成后，运行不同应用的启动初始化配置文件命令:
+`F2` 安装完成后，第一步就是运行应用的初始化配置文件命令:
 
 ::: code-group
 
 ```sh [Windows]
-$ f2 apps --init-config apps.yaml
+$ f2 apps --init-config my_apps.yaml
 ```
 
 ```sh [Linux]
-$ f2 apps --init-config apps.yaml
+$ f2 apps --init-config my_apps.yaml
 ```
 
 ```sh [MacOS]
-$ f2 apps --init-config apps.yaml
+$ f2 apps --init-config my_apps.yaml
 ```
 :::
+
+`my_apps.yaml`就是该应用的自定义配置文件。
 
 
 迎接你的将是几个简单的问题:
@@ -76,71 +87,20 @@ $ f2 douyin --init-config dy.yaml
 请查阅[配置文件的位置](#配置文件的位置)。
 :::
 
-
-## 配置cookie
-
-通过简单的配置，用户与开发者就可以立马上手 `F2`。只需通过 `--update-config` 命令就可以保存`cookie`到主配置文件或者使用`--auto-cookie`命令自动从浏览器获取并填写。
-
-::: code-group
-
-```sh [--update-config]
-$ f2 dy -k "从浏览器中复制的cookie" -c conf/app.yaml --update-config
-```
-
-```sh [--auto-cookie]
-$ f2 dy -c conf/app.yaml --auto-cookie edge
-```
-:::
-
-当然不想出错就手动复制浏览器中的`cookie`，然后使用`--update-config` 命令保存到主配置文件中。手动复制的操作百度一下就可以了。
-
-::: warning 重要
-- 更新配置文件的同时将会在同目录里备份原配置文件，备份文件名为`*.yaml.bak`，方便出错回滚。
-- 不一定非要保存到主配置文件中，你也可以保存到自定义的配置文件中。随你的使用习惯，小白请按照文档的说明来操作。
-- `--update-config` 命令与`--auto-cookie`命令会覆盖主配置文件中的`cookie`，请谨慎使用。
-- `--update-config` 命令需要指定`-c`参数，否则会报错。
-:::
-
-
-## 配置文件的位置
-
-你可以可以在`x:\xxxxxxx\Python\Lib\site-packages\f2\conf\app.yaml`中找到它。
-
-::: tip 提示
-如果找不到配置文件可以在终端输入
-
-::: code-group
-```sh [Windows]
-$ pip show f2
-```
-
-```sh [Linux]
-$ pip3 show f2
-```
-
-```sh [MacOS]
-$ pip3 show f2
-```
-然后查看Location，并在该目录下找到配置文件。
-:::
-
-
 ## 自定义配置文件
 
-由于 F2 采用 app 插件分离式设计，这意味着你可以为相同的 app 配置不同模式的配置文件。
-
-一头雾水🎃？ 接着看。
+由于 `F2` 的配置文件采用高低频参数分离式设计，这意味着你可以为`相同的应用`设置`不同的配置文件`。你可以只设置一个参数在自定义配置文件中，也可以设置你需要高频修改的参数。
 
 
-### 多用户配置
+### 多用户灵活配置
 
-举个例子，我关注了3个用户其中有A的主页跳舞作品、B的喜欢页作品、C的直播。以往的`TikTokDownload`项目设计冗余，一次性实现起来较复杂。
+举个例子，我关注了3个用户。其中有A的主页作品、B的喜欢页作品、C的直播。那么我可以为每个用户配置一个专属的配置文件。
 
-在 F2 中，先把主配置文件中`cookie`与其他你需要设置的命令配置好。再在其他目录下建立A、B、C用户的专属配置文件，只需配置不同你所需的的下载模式。
+在 `F2` 中，先把**应用低频配置文件(app.yaml)** 中`cookie`与其他你需要设置的参数配置好。再在其他目录下建立A、B、C用户的专属配置文件，只需配置上低频中没有设置的参数。如下面2个`高频参数`所示，为不同用户所需的下载模式。
 
 ::: code-group
 
-```yaml [用户A]
+```yaml [用户A主页作品]
 douyin:
   # 浩子
   url: https://www.douyin.com/user/MS4wLjABAAAAu8qwDm1-muGuMhZZ-tVzyPVWlUxIbQRNJN_9k83OhWU?vid=7263127189829307659
@@ -148,7 +108,7 @@ douyin:
   mode: post
 ```
 
-```yaml [用户B]
+```yaml [用户B喜欢页作品]
 douyin:
   # 小布丁
   url: https://www.douyin.com/user/MS4wLjABAAAA35iXl5qqCbLKY99pUvxkXzvpSXi8jgUbJ0zR4EuTpcHcS8PHaEb6G9yB6iKR0dNl?vid=7240082457372937511
@@ -156,7 +116,7 @@ douyin:
   mode: like
 ```
 
-```yaml [用户C]
+```yaml [用户C直播]
 douyin:
   # 醒子8ke
   url: https://live.douyin.com/775841227732
@@ -166,14 +126,35 @@ douyin:
 :::
 
 ::: tip 说明
-只是举例，实际上用户B的喜欢页没有开放，用户C也不一定直播，一切根据你的喜好来设置。
+只是举例，实际上用户B的喜欢页没有开放，用户C也不一定直播，一切根据你的喜好来设置，do ever what you want。
 :::
 
-随后你便可以开启终端，并输入不同的配置文件路径即可一键下载。
+随后你便可以开启终端，并直接输入自定义配置文件路径即可一键下载，剩下的低频参数会自动合并，无需担心。
 
 ::: code-group
 
 ```bash [用户A]
+
+$ f2 dy -c X:\A.yaml
+```
+
+```bash [用户B]
+$ f2 dy -c X:\B.yaml
+```
+
+```bash [用户C]
+$ f2 dy -c X:\C.yaml
+```
+:::
+
+是不是非常方便且容易管理🤭，你可以随时添加喜欢的用户配置文件并设置你所需的下载模式。
+
+::: warning 配置优先级
+- `CLI`参数优先级最高，`自定义配置文件`优先级次之，`应用低频配置文件(app.yaml)`优先级最低。
+- `CLI` > `自定义配置文件` > `应用低频配置文件(app.yaml)`。
+- 高频参数会覆盖低频参数，未设置的参数不会被覆盖。
+- 要想了解更多的`CLI`参数，请查阅[CLI 参考](/cli)。
+=======
 $ f2 dy -c C:\Users\JohnserfSeed\Desktop\A.yaml
 ```
 
@@ -214,82 +195,56 @@ $ f2 dy -c C:\Users\JohnserfSeed\Desktop\C.yaml -M like
 更多的 CLI 命令请查阅 [CLI 参考](/cli)。
 :::
 
+## 配置cookie
+
+通过简单的配置，用户与开发者就可以立马上手 `F2`。只需通过 `--update-config` 命令就可以保存`cookie`到主配置文件或者使用`--auto-cookie`命令自动从浏览器获取。
+
+::: code-group
+
+```sh [--update-config]
+$ f2 dy -k "从浏览器中复制的cookie" -c app.yaml --update-config
+```
+
+```sh [--auto-cookie]
+$ f2 dy -c app.yaml --auto-cookie edge
+```
+:::
+
+当然不想出错就手动复制浏览器中的`cookie`，然后使用`--update-config` 命令保存到主配置文件中。手动复制的操作百度一下就可以了。
+
 ::: warning 重要
-- 命名方式也不受限制，你可以设置`dy-A.yaml`、`dy-B.yaml`、`tk-A.yaml`、`tk-B.ymal`用以区分不同app的用户配置。
-- 配置的操作是通用的，举例用的是douyin的配置文件，tiktok与其他 F2 应用的配置文件的操作是一模一样的。
+- 更新配置文件的同时将会在同目录里备份原配置文件，备份文件名为`*.yaml.bak`，方便回滚。
+- 如果`--auto-cookie`不指定`-c`参数，将直接保存至**低频配置文件(app.yaml)** 中。
+- `cookie`也可以保存到自定义的配置文件中。随你的使用习惯，小白请严格按照文档的说明来操作。
+- `--update-config` 命令与`--auto-cookie`命令会覆盖主配置文件中的`cookie`，请谨慎使用。
+- `--update-config` 命令需要指定`-c`参数，否则会报错。
 :::
 
 
-## 拓展
+## 配置文件的位置
 
-如果不想设置很多配置文件，那就使用主配置。
+你可以在`x:\xxxxxxx\Python\Lib\site-packages\f2\conf\`文件夹中找到它们。
 
-下载「抖音」用户`发布`的所有作品，只需要在主配置文件中设置`mode: post`即可。
+::: tip 提示
+如果找不到配置文件夹路径可以在终端输入
 
 ::: code-group
-
 ```sh [Windows]
-$ f2 dy -c f2/conf/app.yaml
+$ pip show f2
 ```
 
 ```sh [Linux]
-$ f2 dy -c f2/conf/app.yaml
+$ pip3 show f2
 ```
 
 ```sh [MacOS]
-$ f2 dy -c f2/conf/app.yaml
+$ pip3 show f2
 ```
+然后查看Location，并在该目录下找到配置文件。
 :::
 
-下载「抖音」用户`喜欢`的所有作品，CLI 中设置`mode: like`即可。
 
-::: code-group
 
-```sh [Windows]
-$ f2 dy -M like -c f2/conf/app.yaml
-```
-
-```sh [Linux]
-$ f2 dy -M like -c f2/conf/app.yaml
-```
-
-```sh [MacOS]
-$ f2 dy -M like -c f2/conf/app.yaml
-```
-:::
-
-下载「抖音」用户`单个`的作品:
-
-::: code-group
-
-```sh [Windows]
-$ f2 dy -M one -u https://v.douyin.com/iRNBho6u/ -c conf/app.yaml
-```
-
-```sh [Linux]
-$ f2 dy -M one -u https://v.douyin.com/iRNBho6u/ -c conf/app.yaml
-```
-
-```sh [MacOS]
-$ f2 dy -M one -u https://v.douyin.com/iRNBho6u/ -c conf/app.yaml
-```
-:::
-
-F2 会智能的识别出混乱文本中的链接，同时也支持长短链的输入。
-
-::: details 支持的链接格式
-
-<<< @/snippets/douyin/support-link.md
-:::
-
-::: tip 需要注意的是
-在CLI模式下，带有其他信息的文本需要用英文引号将其完整包裹:
-
-```sh [Windows]
-$ f2 dy -M one -u '7.64 gOX:/ w@f.oD 05/14 世界这本书 又多读了一页。冰岛????旅行记# 冰岛  https://v.douyin.com/iR2syBRn/ 复制此链接，打开Dou音搜索，直接观看视！
-' -c conf/app.yaml
-```
-:::
 
 ## 下一步是什么？
 
