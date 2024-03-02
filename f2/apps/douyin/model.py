@@ -91,7 +91,7 @@ class UserLike(BaseRequestModel):
     sec_user_id: str
 
 
-class UserCollect(BaseRequestModel):
+class UserCollection(BaseRequestModel):
     # POST
     cursor: int
     count: int
