@@ -409,7 +409,7 @@ class DouyinHandler:
         logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
 
     @mode_handler("collection")
-    async def handle_user_collect(self):
+    async def handle_user_collection(self):
         """
         用于处理用户收藏的视频 (Used to process videos collected by users)
 
