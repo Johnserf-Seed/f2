@@ -14,7 +14,7 @@ from f2.apps.douyin.model import (
     UserPost,
     UserProfile,
     UserLike,
-    UserCollect,
+    UserCollection,
     UserMix,
     PostDetail,
     UserLive,
@@ -408,7 +408,7 @@ class DouyinHandler:
 
         logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
 
-    @mode_handler("collect")
+    @mode_handler("collection")
     async def handle_user_collect(self):
         """
         用于处理用户收藏的视频 (Used to process videos collected by users)
@@ -426,14 +426,14 @@ class DouyinHandler:
         async with AsyncUserDB("douyin_users.db") as db:
             user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, db)
 
-        async for aweme_data_list in self.fetch_user_collect_videos(
+        async for aweme_data_list in self.fetch_user_collection_videos(
             max_cursor, page_counts, max_counts
         ):
             await self.downloader.create_download_tasks(
                 self.kwargs, aweme_data_list, user_path
             )
 
-    async def fetch_user_collect_videos(
+    async def fetch_user_collection_videos(
         self, max_cursor: int = 0, page_counts: int = 20, max_counts: int = None
     ) -> AsyncGenerator[List[Dict[str, Any]], None]:
         """
@@ -470,8 +470,8 @@ class DouyinHandler:
             logger.debug(_("开始爬取第 {0} 页").format(max_cursor))
 
             async with DouyinCrawler(self.kwargs) as crawler:
-                params = UserCollect(cursor=max_cursor, count=current_request_size)
-                response = await crawler.fetch_user_collect(params)
+                params = UserCollection(cursor=max_cursor, count=current_request_size)
+                response = await crawler.fetch_user_collection(params)
                 video = UserCollectFilter(response)
 
             logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
