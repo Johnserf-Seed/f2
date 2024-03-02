@@ -313,7 +313,7 @@ class UserPostFilter(JSONModel):
         return list_dicts
 
 
-class UserCollectFilter(UserPostFilter):
+class UserCollectionFilter(UserPostFilter):
     def __init__(self, data):
         super().__init__(data)
 
