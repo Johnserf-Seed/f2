@@ -19,7 +19,7 @@ async def main():
     )
     results = [
         aweme_data_list
-        async for aweme_data_list in DouyinHandler(kwargs).fetch_user_collect_videos(
+        async for aweme_data_list in DouyinHandler(kwargs).fetch_user_mix_videos(
             mix_id
         )
     ]
@@ -27,7 +27,7 @@ async def main():
     print("-------------------")
     results = [
         aweme_data_list
-        async for aweme_data_list in DouyinHandler(kwargs).fetch_user_collect_videos(
+        async for aweme_data_list in DouyinHandler(kwargs).fetch_user_mix_videos(
             mix_id, 0, 10, 20
         )
     ]
