@@ -350,78 +350,90 @@ class UserCollectsFilter(JSONModel):
 
     @property
     def app_id(self):
-        return self._get_attr_value("$.collects_list[*].app_id")
+        return self._get_list_attr_value("$.collects_list[*].app_id")
 
     @property
     def collects_cover(self):
-        return self._get_attr_value("$.collects_list[*].collects_cover.url_list[0]")
+        return self._get_list_attr_value(
+            "$.collects_list[*].collects_cover.url_list[0]"
+        )
 
     @property
     def collects_id(self):
-        return self._get_attr_value("$.collects_list[*].collects_id")
+        return self._get_list_attr_value("$.collects_list[*].collects_id")
 
     @property
     def collects_name(self):
-        return self._get_attr_value("$.collects_list[*].collects_name")
+        return self._get_list_attr_value("$.collects_list[*].collects_name")
 
     @property
     def create_time(self):
-        return timestamp_2_str(self._get_attr_value("$.collects_list[*].create_time"))
+        create_times = self._get_list_attr_value("$.collects_list[*].create_time")
+        return (
+            [timestamp_2_str(ct) for ct in create_times]
+            if isinstance(create_times, list)
+            else timestamp_2_str(create_times)
+        )
 
     @property
     def follow_status(self):
-        return self._get_attr_value("$.collects_list[*].follow_status")
+        return self._get_list_attr_value("$.collects_list[*].follow_status")
 
     @property
     def followed_count(self):
-        return self._get_attr_value("$.collects_list[*].followed_count")
+        return self._get_list_attr_value("$.collects_list[*].followed_count")
 
     @property
     def is_normal_status(self):
-        return self._get_attr_value("$.collects_list[*].is_normal_status")
+        return self._get_list_attr_value("$.collects_list[*].is_normal_status")
 
     @property
     def item_type(self):
-        return self._get_attr_value("$.collects_list[*].item_type")
+        return self._get_list_attr_value("$.collects_list[*].item_type")
 
     @property
     def last_collect_time(self):
-        return timestamp_2_str(
-            self._get_attr_value("$.collects_list[*].last_collect_time")
+        create_times = self._get_list_attr_value("$.collects_list[*].last_collect_time")
+        return (
+            [timestamp_2_str(ct) for ct in create_times]
+            if isinstance(create_times, list)
+            else timestamp_2_str(create_times)
         )
 
     @property
     def play_count(self):
-        return self._get_attr_value("$.collects_list[*].play_count")
+        return self._get_list_attr_value("$.collects_list[*].play_count")
 
     @property
     def states(self):
-        return self._get_attr_value("$.collects_list[*].states")
+        return self._get_list_attr_value("$.collects_list[*].states")
 
     @property
     def status(self):
-        return self._get_attr_value("$.collects_list[*].status")
+        return self._get_list_attr_value("$.collects_list[*].status")
 
     @property
     def system_type(self):
-        return self._get_attr_value("$.collects_list[*].system_type")
+        return self._get_list_attr_value("$.collects_list[*].system_type")
 
     @property
     def total_number(self):
-        return self._get_attr_value("$.collects_list[*].total_number")
+        return self._get_list_attr_value("$.collects_list[*].total_number")
 
     @property
     def user_id(self):
-        return self._get_attr_value("$.collects_list[*].user_id")
+        return self._get_list_attr_value("$.collects_list[*].user_id")
 
     # user_info
     @property
     def nickname(self):
-        return replaceT(self._get_attr_value("$.collects_list[*].user_info.nickname"))
+        return replaceT(
+            self._get_list_attr_value("$.collects_list[*].user_info.nickname")
+        )
 
     @property
     def uid(self):
-        return self._get_attr_value("$.collects_list[*].user_info.uid")
+        return self._get_list_attr_value("$.collects_list[*].user_info.uid")
 
     def _to_dict(self) -> dict:
         return {
