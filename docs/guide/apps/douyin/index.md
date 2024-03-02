@@ -15,7 +15,7 @@ outline: deep
 | 下载单个作品          | handle_one_video      |
 | 下载用户发布作品       | handle_user_post      |
 | 下载用户喜欢作品       | handle_user_like      |
-| 下载用户收藏作品       | handle_user_collect   |
+| 下载用户收藏作品       | handle_user_collection   |
 | 下载用户合辑作品       | handle_user_mix       |
 | 下载用户直播流         | handle_user_live      |
 | 下载用户首页推荐作品    | handle_user_feed      |
@@ -25,7 +25,7 @@ outline: deep
 | 单个作品数据          | fetch_one_video        |     🟢      |
 | 用户发布作品数据       | fetch_user_post_videos |     🟢      |
 | 用户喜欢作品数据       | fetch_user_like_videos |     🟢      |
-| 用户收藏作品数据       | fetch_user_collect_videos |  🟢      |
+| 用户收藏作品数据       | fetch_user_collection_videos |  🟢      |
 | 用户合辑作品数据       | fetch_user_mix_videos  |     🟢      |
 | 用户直播流数据         | fetch_user_live_videos |     🟢      |
 | 用户直播流数据2        | fetch_user_live_videos_by_room_id |     🟢      |
@@ -74,7 +74,7 @@ outline: deep
 | 用户信息接口地址 | DouyinCrawler | fetch_user_profile |  🟢  |
 | 主页作品接口地址 | DouyinCrawler | fetch_user_post |  🟢  |
 | 喜欢作品接口地址 | DouyinCrawler | fetch_user_like |  🟢  |
-| 收藏作品接口地址 | DouyinCrawler | fetch_user_collect |  🟢  |
+| 收藏作品接口地址 | DouyinCrawler | fetch_user_collection |  🟢  |
 | 合辑作品接口地址 | DouyinCrawler | fetch_user_mix |  🟢  |
 | 作品详情接口地址 | DouyinCrawler | fetch_post_detail |  🟢  |
 | 作品评论接口地址 | DouyinCrawler | fetch_post_comment |  🟡  |
@@ -167,7 +167,7 @@ outline: deep
 | :--- | :--- | :--- |
 | aweme_data | dict | 视频数据字典，包含视频ID、视频文案、作者昵称、页码等 |
 
-<<< @/snippets/douyin/user-collect.py{16-17,22-25}
+<<< @/snippets/douyin/user-collection.py{16-17,22-25}
 
 ### 用户合辑作品数据 🟢
 
