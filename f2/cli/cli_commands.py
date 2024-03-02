@@ -138,6 +138,7 @@ def set_cli_config(ctx, **kwargs):
 
 
 async def run_app(kwargs):
+    logger.info(f"Version {__version__._version}")
     app_name = kwargs["app_name"]
     app_module = importlib.import_module(f"f2.apps.{app_name}.handler")
     await app_module.main(kwargs)
