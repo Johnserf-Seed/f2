@@ -330,6 +330,107 @@ class UserCollectionFilter(UserPostFilter):
         return self._get_attr_value("$.cursor")
 
 
+class UserCollectsFilter(JSONModel):
+
+    @property
+    def max_cursor(self):
+        return self._get_attr_value("$.cursor")
+
+    @property
+    def status_code(self):
+        return self._get_attr_value("$.status_code")
+
+    @property
+    def total_number(self):
+        return self._get_attr_value("$.total_number")
+
+    @property
+    def has_more(self):
+        return bool(self._get_attr_value("$.has_more"))
+
+    @property
+    def app_id(self):
+        return self._get_attr_value("$.collects_list[*].app_id")
+
+    @property
+    def collects_cover(self):
+        return self._get_attr_value("$.collects_list[*].collects_cover.url_list[0]")
+
+    @property
+    def collects_id(self):
+        return self._get_attr_value("$.collects_list[*].collects_id")
+
+    @property
+    def collects_name(self):
+        return self._get_attr_value("$.collects_list[*].collects_name")
+
+    @property
+    def create_time(self):
+        return timestamp_2_str(self._get_attr_value("$.collects_list[*].create_time"))
+
+    @property
+    def follow_status(self):
+        return self._get_attr_value("$.collects_list[*].follow_status")
+
+    @property
+    def followed_count(self):
+        return self._get_attr_value("$.collects_list[*].followed_count")
+
+    @property
+    def is_normal_status(self):
+        return self._get_attr_value("$.collects_list[*].is_normal_status")
+
+    @property
+    def item_type(self):
+        return self._get_attr_value("$.collects_list[*].item_type")
+
+    @property
+    def last_collect_time(self):
+        return timestamp_2_str(
+            self._get_attr_value("$.collects_list[*].last_collect_time")
+        )
+
+    @property
+    def play_count(self):
+        return self._get_attr_value("$.collects_list[*].play_count")
+
+    @property
+    def states(self):
+        return self._get_attr_value("$.collects_list[*].states")
+
+    @property
+    def status(self):
+        return self._get_attr_value("$.collects_list[*].status")
+
+    @property
+    def system_type(self):
+        return self._get_attr_value("$.collects_list[*].system_type")
+
+    @property
+    def total_number(self):
+        return self._get_attr_value("$.collects_list[*].total_number")
+
+    @property
+    def user_id(self):
+        return self._get_attr_value("$.collects_list[*].user_id")
+
+    # user_info
+    @property
+    def nickname(self):
+        return replaceT(self._get_attr_value("$.collects_list[*].user_info.nickname"))
+
+    @property
+    def uid(self):
+        return self._get_attr_value("$.collects_list[*].user_info.uid")
+
+    def _to_dict(self) -> dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
+
 class UserMixFilter(UserPostFilter):
     def __init__(self, data):
         super().__init__(data)
