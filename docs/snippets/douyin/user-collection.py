@@ -14,13 +14,13 @@ kwargs = {
 async def main():
     results = [
         aweme_data_list
-        async for aweme_data_list in DouyinHandler(kwargs).fetch_user_collect_videos()
+        async for aweme_data_list in DouyinHandler(kwargs).fetch_user_collection_videos()
     ]
     print(results)
     print("-------------------")
     results = [
         aweme_data_list
-        async for aweme_data_list in DouyinHandler(kwargs).fetch_user_collect_videos(
+        async for aweme_data_list in DouyinHandler(kwargs).fetch_user_collection_videos(
             0, 10, 20
         )
     ]
