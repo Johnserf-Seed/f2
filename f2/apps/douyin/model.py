@@ -63,6 +63,7 @@ class BaseLiveModel2(BaseModel):
     app_id: str = "1128"
     msToken: str = TokenManager.gen_real_msToken()
 
+
 class BaseLoginModel(BaseModel):
     service: str = "https://www.douyin.com"
     need_logo: str = "false"
@@ -175,6 +176,7 @@ class UserLive(BaseLiveModel):
     web_rid: str
     room_id_str: str
 
+
 class UserLive2(BaseLiveModel2):
     room_id: str
 
@@ -209,6 +211,7 @@ class LoginGetQr(BaseLoginModel):
     verifyFp: str = ""
     fp: str = ""
     # msToken: str = TokenManager.gen_real_msToken()
+
 
 class LoginCheckQr(BaseLoginModel):
     token: str = ""

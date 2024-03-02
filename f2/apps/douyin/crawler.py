@@ -59,14 +59,14 @@ class DouyinCrawler(BaseCrawler):
         endpoint = XBogusManager.model_2_endpoint(
             dyendpoint.USER_FAVORITE_A, params.dict()
         )
-        logger.debug(_("喜欢作品接口地址:" + endpoint))
+        logger.debug(_("主页喜欢作品接口地址:" + endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_user_collection(self, params: UserCollection):
         endpoint = XBogusManager.model_2_endpoint(
             dyendpoint.USER_COLLECTION, params.dict()
         )
-        logger.debug(_("收藏作品接口地址:" + endpoint))
+        logger.debug(_("主页收藏作品接口地址:" + endpoint))
         return await self._fetch_post_json(endpoint, params.dict())
 
     async def fetch_user_mix(self, params: UserMix):
