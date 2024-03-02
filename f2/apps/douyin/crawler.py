@@ -11,7 +11,7 @@ from f2.apps.douyin.model import (
     UserProfile,
     UserPost,
     UserLike,
-    UserCollect,
+    UserCollection,
     PostDetail,
     UserMix,
     UserLive,
@@ -62,7 +62,7 @@ class DouyinCrawler(BaseCrawler):
         logger.debug(_("喜欢作品接口地址:" + endpoint))
         return await self._fetch_get_json(endpoint)
 
-    async def fetch_user_collect(self, params: UserCollect):
+    async def fetch_user_collection(self, params: UserCollection):
         endpoint = XBogusManager.model_2_endpoint(
             dyendpoint.USER_COLLECTION, params.dict()
         )
