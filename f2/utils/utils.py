@@ -196,6 +196,7 @@ def replaceT(obj: Union[str, Any]) -> Union[str, Any]:
     if isinstance(obj, str):
         return re.sub(reSub, "_", obj)
 
+    return obj
     # raise TypeError("输入应为字符串或字符串列表")
 
 
