@@ -173,13 +173,15 @@ class UserPostFilter(JSONModel):
         images_list = self._get_list_attr_value("$.aweme_list[*].images")
 
         return [
-            [
-                img["url_list"][0]
-                for img in images
-                if isinstance(img, dict) and "url_list" in img and img["url_list"]
-            ]
-            if images
-            else None
+            (
+                [
+                    img["url_list"][0]
+                    for img in images
+                    if isinstance(img, dict) and "url_list" in img and img["url_list"]
+                ]
+                if images
+                else None
+            )
             for images in images_list
         ]
 
@@ -193,9 +195,11 @@ class UserPostFilter(JSONModel):
 
         # 逐个视频判断是否存在animated_cover
         animated_covers = [
-            video.get("animated_cover", {}).get("url_list", [None])[0]
-            if video.get("animated_cover")
-            else None
+            (
+                video.get("animated_cover", {}).get("url_list", [None])[0]
+                if video.get("animated_cover")
+                else None
+            )
             for video in videos
         ]
 
@@ -216,11 +220,15 @@ class UserPostFilter(JSONModel):
         bit_rate_data = self._get_list_attr_value("$.aweme_list[*].video.bit_rate")
 
         return [
-            [aweme["bit_rate"]]
-            if isinstance(aweme, dict)
-            else [aweme[0]["bit_rate"]]
-            if len(aweme) == 1
-            else [item["bit_rate"] for item in aweme]
+            (
+                [aweme["bit_rate"]]
+                if isinstance(aweme, dict)
+                else (
+                    [aweme[0]["bit_rate"]]
+                    if len(aweme) == 1
+                    else [item["bit_rate"] for item in aweme]
+                )
+            )
             for aweme in bit_rate_data
         ]
 
@@ -724,11 +732,15 @@ class PostDetailFilter(JSONModel):
         )
 
         return [
-            [aweme["bit_rate"]]
-            if isinstance(aweme, dict)
-            else [aweme[0]["bit_rate"]]
-            if len(aweme) == 1
-            else [item["bit_rate"] for item in aweme]
+            (
+                [aweme["bit_rate"]]
+                if isinstance(aweme, dict)
+                else (
+                    [aweme[0]["bit_rate"]]
+                    if len(aweme) == 1
+                    else [item["bit_rate"] for item in aweme]
+                )
+            )
             for aweme in bit_rate_data
         ]
 
