@@ -35,8 +35,8 @@ def handle_version(
 ) -> None:
     if not value or ctx.resilient_parsing:
         return
-    logger.debug(f"Version {__version__._version}")
-    print(f"Version {__version__._version}")
+
+    click.echo(f"Version {__version__._version}")
     ctx.exit()
 
 
