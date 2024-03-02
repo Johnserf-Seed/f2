@@ -25,7 +25,7 @@ from f2.apps.douyin.model import (
 from f2.apps.douyin.filter import (
     UserPostFilter,
     UserProfileFilter,
-    UserCollectFilter,
+    UserCollectionFilter,
     UserMixFilter,
     PostDetailFilter,
     UserLiveFilter,
@@ -472,7 +472,7 @@ class DouyinHandler:
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserCollection(cursor=max_cursor, count=current_request_size)
                 response = await crawler.fetch_user_collection(params)
-                video = UserCollectFilter(response)
+                video = UserCollectionFilter(response)
 
             logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
             logger.debug(
