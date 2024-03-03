@@ -14,13 +14,13 @@ Change Log  :
 -------------------------------------------------
 """
 
+import f2
 import importlib
 
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 from f2.i18n.translator import _
-from f2.utils import __version__
 
 
 def get_help(app_name: str) -> None:
@@ -34,15 +34,13 @@ def get_help(app_name: str) -> None:
         print(_("没有找到 {0} 应用").format(app_name))
 
 
-def f2() -> None:
+def main() -> None:
     # 真彩
     console = Console(color_system="truecolor")
-    console.print(
-        f"\n:rocket: [bold]f2 {__version__._version} :rocket:", justify="center"
-    )
-    console.print(f"\n[i]{__version__._description_cn}", justify="center")
-    console.print(f"[i]{__version__._description_en}", justify="center")
-    console.print(f"[i]GitHub {__version__._repourl}\n", justify="center")
+    console.print(f"\n:rocket: [bold]f2 {f2.__version__} :rocket:", justify="center")
+    console.print(f"\n[i]{f2.__description_cn__}", justify="center")
+    console.print(f"[i]{f2.__description_en__}", justify="center")
+    console.print(f"[i]GitHub {f2.__repourl__}\n", justify="center")
 
     table = Table.grid(padding=1, pad_edge=True, expand=True)
     table.add_column("Website", no_wrap=True, justify="left", style="bold")
