@@ -16,6 +16,8 @@ from f2.apps.douyin.model import (
     UserProfile,
     UserLike,
     UserCollection,
+    UserCollects,
+    UserCollectsVideo,
     UserMix,
     PostDetail,
     UserLive,
@@ -27,6 +29,7 @@ from f2.apps.douyin.filter import (
     UserPostFilter,
     UserProfileFilter,
     UserCollectionFilter,
+    UserCollectsFilter,
     UserMixFilter,
     PostDetailFilter,
     UserLiveFilter,
@@ -496,9 +499,233 @@ class DouyinHandler:
             videos_collected += len(aweme_data_list)
             max_cursor = video.max_cursor
 
+    @mode_handler("collects")
+    async def handle_user_collects(self):
+        """
+        用于处理用户收藏夹的视频 (Used to process videos in user collections)
+
+        Args:
+            kwargs: dict: 参数字典 (Parameter dictionary)
+        """
+
+        max_cursor = self.kwargs.get("max_cursor", 0)
+        page_counts = self.kwargs.get("page_counts", 20)
+        max_counts = self.kwargs.get("max_counts")
+        # 由于无法在Web端获取收藏夹的URL，因此无法通过URL来获取收藏夹作品。
+        # Web端收藏夹作品的接口只能通过登录的cookie获取，与配置的URL无关。
+        # 因此，即使填写了其他人的URL，也只能获取到你自己的收藏夹作品。
+        # 此外，收藏夹作品的文件夹将根据所配置的URL主页用户名来确定。
+        # 为避免将文件下载到其他人的文件夹下，请务必确保填写的URL是你自己的主页URL。
+        sec_user_id = await SecUserIdFetcher.get_sec_user_id(self.kwargs.get("url"))
+
+        async with AsyncUserDB("douyin_users.db") as db:
+            user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, db)
+
+        async for collects in self.fetch_user_collects(
+            max_cursor, page_counts, max_counts
+        ):
+            choose_collects_id = await self.select_user_collects(collects)
+
+            if isinstance(choose_collects_id, str):
+                choose_collects_id = [choose_collects_id]
+
+            for collects_id in choose_collects_id:
+                # 由于收藏夹作品包含在用户名下且存在收藏夹名，因此将额外创建收藏夹名的文件夹
+                # 将会根据是否设置了 --folderize 参数来决定是否创建收藏夹名的文件夹
+                # 例如: 用户名/收藏夹名/作品名.mp4
+                if self.kwargs.get("folderize"):
+                    tmp_user_path = user_path
+                    tmp_user_path = (
+                        tmp_user_path
+                        / collects.collects_name[
+                            collects.collects_id.index(collects_id)
+                        ]
+                    )
+                else:
+                    tmp_user_path = user_path
+
+                async for aweme_data_list in self.fetch_user_collects_videos(
+                    collects_id, max_cursor, page_counts, max_counts
+                ):
+                    await self.downloader.create_download_tasks(
+                        self.kwargs, aweme_data_list, tmp_user_path
+                    )
+
+    async def select_user_collects(
+        self, collects: UserCollectsFilter
     ) -> Union[str, List[str]]:
+        """
+        用于选择收藏夹
+        (Used to select the collection)
+
+        Args:
+            collects: UserCollectsFilter: 收藏夹列表过滤器  (Collection list Filter)
+
+        Return:
+            collects_id: Union[str, List[str]]: 选择的收藏夹ID (Selected collects_id)
+        """
+
+        rich_console.print(_("0: [bold]全部下载[/bold]"))
+        for i in range(len(collects.collects_id)):
+            rich_console.print(
+                _(
+                    "{0}: {1} (包含 {2} 个作品，收藏夹ID {3})".format(
+                        i + 1,
+                        collects.collects_name[i],
+                        collects.total_number[i],
+                        collects.collects_id[i],
+                    )
+                )
+            )
+
+        # rich_prompt 会有字符刷新问题，暂时使用rich_print
+        rich_console.print(_("[bold yellow]请输入希望下载的收藏夹序号:[/bold yellow]"))
+        selected_index = int(
+            rich_prompt.ask(
+                # _("[bold yellow]请输入希望下载的收藏夹序号:[/bold yellow]"),
+                choices=[str(i) for i in range(len(collects.collects_id) + 1)],
+            )
+        )
+
+        if selected_index == 0:
+            return collects.collects_id
+        else:
+            return collects.collects_id[selected_index - 1]
+
+    async def fetch_user_collects(
+        self, max_cursor: int, page_counts: int, max_counts: int
     ) -> AsyncGenerator[UserCollectsFilter, None]:
+        """
+        用于获取指定用户收藏夹。
+        (Used to get the list of videos in the specified user's collection.)
+
+        Args:
+            max_cursor: int: 起始页 (Page cursor)
+            page_counts: int: 每页收藏夹数  (Page counts)
+            max_counts: int: 最大收藏夹数 (Max counts)
+
+        Return:
+            collects: AsyncGenerator[UserCollectsFilter, None]: 收藏夹列表过滤器 (Collection list Filter)
+        """
+
+        max_counts = max_counts or float("inf")
+        collected = 0
+
+        while collected < max_counts:
+            logger.debug(_("开始爬取用户收藏夹"))
+            logger.debug("=====================================")
+            logger.debug(
+                _("当前请求的max_cursor: {0}， max_counts: {1}").format(
+                    max_cursor, max_counts
+                )
+            )
+
+            async with DouyinCrawler(self.kwargs) as crawler:
+                params = UserCollects(cursor=max_cursor, count=page_counts)
+                response = await crawler.fetch_user_collects(params)
+                collects = UserCollectsFilter(response)
+
+            logger.debug(
+                _("收藏夹ID: {0} 收藏夹标题: {1}").format(
+                    collects.collects_id, collects.collects_name
+                )
+            )
+            logger.debug("=====================================")
+
+            yield collects
+
+            if not collects.has_more:
+                logger.info(_("所有收藏夹ID采集完毕"))
+                break
+
+            # 更新已经处理的收藏夹数量 (Update the number of collections processed)
+            collected += len(collects.collects_id)
+            max_cursor = collects.max_cursor
+
+        logger.debug(_("用户收藏夹爬取结束"))
+
+    async def fetch_user_collects_videos(
+        self,
+        collects_id: str,
+        max_cursor: int,
+        page_counts: int,
+        max_counts: int,
     ) -> AsyncGenerator[List[Dict[str, Any]], None]:
+        """
+        用于获取指定用户收藏夹的视频列表。
+        (Used to get the list of videos in the specified user's collection.)
+
+        Args:
+            collects_id: str: 收藏夹ID (Collection ID)
+            max_cursor: int: 起始页 (Page cursor)
+            page_counts: int: 每页视频数 (Number of videos per page)
+            max_counts: int: 最大视频数 (Maximum number of videos)
+
+        Return:
+            aweme_data: dict: 视频数据字典, 包含视频ID列表、视频文案、作者昵称、起始页
+            (Video data dictionary, including video ID list, video description,
+            author nickname, start page)
+        """
+
+        max_counts = max_counts or float("inf")
+        videos_collected = 0
+
+        logger.debug(_("开始爬取收藏夹: {0} 的视频").format(collects_id))
+
+        while videos_collected < max_counts:
+            current_request_size = min(page_counts, max_counts - videos_collected)
+
+            logger.debug("=====================================")
+            logger.debug(
+                _("最大数量: {0} 每次请求数量: {1}").format(
+                    max_counts, current_request_size
+                )
+            )
+            logger.debug(_("开始爬取第 {0} 页").format(max_cursor))
+
+            async with DouyinCrawler(self.kwargs) as crawler:
+                params = UserCollectsVideo(
+                    cursor=max_cursor,
+                    count=current_request_size,
+                    collects_id=collects_id,
+                )
+                response = await crawler.fetch_user_collects_video(params)
+                video = UserCollectionFilter(response)
+
+            logger.debug(
+                "是否有作品: {0} 是否有更多: {1}".format(
+                    video.has_aweme, video.has_more
+                )
+            )
+            if video.has_aweme:
+                if not video.has_more:
+                    logger.debug(_("收藏夹: {0} 所有作品采集完毕").format(collects_id))
+                    yield video._to_list()
+                    break
+                else:
+                    logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
+                    logger.debug(
+                        _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
+                            video.aweme_id, video.desc, video.nickname
+                        )
+                    )
+                    logger.debug("=====================================")
+
+                    aweme_data_list = video._to_list()
+                    yield aweme_data_list
+
+                    # 更新已经处理的视频数量 (Update the number of videos processed)
+                    videos_collected += len(aweme_data_list)
+                    max_cursor = video.max_cursor
+            else:
+                logger.debug(_("{0} 页没有找到作品".format(max_cursor)))
+                if not video.has_more:
+                    logger.debug(_("收藏夹: {0} 所有作品采集完毕").format(collects_id))
+                    break
+                max_cursor = video.max_cursor
+
+        logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
+
     @mode_handler("mix")
     async def handle_user_mix(self):
         """
