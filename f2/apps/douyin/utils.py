@@ -67,40 +67,45 @@ class TokenManager:
         with httpx.Client(transport=transport, proxies=cls.proxies) as client:
             try:
                 response = client.post(
-                    cls.token_conf["url"], headers=headers, content=payload
+                    cls.token_conf["url"], content=payload, headers=headers
                 )
-
-                if response.status_code == 401:
-                    raise APIUnauthorizedError(_("由于某些错误, 无法获取msToken"))
-                elif response.status_code == 404:
-                    raise APINotFoundError(_("无法找到API端点"))
+                response.raise_for_status()
 
                 msToken = str(httpx.Cookies(response.cookies).get("msToken"))
-
                 if len(msToken) not in [120, 128]:
-                    raise APIResponseError(
-                        _(
-                            "msToken: 请检查并更新 f2 中 conf.yaml 配置文件中的 msToken，以匹配 douyin 新规则。"
-                        )
-                    )
+                    raise APIResponseError(_("msToken内容不符合要求。"))
 
                 return msToken
 
-            except httpx.RequestError:
+            except httpx.RequestError as exc:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
                 raise APIConnectionError(
                     _(
-                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
-                    ).format(cls.token_conf["url"], cls.proxies, cls.__name__)
+                        "请求端点失败，请检查当前网络环境。 链接：{0} 代理：{1} 异常类名：{2} 异常详细信息：{3}"
+                    ).format(cls.token_conf["url"], cls.proxies, cls.__name__, exc)
                 )
 
             except httpx.HTTPStatusError as e:
                 # 捕获 httpx 的状态代码错误 (captures specific status code errors from httpx)
-                raise APIResponseError(
-                    f"HTTP Status Code {e.response.status_code}: {e.response.text}"
-                )
+                if e.response.status_code == 401:
+                    raise APIUnauthorizedError(
+                        _(
+                            "参数验证失败, 请更新F2配置文件中的 msToken，以匹配 douyin 新规则"
+                        )
+                    )
+                elif e.response.status_code == 404:
+                    raise APINotFoundError(_("msToken无法找到API端点"))
+                else:
+                    raise APIResponseError(
+                        _(
+                            "链接：{0} 状态码 {1}：{2} ".format(
+                                e.response.url, e.response.status_code, e.response.text
+                            )
+                        )
+                    )
 
             except APIError as e:
+                logger.error(_("msToken API错误：{0}").format(e))
                 logger.info(_("生成虚假的msToken"))
                 return cls.gen_false_msToken()
 
