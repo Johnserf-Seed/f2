@@ -2,6 +2,7 @@
 
 import asyncio
 from typing import AsyncGenerator, Dict, Any, List
+from pathlib import Path
 
 from f2.log.logger import logger
 from f2.i18n.translator import _
@@ -94,7 +95,7 @@ class DouyinHandler:
 
     async def get_or_add_user_data(
         self, kwargs: dict, sec_user_id: str, db: AsyncUserDB
-    ) -> Any:
+    ) -> Path:
         """
         获取或创建用户数据同时创建用户目录
         (Get or create user data and create user directory)
@@ -493,6 +494,9 @@ class DouyinHandler:
             videos_collected += len(aweme_data_list)
             max_cursor = video.max_cursor
 
+    ) -> Union[str, List[str]]:
+    ) -> AsyncGenerator[UserCollectsFilter, None]:
+    ) -> AsyncGenerator[List[Dict[str, Any]], None]:
     @mode_handler("mix")
     async def handle_user_mix(self):
         """
