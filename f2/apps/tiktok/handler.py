@@ -179,7 +179,7 @@ class TiktokHandler:
             )
         )
         logger.debug("=====================================")
-        return playlist._to_dict()
+        return playlist
 
     async def select_playlist(
         self, playlists: Union[dict, UserPlayListFilter]
@@ -195,23 +195,37 @@ class TiktokHandler:
             selected_index: Union[str, List[str]]: 选择的视频合辑序号 (Selected video mix index)
         """
 
-        rich_console.print("[bold]请选择要下载的合辑:[/bold]")
+        if playlists == {}:
+            sys.exit(_("用户没有视频合辑"))
 
-        for i, mix_id in enumerate(playlists.get("mixId", [])):
-            mix_name = playlists.get("mixName", [""])[i]
-            video_count = int(playlists.get("videoCount", [""])[i])
+        rich_console.print("[bold]请选择要下载的合辑：[/bold]")
+        rich_console.print("0: [bold]全部下载[/bold]")
+
+        for i in range(len(playlists.mixId)):
             rich_console.print(
-                f"[cyan]{i + 1}[/cyan]: {mix_name} ({video_count} videos)"
+                _(
+                    "{0}: {1} (包含 {2} 个作品，收藏夹ID {3})".format(
+                        i + 1,
+                        playlists.mixName[i],
+                        playlists.videoCount[i],
+                        playlists.mixId[i],
+                    )
+                )
             )
 
-        rich_console.print(f"[cyan]0[/cyan]: [bold]全部下载[/bold]")
-
-        selected_index = rich_prompt.ask(
-            "[bold yellow]请输入希望下载的合辑序号:[/bold yellow]",
-            choices=[str(i) for i in range(len(playlists) + 1)],
+        # rich_prompt 会有字符刷新问题，暂时使用rich_print
+        rich_console.print(_("[bold yellow]请输入希望下载的合辑序号：[/bold yellow]"))
+        selected_index = int(
+            rich_prompt.ask(
+                # _("[bold yellow]请输入希望下载的合辑序号:[/bold yellow]"),
+                choices=[str(i) for i in range(len(playlists) + 1)],
+            )
         )
 
-        return int(selected_index)
+        if selected_index == 0:
+            return playlists.mixId
+        else:
+            return playlists.mixId[selected_index - 1]
 
     @mode_handler("one")
     async def handler_one_video(self):
@@ -571,17 +585,10 @@ class TiktokHandler:
         async with AsyncUserDB("tiktok_users.db") as audb:
             user_path = await self.get_or_add_user_data(secUid, audb)
 
-        if selected_index == 0:
-            for mixId in playlist.get("mixId", []):
-                async for aweme_data_list in self.fetch_user_mix_videos(
-                    mixId, cursor, page_counts, max_counts
-                ):
-                    # 创建下载任务
-                    await self.downloader.create_download_tasks(
-                        self.kwargs, aweme_data_list, user_path
-                    )
-        else:
-            mixId = playlist.get("mixId", [])[selected_index - 1]
+        if isinstance(mixId, str):
+            mixId = [mixId]
+
+        for mixId in playlist.get("mixId", []):
             async for aweme_data_list in self.fetch_user_mix_videos(
                 mixId, cursor, page_counts, max_counts
             ):
