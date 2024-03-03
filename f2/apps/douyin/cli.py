@@ -302,11 +302,11 @@ def merge_config(main_conf, custom_conf, **kwargs):
 @click.option(
     "--mode",
     "-M",
-    type=click.Choice(["one", "post", "like", "collection", "mix", "live"]),
+    type=click.Choice(["one", "post", "like", "collection", "collects", "mix", "live"]),
     # default="post",
     # required=True,
     help=_(
-        "下载模式：单个作品(one)，主页作品(post)，点赞作品(like)，收藏作品(collection)，合辑(mix)，直播(live)"
+        "下载模式：单个作品(one)，主页作品(post)，点赞作品(like)，收藏作品(collection)，收藏夹作品(collects)，合辑(mix)，直播(live)"
     ),
 )
 @click.option(
