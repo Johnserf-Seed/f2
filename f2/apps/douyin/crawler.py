@@ -12,6 +12,8 @@ from f2.apps.douyin.model import (
     UserPost,
     UserLike,
     UserCollection,
+    UserCollects,
+    UserCollectsVideo,
     PostDetail,
     UserMix,
     UserLive,
@@ -68,6 +70,20 @@ class DouyinCrawler(BaseCrawler):
         )
         logger.debug(_("主页收藏作品接口地址:" + endpoint))
         return await self._fetch_post_json(endpoint, params.dict())
+
+    async def fetch_user_collects(self, params: UserCollects):
+        endpoint = XBogusManager.model_2_endpoint(
+            dyendpoint.USER_COLLECTS, params.dict()
+        )
+        logger.debug(_("收藏夹接口地址:" + endpoint))
+        return await self._fetch_get_json(endpoint)
+
+    async def fetch_user_collects_video(self, params: UserCollectsVideo):
+        endpoint = XBogusManager.model_2_endpoint(
+            dyendpoint.USER_COLLECTS_VIDEO, params.dict()
+        )
+        logger.debug(_("收藏夹作品接口地址:" + endpoint))
+        return await self._fetch_get_json(endpoint)
 
     async def fetch_user_mix(self, params: UserMix):
         endpoint = XBogusManager.model_2_endpoint(
