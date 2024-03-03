@@ -81,7 +81,7 @@ class TokenManager:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
                 raise APIConnectionError(
                     _(
-                        "请求端点失败，请检查当前网络环境。 链接：{0} 代理：{1} 异常类名：{2} 异常详细信息：{3}"
+                        "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
                     ).format(cls.token_conf["url"], cls.proxies, cls.__name__, exc)
                 )
 
@@ -90,7 +90,7 @@ class TokenManager:
                 if e.response.status_code == 401:
                     raise APIUnauthorizedError(
                         _(
-                            "参数验证失败, 请更新F2配置文件中的 msToken，以匹配 douyin 新规则"
+                            "参数验证失败，请更新F2配置文件中的 msToken，以匹配 douyin 新规则"
                         )
                     )
                 elif e.response.status_code == 404:
@@ -98,7 +98,7 @@ class TokenManager:
                 else:
                     raise APIResponseError(
                         _(
-                            "链接：{0} 状态码 {1}：{2} ".format(
+                            "链接：{0}，状态码 {1}：{2} ".format(
                                 e.response.url, e.response.status_code, e.response.text
                             )
                         )
