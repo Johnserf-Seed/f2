@@ -1,5 +1,7 @@
 # path: f2/apps/tiktok/handler.py
 
+import sys
+
 from pathlib import Path
 from typing import AsyncGenerator, Union, List
 
@@ -169,7 +171,7 @@ class TiktokHandler:
             playlist = UserPlayListFilter(response)
 
         if not playlist.hasPlayList:
-            logger.debug(_("用户: {0} 没有视频合集").format(secUid))
+            logger.info(_("用户：{0} 没有视频合集").format(secUid))
             return {}
 
         logger.debug(_("当前请求的cursor：{0}").format(cursor))
