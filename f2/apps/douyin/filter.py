@@ -364,7 +364,7 @@ class UserCollectsFilter(JSONModel):
 
     @property
     def collects_name(self):
-        return self._get_list_attr_value("$.collects_list[*].collects_name")
+        return replaceT(self._get_list_attr_value("$.collects_list[*].collects_name"))
 
     @property
     def create_time(self):
