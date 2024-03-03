@@ -437,6 +437,7 @@ class AwemeIdFetcher:
 
 
 class MixIdFetcher:
+    # 获取方法同AwemeIdFetcher
     @classmethod
     async def get_mix_id(cls, url: str) -> str:
         return
@@ -694,11 +695,12 @@ def create_or_rename_user_folder(
 
 def show_qrcode(qrcode_url: str, show_image: bool = False) -> None:
     """
-    显示二维码
+    显示二维码 (Show QR code)
 
     Args:
-        qrcode_url (str): 登录二维码链接
+        qrcode_url (str): 登录二维码链接 (Login QR code link)
         show_image (bool): 是否显示图像，True 表示显示，False 表示在控制台显示
+        (Whether to display the image, True means display, False means display in the console)
     """
     if show_image:
         # 创建并显示QR码图像
