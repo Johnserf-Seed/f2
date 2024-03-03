@@ -1,7 +1,7 @@
 # path: f2/apps/tiktok/handler.py
 
 from pathlib import Path
-from typing import AsyncGenerator
+from typing import AsyncGenerator, Union, List
 
 from f2.i18n.translator import _
 from f2.log.logger import logger
@@ -147,7 +147,7 @@ class TiktokHandler:
         secUid: str,
         cursor: int,
         page_counts: int,
-    ) -> dict:
+    ) -> Union[dict, UserPlayListFilter]:
         """
         用于获取指定用户的视频合集列表
         (Used to get video mix list of specified user)
@@ -158,7 +158,7 @@ class TiktokHandler:
             page_counts: int: 分页数量 (Page counts)
 
         Return:
-            aweme_data: dict: 视频数据字典 (Video data dict)
+            playlist: Union[dict, UserPlayListFilter]: 视频合集列表 (Video mix list)
         """
 
         logger.debug(_("开始爬取用户: {0} 的视频合集列表").format(secUid))
@@ -181,16 +181,18 @@ class TiktokHandler:
         logger.debug("=====================================")
         return playlist._to_dict()
 
-    async def select_playlist(playlists: dict) -> int:
+    async def select_playlist(
+        self, playlists: Union[dict, UserPlayListFilter]
+    ) -> Union[str, List[str]]:
         """
         用于选择要下载的视频合辑
         (Used to select the video mix to download)
 
         Args:
-            playlists: dict: 视频合辑列表 (Video mix list)
+            playlists: Union[dict, UserPlayListFilter]: 视频合辑列表 (Video mix list)
 
         Return:
-            selected_index: str: 选择的视频合辑序号 (Selected video mix index)
+            selected_index: Union[str, List[str]]: 选择的视频合辑序号 (Selected video mix index)
         """
 
         rich_console.print("[bold]请选择要下载的合辑:[/bold]")
