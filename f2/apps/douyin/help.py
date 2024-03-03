@@ -37,7 +37,7 @@ def help() -> None:
             "-M --mode",
             "[dark_cyan]Choice",
             _(
-                "下载模式：单个作品(one)，主页作品(post)，点赞作品(like)，收藏作品(collection)，合辑(mix)，直播(live)"
+                "下载模式：单个作品(one)，主页作品(post)，点赞作品(like)，收藏作品(collection)，收藏夹作品(collects)，合辑(mix)，直播(live)"
             ),
         ),
         (
