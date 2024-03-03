@@ -424,7 +424,10 @@ class DouyinHandler:
         max_cursor = self.kwargs.get("max_cursor", 0)
         page_counts = self.kwargs.get("page_counts", 20)
         max_counts = self.kwargs.get("max_counts")
-
+        # 由于Web端收藏作品的接口只能通过登录的cookie获取，而与配置的URL无关。
+        # 因此，即使填写了其他人的URL，也只能获取到你自己的收藏作品。
+        # 此外，收藏作品的文件夹将根据所配置的URL主页用户名来确定。
+        # 为避免将文件下载到其他人的文件夹下，请务必确保填写的URL是你自己的主页URL。
         sec_user_id = await SecUserIdFetcher.get_sec_user_id(self.kwargs.get("url"))
 
         async with AsyncUserDB("douyin_users.db") as db:

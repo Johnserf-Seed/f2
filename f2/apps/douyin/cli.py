@@ -404,14 +404,14 @@ def merge_config(main_conf, custom_conf, **kwargs):
     type=click.Choice(["none", "chrome", "firefox", "edge", "opera"]),
     # default="none",
     help=_(
-        "自动从浏览器获取[yellow]cookie[/yellow]。可选项：chrome、firefox、edge、opera。使用该命令前请确保关闭所选的浏览器"
+        "自动从浏览器获取cookie。可选项：chrome、firefox、edge、opera。使用该命令前请确保关闭所选的浏览器"
     ),
     callback=handler_auto_cookie,
 )
 @click.option(
     "--sso-login",
     is_flag=True,
-    help=_("使用SSO扫码登录获取[yellow]cookie[/yellow]，保存低频主配置文件"),
+    help=_("使用SSO扫码登录获取cookie，保存低频主配置文件"),
     callback=handler_sso_login,
 )
 @click.option(

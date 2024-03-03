@@ -76,10 +76,18 @@ def main() -> None:
 
     table.add_row(_("weibo 或 wb"), _("- 获取微博"))
     table.add_row(
-        _("douyin 或 dy"), _("- 单个作品，主页作品，点赞作品，收藏作品，合辑作品，图文，文案，封面，直播，原声。"), _("✔")
+        _("douyin 或 dy"),
+        _(
+            "- 单个作品，主页作品，点赞作品，收藏作品，合辑作品，图文，文案，封面，直播，原声。"
+        ),
+        _("✔"),
     )
     table.add_row(
-        _("tiktok 或 tk"), _("- 单个作品，主页作品，点赞作品，收藏作品，播放列表（合辑）作品，文案，封面，原声。"), _("✔")
+        _("tiktok 或 tk"),
+        _(
+            "- 单个作品，主页作品，点赞作品，收藏作品，播放列表（合辑）作品，文案，封面，原声。"
+        ),
+        _("✔"),
     )
     table.add_row(_("instagram 或 ig"), _("- 获取ig的作品"), _("⏳"))
     table.add_row(_("twitch 或 tv"), _("- 获取Twitch直播"))
@@ -91,7 +99,9 @@ def main() -> None:
     table.add_row("\n")
     table.add_row(
         "f2 -d [magenta]<apps> [/magenta][cyan][COMMAND]",
-        _("- 记录app的debug到/logs下，如遇BUG提交Issue时请附带该文件并[red]删除个人敏感信息[/red]"),
+        _(
+            "- 记录app的debug到/logs下，如遇BUG提交Issue时请附带该文件并[red]删除个人敏感信息[/red]"
+        ),
         _("⚠"),
     )
     table.add_row(
