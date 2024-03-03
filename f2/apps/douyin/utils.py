@@ -473,36 +473,54 @@ class WebCastIdFetcher:
             raise (
                 APINotFoundError(_("输入的URL不合法。类名：{0}".format(cls.__name__)))
             )
+        try:
+            # 重定向到完整链接
+            transport = httpx.AsyncHTTPTransport(retries=5)
+            async with httpx.AsyncClient(
+                transport=transport, proxies=TokenManager.proxies, timeout=10
+            ) as client:
+                response = await client.get(url, follow_redirects=True)
+                response.raise_for_status()
+                url = str(response.url)
 
-        # 重定向到完整链接
-        transport = httpx.AsyncHTTPTransport(retries=5)
-        async with httpx.AsyncClient(
-            transport=transport, proxies=TokenManager.proxies, timeout=10
-        ) as client:
-            response = await client.get(url, follow_redirects=True)
-            url = str(response.url)
+                live_pattern = cls._DOUYIN_LIVE_URL_PATTERN
+                live_pattern2 = cls._DOUYIN_LIVE_URL_PATTERN2
+                live_pattern3 = cls._DOUYIN_LIVE_URL_PATTERN3
 
-        live_pattern = cls._DOUYIN_LIVE_URL_PATTERN
-        live_pattern2 = cls._DOUYIN_LIVE_URL_PATTERN2
-        live_pattern3 = cls._DOUYIN_LIVE_URL_PATTERN3
+                if live_pattern.search(url):
+                    match = live_pattern.search(url)
+                elif live_pattern2.search(url):
+                    match = live_pattern2.search(url)
+                elif live_pattern3.search(url):
+                    match = live_pattern3.search(url)
+                    logger.warning(
+                        _(
+                            "该链接返回的是room_id，请使用`fetch_user_live_videos_by_room_id`接口"
+                        )
+                    )
+                else:
+                    raise APIResponseError(
+                        _("未在响应的地址中找到webcast_id，检查链接是否为直播页")
+                    )
 
-        if live_pattern.search(url):
-            match = live_pattern.search(url)
-        elif live_pattern2.search(url):
-            match = live_pattern2.search(url)
-        elif live_pattern3.search(url):
-            match = live_pattern3.search(url)
-            logger.debug(
+                return match.group(1)
+
+        except httpx.RequestError as exc:
+            # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
+            raise APIConnectionError(
                 _(
-                    "该链接返回的是room_id，请使用`fetch_user_live_videos_by_room_id`接口"
+                    "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
+                ).format(url, TokenManager.proxies, cls.__name__, exc)
+            )
+
+        except httpx.HTTPStatusError as e:
+            raise APIResponseError(
+                _(
+                    "链接：{0}，状态码 {1}：{2} ".format(
+                        e.response.url, e.response.status_code, e.response.text
+                    )
                 )
             )
-        else:
-            raise APIResponseError(
-                _("未在响应的地址中找到webcast_id, 检查链接是否为直播页")
-            )
-
-        return match.group(1)
 
     @classmethod
     async def get_all_webcast_id(cls, urls: list) -> list:
