@@ -98,6 +98,19 @@ class UserCollection(BaseRequestModel):
     count: int
 
 
+class UserCollects(BaseRequestModel):
+    # GET
+    cursor: int
+    count: int
+
+
+class UserCollectsVideo(BaseRequestModel):
+    # GET
+    cursor: int
+    count: int
+    collects_id: str
+
+
 class UserMix(BaseRequestModel):
     cursor: int
     count: int
