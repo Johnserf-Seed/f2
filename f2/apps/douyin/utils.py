@@ -73,7 +73,7 @@ class TokenManager:
 
                 msToken = str(httpx.Cookies(response.cookies).get("msToken"))
                 if len(msToken) not in [120, 128]:
-                    raise APIResponseError(_("msToken内容不符合要求。"))
+                    raise APIResponseError(_("{0} 内容不符合要求".format("msToken")))
 
                 return msToken
 
@@ -90,11 +90,13 @@ class TokenManager:
                 if e.response.status_code == 401:
                     raise APIUnauthorizedError(
                         _(
-                            "参数验证失败，请更新F2配置文件中的 msToken，以匹配 douyin 新规则"
+                            "参数验证失败，请更新 F2 配置文件中的 {0}，以匹配 {1} 新规则".format(
+                                "msToken", "douyin"
+                            )
                         )
                     )
                 elif e.response.status_code == 404:
-                    raise APINotFoundError(_("msToken无法找到API端点"))
+                    raise APINotFoundError(_("{0} 无法找到API端点".format("msToken")))
                 else:
                     raise APIResponseError(
                         _(
@@ -105,6 +107,7 @@ class TokenManager:
                     )
 
             except APIError as e:
+                # 返回虚假的msToken (Return a fake msToken)
                 logger.error(_("msToken API错误：{0}").format(e))
                 logger.info(_("生成虚假的msToken"))
                 return cls.gen_false_msToken()
@@ -145,7 +148,9 @@ class TokenManager:
                 if e.response.status_code == 401:
                     raise APIUnauthorizedError(
                         _(
-                            "参数验证失败，请更新F2配置文件中的 ttwid，以匹配 douyin 新规则"
+                            "参数验证失败，请更新 F2 配置文件中的 {0}，以匹配 {1} 新规则".format(
+                                "ttwid", "douyin"
+                            )
                         )
                     )
                 elif e.response.status_code == 404:
