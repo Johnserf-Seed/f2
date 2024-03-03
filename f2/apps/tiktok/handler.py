@@ -161,7 +161,7 @@ class TiktokHandler:
             playlist: Union[dict, UserPlayListFilter]: 视频合集列表 (Video mix list)
         """
 
-        logger.debug(_("开始爬取用户: {0} 的视频合集列表").format(secUid))
+        logger.debug(_("开始爬取用户：{0} 的视频合集列表").format(secUid))
 
         async with TiktokCrawler(self.kwargs) as crawler:
             params = UserPlayList(secUid=secUid, cursor=cursor, count=page_counts)
@@ -172,9 +172,9 @@ class TiktokHandler:
             logger.debug(_("用户: {0} 没有视频合集").format(secUid))
             return {}
 
-        logger.debug(_("当前请求的cursor: {0}").format(cursor))
+        logger.debug(_("当前请求的cursor：{0}").format(cursor))
         logger.debug(
-            _("视频合集ID: {0} 视频合集标题: {1}").format(
+            _("视频合集ID：{0} 视频合集标题：{1}").format(
                 playlist.mixId, playlist.mixName
             )
         )
@@ -235,7 +235,7 @@ class TiktokHandler:
         async with AsyncVideoDB("tiktok_videos.db") as vdb:
             await self.get_or_add_video_data(aweme_data, vdb)
 
-        logger.debug(_("单个视频数据: {0}".format(aweme_data)))
+        logger.debug(_("单个视频数据：{0}".format(aweme_data)))
 
         # 创建下载任务
         await self.downloader.create_download_tasks(self.kwargs, aweme_data, user_path)
@@ -252,14 +252,14 @@ class TiktokHandler:
             post: dict: 视频信息 (Video info)
         """
 
-        logger.debug(_("开始爬取视频: {0}").format(itemId))
+        logger.debug(_("开始爬取视频：{0}").format(itemId))
         async with TiktokCrawler(self.kwargs) as crawler:
             params = PostDetail(itemId=itemId)
             response = await crawler.fetch_post_detail(params)
             video = PostDetailFilter(response)
 
         logger.debug(
-            _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
+            _("视频ID：{0} 视频文案：{1} 作者：{2}").format(
                 video.aweme_id, video.desc, video.nickname
             )
         )
@@ -313,7 +313,7 @@ class TiktokHandler:
         max_counts = max_counts or float("inf")
         videos_collected = 0
 
-        logger.debug(_("开始爬取用户: {0} 发布的视频").format(secUid))
+        logger.debug(_("开始爬取用户：{0} 发布的视频").format(secUid))
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
@@ -334,15 +334,15 @@ class TiktokHandler:
             if not video.has_aweme:
                 logger.debug(_("{0} 页没有找到作品".format(cursor)))
                 if not video.hasMore and str(video.api_status_code) == "0":
-                    logger.debug(_("用户: {0} 所有作品采集完毕".format(secUid)))
+                    logger.debug(_("用户：{0} 所有作品采集完毕".format(secUid)))
                     break
                 else:
                     cursor = video.cursor
                     continue
 
-            logger.debug(_("当前请求的cursor: {0}").format(cursor))
+            logger.debug(_("当前请求的cursor：{0}").format(cursor))
             logger.debug(
-                _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
+                _("视频ID：{0} 视频文案：{1} 作者：{2}").format(
                     video.aweme_id, video.desc, video.nickname
                 )
             )
@@ -403,14 +403,14 @@ class TiktokHandler:
         max_counts = max_counts or float("inf")
         videos_collected = 0
 
-        logger.debug(_("开始爬取用户: {0} 点赞的视频").format(secUid))
+        logger.debug(_("开始爬取用户：{0} 点赞的视频").format(secUid))
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
             logger.debug("=====================================")
             logger.debug(
-                _("最大数量: {0} 每次请求数量: {1}").format(
+                _("最大数量：{0} 每次请求数量：{1}").format(
                     max_counts, current_request_size
                 )
             )
@@ -422,9 +422,9 @@ class TiktokHandler:
                 video = UserPostFilter(response)
 
             if video.has_aweme:
-                logger.debug(_("当前请求的cursor: {0}").format(cursor))
+                logger.debug(_("当前请求的cursor：{0}").format(cursor))
                 logger.debug(
-                    _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
+                    _("视频ID：{0} 视频文案：{1} 作者：{2}").format(
                         video.aweme_id, video.desc, video.nickname
                     )
                 )
@@ -437,14 +437,14 @@ class TiktokHandler:
                 videos_collected += len(video.aweme_id)
 
                 if not video.hasMore and str(video.api_status_code) == "0":
-                    logger.debug(_("用户: {0} 所有作品采集完毕").format(secUid))
+                    logger.debug(_("用户：{0} 所有作品采集完毕").format(secUid))
                     break
 
             else:
                 logger.debug(_("{0} 页没有找到作品").format(cursor))
 
                 if not video.hasMore and str(video.api_status_code) == "0":
-                    logger.debug(_("用户: {0} 所有作品采集完毕").format(secUid))
+                    logger.debug(_("用户：{0} 所有作品采集完毕").format(secUid))
                     break
 
             # 更新已经处理的视频数量 (Update the number of videos processed)
@@ -500,14 +500,14 @@ class TiktokHandler:
         max_counts = max_counts or float("inf")
         videos_collected = 0
 
-        logger.debug(_("开始爬取用户: {0} 收藏的视频").format(secUid))
+        logger.debug(_("开始爬取用户：{0} 收藏的视频").format(secUid))
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
             logger.debug("=====================================")
             logger.debug(
-                _("最大数量: {0} 每次请求数量: {1}").format(
+                _("最大数量：{0} 每次请求数量：{1}").format(
                     max_counts, current_request_size
                 )
             )
@@ -519,9 +519,9 @@ class TiktokHandler:
                 video = UserPostFilter(response)
 
             if video.has_aweme:
-                logger.debug(_("当前请求的cursor: {0}").format(cursor))
+                logger.debug(_("当前请求的cursor：{0}").format(cursor))
                 logger.debug(
-                    _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
+                    _("视频ID：{0} 视频文案：{1} 作者：{2}").format(
                         video.aweme_id, video.desc, video.nickname
                     )
                 )
@@ -534,14 +534,14 @@ class TiktokHandler:
                 videos_collected += len(video.aweme_id)
 
                 if not video.hasMore and str(video.api_status_code) == "0":
-                    logger.debug(_("用户: {0} 所有作品采集完毕").format(secUid))
+                    logger.debug(_("用户：{0} 所有作品采集完毕").format(secUid))
                     break
 
             else:
                 logger.debug(_("{0} 页没有找到作品").format(cursor))
 
                 if not video.hasMore and str(video.api_status_code) == "0":
-                    logger.debug(_("用户: {0} 所有作品采集完毕").format(secUid))
+                    logger.debug(_("用户：{0} 所有作品采集完毕").format(secUid))
                     break
 
             # 更新已经处理的视频数量 (Update the number of videos processed)
@@ -566,7 +566,7 @@ class TiktokHandler:
 
         secUid = await SecUserIdFetcher.get_secuid(self.kwargs.get("url"))
         playlist = await self.fetch_play_list(secUid, cursor, page_counts)
-        selected_index = await self.select_playlist(playlist)
+        mixId = await self.select_playlist(playlist)
 
         async with AsyncUserDB("tiktok_users.db") as audb:
             user_path = await self.get_or_add_user_data(secUid, audb)
