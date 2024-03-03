@@ -63,6 +63,12 @@ class DouyinAPIEndpoints:
     # 用户收藏 (User Collection)
     USER_COLLECTION = f"{DOUYIN_DOMAIN}/aweme/v1/web/aweme/listcollection/"
 
+    # 用户收藏夹 (User Collects)
+    USER_COLLECTS = f"{DOUYIN_DOMAIN}/aweme/v1/web/collects/list/"
+
+    # 用户收藏夹作品 (User Collects Posts)
+    USER_COLLECTS_VIDEO = f"{DOUYIN_DOMAIN}/aweme/v1/web/collects/video/list/"
+
     # 首页朋友作品 (Friend Feed)
     FRIEND_FEED = f"{DOUYIN_DOMAIN}/aweme/v1/web/familiar/feed/"
 
