@@ -1,8 +1,8 @@
 # path: f2/apps/douyin/handler.py
 
 import asyncio
-from typing import AsyncGenerator, Dict, Any, List
 from pathlib import Path
+from typing import AsyncGenerator, Union, Dict, Any, List
 
 from f2.log.logger import logger
 from f2.i18n.translator import _
@@ -236,9 +236,9 @@ class DouyinHandler:
     async def fetch_user_post_videos(
         self,
         sec_user_id: str,
-        max_cursor: int = 0,
-        page_counts: int = 20,
-        max_counts: int = None,
+        max_cursor: int,
+        page_counts: int,
+        max_counts: int,
     ):
         """
         用于获取指定用户发布的视频列表。
@@ -341,9 +341,9 @@ class DouyinHandler:
     async def fetch_user_like_videos(
         self,
         sec_user_id: str,
-        max_cursor: int = 0,
-        page_counts: int = 20,
-        max_counts: int = None,
+        max_cursor: int,
+        page_counts: int,
+        max_counts: int,
     ) -> AsyncGenerator[List[Dict[str, Any]], None]:
         """
         用于获取指定用户喜欢的视频列表。
@@ -440,8 +440,6 @@ class DouyinHandler:
         """
         用于获取指定用户收藏的视频列表。
         (Used to get the list of videos collected by the specified user.)
-        该接口需要用POST且只靠cookie来获取数据。
-        (This interface needs to be POST and only relies on cookies to get data.)
 
         Args:
             max_cursor: int: 起始页 (Start page)
@@ -452,6 +450,10 @@ class DouyinHandler:
             aweme_data: dict: 视频数据字典, 包含视频ID列表、视频文案、作者昵称、起始页
             (Video data dictionary, including video ID list, video description,
             author nickname, start page)
+
+        Note:
+            该接口需要用POST且只靠cookie来获取数据。
+            (This interface needs to use POST and only rely on cookies to obtain data.)
         """
 
         max_counts = max_counts or float("inf")
@@ -728,9 +730,9 @@ class DouyinHandler:
     async def fetch_user_feed_videos(
         self,
         sec_user_id: str,
-        max_cursor: int = 0,
-        page_counts: int = 20,
-        max_counts: int = None,
+        max_cursor: int,
+        page_counts: int,
+        max_counts: int,
     ) -> AsyncGenerator[List[Dict[str, Any]], None]:
         """
         用于获取指定用户feed的视频列表。
