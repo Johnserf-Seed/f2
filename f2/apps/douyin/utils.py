@@ -372,6 +372,7 @@ class AwemeIdFetcher:
         ) as client:
             try:
                 response = await client.get(url, follow_redirects=True)
+                response.raise_for_status()
 
                 video_pattern = cls._DOUYIN_VIDEO_URL_PATTERN
                 note_pattern = cls._DOUYIN_NOTE_URL_PATTERN
@@ -385,18 +386,24 @@ class AwemeIdFetcher:
                         aweme_id = match.group(1)
                     else:
                         raise APIResponseError(
-                            _("未在响应的地址中找到aweme_id, 检查链接是否为作品页")
+                            _("未在响应的地址中找到aweme_id，检查链接是否为作品页")
                         )
                 return aweme_id
 
-            except httpx.RequestError:
+            except httpx.RequestError as exc:
+                # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
                 raise APIConnectionError(
                     _(
-                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
-                    ).format(
-                        url,
-                        TokenManager.proxies,
-                        cls.__name__,
+                        "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
+                    ).format(url, TokenManager.proxies, cls.__name__, exc)
+                )
+
+            except httpx.HTTPStatusError as e:
+                raise APIResponseError(
+                    _(
+                        "链接：{0}，状态码 {1}：{2} ".format(
+                            e.response.url, e.response.status_code, e.response.text
+                        )
                     )
                 )
 
