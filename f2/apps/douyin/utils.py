@@ -266,7 +266,7 @@ class SecUserIdFetcher:
                 transport=transport, proxies=TokenManager.proxies, timeout=10
             ) as client:
                 response = await client.get(url, follow_redirects=True)
-
+                # 444一般为Nginx拦截，不返回状态 (444 is generally intercepted by Nginx and does not return status)
                 if response.status_code in {200, 444}:
                     match = pattern.search(str(response.url))
                     if match:
@@ -274,7 +274,7 @@ class SecUserIdFetcher:
                     else:
                         raise APIResponseError(
                             _(
-                                "未在响应的地址中找到sec_user_id, 检查链接是否为用户主页类名: {0}".format(
+                                "未在响应的地址中找到sec_user_id，检查链接是否为用户主页类名：{0}".format(
                                     cls.__name__
                                 )
                             )
@@ -282,31 +282,30 @@ class SecUserIdFetcher:
 
                 elif response.status_code == 401:
                     raise APIUnauthorizedError(
-                        _("未授权的请求。类名: {0}".format(cls.__name__))
+                        _("未授权的请求。类名：{0}".format(cls.__name__))
                     )
                 elif response.status_code == 404:
                     raise APINotFoundError(
-                        _("未找到API端点。类名: {0}".format(cls.__name__))
+                        _("未找到API端点。类名：{0}".format(cls.__name__))
                     )
                 elif response.status_code == 503:
                     raise APIUnavailableError(
-                        _("API服务不可用。类名: {0}".format(cls.__name__))
+                        _("API服务不可用。类名：{0}".format(cls.__name__))
                     )
                 else:
-                    raise APIError(
-                        _("API错误码：{0}。类名: {1}").format(
-                            response.status_code, cls.__name__
+                    raise APIResponseError(
+                        _(
+                            "链接：{0}，状态码 {1}：{2} ".format(
+                                response.url, response.status_code, response.text
+                            )
                         )
                     )
 
-        except httpx.RequestError:
+        except httpx.RequestError as exc:
             raise APIConnectionError(
                 _(
-                    "连接到API时发生错误，请检查URL或网络情况。类名: {0}".format(
-                        cls.__name__
-                    )
-                ),
-                url,
+                    "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
+                ).format(url, TokenManager.proxies, cls.__name__, exc)
             )
 
     @classmethod
