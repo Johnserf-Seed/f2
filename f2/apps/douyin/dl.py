@@ -9,7 +9,7 @@ from f2.log.logger import logger
 from f2.dl.base_downloader import BaseDownloader
 from f2.utils.utils import get_timestamp, timestamp_2_str
 from f2.apps.douyin.db import AsyncUserDB
-from f2.apps.douyin.utils import format_file_name
+from f2.apps.douyin.utils import format_file_name, json_2_lrc
 
 
 class DouyinDownloader(BaseDownloader):
@@ -270,6 +270,79 @@ class DouyinDownloader(BaseDownloader):
 
         # 保存最后一个aweme_id
         await self.save_last_aweme_id(sec_user_id, aweme_id)
+
+    async def create_music_download_tasks(
+        self, kwargs: dict, music_datas: Union[list, dict], user_path: Any
+    ) -> None:
+        """
+        创建音乐下载任务
+
+        Args:
+            kwargs (dict): 命令行参数
+            music_datas (list, dict): 音乐数据列表或字典
+            user_path (Any): 用户目录路径
+        """
+
+        if (
+            not kwargs
+            or not music_datas
+            or not isinstance(music_datas, (list, dict))
+            or not user_path
+        ):
+            return
+
+        if isinstance(music_datas, dict):
+            await self.handler_music_download(kwargs, music_datas, user_path)
+        else:
+            for music_data in music_datas:
+                await self.handler_music_download(kwargs, music_data, user_path)
+
+        # 执行下载任务
+        await self.execute_tasks()
+
+    async def handler_music_download(
+        self, kwargs: dict, music_data_dict: dict, user_path: Any
+    ) -> None:
+        """
+        处理音乐下载任务
+
+        Args:
+            kwargs (dict): 命令行参数
+            music_data_dict (dict): 音乐数据字典
+            user_path (Any): 用户目录路径
+        """
+
+        # 构建文件夹路径
+        base_path = (
+            user_path / music_data_dict.get("title")
+            if kwargs.get("folderize")
+            else user_path
+        )
+        music_name = music_data_dict.get("title") + "_music"
+        music_url = music_data_dict.get("play_url")
+        lyric_name = music_data_dict.get("title") + "_lyric"
+        lyric_url = music_data_dict.get("lyric_url")
+
+        if music_url != None:
+            await self.initiate_download(
+                _("音乐"), music_url, base_path, music_name, ".mp3"
+            )
+
+        if kwargs.get("lyric"):
+            if lyric_url is None:
+                return
+
+            # 下载str格式的json歌词文件
+            lyric = await self.get_fetch_data(lyric_url)
+
+            # 如果json歌词文件下载成功，则读取并处理成lrc格式
+            if lyric.status_code != 200:
+                return
+
+            lrc_content = json_2_lrc(lyric.json())
+            await self.initiate_static_download(
+                _("歌词"), lrc_content, base_path, lyric_name, ".lrc"
+            )
 
     async def create_stream_tasks(
         self, kwargs: dict, webcast_datas: Union[list, dict], user_path: Any
