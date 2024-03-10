@@ -370,7 +370,7 @@ class TiktokHandler:
             videos_collected += len(video.aweme_id)
             cursor = video.cursor
 
-        logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
+        logger.debug(_("爬取结束，共爬取 {0} 个视频").format(videos_collected))
 
     @mode_handler("like")
     async def handler_user_like(self):
@@ -467,7 +467,7 @@ class TiktokHandler:
             videos_collected += len(video.aweme_id)
             cursor = video.cursor
 
-        logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
+        logger.debug(_("爬取结束，共爬取 {0} 个视频").format(videos_collected))
 
     @mode_handler("collect")
     async def handler_user_collect(self):
@@ -564,7 +564,7 @@ class TiktokHandler:
             videos_collected += len(video.aweme_id)
             cursor = video.cursor
 
-        logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
+        logger.debug(_("爬取结束，共爬取 {0} 个视频").format(videos_collected))
 
     @mode_handler("mix")
     async def handler_user_mix(self):
@@ -667,7 +667,7 @@ class TiktokHandler:
             videos_collected += len(video.aweme_id)
             cursor = video.cursor
 
-        logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
+        logger.debug(_("爬取结束，共爬取 {0} 个视频").format(videos_collected))
 
 
 async def main(kwargs):

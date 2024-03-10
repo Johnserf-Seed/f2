@@ -307,7 +307,7 @@ class DouyinHandler:
             videos_collected += len(video.aweme_id)
             max_cursor = video.max_cursor
 
-        logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
+        logger.debug(_("爬取结束，共爬取 {0} 个视频").format(videos_collected))
 
     @mode_handler("like")
     async def handle_user_like(self):
@@ -412,7 +412,7 @@ class DouyinHandler:
             videos_collected += len(aweme_data_list)
             max_cursor = video.max_cursor
 
-        logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
+        logger.debug(_("爬取结束，共爬取 {0} 个视频").format(videos_collected))
 
     @mode_handler("music")
     async def handle_user_music_collection(self):
@@ -815,7 +815,7 @@ class DouyinHandler:
                     break
                 max_cursor = video.max_cursor
 
-        logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
+        logger.debug(_("爬取结束，共爬取 {0} 个视频").format(videos_collected))
 
     @mode_handler("mix")
     async def handle_user_mix(self):
@@ -912,7 +912,7 @@ class DouyinHandler:
                 logger.debug(_("合集: {0} 所有作品采集完毕").format(mix_id))
                 break
 
-        logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
+        logger.debug(_("爬取结束，共爬取 {0} 个视频").format(videos_collected))
 
     @mode_handler("live")
     async def handle_user_live(self):
@@ -1114,7 +1114,7 @@ class DouyinHandler:
             videos_collected += len(video.aweme_id)
             max_cursor = video.max_cursor
 
-        logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
+        logger.debug(_("爬取结束，共爬取 {0} 个视频").format(videos_collected))
 
 
 async def handle_sso_login():

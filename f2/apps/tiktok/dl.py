@@ -17,8 +17,7 @@ class TiktokDownloader(BaseDownloader):
         if kwargs["cookie"] is None:
             raise ValueError(
                 _(
-                    "cookie不能为空。请提供有效的 cookie 参数，或自动从浏览器获取 f2 -d dy --help，如扫码登录请保留双引号cookie: "
-                    "，再使用--sso-login命令。"
+                    "cookie不能为空。请提供有效的 cookie 参数，或自动从浏览器获取 `--auto-cookie edge`"
                 )
             )
 
@@ -82,7 +81,9 @@ class TiktokDownloader(BaseDownloader):
                 )
                 return aweme_datas
             else:
-                logger.warning(_("作品发布时间不在指定区间内：{0}").format(aweme_date_str))
+                logger.warning(
+                    _("作品发布时间不在指定区间内：{0}").format(aweme_date_str)
+                )
                 return None
 
         elif isinstance(aweme_datas, list):
@@ -159,7 +160,9 @@ class TiktokDownloader(BaseDownloader):
         )
 
         secUid = str(aweme_data_dict.get("secUid"))  # 用户ID
-        aweme_privateItem = aweme_data_dict.get("privateItem")  # 作品权限 false公开, true私密
+        aweme_privateItem = aweme_data_dict.get(
+            "privateItem"
+        )  # 作品权限 false公开, true私密
         aweme_secret = aweme_data_dict.get("secret")  # 作品权限 false公开, true私密
         aweme_id = str(aweme_data_dict.get("aweme_id"))  # 视频ID
 
