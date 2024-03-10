@@ -629,7 +629,7 @@ class DouyinHandler:
                     tmp_user_path = (
                         tmp_user_path
                         / collects.collects_name[
-                            collects.collects_id.index(collects_id)
+                            collects.collects_id.index(int(collects_id))
                         ]
                     )
                 else:
@@ -681,7 +681,7 @@ class DouyinHandler:
         if selected_index == 0:
             return collects.collects_id
         else:
-            return collects.collects_id[selected_index - 1]
+            return str(collects.collects_id[selected_index - 1])
 
     async def fetch_user_collects(
         self, max_cursor: int, page_counts: int, max_counts: int
