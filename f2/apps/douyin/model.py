@@ -111,6 +111,12 @@ class UserCollectsVideo(BaseRequestModel):
     collects_id: str
 
 
+class UserMusicCollection(BaseRequestModel):
+    # GET
+    cursor: int
+    count: int
+
+
 class UserMix(BaseRequestModel):
     cursor: int
     count: int
