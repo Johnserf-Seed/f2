@@ -18,6 +18,7 @@ from f2.apps.douyin.model import (
     UserCollection,
     UserCollects,
     UserCollectsVideo,
+    UserMusicCollection,
     UserMix,
     PostDetail,
     UserLive,
@@ -30,6 +31,7 @@ from f2.apps.douyin.filter import (
     UserProfileFilter,
     UserCollectionFilter,
     UserCollectsFilter,
+    UserMusicCollectionFilter,
     UserMixFilter,
     PostDetailFilter,
     UserLiveFilter,
@@ -441,6 +443,62 @@ class DouyinHandler:
             await self.downloader.create_music_download_tasks(
                 self.kwargs, aweme_data_list, user_path
             )
+
+    async def fetch_user_music_collection(
+        self, max_cursor: int, page_counts: int, max_counts: int
+    ) -> AsyncGenerator[List[Dict[str, Any]], Any]:
+        """
+        用于获取指定用户收藏的音乐作品列表。
+
+        Args:
+            max_cursor: int: 起始页
+            page_counts: int: 每页视频数
+            max_counts: int: 最大视频数
+
+        Return:
+            aweme_data: AsyncGenerator[List[Dict[str, Any]], None]: 音乐作品数据
+        """
+
+        max_counts = max_counts or float("inf")
+        music_collected = 0
+
+        logger.debug(_("开始爬取用户收藏的音乐作品"))
+
+        while music_collected < max_counts:
+            current_request_size = min(page_counts, max_counts - music_collected)
+
+            logger.debug("=====================================")
+            logger.debug(
+                _("最大数量: {0} 每次请求数量: {1}").format(
+                    max_counts, current_request_size
+                )
+            )
+            logger.debug(_("开始爬取第 {0} 页").format(max_cursor))
+
+            async with DouyinCrawler(self.kwargs) as crawler:
+                params = UserMusicCollection(
+                    cursor=max_cursor, count=current_request_size
+                )
+                response = await crawler.fetch_user_music_collection(params)
+                music = UserMusicCollectionFilter(response)
+
+                logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
+                logger.debug(
+                    _("音乐ID: {0} 音乐标题: {1} 作者: {2}").format(
+                        music.music_id, music.title, music.author
+                    )
+                )
+            logger.debug("=====================================")
+
+            yield music._to_list()
+
+            if not music.has_more:
+                logger.debug(_("用户收藏的音乐作品采集完毕"))
+                break
+
+            # 更新已经处理的音乐数量 (Update the number of music processed)
+            music_collected += len(music.music_id)
+            max_cursor = music.max_cursor
 
     @mode_handler("collection")
     async def handle_user_collection(self):
