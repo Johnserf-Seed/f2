@@ -147,7 +147,28 @@ class BaseDownloader(BaseCrawler):
                 )
 
             # 下载完成后重命名文件 (Rename file after download is complete)
-            tmp_path.rename(full_path)
+            try:
+                tmp_path.rename(full_path)
+            except FileExistsError:
+                logger.warning(_("{0} 已存在，将覆盖".format(full_path)))
+                tmp_path.replace(full_path)
+            except PermissionError:
+                logger.error(
+                    _("另一个程序正在使用此文件或受异步调度影响，该任务需要重新下载")
+                )
+                # 尝试删除临时文件 (Try to delete the temporary file)
+                try:
+                    tmp_path.unlink()
+                    tmp_path.rename(full_path)
+                except Exception as e:
+                    logger.error(_("尝试删除临时文件失败: {0}".format(e)))
+
+                await self.progress.update(
+                    task_id,
+                    description=_("[  失败  ]:"),
+                    filename=trim_filename(full_path.name, 45),
+                    state="completed",
+                )
 
             await self.progress.update(
                 task_id,
