@@ -392,6 +392,7 @@ def merge_config(main_conf, custom_conf, **kwargs):
         "代理服务器，最多 2 个参数，http与https。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"
     ),
 )
+@click.option("--lyric", "-L", type=bool, help=_("是否保存原声歌词。可选：'yes'、'no'"))
 @click.option(
     "--update-config",
     type=bool,
