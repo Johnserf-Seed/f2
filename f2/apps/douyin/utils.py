@@ -718,3 +718,33 @@ def show_qrcode(qrcode_url: str, show_image: bool = False) -> None:
         qr.make(fit=True)
         # 在控制台以 ASCII 形式打印二维码
         qr.print_ascii(invert=True)
+
+
+def json_2_lrc(data: Union[str, list, dict]) -> str:
+    """
+    从抖音原声json格式歌词生成lrc格式歌词
+    (Generate lrc lyrics format from Douyin original json lyrics format)
+
+    Args:
+        data (Union[str, list, dict]): 抖音原声json格式歌词 (Douyin original json lyrics format)
+
+    Returns:
+        str: 生成的lrc格式歌词 (Generated lrc format lyrics)
+    """
+    try:
+        lrc_lines = []
+        for item in data:
+            text = item["text"]
+            time_seconds = float(item["timeId"])
+            minutes = int(time_seconds // 60)
+            seconds = int(time_seconds % 60)
+            milliseconds = int((time_seconds % 1) * 1000)
+            time_str = f"{minutes:02}:{seconds:02}.{milliseconds:03}"
+            lrc_lines.append(f"[{time_str}] {text}")
+    except KeyError as e:
+        raise KeyError(_("歌词数据字段错误：{0}").format(e))
+    except RuntimeError as e:
+        raise RuntimeError(_("生成歌词文件失败：{0}，请检查歌词 `data` 内容").format(e))
+    except TypeError as e:
+        raise TypeError(_("歌词数据类型错误：{0}").format(e))
+    return "\n".join(lrc_lines)
