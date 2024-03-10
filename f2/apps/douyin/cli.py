@@ -283,14 +283,14 @@ def merge_config(main_conf, custom_conf, **kwargs):
     "-d",
     type=bool,
     # default="yes",
-    help=_("是否保存视频文案。可选"),
+    help=_("是否保存视频文案"),
 )
 @click.option(
     "--path",
     "-p",
     type=str,
     # default="Download",
-    help=_("作品保存位置，支持绝对与相对路径。"),
+    help=_("作品保存位置，支持绝对与相对路径"),
 )
 @click.option(
     "--folderize",
@@ -338,28 +338,28 @@ def merge_config(main_conf, custom_conf, **kwargs):
     "-e",
     type=int,
     # default=10,
-    help=_("网络请求超时时间。"),
+    help=_("网络请求超时时间"),
 )
 @click.option(
     "--max_retries",
     "-r",
     type=int,
     # default=5,
-    help=_("网络请求超时重试数。"),
+    help=_("网络请求超时重试数"),
 )
 @click.option(
     "--max-connections",
     "-x",
     type=int,
     # default=5,
-    help=_("网络请求并发连接数。"),
+    help=_("网络请求并发连接数"),
 )
 @click.option(
     "--max-tasks",
     "-t",
     type=int,
     # default=10,
-    help=_("异步的任务数。"),
+    help=_("异步的任务数"),
 )
 @click.option(
     "--max-counts",
@@ -373,14 +373,14 @@ def merge_config(main_conf, custom_conf, **kwargs):
     "-s",
     type=int,
     # default=20,
-    help=_("从接口每页可获取作品数，不建议超过20。"),
+    help=_("从接口每页可获取作品数，不建议超过20"),
 )
 @click.option(
     "--languages",
     "-l",
     type=click.Choice(["zh_CN", "en_US"]),
     default="zh_CN",
-    help=_("显示语言。默认为 'zh_CN'。可选：'zh_CN'、'en_US'。不支持配置文件修改。"),
+    help=_("显示语言。默认为 'zh_CN'，可选：'zh_CN'、'en_US'，不支持配置文件修改"),
     callback=handler_language,
 )
 @click.option(
