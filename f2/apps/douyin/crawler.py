@@ -14,6 +14,7 @@ from f2.apps.douyin.model import (
     UserCollection,
     UserCollects,
     UserCollectsVideo,
+    UserMusicCollection,
     PostDetail,
     UserMix,
     UserLive,
@@ -83,6 +84,13 @@ class DouyinCrawler(BaseCrawler):
             dyendpoint.USER_COLLECTS_VIDEO, params.dict()
         )
         logger.debug(_("收藏夹作品接口地址:" + endpoint))
+        return await self._fetch_get_json(endpoint)
+
+    async def fetch_user_music_collection(self, params: UserMusicCollection):
+        endpoint = XBogusManager.model_2_endpoint(
+            dyendpoint.USER_MUSIC_COLLECTION, params.dict()
+        )
+        logger.debug(_("音乐收藏接口地址:" + endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_user_mix(self, params: UserMix):
