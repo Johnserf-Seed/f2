@@ -181,7 +181,7 @@ class TiktokHandler:
                 playlist.mixId, playlist.mixName
             )
         )
-        logger.debug("=====================================")
+        logger.debug("===================================")
         return playlist
 
     async def select_playlist(
@@ -335,7 +335,7 @@ class TiktokHandler:
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
+            logger.debug("===================================")
             logger.debug(
                 _("最大数量: {0} 每次请求数量: {1}").format(
                     max_counts, current_request_size
@@ -363,7 +363,7 @@ class TiktokHandler:
                     video.aweme_id, video.desc, video.nickname
                 )
             )
-            logger.debug("=====================================")
+            logger.debug("===================================")
 
             yield video._to_list()
 
@@ -425,7 +425,7 @@ class TiktokHandler:
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
+            logger.debug("===================================")
             logger.debug(
                 _("最大数量：{0} 每次请求数量：{1}").format(
                     max_counts, current_request_size
@@ -445,7 +445,7 @@ class TiktokHandler:
                         video.aweme_id, video.desc, video.nickname
                     )
                 )
-                logger.debug("=====================================")
+                logger.debug("===================================")
 
                 aweme_data_list = video._to_list()
                 yield aweme_data_list
@@ -522,7 +522,7 @@ class TiktokHandler:
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
+            logger.debug("===================================")
             logger.debug(
                 _("最大数量：{0} 每次请求数量：{1}").format(
                     max_counts, current_request_size
@@ -542,7 +542,7 @@ class TiktokHandler:
                         video.aweme_id, video.desc, video.nickname
                     )
                 )
-                logger.debug("=====================================")
+                logger.debug("===================================")
 
                 aweme_data_list = video._to_list()
                 yield aweme_data_list
@@ -625,7 +625,7 @@ class TiktokHandler:
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
+            logger.debug("===================================")
             logger.debug(
                 _("最大数量: {0} 每次请求数量: {1}").format(
                     max_counts, current_request_size
@@ -645,7 +645,7 @@ class TiktokHandler:
                         video.aweme_id, video.desc, video.nickname
                     )
                 )
-                logger.debug("=====================================")
+                logger.debug("===================================")
 
                 aweme_data_list = video._to_list()
                 yield aweme_data_list

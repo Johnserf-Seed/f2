@@ -168,7 +168,7 @@ class TiktokDownloader(BaseDownloader):
 
         logger.debug(f"========{aweme_id}========")
         logger.debug(aweme_data_dict)
-        logger.debug("================")
+        logger.debug("===================================")
 
         # 检查作品是否被屏蔽
         if aweme_privateItem:

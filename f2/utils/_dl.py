@@ -39,9 +39,9 @@ async def get_content_length(url: str, headers: dict = {}, proxies: dict = {}) -
         except httpx.ConnectTimeout:
             # 连接超时错误处理 (Handling connection timeout errors)
             logger.error(_("连接超时错误: {0}".format(url)))
-            logger.error("==========================")
+            logger.error("===================================")
             logger.error(f"headers:{headers}, proxies:{proxies}")
-            logger.error("==========================")
+            logger.error("===================================")
             return 0
         # 对HTTP状态错误进行处理 (Handling HTTP status errors)
         except httpx.HTTPStatusError as exc:
