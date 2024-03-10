@@ -269,21 +269,21 @@ def merge_config(main_conf, custom_conf, **kwargs):
     "-m",
     type=bool,
     # default="yes",
-    help=_("是否保存视频原声。可选：'yes'、'no'"),
+    help=_("是否保存视频原声"),
 )
 @click.option(
     "--cover",
     "-v",
     type=bool,
     # default="yes",
-    help=_("是否保存视频封面。可选：'yes'、'no'"),
+    help=_("是否保存视频封面"),
 )
 @click.option(
     "--desc",
     "-d",
     type=bool,
     # default="yes",
-    help=_("是否保存视频文案。可选：'yes'、'no'"),
+    help=_("是否保存视频文案。可选"),
 )
 @click.option(
     "--path",
@@ -297,7 +297,7 @@ def merge_config(main_conf, custom_conf, **kwargs):
     "-f",
     type=bool,
     # default="yes",
-    help=_("是否将作品保存到单独的文件夹。可选：'yes'、'no'"),
+    help=_("是否将作品保存到单独的文件夹"),
 )
 @click.option(
     "--mode",
@@ -392,7 +392,7 @@ def merge_config(main_conf, custom_conf, **kwargs):
         "代理服务器，最多 2 个参数，http与https。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"
     ),
 )
-@click.option("--lyric", "-L", type=bool, help=_("是否保存原声歌词。可选：'yes'、'no'"))
+@click.option("--lyric", "-L", type=bool, help=_("是否保存原声歌词"))
 @click.option(
     "--update-config",
     type=bool,

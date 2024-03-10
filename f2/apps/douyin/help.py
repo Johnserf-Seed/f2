@@ -24,14 +24,14 @@ def help() -> None:
                 "根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合辑与直播同上"
             ),
         ),
-        ("-m --music", "[dark_cyan]Choice", _("是否保存视频原声。可选：'yes'、'no'")),
-        ("-v --cover", "[dark_cyan]Choice", _("是否保存视频封面。可选：'yes'、'no'")),
-        ("-d --desc", "[dark_cyan]Choice", _("是否保存视频文案。可选：'yes'、'no'")),
+        ("-m --music", "[dark_cyan]Bool", _("是否保存视频原声")),
+        ("-v --cover", "[dark_cyan]Bool", _("是否保存视频封面")),
+        ("-d --desc", "[dark_cyan]Bool", _("是否保存视频文案")),
         ("-p --path", "[dark_cyan]str", _("作品保存位置，支持绝对与相对路径。")),
         (
             "-f --folderize",
-            "[dark_cyan]Choice",
-            _("是否将作品保存到单独的文件夹。可选：'yes'、'no'"),
+            "[dark_cyan]Bool",
+            _("是否将作品保存到单独的文件夹"),
         ),
         (
             "-M --mode",
@@ -81,6 +81,7 @@ def help() -> None:
                 "代理服务器，最多 2 个参数，http与https。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"
             ),
         ),
+        ("-L --lyric", "[dark_cyan]Bool", _("是否保存视频歌词")),
         (
             "--update-config",
             "[dark_cyan]Flag",
