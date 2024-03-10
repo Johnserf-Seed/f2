@@ -266,7 +266,7 @@ class DouyinHandler:
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
+            logger.debug("===================================")
             logger.debug(
                 _("最大数量: {0} 每次请求数量: {1}").format(
                     max_counts, current_request_size
@@ -298,7 +298,7 @@ class DouyinHandler:
                     video.aweme_id, video.desc, video.nickname
                 )
             )
-            logger.debug("=====================================")
+            logger.debug("===================================")
 
             aweme_data_list = video._to_list()
             yield aweme_data_list
@@ -371,7 +371,7 @@ class DouyinHandler:
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
+            logger.debug("===================================")
             logger.debug(
                 _("最大数量: {0} 每次请求数量: {1}").format(
                     max_counts, current_request_size
@@ -403,7 +403,7 @@ class DouyinHandler:
                     video.aweme_id, video.desc, video.nickname
                 )
             )
-            logger.debug("=====================================")
+            logger.debug("===================================")
 
             aweme_data_list = video._to_list()
             yield aweme_data_list
@@ -467,7 +467,7 @@ class DouyinHandler:
         while music_collected < max_counts:
             current_request_size = min(page_counts, max_counts - music_collected)
 
-            logger.debug("=====================================")
+            logger.debug("===================================")
             logger.debug(
                 _("最大数量: {0} 每次请求数量: {1}").format(
                     max_counts, current_request_size
@@ -488,7 +488,7 @@ class DouyinHandler:
                         music.music_id, music.title, music.author
                     )
                 )
-            logger.debug("=====================================")
+            logger.debug("===================================")
 
             yield music._to_list()
 
@@ -558,7 +558,7 @@ class DouyinHandler:
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
+            logger.debug("===================================")
             logger.debug(
                 _("最大数量: {0} 每次请求数量: {1}").format(
                     max_counts, current_request_size
@@ -577,7 +577,7 @@ class DouyinHandler:
                     video.aweme_id, video.desc, video.nickname
                 )
             )
-            logger.debug("=====================================")
+            logger.debug("===================================")
 
             aweme_data_list = video._to_list()
             yield aweme_data_list
@@ -704,7 +704,7 @@ class DouyinHandler:
 
         while collected < max_counts:
             logger.debug(_("开始爬取用户收藏夹"))
-            logger.debug("=====================================")
+            logger.debug("===================================")
             logger.debug(
                 _("当前请求的max_cursor: {0}， max_counts: {1}").format(
                     max_cursor, max_counts
@@ -721,7 +721,7 @@ class DouyinHandler:
                     collects.collects_id, collects.collects_name
                 )
             )
-            logger.debug("=====================================")
+            logger.debug("===================================")
 
             yield collects
 
@@ -766,7 +766,7 @@ class DouyinHandler:
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
+            logger.debug("===================================")
             logger.debug(
                 _("最大数量: {0} 每次请求数量: {1}").format(
                     max_counts, current_request_size
@@ -800,7 +800,7 @@ class DouyinHandler:
                             video.aweme_id, video.desc, video.nickname
                         )
                     )
-                    logger.debug("=====================================")
+                    logger.debug("===================================")
 
                     aweme_data_list = video._to_list()
                     yield aweme_data_list
@@ -878,7 +878,7 @@ class DouyinHandler:
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
+            logger.debug("===================================")
             logger.debug(
                 _("最大数量: {0} 每次请求数量: {1}").format(
                     max_counts, current_request_size
@@ -899,7 +899,7 @@ class DouyinHandler:
                     video.aweme_id, video.desc, video.nickname
                 )
             )
-            logger.debug("=====================================")
+            logger.debug("===================================")
 
             aweme_data_list = video._to_list()
             yield aweme_data_list
@@ -954,7 +954,7 @@ class DouyinHandler:
         """
 
         logger.debug(_("开始爬取直播: {0} 的数据").format(webcast_id))
-        logger.debug("=====================================")
+        logger.debug("===================================")
 
         async with DouyinCrawler(self.kwargs) as crawler:
             params = UserLive(web_rid=webcast_id, room_id_str="")
@@ -971,7 +971,7 @@ class DouyinHandler:
                 live.sub_partition_title, live.nickname
             )
         )
-        logger.debug("=====================================")
+        logger.debug("===================================")
         logger.debug(_("直播信息爬取结束"))
 
         webcast_data = live._to_dict()
@@ -992,7 +992,7 @@ class DouyinHandler:
         """
 
         logger.debug(_("开始爬取房间号: {0} 的数据").format(room_id))
-        logger.debug("=====================================")
+        logger.debug("===================================")
 
         async with DouyinCrawler(self.kwargs) as crawler:
             params = UserLive2(room_id=room_id)
@@ -1013,7 +1013,7 @@ class DouyinHandler:
                 ),
             )
         )
-        logger.debug("=====================================")
+        logger.debug("===================================")
         logger.debug(_("直播信息爬取结束"))
 
         webcast_data = live._to_dict()
@@ -1073,7 +1073,7 @@ class DouyinHandler:
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
+            logger.debug("===================================")
             logger.debug(
                 _("最大数量: {0} 每次请求数量: {1}").format(
                     max_counts, current_request_size
@@ -1105,7 +1105,7 @@ class DouyinHandler:
                     video.aweme_id, video.desc, video.nickname
                 )
             )
-            logger.debug("=====================================")
+            logger.debug("===================================")
 
             aweme_data_list = video._to_list()
             yield aweme_data_list
