@@ -412,6 +412,36 @@ class DouyinHandler:
 
         logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
 
+    @mode_handler("music")
+    async def handle_user_music_collection(self):
+        """
+        用于处理用户收藏的音乐 (Used to process music collected by users)
+
+        Args:
+            kwargs: dict: 参数字典 (Parameter dictionary)
+        """
+
+        max_cursor = self.kwargs.get("max_cursor", 0)
+        page_counts = self.kwargs.get("page_counts", 20)
+        max_counts = self.kwargs.get("max_counts")
+
+        # Web端音乐收藏作品的接口只能通过登录的cookie获取，与配置的URL无关。
+        # 因此，即使填写了其他人的URL，也只能获取到你自己的音乐收藏作品。
+        # 此外，音乐收藏作品的文件夹将根据所配置的URL主页用户名来确定。
+        # 为避免将文件下载到其他人的文件夹下，请务必确保填写的URL是你自己的主页URL。
+        sec_user_id = await SecUserIdFetcher.get_sec_user_id(self.kwargs.get("url"))
+
+        async with AsyncUserDB("douyin_users.db") as db:
+            user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, db)
+
+        async for aweme_data_list in self.fetch_user_music_collection(
+            max_cursor, page_counts, max_counts
+        ):
+            # 创建下载任务
+            await self.downloader.create_music_download_tasks(
+                self.kwargs, aweme_data_list, user_path
+            )
+
     @mode_handler("collection")
     async def handle_user_collection(self):
         """
