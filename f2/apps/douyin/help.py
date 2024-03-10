@@ -59,15 +59,15 @@ def help() -> None:
                 "下载日期区间发布的作品，格式：2022-01-01|2023-01-01，'all' 为下载所有作品"
             ),
         ),
-        ("-e --timeout", "[dark_cyan]int", _("网络请求超时时间。")),
-        ("-r --max-retries", "[dark_cyan]int", _("网络请求超时重试数。")),
-        ("-x --max-connections", "[dark_cyan]int", _("网络请求并发连接数。")),
-        ("-t --max-tasks", "[dark_cyan]int", _("异步的任务数。")),
+        ("-e --timeout", "[dark_cyan]int", _("网络请求超时时间")),
+        ("-r --max-retries", "[dark_cyan]int", _("网络请求超时重试数")),
+        ("-x --max-connections", "[dark_cyan]int", _("网络请求并发连接数")),
+        ("-t --max-tasks", "[dark_cyan]int", _("异步的任务数")),
         ("-o --max-counts", "[dark_cyan]int", _("最大作品下载数。0 表示无限制")),
         (
             "-s --page-counts",
             "[dark_cyan]int",
-            _("从接口每页可获取作品数，不建议超过20。"),
+            _("从接口每页可获取作品数，不建议超过20"),
         ),
         (
             "-l --languages",
