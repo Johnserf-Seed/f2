@@ -16,7 +16,7 @@ async def main():
     results = [
         aweme_data_list
         async for aweme_data_list in DouyinHandler(kwargs).fetch_user_post_videos(
-            user_sec_id
+            user_sec_id, 0, 10, 20
         )
     ]
     print(results)
