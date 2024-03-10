@@ -443,6 +443,140 @@ class UserCollectsFilter(JSONModel):
         }
 
 
+class UserMusicCollectionFilter(JSONModel):
+
+    @property
+    def max_cursor(self):
+        return self._get_attr_value("$.cursor")
+
+    @property
+    def has_more(self):
+        return self._get_attr_value("$.has_more")
+
+    @property
+    def status_code(self):
+        return self._get_attr_value("$.status_code")
+
+    @property
+    def msg(self):
+        return self._get_attr_value("$.msg")
+
+    @property
+    def album(self):
+        return self._get_list_attr_value("$.mc_list[*].album")
+
+    @property
+    def audition_duration(self):
+        return self._get_list_attr_value("$.mc_list[*].audition_duration")
+
+    @property
+    def duration(self):
+        return self._get_list_attr_value("$.mc_list[*].duration")
+
+    @property
+    def author(self):
+        return replaceT(self._get_list_attr_value("$.mc_list[*].author"))
+
+    @property
+    def collect_status(self):
+        return self._get_list_attr_value("$.mc_list[*].collect_stat")
+
+    @property
+    def music_status(self):
+        return self._get_list_attr_value("$.mc_list[*].music_status")
+
+    @property
+    def cover_hd(self):
+        return self._get_list_attr_value("$.mc_list[*].cover_hd.url_list[0]")
+
+    @property
+    def music_id(self):
+        return self._get_list_attr_value("$.mc_list[*].id")
+
+    @property
+    def mid(self):
+        return self._get_list_attr_value("$.mc_list[*].mid")
+
+    @property
+    def is_commerce_music(self):
+        return self._get_list_attr_value("$.mc_list[*].is_commerce_music")
+
+    @property
+    def is_original(self):
+        return self._get_list_attr_value("$.mc_list[*].is_original")
+
+    @property
+    def is_original_sound(self):
+        return self._get_list_attr_value("$.mc_list[*].is_original_sound")
+
+    @property
+    def lyric_type(self):
+        return self._get_list_attr_value("$.mc_list[*].lyric_type")
+
+    @property
+    def lyric_url(self):
+        return self._get_list_attr_value("$.mc_list[*].lyric_url")
+
+    @property
+    def play_url(self):
+        return self._get_list_attr_value("$.mc_list[*].play_url.url_list[0]")
+
+    @property
+    def title(self):
+        return replaceT(self._get_list_attr_value("$.mc_list[*].title"))
+
+    @property
+    def strong_beat_url(self):
+        return self._get_list_attr_value("$.mc_list[*].strong_beat_url.url_list[0]")
+
+    @property
+    def owner_nickname(self):
+        return replaceT(self._get_list_attr_value("$.mc_list[*].owner_nickname"))
+
+    @property
+    def owner_id(self):
+        return self._get_list_attr_value("$.mc_list[*].owner_id")
+
+    @property
+    def sec_uid(self):
+        return self._get_list_attr_value("$.mc_list[*].sec_uid")
+
+    def _to_dict(self) -> dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
+    def _to_list(self):
+        exclude_list = ["has_more", "max_cursor", "status_code", "msg"]
+
+        keys = [
+            prop_name
+            for prop_name in dir(self)
+            if not prop_name.startswith("__")
+            and not prop_name.startswith("_")
+            and prop_name not in exclude_list
+        ]
+
+        aweme_entries = self._get_attr_value("$.mc_list") or []
+
+        list_dicts = []
+        for entry in aweme_entries:
+            d = {
+                "has_more": self.has_more,
+                "max_cursor": self.max_cursor,
+                "status_code": self.status_code,
+                "msg": self.msg,
+            }
+            for key in keys:
+                attr_values = getattr(self, key)
+                index = aweme_entries.index(entry)
+                d[key] = attr_values[index] if index < len(attr_values) else None
+            list_dicts.append(d)
+        return list_dicts
+
+
 class UserMixFilter(UserPostFilter):
     def __init__(self, data):
         super().__init__(data)
