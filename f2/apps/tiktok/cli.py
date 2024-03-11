@@ -9,7 +9,7 @@ from pathlib import Path
 from f2 import helps
 from f2.cli.cli_commands import set_cli_config
 from f2.log.logger import logger
-from f2.utils.utils import split_dict_cookie, get_resource_path
+from f2.utils.utils import split_dict_cookie, get_resource_path, get_cookie_from_browser
 from f2.utils.conf_manager import ConfigManager
 from f2.i18n.translator import TranslationManager, _
 
@@ -49,31 +49,30 @@ def handler_auto_cookie(
         param: 提供的参数或选项 (The provided parameter or option)
         value: 参数或选项的值 (The value of the parameter or option)
     """
-    if not value or ctx.resilient_parsing:
-        return
-
-    # 如果用户明确设置了 --cookie，那么跳过自动获取过程
-    if ctx.params.get("cookie"):
+    # 如果用户没有提供值或者设置了 resilient_parsing 或者设置了 --cookie，那么跳过自动获取过程
+    if not value or ctx.resilient_parsing or ctx.params.get("cookie"):
         return
 
     # 根据浏览器选择获取cookie
-    if value in ["chrome", "firefox", "edge", "opera"]:
-        try:
-            cookie_value = split_dict_cookie(get_cookie_from_browser(value))
-            manager = ConfigManager(ctx.params.get("config", "conf/app.yaml"))
-            manager.update_config_with_args("tiktok", cookie=cookie_value)
-        except PermissionError:
-            message = _("请关闭所有已打开的浏览器重试, 并且你有适当的权限访问浏览器 !")
-            logger.error(message)
-            click.echo(message)
-            ctx.abort()
-        except Exception as e:
-            message = _("自动获取Cookie失败: {0}".format(str(e)))
-            logger.error(message)
-            click.echo(message)
-            ctx.abort()
+    try:
+        cookie_value = split_dict_cookie(get_cookie_from_browser(value, "tiktok.com"))
 
+        if not cookie_value:
+            raise ValueError(_("无法从 {0} 浏览器中获取cookie").format(value))
 
+        # 如果没有提供配置文件，那么使用高频配置文件
+        if not ctx.params.get("config"):
+            manager = ConfigManager(get_resource_path(f2.APP_CONFIG_FILE_PATH))
+        else:
+            manager = ConfigManager(ctx.params.get("config"))
+
+        manager.update_config_with_args("tiktok", cookie=cookie_value)
+    except PermissionError:
+        logger.error(_("请关闭所有已打开的浏览器重试，并且你有适当的权限访问浏览器！"))
+        ctx.abort()
+    except Exception as e:
+        logger.error(_("自动获取Cookie失败：{0}".format(str(e))))
+        ctx.abort()
 
 
 def handler_language(
@@ -336,7 +335,7 @@ def merge_config(main_conf, custom_conf, **kwargs):
 # @click.confirmation_option(prompt='是否要使用命令行的参数更新配置文件?')
 @click.option(
     "--auto-cookie",
-    type=click.Choice(["none", "chrome", "firefox", "edge", "opera"]),
+    type=click.Choice(f2.BROWSER_LIST),
     # default="none",
     help=_(
         "自动从浏览器获取cookie。可选项：chrome、firefox、edge、opera。使用该命令前请确保关闭所选的浏览器"
