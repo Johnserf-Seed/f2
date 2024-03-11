@@ -25,7 +25,7 @@ from f2.i18n.translator import _
 
 def get_help(app_name: str) -> None:
     try:
-        module = importlib.import_module(f"f2.apps.{app_name}")
+        module = importlib.import_module(f"f2.apps.{app_name}.help")
         if hasattr(module, "help"):
             module.help()
         else:
