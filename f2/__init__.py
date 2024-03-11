@@ -8,3 +8,16 @@ __repourl__ = "https://github.com/Johnserf-Seed/f2"
 APP_CONFIG_FILE_PATH = "conf/app.yaml"
 F2_CONFIG_FILE_PATH = "conf/conf.yaml"
 F2_DEFAULTS_FILE_PATH = "conf/defaults.yaml"
+
+BROWSER_LIST = [
+    "chrome",
+    "firefox",
+    "edge",
+    "opera",
+    "opera_gx",
+    "safari",
+    "chromium",
+    "brave",
+    "vivaldi",
+    "librewolf",
+]
