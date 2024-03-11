@@ -10,7 +10,12 @@ from pathlib import Path
 from f2 import helps
 from f2.cli.cli_commands import set_cli_config
 from f2.log.logger import logger
-from f2.utils.utils import split_dict_cookie, get_resource_path, get_cookie_from_browser
+from f2.utils.utils import (
+    split_dict_cookie,
+    get_resource_path,
+    get_cookie_from_browser,
+    check_invalid_naming,
+)
 from f2.utils.conf_manager import ConfigManager
 from f2.i18n.translator import TranslationManager, _
 from f2.apps.douyin.handler import handle_sso_login
@@ -125,28 +130,8 @@ def handler_naming(
     ALLOWED_PATTERNS = ["{nickname}", "{create}", "{aweme_id}", "{desc}", "{uid}"]
     ALLOWED_SEPARATORS = ["-", "_"]
 
-    temp_naming = value
-    invalid_patterns = []
-
-    # 检查提供的模式是否有效
-    for pattern in ALLOWED_PATTERNS:
-        if pattern in temp_naming:
-            temp_naming = temp_naming.replace(pattern, "")
-
-    # 此时，temp_naming应只包含分隔符
-    for char in temp_naming:
-        if char not in ALLOWED_SEPARATORS:
-            invalid_patterns.append(char)
-
-    # 检查连续的无效模式或分隔符
-    for pattern in ALLOWED_PATTERNS:
-        # 检查像"{aweme_id}{aweme_id}"这样的模式
-        if pattern + pattern in value:
-            invalid_patterns.append(pattern + pattern)
-        for sep in ALLOWED_SEPARATORS:
-            # 检查像"{aweme_id}-{aweme_id}"这样的模式
-            if pattern + sep + pattern in value:
-                invalid_patterns.append(pattern + sep + pattern)
+    # 检查命名是否符合命名规范
+    invalid_patterns = check_invalid_naming(value, ALLOWED_PATTERNS, ALLOWED_SEPARATORS)
 
     if invalid_patterns:
         raise click.BadParameter(
