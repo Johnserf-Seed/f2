@@ -66,11 +66,9 @@ def handler_auto_cookie(
             raise ValueError(_("无法从 {0} 浏览器中获取cookie").format(value))
 
         # 如果没有提供配置文件，那么使用高频配置文件
-        if not ctx.params.get("config"):
-            manager = ConfigManager(get_resource_path(f2.APP_CONFIG_FILE_PATH))
-        else:
-            manager = ConfigManager(ctx.params.get("config"))
-
+        manager = ConfigManager(
+            ctx.params.get("config", get_resource_path(f2.APP_CONFIG_FILE_PATH))
+        )
         manager.update_config_with_args("tiktok", cookie=cookie_value)
     except PermissionError:
         logger.error(_("请关闭所有已打开的浏览器重试，并且你有适当的权限访问浏览器！"))
@@ -120,7 +118,7 @@ def handler_naming(
         value: 命名模式模板 (Naming pattern template)
     """
     # 避免和配置文件参数冲突
-    if value is None:
+    if not value or ctx.resilient_parsing:
         return
 
     # 允许的模式和分隔符
