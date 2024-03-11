@@ -3,7 +3,6 @@
 import f2
 import click
 import typing
-import browser_cookie3
 
 from pathlib import Path
 
@@ -75,36 +74,6 @@ def handler_auto_cookie(
             ctx.abort()
 
 
-def get_cookie_from_browser(browser_choice: str):
-    """
-    根据用户选择的浏览器获取tiktok.com的cookie。
-
-    Args:
-        browser_choice (str): 用户选择的浏览器名称
-
-    Returns:
-        str: *.tiktok.com的cookie值
-    """
-
-    BROWSER_FUNCTIONS = {
-        "chrome": browser_cookie3.chrome,
-        "firefox": browser_cookie3.firefox,
-        "edge": browser_cookie3.edge,
-        "opera": browser_cookie3.opera,
-    }
-    cj_function = BROWSER_FUNCTIONS.get(browser_choice)
-    if not cj_function:
-        raise ValueError(_("不支持的浏览器选项, 输入f2 dy --help查看更多帮助!"))
-
-    cj = cj_function(domain_name="tiktok.com")
-
-    # cookie_value = next((c.value for c in cj if c.name == 'ttwid'), None)
-    cookie_value = {c.name: c.value for c in cj if c.domain.endswith("tiktok.com")}
-
-    if not cookie_value:
-        raise ValueError(_("无法从{0}浏览器中获取cookie").format(browser_choice))
-
-    return cookie_value
 
 
 def handler_language(
