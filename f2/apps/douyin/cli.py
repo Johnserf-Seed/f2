@@ -15,6 +15,7 @@ from f2.utils.utils import (
     get_resource_path,
     get_cookie_from_browser,
     check_invalid_naming,
+    merge_config,
 )
 from f2.utils.conf_manager import ConfigManager
 from f2.i18n.translator import TranslationManager, _
@@ -176,35 +177,6 @@ def handler_sso_login(
         manager.update_config_with_args("douyin", cookie=login_cookie)
     else:
         raise click.UsageError(_("SSO登录失败，请重试！"))
-
-
-def merge_config(main_conf, custom_conf, **kwargs):
-    """
-    合并配置参数，使 CLI 参数优先级高于自定义配置，自定义配置优先级高于主配置，最终生成完整配置参数字典。
-    Args:
-        main_conf (dict): 主配置参数字典
-        custom_conf (dict): 自定义配置参数字典
-        **kwargs: CLI 参数和其他额外的配置参数
-
-    Returns:
-        dict: 合并后的配置参数字典
-    """
-    # 合并主配置和自定义配置
-    merged_conf = {}
-    for key, value in main_conf.items():
-        merged_conf[key] = value  # 将主配置复制到合并后的配置中
-    for key, value in custom_conf.items():
-        if value is not None and value != "":  # 只有值不为 None 和 空值，才进行合并
-            merged_conf[key] = value  # 自定义配置参数会覆盖主配置中的同名参数
-
-    # 合并 CLI 参数与合并后的配置，确保 CLI 参数的优先级最高
-    for key, value in kwargs.items():
-        if key not in merged_conf:  # 如果合并后的配置中没有这个键，则直接添加
-            merged_conf[key] = value
-        elif value is not None and value != "":  # 如果值不为 None 和 空值，则进行合并
-            merged_conf[key] = value  # CLI 参数会覆盖自定义配置和主配置中的同名参数
-
-    return merged_conf
 
 
 @click.command(name="douyin", help=_("抖音无水印解析"))
