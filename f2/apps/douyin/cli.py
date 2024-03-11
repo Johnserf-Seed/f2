@@ -16,7 +16,7 @@ from f2.i18n.translator import TranslationManager, _
 from f2.apps.douyin.handler import handle_sso_login
 
 
-def handle_help(
+def handler_help(
     ctx: click.Context,
     param: typing.Union[click.Option, click.Parameter],
     value: typing.Any,
@@ -83,8 +83,16 @@ def handler_language(
     param: typing.Union[click.Option, click.Parameter],
     value: typing.Any,
 ) -> typing.Any:
-    """用于设置语言 (For setting the language)"""
+    """用于设置语言 (For setting the language)
 
+    Args:
+        ctx: click的上下文对象 (Click's context object)
+        param: 提供的参数或选项 (The provided parameter or option)
+        value: 参数或选项的值 (The value of the parameter or option)
+    """
+
+    if not value or ctx.resilient_parsing:
+        return
     TranslationManager.get_instance().set_language(value)
     global _
     _ = TranslationManager.get_instance().gettext
@@ -391,7 +399,7 @@ def merge_config(main_conf, custom_conf, **kwargs):
     is_eager=True,
     expose_value=False,
     help=_("显示富文本帮助"),
-    callback=handle_help,
+    callback=handler_help,
 )
 @click.pass_context
 def douyin(ctx, config, init_config, update_config, **kwargs):
@@ -473,7 +481,7 @@ def douyin(ctx, config, init_config, update_config, **kwargs):
     # 尝试从命令行参数或kwargs中获取URL
     if not kwargs.get("url"):
         logger.error("缺乏URL参数，详情看命令帮助")
-        handle_help(ctx, None, True)
+        handler_help(ctx, None, True)
 
     # 添加app_name到kwargs
     kwargs["app_name"] = "douyin"
