@@ -73,7 +73,7 @@ class TokenManager:
 
                 msToken = str(httpx.Cookies(response.cookies).get("msToken"))
                 if len(msToken) not in [120, 128]:
-                    raise APIResponseError(_("{0} 内容不符合要求".format("msToken")))
+                    raise APIResponseError(_("{0} 内容不符合要求").format("msToken"))
 
                 return msToken
 
@@ -90,19 +90,16 @@ class TokenManager:
                 if e.response.status_code == 401:
                     raise APIUnauthorizedError(
                         _(
-                            "参数验证失败，请更新 F2 配置文件中的 {0}，以匹配 {1} 新规则".format(
-                                "msToken", "douyin"
-                            )
-                        )
+                            "参数验证失败，请更新 F2 配置文件中的 {0}，以匹配 {1} 新规则"
+                        ).format("msToken", "douyin")
                     )
+
                 elif e.response.status_code == 404:
-                    raise APINotFoundError(_("{0} 无法找到API端点".format("msToken")))
+                    raise APINotFoundError(_("{0} 无法找到API端点").format("msToken"))
                 else:
                     raise APIResponseError(
-                        _(
-                            "链接：{0}，状态码 {1}：{2} ".format(
-                                e.response.url, e.response.status_code, e.response.text
-                            )
+                        _("链接：{0}，状态码 {1}：{2} ").format(
+                            e.response.url, e.response.status_code, e.response.text
                         )
                     )
 
@@ -148,19 +145,16 @@ class TokenManager:
                 if e.response.status_code == 401:
                     raise APIUnauthorizedError(
                         _(
-                            "参数验证失败，请更新 F2 配置文件中的 {0}，以匹配 {1} 新规则".format(
-                                "ttwid", "douyin"
-                            )
-                        )
+                            "参数验证失败，请更新 F2 配置文件中的 {0}，以匹配 {1} 新规则"
+                        ).format("ttwid", "douyin")
                     )
+
                 elif e.response.status_code == 404:
                     raise APINotFoundError(_("ttwid无法找到API端点"))
                 else:
                     raise APIResponseError(
-                        _(
-                            "链接：{0}，状态码 {1}：{2} ".format(
-                                e.response.url, e.response.status_code, e.response.text
-                            )
+                        _("链接：{0}，状态码 {1}：{2} ").format(
+                            e.response.url, e.response.status_code, e.response.text
                         )
                     )
 
@@ -256,7 +250,7 @@ class SecUserIdFetcher:
 
         if url is None:
             raise (
-                APINotFoundError(_("输入的URL不合法。类名：{0}".format(cls.__name__)))
+                APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
             )
 
         pattern = (
@@ -279,30 +273,26 @@ class SecUserIdFetcher:
                     else:
                         raise APIResponseError(
                             _(
-                                "未在响应的地址中找到sec_user_id，检查链接是否为用户主页类名：{0}".format(
-                                    cls.__name__
-                                )
-                            )
+                                "未在响应的地址中找到sec_user_id，检查链接是否为用户主页类名：{0}"
+                            ).format(cls.__name__)
                         )
 
                 elif response.status_code == 401:
                     raise APIUnauthorizedError(
-                        _("未授权的请求。类名：{0}".format(cls.__name__))
+                        _("未授权的请求。类名：{0}").format(cls.__name__)
                     )
                 elif response.status_code == 404:
                     raise APINotFoundError(
-                        _("未找到API端点。类名：{0}".format(cls.__name__))
+                        _("未找到API端点。类名：{0}").format(cls.__name__)
                     )
                 elif response.status_code == 503:
                     raise APIUnavailableError(
-                        _("API服务不可用。类名：{0}".format(cls.__name__))
+                        _("API服务不可用。类名：{0}").format(cls.__name__)
                     )
                 else:
                     raise APIResponseError(
-                        _(
-                            "链接：{0}，状态码 {1}：{2} ".format(
-                                response.url, response.status_code, response.text
-                            )
+                        _("链接：{0}，状态码 {1}：{2} ").format(
+                            response.url, response.status_code, response.text
                         )
                     )
 
@@ -334,7 +324,7 @@ class SecUserIdFetcher:
         if urls == []:
             raise (
                 APINotFoundError(
-                    _("输入的URL List不合法。类名：{0}".format(cls.__name__))
+                    _("输入的URL List不合法。类名：{0}").format(cls.__name__)
                 )
             )
 
@@ -367,7 +357,7 @@ class AwemeIdFetcher:
 
         if url is None:
             raise (
-                APINotFoundError(_("输入的URL不合法。类名：{0}".format(cls.__name__)))
+                APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
             )
 
         # 重定向到完整链接
@@ -405,10 +395,8 @@ class AwemeIdFetcher:
 
             except httpx.HTTPStatusError as e:
                 raise APIResponseError(
-                    _(
-                        "链接：{0}，状态码 {1}：{2} ".format(
-                            e.response.url, e.response.status_code, e.response.text
-                        )
+                    _("链接：{0}，状态码 {1}：{2} ").format(
+                        e.response.url, e.response.status_code, e.response.text
                     )
                 )
 
@@ -433,7 +421,7 @@ class AwemeIdFetcher:
         if urls == []:
             raise (
                 APINotFoundError(
-                    _("输入的URL List不合法。类名：{0}".format(cls.__name__))
+                    _("输入的URL List不合法。类名：{0}").format(cls.__name__)
                 )
             )
 
@@ -477,7 +465,7 @@ class WebCastIdFetcher:
 
         if url is None:
             raise (
-                APINotFoundError(_("输入的URL不合法。类名：{0}".format(cls.__name__)))
+                APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
             )
         try:
             # 重定向到完整链接
@@ -521,10 +509,8 @@ class WebCastIdFetcher:
 
         except httpx.HTTPStatusError as e:
             raise APIResponseError(
-                _(
-                    "链接：{0}，状态码 {1}：{2} ".format(
-                        e.response.url, e.response.status_code, e.response.text
-                    )
+                _("链接：{0}，状态码 {1}：{2} ").format(
+                    e.response.url, e.response.status_code, e.response.text
                 )
             )
 
@@ -549,7 +535,7 @@ class WebCastIdFetcher:
         if urls == []:
             raise (
                 APINotFoundError(
-                    _("输入的URL List不合法。类名：{0}".format(cls.__name__))
+                    _("输入的URL List不合法。类名：{0}").format(cls.__name__)
                 )
             )
 
@@ -608,7 +594,7 @@ def format_file_name(
     try:
         return naming_template.format(**fields)
     except KeyError as e:
-        raise KeyError(_("文件名模板字段 {0} 不存在，请检查".format(e)))
+        raise KeyError(_("文件名模板字段 {0} 不存在，请检查").format(e))
 
 
 def create_user_folder(kwargs: dict, nickname: Union[str, int]) -> Path:

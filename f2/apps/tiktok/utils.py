@@ -72,7 +72,7 @@ class TokenManager:
                 msToken = str(httpx.Cookies(response.cookies).get("msToken"))
 
                 if len(msToken) not in [148]:
-                    raise APIResponseError(_("{0} 内容不符合要求".format("msToken")))
+                    raise APIResponseError(_("{0} 内容不符合要求").format("msToken"))
 
                 return msToken
 
@@ -89,19 +89,16 @@ class TokenManager:
                 if response.status_code == 401:
                     raise APIUnauthorizedError(
                         _(
-                            "参数验证失败，请更新 F2 配置文件中的 {0}，以匹配 {1} 新规则".format(
-                                "msToken", "tiktok"
-                            )
-                        )
+                            "参数验证失败，请更新 F2 配置文件中的 {0}，以匹配 {1} 新规则"
+                        ).format("msToken", "tiktok")
                     )
+
                 elif response.status_code == 404:
-                    raise APINotFoundError(_("{0} 无法找到API端点".format("msToken")))
+                    raise APINotFoundError(_("{0} 无法找到API端点").format("msToken"))
                 else:
                     raise APIResponseError(
-                        _(
-                            "链接：{0}，状态码 {1}：{2} ".format(
-                                e.response.url, e.response.status_code, e.response.text
-                            )
+                        _("链接：{0}，状态码 {1}：{2} ").format(
+                            e.response.url, e.response.status_code, e.response.text
                         )
                     )
 
@@ -156,19 +153,16 @@ class TokenManager:
                 if response.status_code == 401:
                     raise APIUnauthorizedError(
                         _(
-                            "参数验证失败，请更新 F2 配置文件中的 {0}，以匹配 {1} 新规则".format(
-                                "ttwid", "tiktok"
-                            )
-                        )
+                            "参数验证失败，请更新 F2 配置文件中的 {0}，以匹配 {1} 新规则"
+                        ).format("ttwid", "tiktok")
                     )
+
                 elif response.status_code == 404:
-                    raise APINotFoundError(_("{0} 无法找到API端点".format("ttwid")))
+                    raise APINotFoundError(_("{0} 无法找到API端点").format("ttwid"))
                 else:
                     raise APIResponseError(
-                        _(
-                            "链接：{0}，状态码 {1}：{2} ".format(
-                                e.response.url, e.response.status_code, e.response.text
-                            )
+                        _("链接：{0}，状态码 {1}：{2} ").format(
+                            e.response.url, e.response.status_code, e.response.text
                         )
                     )
 
@@ -186,7 +180,7 @@ class TokenManager:
                 odin_tt = httpx.Cookies(response.cookies).get("odin_tt")
 
                 if odin_tt is None:
-                    raise APIResponseError(_("{0} 内容不符合要求".format("odin_tt")))
+                    raise APIResponseError(_("{0} 内容不符合要求").format("odin_tt"))
 
                 return odin_tt
 
@@ -203,19 +197,16 @@ class TokenManager:
                 if response.status_code == 401:
                     raise APIUnauthorizedError(
                         _(
-                            "参数验证失败，请更新 F2 配置文件中的 {0}，以匹配 {1} 新规则".format(
-                                "odin_tt", "tiktok"
-                            )
-                        )
+                            "参数验证失败，请更新 F2 配置文件中的 {0}，以匹配 {1} 新规则"
+                        ).format("odin_tt", "tiktok")
                     )
+
                 elif response.status_code == 404:
-                    raise APINotFoundError(_("{0} 无法找到API端点".format("odin_tt")))
+                    raise APINotFoundError(_("{0} 无法找到API端点").format("odin_tt"))
                 else:
                     raise APIResponseError(
-                        _(
-                            "链接：{0}，状态码 {1}：{2} ".format(
-                                e.response.url, e.response.status_code, e.response.text
-                            )
+                        _("链接：{0}，状态码 {1}：{2} ").format(
+                            e.response.url, e.response.status_code, e.response.text
                         )
                     )
 
@@ -278,7 +269,7 @@ class SecUserIdFetcher:
 
         if url is None:
             raise (
-                APINotFoundError(_("输入的URL不合法。类名：{0}".format(cls.__name__)))
+                APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
             )
 
         transport = httpx.AsyncHTTPTransport(retries=5)
@@ -292,19 +283,16 @@ class SecUserIdFetcher:
                     if cls._TIKTOK_NOTFOUND_PARREN.search(str(response.url)):
                         raise APINotFoundError(
                             _(
-                                "页面不可用，可能是由于区域限制（代理）造成的。类名: {0}".format(
-                                    cls.__name__
-                                )
-                            )
+                                "页面不可用，可能是由于区域限制（代理）造成的。类名: {0}"
+                            ).format(cls.__name__)
                         )
+
                     match = cls._TIKTOK_SECUID_PARREN.search(str(response.text))
                     if not match:
                         raise APIResponseError(
                             _(
-                                "未在响应中找到 {0}，检查链接是否为用户主页。类名: {1}".format(
-                                    "sec_uid", cls.__name__
-                                )
-                            )
+                                "未在响应中找到 {0}，检查链接是否为用户主页。类名: {1}"
+                            ).format("sec_uid", cls.__name__)
                         )
 
                     # 提取SIGI_STATE对象中的sec_uid
@@ -316,7 +304,7 @@ class SecUserIdFetcher:
 
                     if sec_uid is None:
                         raise RuntimeError(
-                            _("获取 {0} 失败，{1}".format(sec_uid, user_info))
+                            _("获取 {0} 失败，{1}").format(sec_uid, user_info)
                         )
 
                     return sec_uid
@@ -352,7 +340,7 @@ class SecUserIdFetcher:
         if urls == []:
             raise (
                 APINotFoundError(
-                    _("输入的URL List不合法。类名：{0}".format(cls.__name__))
+                    _("输入的URL List不合法。类名：{0}").format(cls.__name__)
                 )
             )
 
@@ -378,7 +366,7 @@ class SecUserIdFetcher:
 
         if url is None:
             raise (
-                APINotFoundError(_("输入的URL不合法。类名：{0}".format(cls.__name__)))
+                APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
             )
 
         transport = httpx.AsyncHTTPTransport(retries=5)
@@ -392,22 +380,21 @@ class SecUserIdFetcher:
                     if cls._TIKTOK_NOTFOUND_PARREN.search(str(response.url)):
                         raise APINotFoundError(
                             _(
-                                "页面不可用，可能是由于区域限制（代理）造成的。类名: {0}".format(
-                                    cls.__name__
-                                )
-                            )
+                                "页面不可用，可能是由于区域限制（代理）造成的。类名: {0}"
+                            ).format(cls.__name__)
                         )
+
                     match = cls._TIKTOK_UNIQUEID_PARREN.search(str(response.url))
                     if not match:
                         raise APIResponseError(
-                            _("未在响应中找到 {0}".format("unique_id"))
+                            _("未在响应中找到 {0}").format("unique_id")
                         )
 
                     unique_id = match.group(1)
 
                     if unique_id is None:
                         raise RuntimeError(
-                            _("获取 {0} 失败，{1}".format("unique_id", response.url))
+                            _("获取 {0} 失败，{1}").format("unique_id", response.url)
                         )
 
                     return unique_id
@@ -444,7 +431,7 @@ class SecUserIdFetcher:
         if urls == []:
             raise (
                 APINotFoundError(
-                    _("输入的URL List不合法。类名：{0}".format(cls.__name__))
+                    _("输入的URL List不合法。类名：{0}").format(cls.__name__)
                 )
             )
 
@@ -479,7 +466,7 @@ class AwemeIdFetcher:
 
         if url is None:
             raise (
-                APINotFoundError(_("输入的URL不合法。类名：{0}".format(cls.__name__)))
+                APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
             )
 
         transport = httpx.AsyncHTTPTransport(retries=5)
@@ -493,22 +480,21 @@ class AwemeIdFetcher:
                     if cls._TIKTOK_NOTFOUND_PARREN.search(str(response.url)):
                         raise APINotFoundError(
                             _(
-                                "页面不可用，可能是由于区域限制（代理）造成的。类名: {0}".format(
-                                    cls.__name__
-                                )
-                            )
+                                "页面不可用，可能是由于区域限制（代理）造成的。类名: {0}"
+                            ).format(cls.__name__)
                         )
+
                     match = cls._TIKTOK_AWEMEID_PARREN.search(str(response.url))
                     if not match:
                         raise APIResponseError(
-                            _("未在响应中找到 {0}".format("aweme_id"))
+                            _("未在响应中找到 {0}").format("aweme_id")
                         )
 
                     aweme_id = match.group(1)
 
                     if aweme_id is None:
                         raise RuntimeError(
-                            _("获取 {0} 失败，{1}".format("aweme_id", response.url))
+                            _("获取 {0} 失败，{1}").format("aweme_id", response.url)
                         )
 
                     return aweme_id
@@ -546,7 +532,7 @@ class AwemeIdFetcher:
         if urls == []:
             raise (
                 APINotFoundError(
-                    _("输入的URL List不合法。类名：{0}".format(cls.__name__))
+                    _("输入的URL List不合法。类名：{0}").format(cls.__name__)
                 )
             )
 
@@ -605,7 +591,7 @@ def format_file_name(
     try:
         return naming_template.format(**fields)
     except KeyError as e:
-        raise KeyError(_("文件名模板字段 {0} 不存在，请检查".format(e)))
+        raise KeyError(_("文件名模板字段 {0} 不存在，请检查").format(e))
 
 
 def create_user_folder(kwargs: dict, nickname: Union[str, int]) -> Path:
