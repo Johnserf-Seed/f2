@@ -21,3 +21,14 @@ BROWSER_LIST = [
     "vivaldi",
     "librewolf",
 ]
+
+DOUYIN_MODE_LIST = [
+    "one",
+    "post",
+    "like",
+    "collection",
+    "collects",
+    "music",
+    "mix",
+    "live",
+]

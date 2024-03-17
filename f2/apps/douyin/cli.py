@@ -231,9 +231,7 @@ def handler_sso_login(
 @click.option(
     "--mode",
     "-M",
-    type=click.Choice(
-        ["one", "post", "like", "collection", "collects", "music", "mix", "live"]
-    ),
+    type=click.Choice(f2.DOUYIN_MODE_LIST),
     # default="post",
     # required=True,
     help=_(
