@@ -193,7 +193,7 @@ def handler_naming(
 @click.option(
     "--mode",
     "-M",
-    type=click.Choice(["one", "post", "like", "collect", "mix"]),
+    type=click.Choice(f2.TIKTOK_MODE_LIST),
     # default="post",
     # required=True,
     help=_(
