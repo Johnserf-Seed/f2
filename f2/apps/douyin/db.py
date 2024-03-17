@@ -77,7 +77,7 @@ class AsyncUserDB(BaseDB):
         # VALUES (?, {placeholders})', (kwargs.get('sec_user_id'), *values))
         await self.commit()
 
-    async def update_user_info(self, sec_user_id, **kwargs) -> None:
+    async def update_user_info(self, sec_user_id: str, **kwargs) -> None:
         """
         更新用户信息
 
