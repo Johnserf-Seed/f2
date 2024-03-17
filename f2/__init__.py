@@ -32,3 +32,5 @@ DOUYIN_MODE_LIST = [
     "mix",
     "live",
 ]
+
+TIKTOK_MODE_LIST = ["one", "post", "like", "collect", "mix"]
