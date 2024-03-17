@@ -179,7 +179,7 @@ class DouyinHandler:
         async with AsyncVideoDB("douyin_videos.db") as db:
             await self.get_or_add_video_data(aweme_data, db, self.ignore_fields)
 
-        logger.debug(_("单个视频数据: {0}".format(aweme_data)))
+        logger.debug(_("单个视频数据：{0}").format(aweme_data))
         await self.downloader.create_download_tasks(self.kwargs, aweme_data, user_path)
 
     async def fetch_one_video(self, aweme_id: str) -> dict:
@@ -193,14 +193,14 @@ class DouyinHandler:
             video_data: dict: 视频数据字典，包含视频ID、视频文案、作者昵称
         """
 
-        logger.debug(_("开始爬取视频: {0}").format(aweme_id))
+        logger.debug(_("开始爬取视频：{0}").format(aweme_id))
         async with DouyinCrawler(self.kwargs) as crawler:
             params = PostDetail(aweme_id=aweme_id)
             response = await crawler.fetch_post_detail(params)
             video = PostDetailFilter(response)
 
         logger.debug(
-            _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
+            _("视频ID：{0} 视频文案：{1} 作者：{2}").format(
                 video.aweme_id, video.desc, video.nickname
             )
         )
@@ -261,14 +261,14 @@ class DouyinHandler:
         max_counts = max_counts or float("inf")
         videos_collected = 0
 
-        logger.debug(_("开始爬取用户: {0} 发布的视频").format(sec_user_id))
+        logger.debug(_("开始爬取用户：{0} 发布的视频").format(sec_user_id))
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
             logger.debug("===================================")
             logger.debug(
-                _("最大数量: {0} 每次请求数量: {1}").format(
+                _("最大数量：{0} 每次请求数量：{1}").format(
                     max_counts, current_request_size
                 )
             )
@@ -284,17 +284,17 @@ class DouyinHandler:
                 video = UserPostFilter(response)
 
             if not video.has_aweme:
-                logger.debug(_("{0} 页没有找到作品".format(max_cursor)))
+                logger.debug(_("{0} 页没有找到作品").format(max_cursor))
                 if not video.has_more:
-                    logger.debug(_("用户: {0} 所有作品采集完毕".format(sec_user_id)))
+                    logger.debug(_("用户: {0} 所有作品采集完毕").format(sec_user_id))
                     break
 
                 max_cursor = video.max_cursor
                 continue
 
-            logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
+            logger.debug(_("当前请求的max_cursor：{0}").format(max_cursor))
             logger.debug(
-                _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
+                _("视频ID：{0} 视频文案：{1} 作者：{2}").format(
                     video.aweme_id, video.desc, video.nickname
                 )
             )
@@ -366,14 +366,14 @@ class DouyinHandler:
         max_counts = max_counts or float("inf")
         videos_collected = 0
 
-        logger.debug(_("开始爬取用户: {0} 喜欢的视频").format(sec_user_id))
+        logger.debug(_("开始爬取用户：{0} 喜欢的视频").format(sec_user_id))
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
             logger.debug("===================================")
             logger.debug(
-                _("最大数量: {0} 每次请求数量: {1}").format(
+                _("最大数量：{0} 每次请求数量：{1}").format(
                     max_counts, current_request_size
                 )
             )
@@ -389,17 +389,17 @@ class DouyinHandler:
                 video = UserPostFilter(response)
 
             if not video.has_aweme:
-                logger.debug(_("{0} 页没有找到作品".format(max_cursor)))
+                logger.debug(_("{0} 页没有找到作品").format(max_cursor))
                 if not video.has_more:
-                    logger.debug(_("用户: {0} 所有作品采集完毕".format(sec_user_id)))
+                    logger.debug(_("用户：{0} 所有作品采集完毕").format(sec_user_id))
                     break
 
                 max_cursor = video.max_cursor
                 continue
 
-            logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
+            logger.debug(_("当前请求的max_cursor：{0}").format(max_cursor))
             logger.debug(
-                _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
+                _("视频ID：{0} 视频文案：{1} 作者：{2}").format(
                     video.aweme_id, video.desc, video.nickname
                 )
             )
@@ -469,7 +469,7 @@ class DouyinHandler:
 
             logger.debug("===================================")
             logger.debug(
-                _("最大数量: {0} 每次请求数量: {1}").format(
+                _("最大数量：{0} 每次请求数量：{1}").format(
                     max_counts, current_request_size
                 )
             )
@@ -482,9 +482,9 @@ class DouyinHandler:
                 response = await crawler.fetch_user_music_collection(params)
                 music = UserMusicCollectionFilter(response)
 
-                logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
+                logger.debug(_("当前请求的max_cursor：{0}").format(max_cursor))
                 logger.debug(
-                    _("音乐ID: {0} 音乐标题: {1} 作者: {2}").format(
+                    _("音乐ID：{0} 音乐标题：{1} 作者：{2}").format(
                         music.music_id, music.title, music.author
                     )
                 )
@@ -659,13 +659,11 @@ class DouyinHandler:
         rich_console.print(_("0: [bold]全部下载[/bold]"))
         for i in range(len(collects.collects_id)):
             rich_console.print(
-                _(
-                    "{0}: {1} (包含 {2} 个作品，收藏夹ID {3})".format(
-                        i + 1,
-                        collects.collects_name[i],
-                        collects.total_number[i],
-                        collects.collects_id[i],
-                    )
+                _("{0}: {1} (包含 {2} 个作品，收藏夹ID {3})").format(
+                    i + 1,
+                    collects.collects_name[i],
+                    collects.total_number[i],
+                    collects.collects_id[i],
                 )
             )
 
@@ -809,7 +807,7 @@ class DouyinHandler:
                     videos_collected += len(aweme_data_list)
                     max_cursor = video.max_cursor
             else:
-                logger.debug(_("{0} 页没有找到作品".format(max_cursor)))
+                logger.debug(_("{0} 页没有找到作品").format(max_cursor))
                 if not video.has_more:
                     logger.debug(_("收藏夹: {0} 所有作品采集完毕").format(collects_id))
                     break
@@ -1091,9 +1089,9 @@ class DouyinHandler:
                 video = UserPostFilter(response)
 
             if not video.has_aweme:
-                logger.debug(_("{0} 页没有找到作品".format(max_cursor)))
+                logger.debug(_("{0} 页没有找到作品").format(max_cursor))
                 if not video.has_more:
-                    logger.debug(_("用户: {0} 所有作品采集完毕".format(sec_user_id)))
+                    logger.debug(_("用户: {0} 所有作品采集完毕").format(sec_user_id))
                     break
 
                 max_cursor = video.max_cursor

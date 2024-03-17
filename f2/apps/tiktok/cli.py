@@ -75,7 +75,7 @@ def handler_auto_cookie(
         logger.error(_("请关闭所有已打开的浏览器重试，并且你有适当的权限访问浏览器！"))
         ctx.abort()
     except Exception as e:
-        logger.error(_("自动获取Cookie失败：{0}".format(str(e))))
+        logger.error(_("自动获取Cookie失败：{0}").format(str(e)))
         ctx.abort()
 
 
@@ -131,10 +131,8 @@ def handler_naming(
 
     if invalid_patterns:
         raise click.BadParameter(
-            _(
-                "`{0}` 中的 `{1}` 不符合命名模式".format(
-                    value, "".join(invalid_patterns)
-                )
+            _("`{0}` 中的 `{1}` 不符合命名模式").format(
+                value, "".join(invalid_patterns)
             )
         )
 
@@ -300,9 +298,7 @@ def handler_naming(
     "--auto-cookie",
     type=click.Choice(f2.BROWSER_LIST),
     # default="none",
-    help=_(
-        "自动从浏览器获取cookie，使用该命令前请确保关闭所选的浏览器"
-    ),
+    help=_("自动从浏览器获取cookie，使用该命令前请确保关闭所选的浏览器"),
     callback=handler_auto_cookie,
 )
 @click.option(
@@ -390,11 +386,11 @@ def tiktok(
     # 从低频配置开始到高频配置再到cli参数，逐级覆盖，如果键值不存在使用父级的键值
     kwargs = merge_config(main_conf, custom_conf, **kwargs)
 
-    logger.info(_("主配置路径： {0}".format(main_conf_path)))
-    logger.info(_("自定义配置路径： {0}".format(Path.cwd() / config)))
-    logger.debug(_("主配置参数：{0}".format(main_conf)))
-    logger.debug(_("自定义配置参数：{0}".format(custom_conf)))
-    logger.debug(_("CLI参数：{0}".format(kwargs)))
+    logger.info(_("主配置路径： {0}").format(main_conf_path))
+    logger.info(_("自定义配置路径： {0}").format(Path.cwd() / config))
+    logger.debug(_("主配置参数：{0}").format(main_conf))
+    logger.debug(_("自定义配置参数：{0}").format(custom_conf))
+    logger.debug(_("CLI参数：{0}").format(kwargs))
 
     # 尝试从命令行参数或kwargs中获取URL
     if not kwargs.get("url"):

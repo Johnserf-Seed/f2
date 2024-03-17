@@ -17,7 +17,7 @@ class DouyinDownloader(BaseDownloader):
         if kwargs["cookie"] is None:
             raise ValueError(
                 _(
-                    "cookie不能为空。请提供有效的 cookie 参数，或自动从浏览器获取 `--auto-cookie edge`"
+                    "cookie不能为空。请提供有效的 cookie 参数，或自动从浏览器获取。如 `--auto-cookie edge`"
                 )
             )
 

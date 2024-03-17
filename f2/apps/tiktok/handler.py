@@ -206,13 +206,11 @@ class TiktokHandler:
 
         for i in range(len(playlists.mixId)):
             rich_console.print(
-                _(
-                    "{0}: {1} (包含 {2} 个作品，收藏夹ID {3})".format(
-                        i + 1,
-                        playlists.mixName[i],
-                        playlists.videoCount[i],
-                        playlists.mixId[i],
-                    )
+                _("{0}: {1} (包含 {2} 个作品，收藏夹ID {3})").format(
+                    i + 1,
+                    playlists.mixName[i],
+                    playlists.videoCount[i],
+                    playlists.mixId[i],
                 )
             )
 
@@ -252,7 +250,7 @@ class TiktokHandler:
         async with AsyncVideoDB("tiktok_videos.db") as vdb:
             await self.get_or_add_video_data(aweme_data, vdb)
 
-        logger.debug(_("单个视频数据：{0}".format(aweme_data)))
+        logger.debug(_("单个视频数据：{0}").format(aweme_data))
 
         # 创建下载任务
         await self.downloader.create_download_tasks(self.kwargs, aweme_data, user_path)
@@ -349,9 +347,9 @@ class TiktokHandler:
                 video = UserPostFilter(response)
 
             if not video.has_aweme:
-                logger.debug(_("{0} 页没有找到作品".format(cursor)))
+                logger.debug(_("{0} 页没有找到作品").format(cursor))
                 if not video.hasMore and str(video.api_status_code) == "0":
-                    logger.debug(_("用户：{0} 所有作品采集完毕".format(secUid)))
+                    logger.debug(_("用户：{0} 所有作品采集完毕").format(secUid))
                     break
                 else:
                     cursor = video.cursor
