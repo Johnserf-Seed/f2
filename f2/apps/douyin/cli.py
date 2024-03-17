@@ -338,7 +338,7 @@ def handler_sso_login(
     type=click.Choice(f2.BROWSER_LIST),
     # default="none",
     help=_(
-        "自动从浏览器获取cookie。可选项：chrome、firefox、edge、opera。使用该命令前请确保关闭所选的浏览器"
+        "自动从浏览器获取cookie，使用该命令前请确保关闭所选的浏览器"
     ),
     callback=handler_auto_cookie,
 )
@@ -357,7 +357,13 @@ def handler_sso_login(
     callback=handler_help,
 )
 @click.pass_context
-def douyin(ctx, config, init_config, update_config, **kwargs):
+def douyin(
+    ctx: click.Context,
+    config: str,
+    init_config: str,
+    update_config: bool,
+    **kwargs,
+):
     ##################
     # f2 存在2个主配置文件，分别是app低频配置(app.yaml)和f2低频配置(conf.yaml)
     # app低频配置存放app相关的参数

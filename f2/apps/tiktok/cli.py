@@ -162,35 +162,35 @@ def handler_naming(
     "-m",
     type=bool,
     # default="yes",
-    help=_("是否保存视频原声。可选：'yes'、'no'"),
+    help=_("是否保存视频原声"),
 )
 @click.option(
     "--cover",
     "-v",
     type=bool,
     # default="yes",
-    help=_("是否保存视频封面。可选：'yes'、'no'"),
+    help=_("是否保存视频封面"),
 )
 @click.option(
     "--desc",
     "-d",
     type=bool,
     # default="yes",
-    help=_("是否保存视频文案。可选：'yes'、'no'"),
+    help=_("是否保存视频文案"),
 )
 @click.option(
     "--path",
     "-p",
     type=str,
     # default="Download",
-    help=_("作品保存位置，支持绝对与相对路径。"),
+    help=_("作品保存位置，支持绝对与相对路径"),
 )
 @click.option(
     "--folderize",
     "-f",
     type=bool,
     # default="yes",
-    help=_("是否将作品保存到单独的文件夹。可选：'yes'、'no'"),
+    help=_("是否将作品保存到单独的文件夹"),
 )
 @click.option(
     "--mode",
@@ -301,7 +301,7 @@ def handler_naming(
     type=click.Choice(f2.BROWSER_LIST),
     # default="none",
     help=_(
-        "自动从浏览器获取cookie。可选项：chrome、firefox、edge、opera。使用该命令前请确保关闭所选的浏览器"
+        "自动从浏览器获取cookie，使用该命令前请确保关闭所选的浏览器"
     ),
     callback=handler_auto_cookie,
 )
@@ -310,11 +310,17 @@ def handler_naming(
     is_flag=True,
     is_eager=True,
     expose_value=False,
-    help="显示富文本帮助",
+    help=_("显示富文本帮助"),
     callback=handler_help,
 )
 @click.pass_context
-def tiktok(ctx, config, init_config, update_config, **kwargs):
+def tiktok(
+    ctx: click.Context,
+    config: str,
+    init_config: str,
+    update_config: bool,
+    **kwargs,
+) -> None:
     ##################
     # f2 存在2个主配置文件，分别是app低频配置(app.yaml)和f2低频配置(conf.yaml)
     # app低频配置存放app相关的参数
