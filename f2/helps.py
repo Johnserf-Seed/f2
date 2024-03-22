@@ -43,37 +43,24 @@ def main() -> None:
     console.print(f"[i]{f2.__description_en__}", justify="center")
     console.print(f"[i]GitHub {f2.__repourl__}\n", justify="center")
 
-    table = Table.grid(padding=1, pad_edge=True, expand=True)
-    table.add_column("Website", no_wrap=True, justify="left", style="bold")
-    table.add_column("Description", no_wrap=True, justify="left", style="bold")
-
-    # 分割
-    # console.rule("[b]已适配[/b]", align="center")
-    # table.add_row(
-    #     _("抖音"), _("  单个作品，主页作品，点赞作品，收藏作品，合辑作品，图文，原声。后续更新：推荐作品，朋友作品，好友作品，搜索作品")
-    # )
-    # table.add_row(
-    #     _("TikTok"), _("  单个作品，主页作品，点赞作品，收藏作品，播放列表（合辑）作品，原声。后续更新：推荐作品，朋友作品，好友作品，搜索作品")
-    # )
-    # # 待适配
-    # console.print(table)
-    # 分割
-    # console.rule()
-
     # 使用方法
     table = Table.grid(padding=1, pad_edge=True)
     table.add_column("Usage", no_wrap=True, justify="left", style="bold")
     table.add_row("[b]f2[/b] [magenta]<apps> [/magenta][cyan][COMMAND]")
-    table.add_row(_("例： f2 dy -h 来获取douyin的命令帮助"))
+    table.add_row(_("例：f2 dy -h/--help 获取douyin的命令帮助"))
+    table.add_row(
+        "[b]f2[/b] [magenta][Option] [/magenta][cyan][Args][/cyan] [magenta]<apps> [/magenta][cyan][COMMAND]"
+    )
+    table.add_row(_("例：f2 -d DEBUG dy 日志级别为调试运行"))
     console.print(
         Panel(table, border_style="bold", title="使用方法 | Usage", title_align="left")
     )
 
-    table = Table.grid(padding=1, pad_edge=True, expand=True)
+    # 应用列表
     table = Table(show_header=True, header_style="bold magenta")
-    table.add_column("Parameter", no_wrap=True, justify="left", style="bold")
-    table.add_column("Description", no_wrap=True, style="bold")
-    table.add_column("Status", no_wrap=True, justify="left", style="bold")
+    table.add_column(_("参数"), no_wrap=True, justify="left", style="bold")
+    table.add_column(_("描述"), no_wrap=True, style="bold")
+    table.add_column(_("状态"), no_wrap=True, justify="left", style="bold")
 
     table.add_row(_("weibo 或 wb"), _("- 获取微博"))
     table.add_row(
@@ -99,9 +86,9 @@ def main() -> None:
     table.add_row(_("little_red_book 或 lrb"), _("- 获取小红书的作品"))
     table.add_row("\n")
     table.add_row(
-        "f2 -d [magenta]<apps> [/magenta][cyan][COMMAND]",
+        "f2 -d DEBUG",
         _(
-            "- 记录app的debug到/logs下，如遇BUG提交Issue时请附带该文件并[red]删除个人敏感信息[/red]"
+            "- 记录app的调试日志到/logs下，如遇BUG提交Issue时请附带该文件并[red]删除个人敏感信息[/red]"
         ),
         _("⚠"),
     )
@@ -115,7 +102,7 @@ def main() -> None:
         Panel(
             table,
             border_style="bold",
-            title="<apps>",
+            title="应用 | apps",
             title_align="left",
             subtitle=_("欢迎提交PR适配更多网站"),
         )
