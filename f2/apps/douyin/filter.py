@@ -111,6 +111,9 @@ class UserProfileFilter(JSONModel):
     def user_age(self):
         return self._get_attr_value("$.user.user_age")
 
+    def _to_raw(self) -> dict:
+        return self._data
+
     def _to_dict(self) -> dict:
         return {
             prop_name: getattr(self, prop_name)
@@ -282,6 +285,9 @@ class UserPostFilter(JSONModel):
     def min_cursor(self):
         return self._get_attr_value("$.min_cursor")
 
+    def _to_raw(self) -> dict:
+        return self._data
+
     def _to_dict(self) -> dict:
         return {
             prop_name: getattr(self, prop_name)
@@ -437,6 +443,9 @@ class UserCollectsFilter(JSONModel):
     def uid(self):
         return self._get_list_attr_value("$.collects_list[*].user_info.uid")
 
+    def _to_raw(self) -> dict:
+        return self._data
+
     def _to_dict(self) -> dict:
         return {
             prop_name: getattr(self, prop_name)
@@ -542,6 +551,9 @@ class UserMusicCollectionFilter(JSONModel):
     @property
     def sec_uid(self):
         return self._get_list_attr_value("$.mc_list[*].sec_uid")
+
+    def _to_raw(self) -> dict:
+        return self._data
 
     def _to_dict(self) -> dict:
         return {
@@ -1121,6 +1133,9 @@ class PostDetailFilter(JSONModel):
     def images(self):
         return self._get_list_attr_value("$.aweme_detail.images[*].url_list[0]")
 
+    def _to_raw(self) -> dict:
+        return self._data
+
     def _to_dict(self) -> dict:
         return {
             prop_name: getattr(self, prop_name)
@@ -1261,6 +1276,9 @@ class UserLiveFilter(JSONModel):
     def ShareAuth(self):
         return self._get_attr_value("$.data.data[0].room_auth.Share")
 
+    def _to_raw(self) -> dict:
+        return self._data
+
     def _to_dict(self) -> dict:
         return {
             prop_name: getattr(self, prop_name)
@@ -1389,6 +1407,9 @@ class UserLive2Filter(JSONModel):
     def sec_uid(self):
         return self._get_attr_value("$.data.room.owner.sec_uid")
 
+    def _to_raw(self) -> dict:
+        return self._data
+
     def _to_dict(self) -> dict:
         return {
             prop_name: getattr(self, prop_name)
@@ -1454,6 +1475,9 @@ class GetQrcodeFilter(JSONModel):
     def message(self):
         return self._get_attr_value("$.message")
 
+    def _to_raw(self) -> dict:
+        return self._data
+
     def _to_dict(self) -> dict:
         return {
             prop_name: getattr(self, prop_name)
@@ -1490,6 +1514,9 @@ class CheckQrcodeFilter(JSONModel):
     @property
     def verify_ticket(self):
         return self._get_attr_value("$.verify_ticket")
+
+    def _to_raw(self) -> dict:
+        return self._data
 
     def _to_dict(self) -> dict:
         return {
