@@ -25,6 +25,7 @@ from f2.apps.douyin.model import (
     UserLive2,
     LoginGetQr,
     LoginCheckQr,
+    UserFollowing,
 )
 from f2.apps.douyin.filter import (
     UserPostFilter,
@@ -38,6 +39,7 @@ from f2.apps.douyin.filter import (
     UserLive2Filter,
     GetQrcodeFilter,
     CheckQrcodeFilter,
+    UserFollowingFilter,
 )
 from f2.apps.douyin.utils import (
     SecUserIdFetcher,
@@ -1113,6 +1115,96 @@ class DouyinHandler:
             max_cursor = video.max_cursor
 
         logger.debug(_("爬取结束，共爬取 {0} 个视频").format(videos_collected))
+
+    async def fetch_user_following(
+        self,
+        user_id: str = "",
+        sec_user_id: str = "",
+        offset: int = 0,
+        count: int = 20,
+        source_type: int = 4,
+        min_time: int = 0,
+        max_time: int = 0,
+        max_counts: float = float("inf"),
+    ) -> AsyncGenerator[UserFollowingFilter, Any]:
+        """
+        用于获取指定用户关注的用户的视频列表。
+
+        Args:
+            user_id: str: 用户ID
+            sec_user_id: str: 用户ID
+            offset: int: 起始页
+            count: int: 每页关注用户数
+            source_type: int: 排序类型
+            min_time: int: 最小时间戳
+            max_time: int: 最大时间戳
+        Return:
+            following_data: dict: 关注用户数据字典，包含用户ID列表、用户昵称、用户头像、起始页
+        """
+
+        if not user_id and not sec_user_id:
+            raise ValueError(_("至少提供 user_id 或 sec_user_id 中的一个参数"))
+
+        max_counts = max_counts or float("inf")
+        users_collected = 0
+
+        logger.info(_("开始爬取用户: {0} 的关注用户").format(sec_user_id))
+
+        while users_collected < max_counts:
+            current_request_size = min(count, max_counts - users_collected)
+
+            logger.debug("===================================")
+            logger.debug(
+                _("最大数量: {0} 每次请求数量: {1}").format(count, current_request_size)
+            )
+            logger.info(_("开始爬取第 {0} 个关注用户").format(offset))
+
+            async with DouyinCrawler(self.kwargs) as crawler:
+                params = UserFollowing(
+                    offset=offset,
+                    count=current_request_size,
+                    user_id=user_id,
+                    sec_user_id=sec_user_id,
+                    source_type=source_type,
+                    min_time=min_time,
+                    max_time=max_time,
+                )
+                response = await crawler.fetch_user_following(params)
+                following = UserFollowingFilter(response)
+
+            if following.status_code != 0:
+                logger.error(
+                    _("错误代码：{0} 错误消息：{1}").format(
+                        following.status_code, following.status_msg
+                    )
+                )
+                break
+
+            logger.info(_("当前请求的offset: {0}").format(offset))
+            logger.debug(
+                _("用户ID: {0} 用户昵称: {1} 用户作品数: {2}").format(
+                    following.sec_uid,
+                    following.nickname,
+                    following.aweme_count,
+                )
+            )
+            logger.debug("===================================")
+
+            yield following
+
+            if not following.has_more:
+                logger.info(_("用户: {0} 所有关注用户采集完毕").format(sec_user_id))
+                break
+
+            # 更新已经处理的用户数量 (Update the number of users processed)
+            users_collected += len(following.sec_uid)
+            offset = following.offset
+
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(_("爬取结束，共爬取 {0} 个用户").format(users_collected))
 
 
 async def handle_sso_login():
