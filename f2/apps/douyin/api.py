@@ -54,6 +54,9 @@ class DouyinAPIEndpoints:
     # 用户喜欢B (User Like B)
     USER_FAVORITE_B = f"{IESDOUYIN_DOMAIN}/web/api/v2/aweme/like/"
 
+    # 关注用户(User Following)
+    USER_FOLLOWING = f"{DOUYIN_DOMAIN}/aweme/v1/web/user/following/list/"
+
     # 合集作品
     MIX_AWEME = f"{DOUYIN_DOMAIN}/aweme/v1/web/mix/aweme/"
 
