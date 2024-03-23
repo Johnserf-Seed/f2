@@ -1148,14 +1148,14 @@ class DouyinHandler:
         max_counts = max_counts or float("inf")
         users_collected = 0
 
-        logger.info(_("开始爬取用户: {0} 的关注用户").format(sec_user_id))
+        logger.info(_("开始爬取用户：{0} 的关注用户").format(sec_user_id))
 
         while users_collected < max_counts:
             current_request_size = min(count, max_counts - users_collected)
 
             logger.debug("===================================")
             logger.debug(
-                _("最大数量: {0} 每次请求数量: {1}").format(count, current_request_size)
+                _("最大数量：{0} 每次请求数量：{1}").format(count, current_request_size)
             )
             logger.info(_("开始爬取第 {0} 个关注用户").format(offset))
 
@@ -1193,7 +1193,7 @@ class DouyinHandler:
             yield following
 
             if not following.has_more:
-                logger.info(_("用户: {0} 所有关注用户采集完毕").format(sec_user_id))
+                logger.info(_("用户：{0} 所有关注用户采集完毕").format(sec_user_id))
                 break
 
             # 更新已经处理的用户数量 (Update the number of users processed)
