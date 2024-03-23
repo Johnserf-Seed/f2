@@ -679,9 +679,20 @@ class UserFollowingFilter(JSONModel):
         return self._get_list_attr_value("$.followings[*].create_time")
 
     @property
-    def unwatched_aweme_count(self):
+    def secondary_priority(self):
+        # secondary_priority 6 代表未看过的作品数量 1 代表正在直播 7 代表简介内容
         return self._get_list_attr_value(
-            "$.followings[*].followings_secondary_information_struct.secondary_information_text"
+            "$.followings[*].following_list_secondary_information_struct.secondary_information_priority"
+        )
+
+    @property
+    def secondary_text(self):
+        return replaceT(
+            self._get_list_attr_value(
+                "$.followings[*].following_list_secondary_information_struct.secondary_information_text"
+            )
+        )
+
         )
 
     @property
