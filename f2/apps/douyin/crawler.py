@@ -23,6 +23,7 @@ from f2.apps.douyin.model import (
     LoginGetQr,
     LoginCheckQr,
     UserFollowing,
+    UserFollower,
 )
 from f2.apps.douyin.utils import XBogusManager
 
@@ -206,6 +207,13 @@ class DouyinCrawler(BaseCrawler):
             dyendpoint.USER_FOLLOWING, params.dict()
         )
         logger.debug(_("用户关注列表接口地址：{0}").format(endpoint))
+        return await self._fetch_get_json(endpoint)
+
+    async def fetch_user_follower(self, params: UserFollower):
+        endpoint = XBogusManager.model_2_endpoint(
+            dyendpoint.USER_FOLLOWER, params.dict()
+        )
+        logger.debug(_("用户粉丝列表接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def __aenter__(self):
