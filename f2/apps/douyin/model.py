@@ -237,3 +237,18 @@ class LoginCheckQr(BaseLoginModel):
     verifyFp: str = ""
     fp: str = ""
     # msToken: str = TokenManager.gen_real_msToken()
+
+
+class UserFollowing(BaseRequestModel):
+    user_id: str = ""
+    sec_user_id: str = ""
+    offset: int = 0  # 相当于cursor
+    min_time: int = 0
+    max_time: int = 0
+    count: int = 20
+    # source_type = 1: 最近关注 需要指定max_time(s) 3: 最早关注 需要指定min_time(s) 4: 综合排序
+    source_type: int = 4
+    gps_access: int = 0
+    address_book_access: int = 0
+    is_top: int = 1
+
