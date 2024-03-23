@@ -57,6 +57,9 @@ class DouyinAPIEndpoints:
     # 关注用户(User Following)
     USER_FOLLOWING = f"{DOUYIN_DOMAIN}/aweme/v1/web/user/following/list/"
 
+    # 粉丝用户 (User Follower)
+    USER_FOLLOWER = f"{DOUYIN_DOMAIN}/aweme/v1/web/user/follower/list/"
+
     # 合集作品
     MIX_AWEME = f"{DOUYIN_DOMAIN}/aweme/v1/web/mix/aweme/"
 
