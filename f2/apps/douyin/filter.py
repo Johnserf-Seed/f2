@@ -822,6 +822,168 @@ class UserFollowingFilter(JSONModel):
         return list_dicts
 
 
+class UserFollowerFilter(UserFollowingFilter):
+    def __init__(self, data):
+        super().__init__(data)
+
+    @property
+    def total(self):
+        return self._get_attr_value("$.total")
+
+    # followers
+    @property
+    def avatar_larger(self):
+        return self._get_list_attr_value("$.followers[*].avatar_larger.url_list[0]")
+
+    @property
+    def can_comment(self):
+        return self._get_list_attr_value("$.followers[*].aweme_control.can_comment")
+
+    @property
+    def can_forward(self):
+        return self._get_list_attr_value("$.followers[*].aweme_control.can_forward")
+
+    @property
+    def can_share(self):
+        return self._get_list_attr_value(
+            "$.followersfollowers[*].aweme_control.can_share"
+        )
+
+    @property
+    def can_show_comment(self):
+        return self._get_list_attr_value(
+            "$.followers[*].aweme_control.can_show_comment"
+        )
+
+    @property
+    def aweme_count(self):
+        return self._get_list_attr_value("$.followers[*].aweme_count")
+
+    @property
+    def back_cover(self):
+        return self._get_list_attr_value("$.followers[*].cover_url[0].url_list[0]")
+
+    @property
+    def register_time(self):
+        return self._get_list_attr_value("$.followers[*].create_time")
+
+    @property
+    def is_block(self):
+        return self._get_list_attr_value("$.followers[*].is_block")
+
+    @property
+    def is_blocked(self):
+        return self._get_list_attr_value("$.followers[*].is_blocked")
+
+    @property
+    def is_gov_media_vip(self):
+        return self._get_list_attr_value("$.followers[*].is_gov_media_vip")
+
+    @property
+    def is_mix_user(self):
+        return self._get_list_attr_value("$.followers[*].is_mix_user")
+
+    @property
+    def is_phone_binded(self):
+        return self._get_list_attr_value("$.followers[*].is_phone_binded")
+
+    @property
+    def is_star(self):
+        return self._get_list_attr_value("$.followers[*].is_star")
+
+    @property
+    def is_top(self):
+        # 超粉?
+        return self._get_list_attr_value("$.followers[*].is_top")
+
+    @property
+    def is_verified(self):
+        # 实名?
+        return self._get_list_attr_value("$.followers[*].is_verified")
+
+    @property
+    def language(self):
+        return self._get_list_attr_value("$.followers[*].language")
+
+    @property
+    def nickname(self):
+        return replaceT(self._get_list_attr_value("$.followers[*].nickname"))
+
+    @property
+    def relation_label(self):
+        return self._get_list_attr_value("$.followers[*].relation_label")
+
+    @property
+    def room_id(self):
+        return self._get_list_attr_value("$.followers[*].room_id")
+
+    @property
+    def sec_uid(self):
+        return self._get_list_attr_value("$.followers[*].sec_uid")
+
+    @property
+    def secret(self):
+        # 私密?
+        return self._get_list_attr_value("$.followers[*].secret")
+
+    @property
+    def short_id(self):
+        return self._get_list_attr_value("$.followers[*].short_id")
+
+    @property
+    def signature(self):
+        return replaceT(self._get_list_attr_value("$.followers[*].signature"))
+
+    @property
+    def uid(self):
+        return self._get_list_attr_value("$.followers[*].uid")
+
+    @property
+    def unique_id(self):
+        return self._get_list_attr_value("$.followers[*].unique_id")
+
+    def _to_list(self):
+        exclude_list = [
+            "status_code",
+            "status_msg",
+            "has_more",
+            "total",
+            "mix_count",
+            "offset",
+            "myself_user_id",
+            "max_time",
+            "min_time",
+        ]
+
+        keys = [
+            prop_name
+            for prop_name in dir(self)
+            if not prop_name.startswith("__")
+            and not prop_name.startswith("_")
+            and prop_name not in exclude_list
+        ]
+
+        following_entries = self._get_attr_value("$.followers") or []
+
+        list_dicts = []
+        for entry in following_entries:
+            d = {
+                "has_more": self.has_more,
+                "total": self.total,
+                "mix_count": self.mix_count,
+                "offset": self.offset,
+                "myself_user_id": self.myself_user_id,
+                "max_time": self.max_time,
+                "min_time": self.min_time,
+            }
+            for key in keys:
+                attr_values = getattr(self, key)
+                index = following_entries.index(entry)
+                d[key] = attr_values[index] if index < len(attr_values) else None
+            list_dicts.append(d)
+        return list_dicts
+
+
 class PostDetailFilter(JSONModel):
 
     @property
