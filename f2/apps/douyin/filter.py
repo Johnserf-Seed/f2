@@ -620,7 +620,7 @@ class UserFollowingFilter(JSONModel):
         return self._get_attr_value("$.has_more")
 
     @property
-    def total_following(self):
+    def total(self):
         return self._get_attr_value("$.total")
 
     @property
@@ -785,7 +785,7 @@ class UserFollowingFilter(JSONModel):
             "status_code",
             "status_msg",
             "has_more",
-            "total_following",
+            "total",
             "mix_count",
             "offset",
             "myself_user_id",
@@ -807,7 +807,7 @@ class UserFollowingFilter(JSONModel):
         for entry in following_entries:
             d = {
                 "has_more": self.has_more,
-                "total_following": self.total_following,
+                "total": self.total,
                 "mix_count": self.mix_count,
                 "offset": self.offset,
                 "myself_user_id": self.myself_user_id,
