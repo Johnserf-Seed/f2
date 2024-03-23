@@ -1157,7 +1157,6 @@ class DouyinHandler:
             logger.debug(
                 _("最大数量：{0} 每次请求数量：{1}").format(count, current_request_size)
             )
-            logger.info(_("开始爬取第 {0} 个关注用户").format(offset))
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserFollowing(
@@ -1180,12 +1179,14 @@ class DouyinHandler:
                 )
                 break
 
-            logger.info(_("当前请求的offset: {0}").format(offset))
+            logger.info(_("当前请求的offset：{0}").format(offset))
+            logger.info(_("爬取了 {0} 个关注用户").format(offset + 1))
             logger.debug(
-                _("用户ID: {0} 用户昵称: {1} 用户作品数: {2}").format(
+                _("用户ID：{0} 用户昵称：{1} 用户作品数：{2} 额外内容：{3}").format(
                     following.sec_uid,
                     following.nickname,
                     following.aweme_count,
+                    following.secondary_text,
                 )
             )
             logger.debug("===================================")
