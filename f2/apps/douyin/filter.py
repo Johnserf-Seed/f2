@@ -782,6 +782,8 @@ class UserFollowingFilter(JSONModel):
 
     def _to_list(self):
         exclude_list = [
+            "status_code",
+            "status_msg",
             "has_more",
             "total_following",
             "mix_count",
