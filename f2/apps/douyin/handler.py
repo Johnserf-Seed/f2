@@ -26,6 +26,7 @@ from f2.apps.douyin.model import (
     LoginGetQr,
     LoginCheckQr,
     UserFollowing,
+    UserFollower,
 )
 from f2.apps.douyin.filter import (
     UserPostFilter,
@@ -40,6 +41,7 @@ from f2.apps.douyin.filter import (
     GetQrcodeFilter,
     CheckQrcodeFilter,
     UserFollowingFilter,
+    UserFollowerFilter,
 )
 from f2.apps.douyin.utils import (
     SecUserIdFetcher,
