@@ -1165,7 +1165,7 @@ class PostDetailFilter(JSONModel):
         return replaceT(self._get_attr_value("$.aweme_detail.mix_info.mix_desc"))
 
     @property
-    def mix_dec_raw(self):
+    def mix_desc_raw(self):
         return self._get_attr_value("$.aweme_detail.mix_info.mix_desc")
 
     @property
