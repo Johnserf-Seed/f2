@@ -7,7 +7,7 @@ import aiofiles
 import traceback
 from pathlib import Path
 from rich.progress import TaskID
-from typing import Union, Optional, Any
+from typing import Union, Optional, Any, List
 
 from f2.log.logger import logger
 from f2.i18n.translator import _
@@ -81,15 +81,23 @@ class BaseDownloader(BaseCrawler):
             logger.error(_("文件区块下载失败：{0}").format(e))
 
     async def download_file(
-        self, task_id: TaskID, url: str, full_path: Union[str, Path]
+        self,
+        task_id: TaskID,
+        urls: Union[str, List[str]],
+        full_path: Union[str, Path],
     ) -> None:
         """
         下载文件 (Download file)
 
         Args:
             task_id (TaskID): 任务ID (Task ID)
-            url (str): 文件URL (File URL)
+            urls (Union[str, List[str]]): 文件URL (File URL)
             full_path (Union[str, Path]): 保存路径 (Save path)
+
+        Note:
+            url仅代表一个文件的链接，当url为列表时，表示该文件的多个链接
+            (url represents only a link to a file, when url is a list,
+                it represents multiple links to the file)
         """
         async with self.semaphore:
             # 确保目标路径存在 (Ensure target path exists)
@@ -180,7 +188,10 @@ class BaseDownloader(BaseCrawler):
             logger.debug(_("下载完成, 文件已保存为 {0}".format(full_path)))
 
     async def save_file(
-        self, task_id: TaskID, content: Any, full_path: Union[str, Path]
+        self,
+        task_id: TaskID,
+        content: Any,
+        full_path: Union[str, Path],
     ):
         """
         保存文件 (Save file)
@@ -212,7 +223,10 @@ class BaseDownloader(BaseCrawler):
         logger.debug(_("下载完成, 文件已保存为 {0}").format(full_path))
 
     async def download_m3u8_stream(
-        self, task_id: TaskID, url: str, full_path: Union[str, Path]
+        self,
+        task_id: TaskID,
+        url: str,
+        full_path: Union[str, Path],
     ) -> None:
         """
         下载m3u8流视频 (Download m3u8 stream video)
@@ -327,7 +341,7 @@ class BaseDownloader(BaseCrawler):
     async def initiate_download(
         self,
         file_type: str,
-        file_url: str,
+        file_url: Union[str, List[str]],
         base_path: Union[str, Path],
         file_name: str,
         file_suffix: Optional[str],
@@ -339,10 +353,15 @@ class BaseDownloader(BaseCrawler):
 
         Args:
             file_type (str): 文件类型描述 (File type description)
-            file_url (str): 文件URL (File URL)
+            file_url (Union[str, List[str]]): 文件URL (File URL)
             file_name (str): 文件名称 (File name)
             base_path (Union[str, Path]): 基础路径 (Base path)
             file_suffix (Optional[str]): 文件后缀 (File suffix)
+
+        Note:
+            file_url仅代表一个文件的链接，当file_url为列表时，表示该文件的多个链接
+            (file_url represents only a link to a file, when file_url is a list,
+                it represents multiple links to the file)
         """
 
         # 文件路径
