@@ -46,6 +46,10 @@ class UserProfileFilter(JSONModel):
         return replaceT(self._get_attr_value("$.userInfo.user.nickname"))
 
     @property
+    def nickname_raw(self):
+        return self._get_attr_value("$.userInfo.user.nickname")
+
+    @property
     def secUid(self):
         return self._get_attr_value("$.userInfo.user.secUid")
 
@@ -80,6 +84,10 @@ class UserProfileFilter(JSONModel):
     @property
     def signature(self):
         return replaceT(self._get_attr_value("$.userInfo.user.signature"))
+
+    @property
+    def signature_raw(self):
+        return self._get_attr_value("$.userInfo.user.signature")
 
     @property
     def ttSeller(self) -> bool:
@@ -133,6 +141,10 @@ class UserPostFilter(JSONModel):
         return replaceT(self._get_list_attr_value("$.itemList[*].desc"))
 
     @property
+    def desc_raw(self):
+        return self._get_list_attr_value("$.itemList[*].desc")
+
+    @property
     def textExtra(self):
         return self._get_list_attr_value("$.itemList[*].textExtra")
 
@@ -141,6 +153,10 @@ class UserPostFilter(JSONModel):
     @property
     def nickname(self):
         return replaceT(self._get_list_attr_value("$.itemList[*].author.nickname"))
+
+    @property
+    def nickname_raw(self):
+        return self._get_list_attr_value("$.itemList[*].author.nickname")
 
     @property
     def uid(self):
@@ -222,6 +238,10 @@ class UserPostFilter(JSONModel):
         return replaceT(self._get_list_attr_value("$.itemList[*].music.authorName"))
 
     @property
+    def music_authorName_raw(self):
+        return self._get_list_attr_value("$.itemList[*].music.authorName")
+
+    @property
     def music_coverLarge(self):
         return self._get_list_attr_value("$.itemList[*].music.coverLarge")
 
@@ -244,6 +264,10 @@ class UserPostFilter(JSONModel):
     @property
     def music_title(self):
         return replaceT(self._get_list_attr_value("$.itemList[*].music.title"))
+
+    @property
+    def music_title_raw(self):
+        return self._get_list_attr_value("$.itemList[*].music.title")
 
     # video
     @property
@@ -418,6 +442,10 @@ class PostDetailFilter(JSONModel):
         return replaceT(self._get_attr_value("$.itemInfo.itemStruct.author.nickname"))
 
     @property
+    def nickname_raw(self):
+        return self._get_attr_value("$.itemInfo.itemStruct.author.nickname")
+
+    @property
     def secUid(self):
         return self._get_attr_value("$.itemInfo.itemStruct.author.secUid")
 
@@ -428,6 +456,10 @@ class PostDetailFilter(JSONModel):
     @property
     def signature(self):
         return replaceT(self._get_attr_value("$.itemInfo.itemStruct.author.signature"))
+
+    @property
+    def signature_raw(self):
+        return self._get_attr_value("$.itemInfo.itemStruct.author.signature")
 
     @property
     def openFavorite(self):
@@ -460,6 +492,10 @@ class PostDetailFilter(JSONModel):
     @property
     def desc(self):
         return replaceT(self._get_attr_value("$.itemInfo.itemStruct.desc"))
+
+    @property
+    def desc_raw(self):
+        return self._get_attr_value("$.itemInfo.itemStruct.desc")
 
     @property
     def textExtra(self):
@@ -532,6 +568,10 @@ class PostDetailFilter(JSONModel):
         return replaceT(self._get_attr_value("$.itemInfo.itemStruct.music.authorName"))
 
     @property
+    def music_authorName_raw(self):
+        return self._get_attr_value("$.itemInfo.itemStruct.music.authorName")
+
+    @property
     def music_coverLarge(self):
         return self._get_attr_value("$.itemInfo.itemStruct.music.coverLarge")
 
@@ -554,6 +594,10 @@ class PostDetailFilter(JSONModel):
     @property
     def music_title(self):
         return replaceT(self._get_attr_value("$.itemInfo.itemStruct.music.title"))
+
+    @property
+    def music_title_raw(self):
+        return self._get_attr_value("$.itemInfo.itemStruct.music.title")
 
     # video
     @property
