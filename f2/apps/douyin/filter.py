@@ -154,9 +154,9 @@ class UserPostFilter(JSONModel):
     def create_time(self):
         create_times = self._get_list_attr_value("$.aweme_list[*].create_time")
         return (
-            [timestamp_2_str(ct) for ct in create_times]
+            [timestamp_2_str(str(ct)) for ct in create_times]
             if isinstance(create_times, list)
-            else timestamp_2_str(create_times)
+            else timestamp_2_str(str(create_times))
         )
 
     @property
@@ -402,9 +402,9 @@ class UserCollectsFilter(JSONModel):
     def create_time(self):
         create_times = self._get_list_attr_value("$.collects_list[*].create_time")
         return (
-            [timestamp_2_str(ct) for ct in create_times]
+            [timestamp_2_str(str(ct)) for ct in create_times]
             if isinstance(create_times, list)
-            else timestamp_2_str(create_times)
+            else timestamp_2_str(str(create_times))
         )
 
     @property
@@ -427,9 +427,9 @@ class UserCollectsFilter(JSONModel):
     def last_collect_time(self):
         create_times = self._get_list_attr_value("$.collects_list[*].last_collect_time")
         return (
-            [timestamp_2_str(ct) for ct in create_times]
+            [timestamp_2_str(str(ct)) for ct in create_times]
             if isinstance(create_times, list)
-            else timestamp_2_str(create_times)
+            else timestamp_2_str(str(create_times))
         )
 
     @property
@@ -1625,11 +1625,11 @@ class UserLive2Filter(JSONModel):
 
     @property
     def create_time(self):
-        return timestamp_2_str(self._get_attr_value("$.data.room.create_time"))
+        return timestamp_2_str(str(self._get_attr_value("$.data.room.create_time")))
 
     @property
     def finish_time(self):
-        return timestamp_2_str(self._get_attr_value("$.data.room.finish_time"))
+        return timestamp_2_str(str(self._get_attr_value("$.data.room.finish_time")))
 
     @property
     def cover(self):
