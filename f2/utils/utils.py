@@ -78,6 +78,10 @@ def timestamp_2_str(
     if timestamp is None or timestamp == "None":
         return ""
 
+    if isinstance(timestamp, str):
+        if len(timestamp) == 30:
+            return datetime.datetime.strptime(timestamp, "%a %b %d %H:%M:%S %z %Y")
+
     return datetime.datetime.fromtimestamp(float(timestamp)).strftime(format)
 
 
