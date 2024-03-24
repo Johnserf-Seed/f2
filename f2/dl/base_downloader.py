@@ -100,77 +100,92 @@ class BaseDownloader(BaseCrawler):
                 it represents multiple links to the file)
         """
         async with self.semaphore:
+            # 如果urls是单个链接，则转换为列表以便统一处理
+            if isinstance(urls, str):
+                urls = [urls]
+
             # 确保目标路径存在 (Ensure target path exists)
             full_path = self._ensure_path(full_path)
-            # 获取文件内容大小 (Get the size of the file content)
-            content_length = await get_content_length(url, self.headers, self.proxies)
 
-            logger.debug(
-                _("{0}在服务器上的总内容长度为：{1} 字节".format(url, content_length))
-            )
-
-            # 如果文件内容大小为0, 则不下载 (If file content size is 0, skip download)
-            if content_length == 0:
-                logger.warning(_("内容长度为0，跳过下载"))
-                await self.progress.update(
-                    task_id,
-                    description=_("[  丢失  ]:"),
-                    filename=trim_filename(full_path.name, 45),
-                    state="completed",
+            # 遍历所有链接 (Iterate over all links)
+            for link in urls:
+                # 获取文件内容大小 (Get the size of the file content)
+                content_length = await get_content_length(
+                    link, self.headers, self.proxies
                 )
-                return
 
-            # 确保目标路径存在 (Ensure target path exists)
-            full_path.parent.mkdir(parents=True, exist_ok=True)
-            # 寻找未下载完的临时文件 (Find unfinished temporary files)
-            tmp_path = full_path.with_suffix(".tmp")
-            # 获取临时文件的大小 (Get the size of the temporary file)
-            start_byte = 0 if not tmp_path.exists() else tmp_path.stat().st_size
+                logger.debug(
+                    _("{0} 在服务器上的总内容长度为：{1} 字节").format(
+                        link, content_length
+                    )
+                )
 
-            logger.debug(
-                _(
-                    "找到了未下载完的文件 {0}, 大小为 {1} 字节".format(
+                # 如果文件内容大小为0, 则尝试下一个链接 (If file content size is 0, try the next link)
+                if content_length == 0:
+                    logger.warning(
+                        _("链接 {0} 内容长度为0，尝试下一个链接是否可用").format(link)
+                    )
+                    continue
+
+                # 确保目标路径存在 (Ensure target path exists)
+                full_path.parent.mkdir(parents=True, exist_ok=True)
+                # 寻找未下载完的临时文件 (Find unfinished temporary files)
+                tmp_path = full_path.with_suffix(".tmp")
+                # 获取临时文件的大小 (Get the size of the temporary file)
+                start_byte = 0 if not tmp_path.exists() else tmp_path.stat().st_size
+
                 logger.debug(
                     _("找到了未下载完的文件 {0}, 大小为 {1} 字节").format(
                         tmp_path, start_byte
                     )
                 )
 
-            if start_byte in [0, content_length]:
-                if start_byte:
-                    tmp_path.rename(full_path)
-                    logger.debug(_("临时文件已完全下载"))
-                    return
+                if start_byte in [0, content_length]:
+                    if start_byte:
+                        tmp_path.rename(full_path)
+                        logger.debug(_("临时文件已完全下载"))
+                        return
 
-            # 构建range请求头 (Build range request header)
-            range_headers = (
-                {"Range": "bytes={}-".format(start_byte)} if start_byte else {}
-            )
-            range_headers.update(self.headers)
-            range_request = self.aclient.build_request(
-                "GET", url, headers=range_headers
-            )
-            async with aiofiles.open(tmp_path, "ab" if start_byte else "wb") as file:
-                await self._download_chunks(
-                    self.aclient, range_request, file, content_length, task_id
+                # 构建range请求头 (Build range request header)
+                range_headers = (
+                    {"Range": "bytes={}-".format(start_byte)} if start_byte else {}
                 )
+                range_headers.update(self.headers)
+                range_request = self.aclient.build_request(
+                    "GET", link, headers=range_headers
+                )
+                async with aiofiles.open(
+                    tmp_path, "ab" if start_byte else "wb"
+                ) as file:
+                    await self._download_chunks(
+                        self.aclient, range_request, file, content_length, task_id
+                    )
 
-            # 下载完成后重命名文件 (Rename file after download is complete)
-            try:
-                tmp_path.rename(full_path)
-            except FileExistsError:
-                logger.warning(_("{0} 已存在，将覆盖".format(full_path)))
-                tmp_path.replace(full_path)
-            except PermissionError:
-                logger.error(
-                    _("另一个程序正在使用此文件或受异步调度影响，该任务需要重新下载")
-                )
-                # 尝试删除临时文件 (Try to delete the temporary file)
+                # 下载完成后重命名文件 (Rename file after download is complete)
                 try:
-                    tmp_path.unlink()
                     tmp_path.rename(full_path)
-                except Exception as e:
-                    logger.error(_("尝试删除临时文件失败: {0}".format(e)))
+                except FileExistsError:
+                    logger.warning(_("{0} 已存在，将覆盖").format(full_path))
+                    tmp_path.replace(full_path)
+                except PermissionError:
+                    logger.error(
+                        _(
+                            "另一个程序正在使用此文件或受异步调度影响，该任务需要重新下载"
+                        )
+                    )
+                    # 尝试删除临时文件 (Try to delete the temporary file)
+                    try:
+                        tmp_path.unlink()
+                        tmp_path.rename(full_path)
+                    except Exception as e:
+                        logger.error(_("尝试删除临时文件失败：{0}").format(e))
+
+                    await self.progress.update(
+                        task_id,
+                        description=_("[  失败  ]："),
+                        filename=trim_filename(full_path.name, 45),
+                        state="error",
+                    )
 
                 await self.progress.update(
                     task_id,
@@ -178,14 +193,20 @@ class BaseDownloader(BaseCrawler):
                     filename=trim_filename(full_path.name, 45),
                     state="completed",
                 )
+                logger.debug(_("下载完成, 文件已保存为 {0}").format(full_path))
 
-            await self.progress.update(
-                task_id,
-                description=_("[  完成  ]:"),
-                filename=trim_filename(full_path.name, 45),
-                state="completed",
-            )
-            logger.debug(_("下载完成, 文件已保存为 {0}".format(full_path)))
+                # 如果下载成功，则跳出循环 (If download is successful, break the loop)
+                break
+
+            else:
+                # 如果遍历完所有链接仍然无法成功下载，则记录警告
+                logger.warning("所有链接都无法下载")
+                await self.progress.update(
+                    task_id,
+                    description=_("[  丢失  ]：所有链接都无法下载"),
+                    filename=trim_filename(full_path.name, 45),
+                    state="error",
+                )
 
     async def save_file(
         self,

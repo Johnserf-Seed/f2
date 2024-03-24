@@ -244,7 +244,7 @@ class DouyinDownloader(BaseDownloader):
                     )
                     + "_video"
                 )
-
+                # video_play_addr 现在为一个list，第一个链接下载失败，则下载第二个链接
                 video_url = aweme_data_dict.get("video_play_addr")
                 if video_url != None:
                     await self.initiate_download(

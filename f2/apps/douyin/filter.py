@@ -1395,7 +1395,7 @@ class PostDetailFilter(JSONModel):
 
     @property
     def video_play_addr(self):
-        return self._get_attr_value("$.aweme_detail.video.play_addr.url_list[0]")
+        return self._get_attr_value("$.aweme_detail.video.play_addr.url_list")
 
     # images
     @property
