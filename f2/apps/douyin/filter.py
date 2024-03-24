@@ -76,6 +76,10 @@ class UserProfileFilter(JSONModel):
         return replaceT(self._get_attr_value("$.user.nickname"))
 
     @property
+    def nickname_raw(self):
+        return self._get_attr_value("$.user.nickname")
+
+    @property
     def room_id(self):
         return self._get_attr_value("$.user.room_id")
 
@@ -94,6 +98,10 @@ class UserProfileFilter(JSONModel):
     @property
     def signature(self):
         return replaceT(self._get_attr_value("$.user.signature"))
+
+    @property
+    def signature_raw(self):
+        return self._get_attr_value("$.user.signature")
 
     @property
     def total_favorited(self):
@@ -156,6 +164,10 @@ class UserPostFilter(JSONModel):
         return replaceT(self._get_list_attr_value("$.aweme_list[*].desc"))
 
     @property
+    def desc_raw(self):
+        return self._get_list_attr_value("$.aweme_list[*].desc")
+
+    @property
     def uid(self):
         return self._get_list_attr_value("$.aweme_list[*].author.uid")
 
@@ -166,6 +178,10 @@ class UserPostFilter(JSONModel):
     @property
     def nickname(self):
         return replaceT(self._get_list_attr_value("$.aweme_list[*].author.nickname"))
+
+    @property
+    def nickname_raw(self):
+        return self._get_list_attr_value("$.aweme_list[*].author.nickname")
 
     @property
     def author_avatar_thumb(self):
@@ -267,6 +283,10 @@ class UserPostFilter(JSONModel):
     @property
     def music_title(self):
         return replaceT(self._get_list_attr_value("$.aweme_list[*].music.title"))
+
+    @property
+    def music_title_raw(self):
+        return self._get_list_attr_value("$.aweme_list[*].music.title")
 
     @property
     def music_play_url(self):
@@ -375,6 +395,10 @@ class UserCollectsFilter(JSONModel):
         return replaceT(self._get_list_attr_value("$.collects_list[*].collects_name"))
 
     @property
+    def collects_name_raw(self):
+        return self._get_list_attr_value("$.collects_list[*].collects_name")
+
+    @property
     def create_time(self):
         create_times = self._get_list_attr_value("$.collects_list[*].create_time")
         return (
@@ -440,6 +464,10 @@ class UserCollectsFilter(JSONModel):
         )
 
     @property
+    def nickname_raw(self):
+        return self._get_list_attr_value("$.collects_list[*].user_info.nickname")
+
+    @property
     def uid(self):
         return self._get_list_attr_value("$.collects_list[*].user_info.uid")
 
@@ -487,6 +515,10 @@ class UserMusicCollectionFilter(JSONModel):
     @property
     def author(self):
         return replaceT(self._get_list_attr_value("$.mc_list[*].author"))
+
+    @property
+    def author_raw(self):
+        return self._get_list_attr_value("$.mc_list[*].author")
 
     @property
     def collect_status(self):
@@ -537,12 +569,20 @@ class UserMusicCollectionFilter(JSONModel):
         return replaceT(self._get_list_attr_value("$.mc_list[*].title"))
 
     @property
+    def title_raw(self):
+        return self._get_list_attr_value("$.mc_list[*].title")
+
+    @property
     def strong_beat_url(self):
         return self._get_list_attr_value("$.mc_list[*].strong_beat_url.url_list[0]")
 
     @property
     def owner_nickname(self):
         return replaceT(self._get_list_attr_value("$.mc_list[*].owner_nickname"))
+
+    @property
+    def owner_nickname_raw(self):
+        return self._get_list_attr_value("$.mc_list[*].owner_nickname")
 
     @property
     def owner_id(self):
@@ -693,6 +733,10 @@ class UserFollowingFilter(JSONModel):
             )
         )
 
+    @property
+    def secondary_text_raw(self):
+        return self._get_list_attr_value(
+            "$.followings[*].following_list_secondary_information_struct.secondary_information_text"
         )
 
     @property
@@ -738,6 +782,10 @@ class UserFollowingFilter(JSONModel):
         return replaceT(self._get_list_attr_value("$.followings[*].nickname"))
 
     @property
+    def nickname_raw(self):
+        return self._get_list_attr_value("$.followings[*].nickname")
+
+    @property
     def relation_label(self):
         return self._get_list_attr_value("$.followings[*].relation_label")
 
@@ -761,6 +809,10 @@ class UserFollowingFilter(JSONModel):
     @property
     def signature(self):
         return replaceT(self._get_list_attr_value("$.followings[*].signature"))
+
+    @property
+    def signature_raw(self):
+        return self._get_list_attr_value("$.followings[*].signature")
 
     @property
     def uid(self):
@@ -910,6 +962,10 @@ class UserFollowerFilter(UserFollowingFilter):
         return replaceT(self._get_list_attr_value("$.followers[*].nickname"))
 
     @property
+    def nickname_raw(self):
+        return self._get_list_attr_value("$.followers[*].nickname")
+
+    @property
     def relation_label(self):
         return self._get_list_attr_value("$.followers[*].relation_label")
 
@@ -933,6 +989,10 @@ class UserFollowerFilter(UserFollowingFilter):
     @property
     def signature(self):
         return replaceT(self._get_list_attr_value("$.followers[*].signature"))
+
+    @property
+    def signature_raw(self):
+        return self._get_list_attr_value("$.followers[*].signature")
 
     @property
     def uid(self):
@@ -1004,6 +1064,10 @@ class PostDetailFilter(JSONModel):
         return replaceT(self._get_attr_value("$.aweme_detail.author.nickname"))
 
     @property
+    def nickname_raw(self):
+        return self._get_attr_value("$.aweme_detail.author.nickname")
+
+    @property
     def sec_user_id(self):
         return self._get_attr_value("$.aweme_detail.author.sec_uid")
 
@@ -1048,6 +1112,10 @@ class PostDetailFilter(JSONModel):
     @property
     def desc(self):
         return replaceT(self._get_attr_value("$.aweme_detail.desc"))
+
+    @property
+    def desc_raw(self):
+        return self._get_attr_value("$.aweme_detail.desc")
 
     @property
     def duration(self):
@@ -1095,6 +1163,10 @@ class PostDetailFilter(JSONModel):
     @property
     def mix_desc(self):
         return replaceT(self._get_attr_value("$.aweme_detail.mix_info.mix_desc"))
+
+    @property
+    def mix_dec_raw(self):
+        return self._get_attr_value("$.aweme_detail.mix_info.mix_desc")
 
     @property
     def mix_create_time(self):
@@ -1150,6 +1222,10 @@ class PostDetailFilter(JSONModel):
         return replaceT(self._get_attr_value("$.aweme_detail.music.author"))
 
     @property
+    def music_author_raw(self):
+        return self._get_attr_value("$.aweme_detail.music.author")
+
+    @property
     def music_author_deleted(self):
         return self._get_attr_value("$.aweme_detail.music.author_deleted")
 
@@ -1172,11 +1248,21 @@ class PostDetailFilter(JSONModel):
         )
 
     @property
+    def pgc_author_raw(self):
+        return self._get_attr_value("$.aweme_detail.music.matched_pgc_sound.pgc_author")
+
+    @property
     def pgc_author_title(self):
         return replaceT(
             self._get_attr_value(
                 "$.aweme_detail.music.matched_pgc_sound.pgc_author_title"
             )
+        )
+
+    @property
+    def pgc_author_title_raw(self):
+        return self._get_attr_value(
+            "$.aweme_detail.music.matched_pgc_sound.pgc_author_title"
         )
 
     @property
@@ -1194,12 +1280,20 @@ class PostDetailFilter(JSONModel):
         return replaceT(self._get_attr_value("$.aweme_detail.music.owner_handle"))
 
     @property
+    def music_owner_handle_raw(self):
+        return self._get_attr_value("$.aweme_detail.music.owner_handle")
+
+    @property
     def music_owner_id(self):
         return self._get_attr_value("$.aweme_detail.music.owner_id")
 
     @property
     def music_owner_nickname(self):
         return replaceT(self._get_attr_value("$.aweme_detail.music.owner_nickname"))
+
+    @property
+    def music_owner_nickname_raw(self):
+        return self._get_attr_value("$.aweme_detail.music.owner_nickname")
 
     @property
     def music_play_url(self):
@@ -1367,6 +1461,10 @@ class UserLiveFilter(JSONModel):
         return replaceT(self._get_attr_value("$.data.data[0].title"))
 
     @property
+    def live_title_raw(self):
+        return self._get_attr_value("$.data.data[0].title")
+
+    @property
     def cover(self):
         return self._get_attr_value("$.data.data[0].cover.url_list[0]")
 
@@ -1402,6 +1500,10 @@ class UserLiveFilter(JSONModel):
     @property
     def nickname(self):
         return replaceT(self._get_attr_value("$.data.data[0].owner.nickname"))
+
+    @property
+    def nickname_raw(self):
+        return self._get_attr_value("$.data.data[0].owner.nickname")
 
     @property
     def avatar_thumb(self):
@@ -1514,6 +1616,10 @@ class UserLive2Filter(JSONModel):
         return replaceT(self._get_attr_value("$.data.room.title"))
 
     @property
+    def live_title_raw(self):
+        return self._get_attr_value("$.data.room.title")
+
+    @property
     def user_count(self):
         return self._get_attr_value("$.data.room.user_count")
 
@@ -1551,12 +1657,24 @@ class UserLive2Filter(JSONModel):
         return replaceT(self._get_attr_value("$.data.room.owner.nickname"))
 
     @property
+    def nickname_raw(self):
+        return self._get_attr_value("$.data.room.owner.nickname")
+
+    @property
     def gender(self):
         return replaceT(self._get_attr_value("$.data.room.owner.gender"))
 
     @property
+    def gender_raw(self):
+        return self._get_attr_value("$.data.room.owner.gender")
+
+    @property
     def signature(self):
         return replaceT(self._get_attr_value("$.data.room.owner.signature"))
+
+    @property
+    def signature_raw(self):
+        return self._get_attr_value("$.data.room.owner.signature")
 
     @property
     def avatar_large(self):
