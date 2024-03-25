@@ -271,9 +271,7 @@ class TiktokHandler:
             self.kwargs, aweme_data._to_dict(), user_path
         )
 
-    async def fetch_one_video(
-        self, itemId: str
-    ) -> AsyncGenerator[PostDetailFilter, Any]:
+    async def fetch_one_video(self, itemId: str) -> PostDetailFilter:
         """
         用于获取指定作品的详细信息
         (Used to get detailed information of specified video)
@@ -282,7 +280,7 @@ class TiktokHandler:
             itemId: str: 作品ID (Video ID)
 
         Return:
-            video: AsyncGenerator[PostDetailFilter, Any]: 作品信息过滤器 (Video info filter)
+            video: PostDetailFilter: 作品信息过滤器 (Video info filter)
         """
 
         logger.debug(_("开始爬取作品：{0}").format(itemId))
