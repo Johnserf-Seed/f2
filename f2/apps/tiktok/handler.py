@@ -257,17 +257,19 @@ class TiktokHandler:
         aweme_data = await self.fetch_one_video(aweme_id)
 
         async with AsyncUserDB("tiktok_users.db") as udb:
-            user_path = await self.get_or_add_user_data(
-                str(aweme_data.get("secUid")), udb
-            )
+            user_path = await self.get_or_add_user_data(aweme_data.secUid, udb)
 
         async with AsyncVideoDB("tiktok_videos.db") as vdb:
-            await self.get_or_add_video_data(aweme_data, vdb)
+            await self.get_or_add_video_data(
+                aweme_data._to_dict(), vdb, self.ignore_fields
+            )
 
-        logger.debug(_("单个作品数据：{0}").format(aweme_data))
+        logger.debug(_("单个作品数据：{0}").format(aweme_data._to_dict()))
 
         # 创建下载任务
-        await self.downloader.create_download_tasks(self.kwargs, aweme_data, user_path)
+        await self.downloader.create_download_tasks(
+            self.kwargs, aweme_data._to_dict(), user_path
+        )
 
     async def fetch_one_video(
         self, itemId: str
@@ -321,7 +323,7 @@ class TiktokHandler:
         ):
             # 创建下载任务
             await self.downloader.create_download_tasks(
-                self.kwargs, aweme_data_list, user_path
+                self.kwargs, aweme_data_list._to_list(), user_path
             )
 
     async def fetch_user_post_videos(
@@ -411,7 +413,7 @@ class TiktokHandler:
         ):
             # 创建下载任务
             await self.downloader.create_download_tasks(
-                self.kwargs, aweme_data_list, user_path
+                self.kwargs, aweme_data_list._to_list(), user_path
             )
 
     async def fetch_user_like_videos(
@@ -507,7 +509,7 @@ class TiktokHandler:
         ):
             # 创建下载任务
             await self.downloader.create_download_tasks(
-                self.kwargs, aweme_data_list, user_path
+                self.kwargs, aweme_data_list._to_list(), user_path
             )
 
     async def fetch_user_collect_videos(
@@ -609,7 +611,7 @@ class TiktokHandler:
             ):
                 # 创建下载任务
                 await self.downloader.create_download_tasks(
-                    self.kwargs, aweme_data_list, user_path
+                    self.kwargs, aweme_data_list._to_list(), user_path
                 )
 
     async def fetch_user_mix_videos(
