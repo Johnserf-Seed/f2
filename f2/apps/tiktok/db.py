@@ -1,6 +1,5 @@
 # path: f2/apps/tiktok/db.py
 
-import aiosqlite
 from f2.db.base_db import BaseDB
 
 

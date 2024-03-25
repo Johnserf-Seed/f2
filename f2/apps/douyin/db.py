@@ -1,6 +1,5 @@
 # path: f2/apps/douyin/db.py
 
-import aiosqlite
 from f2.db.base_db import BaseDB
 
 
@@ -265,29 +264,26 @@ class AsyncVideoDB(BaseDB):
             video_data_list (list): 视频信息列表
             ignore_fields (list): 要忽略的字段列表，例如 ["field1", "field2"]
         """
-        try:
-            # 如果 ignore_fields 未提供或者为 None，将其设置为空列表
-            ignore_fields = ignore_fields or []
+        # 如果 ignore_fields 未提供或者为 None，将其设置为空列表
+        ignore_fields = ignore_fields or []
 
-            # 删除要忽略的字段
-            for field in ignore_fields:
-                for video_data in video_data_list:
-                    if field in video_data:
-                        del video_data[field]
+        # 删除要忽略的字段
+        for field in ignore_fields:
+            for video_data in video_data_list:
+                if field in video_data:
+                    del video_data[field]
 
-            keys = ", ".join(video_data_list[0].keys())
-            placeholders = ", ".join(["?" for _ in range(len(video_data_list[0]))])
+        keys = ", ".join(video_data_list[0].keys())
+        placeholders = ", ".join(["?" for _ in range(len(video_data_list[0]))])
 
-            # 构建插入数据的元组列表
-            values = [tuple(video_data.values()) for video_data in video_data_list]
+        # 构建插入数据的元组列表
+        values = [tuple(video_data.values()) for video_data in video_data_list]
 
-            await self.execute(
-                f"INSERT OR REPLACE INTO {self.TABLE_NAME} ({keys}) VALUES ({placeholders})",
-                values,
-            )
-            await self.commit()
-        except aiosqlite.Error as e:
-            print(f"Error batch inserting videos: {e}")
+        await self.execute(
+            f"INSERT OR REPLACE INTO {self.TABLE_NAME} ({keys}) VALUES ({placeholders})",
+            values,
+        )
+        await self.commit()
 
     async def get_video_info(self, aweme_id: str) -> dict:
         """
