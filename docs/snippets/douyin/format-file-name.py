@@ -16,7 +16,7 @@ async def main():
     # 单作品的数据
     aweme_data = await DouyinHandler(kwargs).fetch_one_video("7218193198328433954")
     # 格式化后的文件名
-    print(format_file_name(kwargs.get("naming"), aweme_data) + "_video")
+    print(format_file_name(kwargs.get("naming"), aweme_data._to_dict()) + "_video")
 
     # 文件名模板
     kwargs = {
@@ -31,10 +31,15 @@ async def main():
     # 用户自定义字段
     custom_fields = {"location": "New York"}
     # 格式化后的自定义文件名
-    print(format_file_name(kwargs.get("naming"), aweme_data, custom_fields) + "_video")
+    print(
+        format_file_name(kwargs.get("naming"), aweme_data._to_dict(), custom_fields)
+        + "_video"
+    )
     # 格式化后的自定义文件名，长度限制在100
     print(
-        format_file_name(kwargs.get("naming"), aweme_data, custom_fields, 100)
+        format_file_name(
+            kwargs.get("naming"), aweme_data._to_dict(), custom_fields, 100
+        )
         + "_video"
     )
 
