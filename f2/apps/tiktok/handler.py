@@ -48,7 +48,9 @@ class TiktokHandler:
         self.downloader = TiktokDownloader(kwargs)
 
     async def handler_user_profile(
-        self, secUid: str = "", uniqueId: str = ""
+        self,
+        secUid: str = "",
+        uniqueId: str = "",
     ) -> UserProfileFilter:
         """
         用于获取指定用户的个人信息
@@ -66,7 +68,7 @@ class TiktokHandler:
             raise ValueError(_("至少提供 secUid 或 uniqueId 中的一个参数"))
 
         async with TiktokCrawler(self.kwargs) as crawler:
-            params = UserProfile(region="SG", secUid=secUid, uniqueId=uniqueId)
+            params = UserProfile(secUid=secUid, uniqueId=uniqueId)
             response = await crawler.fetch_user_profile(params)
             return UserProfileFilter(response)
 
