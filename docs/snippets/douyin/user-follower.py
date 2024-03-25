@@ -1,0 +1,43 @@
+import asyncio
+from f2.log.logger import logger
+from f2.apps.douyin.handler import DouyinHandler
+
+kwargs = {
+    "headers": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
+        "Referer": "https://www.douyin.com/",
+    },
+    "proxies": {
+        "http": None,
+        "https": None,
+    },
+    "timeout": 10,
+    "cookie": "YOUR_COOKIE_HERE",
+}
+
+
+async def main():
+    sec_user_id = ""  # 公开粉丝的账号
+    # sec_user_id = "MS4wLjABAAAAGPm-wPeGQuziCu5z6KerQA7WmSTnS99c8lU8WLToB0BsN02mqbPxPuxwDjKf7udZ"  # 隐私设置的账号
+    # 根据max_time 和 min_time 区间获取用户粉丝列表
+    async for follower in DouyinHandler(kwargs).fetch_user_follower(
+        sec_user_id=sec_user_id,
+        # max_time=1668606509,
+        # min_time=0,
+    ):
+        logger.info(
+            "用户ID：{0} 用户昵称：{1} 用户作品数：{2}".format(
+                follower.sec_uid, follower.nickname, follower.aweme_count
+            )
+        )
+        # print("=================_to_raw==================")
+        # print(follower._to_raw())
+        # print("=================_to_dict=================")
+        # print(follower._to_dict())
+        # print("=================_to_list===============")
+        # 数据量多的情况下_to_list这种数据结构比较慢
+        # print(follower._to_list())
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
