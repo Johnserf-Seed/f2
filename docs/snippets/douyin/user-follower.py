@@ -30,9 +30,9 @@ async def main():
                 follower.sec_uid, follower.nickname, follower.aweme_count
             )
         )
-        # print("=================_to_raw==================")
+        # print("=================_to_raw================")
         # print(follower._to_raw())
-        # print("=================_to_dict=================")
+        # print("=================_to_dict===============")
         # print(follower._to_dict())
         # print("=================_to_list===============")
         # 数据量多的情况下_to_list这种数据结构比较慢
