@@ -16,9 +16,17 @@ async def main():
         "MS4wLjABAAAAQhcYf_TjRKUku-aF8oqngAfzrYksgGLRz8CKMciBFdfR54HQu3qGs-WoJ-KO7hO8"
     )
     uniqueId = "vantoan___"
-    print(await TiktokHandler(kwargs).handler_user_profile(secUid=secUid))
-    print("-------------------")
-    print(await TiktokHandler(kwargs).handler_user_profile(uniqueId=uniqueId))
+    user = await TiktokHandler(kwargs).handler_user_profile(secUid=secUid)
+    print("=================_to_raw================")
+    print(user._to_raw())
+    # print("=================_to_dict===============")
+    # print(user._to_dict())
+
+    user = await TiktokHandler(kwargs).handler_user_profile(uniqueId=uniqueId)
+    print("=================_to_raw================")
+    print(user._to_raw())
+    # print("=================_to_dict===============")
+    # print(user._to_dict())
 
 
 if __name__ == "__main__":

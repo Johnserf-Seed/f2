@@ -14,7 +14,11 @@ kwargs = {
 
 async def main():
     secUid = await SecUserIdFetcher.get_secuid("https://www.tiktok.com/@vantoan___")
-    print(await TiktokHandler(kwargs).fetch_play_list(secUid, 0, 30))
+    playlist = await TiktokHandler(kwargs).fetch_play_list(secUid, 0, 30)
+    print("=================_to_raw================")
+    print(playlist._to_raw())
+    # print("=================_to_dict===============")
+    # print(aweme_data_list._to_dict())
 
 
 if __name__ == "__main__":
