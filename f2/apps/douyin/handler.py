@@ -199,6 +199,8 @@ class DouyinHandler:
             )
 
         logger.debug(_("单个作品数据：{0}").format(aweme_data._to_dict()))
+
+        # 创建下载任务
         await self.downloader.create_download_tasks(
             self.kwargs, aweme_data._to_dict(), user_path
         )
