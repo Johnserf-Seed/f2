@@ -190,14 +190,18 @@ class DouyinHandler:
 
         async with AsyncUserDB("douyin_users.db") as db:
             user_path = await self.get_or_add_user_data(
-                self.kwargs, aweme_data.get("sec_user_id"), db
+                self.kwargs, aweme_data.sec_user_id, db
             )
 
         async with AsyncVideoDB("douyin_videos.db") as db:
-            await self.get_or_add_video_data(aweme_data, db, self.ignore_fields)
+            await self.get_or_add_video_data(
+                aweme_data._to_dict(), db, self.ignore_fields
+            )
 
-        logger.debug(_("单个视频数据：{0}").format(aweme_data))
-        await self.downloader.create_download_tasks(self.kwargs, aweme_data, user_path)
+        logger.debug(_("单个作品数据：{0}").format(aweme_data._to_dict()))
+        await self.downloader.create_download_tasks(
+            self.kwargs, aweme_data._to_dict(), user_path
+        )
 
     async def fetch_one_video(
         self,
@@ -251,12 +255,12 @@ class DouyinHandler:
         ):
             # 创建下载任务
             await self.downloader.create_download_tasks(
-                self.kwargs, aweme_data_list, user_path
+                self.kwargs, aweme_data_list._to_list(), user_path
             )
 
             # # 一次性批量插入作品数据到数据库
             # async with AsyncVideoDB("douyin_videos.db") as db:
-            #     await db.batch_insert_videos(aweme_data_list, ignore_fields)
+            #     await db.batch_insert_videos(aweme_data_list._to_list(), ignore_fields)
 
     async def fetch_user_post_videos(
         self,
@@ -351,7 +355,7 @@ class DouyinHandler:
         ):
             # 创建下载任务
             await self.downloader.create_download_tasks(
-                self.kwargs, aweme_data_list, user_path
+                self.kwargs, aweme_data_list._to_list(), user_path
             )
 
             # async with AsyncVideoDB("douyin_videos.db") as db:
@@ -459,7 +463,7 @@ class DouyinHandler:
         ):
             # 创建下载任务
             await self.downloader.create_music_download_tasks(
-                self.kwargs, aweme_data_list, user_path
+                self.kwargs, aweme_data_list._to_list(), user_path
             )
 
     async def fetch_user_music_collection(
@@ -548,7 +552,7 @@ class DouyinHandler:
             max_cursor, page_counts, max_counts
         ):
             await self.downloader.create_download_tasks(
-                self.kwargs, aweme_data_list, user_path
+                self.kwargs, aweme_data_list._to_list(), user_path
             )
 
     async def fetch_user_collection_videos(
@@ -664,7 +668,7 @@ class DouyinHandler:
                     collects_id, max_cursor, page_counts, max_counts
                 ):
                     await self.downloader.create_download_tasks(
-                        self.kwargs, aweme_data_list, tmp_user_path
+                        self.kwargs, aweme_data_list._to_list(), tmp_user_path
                     )
 
     async def select_user_collects(
@@ -866,11 +870,11 @@ class DouyinHandler:
         ):
             # 创建下载任务
             await self.downloader.create_download_tasks(
-                self.kwargs, aweme_data_list, user_path
+                self.kwargs, aweme_data_list._to_list(), user_path
             )
 
         # async with AsyncVideoDB("douyin_videos.db") as db:
-        #     for aweme_data in aweme_data_list:
+        #     for aweme_data in aweme_data_list._to_list():
         #         await get_or_add_video_data(aweme_data, db, ignore_fields)
 
     async def fetch_user_mix_videos(
@@ -950,18 +954,22 @@ class DouyinHandler:
 
         # 然后下载直播推流
         webcast_data = await self.fetch_user_live_videos(webcast_id)
-        live_status = webcast_data.get("live_status")
+
+        live_status = webcast_data.live_status
+        sec_user_id = webcast_data.sec_user_id
+
         # 是否正在直播
         if live_status != 2:
             logger.info(_("当前 {0} 直播已结束").format(webcast_id))
             return
-        sec_user_id = webcast_data.get("sec_user_id")
 
         async with AsyncUserDB("douyin_users.db") as db:
             user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, db)
-        await self.downloader.create_stream_tasks(self.kwargs, webcast_data, user_path)
 
-    async def fetch_user_live_videos(self, webcast_id: str):
+        await self.downloader.create_stream_tasks(
+            self.kwargs, webcast_data._to_dict(), user_path
+        )
+
     async def fetch_user_live_videos(
         self,
         webcast_id: str,
@@ -1069,7 +1077,7 @@ class DouyinHandler:
         ):
             # 创建下载任务
             await self.downloader.create_download_tasks(
-                self.kwargs, aweme_data_list, user_path
+                self.kwargs, aweme_data_list._to_list(), user_path
             )
 
     async def fetch_user_feed_videos(
