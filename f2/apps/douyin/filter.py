@@ -1563,35 +1563,6 @@ class UserLiveFilter(JSONModel):
             if not prop_name.startswith("__") and not prop_name.startswith("_")
         }
 
-    def _to_list(self):
-        # 不需要的属性列表
-        exclude_list = []
-        # 生成属性名称列表，然后过滤掉不需要的属性
-        keys = [
-            prop_name
-            for prop_name in dir(self)
-            if not prop_name.startswith("__")
-            and not prop_name.startswith("_")
-            and prop_name not in exclude_list
-        ]
-
-        aweme_entries = self._get_attr_value("$.aweme_list") or []
-
-        list_dicts = []
-        # 遍历每个条目并创建一个字典
-        # (Iterate through each entry and create a dict)
-        for entry in aweme_entries:
-            d = {}
-            for key in keys:
-                attr_values = getattr(self, key)
-                # 当前aweme_entry在属性列表中的索引
-                index = aweme_entries.index(entry)
-                # 如果属性值的长度足够则赋值，否则赋None
-                # (Assign value if the length of the attribute value is sufficient, otherwise assign None)
-                d[key] = attr_values[index] if index < len(attr_values) else None
-            list_dicts.append(d)
-        return list_dicts
-
 
 class UserLive2Filter(JSONModel):
     # live
