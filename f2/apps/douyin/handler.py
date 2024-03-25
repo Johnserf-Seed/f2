@@ -954,13 +954,14 @@ class DouyinHandler:
 
             yield mix
 
+            if not mix.has_more:
+                logger.debug(_("合集: {0} 所有作品采集完毕").format(mix_id))
+                break
+
             # 更新已经处理的作品数量 (Update the number of videos processed)
             videos_collected += len(mix.aweme_id)
             max_cursor = mix.max_cursor
 
-            if not mix.has_more:
-                logger.debug(_("合集: {0} 所有作品采集完毕").format(mix_id))
-                break
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
