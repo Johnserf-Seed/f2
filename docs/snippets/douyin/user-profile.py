@@ -13,7 +13,11 @@ kwargs = {
 
 async def main():
     sec_user_id = "MS4wLjABAAAANXSltcLCzDGmdNFI2Q_QixVTr67NiYzjKOIP5s03CAE"
-    print(await DouyinHandler(kwargs).handler_user_profile(sec_user_id=sec_user_id))
+    user = await DouyinHandler(kwargs).handler_user_profile(sec_user_id=sec_user_id)
+    print("=================_to_raw================")
+    print(user._to_raw())
+    # print("=================_to_dict===============")
+    # print(user._to_dict())
 
 
 if __name__ == "__main__":

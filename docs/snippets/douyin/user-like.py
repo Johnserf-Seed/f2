@@ -8,26 +8,30 @@ kwargs = {
     },
     "proxies": {"http": None, "https": None},
     "cookie": "YOUR_COOKIE_HERE",
+    "timeout": 10,
 }
 
 
 async def main():
-    user_sec_id = "YOUR_HOME_PAGE"  # 替换开放喜欢列表的sec_user_id
-    results = [
-        aweme_data_list
-        async for aweme_data_list in DouyinHandler(kwargs).fetch_user_like_videos(
-            user_sec_id
-        )
-    ]
-    print(results)
-    print("-------------------")
-    results = [
-        aweme_data_list
-        async for aweme_data_list in DouyinHandler(kwargs).fetch_user_like_videos(
-            user_sec_id, 0, 10, 20
-        )
-    ]
-    print(results)
+    sec_user_id = "MS4wLjABAAAA5sofqwkCjeZqwtTMs00E5HAg8udRR-warVgfPykwwgk"  # 替换开放喜欢列表的sec_user_id
+
+    async for aweme_data_list in DouyinHandler(kwargs).fetch_user_like_videos(
+        sec_user_id, 0, 10, 20
+    ):
+        print("=================_to_raw================")
+        print(aweme_data_list._to_raw())
+
+    # async for aweme_data_list in DouyinHandler(kwargs).fetch_user_like_videos(
+    #     sec_user_id, 0, 10, 20
+    # ):
+    #     print("=================_to_dict===============")
+    #     print(aweme_data_list._to_dict())
+
+    # async for aweme_data_list in DouyinHandler(kwargs).fetch_user_like_videos(
+    #     sec_user_id, 0, 10, 20
+    # ):
+    #     print("=================_to_list===============")
+    #     print(aweme_data_list._to_list())
 
 
 if __name__ == "__main__":
