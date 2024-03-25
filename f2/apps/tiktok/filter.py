@@ -95,6 +95,9 @@ class UserProfileFilter(JSONModel):
     def verified(self) -> bool:
         return bool(self._get_attr_value("$.userInfo.user.verified"))
 
+    def _to_raw(self) -> dict:
+        return self._data
+
     def _to_dict(self) -> dict:
         return {
             prop_name: getattr(self, prop_name)
@@ -328,6 +331,9 @@ class UserPostFilter(JSONModel):
     def video_width(self):
         return self._get_list_attr_value("$.itemList[*].video.width")
 
+    def _to_raw(self) -> dict:
+        return self._data
+
     def _to_dict(self) -> dict:
         return {
             prop_name: getattr(self, prop_name)
@@ -404,6 +410,9 @@ class UserPlayListFilter(JSONModel):
     @property
     def videoCount(self):
         return self._get_attr_value("$.playList[*].videoCount")
+
+    def _to_raw(self) -> dict:
+        return self._data
 
     def _to_dict(self) -> dict:
         return {
@@ -640,6 +649,9 @@ class PostDetailFilter(JSONModel):
     @property
     def video_width(self):
         return self._get_attr_value("$.itemInfo.itemStruct.video.width")
+
+    def _to_raw(self) -> dict:
+        return self._data
 
     def _to_dict(self) -> dict:
         return {
