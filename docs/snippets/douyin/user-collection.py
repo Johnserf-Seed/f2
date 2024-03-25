@@ -16,18 +16,10 @@ async def main():
     async for aweme_data_list in DouyinHandler(kwargs).fetch_user_collection_videos():
         print("=================_to_raw================")
         print(aweme_data_list._to_raw())
-
-    # async for aweme_data_list in DouyinHandler(kwargs).fetch_user_collection_videos(
-    #     0, 10, 20
-    # ):
-    #     print("=================_to_dict===============")
-    #     print(aweme_data_list._to_dict())
-
-    # async for aweme_data_list in DouyinHandler(kwargs).fetch_user_collection_videos(
-    #     0, 10, 20
-    # ):
-    #     print("=================_to_list===============")
-    #     print(aweme_data_list._to_list())
+        # print("=================_to_dict===============")
+        # print(aweme_data_list._to_dict())
+        # print("=================_to_list===============")
+        # print(aweme_data_list._to_list())
 
 
 if __name__ == "__main__":

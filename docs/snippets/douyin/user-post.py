@@ -25,16 +25,6 @@ async def main():
         # print("=================_to_list===============")
         # print(aweme_data_list._to_list())
 
-    async for aweme_data_list in DouyinHandler(kwargs).fetch_user_post_videos(
-        sec_user_id, 0, 10, 20
-    ):
-        print("=================_to_raw================")
-        print(aweme_data_list._to_raw())
-        # print("=================_to_dict===============")
-        # print(aweme_data_list._to_dict())
-        # print("=================_to_list===============")
-        # print(aweme_data_list._to_list())
-
 
 if __name__ == "__main__":
     asyncio.run(main())
