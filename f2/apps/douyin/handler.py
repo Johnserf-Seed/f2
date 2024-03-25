@@ -330,6 +330,10 @@ class DouyinHandler:
             videos_collected += len(video.aweme_id)
             max_cursor = video.max_cursor
 
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
         logger.info(_("爬取结束，共爬取 {0} 个作品").format(videos_collected))
 
     @mode_handler("like")
@@ -434,6 +438,10 @@ class DouyinHandler:
             videos_collected += len(like.aweme_id)
             max_cursor = like.max_cursor
 
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
         logger.debug(_("爬取结束，共爬取 {0} 个点赞作品").format(videos_collected))
 
     @mode_handler("music")
@@ -524,6 +532,10 @@ class DouyinHandler:
             # 更新已经处理的音乐数量 (Update the number of music processed)
             music_collected += len(music.music_id)
             max_cursor = music.max_cursor
+
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
 
         logger.debug(_("爬取结束，共爬取 {0} 个音乐作品").format(music_collected))
 
@@ -616,6 +628,10 @@ class DouyinHandler:
             # 更新已经处理的作品数量 (Update the number of videos processed)
             videos_collected += len(collection.aweme_id)
             max_cursor = collection.max_cursor
+
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
 
         logger.debug(_("爬取结束，共爬取 {0} 个收藏作品").format(videos_collected))
 
@@ -763,6 +779,10 @@ class DouyinHandler:
             collected += len(collects.collects_id)
             max_cursor = collects.max_cursor
 
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
         logger.debug(_("爬取结束，共爬取 {0} 个收藏夹").format(collected))
 
     async def fetch_user_collects_videos(
@@ -841,6 +861,10 @@ class DouyinHandler:
                     logger.debug(_("收藏夹: {0} 所有作品采集完毕").format(collects_id))
                     break
                 max_cursor = video.max_cursor
+
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
 
         logger.debug(_("爬取结束，共爬取 {0} 个作品").format(videos_collected))
 
@@ -937,6 +961,9 @@ class DouyinHandler:
             if not mix.has_more:
                 logger.debug(_("合集: {0} 所有作品采集完毕").format(mix_id))
                 break
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
 
         logger.debug(_("爬取结束，共爬取 {0} 个合集作品").format(videos_collected))
 
@@ -1147,6 +1174,10 @@ class DouyinHandler:
             # 更新已经处理的作品数量 (Update the number of videos processed)
             videos_collected += len(feed.aweme_id)
             max_cursor = feed.max_cursor
+
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
 
         logger.debug(_("爬取结束，共爬取 {0} 个首页推荐作品").format(videos_collected))
 
