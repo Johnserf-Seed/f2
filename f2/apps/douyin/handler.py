@@ -225,7 +225,7 @@ class DouyinHandler:
             )
         )
 
-        return video._to_dict()
+        return video
 
     @mode_handler("post")
     async def handle_user_post(self):
@@ -320,8 +320,7 @@ class DouyinHandler:
             )
             logger.debug("===================================")
 
-            aweme_data_list = video._to_list()
-            yield aweme_data_list
+            yield video
 
             # 更新已经处理的作品数量 (Update the number of videos processed)
             videos_collected += len(video.aweme_id)
@@ -406,31 +405,30 @@ class DouyinHandler:
                     sec_user_id=sec_user_id,
                 )
                 response = await crawler.fetch_user_like(params)
-                video = UserPostFilter(response)
+                like = UserPostFilter(response)
 
-            if not video.has_aweme:
+            if not like.has_aweme:
                 logger.debug(_("{0} 页没有找到作品").format(max_cursor))
-                if not video.has_more:
+                if not like.has_more:
                     logger.debug(_("用户：{0} 所有作品采集完毕").format(sec_user_id))
                     break
 
-                max_cursor = video.max_cursor
+                max_cursor = like.max_cursor
                 continue
 
             logger.debug(_("当前请求的max_cursor：{0}").format(max_cursor))
             logger.debug(
-                _("视频ID：{0} 视频文案：{1} 作者：{2}").format(
-                    video.aweme_id, video.desc, video.nickname
+                _("作品ID：{0} 作品文案：{1} 作者：{2}").format(
+                    like.aweme_id, like.desc, like.nickname
                 )
             )
             logger.debug("===================================")
 
-            aweme_data_list = video._to_list()
-            yield aweme_data_list
+            yield like
 
-            # 更新已经处理的视频数量 (Update the number of videos processed)
-            videos_collected += len(aweme_data_list)
-            max_cursor = video.max_cursor
+            # 更新已经处理的作品数量 (Update the number of videos processed)
+            videos_collected += len(like.aweme_id)
+            max_cursor = like.max_cursor
 
         logger.debug(_("爬取结束，共爬取 {0} 个点赞作品").format(videos_collected))
 
@@ -513,7 +511,7 @@ class DouyinHandler:
                 )
             logger.debug("===================================")
 
-            yield music._to_list()
+            yield music
 
             if not music.has_more:
                 logger.debug(_("用户收藏的音乐作品采集完毕"))
@@ -595,26 +593,27 @@ class DouyinHandler:
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserCollection(cursor=max_cursor, count=current_request_size)
                 response = await crawler.fetch_user_collection(params)
-                video = UserCollectionFilter(response)
+                collection = UserCollectionFilter(response)
 
             logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
             logger.debug(
-                _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
-                    video.aweme_id, video.desc, video.nickname
+                _("作品ID: {0} 作品文案: {1} 作者: {2}").format(
+                    collection.aweme_id, collection.desc, collection.nickname
                 )
             )
             logger.debug("===================================")
 
-            aweme_data_list = video._to_list()
-            yield aweme_data_list
+            yield collection
 
-            if not video.has_more:
-                logger.debug(_("用户收藏的视频采集完毕"))
+            if not collection.has_more:
+                logger.debug(_("用户收藏的作品采集完毕"))
                 break
 
-            # 更新已经处理的视频数量 (Update the number of videos processed)
-            videos_collected += len(aweme_data_list)
-            max_cursor = video.max_cursor
+            # 更新已经处理的作品数量 (Update the number of videos processed)
+            videos_collected += len(collection.aweme_id)
+            max_cursor = collection.max_cursor
+
+        logger.debug(_("爬取结束，共爬取 {0} 个收藏作品").format(videos_collected))
 
     @mode_handler("collects")
     async def handle_user_collects(self):
@@ -816,7 +815,7 @@ class DouyinHandler:
             if video.has_aweme:
                 if not video.has_more:
                     logger.debug(_("收藏夹: {0} 所有作品采集完毕").format(collects_id))
-                    yield video._to_list()
+                    yield video
                     break
                 else:
                     logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
@@ -827,11 +826,10 @@ class DouyinHandler:
                     )
                     logger.debug("===================================")
 
-                    aweme_data_list = video._to_list()
-                    yield aweme_data_list
+                    yield video
 
-                    # 更新已经处理的视频数量 (Update the number of videos processed)
-                    videos_collected += len(aweme_data_list)
+                    # 更新已经处理的作品数量 (Update the number of videos processed)
+                    videos_collected += len(video.aweme_id)
                     max_cursor = video.max_cursor
             else:
                 logger.debug(_("{0} 页没有找到作品").format(max_cursor))
@@ -916,24 +914,23 @@ class DouyinHandler:
                     cursor=max_cursor, count=current_request_size, mix_id=mix_id
                 )
                 response = await crawler.fetch_user_mix(params)
-                video = UserMixFilter(response)
+                mix = UserMixFilter(response)
 
             logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
             logger.debug(
-                _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
-                    video.aweme_id, video.desc, video.nickname
+                _("作品ID: {0} 作品文案: {1} 作者: {2}").format(
+                    mix.aweme_id, mix.desc, mix.nickname
                 )
             )
             logger.debug("===================================")
 
-            aweme_data_list = video._to_list()
-            yield aweme_data_list
+            yield mix
 
-            # 更新已经处理的视频数量 (Update the number of videos processed)
-            videos_collected += len(aweme_data_list)
-            max_cursor = video.max_cursor
+            # 更新已经处理的作品数量 (Update the number of videos processed)
+            videos_collected += len(mix.aweme_id)
+            max_cursor = mix.max_cursor
 
-            if not video.has_more:
+            if not mix.has_more:
                 logger.debug(_("合集: {0} 所有作品采集完毕").format(mix_id))
                 break
 
@@ -1003,8 +1000,7 @@ class DouyinHandler:
         logger.debug("===================================")
         logger.debug(_("直播信息爬取结束"))
 
-        webcast_data = live._to_dict()
-        return webcast_data
+        return live
 
     async def fetch_user_live_videos_by_room_id(
         self,
@@ -1048,8 +1044,7 @@ class DouyinHandler:
         logger.debug("===================================")
         logger.debug(_("直播信息爬取结束"))
 
-        webcast_data = live._to_dict()
-        return webcast_data
+        return live
 
     @mode_handler("feed")
     async def handle_user_feed(self):
@@ -1120,31 +1115,30 @@ class DouyinHandler:
                     sec_user_id=sec_user_id,
                 )
                 response = await crawler.fetch_user_post(params)
-                video = UserPostFilter(response)
+                feed = UserPostFilter(response)
 
-            if not video.has_aweme:
+            if not feed.has_aweme:
                 logger.debug(_("{0} 页没有找到作品").format(max_cursor))
-                if not video.has_more:
+                if not feed.has_more:
                     logger.debug(_("用户: {0} 所有作品采集完毕").format(sec_user_id))
                     break
 
-                max_cursor = video.max_cursor
+                max_cursor = feed.max_cursor
                 continue
 
             logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
             logger.debug(
-                _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
-                    video.aweme_id, video.desc, video.nickname
+                _("作品ID: {0} 作品文案: {1} 作者: {2}").format(
+                    feed.aweme_id, feed.desc, feed.nickname
                 )
             )
             logger.debug("===================================")
 
-            aweme_data_list = video._to_list()
-            yield aweme_data_list
+            yield feed
 
-            # 更新已经处理的视频数量 (Update the number of videos processed)
-            videos_collected += len(video.aweme_id)
-            max_cursor = video.max_cursor
+            # 更新已经处理的作品数量 (Update the number of videos processed)
+            videos_collected += len(feed.aweme_id)
+            max_cursor = feed.max_cursor
 
         logger.debug(_("爬取结束，共爬取 {0} 个首页推荐作品").format(videos_collected))
 
