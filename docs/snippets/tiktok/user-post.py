@@ -8,20 +8,23 @@ kwargs = {
         "Referer": "https://www.tiktok.com/",
     },
     "proxies": {"http": None, "https": None},
+    "timeout": 10,
     "cookie": "YOUR_COOKIE_HERE",
 }
 
 
 async def main():
     secUid = await SecUserIdFetcher.get_secuid("https://www.tiktok.com/@vantoan___")
-    print(
-        [
-            aweme_data_list
-            async for aweme_data_list in TiktokHandler(kwargs).fetch_user_post_videos(
-                secUid, 0, 30, 0
-            )
-        ]
-    )
+
+    async for aweme_data_list in TiktokHandler(kwargs).fetch_user_post_videos(
+        secUid, 0, 30, None
+    ):
+        print("=================_to_raw================")
+        print(aweme_data_list._to_raw())
+        # print("=================_to_dict===============")
+        # print(aweme_data_list._to_dict())
+        # print("=================_to_list===============")
+        # print(aweme_data_list._to_list())
 
 
 if __name__ == "__main__":
