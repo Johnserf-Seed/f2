@@ -22,14 +22,20 @@ async def main():
     async for following in DouyinHandler(kwargs).fetch_user_following(
         sec_user_id=sec_user_id
     ):
-        logger.info(
-            "用户ID：{0} 用户昵称：{1} 用户作品数：{2} 额外内容：{3}".format(
-                following.sec_uid,
-                following.nickname,
-                following.aweme_count,
-                following.secondary_text,
+        if following.status_code != 0:
+            logger.error_("错误代码：{0} 错误消息：{1}").format(
+                following.status_code, following.status_msg
             )
-        )
+        else:
+            logger.info(
+                "用户ID：{0} 用户昵称：{1} 用户作品数：{2} 额外内容：{3}".format(
+                    following.sec_uid,
+                    following.nickname,
+                    following.aweme_count,
+                    following.secondary_text,
+                )
+            )
+
         # print("=================_to_raw================")
         # print(following._to_raw())
         # print("=================_to_dict===============")

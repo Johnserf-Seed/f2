@@ -13,8 +13,8 @@ kwargs = {
 
 
 async def main():
-    sec_user_id = "MS4wLjABAAAA5sofqwkCjeZqwtTMs00E5HAg8udRR-warVgfPykwwgk"  # 替换开放喜欢列表的sec_user_id
-
+    sec_user_id = "MS4wLjABAAAAW9FWcqS7RdQAWPd2AA5fL_ilmqsIFUCQ_Iym6Yh9_cUa6ZRqVLjVQSUjlHrfXY1Y"  # 开放喜欢列表的sec_user_id
+    # sec_user_id = "MS4wLjABAAAAkA9Zsx7wNHUWse8xwUt9zzlAUfZ-7ZOBMbPzKhkDYEjUd-f4qS_DM6fNyxP_-9l2"  # 未开放喜欢列表的sec_user_id
     async for aweme_data_list in DouyinHandler(kwargs).fetch_user_like_videos(
         sec_user_id, 0, 10, 20
     ):

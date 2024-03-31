@@ -25,11 +25,17 @@ async def main():
         # max_time=1668606509,
         # min_time=0,
     ):
-        logger.info(
-            "用户ID：{0} 用户昵称：{1} 用户作品数：{2}".format(
-                follower.sec_uid, follower.nickname, follower.aweme_count
+        if follower.status_code != 0:
+            logger.erro("错误代码：{0} 错误消息：{1}").format(
+                follower.status_code, follower.status_msg
             )
-        )
+        else:
+            logger.info(
+                "用户ID：{0} 用户昵称：{1} 用户作品数：{2}".format(
+                    follower.sec_uid, follower.nickname, follower.aweme_count
+                )
+            )
+
         # print("=================_to_raw================")
         # print(follower._to_raw())
         # print("=================_to_dict===============")
