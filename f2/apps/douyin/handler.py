@@ -311,7 +311,7 @@ class DouyinHandler:
                 yield video
 
             if not video.has_aweme:
-                logger.info(_("{0} 页没有找到作品").format(max_cursor))
+                logger.info(_("第 {0} 页没有找到作品").format(max_cursor))
                 if not video.has_more:
                     logger.info(_("用户: {0} 所有作品采集完毕").format(sec_user_id))
                     break
@@ -1140,7 +1140,7 @@ class DouyinHandler:
                 yield feed
 
             if not feed.has_aweme:
-                logger.info(_("{0} 页没有找到作品").format(max_cursor))
+                logger.info(_("第 {0} 页没有找到作品").format(max_cursor))
                 if not feed.has_more:
                     logger.info(_("用户: {0} 所有作品采集完毕").format(sec_user_id))
                     break
