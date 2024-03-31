@@ -308,6 +308,7 @@ class DouyinHandler:
                 )
                 response = await crawler.fetch_user_post(params)
                 video = UserPostFilter(response)
+                yield video
 
             if not video.has_aweme:
                 logger.debug(_("{0} 页没有找到作品").format(max_cursor))
@@ -325,8 +326,6 @@ class DouyinHandler:
                 )
             )
             logger.debug("===================================")
-
-            yield video
 
             # 更新已经处理的作品数量 (Update the number of videos processed)
             videos_collected += len(video.aweme_id)
@@ -416,6 +415,7 @@ class DouyinHandler:
                 )
                 response = await crawler.fetch_user_like(params)
                 like = UserPostFilter(response)
+                yield like
 
             if not like.has_aweme:
                 logger.debug(_("{0} 页没有找到作品").format(max_cursor))
@@ -433,8 +433,6 @@ class DouyinHandler:
                 )
             )
             logger.debug("===================================")
-
-            yield like
 
             # 更新已经处理的作品数量 (Update the number of videos processed)
             videos_collected += len(like.aweme_id)
@@ -516,20 +514,19 @@ class DouyinHandler:
                 )
                 response = await crawler.fetch_user_music_collection(params)
                 music = UserMusicCollectionFilter(response)
-
-                logger.debug(_("当前请求的max_cursor：{0}").format(max_cursor))
-                logger.debug(
-                    _("音乐ID：{0} 音乐标题：{1} 作者：{2}").format(
-                        music.music_id, music.title, music.author
-                    )
-                )
-            logger.debug("===================================")
-
-            yield music
+                yield music
 
             if not music.has_more:
                 logger.debug(_("用户收藏的音乐作品采集完毕"))
                 break
+
+            logger.debug(_("当前请求的max_cursor：{0}").format(max_cursor))
+            logger.debug(
+                _("音乐ID：{0} 音乐标题：{1} 作者：{2}").format(
+                    music.music_id, music.title, music.author
+                )
+            )
+            logger.debug("===================================")
 
             # 更新已经处理的音乐数量 (Update the number of music processed)
             music_collected += len(music.music_id)
@@ -612,6 +609,11 @@ class DouyinHandler:
                 params = UserCollection(cursor=max_cursor, count=current_request_size)
                 response = await crawler.fetch_user_collection(params)
                 collection = UserCollectionFilter(response)
+                yield collection
+
+            if not collection.has_more:
+                logger.debug(_("用户收藏的作品采集完毕"))
+                break
 
             logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
             logger.debug(
@@ -620,12 +622,6 @@ class DouyinHandler:
                 )
             )
             logger.debug("===================================")
-
-            yield collection
-
-            if not collection.has_more:
-                logger.debug(_("用户收藏的作品采集完毕"))
-                break
 
             # 更新已经处理的作品数量 (Update the number of videos processed)
             videos_collected += len(collection.aweme_id)
@@ -763,6 +759,11 @@ class DouyinHandler:
                 params = UserCollects(cursor=max_cursor, count=page_counts)
                 response = await crawler.fetch_user_collects(params)
                 collects = UserCollectsFilter(response)
+                yield collects
+
+            if not collects.has_more:
+                logger.info(_("所有收藏夹ID采集完毕"))
+                break
 
             logger.debug(
                 _("收藏夹ID: {0} 收藏夹标题: {1}").format(
@@ -770,12 +771,6 @@ class DouyinHandler:
                 )
             )
             logger.debug("===================================")
-
-            yield collects
-
-            if not collects.has_more:
-                logger.info(_("所有收藏夹ID采集完毕"))
-                break
 
             # 更新已经处理的收藏夹数量 (Update the number of collections processed)
             collected += len(collects.collects_id)
@@ -832,37 +827,25 @@ class DouyinHandler:
                 )
                 response = await crawler.fetch_user_collects_video(params)
                 video = UserCollectionFilter(response)
+                yield video
 
+            if not video.has_aweme:
+                logger.debug(_("第 {0} 页没有找到作品").format(max_cursor))
+                if not video.has_more:
+                    logger.debug(_("收藏夹: {0} 所有作品采集完毕").format(collects_id))
+                    break
+
+            logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
             logger.debug(
-                "是否有作品: {0} 是否有更多: {1}".format(
-                    video.has_aweme, video.has_more
+                _("作品ID: {0} 作品文案: {1} 作者: {2}").format(
+                    video.aweme_id, video.desc, video.nickname
                 )
             )
-            if video.has_aweme:
-                if not video.has_more:
-                    logger.debug(_("收藏夹: {0} 所有作品采集完毕").format(collects_id))
-                    yield video
-                    break
-                else:
-                    logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
-                    logger.debug(
-                        _("作品ID: {0} 作品文案: {1} 作者: {2}").format(
-                            video.aweme_id, video.desc, video.nickname
-                        )
-                    )
-                    logger.debug("===================================")
+            logger.debug("===================================")
 
-                    yield video
-
-                    # 更新已经处理的作品数量 (Update the number of videos processed)
-                    videos_collected += len(video.aweme_id)
-                    max_cursor = video.max_cursor
-            else:
-                logger.debug(_("{0} 页没有找到作品").format(max_cursor))
-                if not video.has_more:
-                    logger.debug(_("收藏夹: {0} 所有作品采集完毕").format(collects_id))
-                    break
-                max_cursor = video.max_cursor
+            # 更新已经处理的作品数量 (Update the number of videos processed)
+            videos_collected += len(video.aweme_id)
+            max_cursor = video.max_cursor
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -945,6 +928,11 @@ class DouyinHandler:
                 )
                 response = await crawler.fetch_user_mix(params)
                 mix = UserMixFilter(response)
+                yield mix
+
+            if not mix.has_more:
+                logger.debug(_("合集: {0} 所有作品采集完毕").format(mix_id))
+                break
 
             logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
             logger.debug(
@@ -953,12 +941,6 @@ class DouyinHandler:
                 )
             )
             logger.debug("===================================")
-
-            yield mix
-
-            if not mix.has_more:
-                logger.debug(_("合集: {0} 所有作品采集完毕").format(mix_id))
-                break
 
             # 更新已经处理的作品数量 (Update the number of videos processed)
             videos_collected += len(mix.aweme_id)
@@ -1154,6 +1136,7 @@ class DouyinHandler:
                 )
                 response = await crawler.fetch_user_post(params)
                 feed = UserPostFilter(response)
+                yield feed
 
             if not feed.has_aweme:
                 logger.debug(_("{0} 页没有找到作品").format(max_cursor))
@@ -1171,8 +1154,6 @@ class DouyinHandler:
                 )
             )
             logger.debug("===================================")
-
-            yield feed
 
             # 更新已经处理的作品数量 (Update the number of videos processed)
             videos_collected += len(feed.aweme_id)
@@ -1238,13 +1219,10 @@ class DouyinHandler:
                 )
                 response = await crawler.fetch_user_following(params)
                 following = UserFollowingFilter(response)
+                yield following
 
-            if following.status_code != 0:
-                logger.error(
-                    _("错误代码：{0} 错误消息：{1}").format(
-                        following.status_code, following.status_msg
-                    )
-                )
+            if not following.has_more:
+                logger.info(_("用户：{0} 所有关注用户采集完毕").format(sec_user_id))
                 break
 
             logger.info(_("当前请求的offset：{0}").format(offset))
@@ -1258,12 +1236,6 @@ class DouyinHandler:
                 )
             )
             logger.debug("===================================")
-
-            yield following
-
-            if not following.has_more:
-                logger.info(_("用户：{0} 所有关注用户采集完毕").format(sec_user_id))
-                break
 
             # 更新已经处理的用户数量 (Update the number of users processed)
             users_collected += len(following.sec_uid)
@@ -1329,13 +1301,10 @@ class DouyinHandler:
                 )
                 response = await crawler.fetch_user_follower(params)
                 follower = UserFollowerFilter(response)
+                yield follower
 
-            if follower.status_code != 0:
-                logger.error(
-                    _("错误代码：{0} 错误消息：{1}").format(
-                        follower.status_code, follower.status_msg
-                    )
-                )
+            if not follower.has_more:
+                logger.info(_("用户：{0} 所有粉丝采集完毕").format(sec_user_id))
                 break
 
             logger.info(
@@ -1348,12 +1317,6 @@ class DouyinHandler:
                 )
             )
             logger.debug("===================================")
-
-            yield follower
-
-            if not follower.has_more:
-                logger.info(_("用户：{0} 所有粉丝采集完毕").format(sec_user_id))
-                break
 
             # 更新已经处理的用户数量 (Update the number of users processed)
             users_collected += len(follower.sec_uid)
