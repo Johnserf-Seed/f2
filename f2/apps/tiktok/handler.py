@@ -363,7 +363,7 @@ class TiktokHandler:
                 video = UserPostFilter(response)
 
             if not video.has_aweme:
-                logger.debug(_("{0} 页没有找到作品").format(cursor))
+                logger.debug(_("第 {0} 页没有找到作品").format(cursor))
                 if not video.hasMore and str(video.api_status_code) == "0":
                     logger.debug(_("用户：{0} 所有作品采集完毕").format(secUid))
                     break
@@ -471,7 +471,7 @@ class TiktokHandler:
                     break
 
             else:
-                logger.debug(_("{0} 页没有找到作品").format(cursor))
+                logger.debug(_("第 {0} 页没有找到作品").format(cursor))
 
                 if not like.hasMore and str(like.api_status_code) == "0":
                     logger.debug(_("用户：{0} 所有作品采集完毕").format(secUid))
@@ -567,7 +567,7 @@ class TiktokHandler:
                     break
 
             else:
-                logger.debug(_("{0} 页没有找到作品").format(cursor))
+                logger.debug(_("第 {0} 页没有找到作品").format(cursor))
 
                 if not collect.hasMore and str(collect.api_status_code) == "0":
                     logger.debug(_("用户：{0} 所有作品采集完毕").format(secUid))
@@ -669,7 +669,7 @@ class TiktokHandler:
                     break
 
             else:
-                logger.debug(_("{0} 页没有找到作品").format(cursor))
+                logger.debug(_("第 {0} 页没有找到作品").format(cursor))
 
                 if not mix.hasMore and str(mix.api_status_code) == "0":
                     logger.debug(_("合辑: {0} 所有作品采集完毕").format(mixId))

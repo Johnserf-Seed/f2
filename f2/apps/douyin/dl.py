@@ -178,7 +178,7 @@ class DouyinDownloader(BaseDownloader):
 
         # 检查作品是否被屏蔽
         if aweme_prohibited:
-            logger.warning(_("{0} 该作品已被屏蔽，无法下载").format(aweme_id))
+            logger.warning(_("该 {0} 作品已被屏蔽，无法下载").format(aweme_id))
             return
 
         # 检查作品是否可见
