@@ -267,9 +267,9 @@ class DouyinHandler:
     async def fetch_user_post_videos(
         self,
         sec_user_id: str,
-        max_cursor: int,
-        page_counts: int,
-        max_counts: int,
+        max_cursor: int = 0,
+        page_counts: int = 20,
+        max_counts: int = None,
     ) -> AsyncGenerator[UserPostFilter, Any]:
         """
         用于获取指定用户发布的作品列表。
@@ -374,9 +374,9 @@ class DouyinHandler:
     async def fetch_user_like_videos(
         self,
         sec_user_id: str,
-        max_cursor: int,
-        page_counts: int,
-        max_counts: int,
+        max_cursor: int = 0,
+        page_counts: int = 20,
+        max_counts: int = None,
     ) -> AsyncGenerator[UserPostFilter, Any]:
         """
         用于获取指定用户喜欢的作品列表。
@@ -476,9 +476,9 @@ class DouyinHandler:
 
     async def fetch_user_music_collection(
         self,
-        max_cursor: int,
-        page_counts: int,
-        max_counts: int,
+        max_cursor: int = 0,
+        page_counts: int = 20,
+        max_counts: int = None,
     ) -> AsyncGenerator[UserMusicCollectionFilter, Any]:
         """
         用于获取指定用户收藏的音乐作品列表。
@@ -726,9 +726,9 @@ class DouyinHandler:
 
     async def fetch_user_collects(
         self,
-        max_cursor: int,
-        page_counts: int,
-        max_counts: int,
+        max_cursor: int = 0,
+        page_counts: int = 20,
+        max_counts: int = None,
     ) -> AsyncGenerator[UserCollectsFilter, Any]:
         """
         用于获取指定用户收藏夹。
@@ -785,9 +785,9 @@ class DouyinHandler:
     async def fetch_user_collects_videos(
         self,
         collects_id: str,
-        max_cursor: int,
-        page_counts: int,
-        max_counts: int,
+        max_cursor: int = 0,
+        page_counts: int = 20,
+        max_counts: int = None,
     ) -> AsyncGenerator[UserCollectionFilter, Any]:
         """
         用于获取指定用户收藏夹的作品列表。
@@ -1095,9 +1095,9 @@ class DouyinHandler:
     async def fetch_user_feed_videos(
         self,
         sec_user_id: str,
-        max_cursor: int,
-        page_counts: int,
-        max_counts: int,
+        max_cursor: int = 0,
+        page_counts: int = 20,
+        max_counts: int = None,
     ) -> AsyncGenerator[UserPostFilter, Any]:
         """
         用于获取指定用户feed的作品列表。
