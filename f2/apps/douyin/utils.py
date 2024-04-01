@@ -197,23 +197,32 @@ class VerifyFpManager:
 
 class XBogusManager:
     @classmethod
-    def str_2_endpoint(cls, endpoint: str) -> str:
+    def str_2_endpoint(
+        cls,
+        user_agent: str,
+        endpoint: str,
+    ) -> str:
         try:
-            final_endpoint = XB().getXBogus(endpoint)
+            final_endpoint = XB(user_agent).getXBogus(endpoint)
         except Exception as e:
             raise RuntimeError(_("生成X-Bogus失败: {0})").format(e))
 
         return final_endpoint[0]
 
     @classmethod
-    def model_2_endpoint(cls, base_endpoint: str, params: dict) -> str:
+    def model_2_endpoint(
+        cls,
+        user_agent: str,
+        base_endpoint: str,
+        params: dict,
+    ) -> str:
         if not isinstance(params, dict):
             raise TypeError(_("参数必须是字典类型"))
 
         param_str = "&".join([f"{k}={v}" for k, v in params.items()])
 
         try:
-            xb_value = XB().getXBogus(param_str)
+            xb_value = XB(user_agent).getXBogus(param_str)
         except Exception as e:
             raise RuntimeError(_("生成X-Bogus失败: {0})").format(e))
 
