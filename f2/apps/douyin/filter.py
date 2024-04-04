@@ -558,7 +558,12 @@ class UserMusicCollectionFilter(JSONModel):
 
     @property
     def lyric_url(self):
-        return self._get_list_attr_value("$.mc_list[*].lyric_url")
+        # 不是每个作品都有 lyric_url，如果不存在则为 None
+        lyric_urls = []
+        for item in self._data.get("mc_list"):
+            lyric_urls.append(item.get("lyric_url", None))
+
+        return lyric_urls
 
     @property
     def play_url(self):
@@ -1411,6 +1416,7 @@ class PostDetailFilter(JSONModel):
             for prop_name in dir(self)
             if not prop_name.startswith("__") and not prop_name.startswith("_")
         }
+
 
 class UserLiveFilter(JSONModel):
     # live
