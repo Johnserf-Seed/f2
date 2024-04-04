@@ -33,6 +33,7 @@ from f2.apps.tiktok.utils import (
     create_or_rename_user_folder,
 )
 from f2.cli.cli_console import RichConsoleManager
+from f2.exceptions.api_exceptions import APIResponseError
 
 rich_console = RichConsoleManager().rich_console
 rich_prompt = RichConsoleManager().rich_prompt
@@ -70,6 +71,9 @@ class TiktokHandler:
         async with TiktokCrawler(self.kwargs) as crawler:
             params = UserProfile(secUid=secUid, uniqueId=uniqueId)
             response = await crawler.fetch_user_profile(params)
+            user = UserProfileFilter(response)
+            if user.nickname is None:
+                raise APIResponseError(_("API内容请求失败，请更换新cookie后再试"))
             return UserProfileFilter(response)
 
     async def get_user_nickname(
