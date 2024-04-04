@@ -6,7 +6,7 @@ const require = createRequire(import.meta.url)
 
 const pkg = require('vitepress/package.json')
 
-const version = "v0.0.1.4-pw.1"
+const version = "v0.0.1.5-pw.2"
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
