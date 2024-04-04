@@ -34,6 +34,7 @@
 - 添加`douyin`用户收藏夹代码片段
 - 添加对丢失链接的重试逻辑
 - 添加`自定义UA`生成`XBogus`参数
+- 添加`douyin`，`tiktok`对`UserProfile`请求内容为空的报错
 
 ### Changed
 
