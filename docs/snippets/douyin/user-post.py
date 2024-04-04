@@ -7,27 +7,23 @@ kwargs = {
         "Referer": "https://www.douyin.com/",
     },
     "proxies": {"http": None, "https": None},
+    "timeout": 10,
     "cookie": "YOUR_COOKIE_HERE",
 }
 
 
 async def main():
-    user_sec_id = "MS4wLjABAAAANXSltcLCzDGmdNFI2Q_QixVTr67NiYzjKOIP5s03CAE"
-    results = [
-        aweme_data_list
-        async for aweme_data_list in DouyinHandler(kwargs).fetch_user_post_videos(
-            user_sec_id
-        )
-    ]
-    print(results)
-    print("-------------------")
-    results = [
-        aweme_data_list
-        async for aweme_data_list in DouyinHandler(kwargs).fetch_user_post_videos(
-            user_sec_id, 0, 10, 20
-        )
-    ]
-    print(results)
+    sec_user_id = "MS4wLjABAAAANXSltcLCzDGmdNFI2Q_QixVTr67NiYzjKOIP5s03CAE"
+
+    async for aweme_data_list in DouyinHandler(kwargs).fetch_user_post_videos(
+        sec_user_id, 0, 10, 20
+    ):
+        print("=================_to_raw================")
+        print(aweme_data_list._to_raw())
+        # print("=================_to_dict===============")
+        # print(aweme_data_list._to_dict())
+        # print("=================_to_list===============")
+        # print(aweme_data_list._to_list())
 
 
 if __name__ == "__main__":

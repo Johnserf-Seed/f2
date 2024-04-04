@@ -12,7 +12,11 @@ kwargs = {
 
 
 async def main():
-    print(await DouyinHandler(kwargs).fetch_user_live_videos(webcast_id="775841227732"))
+    live = await DouyinHandler(kwargs).fetch_user_live_videos(webcast_id="775841227732")
+    print("=================_to_raw================")
+    print(live._to_raw())
+    # print("=================_to_dict===============")
+    # print(live._to_dict())
 
 
 if __name__ == "__main__":

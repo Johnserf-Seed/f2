@@ -1,7 +1,6 @@
 # path: f2/utils/conf_manager.py
 
 import f2
-import time
 import yaml
 import click
 
@@ -27,14 +26,10 @@ class ConfigManager:
     def load_config(self) -> dict:
         """从文件中加载配置 (Load the conf from the file)"""
 
-        try:
-            if not self.filepath.exists():
-                raise FileNotFound(_("'{0}' 配置文件路径不存在").format(self.filepath))
-            return yaml.safe_load(self.filepath.read_text(encoding="utf-8")) or {}
-        except FileNotFound as e:
-            e.display_error()
-            time.sleep(2)
-            exit(0)
+        if not self.filepath.exists():
+            raise FileNotFound(_("配置文件不存在"), self.filepath)
+
+        return yaml.safe_load(self.filepath.read_text(encoding="utf-8")) or {}
 
     def get_config(self, app_name: str, default=None) -> dict:
         """
@@ -58,9 +53,7 @@ class ConfigManager:
         try:
             self.filepath.write_text(yaml.dump(config), encoding="utf-8")
         except PermissionError:
-            raise FilePermissionError(
-                _("'{0}' 配置文件路径无写权限").format(self.filepath)
-            )
+            raise FilePermissionError(_("配置文件路径无写权限"), self.filepath)
 
     def backup_config(self):
         """在进行更改前备份配置文件 (Backup the conf file before making changes)"""

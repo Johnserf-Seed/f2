@@ -24,20 +24,20 @@ def help() -> None:
                 "根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合辑与直播同上"
             ),
         ),
-        ("-m --music", "[dark_cyan]Choice", _("是否保存视频原声。可选：'yes'、'no'")),
-        ("-v --cover", "[dark_cyan]Choice", _("是否保存视频封面。可选：'yes'、'no'")),
-        ("-d --desc", "[dark_cyan]Choice", _("是否保存视频文案。可选：'yes'、'no'")),
+        ("-m --music", "[dark_cyan]Bool", _("是否保存视频原声")),
+        ("-v --cover", "[dark_cyan]Bool", _("是否保存视频封面")),
+        ("-d --desc", "[dark_cyan]Bool", _("是否保存视频文案")),
         ("-p --path", "[dark_cyan]str", _("作品保存位置，支持绝对与相对路径。")),
         (
             "-f --folderize",
-            "[dark_cyan]Choice",
-            _("是否将作品保存到单独的文件夹。可选：'yes'、'no'"),
+            "[dark_cyan]Bool",
+            _("是否将作品保存到单独的文件夹"),
         ),
         (
             "-M --mode",
             "[dark_cyan]Choice",
             _(
-                "下载模式：单个作品(one)，主页作品(post)，点赞作品(like)，收藏作品(collect)，合辑(mix)，直播(live)"
+                "下载模式：单个作品(one)，主页作品(post)，点赞作品(like)，收藏作品(collection)，收藏夹作品(collects)，合辑(mix)，直播(live)"
             ),
         ),
         (
@@ -59,15 +59,15 @@ def help() -> None:
                 "下载日期区间发布的作品，格式：2022-01-01|2023-01-01，'all' 为下载所有作品"
             ),
         ),
-        ("-e --timeout", "[dark_cyan]int", _("网络请求超时时间。")),
-        ("-r --max-retries", "[dark_cyan]int", _("网络请求超时重试数。")),
-        ("-x --max-connections", "[dark_cyan]int", _("网络请求并发连接数。")),
-        ("-t --max-tasks", "[dark_cyan]int", _("异步的任务数。")),
+        ("-e --timeout", "[dark_cyan]int", _("网络请求超时时间")),
+        ("-r --max-retries", "[dark_cyan]int", _("网络请求超时重试数")),
+        ("-x --max-connections", "[dark_cyan]int", _("网络请求并发连接数")),
+        ("-t --max-tasks", "[dark_cyan]int", _("异步的任务数")),
         ("-o --max-counts", "[dark_cyan]int", _("最大作品下载数。0 表示无限制")),
         (
             "-s --page-counts",
             "[dark_cyan]int",
-            _("从接口每页可获取作品数，不建议超过20。"),
+            _("从接口每页可获取作品数，不建议超过20"),
         ),
         (
             "-l --languages",
@@ -81,6 +81,7 @@ def help() -> None:
                 "代理服务器，最多 2 个参数，http与https。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"
             ),
         ),
+        ("-L --lyric", "[dark_cyan]Bool", _("是否保存视频歌词")),
         (
             "--update-config",
             "[dark_cyan]Flag",
@@ -95,7 +96,7 @@ def help() -> None:
             "--auto-cookie",
             "[dark_cyan]Choice",
             _(
-                "自动从浏览器获取[yellow]cookie[/yellow]。可选项：chrome、firefox、edge、opera。使用该命令前请确保关闭所选的浏览器"
+                "自动从浏览器获取[yellow]cookie[/yellow]，使用该命令前请确保关闭所选的浏览器"
             ),
         ),
         (

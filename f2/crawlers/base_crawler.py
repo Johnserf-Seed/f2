@@ -175,7 +175,7 @@ class BaseCrawler:
                 self.handle_http_status_error(http_error, url, attempt + 1)
 
             except APIError as e:
-                e.display_error()
+                logger.error(e)
 
     async def post_fetch_data(self, url: str, params: dict = {}):
         """
@@ -223,7 +223,7 @@ class BaseCrawler:
                 self.handle_http_status_error(http_error, url, attempt + 1)
 
             except APIError as e:
-                e.display_error()
+                logger.error(e)
 
     async def head_fetch_data(self, url: str):
         """
@@ -252,7 +252,7 @@ class BaseCrawler:
             self.handle_http_status_error(http_error, url, 1)
 
         except APIError as e:
-            e.display_error()
+            logger.error(e)
 
     def handle_http_status_error(self, http_error, url: str, attempt):
         """
@@ -277,31 +277,33 @@ class BaseCrawler:
 
         if response is None or status_code is None:
             logger.error(
-                _("HTTP状态错误: {0}, URL: {1}, 尝试次数: {2}").format(
+                _("HTTP状态错误：{0}, URL：{1}, 尝试次数：{2}").format(
                     http_error, url, attempt
                 )
             )
-            raise APIResponseError(f"处理HTTP错误时遇到意外情况: {http_error}")
+            raise APIResponseError(
+                _("处理HTTP错误时遇到意外情况：{0}").format(http_error)
+            )
 
         if status_code == 302:
             pass
         elif status_code == 404:
-            raise APINotFoundError(f"HTTP Status Code {status_code}")
+            raise APINotFoundError(_("HTTP状态码错误："), status_code)
         elif status_code == 503:
-            raise APIUnavailableError(f"HTTP Status Code {status_code}")
+            raise APIUnavailableError(_("HTTP状态码错误："), status_code)
         elif status_code == 408:
-            raise APITimeoutError(f"HTTP Status Code {status_code}")
+            raise APITimeoutError(_("HTTP状态码错误："), status_code)
         elif status_code == 401:
-            raise APIUnauthorizedError(f"HTTP Status Code {status_code}")
+            raise APIUnauthorizedError(_("HTTP状态码错误："), status_code)
         elif status_code == 429:
-            raise APIRateLimitError(f"HTTP Status Code {status_code}")
+            raise APIRateLimitError(_("HTTP状态码错误："), status_code)
         else:
             logger.error(
-                _("HTTP状态错误: {0}, URL: {1}, 尝试次数: {2}").format(
-                    status_code, url, attempt
+                _("HTTP状态错误：{0}, URL：{1}, 尝试次数：{2}").format(
+                    http_error, url, attempt
                 )
             )
-            raise APIResponseError(f"HTTP状态错误: {status_code}")
+            raise APIResponseError(_("HTTP状态码错误："), status_code)
 
     async def close(self):
         await self.aclient.aclose()

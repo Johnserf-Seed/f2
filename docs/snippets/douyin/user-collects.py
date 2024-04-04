@@ -1,11 +1,10 @@
 import asyncio
-from f2.apps.tiktok.handler import TiktokHandler
-from f2.apps.tiktok.utils import SecUserIdFetcher
+from f2.apps.douyin.handler import DouyinHandler
 
 kwargs = {
     "headers": {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
-        "Referer": "https://www.tiktok.com/",
+        "Referer": "https://www.douyin.com/",
     },
     "proxies": {"http": None, "https": None},
     "timeout": 10,
@@ -14,10 +13,9 @@ kwargs = {
 
 
 async def main():
-    secUid = await SecUserIdFetcher.get_secuid("https://www.tiktok.com/@vantoan___")
-
-    async for aweme_data_list in TiktokHandler(kwargs).fetch_user_post_videos(
-        secUid, 0, 30, None
+    collects_id = ""  # 收藏夹ID
+    async for aweme_data_list in DouyinHandler(kwargs).fetch_user_collects_videos(
+        collects_id, 0, 10, 20
     ):
         print("=================_to_raw================")
         print(aweme_data_list._to_raw())

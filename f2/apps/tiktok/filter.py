@@ -1,7 +1,5 @@
 # path: f2/apps/tiktok/filter.py
 
-from typing import List, Union
-
 from f2.utils.json_filter import JSONModel
 from f2.utils.utils import _get_first_item_from_list, timestamp_2_str, replaceT
 
@@ -46,6 +44,10 @@ class UserProfileFilter(JSONModel):
         return replaceT(self._get_attr_value("$.userInfo.user.nickname"))
 
     @property
+    def nickname_raw(self):
+        return self._get_attr_value("$.userInfo.user.nickname")
+
+    @property
     def secUid(self):
         return self._get_attr_value("$.userInfo.user.secUid")
 
@@ -82,12 +84,19 @@ class UserProfileFilter(JSONModel):
         return replaceT(self._get_attr_value("$.userInfo.user.signature"))
 
     @property
+    def signature_raw(self):
+        return self._get_attr_value("$.userInfo.user.signature")
+
+    @property
     def ttSeller(self) -> bool:
         return bool(self._get_attr_value("$.userInfo.user.ttSeller"))
 
     @property
     def verified(self) -> bool:
         return bool(self._get_attr_value("$.userInfo.user.verified"))
+
+    def _to_raw(self) -> dict:
+        return self._data
 
     def _to_dict(self) -> dict:
         return {
@@ -133,6 +142,10 @@ class UserPostFilter(JSONModel):
         return replaceT(self._get_list_attr_value("$.itemList[*].desc"))
 
     @property
+    def desc_raw(self):
+        return self._get_list_attr_value("$.itemList[*].desc")
+
+    @property
     def textExtra(self):
         return self._get_list_attr_value("$.itemList[*].textExtra")
 
@@ -141,6 +154,10 @@ class UserPostFilter(JSONModel):
     @property
     def nickname(self):
         return replaceT(self._get_list_attr_value("$.itemList[*].author.nickname"))
+
+    @property
+    def nickname_raw(self):
+        return self._get_list_attr_value("$.itemList[*].author.nickname")
 
     @property
     def uid(self):
@@ -222,6 +239,10 @@ class UserPostFilter(JSONModel):
         return replaceT(self._get_list_attr_value("$.itemList[*].music.authorName"))
 
     @property
+    def music_authorName_raw(self):
+        return self._get_list_attr_value("$.itemList[*].music.authorName")
+
+    @property
     def music_coverLarge(self):
         return self._get_list_attr_value("$.itemList[*].music.coverLarge")
 
@@ -245,6 +266,10 @@ class UserPostFilter(JSONModel):
     def music_title(self):
         return replaceT(self._get_list_attr_value("$.itemList[*].music.title"))
 
+    @property
+    def music_title_raw(self):
+        return self._get_list_attr_value("$.itemList[*].music.title")
+
     # video
     @property
     def video_bitrate(self):
@@ -266,11 +291,17 @@ class UserPostFilter(JSONModel):
     def video_bitrateInfo(self):
         bit_rate_data = self._get_list_attr_value("$.itemList[*].video.bitrateInfo")
         return [
-            [aweme.get("Bitrate", "")]  # 使用 get 方法以处理字典中没有 "Bitrate" 键的情况
-            if isinstance(aweme, dict)
-            else [aweme[0].get("Bitrate", "")]
-            if len(aweme) == 1
-            else [item.get("Bitrate", "") for item in aweme]
+            (
+                [
+                    aweme.get("Bitrate", "")
+                ]  # 使用 get 方法以处理字典中没有 "Bitrate" 键的情况
+                if isinstance(aweme, dict)
+                else (
+                    [aweme[0].get("Bitrate", "")]
+                    if len(aweme) == 1
+                    else [item.get("Bitrate", "") for item in aweme]
+                )
+            )
             for aweme in bit_rate_data
         ]
 
@@ -305,6 +336,9 @@ class UserPostFilter(JSONModel):
     @property
     def video_width(self):
         return self._get_list_attr_value("$.itemList[*].video.width")
+
+    def _to_raw(self) -> dict:
+        return self._data
 
     def _to_dict(self) -> dict:
         return {
@@ -383,6 +417,9 @@ class UserPlayListFilter(JSONModel):
     def videoCount(self):
         return self._get_attr_value("$.playList[*].videoCount")
 
+    def _to_raw(self) -> dict:
+        return self._data
+
     def _to_dict(self) -> dict:
         return {
             prop_name: getattr(self, prop_name)
@@ -418,6 +455,10 @@ class PostDetailFilter(JSONModel):
         return replaceT(self._get_attr_value("$.itemInfo.itemStruct.author.nickname"))
 
     @property
+    def nickname_raw(self):
+        return self._get_attr_value("$.itemInfo.itemStruct.author.nickname")
+
+    @property
     def secUid(self):
         return self._get_attr_value("$.itemInfo.itemStruct.author.secUid")
 
@@ -428,6 +469,10 @@ class PostDetailFilter(JSONModel):
     @property
     def signature(self):
         return replaceT(self._get_attr_value("$.itemInfo.itemStruct.author.signature"))
+
+    @property
+    def signature_raw(self):
+        return self._get_attr_value("$.itemInfo.itemStruct.author.signature")
 
     @property
     def openFavorite(self):
@@ -460,6 +505,10 @@ class PostDetailFilter(JSONModel):
     @property
     def desc(self):
         return replaceT(self._get_attr_value("$.itemInfo.itemStruct.desc"))
+
+    @property
+    def desc_raw(self):
+        return self._get_attr_value("$.itemInfo.itemStruct.desc")
 
     @property
     def textExtra(self):
@@ -532,6 +581,10 @@ class PostDetailFilter(JSONModel):
         return replaceT(self._get_attr_value("$.itemInfo.itemStruct.music.authorName"))
 
     @property
+    def music_authorName_raw(self):
+        return self._get_attr_value("$.itemInfo.itemStruct.music.authorName")
+
+    @property
     def music_coverLarge(self):
         return self._get_attr_value("$.itemInfo.itemStruct.music.coverLarge")
 
@@ -554,6 +607,10 @@ class PostDetailFilter(JSONModel):
     @property
     def music_title(self):
         return replaceT(self._get_attr_value("$.itemInfo.itemStruct.music.title"))
+
+    @property
+    def music_title_raw(self):
+        return self._get_attr_value("$.itemInfo.itemStruct.music.title")
 
     # video
     @property
@@ -598,6 +655,9 @@ class PostDetailFilter(JSONModel):
     @property
     def video_width(self):
         return self._get_attr_value("$.itemInfo.itemStruct.video.width")
+
+    def _to_raw(self) -> dict:
+        return self._data
 
     def _to_dict(self) -> dict:
         return {

@@ -12,9 +12,13 @@ kwargs = {
 
 
 async def main():
-    print(await TiktokHandler(kwargs).fetch_one_video(itemId="7095819783324601605"))
-    print("-------------------")
-    print(await TiktokHandler(kwargs).fetch_one_video(itemId="7305827432509082913"))
+    video = await TiktokHandler(kwargs).fetch_one_video(itemId="7095819783324601605")
+    print("=================_to_raw================")
+    print(video._to_raw())
+    # print("=================_to_dict================")
+    # print(video._to_dict())
+    # print("=================_to_list================")
+    # print(video._to_list())
 
 
 if __name__ == "__main__":

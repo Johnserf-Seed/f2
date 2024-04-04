@@ -54,6 +54,12 @@ class DouyinAPIEndpoints:
     # 用户喜欢B (User Like B)
     USER_FAVORITE_B = f"{IESDOUYIN_DOMAIN}/web/api/v2/aweme/like/"
 
+    # 关注用户(User Following)
+    USER_FOLLOWING = f"{DOUYIN_DOMAIN}/aweme/v1/web/user/following/list/"
+
+    # 粉丝用户 (User Follower)
+    USER_FOLLOWER = f"{DOUYIN_DOMAIN}/aweme/v1/web/user/follower/list/"
+
     # 合集作品
     MIX_AWEME = f"{DOUYIN_DOMAIN}/aweme/v1/web/mix/aweme/"
 
@@ -62,6 +68,15 @@ class DouyinAPIEndpoints:
 
     # 用户收藏 (User Collection)
     USER_COLLECTION = f"{DOUYIN_DOMAIN}/aweme/v1/web/aweme/listcollection/"
+
+    # 用户收藏夹 (User Collects)
+    USER_COLLECTS = f"{DOUYIN_DOMAIN}/aweme/v1/web/collects/list/"
+
+    # 用户收藏夹作品 (User Collects Posts)
+    USER_COLLECTS_VIDEO = f"{DOUYIN_DOMAIN}/aweme/v1/web/collects/video/list/"
+
+    # 用户音乐收藏 (User Music Collection)
+    USER_MUSIC_COLLECTION = f"{DOUYIN_DOMAIN}/aweme/v1/web/music/listcollection/"
 
     # 首页朋友作品 (Friend Feed)
     FRIEND_FEED = f"{DOUYIN_DOMAIN}/aweme/v1/web/familiar/feed/"

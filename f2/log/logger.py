@@ -68,7 +68,9 @@ class LogManager(metaclass=Singleton):
             try:
                 log_file.unlink()
             except PermissionError:
-                self.logger.warning(f"无法删除日志文件 {log_file}, 它正被另一个进程使用")
+                self.logger.warning(
+                    f"无法删除日志文件 {log_file}, 它正被另一个进程使用"
+                )
 
     def shutdown(self):
         for handler in self.logger.handlers:

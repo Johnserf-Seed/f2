@@ -12,18 +12,18 @@ class BaseRequestModel(BaseModel):
     aid: str = "6383"
     channel: str = "channel_pc_web"
     pc_client_type: int = 1
-    version_code: str = "170400"
-    version_name: str = "17.4.0"
+    version_code: str = "190500"
+    version_name: str = "19.5.0"
     cookie_enabled: str = "true"
     screen_width: int = 1920
     screen_height: int = 1080
     browser_language: str = "zh-CN"
     browser_platform: str = "Win32"
     browser_name: str = "Edge"
-    browser_version: str = "117.0.2045.47"
+    browser_version: str = "122.0.0.0"
     browser_online: str = "true"
     engine_name: str = "Blink"
-    engine_version: str = "117.0.0.0"
+    engine_version: str = "122.0.0.0"
     os_name: str = "Windows"
     os_version: str = "10"
     cpu_core_num: int = 12
@@ -63,6 +63,7 @@ class BaseLiveModel2(BaseModel):
     app_id: str = "1128"
     msToken: str = TokenManager.gen_real_msToken()
 
+
 class BaseLoginModel(BaseModel):
     service: str = "https://www.douyin.com"
     need_logo: str = "false"
@@ -91,8 +92,27 @@ class UserLike(BaseRequestModel):
     sec_user_id: str
 
 
-class UserCollect(BaseRequestModel):
+class UserCollection(BaseRequestModel):
     # POST
+    cursor: int
+    count: int
+
+
+class UserCollects(BaseRequestModel):
+    # GET
+    cursor: int
+    count: int
+
+
+class UserCollectsVideo(BaseRequestModel):
+    # GET
+    cursor: int
+    count: int
+    collects_id: str
+
+
+class UserMusicCollection(BaseRequestModel):
+    # GET
     cursor: int
     count: int
 
@@ -175,6 +195,7 @@ class UserLive(BaseLiveModel):
     web_rid: str
     room_id_str: str
 
+
 class UserLive2(BaseLiveModel2):
     room_id: str
 
@@ -210,8 +231,37 @@ class LoginGetQr(BaseLoginModel):
     fp: str = ""
     # msToken: str = TokenManager.gen_real_msToken()
 
+
 class LoginCheckQr(BaseLoginModel):
     token: str = ""
     verifyFp: str = ""
     fp: str = ""
     # msToken: str = TokenManager.gen_real_msToken()
+
+
+class UserFollowing(BaseRequestModel):
+    user_id: str = ""
+    sec_user_id: str = ""
+    offset: int = 0  # 相当于cursor
+    min_time: int = 0
+    max_time: int = 0
+    count: int = 20
+    # source_type = 1: 最近关注 需要指定max_time(s) 3: 最早关注 需要指定min_time(s) 4: 综合排序
+    source_type: int = 4
+    gps_access: int = 0
+    address_book_access: int = 0
+    is_top: int = 1
+
+
+class UserFollower(BaseRequestModel):
+    user_id: str
+    sec_user_id: str
+    offset: int = 0  # 相当于cursor 但只对source_type: = 2 有效，其他情况为 0 即可
+    min_time: int = 0
+    max_time: int = 0
+    count: int = 20
+    # source_type = 1: 最近关注 需要指定max_time(s) 2: 综合关注(意义不明)
+    source_type: int = 1
+    gps_access: int = 0
+    address_book_access: int = 0
+    is_top: int = 1

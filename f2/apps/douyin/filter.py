@@ -1,3 +1,5 @@
+# path: f2/apps/douyin/filter.py
+
 from f2.utils.json_filter import JSONModel
 from f2.utils.utils import _get_first_item_from_list, timestamp_2_str, replaceT
 
@@ -74,6 +76,10 @@ class UserProfileFilter(JSONModel):
         return replaceT(self._get_attr_value("$.user.nickname"))
 
     @property
+    def nickname_raw(self):
+        return self._get_attr_value("$.user.nickname")
+
+    @property
     def room_id(self):
         return self._get_attr_value("$.user.room_id")
 
@@ -94,6 +100,10 @@ class UserProfileFilter(JSONModel):
         return replaceT(self._get_attr_value("$.user.signature"))
 
     @property
+    def signature_raw(self):
+        return self._get_attr_value("$.user.signature")
+
+    @property
     def total_favorited(self):
         return self._get_attr_value("$.user.total_favorited")
 
@@ -108,6 +118,9 @@ class UserProfileFilter(JSONModel):
     @property
     def user_age(self):
         return self._get_attr_value("$.user.user_age")
+
+    def _to_raw(self) -> dict:
+        return self._data
 
     def _to_dict(self) -> dict:
         return {
@@ -141,14 +154,18 @@ class UserPostFilter(JSONModel):
     def create_time(self):
         create_times = self._get_list_attr_value("$.aweme_list[*].create_time")
         return (
-            [timestamp_2_str(ct) for ct in create_times]
+            [timestamp_2_str(str(ct)) for ct in create_times]
             if isinstance(create_times, list)
-            else timestamp_2_str(create_times)
+            else timestamp_2_str(str(create_times))
         )
 
     @property
     def desc(self):
         return replaceT(self._get_list_attr_value("$.aweme_list[*].desc"))
+
+    @property
+    def desc_raw(self):
+        return self._get_list_attr_value("$.aweme_list[*].desc")
 
     @property
     def uid(self):
@@ -163,6 +180,10 @@ class UserPostFilter(JSONModel):
         return replaceT(self._get_list_attr_value("$.aweme_list[*].author.nickname"))
 
     @property
+    def nickname_raw(self):
+        return self._get_list_attr_value("$.aweme_list[*].author.nickname")
+
+    @property
     def author_avatar_thumb(self):
         return self._get_list_attr_value(
             "$.aweme_list[*].author.avatar_thumb.url_list[0]"
@@ -173,13 +194,15 @@ class UserPostFilter(JSONModel):
         images_list = self._get_list_attr_value("$.aweme_list[*].images")
 
         return [
-            [
-                img["url_list"][0]
-                for img in images
-                if isinstance(img, dict) and "url_list" in img and img["url_list"]
-            ]
-            if images
-            else None
+            (
+                [
+                    img["url_list"][0]
+                    for img in images
+                    if isinstance(img, dict) and "url_list" in img and img["url_list"]
+                ]
+                if images
+                else None
+            )
             for images in images_list
         ]
 
@@ -193,9 +216,11 @@ class UserPostFilter(JSONModel):
 
         # 逐个视频判断是否存在animated_cover
         animated_covers = [
-            video.get("animated_cover", {}).get("url_list", [None])[0]
-            if video.get("animated_cover")
-            else None
+            (
+                video.get("animated_cover", {}).get("url_list", [None])[0]
+                if video.get("animated_cover")
+                else None
+            )
             for video in videos
         ]
 
@@ -216,11 +241,15 @@ class UserPostFilter(JSONModel):
         bit_rate_data = self._get_list_attr_value("$.aweme_list[*].video.bit_rate")
 
         return [
-            [aweme["bit_rate"]]
-            if isinstance(aweme, dict)
-            else [aweme[0]["bit_rate"]]
-            if len(aweme) == 1
-            else [item["bit_rate"] for item in aweme]
+            (
+                [aweme["bit_rate"]]
+                if isinstance(aweme, dict)
+                else (
+                    [aweme[0]["bit_rate"]]
+                    if len(aweme) == 1
+                    else [item["bit_rate"] for item in aweme]
+                )
+            )
             for aweme in bit_rate_data
         ]
 
@@ -256,6 +285,10 @@ class UserPostFilter(JSONModel):
         return replaceT(self._get_list_attr_value("$.aweme_list[*].music.title"))
 
     @property
+    def music_title_raw(self):
+        return self._get_list_attr_value("$.aweme_list[*].music.title")
+
+    @property
     def music_play_url(self):
         url_list = self._get_list_attr_value("$.aweme_list[*].music.play_url.url_list")
         return _get_first_item_from_list(url_list)
@@ -271,6 +304,9 @@ class UserPostFilter(JSONModel):
     @property
     def min_cursor(self):
         return self._get_attr_value("$.min_cursor")
+
+    def _to_raw(self) -> dict:
+        return self._data
 
     def _to_dict(self) -> dict:
         return {
@@ -313,13 +349,291 @@ class UserPostFilter(JSONModel):
         return list_dicts
 
 
-class UserCollectFilter(UserPostFilter):
+class UserCollectionFilter(UserPostFilter):
     def __init__(self, data):
         super().__init__(data)
 
     @property
     def max_cursor(self):
         return self._get_attr_value("$.cursor")
+
+
+class UserCollectsFilter(JSONModel):
+
+    @property
+    def max_cursor(self):
+        return self._get_attr_value("$.cursor")
+
+    @property
+    def status_code(self):
+        return self._get_attr_value("$.status_code")
+
+    @property
+    def total_number(self):
+        return self._get_attr_value("$.total_number")
+
+    @property
+    def has_more(self):
+        return bool(self._get_attr_value("$.has_more"))
+
+    @property
+    def app_id(self):
+        return self._get_list_attr_value("$.collects_list[*].app_id")
+
+    @property
+    def collects_cover(self):
+        return self._get_list_attr_value(
+            "$.collects_list[*].collects_cover.url_list[0]"
+        )
+
+    @property
+    def collects_id(self):
+        return self._get_list_attr_value("$.collects_list[*].collects_id")
+
+    @property
+    def collects_name(self):
+        return replaceT(self._get_list_attr_value("$.collects_list[*].collects_name"))
+
+    @property
+    def collects_name_raw(self):
+        return self._get_list_attr_value("$.collects_list[*].collects_name")
+
+    @property
+    def create_time(self):
+        create_times = self._get_list_attr_value("$.collects_list[*].create_time")
+        return (
+            [timestamp_2_str(str(ct)) for ct in create_times]
+            if isinstance(create_times, list)
+            else timestamp_2_str(str(create_times))
+        )
+
+    @property
+    def follow_status(self):
+        return self._get_list_attr_value("$.collects_list[*].follow_status")
+
+    @property
+    def followed_count(self):
+        return self._get_list_attr_value("$.collects_list[*].followed_count")
+
+    @property
+    def is_normal_status(self):
+        return self._get_list_attr_value("$.collects_list[*].is_normal_status")
+
+    @property
+    def item_type(self):
+        return self._get_list_attr_value("$.collects_list[*].item_type")
+
+    @property
+    def last_collect_time(self):
+        create_times = self._get_list_attr_value("$.collects_list[*].last_collect_time")
+        return (
+            [timestamp_2_str(str(ct)) for ct in create_times]
+            if isinstance(create_times, list)
+            else timestamp_2_str(str(create_times))
+        )
+
+    @property
+    def play_count(self):
+        return self._get_list_attr_value("$.collects_list[*].play_count")
+
+    @property
+    def states(self):
+        return self._get_list_attr_value("$.collects_list[*].states")
+
+    @property
+    def status(self):
+        return self._get_list_attr_value("$.collects_list[*].status")
+
+    @property
+    def system_type(self):
+        return self._get_list_attr_value("$.collects_list[*].system_type")
+
+    @property
+    def total_number(self):
+        return self._get_list_attr_value("$.collects_list[*].total_number")
+
+    @property
+    def user_id(self):
+        return self._get_list_attr_value("$.collects_list[*].user_id")
+
+    # user_info
+    @property
+    def nickname(self):
+        return replaceT(
+            self._get_list_attr_value("$.collects_list[*].user_info.nickname")
+        )
+
+    @property
+    def nickname_raw(self):
+        return self._get_list_attr_value("$.collects_list[*].user_info.nickname")
+
+    @property
+    def uid(self):
+        return self._get_list_attr_value("$.collects_list[*].user_info.uid")
+
+    def _to_raw(self) -> dict:
+        return self._data
+
+    def _to_dict(self) -> dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
+
+class UserMusicCollectionFilter(JSONModel):
+
+    @property
+    def max_cursor(self):
+        return self._get_attr_value("$.cursor")
+
+    @property
+    def has_more(self):
+        return self._get_attr_value("$.has_more")
+
+    @property
+    def status_code(self):
+        return self._get_attr_value("$.status_code")
+
+    @property
+    def msg(self):
+        return self._get_attr_value("$.msg")
+
+    @property
+    def album(self):
+        return self._get_list_attr_value("$.mc_list[*].album")
+
+    @property
+    def audition_duration(self):
+        return self._get_list_attr_value("$.mc_list[*].audition_duration")
+
+    @property
+    def duration(self):
+        return self._get_list_attr_value("$.mc_list[*].duration")
+
+    @property
+    def author(self):
+        return replaceT(self._get_list_attr_value("$.mc_list[*].author"))
+
+    @property
+    def author_raw(self):
+        return self._get_list_attr_value("$.mc_list[*].author")
+
+    @property
+    def collect_status(self):
+        return self._get_list_attr_value("$.mc_list[*].collect_stat")
+
+    @property
+    def music_status(self):
+        return self._get_list_attr_value("$.mc_list[*].music_status")
+
+    @property
+    def cover_hd(self):
+        return self._get_list_attr_value("$.mc_list[*].cover_hd.url_list[0]")
+
+    @property
+    def music_id(self):
+        return self._get_list_attr_value("$.mc_list[*].id")
+
+    @property
+    def mid(self):
+        return self._get_list_attr_value("$.mc_list[*].mid")
+
+    @property
+    def is_commerce_music(self):
+        return self._get_list_attr_value("$.mc_list[*].is_commerce_music")
+
+    @property
+    def is_original(self):
+        return self._get_list_attr_value("$.mc_list[*].is_original")
+
+    @property
+    def is_original_sound(self):
+        return self._get_list_attr_value("$.mc_list[*].is_original_sound")
+
+    @property
+    def lyric_type(self):
+        return self._get_list_attr_value("$.mc_list[*].lyric_type")
+
+    @property
+    def lyric_url(self):
+        # 不是每个作品都有 lyric_url，如果不存在则为 None
+        lyric_urls = []
+        for item in self._data.get("mc_list"):
+            lyric_urls.append(item.get("lyric_url", None))
+
+        return lyric_urls
+
+    @property
+    def play_url(self):
+        return self._get_list_attr_value("$.mc_list[*].play_url.url_list[0]")
+
+    @property
+    def title(self):
+        return replaceT(self._get_list_attr_value("$.mc_list[*].title"))
+
+    @property
+    def title_raw(self):
+        return self._get_list_attr_value("$.mc_list[*].title")
+
+    @property
+    def strong_beat_url(self):
+        return self._get_list_attr_value("$.mc_list[*].strong_beat_url.url_list[0]")
+
+    @property
+    def owner_nickname(self):
+        return replaceT(self._get_list_attr_value("$.mc_list[*].owner_nickname"))
+
+    @property
+    def owner_nickname_raw(self):
+        return self._get_list_attr_value("$.mc_list[*].owner_nickname")
+
+    @property
+    def owner_id(self):
+        return self._get_list_attr_value("$.mc_list[*].owner_id")
+
+    @property
+    def sec_uid(self):
+        return self._get_list_attr_value("$.mc_list[*].sec_uid")
+
+    def _to_raw(self) -> dict:
+        return self._data
+
+    def _to_dict(self) -> dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
+    def _to_list(self):
+        exclude_list = ["has_more", "max_cursor", "status_code", "msg"]
+
+        keys = [
+            prop_name
+            for prop_name in dir(self)
+            if not prop_name.startswith("__")
+            and not prop_name.startswith("_")
+            and prop_name not in exclude_list
+        ]
+
+        aweme_entries = self._get_attr_value("$.mc_list") or []
+
+        list_dicts = []
+        for entry in aweme_entries:
+            d = {
+                "has_more": self.has_more,
+                "max_cursor": self.max_cursor,
+                "status_code": self.status_code,
+                "msg": self.msg,
+            }
+            for key in keys:
+                attr_values = getattr(self, key)
+                index = aweme_entries.index(entry)
+                d[key] = attr_values[index] if index < len(attr_values) else None
+            list_dicts.append(d)
+        return list_dicts
 
 
 class UserMixFilter(UserPostFilter):
@@ -336,92 +650,406 @@ class UserLikeFilter(UserPostFilter):
         super().__init__(data)
 
 
+class UserFollowingFilter(JSONModel):
+
+    @property
+    def status_code(self):  # 1 正常，2096 用户隐私设置不允许查看
+        return self._get_attr_value("$.status_code")
+
+    @property
+    def status_msg(self):
+        return self._get_attr_value("$.status_msg")
+
+    @property
+    def has_more(self):
+        return self._get_attr_value("$.has_more")
+
+    @property
+    def total(self):
+        return self._get_attr_value("$.total")
+
+    @property
+    def mix_count(self):
+        return self._get_attr_value("$.mix_count")
+
+    @property
+    def offset(self):
+        return self._get_attr_value("$.offset")
+
+    @property
+    def myself_user_id(self):
+        return self._get_attr_value("$.myself_user_id")
+
+    @property
+    def max_time(self):
+        return self._get_attr_value("$.max_time")
+
+    @property
+    def min_time(self):
+        return self._get_attr_value("$.min_time")
+
+    # following_list
+    @property
+    def avatar_larger(self):
+        return self._get_list_attr_value("$.followings[*].avatar_larger.url_list[0]")
+
+    @property
+    def can_comment(self):
+        return self._get_list_attr_value("$.followings[*].aweme_control.can_comment")
+
+    @property
+    def can_forward(self):
+        return self._get_list_attr_value("$.followings[*].aweme_control.can_forward")
+
+    @property
+    def can_share(self):
+        return self._get_list_attr_value("$.followings[*].aweme_control.can_share")
+
+    @property
+    def can_show_comment(self):
+        return self._get_list_attr_value(
+            "$.followings[*].aweme_control.can_show_comment"
+        )
+
+    @property
+    def aweme_count(self):
+        return self._get_list_attr_value("$.followings[*].aweme_count")
+
+    @property
+    def back_cover(self):
+        return self._get_list_attr_value("$.followings[*].cover_url[0].url_list[0]")
+
+    @property
+    def register_time(self):
+        return self._get_list_attr_value("$.followings[*].create_time")
+
+    @property
+    def secondary_priority(self):
+        # secondary_priority 6 代表未看过的作品数量 1 代表正在直播 7 代表简介内容
+        return self._get_list_attr_value(
+            "$.followings[*].following_list_secondary_information_struct.secondary_information_priority"
+        )
+
+    @property
+    def secondary_text(self):
+        return replaceT(
+            self._get_list_attr_value(
+                "$.followings[*].following_list_secondary_information_struct.secondary_information_text"
+            )
+        )
+
+    @property
+    def secondary_text_raw(self):
+        return self._get_list_attr_value(
+            "$.followings[*].following_list_secondary_information_struct.secondary_information_text"
+        )
+
+    @property
+    def is_block(self):
+        return self._get_list_attr_value("$.followings[*].is_block")
+
+    @property
+    def is_blocked(self):
+        return self._get_list_attr_value("$.followings[*].is_blocked")
+
+    @property
+    def is_gov_media_vip(self):
+        return self._get_list_attr_value("$.followings[*].is_gov_media_vip")
+
+    @property
+    def is_mix_user(self):
+        return self._get_list_attr_value("$.followings[*].is_mix_user")
+
+    @property
+    def is_phone_binded(self):
+        return self._get_list_attr_value("$.followings[*].is_phone_binded")
+
+    @property
+    def is_star(self):
+        return self._get_list_attr_value("$.followings[*].is_star")
+
+    @property
+    def is_top(self):
+        # 超粉?
+        return self._get_list_attr_value("$.followings[*].is_top")
+
+    @property
+    def is_verified(self):
+        # 实名?
+        return self._get_list_attr_value("$.followings[*].is_verified")
+
+    @property
+    def language(self):
+        return self._get_list_attr_value("$.followings[*].language")
+
+    @property
+    def nickname(self):
+        return replaceT(self._get_list_attr_value("$.followings[*].nickname"))
+
+    @property
+    def nickname_raw(self):
+        return self._get_list_attr_value("$.followings[*].nickname")
+
+    @property
+    def relation_label(self):
+        return self._get_list_attr_value("$.followings[*].relation_label")
+
+    @property
+    def room_id(self):
+        return self._get_list_attr_value("$.followings[*].room_id")
+
+    @property
+    def sec_uid(self):
+        return self._get_list_attr_value("$.followings[*].sec_uid")
+
+    @property
+    def secret(self):
+        # 私密?
+        return self._get_list_attr_value("$.followings[*].secret")
+
+    @property
+    def short_id(self):
+        return self._get_list_attr_value("$.followings[*].short_id")
+
+    @property
+    def signature(self):
+        return replaceT(self._get_list_attr_value("$.followings[*].signature"))
+
+    @property
+    def signature_raw(self):
+        return self._get_list_attr_value("$.followings[*].signature")
+
+    @property
+    def uid(self):
+        return self._get_list_attr_value("$.followings[*].uid")
+
+    @property
+    def unique_id(self):
+        return self._get_list_attr_value("$.followings[*].unique_id")
+
+    def _to_raw(self) -> dict:
+        return self._data
+
+    def _to_dict(self) -> dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
+    def _to_list(self):
+        exclude_list = [
+            "status_code",
+            "status_msg",
+            "has_more",
+            "total",
+            "mix_count",
+            "offset",
+            "myself_user_id",
+            "max_time",
+            "min_time",
+        ]
+
+        keys = [
+            prop_name
+            for prop_name in dir(self)
+            if not prop_name.startswith("__")
+            and not prop_name.startswith("_")
+            and prop_name not in exclude_list
+        ]
+
+        following_entries = self._get_attr_value("$.followings") or []
+
+        list_dicts = []
+        for entry in following_entries:
+            d = {
+                "has_more": self.has_more,
+                "total": self.total,
+                "mix_count": self.mix_count,
+                "offset": self.offset,
+                "myself_user_id": self.myself_user_id,
+                "max_time": self.max_time,
+                "min_time": self.min_time,
+            }
+            for key in keys:
+                attr_values = getattr(self, key)
+                index = following_entries.index(entry)
+                d[key] = attr_values[index] if index < len(attr_values) else None
+            list_dicts.append(d)
+        return list_dicts
+
+
+class UserFollowerFilter(UserFollowingFilter):
+    def __init__(self, data):
+        super().__init__(data)
+
+    @property
+    def total(self):
+        return self._get_attr_value("$.total")
+
+    # followers
+    @property
+    def avatar_larger(self):
+        return self._get_list_attr_value("$.followers[*].avatar_larger.url_list[0]")
+
+    @property
+    def can_comment(self):
+        return self._get_list_attr_value("$.followers[*].aweme_control.can_comment")
+
+    @property
+    def can_forward(self):
+        return self._get_list_attr_value("$.followers[*].aweme_control.can_forward")
+
+    @property
+    def can_share(self):
+        return self._get_list_attr_value(
+            "$.followersfollowers[*].aweme_control.can_share"
+        )
+
+    @property
+    def can_show_comment(self):
+        return self._get_list_attr_value(
+            "$.followers[*].aweme_control.can_show_comment"
+        )
+
+    @property
+    def aweme_count(self):
+        return self._get_list_attr_value("$.followers[*].aweme_count")
+
+    @property
+    def back_cover(self):
+        return self._get_list_attr_value("$.followers[*].cover_url[0].url_list[0]")
+
+    @property
+    def register_time(self):
+        return self._get_list_attr_value("$.followers[*].create_time")
+
+    @property
+    def is_block(self):
+        return self._get_list_attr_value("$.followers[*].is_block")
+
+    @property
+    def is_blocked(self):
+        return self._get_list_attr_value("$.followers[*].is_blocked")
+
+    @property
+    def is_gov_media_vip(self):
+        return self._get_list_attr_value("$.followers[*].is_gov_media_vip")
+
+    @property
+    def is_mix_user(self):
+        return self._get_list_attr_value("$.followers[*].is_mix_user")
+
+    @property
+    def is_phone_binded(self):
+        return self._get_list_attr_value("$.followers[*].is_phone_binded")
+
+    @property
+    def is_star(self):
+        return self._get_list_attr_value("$.followers[*].is_star")
+
+    @property
+    def is_top(self):
+        # 超粉?
+        return self._get_list_attr_value("$.followers[*].is_top")
+
+    @property
+    def is_verified(self):
+        # 实名?
+        return self._get_list_attr_value("$.followers[*].is_verified")
+
+    @property
+    def language(self):
+        return self._get_list_attr_value("$.followers[*].language")
+
+    @property
+    def nickname(self):
+        return replaceT(self._get_list_attr_value("$.followers[*].nickname"))
+
+    @property
+    def nickname_raw(self):
+        return self._get_list_attr_value("$.followers[*].nickname")
+
+    @property
+    def relation_label(self):
+        return self._get_list_attr_value("$.followers[*].relation_label")
+
+    @property
+    def room_id(self):
+        return self._get_list_attr_value("$.followers[*].room_id")
+
+    @property
+    def sec_uid(self):
+        return self._get_list_attr_value("$.followers[*].sec_uid")
+
+    @property
+    def secret(self):
+        # 私密?
+        return self._get_list_attr_value("$.followers[*].secret")
+
+    @property
+    def short_id(self):
+        return self._get_list_attr_value("$.followers[*].short_id")
+
+    @property
+    def signature(self):
+        return replaceT(self._get_list_attr_value("$.followers[*].signature"))
+
+    @property
+    def signature_raw(self):
+        return self._get_list_attr_value("$.followers[*].signature")
+
+    @property
+    def uid(self):
+        return self._get_list_attr_value("$.followers[*].uid")
+
+    @property
+    def unique_id(self):
+        return self._get_list_attr_value("$.followers[*].unique_id")
+
+    def _to_list(self):
+        exclude_list = [
+            "status_code",
+            "status_msg",
+            "has_more",
+            "total",
+            "mix_count",
+            "offset",
+            "myself_user_id",
+            "max_time",
+            "min_time",
+        ]
+
+        keys = [
+            prop_name
+            for prop_name in dir(self)
+            if not prop_name.startswith("__")
+            and not prop_name.startswith("_")
+            and prop_name not in exclude_list
+        ]
+
+        following_entries = self._get_attr_value("$.followers") or []
+
+        list_dicts = []
+        for entry in following_entries:
+            d = {
+                "has_more": self.has_more,
+                "total": self.total,
+                "mix_count": self.mix_count,
+                "offset": self.offset,
+                "myself_user_id": self.myself_user_id,
+                "max_time": self.max_time,
+                "min_time": self.min_time,
+            }
+            for key in keys:
+                attr_values = getattr(self, key)
+                index = following_entries.index(entry)
+                d[key] = attr_values[index] if index < len(attr_values) else None
+            list_dicts.append(d)
+        return list_dicts
+
+
 class PostDetailFilter(JSONModel):
-    # api_status_code = property(lambda self: self._get_attr_value("$.status_code"))
-    # # author
-    # nickname = property(lambda self: replaceT(self._get_attr_value("$.aweme_detail.author.nickname")))
-    # sec_user_id = property(lambda self: self._get_attr_value("$.aweme_detail.author.sec_uid"))
-    # short_id = property(lambda self: self._get_attr_value("$.aweme_detail.author.short_id"))
-    # uid = property(lambda self: self._get_attr_value("$.aweme_detail.author.uid"))
-    # unique_id = property(lambda self: self._get_attr_value("$.aweme_detail.author.unique_id"))
-
-    # can_comment = property(lambda self: self._get_attr_value("$.aweme_detail.aweme_control.can_comment"))
-    # can_forward = property(lambda self: self._get_attr_value("$.aweme_detail.aweme_control.can_forward"))
-    # can_share = property(lambda self: self._get_attr_value("$.aweme_detail.aweme_control.can_share"))
-    # can_show_comment = property(lambda self: self._get_attr_value("$.aweme_detail.aweme_control.can_show_comment"))
-    # aweme_type = property(lambda self: self._get_attr_value("$.aweme_detail.aweme_control.aweme_type"))
-    # aweme_id = property(lambda self: self._get_attr_value("$.aweme_detail.aweme_id"))
-    # comment_gid = property(lambda self: self._get_attr_value("$.aweme_detail.comment_gid"))
-    # create_time = property(lambda self: timestamp_2_str(self._get_attr_value("$.aweme_detail.create_time")))
-    # desc = property(lambda self: replaceT(self._get_attr_value("$.aweme_detail.desc")))
-    # duration = property(lambda self: self._get_attr_value("$.aweme_detail.duration"))
-    # is_ads = property(lambda self: self._get_attr_value("$.aweme_detail.is_ads"))
-    # is_story = property(lambda self: self._get_attr_value("$.aweme_detail.is_story"))
-    # is_top = property(lambda self: self._get_attr_value("$.aweme_detail.is_top"))
-    # video_bit_rate = property(lambda self: [
-    #     [aweme['bit_rate']] if isinstance(aweme, dict)
-    #     else [aweme[0]['bit_rate']] if len(aweme) == 1
-    #     else [item['bit_rate'] for item in aweme]
-    #     for aweme in self._get_list_attr_value("$.aweme_detail.video.bit_rate")
-    # ])
-    # video_play_addr = property(lambda self: self._get_attr_value("$.aweme_detail.video.play_addr.url_list[0]"))
-    # images = property(lambda self: [
-    #     [img['url_list'][0] for img in images if isinstance(img, dict) and 'url_list' in img and img['url_list']]
-    #     if images else None
-    #     for images in self._get_list_attr_value("$.aweme_detail.images")
-    # ])
-
-    # # aweme status
-    # is_delete = property(lambda self: self._get_attr_value("$.aweme_detail.status.is_delete"))
-    # is_prohibited = property(lambda self: self._get_attr_value("$.aweme_detail.status.is_prohibited"))
-
-    # is_long_video = property(lambda self: self._get_attr_value("$.aweme_detail.long_video"))
-    # media_type = property(lambda self: self._get_attr_value("$.aweme_detail.media_type"))
-    # # mix
-    # mix_desc = property(lambda self: replaceT(self._get_attr_value("$.aweme_detail.mix_info.mix_desc")))
-    # mix_create_time = property(lambda self: timestamp_2_str(self._get_attr_value("$.aweme_detail.mix_info.mix_create_time")))
-    # mix_id = property(lambda self: self._get_attr_value("$.aweme_detail.mix_info.mix_id"))
-    # mix_name = property(lambda self: self._get_attr_value("$.aweme_detail.mix_info.mix_name"))
-    # mix_pic_type = property(lambda self: self._get_attr_value("$.aweme_detail.mix_info.mix_pic_type"))
-    # mix_type = property(lambda self: self._get_attr_value("$.aweme_detail.mix_info.mix_type"))
-    # mix_share_url = property(lambda self: self._get_attr_value("$.aweme_detail.mix_info.mix_share_url"))
-    # mix_update_time = property(lambda self: timestamp_2_str(self._get_attr_value("$.aweme_detail.mix_info.mix_update_time")))
-    # # music
-    # is_commerce_music = property(lambda self: self._get_attr_value("$.aweme_detail.music.is_commerce_music"))
-    # is_original = property(lambda self: self._get_attr_value("$.aweme_detail.music.is_original"))
-    # is_original_sound = property(lambda self: self._get_attr_value("$.aweme_detail.music.is_original_sound"))
-    # is_pgc = property(lambda self: self._get_attr_value("$.aweme_detail.music.is_pgc"))
-    # music_author = property(lambda self: replaceT(self._get_attr_value("$.aweme_detail.music.author")))
-    # music_author_deleted = property(lambda self: self._get_attr_value("$.aweme_detail.music.author_deleted"))
-    # music_duration = property(lambda self: self._get_attr_value("$.aweme_detail.music.duration"))
-    # music_id = property(lambda self: self._get_attr_value("$.aweme_detail.music.id"))
-    # music_id_str = property(lambda self: self._get_attr_value("$.aweme_detail.music.id_str"))
-    # music_mid = property(lambda self: self._get_attr_value("$.aweme_detail.music.mid"))
-    # pgc_author = property(lambda self: replaceT(self._get_attr_value("$.aweme_detail.music.matched_pgc_sound.pgc_author")))
-    # pgc_author_title = property(lambda self: replaceT(self._get_attr_value("$.aweme_detail.music.matched_pgc_sound.pgc_author_title")))
-    # pgc_music_type = property(lambda self: self._get_attr_value("$.aweme_detail.music.matched_pgc_sound.pgc_music_type"))
-    # music_status = property(lambda self: self._get_attr_value("$.aweme_detail.music.status"))
-    # music_owner_handle = property(lambda self: replaceT(self._get_attr_value("$.aweme_detail.music.owner_handle")))
-    # music_owner_id = property(lambda self: self._get_attr_value("$.aweme_detail.music.owner_id"))
-    # music_owner_nickname = property(lambda self: replaceT(self._get_attr_value("$.aweme_detail.music.owner_nickname")))
-    # music_play_url = property(lambda self: self._get_attr_value("$.aweme_detail.music.play_url.url_list[0]"))
-
-    # # position
-    # position = property(lambda self: self._get_attr_value("$.aweme_detail.position"))
-    # # region = property(lambda self: self._get_attr_value("$.aweme_detail.region"))
-
-    # # seo_ocr_content
-    # seo_ocr_content = property(lambda self: self._get_attr_value("$.aweme_detail.seo_info.seo_ocr_content"))
-
-    # admire_count = property(lambda self: self._get_attr_value("$.aweme_detail.statistics.admire_count"))
-    # collect_count = property(lambda self: self._get_attr_value("$.aweme_detail.statistics.collect_count"))
-    # comment_count = property(lambda self: self._get_attr_value("$.aweme_detail.statistics.comment_count"))
-    # digg_count = property(lambda self: self._get_attr_value("$.aweme_detail.statistics.digg_count"))
-    # # play_count = property(lambda self: self._get_attr_value("$.aweme_detail.statistics.play_count"))
-    # share_count = property(lambda self: self._get_attr_value("$.aweme_detail.statistics.share_count"))
-
-    # hashtag_ids = property(lambda self: self._get_list_attr_value("$.aweme_detail.text_extra[*].hashtag_id"))
-    # hashtag_names = property(lambda self: self._get_list_attr_value("$.aweme_detail.text_extra[*].hashtag_name"))
 
     @property
     def api_status_code(self):
@@ -439,6 +1067,10 @@ class PostDetailFilter(JSONModel):
     @property
     def nickname(self):
         return replaceT(self._get_attr_value("$.aweme_detail.author.nickname"))
+
+    @property
+    def nickname_raw(self):
+        return self._get_attr_value("$.aweme_detail.author.nickname")
 
     @property
     def sec_user_id(self):
@@ -487,6 +1119,10 @@ class PostDetailFilter(JSONModel):
         return replaceT(self._get_attr_value("$.aweme_detail.desc"))
 
     @property
+    def desc_raw(self):
+        return self._get_attr_value("$.aweme_detail.desc")
+
+    @property
     def duration(self):
         return self._get_attr_value("$.aweme_detail.duration")
 
@@ -532,6 +1168,10 @@ class PostDetailFilter(JSONModel):
     @property
     def mix_desc(self):
         return replaceT(self._get_attr_value("$.aweme_detail.mix_info.mix_desc"))
+
+    @property
+    def mix_desc_raw(self):
+        return self._get_attr_value("$.aweme_detail.mix_info.mix_desc")
 
     @property
     def mix_create_time(self):
@@ -587,6 +1227,10 @@ class PostDetailFilter(JSONModel):
         return replaceT(self._get_attr_value("$.aweme_detail.music.author"))
 
     @property
+    def music_author_raw(self):
+        return self._get_attr_value("$.aweme_detail.music.author")
+
+    @property
     def music_author_deleted(self):
         return self._get_attr_value("$.aweme_detail.music.author_deleted")
 
@@ -609,11 +1253,21 @@ class PostDetailFilter(JSONModel):
         )
 
     @property
+    def pgc_author_raw(self):
+        return self._get_attr_value("$.aweme_detail.music.matched_pgc_sound.pgc_author")
+
+    @property
     def pgc_author_title(self):
         return replaceT(
             self._get_attr_value(
                 "$.aweme_detail.music.matched_pgc_sound.pgc_author_title"
             )
+        )
+
+    @property
+    def pgc_author_title_raw(self):
+        return self._get_attr_value(
+            "$.aweme_detail.music.matched_pgc_sound.pgc_author_title"
         )
 
     @property
@@ -631,12 +1285,20 @@ class PostDetailFilter(JSONModel):
         return replaceT(self._get_attr_value("$.aweme_detail.music.owner_handle"))
 
     @property
+    def music_owner_handle_raw(self):
+        return self._get_attr_value("$.aweme_detail.music.owner_handle")
+
+    @property
     def music_owner_id(self):
         return self._get_attr_value("$.aweme_detail.music.owner_id")
 
     @property
     def music_owner_nickname(self):
         return replaceT(self._get_attr_value("$.aweme_detail.music.owner_nickname"))
+
+    @property
+    def music_owner_nickname_raw(self):
+        return self._get_attr_value("$.aweme_detail.music.owner_nickname")
 
     @property
     def music_play_url(self):
@@ -724,22 +1386,29 @@ class PostDetailFilter(JSONModel):
         )
 
         return [
-            [aweme["bit_rate"]]
-            if isinstance(aweme, dict)
-            else [aweme[0]["bit_rate"]]
-            if len(aweme) == 1
-            else [item["bit_rate"] for item in aweme]
+            (
+                [aweme["bit_rate"]]
+                if isinstance(aweme, dict)
+                else (
+                    [aweme[0]["bit_rate"]]
+                    if len(aweme) == 1
+                    else [item["bit_rate"] for item in aweme]
+                )
+            )
             for aweme in bit_rate_data
         ]
 
     @property
     def video_play_addr(self):
-        return self._get_attr_value("$.aweme_detail.video.play_addr.url_list[0]")
+        return self._get_attr_value("$.aweme_detail.video.play_addr.url_list")
 
     # images
     @property
     def images(self):
         return self._get_list_attr_value("$.aweme_detail.images[*].url_list[0]")
+
+    def _to_raw(self) -> dict:
+        return self._data
 
     def _to_dict(self) -> dict:
         return {
@@ -747,35 +1416,6 @@ class PostDetailFilter(JSONModel):
             for prop_name in dir(self)
             if not prop_name.startswith("__") and not prop_name.startswith("_")
         }
-
-    def _to_list(self):
-        # 不需要的属性列表
-        exclude_list = ["has_more", "max_cursor", "min_cursor"]
-        # 生成属性名称列表，然后过滤掉不需要的属性
-        keys = [
-            prop_name
-            for prop_name in dir(self)
-            if not prop_name.startswith("__")
-            and not prop_name.startswith("_")
-            and prop_name not in exclude_list
-        ]
-
-        aweme_entries = self._get_attr_value("$.aweme_detail") or []
-
-        list_dicts = []
-        # 遍历每个条目并创建一个字典
-        # (Iterate through each entry and create a dict)
-        for entry in aweme_entries:
-            d = {}
-            for key in keys:
-                attr_values = getattr(self, key)
-                # 当前aweme_entry在属性列表中的索引
-                index = aweme_entries.index(entry)
-                # 如果属性值的长度足够则赋值，否则赋None
-                # (Assign value if the length of the attribute value is sufficient, otherwise assign None)
-                d[key] = attr_values[index] if index < len(attr_values) else None
-            list_dicts.append(d)
-        return list_dicts
 
 
 class UserLiveFilter(JSONModel):
@@ -795,6 +1435,10 @@ class UserLiveFilter(JSONModel):
     @property
     def live_title(self):
         return replaceT(self._get_attr_value("$.data.data[0].title"))
+
+    @property
+    def live_title_raw(self):
+        return self._get_attr_value("$.data.data[0].title")
 
     @property
     def cover(self):
@@ -832,6 +1476,10 @@ class UserLiveFilter(JSONModel):
     @property
     def nickname(self):
         return replaceT(self._get_attr_value("$.data.data[0].owner.nickname"))
+
+    @property
+    def nickname_raw(self):
+        return self._get_attr_value("$.data.data[0].owner.nickname")
 
     @property
     def avatar_thumb(self):
@@ -881,41 +1529,15 @@ class UserLiveFilter(JSONModel):
     def ShareAuth(self):
         return self._get_attr_value("$.data.data[0].room_auth.Share")
 
+    def _to_raw(self) -> dict:
+        return self._data
+
     def _to_dict(self) -> dict:
         return {
             prop_name: getattr(self, prop_name)
             for prop_name in dir(self)
             if not prop_name.startswith("__") and not prop_name.startswith("_")
         }
-
-    def _to_list(self):
-        # 不需要的属性列表
-        exclude_list = []
-        # 生成属性名称列表，然后过滤掉不需要的属性
-        keys = [
-            prop_name
-            for prop_name in dir(self)
-            if not prop_name.startswith("__")
-            and not prop_name.startswith("_")
-            and prop_name not in exclude_list
-        ]
-
-        aweme_entries = self._get_attr_value("$.aweme_list") or []
-
-        list_dicts = []
-        # 遍历每个条目并创建一个字典
-        # (Iterate through each entry and create a dict)
-        for entry in aweme_entries:
-            d = {}
-            for key in keys:
-                attr_values = getattr(self, key)
-                # 当前aweme_entry在属性列表中的索引
-                index = aweme_entries.index(entry)
-                # 如果属性值的长度足够则赋值，否则赋None
-                # (Assign value if the length of the attribute value is sufficient, otherwise assign None)
-                d[key] = attr_values[index] if index < len(attr_values) else None
-            list_dicts.append(d)
-        return list_dicts
 
 
 class UserLive2Filter(JSONModel):
@@ -941,16 +1563,20 @@ class UserLive2Filter(JSONModel):
         return replaceT(self._get_attr_value("$.data.room.title"))
 
     @property
+    def live_title_raw(self):
+        return self._get_attr_value("$.data.room.title")
+
+    @property
     def user_count(self):
         return self._get_attr_value("$.data.room.user_count")
 
     @property
     def create_time(self):
-        return timestamp_2_str(self._get_attr_value("$.data.room.create_time"))
+        return timestamp_2_str(str(self._get_attr_value("$.data.room.create_time")))
 
     @property
     def finish_time(self):
-        return timestamp_2_str(self._get_attr_value("$.data.room.finish_time"))
+        return timestamp_2_str(str(self._get_attr_value("$.data.room.finish_time")))
 
     @property
     def cover(self):
@@ -978,12 +1604,24 @@ class UserLive2Filter(JSONModel):
         return replaceT(self._get_attr_value("$.data.room.owner.nickname"))
 
     @property
+    def nickname_raw(self):
+        return self._get_attr_value("$.data.room.owner.nickname")
+
+    @property
     def gender(self):
         return replaceT(self._get_attr_value("$.data.room.owner.gender"))
 
     @property
+    def gender_raw(self):
+        return self._get_attr_value("$.data.room.owner.gender")
+
+    @property
     def signature(self):
         return replaceT(self._get_attr_value("$.data.room.owner.signature"))
+
+    @property
+    def signature_raw(self):
+        return self._get_attr_value("$.data.room.owner.signature")
 
     @property
     def avatar_large(self):
@@ -1008,6 +1646,9 @@ class UserLive2Filter(JSONModel):
     @property
     def sec_uid(self):
         return self._get_attr_value("$.data.room.owner.sec_uid")
+
+    def _to_raw(self) -> dict:
+        return self._data
 
     def _to_dict(self) -> dict:
         return {
@@ -1074,6 +1715,9 @@ class GetQrcodeFilter(JSONModel):
     def message(self):
         return self._get_attr_value("$.message")
 
+    def _to_raw(self) -> dict:
+        return self._data
+
     def _to_dict(self) -> dict:
         return {
             prop_name: getattr(self, prop_name)
@@ -1110,6 +1754,9 @@ class CheckQrcodeFilter(JSONModel):
     @property
     def verify_ticket(self):
         return self._get_attr_value("$.verify_ticket")
+
+    def _to_raw(self) -> dict:
+        return self._data
 
     def _to_dict(self) -> dict:
         return {
