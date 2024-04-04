@@ -67,40 +67,45 @@ class TokenManager:
         with httpx.Client(transport=transport, proxies=cls.proxies) as client:
             try:
                 response = client.post(
-                    cls.token_conf["url"], headers=headers, content=payload
+                    cls.token_conf["url"], content=payload, headers=headers
                 )
-
-                if response.status_code == 401:
-                    raise APIUnauthorizedError(_("由于某些错误, 无法获取msToken"))
-                elif response.status_code == 404:
-                    raise APINotFoundError(_("无法找到API端点"))
+                response.raise_for_status()
 
                 msToken = str(httpx.Cookies(response.cookies).get("msToken"))
-
                 if len(msToken) not in [120, 128]:
-                    raise APIResponseError(
-                        _(
-                            "msToken: 请检查并更新 f2 中 conf.yaml 配置文件中的 msToken，以匹配 douyin 新规则。"
-                        )
-                    )
+                    raise APIResponseError(_("{0} 内容不符合要求").format("msToken"))
 
                 return msToken
 
-            except httpx.RequestError:
+            except httpx.RequestError as exc:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
                 raise APIConnectionError(
                     _(
-                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
-                    ).format(cls.token_conf["url"], cls.proxies, cls.__name__)
+                        "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
+                    ).format(cls.token_conf["url"], cls.proxies, cls.__name__, exc)
                 )
 
             except httpx.HTTPStatusError as e:
                 # 捕获 httpx 的状态代码错误 (captures specific status code errors from httpx)
-                raise APIResponseError(
-                    f"HTTP Status Code {e.response.status_code}: {e.response.text}"
-                )
+                if e.response.status_code == 401:
+                    raise APIUnauthorizedError(
+                        _(
+                            "参数验证失败，请更新 F2 配置文件中的 {0}，以匹配 {1} 新规则"
+                        ).format("msToken", "douyin")
+                    )
+
+                elif e.response.status_code == 404:
+                    raise APINotFoundError(_("{0} 无法找到API端点").format("msToken"))
+                else:
+                    raise APIResponseError(
+                        _("链接：{0}，状态码 {1}：{2} ").format(
+                            e.response.url, e.response.status_code, e.response.text
+                        )
+                    )
 
             except APIError as e:
+                # 返回虚假的msToken (Return a fake msToken)
+                logger.error(_("msToken API错误：{0}").format(e))
                 logger.info(_("生成虚假的msToken"))
                 return cls.gen_false_msToken()
 
@@ -122,28 +127,36 @@ class TokenManager:
                 response = client.post(
                     cls.ttwid_conf["url"], content=cls.ttwid_conf["data"]
                 )
-
-                if response.status_code == 401:
-                    raise APIUnauthorizedError(_("由于某些错误, 无法获取ttwid"))
-                elif response.status_code == 404:
-                    raise APINotFoundError(_("无法找到API端点"))
+                response.raise_for_status()
 
                 ttwid = str(httpx.Cookies(response.cookies).get("ttwid"))
                 return ttwid
 
-            except httpx.RequestError:
+            except httpx.RequestError as exc:
                 # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
                 raise APIConnectionError(
                     _(
-                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
-                    ).format(cls.ttwid_conf["url"], cls.proxies, cls.__name__)
+                        "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
+                    ).format(cls.ttwid_conf["url"], cls.proxies, cls.__name__, exc)
                 )
 
             except httpx.HTTPStatusError as e:
                 # 捕获 httpx 的状态代码错误 (captures specific status code errors from httpx)
-                raise APIResponseError(
-                    f"HTTP Status Code {e.response.status_code}: {e.response.text}"
-                )
+                if e.response.status_code == 401:
+                    raise APIUnauthorizedError(
+                        _(
+                            "参数验证失败，请更新 F2 配置文件中的 {0}，以匹配 {1} 新规则"
+                        ).format("ttwid", "douyin")
+                    )
+
+                elif e.response.status_code == 404:
+                    raise APINotFoundError(_("ttwid无法找到API端点"))
+                else:
+                    raise APIResponseError(
+                        _("链接：{0}，状态码 {1}：{2} ").format(
+                            e.response.url, e.response.status_code, e.response.text
+                        )
+                    )
 
 
 class VerifyFpManager:
@@ -184,23 +197,32 @@ class VerifyFpManager:
 
 class XBogusManager:
     @classmethod
-    def str_2_endpoint(cls, endpoint: str) -> str:
+    def str_2_endpoint(
+        cls,
+        user_agent: str,
+        endpoint: str,
+    ) -> str:
         try:
-            final_endpoint = XB().getXBogus(endpoint)
+            final_endpoint = XB(user_agent).getXBogus(endpoint)
         except Exception as e:
             raise RuntimeError(_("生成X-Bogus失败: {0})").format(e))
 
         return final_endpoint[0]
 
     @classmethod
-    def model_2_endpoint(cls, base_endpoint: str, params: dict) -> str:
+    def model_2_endpoint(
+        cls,
+        user_agent: str,
+        base_endpoint: str,
+        params: dict,
+    ) -> str:
         if not isinstance(params, dict):
             raise TypeError(_("参数必须是字典类型"))
 
         param_str = "&".join([f"{k}={v}" for k, v in params.items()])
 
         try:
-            xb_value = XB().getXBogus(param_str)
+            xb_value = XB(user_agent).getXBogus(param_str)
         except Exception as e:
             raise RuntimeError(_("生成X-Bogus失败: {0})").format(e))
 
@@ -237,7 +259,7 @@ class SecUserIdFetcher:
 
         if url is None:
             raise (
-                APINotFoundError(_("输入的URL不合法。类名：{0}".format(cls.__name__)))
+                APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
             )
 
         pattern = (
@@ -252,7 +274,7 @@ class SecUserIdFetcher:
                 transport=transport, proxies=TokenManager.proxies, timeout=10
             ) as client:
                 response = await client.get(url, follow_redirects=True)
-
+                # 444一般为Nginx拦截，不返回状态 (444 is generally intercepted by Nginx and does not return status)
                 if response.status_code in {200, 444}:
                     match = pattern.search(str(response.url))
                     if match:
@@ -260,39 +282,34 @@ class SecUserIdFetcher:
                     else:
                         raise APIResponseError(
                             _(
-                                "未在响应的地址中找到sec_user_id, 检查链接是否为用户主页类名: {0}".format(
-                                    cls.__name__
-                                )
-                            )
+                                "未在响应的地址中找到sec_user_id，检查链接是否为用户主页类名：{0}"
+                            ).format(cls.__name__)
                         )
 
                 elif response.status_code == 401:
                     raise APIUnauthorizedError(
-                        _("未授权的请求。类名: {0}".format(cls.__name__))
+                        _("未授权的请求。类名：{0}").format(cls.__name__)
                     )
                 elif response.status_code == 404:
                     raise APINotFoundError(
-                        _("未找到API端点。类名: {0}".format(cls.__name__))
+                        _("未找到API端点。类名：{0}").format(cls.__name__)
                     )
                 elif response.status_code == 503:
                     raise APIUnavailableError(
-                        _("API服务不可用。类名: {0}".format(cls.__name__))
+                        _("API服务不可用。类名：{0}").format(cls.__name__)
                     )
                 else:
-                    raise APIError(
-                        _("API错误码：{0}。类名: {1}").format(
-                            response.status_code, cls.__name__
+                    raise APIResponseError(
+                        _("链接：{0}，状态码 {1}：{2} ").format(
+                            response.url, response.status_code, response.text
                         )
                     )
 
-        except httpx.RequestError:
+        except httpx.RequestError as exc:
             raise APIConnectionError(
                 _(
-                    "连接到API时发生错误，请检查URL或网络情况。类名: {0}".format(
-                        cls.__name__
-                    )
-                ),
-                url,
+                    "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
+                ).format(url, TokenManager.proxies, cls.__name__, exc)
             )
 
     @classmethod
@@ -316,7 +333,7 @@ class SecUserIdFetcher:
         if urls == []:
             raise (
                 APINotFoundError(
-                    _("输入的URL List不合法。类名：{0}".format(cls.__name__))
+                    _("输入的URL List不合法。类名：{0}").format(cls.__name__)
                 )
             )
 
@@ -349,7 +366,7 @@ class AwemeIdFetcher:
 
         if url is None:
             raise (
-                APINotFoundError(_("输入的URL不合法。类名：{0}".format(cls.__name__)))
+                APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
             )
 
         # 重定向到完整链接
@@ -359,6 +376,7 @@ class AwemeIdFetcher:
         ) as client:
             try:
                 response = await client.get(url, follow_redirects=True)
+                response.raise_for_status()
 
                 video_pattern = cls._DOUYIN_VIDEO_URL_PATTERN
                 note_pattern = cls._DOUYIN_NOTE_URL_PATTERN
@@ -372,18 +390,22 @@ class AwemeIdFetcher:
                         aweme_id = match.group(1)
                     else:
                         raise APIResponseError(
-                            _("未在响应的地址中找到aweme_id, 检查链接是否为作品页")
+                            _("未在响应的地址中找到aweme_id，检查链接是否为作品页")
                         )
                 return aweme_id
 
-            except httpx.RequestError:
+            except httpx.RequestError as exc:
+                # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
                 raise APIConnectionError(
                     _(
-                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
-                    ).format(
-                        url,
-                        TokenManager.proxies,
-                        cls.__name__,
+                        "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
+                    ).format(url, TokenManager.proxies, cls.__name__, exc)
+                )
+
+            except httpx.HTTPStatusError as e:
+                raise APIResponseError(
+                    _("链接：{0}，状态码 {1}：{2} ").format(
+                        e.response.url, e.response.status_code, e.response.text
                     )
                 )
 
@@ -408,7 +430,7 @@ class AwemeIdFetcher:
         if urls == []:
             raise (
                 APINotFoundError(
-                    _("输入的URL List不合法。类名：{0}".format(cls.__name__))
+                    _("输入的URL List不合法。类名：{0}").format(cls.__name__)
                 )
             )
 
@@ -417,6 +439,7 @@ class AwemeIdFetcher:
 
 
 class MixIdFetcher:
+    # 获取方法同AwemeIdFetcher
     @classmethod
     async def get_mix_id(cls, url: str) -> str:
         return
@@ -427,7 +450,7 @@ class WebCastIdFetcher:
     _DOUYIN_LIVE_URL_PATTERN = re.compile(r"live/([^/?]*)")
     # https://live.douyin.com/766545142636?cover_type=0&enter_from_merge=web_live&enter_method=web_card&game_name=&is_recommend=1&live_type=game&more_detail=&request_id=20231110224012D47CD00C18B4AE4BFF9B&room_id=7299828646049827596&stream_type=vertical&title_type=1&web_live_page=hot_live&web_live_tab=all
     # https://live.douyin.com/766545142636
-    _DOUYIN_LIVE_URL_PATTERN2 = re.compile(r"https://live.douyin.com/(\d+)")
+    _DOUYIN_LIVE_URL_PATTERN2 = re.compile(r"http[s]?://live.douyin.com/(\d+)")
     # https://webcast.amemv.com/douyin/webcast/reflow/7318296342189919011?u_code=l1j9bkbd&did=MS4wLjABAAAAEs86TBQPNwAo-RGrcxWyCdwKhI66AK3Pqf3ieo6HaxI&iid=MS4wLjABAAAA0ptpM-zzoliLEeyvWOCUt-_dQza4uSjlIvbtIazXnCY&with_sec_did=1&use_link_command=1&ecom_share_track_params=&extra_params={"from_request_id":"20231230162057EC005772A8EAA0199906","im_channel_invite_id":"0"}&user_id=3644207898042206&liveId=7318296342189919011&from=share&style=share&enter_method=click_share&roomId=7318296342189919011&activity_info={}
     _DOUYIN_LIVE_URL_PATTERN3 = re.compile(r"reflow/([^/?]*)")
 
@@ -451,38 +474,54 @@ class WebCastIdFetcher:
 
         if url is None:
             raise (
-                APINotFoundError(_("输入的URL不合法。类名：{0}".format(cls.__name__)))
+                APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
+            )
+        try:
+            # 重定向到完整链接
+            transport = httpx.AsyncHTTPTransport(retries=5)
+            async with httpx.AsyncClient(
+                transport=transport, proxies=TokenManager.proxies, timeout=10
+            ) as client:
+                response = await client.get(url, follow_redirects=True)
+                response.raise_for_status()
+                url = str(response.url)
+
+                live_pattern = cls._DOUYIN_LIVE_URL_PATTERN
+                live_pattern2 = cls._DOUYIN_LIVE_URL_PATTERN2
+                live_pattern3 = cls._DOUYIN_LIVE_URL_PATTERN3
+
+                if live_pattern.search(url):
+                    match = live_pattern.search(url)
+                elif live_pattern2.search(url):
+                    match = live_pattern2.search(url)
+                elif live_pattern3.search(url):
+                    match = live_pattern3.search(url)
+                    logger.warning(
+                        _(
+                            "该链接返回的是room_id，请使用`fetch_user_live_videos_by_room_id`接口"
+                        )
+                    )
+                else:
+                    raise APIResponseError(
+                        _("未在响应的地址中找到webcast_id，检查链接是否为直播页")
+                    )
+
+                return match.group(1)
+
+        except httpx.RequestError as exc:
+            # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
+            raise APIConnectionError(
+                _(
+                    "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
+                ).format(url, TokenManager.proxies, cls.__name__, exc)
             )
 
-        # 重定向到完整链接
-        transport = httpx.AsyncHTTPTransport(retries=5)
-        async with httpx.AsyncClient(
-            transport=transport, proxies=TokenManager.proxies, timeout=10
-        ) as client:
-            response = await client.get(url, follow_redirects=True)
-            url = str(response.url)
-
-        live_pattern = cls._DOUYIN_LIVE_URL_PATTERN
-        live_pattern2 = cls._DOUYIN_LIVE_URL_PATTERN2
-        live_pattern3 = cls._DOUYIN_LIVE_URL_PATTERN3
-
-        if live_pattern.search(url):
-            match = live_pattern.search(url)
-        elif live_pattern2.search(url):
-            match = live_pattern2.search(url)
-        elif live_pattern3.search(url):
-            match = live_pattern3.search(url)
-            logger.debug(
-                _(
-                    "该链接返回的是room_id，请使用`fetch_user_live_videos_by_room_id`接口"
+        except httpx.HTTPStatusError as e:
+            raise APIResponseError(
+                _("链接：{0}，状态码 {1}：{2} ").format(
+                    e.response.url, e.response.status_code, e.response.text
                 )
             )
-        else:
-            raise APIResponseError(
-                _("未在响应的地址中找到webcast_id, 检查链接是否为直播页")
-            )
-
-        return match.group(1)
 
     @classmethod
     async def get_all_webcast_id(cls, urls: list) -> list:
@@ -505,7 +544,7 @@ class WebCastIdFetcher:
         if urls == []:
             raise (
                 APINotFoundError(
-                    _("输入的URL List不合法。类名：{0}".format(cls.__name__))
+                    _("输入的URL List不合法。类名：{0}").format(cls.__name__)
                 )
             )
 
@@ -564,7 +603,7 @@ def format_file_name(
     try:
         return naming_template.format(**fields)
     except KeyError as e:
-        raise KeyError(_("文件名模板字段 {0} 不存在，请检查".format(e)))
+        raise KeyError(_("文件名模板字段 {0} 不存在，请检查").format(e))
 
 
 def create_user_folder(kwargs: dict, nickname: Union[str, int]) -> Path:
@@ -656,11 +695,12 @@ def create_or_rename_user_folder(
 
 def show_qrcode(qrcode_url: str, show_image: bool = False) -> None:
     """
-    显示二维码
+    显示二维码 (Show QR code)
 
     Args:
-        qrcode_url (str): 登录二维码链接
+        qrcode_url (str): 登录二维码链接 (Login QR code link)
         show_image (bool): 是否显示图像，True 表示显示，False 表示在控制台显示
+        (Whether to display the image, True means display, False means display in the console)
     """
     if show_image:
         # 创建并显示QR码图像
@@ -673,3 +713,33 @@ def show_qrcode(qrcode_url: str, show_image: bool = False) -> None:
         qr.make(fit=True)
         # 在控制台以 ASCII 形式打印二维码
         qr.print_ascii(invert=True)
+
+
+def json_2_lrc(data: Union[str, list, dict]) -> str:
+    """
+    从抖音原声json格式歌词生成lrc格式歌词
+    (Generate lrc lyrics format from Douyin original json lyrics format)
+
+    Args:
+        data (Union[str, list, dict]): 抖音原声json格式歌词 (Douyin original json lyrics format)
+
+    Returns:
+        str: 生成的lrc格式歌词 (Generated lrc format lyrics)
+    """
+    try:
+        lrc_lines = []
+        for item in data:
+            text = item["text"]
+            time_seconds = float(item["timeId"])
+            minutes = int(time_seconds // 60)
+            seconds = int(time_seconds % 60)
+            milliseconds = int((time_seconds % 1) * 1000)
+            time_str = f"{minutes:02}:{seconds:02}.{milliseconds:03}"
+            lrc_lines.append(f"[{time_str}] {text}")
+    except KeyError as e:
+        raise KeyError(_("歌词数据字段错误：{0}").format(e))
+    except RuntimeError as e:
+        raise RuntimeError(_("生成歌词文件失败：{0}，请检查歌词 `data` 内容").format(e))
+    except TypeError as e:
+        raise TypeError(_("歌词数据类型错误：{0}").format(e))
+    return "\n".join(lrc_lines)

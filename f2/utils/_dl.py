@@ -25,13 +25,23 @@ async def get_content_length(url: str, headers: dict = {}, proxies: dict = {}) -
     ) as client:
         try:
             response = await client.head(url, headers=headers, follow_redirects=True)
+            # 当head请求被禁止时，释放status异常被捕获 (When head requests are forbidden, release status exceptions are caught)
             response.raise_for_status()
+
+            if (
+                response.headers.get("Content-Length") != None
+                and int(response.headers.get("Content-Length")) == 0
+            ):
+                # 如果head请求无法获取Content-Length, 则使用GET请求再次尝试获取
+                response = await client.get(url, headers=headers, follow_redirects=True)
+                response.raise_for_status()
+
         except httpx.ConnectTimeout:
             # 连接超时错误处理 (Handling connection timeout errors)
             logger.error(_("连接超时错误: {0}".format(url)))
-            logger.error("==========================")
+            logger.error("===================================")
             logger.error(f"headers:{headers}, proxies:{proxies}")
-            logger.error("==========================")
+            logger.error("===================================")
             return 0
         # 对HTTP状态错误进行处理 (Handling HTTP status errors)
         except httpx.HTTPStatusError as exc:

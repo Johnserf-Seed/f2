@@ -8,6 +8,7 @@ kwargs = {
         "Referer": "https://www.tiktok.com/",
     },
     "proxies": {"http": None, "https": None},
+    "timeout": 10,
     "cookie": "YOUR_COOKIE_HERE",
 }
 
@@ -16,14 +17,16 @@ async def main():
     secUid = await SecUserIdFetcher.get_secuid(
         "YOUR_HOME_PAGE"
     )  # 替换开放收藏列表的用户主页
-    print(
-        [
-            aweme_data_list
-            async for aweme_data_list in TiktokHandler(
-                kwargs
-            ).fetch_user_collect_videos(secUid)
-        ]
-    )
+
+    async for aweme_data_list in TiktokHandler(kwargs).fetch_user_collect_videos(
+        secUid, 0, 10, 20
+    ):
+        print("=================_to_raw================")
+        print(aweme_data_list._to_raw())
+        # print("=================_to_dict===============")
+        # print(aweme_data_list._to_dict())
+        # print("=================_to_list===============")
+        # print(aweme_data_list._to_list())
 
 
 if __name__ == "__main__":

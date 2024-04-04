@@ -21,7 +21,7 @@ async def main():
     )
     async with AsyncVideoDB("douyin_videos.db") as avdb:
         await DouyinHandler(kwargs).get_or_add_video_data(
-            aweme_data, avdb, ignore_fields
+            aweme_data._to_dict(), avdb, ignore_fields
         )
 
 

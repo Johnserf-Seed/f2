@@ -1,6 +1,5 @@
 # path: f2/apps/douyin/db.py
 
-import aiosqlite
 from f2.db.base_db import BaseDB
 
 
@@ -32,10 +31,12 @@ class AsyncUserDB(BaseDB):
             "mix_count INTEGER",
             "mplatform_followers_count INTEGER",
             "nickname TEXT",
+            "nickname_raw TEXT",
             "room_id TEXT",
             "school_name TEXT",
             "short_id TEXT",
             "signature TEXT",
+            "signature_raw TEXT",
             "total_favorited INTEGER",
             "uid TEXT",
             "unique_id TEXT",
@@ -77,7 +78,7 @@ class AsyncUserDB(BaseDB):
         # VALUES (?, {placeholders})', (kwargs.get('sec_user_id'), *values))
         await self.commit()
 
-    async def update_user_info(self, sec_user_id, **kwargs) -> None:
+    async def update_user_info(self, sec_user_id: str, **kwargs) -> None:
         """
         更新用户信息
 
@@ -147,6 +148,7 @@ class AsyncVideoDB(BaseDB):
             "aweme_id TEXT PRIMARY KEY",
             "aweme_type TEXT",
             "nickname TEXT",
+            "nickname_raw TEXT",
             "sec_user_id TEXT",
             "short_id TEXT",
             "uid TEXT",
@@ -158,6 +160,7 @@ class AsyncVideoDB(BaseDB):
             "comment_gid TEXT",
             "create_time TEXT",
             "desc TEXT",
+            "desc_raw TEXT",
             "duration TEXT",
             "is_ads TEXT",
             "is_story TEXT",
@@ -174,6 +177,7 @@ class AsyncVideoDB(BaseDB):
             "is_long_video TEXT",
             "media_type TEXT",
             "mix_desc TEXT",
+            "mix_desc_raw TEXT",
             "mix_create_time TEXT",
             "mix_id TEXT",
             "mix_name TEXT",
@@ -186,17 +190,22 @@ class AsyncVideoDB(BaseDB):
             "is_original_sound TEXT",
             "is_pgc TEXT",
             "music_author TEXT",
+            "music_author_raw TEXT",
             "music_author_deleted TEXT",
             "music_duration TEXT",
             "music_id TEXT",
             "music_mid TEXT",
             "pgc_author TEXT",
+            "pgc_author_raw TEXT",
             "pgc_author_title TEXT",
+            "pgc_author_title_raw TEXT",
             "pgc_music_type TEXT",
             "music_status TEXT",
             "music_owner_handle TEXT",
+            "music_owner_handle_raw TEXT",
             "music_owner_id TEXT",
             "music_owner_nickname TEXT",
+            "music_owner_nickname_raw TEXT",
             "music_play_url TEXT",
             "position TEXT",
             "region TEXT",
@@ -255,29 +264,26 @@ class AsyncVideoDB(BaseDB):
             video_data_list (list): 视频信息列表
             ignore_fields (list): 要忽略的字段列表，例如 ["field1", "field2"]
         """
-        try:
-            # 如果 ignore_fields 未提供或者为 None，将其设置为空列表
-            ignore_fields = ignore_fields or []
+        # 如果 ignore_fields 未提供或者为 None，将其设置为空列表
+        ignore_fields = ignore_fields or []
 
-            # 删除要忽略的字段
-            for field in ignore_fields:
-                for video_data in video_data_list:
-                    if field in video_data:
-                        del video_data[field]
+        # 删除要忽略的字段
+        for field in ignore_fields:
+            for video_data in video_data_list:
+                if field in video_data:
+                    del video_data[field]
 
-            keys = ", ".join(video_data_list[0].keys())
-            placeholders = ", ".join(["?" for _ in range(len(video_data_list[0]))])
+        keys = ", ".join(video_data_list[0].keys())
+        placeholders = ", ".join(["?" for _ in range(len(video_data_list[0]))])
 
-            # 构建插入数据的元组列表
-            values = [tuple(video_data.values()) for video_data in video_data_list]
+        # 构建插入数据的元组列表
+        values = [tuple(video_data.values()) for video_data in video_data_list]
 
-            await self.execute(
-                f"INSERT OR REPLACE INTO {self.TABLE_NAME} ({keys}) VALUES ({placeholders})",
-                values,
-            )
-            await self.commit()
-        except aiosqlite.Error as e:
-            print(f"Error batch inserting videos: {e}")
+        await self.execute(
+            f"INSERT OR REPLACE INTO {self.TABLE_NAME} ({keys}) VALUES ({placeholders})",
+            values,
+        )
+        await self.commit()
 
     async def get_video_info(self, aweme_id: str) -> dict:
         """

@@ -1,5 +1,6 @@
 # path: f2/cli/cli_command.py
 
+import f2
 import click
 import typing
 import asyncio
@@ -7,7 +8,6 @@ import importlib
 
 from f2 import helps
 from f2.apps import __apps__ as apps_module
-from f2.utils import __version__
 from f2.exceptions import APIError
 from f2.cli.cli_console import RichConsoleManager
 from f2.utils._signal import SignalManager
@@ -23,7 +23,7 @@ def handle_help(
 ) -> None:
     if not value or ctx.resilient_parsing:
         return
-    helps.f2()
+    helps.main()
     ctx.exit()
 
 
@@ -35,8 +35,8 @@ def handle_version(
 ) -> None:
     if not value or ctx.resilient_parsing:
         return
-    logger.debug(f"Version {__version__._version}")
-    print(f"Version {__version__._version}")
+
+    click.echo(f"Version {f2.__version__}")
     ctx.exit()
 
 
@@ -134,10 +134,11 @@ def set_cli_config(ctx, **kwargs):
         try:
             asyncio.run(run_app(kwargs))
         except APIError as e:
-            logger.error(e.display_error())
+            logger.error(e)
 
 
 async def run_app(kwargs):
+    logger.info(f"Version {f2.__version__}")
     app_name = kwargs["app_name"]
     app_module = importlib.import_module(f"f2.apps.{app_name}.handler")
     await app_module.main(kwargs)

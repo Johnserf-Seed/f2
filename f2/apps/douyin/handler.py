@@ -1,7 +1,8 @@
 # path: f2/apps/douyin/handler.py
 
 import asyncio
-from typing import AsyncGenerator, Dict, Any, List
+from pathlib import Path
+from typing import AsyncGenerator, Union, Dict, Any, List
 
 from f2.log.logger import logger
 from f2.i18n.translator import _
@@ -14,24 +15,33 @@ from f2.apps.douyin.model import (
     UserPost,
     UserProfile,
     UserLike,
-    UserCollect,
+    UserCollection,
+    UserCollects,
+    UserCollectsVideo,
+    UserMusicCollection,
     UserMix,
     PostDetail,
     UserLive,
     UserLive2,
     LoginGetQr,
     LoginCheckQr,
+    UserFollowing,
+    UserFollower,
 )
 from f2.apps.douyin.filter import (
     UserPostFilter,
     UserProfileFilter,
-    UserCollectFilter,
+    UserCollectionFilter,
+    UserCollectsFilter,
+    UserMusicCollectionFilter,
     UserMixFilter,
     PostDetailFilter,
     UserLiveFilter,
     UserLive2Filter,
     GetQrcodeFilter,
     CheckQrcodeFilter,
+    UserFollowingFilter,
+    UserFollowerFilter,
 )
 from f2.apps.douyin.utils import (
     SecUserIdFetcher,
@@ -42,6 +52,7 @@ from f2.apps.douyin.utils import (
     show_qrcode,
 )
 from f2.cli.cli_console import RichConsoleManager
+from f2.exceptions.api_exceptions import APIResponseError
 
 rich_console = RichConsoleManager().rich_console
 rich_prompt = RichConsoleManager().rich_prompt
@@ -52,11 +63,14 @@ class DouyinHandler:
     # 需要忽略的字段（需过滤掉有时效性的字段）
     ignore_fields = ["video_play_addr", "images", "video_bit_rate", "cover"]
 
-    def __init__(self, kwargs) -> None:
+    def __init__(self, kwargs: dict = ...) -> None:
         self.kwargs = kwargs
         self.downloader = DouyinDownloader(kwargs)
 
-    async def handler_user_profile(self, sec_user_id: str) -> UserProfileFilter:
+    async def handler_user_profile(
+        self,
+        sec_user_id: str,
+    ) -> UserProfileFilter:
         """
         用于获取指定用户的个人信息
         (Used to get personal info of specified users)
@@ -71,9 +85,16 @@ class DouyinHandler:
         async with DouyinCrawler(self.kwargs) as crawler:
             params = UserProfile(sec_user_id=sec_user_id)
             response = await crawler.fetch_user_profile(params)
+            user = UserProfileFilter(response)
+            if user.nickname is None:
+                raise APIResponseError(_("API内容请求失败，请更换新cookie后再试"))
             return UserProfileFilter(response)
 
-    async def get_user_nickname(self, sec_user_id: str, db: AsyncUserDB) -> str:
+    async def get_user_nickname(
+        self,
+        sec_user_id: str,
+        db: AsyncUserDB,
+    ) -> str:
         """
         获取指定用户的昵称，如果不存在，则从服务器获取并存储到数据库中
         (Used to get personal info of specified users)
@@ -93,8 +114,11 @@ class DouyinHandler:
         return user_dict.get("nickname")
 
     async def get_or_add_user_data(
-        self, kwargs: dict, sec_user_id: str, db: AsyncUserDB
-    ) -> Any:
+        self,
+        kwargs: dict,
+        sec_user_id: str,
+        db: AsyncUserDB,
+    ) -> Path:
         """
         获取或创建用户数据同时创建用户目录
         (Get or create user data and create user directory)
@@ -130,7 +154,10 @@ class DouyinHandler:
 
     @classmethod
     async def get_or_add_video_data(
-        cls, aweme_data: dict, db: AsyncVideoDB, ignore_fields: list = None
+        cls,
+        aweme_data: dict,
+        db: AsyncVideoDB,
+        ignore_fields: list = None,
     ):
         """
         获取或创建作品数据库数据
@@ -154,7 +181,7 @@ class DouyinHandler:
     @mode_handler("one")
     async def handle_one_video(self):
         """
-        用于处理单个视频。
+        用于处理单个作品。
         (Used to process a single video.)
 
         Args:
@@ -167,44 +194,53 @@ class DouyinHandler:
 
         async with AsyncUserDB("douyin_users.db") as db:
             user_path = await self.get_or_add_user_data(
-                self.kwargs, aweme_data.get("sec_user_id"), db
+                self.kwargs, aweme_data.sec_user_id, db
             )
 
         async with AsyncVideoDB("douyin_videos.db") as db:
-            await self.get_or_add_video_data(aweme_data, db, self.ignore_fields)
+            await self.get_or_add_video_data(
+                aweme_data._to_dict(), db, self.ignore_fields
+            )
 
-        logger.debug(_("单个视频数据: {0}".format(aweme_data)))
-        await self.downloader.create_download_tasks(self.kwargs, aweme_data, user_path)
+        logger.debug(_("单个作品数据：{0}").format(aweme_data._to_dict()))
 
-    async def fetch_one_video(self, aweme_id: str) -> dict:
+        # 创建下载任务
+        await self.downloader.create_download_tasks(
+            self.kwargs, aweme_data._to_dict(), user_path
+        )
+
+    async def fetch_one_video(
+        self,
+        aweme_id: str,
+    ) -> PostDetailFilter:
         """
-        用于获取单个视频。
+        用于获取单个作品。
 
         Args:
-            aweme_id: str: 视频ID
+            aweme_id: str: 作品ID
 
         Return:
-            video_data: dict: 视频数据字典，包含视频ID、视频文案、作者昵称
+            video: PostDetailFilter: 单个作品数据过滤器
         """
 
-        logger.debug(_("开始爬取视频: {0}").format(aweme_id))
+        logger.info(_("开始爬取作品：{0}").format(aweme_id))
         async with DouyinCrawler(self.kwargs) as crawler:
             params = PostDetail(aweme_id=aweme_id)
             response = await crawler.fetch_post_detail(params)
             video = PostDetailFilter(response)
 
         logger.debug(
-            _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
+            _("作品ID：{0} 作品文案：{1} 作者：{2}").format(
                 video.aweme_id, video.desc, video.nickname
             )
         )
 
-        return video._to_dict()
+        return video
 
     @mode_handler("post")
     async def handle_user_post(self):
         """
-        用于处理用户发布的视频。
+        用于处理用户发布的作品。
         (Used to process videos published by users.)
 
         Args:
@@ -225,12 +261,12 @@ class DouyinHandler:
         ):
             # 创建下载任务
             await self.downloader.create_download_tasks(
-                self.kwargs, aweme_data_list, user_path
+                self.kwargs, aweme_data_list._to_list(), user_path
             )
 
-            # # 一次性批量插入视频数据到数据库
+            # # 一次性批量插入作品数据到数据库
             # async with AsyncVideoDB("douyin_videos.db") as db:
-            #     await db.batch_insert_videos(aweme_data_list, ignore_fields)
+            #     await db.batch_insert_videos(aweme_data_list._to_list(), ignore_fields)
 
     async def fetch_user_post_videos(
         self,
@@ -238,35 +274,35 @@ class DouyinHandler:
         max_cursor: int = 0,
         page_counts: int = 20,
         max_counts: int = None,
-    ):
+    ) -> AsyncGenerator[UserPostFilter, Any]:
         """
-        用于获取指定用户发布的视频列表。
+        用于获取指定用户发布的作品列表。
 
         Args:
             sec_user_id: str: 用户ID
             max_cursor: int: 起始页
-            page_counts: int: 每页视频数
-            max_counts: int: 最大视频数
+            page_counts: int: 每页作品数
+            max_counts: int: 最大作品数
 
         Return:
-            aweme_data: dict: 视频数据字典，包含视频ID列表、视频文案、作者昵称、起始页
+            video: AsyncGenerator[UserPostFilter, Any]: 作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
         """
 
         max_counts = max_counts or float("inf")
         videos_collected = 0
 
-        logger.debug(_("开始爬取用户: {0} 发布的视频").format(sec_user_id))
+        logger.info(_("开始爬取用户：{0} 发布的作品").format(sec_user_id))
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
+            logger.debug("===================================")
             logger.debug(
-                _("最大数量: {0} 每次请求数量: {1}").format(
+                _("最大数量：{0} 每次请求数量：{1}").format(
                     max_counts, current_request_size
                 )
             )
-            logger.debug(_("开始爬取第 {0} 页").format(max_cursor))
+            logger.info(_("开始爬取第 {0} 页").format(max_cursor))
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserPost(
@@ -276,37 +312,39 @@ class DouyinHandler:
                 )
                 response = await crawler.fetch_user_post(params)
                 video = UserPostFilter(response)
+                yield video
 
             if not video.has_aweme:
-                logger.debug(_("{0} 页没有找到作品".format(max_cursor)))
+                logger.info(_("第 {0} 页没有找到作品").format(max_cursor))
                 if not video.has_more:
-                    logger.debug(_("用户: {0} 所有作品采集完毕".format(sec_user_id)))
+                    logger.info(_("用户: {0} 所有作品采集完毕").format(sec_user_id))
                     break
 
                 max_cursor = video.max_cursor
                 continue
 
-            logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
+            logger.debug(_("当前请求的max_cursor：{0}").format(max_cursor))
             logger.debug(
-                _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
+                _("作品ID：{0} 作品文案：{1} 作者：{2}").format(
                     video.aweme_id, video.desc, video.nickname
                 )
             )
-            logger.debug("=====================================")
+            logger.debug("===================================")
 
-            aweme_data_list = video._to_list()
-            yield aweme_data_list
-
-            # 更新已经处理的视频数量 (Update the number of videos processed)
+            # 更新已经处理的作品数量 (Update the number of videos processed)
             videos_collected += len(video.aweme_id)
             max_cursor = video.max_cursor
 
-        logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(_("爬取结束，共爬取 {0} 个作品").format(videos_collected))
 
     @mode_handler("like")
     async def handle_user_like(self):
         """
-        用于处理用户喜欢的视频 (Used to process videos liked by users)
+        用于处理用户喜欢的作品 (Used to process videos liked by users)
 
         Args:
             kwargs: dict: 参数字典 (Parameter dictionary)
@@ -326,14 +364,14 @@ class DouyinHandler:
         ):
             # 创建下载任务
             await self.downloader.create_download_tasks(
-                self.kwargs, aweme_data_list, user_path
+                self.kwargs, aweme_data_list._to_list(), user_path
             )
 
             # async with AsyncVideoDB("douyin_videos.db") as db:
             #     for aweme_data in aweme_data_list:
             #         await get_or_add_video_data(aweme_data, db, ignore_fields)
 
-            # # 一次性批量插入视频数据到数据库
+            # # 一次性批量插入作品数据到数据库
             # async with AsyncVideoDB("douyin_videos.db") as db:
             #     await db.batch_insert_videos(aweme_data_list, ignore_fields)
 
@@ -343,35 +381,35 @@ class DouyinHandler:
         max_cursor: int = 0,
         page_counts: int = 20,
         max_counts: int = None,
-    ) -> AsyncGenerator[List[Dict[str, Any]], None]:
+    ) -> AsyncGenerator[UserPostFilter, Any]:
         """
-        用于获取指定用户喜欢的视频列表。
+        用于获取指定用户喜欢的作品列表。
 
         Args:
             sec_user_id: str: 用户ID
             max_cursor: int: 起始页
-            page_counts: int: 每页视频数
-            max_counts: int: 最大视频数
+            page_counts: int: 每页作品数
+            max_counts: int: 最大作品数
 
         Return:
-            aweme_data: dict: 视频数据字典，包含视频ID列表、视频文案、作者昵称、起始页
+            video: AsyncGenerator[UserPostFilter, Any]: 作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
         """
 
         max_counts = max_counts or float("inf")
         videos_collected = 0
 
-        logger.debug(_("开始爬取用户: {0} 喜欢的视频").format(sec_user_id))
+        logger.info(_("开始爬取用户：{0} 喜欢的作品").format(sec_user_id))
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
+            logger.debug("===================================")
             logger.debug(
-                _("最大数量: {0} 每次请求数量: {1}").format(
+                _("最大数量：{0} 每次请求数量：{1}").format(
                     max_counts, current_request_size
                 )
             )
-            logger.debug(_("开始爬取第 {0} 页").format(max_cursor))
+            logger.info(_("开始爬取第 {0} 页").format(max_cursor))
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserLike(
@@ -380,38 +418,40 @@ class DouyinHandler:
                     sec_user_id=sec_user_id,
                 )
                 response = await crawler.fetch_user_like(params)
-                video = UserPostFilter(response)
+                like = UserPostFilter(response)
+                yield like
 
-            if not video.has_aweme:
-                logger.debug(_("{0} 页没有找到作品".format(max_cursor)))
-                if not video.has_more:
-                    logger.debug(_("用户: {0} 所有作品采集完毕".format(sec_user_id)))
+            if not like.has_aweme:
+                logger.info(_("第 {0} 页没有找到作品").format(max_cursor))
+                if not like.has_more:
+                    logger.info(_("用户：{0} 所有作品采集完毕").format(sec_user_id))
                     break
 
-                max_cursor = video.max_cursor
+                max_cursor = like.max_cursor
                 continue
 
-            logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
+            logger.debug(_("当前请求的max_cursor：{0}").format(max_cursor))
             logger.debug(
-                _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
-                    video.aweme_id, video.desc, video.nickname
+                _("作品ID：{0} 作品文案：{1} 作者：{2}").format(
+                    like.aweme_id, like.desc, like.nickname
                 )
             )
-            logger.debug("=====================================")
+            logger.debug("===================================")
 
-            aweme_data_list = video._to_list()
-            yield aweme_data_list
+            # 更新已经处理的作品数量 (Update the number of videos processed)
+            videos_collected += len(like.aweme_id)
+            max_cursor = like.max_cursor
 
-            # 更新已经处理的视频数量 (Update the number of videos processed)
-            videos_collected += len(aweme_data_list)
-            max_cursor = video.max_cursor
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
 
-        logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
+        logger.info(_("爬取结束，共爬取 {0} 个点赞作品").format(videos_collected))
 
-    @mode_handler("collect")
-    async def handle_user_collect(self):
+    @mode_handler("music")
+    async def handle_user_music_collection(self):
         """
-        用于处理用户收藏的视频 (Used to process videos collected by users)
+        用于处理用户收藏的音乐 (Used to process music collected by users)
 
         Args:
             kwargs: dict: 参数字典 (Parameter dictionary)
@@ -421,82 +461,424 @@ class DouyinHandler:
         page_counts = self.kwargs.get("page_counts", 20)
         max_counts = self.kwargs.get("max_counts")
 
+        # Web端音乐收藏作品的接口只能通过登录的cookie获取，与配置的URL无关。
+        # 因此，即使填写了其他人的URL，也只能获取到你自己的音乐收藏作品。
+        # 此外，音乐收藏作品的文件夹将根据所配置的URL主页用户名来确定。
+        # 为避免将文件下载到其他人的文件夹下，请务必确保填写的URL是你自己的主页URL。
         sec_user_id = await SecUserIdFetcher.get_sec_user_id(self.kwargs.get("url"))
 
         async with AsyncUserDB("douyin_users.db") as db:
             user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, db)
 
-        async for aweme_data_list in self.fetch_user_collect_videos(
+        async for aweme_data_list in self.fetch_user_music_collection(
+            max_cursor, page_counts, max_counts
+        ):
+            # 创建下载任务
+            await self.downloader.create_music_download_tasks(
+                self.kwargs, aweme_data_list._to_list(), user_path
+            )
+
+    async def fetch_user_music_collection(
+        self,
+        max_cursor: int = 0,
+        page_counts: int = 20,
+        max_counts: int = None,
+    ) -> AsyncGenerator[UserMusicCollectionFilter, Any]:
+        """
+        用于获取指定用户收藏的音乐作品列表。
+
+        Args:
+            max_cursor: int: 起始页
+            page_counts: int: 每页作品数
+            max_counts: int: 最大作品数
+
+        Return:
+            music: AsyncGenerator[UserMusicCollectionFilter, Any]: 音乐数据过滤器，包含音乐数据的_to_raw、_to_dict、_to_list方法
+        """
+
+        max_counts = max_counts or float("inf")
+        music_collected = 0
+
+        logger.info(_("开始爬取用户收藏的音乐作品"))
+
+        while music_collected < max_counts:
+            current_request_size = min(page_counts, max_counts - music_collected)
+
+            logger.debug("===================================")
+            logger.debug(
+                _("最大数量：{0} 每次请求数量：{1}").format(
+                    max_counts, current_request_size
+                )
+            )
+            logger.info(_("开始爬取第 {0} 页").format(max_cursor))
+
+            async with DouyinCrawler(self.kwargs) as crawler:
+                params = UserMusicCollection(
+                    cursor=max_cursor, count=current_request_size
+                )
+                response = await crawler.fetch_user_music_collection(params)
+                music = UserMusicCollectionFilter(response)
+                yield music
+
+            if not music.has_more:
+                logger.info(_("用户收藏的音乐作品采集完毕"))
+                break
+
+            logger.debug(_("当前请求的max_cursor：{0}").format(max_cursor))
+            logger.debug(
+                _("音乐ID：{0} 音乐标题：{1} 作者：{2}").format(
+                    music.music_id, music.title, music.author
+                )
+            )
+            logger.debug("===================================")
+
+            # 更新已经处理的音乐数量 (Update the number of music processed)
+            music_collected += len(music.music_id)
+            max_cursor = music.max_cursor
+
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(_("爬取结束，共爬取 {0} 个音乐作品").format(music_collected))
+
+    @mode_handler("collection")
+    async def handle_user_collection(self):
+        """
+        用于处理用户收藏的作品 (Used to process videos collected by users)
+
+        Args:
+            kwargs: dict: 参数字典 (Parameter dictionary)
+        """
+
+        max_cursor = self.kwargs.get("max_cursor", 0)
+        page_counts = self.kwargs.get("page_counts", 20)
+        max_counts = self.kwargs.get("max_counts")
+        # 由于Web端收藏作品的接口只能通过登录的cookie获取，而与配置的URL无关。
+        # 因此，即使填写了其他人的URL，也只能获取到你自己的收藏作品。
+        # 此外，收藏作品的文件夹将根据所配置的URL主页用户名来确定。
+        # 为避免将文件下载到其他人的文件夹下，请务必确保填写的URL是你自己的主页URL。
+        sec_user_id = await SecUserIdFetcher.get_sec_user_id(self.kwargs.get("url"))
+
+        async with AsyncUserDB("douyin_users.db") as db:
+            user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, db)
+
+        async for aweme_data_list in self.fetch_user_collection_videos(
             max_cursor, page_counts, max_counts
         ):
             await self.downloader.create_download_tasks(
-                self.kwargs, aweme_data_list, user_path
+                self.kwargs, aweme_data_list._to_list(), user_path
             )
 
-    async def fetch_user_collect_videos(
-        self, max_cursor: int = 0, page_counts: int = 20, max_counts: int = None
-    ) -> AsyncGenerator[List[Dict[str, Any]], None]:
+    async def fetch_user_collection_videos(
+        self,
+        max_cursor: int = 0,
+        page_counts: int = 20,
+        max_counts: int = None,
+    ) -> AsyncGenerator[UserCollectionFilter, Any]:
         """
-        用于获取指定用户收藏的视频列表。
+        用于获取指定用户收藏的作品列表。
         (Used to get the list of videos collected by the specified user.)
-        该接口需要用POST且只靠cookie来获取数据。
-        (This interface needs to be POST and only relies on cookies to get data.)
 
         Args:
             max_cursor: int: 起始页 (Start page)
-            page_counts: int: 每页视频数 (Number of videos per page)
-            max_counts: int: 最大视频数 (Maximum number of videos)
+            page_counts: int: 每页作品数 (Number of videos per page)
+            max_counts: int: 最大作品数 (Maximum number of videos)
 
         Return:
-            aweme_data: dict: 视频数据字典, 包含视频ID列表、视频文案、作者昵称、起始页
-            (Video data dictionary, including video ID list, video description,
-            author nickname, start page)
+            collection: AsyncGenerator[UserCollectionFilter, Any]: 作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
+
+        Note:
+            该接口需要用POST且只靠cookie来获取数据。
+            (This interface needs to use POST and only rely on cookies to obtain data.)
         """
 
         max_counts = max_counts or float("inf")
         videos_collected = 0
 
-        logger.debug(_("开始爬取用户收藏的视频"))
+        logger.info(_("开始爬取用户收藏的作品"))
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
+            logger.debug("===================================")
             logger.debug(
                 _("最大数量: {0} 每次请求数量: {1}").format(
                     max_counts, current_request_size
                 )
             )
-            logger.debug(_("开始爬取第 {0} 页").format(max_cursor))
+            logger.info(_("开始爬取第 {0} 页").format(max_cursor))
 
             async with DouyinCrawler(self.kwargs) as crawler:
-                params = UserCollect(cursor=max_cursor, count=current_request_size)
-                response = await crawler.fetch_user_collect(params)
-                video = UserCollectFilter(response)
+                params = UserCollection(cursor=max_cursor, count=current_request_size)
+                response = await crawler.fetch_user_collection(params)
+                collection = UserCollectionFilter(response)
+                yield collection
+
+            if not collection.has_more:
+                logger.info(_("用户收藏的作品采集完毕"))
+                break
 
             logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
             logger.debug(
-                _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
-                    video.aweme_id, video.desc, video.nickname
+                _("作品ID: {0} 作品文案: {1} 作者: {2}").format(
+                    collection.aweme_id, collection.desc, collection.nickname
                 )
             )
-            logger.debug("=====================================")
+            logger.debug("===================================")
 
-            aweme_data_list = video._to_list()
-            yield aweme_data_list
+            # 更新已经处理的作品数量 (Update the number of videos processed)
+            videos_collected += len(collection.aweme_id)
+            max_cursor = collection.max_cursor
 
-            if not video.has_more:
-                logger.debug(_("用户收藏的视频采集完毕"))
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(_("爬取结束，共爬取 {0} 个收藏作品").format(videos_collected))
+
+    @mode_handler("collects")
+    async def handle_user_collects(self):
+        """
+        用于处理用户收藏夹的作品 (Used to process videos in user collections)
+
+        Args:
+            kwargs: dict: 参数字典 (Parameter dictionary)
+        """
+
+        max_cursor = self.kwargs.get("max_cursor", 0)
+        page_counts = self.kwargs.get("page_counts", 20)
+        max_counts = self.kwargs.get("max_counts")
+        # 由于无法在Web端获取收藏夹的URL，因此无法通过URL来获取收藏夹作品。
+        # Web端收藏夹作品的接口只能通过登录的cookie获取，与配置的URL无关。
+        # 因此，即使填写了其他人的URL，也只能获取到你自己的收藏夹作品。
+        # 此外，收藏夹作品的文件夹将根据所配置的URL主页用户名来确定。
+        # 为避免将文件下载到其他人的文件夹下，请务必确保填写的URL是你自己的主页URL。
+        sec_user_id = await SecUserIdFetcher.get_sec_user_id(self.kwargs.get("url"))
+
+        async with AsyncUserDB("douyin_users.db") as db:
+            user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, db)
+
+        async for collects in self.fetch_user_collects(
+            max_cursor, page_counts, max_counts
+        ):
+            choose_collects_id = await self.select_user_collects(collects)
+
+            if isinstance(choose_collects_id, str):
+                choose_collects_id = [choose_collects_id]
+
+            for collects_id in choose_collects_id:
+                # 由于收藏夹作品包含在用户名下且存在收藏夹名，因此将额外创建收藏夹名的文件夹
+                # 将会根据是否设置了 --folderize 参数来决定是否创建收藏夹名的文件夹
+                # 例如: 用户名/收藏夹名/作品名.mp4
+                if self.kwargs.get("folderize"):
+                    tmp_user_path = user_path
+                    tmp_user_path = (
+                        tmp_user_path
+                        / collects.collects_name[
+                            collects.collects_id.index(int(collects_id))
+                        ]
+                    )
+                else:
+                    tmp_user_path = user_path
+
+                async for aweme_data_list in self.fetch_user_collects_videos(
+                    collects_id, max_cursor, page_counts, max_counts
+                ):
+                    await self.downloader.create_download_tasks(
+                        self.kwargs, aweme_data_list._to_list(), tmp_user_path
+                    )
+
+            logger.info(
+                _("爬取结束，共爬取 {0} 个收藏夹").format(len(choose_collects_id))
+            )
+
+    async def select_user_collects(
+        self, collects: UserCollectsFilter
+    ) -> Union[str, List[str]]:
+        """
+        用于选择收藏夹
+        (Used to select the collection)
+
+        Args:
+            collects: UserCollectsFilter: 收藏夹列表过滤器  (Collection list Filter)
+
+        Return:
+            collects_id: Union[str, List[str]]: 选择的收藏夹ID (Selected collects_id)
+        """
+
+        rich_console.print(_("0: [bold]全部下载[/bold]"))
+        for i in range(len(collects.collects_id)):
+            rich_console.print(
+                _(
+                    "{0}：{1} (包含 {2} 个作品[以网页实际数量为准]，收藏夹ID {3})"
+                ).format(
+                    i + 1,
+                    collects.collects_name[i],
+                    collects.total_number[i],
+                    collects.collects_id[i],
+                )
+            )
+
+        # rich_prompt 会有字符刷新问题，暂时使用rich_print
+        rich_console.print(_("[bold yellow]请输入希望下载的收藏夹序号：[/bold yellow]"))
+        selected_index = int(
+            rich_prompt.ask(
+                # _("[bold yellow]请输入希望下载的收藏夹序号:[/bold yellow]"),
+                choices=[str(i) for i in range(len(collects.collects_id) + 1)],
+            )
+        )
+
+        if selected_index == 0:
+            return collects.collects_id
+        else:
+            return str(collects.collects_id[selected_index - 1])
+
+    async def fetch_user_collects(
+        self,
+        max_cursor: int = 0,
+        page_counts: int = 20,
+        max_counts: int = None,
+    ) -> AsyncGenerator[UserCollectsFilter, Any]:
+        """
+        用于获取指定用户收藏夹。
+        (Used to get the list of videos in the specified user's collection.)
+
+        Args:
+            max_cursor: int: 起始页 (Page cursor)
+            page_counts: int: 每页收藏夹数  (Page counts)
+            max_counts: int: 最大收藏夹数 (Max counts)
+
+        Return:
+            collects: AsyncGenerator[UserCollectsFilter, Any]: 收藏夹数据过滤器，包含收藏夹数据的_to_raw、_to_dict、_to_list方法)
+        """
+
+        max_counts = max_counts or float("inf")
+        collected = 0
+
+        logger.info(_("开始爬取用户收藏夹"))
+
+        while collected < max_counts:
+            logger.debug("===================================")
+            logger.debug(
+                _("当前请求的max_cursor：{0}， max_counts：{1}").format(
+                    max_cursor, max_counts
+                )
+            )
+
+            async with DouyinCrawler(self.kwargs) as crawler:
+                params = UserCollects(cursor=max_cursor, count=page_counts)
+                response = await crawler.fetch_user_collects(params)
+                collects = UserCollectsFilter(response)
+                yield collects
+
+            # 更新已经处理的收藏夹数量 (Update the number of collections processed)
+            collected += len(collects.collects_id)
+
+            if not collects.has_more:
                 break
 
-            # 更新已经处理的视频数量 (Update the number of videos processed)
-            videos_collected += len(aweme_data_list)
-            max_cursor = video.max_cursor
+            logger.debug(
+                _("收藏夹ID：{0} 收藏夹标题：{1}").format(
+                    collects.collects_id, collects.collects_name
+                )
+            )
+            logger.debug("===================================")
+
+            max_cursor = collects.max_cursor
+
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(_("爬取结束，共找到 {0} 个收藏夹").format(collected))
+
+    async def fetch_user_collects_videos(
+        self,
+        collects_id: str,
+        max_cursor: int = 0,
+        page_counts: int = 20,
+        max_counts: int = None,
+    ) -> AsyncGenerator[UserCollectionFilter, Any]:
+        """
+        用于获取指定用户收藏夹的作品列表。
+        (Used to get the list of videos in the specified user's collection.)
+
+        Args:
+            collects_id: str: 收藏夹ID (Collection ID)
+            max_cursor: int: 起始页 (Page cursor)
+            page_counts: int: 每页作品数 (Number of videos per page)
+            max_counts: int: 最大作品数 (Maximum number of videos)
+
+        Return:
+            video: AsyncGenerator[UserCollectionFilter, Any]: 作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
+        """
+
+        max_counts = max_counts or float("inf")
+        videos_collected = 0
+
+        logger.info(_("开始爬取收藏夹：{0} 的作品").format(collects_id))
+
+        while videos_collected < max_counts:
+            current_request_size = min(page_counts, max_counts - videos_collected)
+
+            logger.debug("===================================")
+            logger.debug(
+                _("最大数量：{0} 每次请求数量：{1}").format(
+                    max_counts, current_request_size
+                )
+            )
+            logger.info(_("开始爬取第 {0} 页").format(max_cursor))
+
+            async with DouyinCrawler(self.kwargs) as crawler:
+                params = UserCollectsVideo(
+                    cursor=max_cursor,
+                    count=current_request_size,
+                    collects_id=collects_id,
+                )
+                response = await crawler.fetch_user_collects_video(params)
+                video = UserCollectionFilter(response)
+
+                # 更新已处理视频数量
+                videos_collected += len(video.aweme_id)
+
+                if video.has_aweme:
+                    if not video.has_more:
+                        yield video
+                        break
+
+                    logger.debug(_("当前请求的max_cursor：{0}").format(max_cursor))
+                    logger.debug(
+                        _("视频ID：{0} 视频文案：{1} 作者：{2}").format(
+                            video.aweme_id, video.desc, video.nickname
+                        )
+                    )
+                    logger.debug("=====================================")
+
+                    yield video
+                    max_cursor = video.max_cursor
+                else:
+                    logger.info(_("{0} 页没有找到作品").format(max_cursor))
+
+                    if not video.has_more:
+                        break
+
+                max_cursor = video.max_cursor
+
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(
+            _("收藏夹：{0} 所有作品采集完毕，共爬取 {1} 个作品").format(
+                collects_id, videos_collected
+            )
+        )
 
     @mode_handler("mix")
     async def handle_user_mix(self):
         """
-        用于处理用户合集的视频 (Used to process videos of users' collections)
+        用于处理用户合集的作品 (Used to process videos of users' mix)
 
         Args:
             kwargs: dict: 参数字典 (Parameter dictionary)
@@ -519,11 +901,11 @@ class DouyinHandler:
         ):
             # 创建下载任务
             await self.downloader.create_download_tasks(
-                self.kwargs, aweme_data_list, user_path
+                self.kwargs, aweme_data_list._to_list(), user_path
             )
 
         # async with AsyncVideoDB("douyin_videos.db") as db:
-        #     for aweme_data in aweme_data_list:
+        #     for aweme_data in aweme_data_list._to_list():
         #         await get_or_add_video_data(aweme_data, db, ignore_fields)
 
     async def fetch_user_mix_videos(
@@ -532,63 +914,65 @@ class DouyinHandler:
         max_cursor: int = 0,
         page_counts: int = 20,
         max_counts: int = None,
-    ) -> AsyncGenerator[List[Dict[str, Any]], None]:
+    ) -> AsyncGenerator[UserMixFilter, Any]:
         """
-        用于获取指定用户合集的视频列表。
+        用于获取指定用户合集的作品列表。
 
         Args:
             mix_id: str: 合集ID
             max_cursor: int: 起始页
-            page_counts: int: 每页视频数
-            max_counts: int: 最大视频数
+            page_counts: int: 每页作品数
+            max_counts: int: 最大作品数
 
         Return:
-            aweme_data: dict: 视频数据字典，包含视频ID列表、视频文案、作者昵称、起始页
+            mix: AsyncGenerator[UserMixFilter, Any]: 合集作品数据过滤器，包含合集作品数据的_to_raw、_to_dict、_to_list方法
         """
 
         max_counts = max_counts or float("inf")
         videos_collected = 0
 
-        logger.debug(_("开始爬取合集: {0} 的视频").format(mix_id))
+        logger.info(_("开始爬取合集: {0} 的作品").format(mix_id))
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
+            logger.debug("===================================")
             logger.debug(
                 _("最大数量: {0} 每次请求数量: {1}").format(
                     max_counts, current_request_size
                 )
             )
-            logger.debug(_("开始爬取第 {0} 页").format(max_cursor))
+            logger.info(_("开始爬取第 {0} 页").format(max_cursor))
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserMix(
                     cursor=max_cursor, count=current_request_size, mix_id=mix_id
                 )
                 response = await crawler.fetch_user_mix(params)
-                video = UserMixFilter(response)
+                mix = UserMixFilter(response)
+                yield mix
+
+            if not mix.has_more:
+                logger.info(_("合集: {0} 所有作品采集完毕").format(mix_id))
+                break
 
             logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
             logger.debug(
-                _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
-                    video.aweme_id, video.desc, video.nickname
+                _("作品ID: {0} 作品文案: {1} 作者: {2}").format(
+                    mix.aweme_id, mix.desc, mix.nickname
                 )
             )
-            logger.debug("=====================================")
+            logger.debug("===================================")
 
-            aweme_data_list = video._to_list()
-            yield aweme_data_list
+            # 更新已经处理的作品数量 (Update the number of videos processed)
+            videos_collected += len(mix.aweme_id)
+            max_cursor = mix.max_cursor
 
-            # 更新已经处理的视频数量 (Update the number of videos processed)
-            videos_collected += len(aweme_data_list)
-            max_cursor = video.max_cursor
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
 
-            if not video.has_more:
-                logger.debug(_("合集: {0} 所有作品采集完毕").format(mix_id))
-                break
-
-        logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
+        logger.info(_("爬取结束，共爬取 {0} 个合集作品").format(videos_collected))
 
     @mode_handler("live")
     async def handle_user_live(self):
@@ -604,18 +988,26 @@ class DouyinHandler:
 
         # 然后下载直播推流
         webcast_data = await self.fetch_user_live_videos(webcast_id)
-        live_status = webcast_data.get("live_status")
+
+        live_status = webcast_data.live_status
+        sec_user_id = webcast_data.sec_user_id
+
         # 是否正在直播
         if live_status != 2:
-            logger.debug(_("直播已结束"))
+            logger.info(_("当前 {0} 直播已结束").format(webcast_id))
             return
-        sec_user_id = webcast_data.get("sec_user_id")
 
         async with AsyncUserDB("douyin_users.db") as db:
             user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, db)
-        await self.downloader.create_stream_tasks(self.kwargs, webcast_data, user_path)
 
-    async def fetch_user_live_videos(self, webcast_id: str):
+        await self.downloader.create_stream_tasks(
+            self.kwargs, webcast_data._to_dict(), user_path
+        )
+
+    async def fetch_user_live_videos(
+        self,
+        webcast_id: str,
+    ) -> UserLiveFilter:
         """
         用于获取指定用户直播列表。
         (Used to get the list of videos collected by the specified user.)
@@ -629,8 +1021,8 @@ class DouyinHandler:
             sub-partition, anchor nickname)
         """
 
-        logger.debug(_("开始爬取直播: {0} 的数据").format(webcast_id))
-        logger.debug("=====================================")
+        logger.info(_("开始爬取直播: {0} 的数据").format(webcast_id))
+        logger.debug("===================================")
 
         async with DouyinCrawler(self.kwargs) as crawler:
             params = UserLive(web_rid=webcast_id, room_id_str="")
@@ -647,13 +1039,15 @@ class DouyinHandler:
                 live.sub_partition_title, live.nickname
             )
         )
-        logger.debug("=====================================")
-        logger.debug(_("直播信息爬取结束"))
+        logger.debug("===================================")
+        logger.info(_("直播信息爬取结束"))
 
-        webcast_data = live._to_dict()
-        return webcast_data
+        return live
 
-    async def fetch_user_live_videos_by_room_id(self, room_id: str):
+    async def fetch_user_live_videos_by_room_id(
+        self,
+        room_id: str,
+    ) -> UserLive2Filter:
         """
         使用room_id获取指定用户直播列表。
         (Used to get the list of videos collected by the specified user)
@@ -667,8 +1061,8 @@ class DouyinHandler:
             anchor nickname)
         """
 
-        logger.debug(_("开始爬取房间号: {0} 的数据").format(room_id))
-        logger.debug("=====================================")
+        logger.info(_("开始爬取房间号: {0} 的数据").format(room_id))
+        logger.debug("===================================")
 
         async with DouyinCrawler(self.kwargs) as crawler:
             params = UserLive2(room_id=room_id)
@@ -689,11 +1083,10 @@ class DouyinHandler:
                 ),
             )
         )
-        logger.debug("=====================================")
-        logger.debug(_("直播信息爬取结束"))
+        logger.debug("===================================")
+        logger.info(_("直播信息爬取结束"))
 
-        webcast_data = live._to_dict()
-        return webcast_data
+        return live
 
     @mode_handler("feed")
     async def handle_user_feed(self):
@@ -718,7 +1111,7 @@ class DouyinHandler:
         ):
             # 创建下载任务
             await self.downloader.create_download_tasks(
-                self.kwargs, aweme_data_list, user_path
+                self.kwargs, aweme_data_list._to_list(), user_path
             )
 
     async def fetch_user_feed_videos(
@@ -727,35 +1120,35 @@ class DouyinHandler:
         max_cursor: int = 0,
         page_counts: int = 20,
         max_counts: int = None,
-    ) -> AsyncGenerator[List[Dict[str, Any]], None]:
+    ) -> AsyncGenerator[UserPostFilter, Any]:
         """
-        用于获取指定用户feed的视频列表。
+        用于获取指定用户feed的作品列表。
 
         Args:
             sec_user_id: str: 用户ID
             max_cursor: int: 起始页
-            page_counts: int: 每页视频数
-            max_counts: int: 最大视频数
+            page_counts: int: 每页作品数
+            max_counts: int: 最大作品数
 
         Return:
-            aweme_data: dict: 视频数据字典，包含视频ID列表、视频文案、作者昵称、起始页
+            video: AsyncGenerator[UserPostFilter, Any]: 作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
         """
 
         max_counts = max_counts or float("inf")
         videos_collected = 0
 
-        logger.debug(_("开始爬取用户: {0} feed的视频").format(sec_user_id))
+        logger.info(_("开始爬取用户: {0} feed的作品").format(sec_user_id))
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("=====================================")
+            logger.debug("===================================")
             logger.debug(
                 _("最大数量: {0} 每次请求数量: {1}").format(
                     max_counts, current_request_size
                 )
             )
-            logger.debug(_("开始爬取第 {0} 页").format(max_cursor))
+            logger.info(_("开始爬取第 {0} 页").format(max_cursor))
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserPost(
@@ -764,33 +1157,201 @@ class DouyinHandler:
                     sec_user_id=sec_user_id,
                 )
                 response = await crawler.fetch_user_post(params)
-                video = UserPostFilter(response)
+                feed = UserPostFilter(response)
+                yield feed
 
-            if not video.has_aweme:
-                logger.debug(_("{0} 页没有找到作品".format(max_cursor)))
-                if not video.has_more:
-                    logger.debug(_("用户: {0} 所有作品采集完毕".format(sec_user_id)))
+            if not feed.has_aweme:
+                logger.info(_("第 {0} 页没有找到作品").format(max_cursor))
+                if not feed.has_more:
+                    logger.info(_("用户: {0} 所有作品采集完毕").format(sec_user_id))
                     break
 
-                max_cursor = video.max_cursor
+                max_cursor = feed.max_cursor
                 continue
 
             logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
             logger.debug(
-                _("视频ID: {0} 视频文案: {1} 作者: {2}").format(
-                    video.aweme_id, video.desc, video.nickname
+                _("作品ID: {0} 作品文案: {1} 作者: {2}").format(
+                    feed.aweme_id, feed.desc, feed.nickname
                 )
             )
-            logger.debug("=====================================")
+            logger.debug("===================================")
 
-            aweme_data_list = video._to_list()
-            yield aweme_data_list
+            # 更新已经处理的作品数量 (Update the number of videos processed)
+            videos_collected += len(feed.aweme_id)
+            max_cursor = feed.max_cursor
 
-            # 更新已经处理的视频数量 (Update the number of videos processed)
-            videos_collected += len(video.aweme_id)
-            max_cursor = video.max_cursor
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
 
-        logger.debug(_("爬取结束，共爬取{0}个视频").format(videos_collected))
+        logger.info(_("爬取结束，共爬取 {0} 个首页推荐作品").format(videos_collected))
+
+    async def fetch_user_following(
+        self,
+        user_id: str = "",
+        sec_user_id: str = "",
+        offset: int = 0,
+        count: int = 20,
+        source_type: int = 4,
+        min_time: int = 0,
+        max_time: int = 0,
+        max_counts: float = float("inf"),
+    ) -> AsyncGenerator[UserFollowingFilter, Any]:
+        """
+        用于获取指定用户关注的用户的作品列表。
+
+        Args:
+            user_id: str: 用户ID
+            sec_user_id: str: 用户ID
+            offset: int: 起始页
+            count: int: 每页关注用户数
+            source_type: int: 排序类型
+            min_time: int: 最小时间戳
+            max_time: int: 最大时间戳
+        Return:
+            following: AsyncGenerator[UserFollowingFilter, Any]: 关注用户数据过滤器，包含关注用户数据的_to_raw、_to_dict、_to_list方法
+        """
+
+        if not user_id and not sec_user_id:
+            raise ValueError(_("至少提供 user_id 或 sec_user_id 中的一个参数"))
+
+        max_counts = max_counts or float("inf")
+        users_collected = 0
+
+        logger.info(_("开始爬取用户：{0} 的关注用户").format(sec_user_id))
+
+        while users_collected < max_counts:
+            current_request_size = min(count, max_counts - users_collected)
+
+            logger.debug("===================================")
+            logger.debug(
+                _("最大数量：{0} 每次请求数量：{1}").format(count, current_request_size)
+            )
+
+            async with DouyinCrawler(self.kwargs) as crawler:
+                params = UserFollowing(
+                    offset=offset,
+                    count=current_request_size,
+                    user_id=user_id,
+                    sec_user_id=sec_user_id,
+                    source_type=source_type,
+                    min_time=min_time,
+                    max_time=max_time,
+                )
+                response = await crawler.fetch_user_following(params)
+                following = UserFollowingFilter(response)
+                yield following
+
+            if not following.has_more:
+                logger.info(_("用户：{0} 所有关注用户采集完毕").format(sec_user_id))
+                break
+
+            logger.info(_("当前请求的offset：{0}").format(offset))
+            logger.info(_("爬取了 {0} 个关注用户").format(offset + 1))
+            logger.debug(
+                _("用户ID：{0} 用户昵称：{1} 用户作品数：{2} 额外内容：{3}").format(
+                    following.sec_uid,
+                    following.nickname,
+                    following.aweme_count,
+                    following.secondary_text,
+                )
+            )
+            logger.debug("===================================")
+
+            # 更新已经处理的用户数量 (Update the number of users processed)
+            users_collected += len(following.sec_uid)
+            offset = following.offset
+
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(_("爬取结束，共爬取 {0} 个用户").format(users_collected))
+
+    async def fetch_user_follower(
+        self,
+        user_id: str = "",
+        sec_user_id: str = "",
+        offset: int = 0,
+        count: int = 20,
+        source_type: int = 1,
+        min_time: int = 0,
+        max_time: int = 0,
+        max_counts: float = float("inf"),
+    ) -> AsyncGenerator[UserFollowerFilter, Any]:
+        """
+        用于获取指定用户的粉丝列表。
+
+        Args:
+            user_id: str: 用户ID
+            sec_user_id: str: 用户ID
+            offset: int: 起始页
+            count: int: 每页粉丝数
+            source_type: int: 排序类型
+            min_time: int: 最小时间戳
+            max_time: int: 最大时间戳
+        Return:
+            follower: AsyncGenerator[UserFollowerFilter, Any]: 粉丝数据过滤器，包含用户ID列表、用户昵称、用户头像、起始页
+        """
+
+        if not user_id and not sec_user_id:
+            raise ValueError(_("至少提供 user_id 或 sec_user_id 中的一个参数"))
+
+        max_counts = max_counts or float("inf")
+        users_collected = 0
+
+        logger.info(_("开始爬取用户：{0} 的粉丝").format(sec_user_id))
+
+        while users_collected < max_counts:
+            current_request_size = min(count, max_counts - users_collected)
+
+            logger.debug("===================================")
+            logger.debug(
+                _("最大数量：{0} 每次请求数量：{1}").format(count, current_request_size)
+            )
+
+            async with DouyinCrawler(self.kwargs) as crawler:
+                params = UserFollower(
+                    offset=offset,
+                    count=current_request_size,
+                    user_id=user_id,
+                    sec_user_id=sec_user_id,
+                    source_type=source_type,
+                    min_time=min_time,
+                    max_time=max_time,
+                )
+                response = await crawler.fetch_user_follower(params)
+                follower = UserFollowerFilter(response)
+                yield follower
+
+            if not follower.has_more:
+                logger.info(_("用户：{0} 所有粉丝采集完毕").format(sec_user_id))
+                break
+
+            logger.info(
+                _("当前请求的offset：{0} max_time：{1}").format(offset, max_time)
+            )
+            logger.info(_("爬取了 {0} 个粉丝用户").format(users_collected + 1))
+            logger.debug(
+                _("用户ID：{0} 用户昵称：{1} 用户作品数：{2}").format(
+                    follower.sec_uid, follower.nickname, follower.aweme_count
+                )
+            )
+            logger.debug("===================================")
+
+            # 更新已经处理的用户数量 (Update the number of users processed)
+            users_collected += len(follower.sec_uid)
+            offset = follower.offset
+
+            # 更新最大(最早)时间戳，避免重复返回相同的用户
+            max_time = follower.min_time
+
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(_("爬取结束，共爬取 {0} 个用户").format(users_collected))
 
 
 async def handle_sso_login():

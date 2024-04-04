@@ -5,6 +5,7 @@ import sys
 import random
 import secrets
 import datetime
+import browser_cookie3
 import importlib_resources
 
 from typing import Union, Any
@@ -76,6 +77,10 @@ def timestamp_2_str(
     """
     if timestamp is None or timestamp == "None":
         return ""
+
+    if isinstance(timestamp, str):
+        if len(timestamp) == 30:
+            return datetime.datetime.strptime(timestamp, "%a %b %d %H:%M:%S %z %Y")
 
     return datetime.datetime.fromtimestamp(float(timestamp)).strftime(format)
 
@@ -196,6 +201,7 @@ def replaceT(obj: Union[str, Any]) -> Union[str, Any]:
     if isinstance(obj, str):
         return re.sub(reSub, "_", obj)
 
+    return obj
     # raise TypeError("输入应为字符串或字符串列表")
 
 
@@ -236,3 +242,111 @@ def split_filename(text: str, os_limit: dict) -> str:
 def ensure_path(path: Union[str, Path]) -> Path:
     """确保路径是一个Path对象 (Ensure the path is a Path object)"""
     return Path(path) if isinstance(path, str) else path
+
+
+def get_cookie_from_browser(browser_choice: str, domain: str = "") -> dict:
+    """
+    根据用户选择的浏览器获取domain的cookie。
+
+    Args:
+        browser_choice (str): 用户选择的浏览器名称
+
+    Returns:
+        str: *.domain的cookie值
+    """
+
+    if not browser_choice or not domain:
+        return ""
+
+    BROWSER_FUNCTIONS = {
+        "chrome": browser_cookie3.chrome,
+        "firefox": browser_cookie3.firefox,
+        "edge": browser_cookie3.edge,
+        "opera": browser_cookie3.opera,
+        "opera_gx": browser_cookie3.opera_gx,
+        "safari": browser_cookie3.safari,
+        "chromium": browser_cookie3.chromium,
+        "brave": browser_cookie3.brave,
+        "vivaldi": browser_cookie3.vivaldi,
+        "librewolf": browser_cookie3.librewolf,
+    }
+    cj_function = BROWSER_FUNCTIONS.get(browser_choice)
+    cj = cj_function(domain_name=domain)
+    cookie_value = {c.name: c.value for c in cj if c.domain.endswith(domain)}
+    return cookie_value
+
+
+def check_invalid_naming(
+    naming: str, allowed_patterns: list, allowed_separators: list
+) -> list:
+    """
+    检查命名是否符合命名模板 (Check if the naming conforms to the naming template)
+
+    Args:
+        naming (str): 命名字符串 (Naming string)
+        allowed_patterns (list): 允许的模式列表 (List of allowed patterns)
+        allowed_separators (list): 允许的分隔符列表 (List of allowed separators)
+    Returns:
+        list: 无效的模式列表 (List of invalid patterns)
+    """
+    if not naming or not allowed_patterns or not allowed_separators:
+        return []
+
+    temp_naming = naming
+    invalid_patterns = []
+
+    # 检查提供的模式是否有效
+    for pattern in allowed_patterns:
+        if pattern in temp_naming:
+            temp_naming = temp_naming.replace(pattern, "")
+
+    # 此时，temp_naming应只包含分隔符
+    for char in temp_naming:
+        if char not in allowed_separators:
+            invalid_patterns.append(char)
+
+    # 检查连续的无效模式或分隔符
+    for pattern in allowed_patterns:
+        # 检查像"{xxx}{xxx}"这样的模式
+        if pattern + pattern in naming:
+            invalid_patterns.append(pattern + pattern)
+        for sep in allowed_patterns:
+            # 检查像"{xxx}-{xxx}"这样的模式
+            if pattern + sep + pattern in naming:
+                invalid_patterns.append(pattern + sep + pattern)
+
+    return invalid_patterns
+
+
+def merge_config(
+    main_conf: dict = ...,
+    custom_conf: dict = ...,
+    **kwargs,
+):
+    """
+    合并配置参数，使 CLI 参数优先级高于自定义配置，自定义配置优先级高于主配置，最终生成完整配置参数字典。
+
+    Args:
+        main_conf (dict): 主配置参数字典
+        custom_conf (dict): 自定义配置参数字典
+        **kwargs: CLI 参数和其他额外的配置参数
+
+    Returns:
+        dict: 合并后的配置参数字典
+    """
+    # 合并主配置和自定义配置
+    merged_conf = {}
+    for key, value in main_conf.items():
+        merged_conf[key] = value  # 将主配置复制到合并后的配置中
+    for key, value in custom_conf.items():
+        if value is not None and value != "":  # 只有值不为 None 和 空值，才进行合并
+            merged_conf[key] = value  # 自定义配置参数会覆盖主配置中的同名参数
+
+    # 合并 CLI 参数与合并后的配置，确保 CLI 参数的优先级最高
+    for key, value in kwargs.items():
+        if key not in merged_conf:  # 如果合并后的配置中没有这个键，则直接添加
+            merged_conf[key] = value
+        elif value is not None and value != "":  # 如果值不为 None 和 空值，则进行合并
+            merged_conf[key] = value  # CLI 参数会覆盖自定义配置和主配置中的同名参数
+
+    return merged_conf

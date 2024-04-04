@@ -1,6 +1,5 @@
 # path: f2/apps/tiktok/db.py
 
-import aiosqlite
 from f2.db.base_db import BaseDB
 
 
@@ -24,6 +23,7 @@ class AsyncUserDB(BaseDB):
             "videoCount INTEGER",
             "uid TEXT",
             "nickname TEXT",
+            "nickname_raw TEXT",
             "uniqueId TEXT",
             "commentSetting BOOLEAN",
             "followingVisibility BOOLEAN",
@@ -32,6 +32,7 @@ class AsyncUserDB(BaseDB):
             "showPlayListTab BOOLEAN",
             "relation BOOLEAN",
             "signature TEXT",
+            "signature_raw TEXT",
             "ttSeller BOOLEAN",
             "verified BOOLEAN",
             "last_aweme_id TEXT",

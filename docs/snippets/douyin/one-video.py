@@ -12,9 +12,11 @@ kwargs = {
 
 
 async def main():
-    print(await DouyinHandler(kwargs).fetch_one_video(aweme_id="7294994585925848359"))
-    print("-------------------")
-    print(await DouyinHandler(kwargs).fetch_one_video(aweme_id="7305827432509082913"))
+    video = await DouyinHandler(kwargs).fetch_one_video(aweme_id="7294994585925848359")
+    print("=================_to_raw================")
+    print(video._to_raw())
+    # print("=================_to_dict================")
+    # print(video._to_dict())
 
 
 if __name__ == "__main__":

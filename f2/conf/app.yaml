@@ -5,6 +5,7 @@ douyin:
   path: Download
   timeout: 10
   max_retries: 5
+  lyric: yes
   max_connections: 5
   max_counts: 0
   max_tasks: 10

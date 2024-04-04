@@ -8,23 +8,18 @@ kwargs = {
     },
     "proxies": {"http": None, "https": None},
     "cookie": "YOUR_COOKIE_HERE",
+    "timeout": 10,
 }
 
 
 async def main():
-    results = [
-        aweme_data_list
-        async for aweme_data_list in DouyinHandler(kwargs).fetch_user_collect_videos()
-    ]
-    print(results)
-    print("-------------------")
-    results = [
-        aweme_data_list
-        async for aweme_data_list in DouyinHandler(kwargs).fetch_user_collect_videos(
-            0, 10, 20
-        )
-    ]
-    print(results)
+    async for aweme_data_list in DouyinHandler(kwargs).fetch_user_collection_videos():
+        print("=================_to_raw================")
+        print(aweme_data_list._to_raw())
+        # print("=================_to_dict===============")
+        # print(aweme_data_list._to_dict())
+        # print("=================_to_list===============")
+        # print(aweme_data_list._to_list())
 
 
 if __name__ == "__main__":

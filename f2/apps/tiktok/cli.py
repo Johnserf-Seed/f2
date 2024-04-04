@@ -3,19 +3,24 @@
 import f2
 import click
 import typing
-import browser_cookie3
 
 from pathlib import Path
 
 from f2 import helps
 from f2.cli.cli_commands import set_cli_config
 from f2.log.logger import logger
-from f2.utils.utils import split_dict_cookie, get_resource_path
+from f2.utils.utils import (
+    split_dict_cookie,
+    get_resource_path,
+    get_cookie_from_browser,
+    check_invalid_naming,
+    merge_config,
+)
 from f2.utils.conf_manager import ConfigManager
 from f2.i18n.translator import TranslationManager, _
 
 
-def handle_help(
+def handler_help(
     ctx: click.Context,
     param: typing.Union[click.Option, click.Parameter],
     value: typing.Any,
@@ -50,61 +55,28 @@ def handler_auto_cookie(
         param: 提供的参数或选项 (The provided parameter or option)
         value: 参数或选项的值 (The value of the parameter or option)
     """
-    if not value or ctx.resilient_parsing:
-        return
-
-    # 如果用户明确设置了 --cookie，那么跳过自动获取过程
-    if ctx.params.get("cookie"):
+    # 如果用户没有提供值或者设置了 resilient_parsing 或者设置了 --cookie，那么跳过自动获取过程
+    if not value or ctx.resilient_parsing or ctx.params.get("cookie"):
         return
 
     # 根据浏览器选择获取cookie
-    if value in ["chrome", "firefox", "edge", "opera"]:
-        try:
-            cookie_value = split_dict_cookie(get_cookie_from_browser(value))
-            manager = ConfigManager(ctx.params.get("config", "conf/app.yaml"))
-            manager.update_config_with_args("tiktok", cookie=cookie_value)
-        except PermissionError:
-            message = _("请关闭所有已打开的浏览器重试, 并且你有适当的权限访问浏览器 !")
-            logger.error(message)
-            click.echo(message)
-            ctx.abort()
-        except Exception as e:
-            message = _("自动获取Cookie失败: {0}".format(str(e)))
-            logger.error(message)
-            click.echo(message)
-            ctx.abort()
+    try:
+        cookie_value = split_dict_cookie(get_cookie_from_browser(value, "tiktok.com"))
 
+        if not cookie_value:
+            raise ValueError(_("无法从 {0} 浏览器中获取cookie").format(value))
 
-def get_cookie_from_browser(browser_choice: str):
-    """
-    根据用户选择的浏览器获取tiktok.com的cookie。
-
-    Args:
-        browser_choice (str): 用户选择的浏览器名称
-
-    Returns:
-        str: *.tiktok.com的cookie值
-    """
-
-    BROWSER_FUNCTIONS = {
-        "chrome": browser_cookie3.chrome,
-        "firefox": browser_cookie3.firefox,
-        "edge": browser_cookie3.edge,
-        "opera": browser_cookie3.opera,
-    }
-    cj_function = BROWSER_FUNCTIONS.get(browser_choice)
-    if not cj_function:
-        raise ValueError(_("不支持的浏览器选项, 输入f2 dy --help查看更多帮助!"))
-
-    cj = cj_function(domain_name="tiktok.com")
-
-    # cookie_value = next((c.value for c in cj if c.name == 'ttwid'), None)
-    cookie_value = {c.name: c.value for c in cj if c.domain.endswith("tiktok.com")}
-
-    if not cookie_value:
-        raise ValueError(_("无法从{0}浏览器中获取cookie").format(browser_choice))
-
-    return cookie_value
+        # 如果没有提供配置文件，那么使用高频配置文件
+        manager = ConfigManager(
+            ctx.params.get("config", get_resource_path(f2.APP_CONFIG_FILE_PATH))
+        )
+        manager.update_config_with_args("tiktok", cookie=cookie_value)
+    except PermissionError:
+        logger.error(_("请关闭所有已打开的浏览器重试，并且你有适当的权限访问浏览器！"))
+        ctx.abort()
+    except Exception as e:
+        logger.error(_("自动获取Cookie失败：{0}").format(str(e)))
+        ctx.abort()
 
 
 def handler_language(
@@ -112,8 +84,16 @@ def handler_language(
     param: typing.Union[click.Option, click.Parameter],
     value: typing.Any,
 ) -> typing.Any:
-    """用于设置语言 (For setting the language)"""
+    """用于设置语言 (For setting the language)
 
+    Args:
+        ctx: click的上下文对象 (Click's context object)
+        param: 提供的参数或选项 (The provided parameter or option)
+        value: 参数或选项的值 (The value of the parameter or option)
+    """
+
+    if not value or ctx.resilient_parsing:
+        return
     TranslationManager.get_instance().set_language(value)
     global _
     _ = TranslationManager.get_instance().gettext
@@ -139,75 +119,24 @@ def handler_naming(
         value: 命名模式模板 (Naming pattern template)
     """
     # 避免和配置文件参数冲突
-    if value is None:
+    if not value or ctx.resilient_parsing:
         return
 
     # 允许的模式和分隔符
     ALLOWED_PATTERNS = ["{nickname}", "{create}", "{aweme_id}", "{desc}", "{uid}"]
     ALLOWED_SEPARATORS = ["-", "_"]
 
-    temp_naming = value
-    invalid_patterns = []
-
-    # 检查提供的模式是否有效
-    for pattern in ALLOWED_PATTERNS:
-        if pattern in temp_naming:
-            temp_naming = temp_naming.replace(pattern, "")
-
-    # 此时，temp_naming应只包含分隔符
-    for char in temp_naming:
-        if char not in ALLOWED_SEPARATORS:
-            invalid_patterns.append(char)
-
-    # 检查连续的无效模式或分隔符
-    for pattern in ALLOWED_PATTERNS:
-        # 检查像"{aweme_id}{aweme_id}"这样的模式
-        if pattern + pattern in value:
-            invalid_patterns.append(pattern + pattern)
-        for sep in ALLOWED_SEPARATORS:
-            # 检查像"{aweme_id}-{aweme_id}"这样的模式
-            if pattern + sep + pattern in value:
-                invalid_patterns.append(pattern + sep + pattern)
+    # 检查命名是否符合命名规范
+    invalid_patterns = check_invalid_naming(value, ALLOWED_PATTERNS, ALLOWED_SEPARATORS)
 
     if invalid_patterns:
         raise click.BadParameter(
-            _(
-                "`{0}` 中的 `{1}` 不符合命名模式".format(
-                    value, "".join(invalid_patterns)
-                )
+            _("`{0}` 中的 `{1}` 不符合命名模式").format(
+                value, "".join(invalid_patterns)
             )
         )
 
     return value
-
-
-def merge_config(main_conf, custom_conf, **kwargs):
-    """
-    合并配置参数，使 CLI 参数优先级高于自定义配置，自定义配置优先级高于主配置，最终生成完整配置参数字典。
-    Args:
-        main_conf (dict): 主配置参数字典
-        custom_conf (dict): 自定义配置参数字典
-        **kwargs: CLI 参数和其他额外的配置参数
-
-    Returns:
-        dict: 合并后的配置参数字典
-    """
-    # 合并主配置和自定义配置
-    merged_conf = {}
-    for key, value in main_conf.items():
-        merged_conf[key] = value  # 将主配置复制到合并后的配置中
-    for key, value in custom_conf.items():
-        if value is not None and value != "":  # 只有值不为 None 和 空值，才进行合并
-            merged_conf[key] = value  # 自定义配置参数会覆盖主配置中的同名参数
-
-    # 合并 CLI 参数与合并后的配置，确保 CLI 参数的优先级最高
-    for key, value in kwargs.items():
-        if key not in merged_conf:  # 如果合并后的配置中没有这个键，则直接添加
-            merged_conf[key] = value
-        elif value is not None and value != "":  # 如果值不为 None 和 空值，则进行合并
-            merged_conf[key] = value  # CLI 参数会覆盖自定义配置和主配置中的同名参数
-
-    return merged_conf
 
 
 @click.command(name="tiktok", help=_("TikTok无水印解析"))
@@ -231,40 +160,40 @@ def merge_config(main_conf, custom_conf, **kwargs):
     "-m",
     type=bool,
     # default="yes",
-    help=_("是否保存视频原声。可选：'yes'、'no'"),
+    help=_("是否保存视频原声"),
 )
 @click.option(
     "--cover",
     "-v",
     type=bool,
     # default="yes",
-    help=_("是否保存视频封面。可选：'yes'、'no'"),
+    help=_("是否保存视频封面"),
 )
 @click.option(
     "--desc",
     "-d",
     type=bool,
     # default="yes",
-    help=_("是否保存视频文案。可选：'yes'、'no'"),
+    help=_("是否保存视频文案"),
 )
 @click.option(
     "--path",
     "-p",
     type=str,
     # default="Download",
-    help=_("作品保存位置，支持绝对与相对路径。"),
+    help=_("作品保存位置，支持绝对与相对路径"),
 )
 @click.option(
     "--folderize",
     "-f",
     type=bool,
     # default="yes",
-    help=_("是否将作品保存到单独的文件夹。可选：'yes'、'no'"),
+    help=_("是否将作品保存到单独的文件夹"),
 )
 @click.option(
     "--mode",
     "-M",
-    type=click.Choice(["one", "post", "like", "collect", "mix"]),
+    type=click.Choice(f2.TIKTOK_MODE_LIST),
     # default="post",
     # required=True,
     help=_(
@@ -367,11 +296,9 @@ def merge_config(main_conf, custom_conf, **kwargs):
 # @click.confirmation_option(prompt='是否要使用命令行的参数更新配置文件?')
 @click.option(
     "--auto-cookie",
-    type=click.Choice(["none", "chrome", "firefox", "edge", "opera"]),
+    type=click.Choice(f2.BROWSER_LIST),
     # default="none",
-    help=_(
-        "自动从浏览器获取cookie。可选项：chrome、firefox、edge、opera。使用该命令前请确保关闭所选的浏览器"
-    ),
+    help=_("自动从浏览器获取cookie，使用该命令前请确保关闭所选的浏览器"),
     callback=handler_auto_cookie,
 )
 @click.option(
@@ -379,11 +306,17 @@ def merge_config(main_conf, custom_conf, **kwargs):
     is_flag=True,
     is_eager=True,
     expose_value=False,
-    help="显示富文本帮助",
-    callback=handle_help,
+    help=_("显示富文本帮助"),
+    callback=handler_help,
 )
 @click.pass_context
-def tiktok(ctx, config, init_config, update_config, **kwargs):
+def tiktok(
+    ctx: click.Context,
+    config: str,
+    init_config: str,
+    update_config: bool,
+    **kwargs,
+) -> None:
     ##################
     # f2 存在2个主配置文件，分别是app低频配置(app.yaml)和f2低频配置(conf.yaml)
     # app低频配置存放app相关的参数
@@ -453,16 +386,16 @@ def tiktok(ctx, config, init_config, update_config, **kwargs):
     # 从低频配置开始到高频配置再到cli参数，逐级覆盖，如果键值不存在使用父级的键值
     kwargs = merge_config(main_conf, custom_conf, **kwargs)
 
-    logger.info(_("主配置路径： {0}".format(main_conf_path)))
-    logger.info(_("自定义配置路径： {0}".format(Path.cwd() / config)))
-    logger.debug(_("主配置参数：{0}".format(main_conf)))
-    logger.debug(_("自定义配置参数：{0}".format(custom_conf)))
-    logger.debug(_("CLI参数：{0}".format(kwargs)))
+    logger.info(_("主配置路径：{0}").format(main_conf_path))
+    logger.info(_("自定义配置路径：{0}").format(Path.cwd() / config))
+    logger.debug(_("主配置参数：{0}").format(main_conf))
+    logger.debug(_("自定义配置参数：{0}").format(custom_conf))
+    logger.debug(_("CLI参数：{0}").format(kwargs))
 
     # 尝试从命令行参数或kwargs中获取URL
     if not kwargs.get("url"):
         logger.error("缺乏URL参数，详情看命令帮助")
-        handle_help(ctx, None, True)
+        handler_help(ctx, None, True)
 
     # 添加app_name到kwargs
     kwargs["app_name"] = "tiktok"
