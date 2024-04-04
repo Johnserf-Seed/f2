@@ -685,6 +685,10 @@ class DouyinHandler:
                         self.kwargs, aweme_data_list._to_list(), tmp_user_path
                     )
 
+            logger.info(
+                _("爬取结束，共爬取 {0} 个收藏夹").format(len(choose_collects_id))
+            )
+
     async def select_user_collects(
         self, collects: UserCollectsFilter
     ) -> Union[str, List[str]]:
@@ -702,7 +706,9 @@ class DouyinHandler:
         rich_console.print(_("0: [bold]全部下载[/bold]"))
         for i in range(len(collects.collects_id)):
             rich_console.print(
-                _("{0}: {1} (包含 {2} 个作品，收藏夹ID {3})").format(
+                _(
+                    "{0}：{1} (包含 {2} 个作品[以网页实际数量为准]，收藏夹ID {3})"
+                ).format(
                     i + 1,
                     collects.collects_name[i],
                     collects.total_number[i],
@@ -711,7 +717,7 @@ class DouyinHandler:
             )
 
         # rich_prompt 会有字符刷新问题，暂时使用rich_print
-        rich_console.print(_("[bold yellow]请输入希望下载的收藏夹序号:[/bold yellow]"))
+        rich_console.print(_("[bold yellow]请输入希望下载的收藏夹序号：[/bold yellow]"))
         selected_index = int(
             rich_prompt.ask(
                 # _("[bold yellow]请输入希望下载的收藏夹序号:[/bold yellow]"),
@@ -751,7 +757,7 @@ class DouyinHandler:
         while collected < max_counts:
             logger.debug("===================================")
             logger.debug(
-                _("当前请求的max_cursor: {0}， max_counts: {1}").format(
+                _("当前请求的max_cursor：{0}， max_counts：{1}").format(
                     max_cursor, max_counts
                 )
             )
@@ -762,26 +768,26 @@ class DouyinHandler:
                 collects = UserCollectsFilter(response)
                 yield collects
 
+            # 更新已经处理的收藏夹数量 (Update the number of collections processed)
+            collected += len(collects.collects_id)
+
             if not collects.has_more:
-                logger.info(_("所有收藏夹ID采集完毕"))
                 break
 
             logger.debug(
-                _("收藏夹ID: {0} 收藏夹标题: {1}").format(
+                _("收藏夹ID：{0} 收藏夹标题：{1}").format(
                     collects.collects_id, collects.collects_name
                 )
             )
             logger.debug("===================================")
 
-            # 更新已经处理的收藏夹数量 (Update the number of collections processed)
-            collected += len(collects.collects_id)
             max_cursor = collects.max_cursor
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
-        logger.info(_("爬取结束，共爬取 {0} 个收藏夹").format(collected))
+        logger.info(_("爬取结束，共找到 {0} 个收藏夹").format(collected))
 
     async def fetch_user_collects_videos(
         self,
@@ -807,14 +813,14 @@ class DouyinHandler:
         max_counts = max_counts or float("inf")
         videos_collected = 0
 
-        logger.info(_("开始爬取收藏夹: {0} 的作品").format(collects_id))
+        logger.info(_("开始爬取收藏夹：{0} 的作品").format(collects_id))
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
             logger.debug("===================================")
             logger.debug(
-                _("最大数量: {0} 每次请求数量: {1}").format(
+                _("最大数量：{0} 每次请求数量：{1}").format(
                     max_counts, current_request_size
                 )
             )
@@ -828,31 +834,42 @@ class DouyinHandler:
                 )
                 response = await crawler.fetch_user_collects_video(params)
                 video = UserCollectionFilter(response)
-                yield video
 
-            if not video.has_aweme:
-                logger.info(_("第 {0} 页没有找到作品").format(max_cursor))
-                if not video.has_more:
-                    logger.info(_("收藏夹: {0} 所有作品采集完毕").format(collects_id))
-                    break
+                # 更新已处理视频数量
+                videos_collected += len(video.aweme_id)
 
-            logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
-            logger.debug(
-                _("作品ID: {0} 作品文案: {1} 作者: {2}").format(
-                    video.aweme_id, video.desc, video.nickname
-                )
-            )
-            logger.debug("===================================")
+                if video.has_aweme:
+                    if not video.has_more:
+                        yield video
+                        break
 
-            # 更新已经处理的作品数量 (Update the number of videos processed)
-            videos_collected += len(video.aweme_id)
-            max_cursor = video.max_cursor
+                    logger.debug(_("当前请求的max_cursor：{0}").format(max_cursor))
+                    logger.debug(
+                        _("视频ID：{0} 视频文案：{1} 作者：{2}").format(
+                            video.aweme_id, video.desc, video.nickname
+                        )
+                    )
+                    logger.debug("=====================================")
+
+                    yield video
+                    max_cursor = video.max_cursor
+                else:
+                    logger.info(_("{0} 页没有找到作品").format(max_cursor))
+
+                    if not video.has_more:
+                        break
+
+                max_cursor = video.max_cursor
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
-        logger.info(_("爬取结束，共爬取 {0} 个作品").format(videos_collected))
+        logger.info(
+            _("收藏夹：{0} 所有作品采集完毕，共爬取 {1} 个作品").format(
+                collects_id, videos_collected
+            )
+        )
 
     @mode_handler("mix")
     async def handle_user_mix(self):
