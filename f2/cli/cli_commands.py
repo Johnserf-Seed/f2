@@ -134,7 +134,7 @@ def set_cli_config(ctx, **kwargs):
         try:
             asyncio.run(run_app(kwargs))
         except APIError as e:
-            logger.error(e.display_error())
+            logger.error(e)
 
 
 async def run_app(kwargs):
