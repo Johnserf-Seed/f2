@@ -54,6 +54,13 @@ jobs:
         with:
           path: docs/.vitepress/dist
 
+      # Add this step to upload coverage reports to Codecov
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: Johnserf-Seed/f2
+
   # Deployment job
   deploy:
     environment:
