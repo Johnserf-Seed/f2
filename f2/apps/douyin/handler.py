@@ -46,6 +46,7 @@ from f2.apps.douyin.filter import (
 from f2.apps.douyin.utils import (
     SecUserIdFetcher,
     AwemeIdFetcher,
+    MixIdFetcher,
     WebCastIdFetcher,
     VerifyFpManager,
     create_or_rename_user_folder,
@@ -888,10 +889,21 @@ class DouyinHandler:
         page_counts = self.kwargs.get("page_counts", 20)
         max_counts = self.kwargs.get("max_counts")
 
-        aweme_id = await AwemeIdFetcher.get_aweme_id(self.kwargs.get("url"))
-        mix_data = await self.fetch_one_video(aweme_id)
-        sec_user_id = mix_data.get("sec_user_id")
-        mix_id = mix_data.get("mix_id")
+        # 先假定合集链接获取合集ID
+        try:
+            mix_id = await MixIdFetcher.get_mix_id(self.kwargs.get("url"))
+            async for aweme_data in self.fetch_user_mix_videos(mix_id, 0, 20, 1):
+                logger.info(_("正在从合集链接获取合集ID"))
+                sec_user_id = aweme_data.sec_user_id[0]  # 注意这里是一个列表
+        except Exception as e:
+            logger.warning(
+                _("获取合集ID失败，尝试解析作品链接。错误信息：{0}").format(e)
+            )
+            # 如果获取失败，则假定作品链接获取作品ID
+            aweme_id = await AwemeIdFetcher.get_aweme_id(self.kwargs.get("url"))
+            aweme_data = await self.fetch_one_video(aweme_id)
+            sec_user_id = aweme_data.sec_user_id
+            mix_id = aweme_data.mix_id
 
         async with AsyncUserDB("douyin_users.db") as db:
             user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, db)
