@@ -12,7 +12,9 @@ def test_xbogus_manager():
     )
 
     final_endpoint = XBogusManager.model_2_endpoint(
-        dyendpoint.USER_DETAIL, params.dict()
+        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0",
+        base_endpoint=dyendpoint.USER_DETAIL,
+        params=params.dict(),
     )
 
     assert final_endpoint, "Failed to get a final endpoint."

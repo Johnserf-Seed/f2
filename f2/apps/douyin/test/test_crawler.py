@@ -2,20 +2,17 @@ import pytest
 from f2.apps.douyin.model import UserPost
 from f2.apps.douyin.filter import UserPostFilter
 from f2.apps.douyin.crawler import DouyinCrawler
+from f2.utils.conf_manager import TestConfigManager
 
 
-kwargs = {
-    "headers": {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
-        "Referer": "https://www.douyin.com/",
-    },
-    "cookie": "YOUR_COOKIE_HERE",
-}
+@pytest.fixture
+def cookie_fixture():
+    return TestConfigManager.get_test_config("douyin")
 
 
 @pytest.mark.asyncio
-async def test_crawler_fetcher():
-    async with DouyinCrawler(kwargs) as crawler:
+async def test_crawler_fetcher(cookie_fixture):
+    async with DouyinCrawler(cookie_fixture) as crawler:
         params = UserPost(
             max_cursor=0,
             count=1,
