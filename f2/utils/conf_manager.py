@@ -137,3 +137,15 @@ class ConfigManager:
             click.echo(_("配置文件已更新!"))
         else:
             click.echo(_("已取消更新配置文件!"))
+
+
+class TestConfigManager:
+    # 返回传入app的测试配置内容 (Return the test conf content passed in app)
+
+    @classmethod
+    def get_test_config(cls, app_name: str) -> dict:
+        return ConfigManager(f2.TEST_CONFIG_FILE_PATH).get_config(app_name)
+
+
+if __name__ == "__main__":
+    print(TestConfigManager.get_test_config("douyin"))
