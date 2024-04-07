@@ -17,7 +17,7 @@ jobs:
         run: |
           pip install pytest
           pip install pytest-cov
-          pip install f2
+          pip install -e .
 
       - name: Run tests and collect coverage
         run: pytest --cov=./ --cov-report=xml
