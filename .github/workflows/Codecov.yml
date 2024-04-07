@@ -19,11 +19,6 @@ jobs:
           pip install pytest-cov
           pip install f2
 
-      - name: Run ATS
-        uses: codecov/codecov-ats@v0
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
       - name: Run tests and collect coverage
         run: pytest --cov=./ --cov-report=xml
 
