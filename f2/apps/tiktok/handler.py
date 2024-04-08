@@ -237,7 +237,7 @@ class TiktokHandler:
         selected_index = int(
             rich_prompt.ask(
                 # _("[bold yellow]请输入希望下载的合辑序号:[/bold yellow]"),
-                choices=[str(i) for i in range(len(playlists) + 1)],
+                choices=[str(i) for i in range(len(playlists.mixId) + 1)],
             )
         )
 
@@ -607,7 +607,7 @@ class TiktokHandler:
         if isinstance(mixId, str):
             mixId = [mixId]
 
-        for mixId in playlist.get("mixId", []):
+        for mixId in playlist.mixId:
             async for aweme_data_list in self.fetch_user_mix_videos(
                 mixId, cursor, page_counts, max_counts
             ):
