@@ -129,8 +129,6 @@ def split_dict_cookie(cookie_dict: dict) -> str:
 
 
 def extract_valid_urls(inputs: Union[str, list[str]]) -> Union[str, list[str], None]:
-    from f2.i18n.translator import _
-
     """从输入中提取有效的URL (Extract valid URLs from input)
 
     Args:
