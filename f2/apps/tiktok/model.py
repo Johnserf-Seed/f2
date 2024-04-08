@@ -41,7 +41,6 @@ class BaseRequestModel(BaseModel):
     screen_width: int = 1920
     webcast_language: str = "zh-Hans"
     tz_name: str = quote("Asia/Hong_Kong", safe="")
-    # verifyFp: str = VerifyFpManager.gen_verify_fp()
     msToken: str = TokenManager.gen_real_msToken()
 
 
