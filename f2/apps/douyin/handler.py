@@ -68,7 +68,7 @@ class DouyinHandler:
         self.kwargs = kwargs
         self.downloader = DouyinDownloader(kwargs)
 
-    async def handler_user_profile(
+    async def fetch_user_profile(
         self,
         sec_user_id: str,
     ) -> UserProfileFilter:
@@ -110,7 +110,7 @@ class DouyinHandler:
 
         user_dict = await db.get_user_info(sec_user_id)
         if not user_dict:
-            user_dict = await self.handler_user_profile(sec_user_id)
+            user_dict = await self.fetch_user_profile(sec_user_id)
             await db.add_user_info(**user_dict._to_dict())
         return user_dict.get("nickname")
 
@@ -137,7 +137,7 @@ class DouyinHandler:
         local_user_data = await db.get_user_info(sec_user_id)
 
         # 从服务器获取当前用户最新数据
-        current_user_data = await self.handler_user_profile(sec_user_id)
+        current_user_data = await self.fetch_user_profile(sec_user_id)
 
         # 获取当前用户最新昵称
         current_nickname = current_user_data._to_dict().get("nickname")

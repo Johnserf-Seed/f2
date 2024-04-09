@@ -100,7 +100,7 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
 
   | Feature | Account Status | Interface | Feature Status |
   | --- | --- | --- | --- |
-  | User Information | 🟣⚫ | `handler_user_profile` | 🟢 |
+  | User Information | 🟣⚫ | `fetch_user_profile` | 🟢 |
   | Single Work (Video, Album, Daily) | 🟣⚫ | `fetch_one_video` | 🟢 |
   | Home Page Works | 🟣⚫ | `fetch_user_post_videos` | 🟢 |
   | Liked Works | 🟣⚫ | `fetch_user_like_videos` | 🟢 |

@@ -31,7 +31,7 @@ outline: deep
 | 用户直播流数据2        | fetch_user_live_videos_by_room_id |     🟢      |
 | 用户首页推荐作品数据    | fetch_user_feed_videos |     🟢      |
 | ......               | ......                 |    🔵      |
-| 用户信息              | handler_user_profile   |     🟢      |
+| 用户信息              | fetch_user_profile   |     🟢      |
 | 获取指定用户名         | get_user_nickname      |      🔴     |
 | 创建用户记录与目录      | get_or_add_user_data   |     🟡  |
 | 创建作品下载记录        | get_or_add_video_data  |     🟢      |
@@ -412,7 +412,7 @@ outline: deep
 
 <<< @/snippets/douyin/xbogus.py#model-2-endpoint-2-filter-snippet{22-27}
 
-更加抽象的高级方法可以直接调用handler接口的`handler_user_profile`。
+更加抽象的高级方法可以直接调用handler接口的`fetch_user_profile`。
 
 ::: tip 提示
 本项目中的UA参数为固定值，`Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
