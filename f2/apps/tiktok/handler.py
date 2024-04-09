@@ -192,7 +192,10 @@ class TiktokHandler:
             self.kwargs, aweme_data._to_dict(), user_path
         )
 
-    async def fetch_one_video(self, itemId: str) -> PostDetailFilter:
+    async def fetch_one_video(
+        self,
+        itemId: str,
+    ) -> PostDetailFilter:
         """
         用于获取指定作品的详细信息
         (Used to get detailed information of specified video)
@@ -336,7 +339,11 @@ class TiktokHandler:
             )
 
     async def fetch_user_like_videos(
-        self, secUid: str, cursor: int, page_counts: int, max_counts: float
+        self,
+        secUid: str,
+        cursor: int,
+        page_counts: int,
+        max_counts: float,
     ) -> AsyncGenerator[UserPostFilter, Any]:
         """
         用于获取指定用户点赞的作品列表
@@ -432,7 +439,11 @@ class TiktokHandler:
             )
 
     async def fetch_user_collect_videos(
-        self, secUid: str, cursor: int, page_counts: int, max_counts: float
+        self,
+        secUid: str,
+        cursor: int,
+        page_counts: int,
+        max_counts: float,
     ) -> AsyncGenerator[UserPostFilter, Any]:
         """
         用于获取指定用户收藏的作品列表
@@ -573,7 +584,8 @@ class TiktokHandler:
         return playlist
 
     async def select_playlist(
-        self, playlists: Union[dict, UserPlayListFilter]
+        self,
+        playlists: Union[dict, UserPlayListFilter],
     ) -> Union[str, List[str]]:
         """
         用于选择要下载的作品合辑
@@ -617,7 +629,11 @@ class TiktokHandler:
             return playlists.mixId[selected_index - 1]
 
     async def fetch_user_mix_videos(
-        self, mixId: str, cursor: int, page_counts: int, max_counts: float
+        self,
+        mixId: str,
+        cursor: int,
+        page_counts: int,
+        max_counts: float,
     ) -> AsyncGenerator[UserMixFilter, Any]:
         """
         用于获取指定用户合集的作品列表
@@ -692,4 +708,3 @@ async def main(kwargs):
         await mode_function_map[mode](TiktokHandler(kwargs))
     else:
         logger.error(_("不存在该模式: {0}").format(mode))
-        rich_console.print(_("不存在该模式: {0}").format(mode))
