@@ -48,7 +48,7 @@ class TiktokHandler:
         self.kwargs = kwargs
         self.downloader = TiktokDownloader(kwargs)
 
-    async def handler_user_profile(
+    async def fetch_user_profile(
         self,
         secUid: str = "",
         uniqueId: str = "",
@@ -95,7 +95,7 @@ class TiktokHandler:
 
         user_dict = await db.get_user_info(secUid)
         if not user_dict:
-            user_dict = await self.handler_user_profile(secUid)
+            user_dict = await self.fetch_user_profile(secUid)
             await db.add_user_info(**user_dict._to_dict())
         return user_dict.get("nickname", "")
 
@@ -121,7 +121,7 @@ class TiktokHandler:
         local_user_data = await db.get_user_info(secUid)
 
         # 从服务器获取当前用户最新数据
-        current_user_data = await self.handler_user_profile(secUid)
+        current_user_data = await self.fetch_user_profile(secUid)
 
         # 获取当前用户最新昵称
         current_nickname = current_user_data._to_dict().get("nickname")

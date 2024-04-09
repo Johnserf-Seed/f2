@@ -29,7 +29,7 @@ outline: deep
 | 用户播放列表作品数据    | fetch_play_list        |     🟢      |
 | 用户合辑(播放列表)作品  | fetch_user_mix_videos  |     🟢      |
 | ......               | ......                 |    🔵      |
-| 用户信息              | handler_user_profile   |     🟢      |
+| 用户信息              | fetch_user_profile   |     🟢      |
 | 获取指定用户名         | get_user_nickname      |      🔴     |
 | 创建用户记录与目录      | get_or_add_user_data   |     🟡      |
 | 创建作品下载记录        | get_or_add_video_data  |     🟢      |
@@ -366,7 +366,7 @@ TikTok的用户接口支持`secUid`和`uniqueId`两种用户ID。
 
 <<< @/snippets/tiktok/xbogus.py#model-2-endpoint-2-filter-snippet{21-26}
 
-更加抽象的高级方法可以直接调用handler接口的`handler_user_profile`。
+更加抽象的高级方法可以直接调用handler接口的`fetch_user_profile`。
 
 ::: tip 提示
 本项目中的UA参数为固定值，`Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
