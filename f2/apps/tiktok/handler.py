@@ -163,89 +163,6 @@ class TiktokHandler:
             # current_video_data = await fetch_one_video(aweme_data.get("aweme_id"))
             await db.add_video_info(ignore_fields=ignore_fields, **aweme_data)
 
-    async def fetch_play_list(
-        self,
-        secUid: str,
-        cursor: int,
-        page_counts: int,
-    ) -> UserPlayListFilter:
-        """
-        用于获取指定用户的作品合集列表
-        (Used to get video mix list of specified user)
-
-        Args:
-            secUid: str: 用户ID (User ID)
-            cursor: int: 分页游标 (Page cursor)
-            page_counts: int: 分页数量 (Page counts)
-
-        Return:
-            playlist: UserPlayListFilter: 作品合集列表 (Video mix list)
-        """
-
-        logger.debug(_("开始爬取用户：{0} 的作品合集列表").format(secUid))
-
-        async with TiktokCrawler(self.kwargs) as crawler:
-            params = UserPlayList(secUid=secUid, cursor=cursor, count=page_counts)
-            response = await crawler.fetch_user_play_list(params)
-            playlist = UserPlayListFilter(response)
-
-        if not playlist.hasPlayList:
-            logger.info(_("用户：{0} 没有作品合集").format(secUid))
-            return {}
-
-        logger.debug(_("当前请求的cursor：{0}").format(cursor))
-        logger.debug(
-            _("作品合集ID：{0} 作品合集标题：{1}").format(
-                playlist.mixId, playlist.mixName
-            )
-        )
-        logger.debug("===================================")
-        return playlist
-
-    async def select_playlist(
-        self, playlists: Union[dict, UserPlayListFilter]
-    ) -> Union[str, List[str]]:
-        """
-        用于选择要下载的作品合辑
-        (Used to select the video mix to download)
-
-        Args:
-            playlists: Union[dict, UserPlayListFilter]: 作品合辑列表 (Video mix list)
-
-        Return:
-            selected_index: Union[str, List[str]]: 选择的作品合辑序号 (Selected video mix index)
-        """
-
-        if playlists == {}:
-            sys.exit(_("用户没有作品合辑"))
-
-        rich_console.print("[bold]请选择要下载的合辑：[/bold]")
-        rich_console.print("0: [bold]全部下载[/bold]")
-
-        for i in range(len(playlists.mixId)):
-            rich_console.print(
-                _("{0}: {1} (包含 {2} 个作品，收藏夹ID {3})").format(
-                    i + 1,
-                    playlists.mixName[i],
-                    playlists.videoCount[i],
-                    playlists.mixId[i],
-                )
-            )
-
-        # rich_prompt 会有字符刷新问题，暂时使用rich_print
-        rich_console.print(_("[bold yellow]请输入希望下载的合辑序号：[/bold yellow]"))
-        selected_index = int(
-            rich_prompt.ask(
-                # _("[bold yellow]请输入希望下载的合辑序号:[/bold yellow]"),
-                choices=[str(i) for i in range(len(playlists.mixId) + 1)],
-            )
-        )
-
-        if selected_index == 0:
-            return playlists.mixId
-        else:
-            return playlists.mixId[selected_index - 1]
-
     @mode_handler("one")
     async def handler_one_video(self):
         """
@@ -615,6 +532,89 @@ class TiktokHandler:
                 await self.downloader.create_download_tasks(
                     self.kwargs, aweme_data_list._to_list(), user_path
                 )
+
+    async def fetch_play_list(
+        self,
+        secUid: str,
+        cursor: int,
+        page_counts: int,
+    ) -> UserPlayListFilter:
+        """
+        用于获取指定用户的作品合集列表
+        (Used to get video mix list of specified user)
+
+        Args:
+            secUid: str: 用户ID (User ID)
+            cursor: int: 分页游标 (Page cursor)
+            page_counts: int: 分页数量 (Page counts)
+
+        Return:
+            playlist: UserPlayListFilter: 作品合集列表 (Video mix list)
+        """
+
+        logger.debug(_("开始爬取用户：{0} 的作品合集列表").format(secUid))
+
+        async with TiktokCrawler(self.kwargs) as crawler:
+            params = UserPlayList(secUid=secUid, cursor=cursor, count=page_counts)
+            response = await crawler.fetch_user_play_list(params)
+            playlist = UserPlayListFilter(response)
+
+        if not playlist.hasPlayList:
+            logger.info(_("用户：{0} 没有作品合集").format(secUid))
+            return {}
+
+        logger.debug(_("当前请求的cursor：{0}").format(cursor))
+        logger.debug(
+            _("作品合集ID：{0} 作品合集标题：{1}").format(
+                playlist.mixId, playlist.mixName
+            )
+        )
+        logger.debug("===================================")
+        return playlist
+
+    async def select_playlist(
+        self, playlists: Union[dict, UserPlayListFilter]
+    ) -> Union[str, List[str]]:
+        """
+        用于选择要下载的作品合辑
+        (Used to select the video mix to download)
+
+        Args:
+            playlists: Union[dict, UserPlayListFilter]: 作品合辑列表 (Video mix list)
+
+        Return:
+            selected_index: Union[str, List[str]]: 选择的作品合辑序号 (Selected video mix index)
+        """
+
+        if playlists == {}:
+            sys.exit(_("用户没有作品合辑"))
+
+        rich_console.print("[bold]请选择要下载的合辑：[/bold]")
+        rich_console.print("0: [bold]全部下载[/bold]")
+
+        for i in range(len(playlists.mixId)):
+            rich_console.print(
+                _("{0}: {1} (包含 {2} 个作品，收藏夹ID {3})").format(
+                    i + 1,
+                    playlists.mixName[i],
+                    playlists.videoCount[i],
+                    playlists.mixId[i],
+                )
+            )
+
+        # rich_prompt 会有字符刷新问题，暂时使用rich_print
+        rich_console.print(_("[bold yellow]请输入希望下载的合辑序号：[/bold yellow]"))
+        selected_index = int(
+            rich_prompt.ask(
+                # _("[bold yellow]请输入希望下载的合辑序号:[/bold yellow]"),
+                choices=[str(i) for i in range(len(playlists.mixId) + 1)],
+            )
+        )
+
+        if selected_index == 0:
+            return playlists.mixId
+        else:
+            return playlists.mixId[selected_index - 1]
 
     async def fetch_user_mix_videos(
         self, mixId: str, cursor: int, page_counts: int, max_counts: float
