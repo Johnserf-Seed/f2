@@ -1,5 +1,18 @@
 import pytest
-from f2.utils.utils import timestamp_2_str
+from f2.utils.utils import get_timestamp, timestamp_2_str
+
+
+class TestGetTimestamp:
+    def test_get_timestamp(self):
+        print(get_timestamp())
+        assert len(str(get_timestamp())) == 13
+
+    def test_get_timestamp_with_unit(self):
+        assert len(str(get_timestamp("sec"))) == 10
+
+    def test_get_timestamp_with_invalid_unit(self):
+        with pytest.raises(ValueError):
+            get_timestamp("invalid_unit")
 
 
 class TestTimestamp2Str:
