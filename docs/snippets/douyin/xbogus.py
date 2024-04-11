@@ -22,7 +22,7 @@ from f2.apps.douyin.utils import XBogusManager
 
 async def gen_user_profile(params: UserProfile):
     return XBogusManager.model_2_endpoint(
-        dyendpoint.USER_DETAIL, params.dict()
+        dyendpoint.USER_DETAIL, params.model_dump()
     )
 
 async def main():

@@ -22,7 +22,7 @@ from f2.apps.tiktok.utils import XBogusManager
 
 async def gen_user_profile(params: UserProfile):
     return XBogusManager.model_2_endpoint(
-        tkendpoint.USER_DETAIL, params.dict()
+        tkendpoint.USER_DETAIL, params.model_dump()
     )
 
 async def main():
