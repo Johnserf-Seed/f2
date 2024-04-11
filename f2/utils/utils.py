@@ -38,7 +38,7 @@ def gen_random_str(randomlength: int) -> str:
 
 def get_timestamp(unit: str = "milli"):
     """
-    根据给定的单位获取当前时间 (Get the current time based on the given unit)
+    根据给定的单位获取当前时区的时间戳 (Get the current time based on the given unit)
 
     Args:
         unit (str): 时间单位，可以是 "milli"、"sec"、"min" 等
@@ -48,7 +48,9 @@ def get_timestamp(unit: str = "milli"):
         int: 根据给定单位的当前时间 (The current time based on the given unit)
     """
 
-    now = datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)
+    now = datetime.datetime.now(datetime.timezone.utc) - datetime.datetime(
+        1970, 1, 1, tzinfo=datetime.timezone.utc
+    )
     if unit == "milli":
         return int(now.total_seconds() * 1000)
     elif unit == "sec":
