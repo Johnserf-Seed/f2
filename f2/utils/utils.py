@@ -60,10 +60,12 @@ def get_timestamp(unit: str = "milli"):
 
 
 def timestamp_2_str(
-    timestamp: Union[str, int, float], format: str = "%Y-%m-%d %H-%M-%S"
+    timestamp: Union[str, int, float],
+    format: str = "%Y-%m-%d %H-%M-%S",
+    tz: datetime.timezone = datetime.timezone(datetime.timedelta(hours=8)),
 ) -> str:
     """
-    将 UNIX 时间戳转换为格式化字符串 (Convert a UNIX timestamp to a formatted string)
+    将 UNIX 时间戳转换为东八区北京时间格式化字符串使用
 
     Args:
         timestamp (int): 要转换的 UNIX 时间戳 (The UNIX timestamp to be converted)
@@ -71,6 +73,7 @@ def timestamp_2_str(
                                 默认为 '%Y-%m-%d %H-%M-%S'。
                                 (The format for the returned date-time string
                                 Defaults to '%Y-%m-%d %H-%M-%S')
+        tz (datetime.timezone, optional): 时区，默认为东八区北京时间。
 
     Returns:
         str: 格式化的日期时间字符串 (The formatted date-time string)
@@ -82,10 +85,10 @@ def timestamp_2_str(
         if len(timestamp) == 30:
             date_obj = datetime.datetime.strptime(timestamp, "%a %b %d %H:%M:%S %z %Y")
         else:
-            date_obj = datetime.datetime.fromtimestamp(float(timestamp))
+            date_obj = datetime.datetime.fromtimestamp(float(timestamp), tz=tz)
 
-    if isinstance(timestamp, Union[int, float]):
-        date_obj = datetime.datetime.fromtimestamp(float(timestamp))
+    elif isinstance(timestamp, (int, float)):
+        date_obj = datetime.datetime.fromtimestamp(float(timestamp), tz=tz)
 
     return date_obj.strftime(format)
 
