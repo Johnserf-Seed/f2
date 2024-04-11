@@ -76,13 +76,18 @@ def timestamp_2_str(
         str: 格式化的日期时间字符串 (The formatted date-time string)
     """
     if timestamp is None or timestamp == "None":
-        return ""
+        return "Invalid timestamp"
 
     if isinstance(timestamp, str):
         if len(timestamp) == 30:
-            return datetime.datetime.strptime(timestamp, "%a %b %d %H:%M:%S %z %Y")
+            date_obj = datetime.datetime.strptime(timestamp, "%a %b %d %H:%M:%S %z %Y")
+        else:
+            date_obj = datetime.datetime.fromtimestamp(float(timestamp))
 
-    return datetime.datetime.fromtimestamp(float(timestamp)).strftime(format)
+    if isinstance(timestamp, Union[int, float]):
+        date_obj = datetime.datetime.fromtimestamp(float(timestamp))
+
+    return date_obj.strftime(format)
 
 
 def num_to_base36(num: int) -> str:
