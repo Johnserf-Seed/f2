@@ -91,29 +91,6 @@ class DouyinHandler:
                 raise APIResponseError(_("API内容请求失败，请更换新cookie后再试"))
             return UserProfileFilter(response)
 
-    async def get_user_nickname(
-        self,
-        sec_user_id: str,
-        db: AsyncUserDB,
-    ) -> str:
-        """
-        获取指定用户的昵称，如果不存在，则从服务器获取并存储到数据库中
-        (Used to get personal info of specified users)
-
-        Args:
-            sec_user_id (str): 用户ID (User ID)
-            db (AsyncUserDB): 用户数据库 (User database)
-
-        Returns:
-            user_nickname: (str): 用户昵称 (User nickname)
-        """
-
-        user_dict = await db.get_user_info(sec_user_id)
-        if not user_dict:
-            user_dict = await self.fetch_user_profile(sec_user_id)
-            await db.add_user_info(**user_dict._to_dict())
-        return user_dict.get("nickname")
-
     async def get_or_add_user_data(
         self,
         kwargs: dict,
