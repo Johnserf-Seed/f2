@@ -3,7 +3,11 @@
 import pytest
 from f2.dl.base_downloader import BaseDownloader
 
-kwargs = {"headers": {"User-Agent": "", "Referer": ""}, "cookie": ""}
+kwargs = {
+    "headers": {"User-Agent": "", "Referer": ""},
+    "proxies": {"http://": None, "https://": None},
+    "cookie": "",
+}
 
 
 # 使用 Pytest 的 asyncio 装饰器标记异步测试函数
