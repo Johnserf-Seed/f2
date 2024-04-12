@@ -6,8 +6,8 @@ f2:
       Referer: https://www.douyin.com/
 
     proxies:
-      http:
-      https:
+      http://:
+      https://:
 
     msToken:
       url: https://mssdk.bytedance.com/web/report
