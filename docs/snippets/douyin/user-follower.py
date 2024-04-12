@@ -7,10 +7,7 @@ kwargs = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
         "Referer": "https://www.douyin.com/",
     },
-    "proxies": {
-        "http": None,
-        "https": None,
-    },
+    "proxies": {"http://": None, "https://": None},
     "timeout": 10,
     "cookie": "YOUR_COOKIE_HERE",
 }
