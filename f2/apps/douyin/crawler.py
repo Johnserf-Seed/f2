@@ -1,7 +1,5 @@
 # path: f2/apps/douyin/crawler.py
 
-import f2
-
 from f2.log.logger import logger
 from f2.i18n.translator import _
 from f2.utils.conf_manager import ConfigManager
@@ -25,7 +23,7 @@ from f2.apps.douyin.model import (
     UserFollowing,
     UserFollower,
 )
-from f2.apps.douyin.utils import XBogusManager
+from f2.apps.douyin.utils import XBogusManager, ClientConfManager
 
 
 class DouyinCrawler(BaseCrawler):
@@ -33,17 +31,14 @@ class DouyinCrawler(BaseCrawler):
         self,
         kwargs: dict = ...,
     ):
-        f2_manager = ConfigManager(f2.F2_CONFIG_FILE_PATH)
-        f2_conf = f2_manager.get_config("f2").get("douyin")
-        proxies_conf = kwargs.get("proxies", {"http": None, "https": None})
-        proxies = {
-            "http://": proxies_conf.get("http", None),
-            "https://": proxies_conf.get("https", None),
-        }
+        # 需要与cli同步
+        proxies = kwargs.get("proxies", {"http://": None, "http://": None})
 
+        self.user_agent = ClientConfManager.user_agent()
+        self.referrer = ClientConfManager.referer()
         self.headers = {
-            "User-Agent": f2_conf["headers"]["User-Agent"],
-            "Referer": f2_conf["headers"]["Referer"],
+            "User-Agent": self.user_agent,
+            "Referer": self.referrer,
             "Cookie": kwargs["cookie"],
         }
 

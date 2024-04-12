@@ -71,14 +71,10 @@ class ClientConfManager:
 
 
 class TokenManager:
-    f2_manager = ConfigManager(f2.F2_CONFIG_FILE_PATH).get_config("f2").get("douyin")
-    token_conf = f2_manager.get("msToken", None)
-    ttwid_conf = f2_manager.get("ttwid", None)
-    proxies_conf = f2_manager.get("proxies", None)
-    proxies = {
-        "http://": proxies_conf.get("http", None),
-        "https://": proxies_conf.get("https", None),
-    }
+    token_conf = ClientConfManager.msToken()
+    ttwid_conf = ClientConfManager.ttwid()
+    proxies = ClientConfManager.proxies()
+    user_agent = ClientConfManager.user_agent()
 
     @classmethod
     def gen_real_msToken(cls) -> str:
@@ -97,7 +93,7 @@ class TokenManager:
             }
         )
         headers = {
-            "User-Agent": cls.token_conf["User-Agent"],
+            "User-Agent": cls.user_agent,
             "Content-Type": "application/json",
         }
 
