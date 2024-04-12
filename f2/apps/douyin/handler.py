@@ -140,7 +140,7 @@ class DouyinHandler:
         current_user_data = await self.fetch_user_profile(sec_user_id)
 
         # 获取当前用户最新昵称
-        current_nickname = current_user_data._to_dict().get("nickname")
+        current_nickname = current_user_data.nickname
 
         # 设置用户目录
         user_path = create_or_rename_user_folder(
