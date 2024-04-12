@@ -32,6 +32,44 @@ from f2.exceptions.api_exceptions import (
 )
 
 
+class ClientConfManager:
+    """
+    用于管理客户端配置 (Used to manage client configuration)
+    """
+
+    client_conf = (
+        ConfigManager(f2.F2_CONFIG_FILE_PATH).get_config("f2").get("douyin", {})
+    )
+
+    @classmethod
+    def client(cls) -> dict:
+        return cls.client_conf
+
+    @classmethod
+    def proxies(cls) -> dict:
+        return cls.client_conf.get("proxies", {})
+
+    @classmethod
+    def headers(cls) -> dict:
+        return cls.client_conf.get("headers", {})
+
+    @classmethod
+    def user_agent(cls) -> str:
+        return cls.headers().get("User-Agent", "")
+
+    @classmethod
+    def referer(cls) -> str:
+        return cls.headers().get("Referer", "")
+
+    @classmethod
+    def msToken(cls) -> str:
+        return cls.client_conf.get("msToken", {})
+
+    @classmethod
+    def ttwid(cls) -> str:
+        return cls.client_conf.get("ttwid", {})
+
+
 class TokenManager:
     f2_manager = ConfigManager(f2.F2_CONFIG_FILE_PATH).get_config("f2").get("douyin")
     token_conf = f2_manager.get("msToken", None)
