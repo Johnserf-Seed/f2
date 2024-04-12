@@ -1349,7 +1349,7 @@ async def handle_sso_login():
     """
 
     kwargs = {
-        "proxies": {"http": None, "https": None},
+        "proxies": {"http://": None, "https://": None},
         "cookie": "",
         "headers": {
             "Referer": "https://www.douyin.com/",
