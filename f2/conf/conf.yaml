@@ -28,8 +28,8 @@ f2:
       Referer: https://www.tiktok.com/
 
     proxies:
-      http:
-      https:
+      http://:
+      https://:
 
     msToken:
       url: https://mssdk-sg.tiktok.com/web/common?msToken=1Ab-7YxR9lUHSem0PraI_XzdKmpHb6j50L8AaXLAd2aWTdoJCYLfX_67rVQFE4UwwHVHmyG_NfIipqrlLT3kCXps-5PYlNAqtdwEg7TrDyTAfCKyBrOLmhMUjB55oW8SPZ4_EkNxNFUdV7MquA==
