@@ -76,29 +76,6 @@ class TiktokHandler:
                 raise APIResponseError(_("API内容请求失败，请更换新cookie后再试"))
             return UserProfileFilter(response)
 
-    async def get_user_nickname(
-        self,
-        secUid: str,
-        db: AsyncUserDB,
-    ) -> str:
-        """
-        用于获取指定用户的昵称
-        (Used to get nickname of specified users)
-
-        Args:
-            secUid: str: 用户ID (User ID)
-            db: AsyncUserDB: 用户数据库 (User database)
-
-        Return:
-            nick_name: str: 用户昵称 (User nickname)
-        """
-
-        user_dict = await db.get_user_info(secUid)
-        if not user_dict:
-            user_dict = await self.fetch_user_profile(secUid)
-            await db.add_user_info(**user_dict._to_dict())
-        return user_dict.get("nickname", "")
-
     async def get_or_add_user_data(
         self,
         secUid: str,
