@@ -387,7 +387,7 @@ def douyin(
     # 如果初始化配置文件，则与更新配置文件互斥
     if init_config and not update_config:
         main_manager.generate_config("douyin", init_config)
-        # return
+        return
     elif init_config:
         raise click.UsageError(_("不能同时初始化和更新配置文件"))
     # 如果没有初始化配置文件，但是更新配置文件，则需要提供配置文件路径
