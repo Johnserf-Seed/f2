@@ -18,6 +18,7 @@ from f2.utils.utils import (
 )
 from f2.utils.conf_manager import ConfigManager
 from f2.i18n.translator import TranslationManager, _
+from f2.apps.tiktok.utils import ClientConfManager
 
 
 def handler_help(
@@ -334,22 +335,13 @@ def tiktok(
     main_conf_path = get_resource_path(f2.APP_CONFIG_FILE_PATH)
     main_conf = main_manager.get_config("tiktok")
 
-    # 读取f2低频配置文件
-    f2_manager = ConfigManager(f2.F2_CONFIG_FILE_PATH)
-
-    f2_conf = f2_manager.get_config("f2").get("tiktok")
-    f2_proxies = f2_conf.get("proxies")
-
     # 更新主配置文件中的代理参数
-    main_conf["proxies"] = {
-        "http": f2_proxies.get("http"),
-        "https": f2_proxies.get("https"),
-    }
+    main_conf["proxies"] = ClientConfManager.proxies()
 
     # 更新主配置文件中的headers参数
     kwargs.setdefault("headers", {})
-    kwargs["headers"]["User-Agent"] = f2_conf["headers"].get("User-Agent", "")
-    kwargs["headers"]["Referer"] = f2_conf["headers"].get("Referer", "")
+    kwargs["headers"]["User-Agent"] = ClientConfManager.user_agent()
+    kwargs["headers"]["Referer"] = ClientConfManager.referer()
 
     # 如果初始化配置文件，则与更新配置文件互斥
     if init_config and not update_config:
