@@ -438,7 +438,7 @@ class AwemeIdFetcher:
 
             except httpx.HTTPStatusError as e:
                 raise APIResponseError(
-                    _("链接：{0}，状态码 {1}：{2} ").format(
+                    _("链接：{0}，状态码 {1}：{2}").format(
                         e.response.url, e.response.status_code, e.response.text
                     )
                 )
