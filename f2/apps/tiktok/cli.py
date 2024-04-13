@@ -282,7 +282,7 @@ def handler_naming(
     type=str,
     nargs=2,
     help=_(
-        "代理服务器，最多 2 个参数，http与https。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"
+        "代理服务器，最多 2 个参数，http://与https://。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"
     ),
 )
 @click.option(
@@ -371,8 +371,8 @@ def tiktok(
     # 将kwargs["proxies"]中的tuple转换为dict
     if kwargs.get("proxies"):
         kwargs["proxies"] = {
-            "http": kwargs["proxies"][0],
-            "https": kwargs["proxies"][1],
+            "http://": kwargs["proxies"][0],
+            "https://": kwargs["proxies"][1],
         }
 
     # 从低频配置开始到高频配置再到cli参数，逐级覆盖，如果键值不存在使用父级的键值
