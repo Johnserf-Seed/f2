@@ -121,14 +121,16 @@ class BaseCrawler:
             try:
                 return response.json()
             except json.JSONDecodeError as e:
-                logger.error(_("解析 {0} 接口 JSON 失败： {1}").format(response.url, e))
+                logger.error(_("解析 {0} 接口 JSON 失败：{1}").format(response.url, e))
+            except UnicodeDecodeError as e:
+                logger.error(_("解析 {0} 接口 JSON 失败：{1}").format(response.url, e))
         else:
             if isinstance(response, Response):
                 logger.error(
                     _("获取数据失败。状态码: {0}").format(response.status_code)
                 )
             else:
-                logger.error(_("无效响应类型。响应类型: {0}").format(type(response)))
+                logger.error(_("无效响应类型"))
 
         return {}
 
