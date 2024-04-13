@@ -234,7 +234,7 @@ class UserPostFilter(JSONModel):
 
     @property
     def video_play_addr(self):
-        return self._get_list_attr_value("$.aweme_list[*].video.play_addr.url_list[0]")
+        return self._get_list_attr_value("$.aweme_list[*].video.play_addr.url_list")
 
     @property
     def video_bit_rate(self):
