@@ -162,11 +162,11 @@ $ f2 dy -c X:\C.yaml
 ::: code-group
 
 ```sh [--update-config]
-$ f2 dy -k "从浏览器中复制的cookie" -c app.yaml --update-config
+$ f2 dy -k "从浏览器中复制的cookie" -c conf/app.yaml --update-config
 ```
 
 ```sh [--auto-cookie]
-$ f2 dy -c app.yaml --auto-cookie edge
+$ f2 dy -c conf/app.yaml --auto-cookie edge
 ```
 :::
 
