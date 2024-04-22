@@ -81,7 +81,8 @@ def handler_auto_cookie(
     except Exception as e:
         logger.error(_("自动获取Cookie失败：{0}").format(str(e)))
         ctx.abort()
-
+    finally:
+        ctx.exit(0)
 
 def handler_language(
     ctx: click.Context,
