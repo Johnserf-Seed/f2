@@ -79,6 +79,7 @@ class TiktokHandler:
     async def get_or_add_user_data(
         self,
         secUid: str,
+        uniqueId: str,
         db: AsyncUserDB,
     ) -> Path:
         """
@@ -88,6 +89,7 @@ class TiktokHandler:
         Args:
             kwargs (dict): 配置参数 (Conf parameters)
             secUid (str): 用户ID (User ID)
+            uniqueId (str): 用户名 (Username)
             db (AsyncUserDB): 用户数据库 (User database)
 
         Returns:
@@ -95,10 +97,12 @@ class TiktokHandler:
         """
 
         # 尝试从数据库中获取用户数据
-        local_user_data = await db.get_user_info(secUid)
+        local_user_data = await db.get_user_info(secUid=secUid, uniqueId=uniqueId)
 
         # 从服务器获取当前用户最新数据
-        current_user_data = await self.fetch_user_profile(secUid)
+        current_user_data = await self.fetch_user_profile(
+            secUid=secUid, uniqueId=uniqueId
+        )
 
         # 获取当前用户最新昵称
         current_nickname = current_user_data._to_dict().get("nickname")
@@ -155,7 +159,9 @@ class TiktokHandler:
         aweme_data = await self.fetch_one_video(aweme_id)
 
         async with AsyncUserDB("tiktok_users.db") as udb:
-            user_path = await self.get_or_add_user_data(aweme_data.secUid, udb)
+            user_path = await self.get_or_add_user_data(
+                secUid="", uniqueId=aweme_data.uniqueId, db=udb
+            )
 
         async with AsyncVideoDB("tiktok_videos.db") as vdb:
             await self.get_or_add_video_data(
@@ -215,7 +221,9 @@ class TiktokHandler:
         secUid = await SecUserIdFetcher.get_secuid(self.kwargs.get("url"))
 
         async with AsyncUserDB("tiktok_users.db") as udb:
-            user_path = await self.get_or_add_user_data(secUid, udb)
+            user_path = await self.get_or_add_user_data(
+                secUid=secUid, uniqueId="", db=udb
+            )
 
         async for aweme_data_list in self.fetch_user_post_videos(
             secUid, cursor, page_counts, max_counts
@@ -305,7 +313,9 @@ class TiktokHandler:
         secUid = await SecUserIdFetcher.get_secuid(self.kwargs.get("url"))
 
         async with AsyncUserDB("tiktok_users.db") as udb:
-            user_path = await self.get_or_add_user_data(secUid, udb)
+            user_path = await self.get_or_add_user_data(
+                secUid=secUid, uniqueId="", db=udb
+            )
 
         async for aweme_data_list in self.fetch_user_like_videos(
             secUid, cursor, page_counts, max_counts
@@ -405,7 +415,9 @@ class TiktokHandler:
         secUid = await SecUserIdFetcher.get_secuid(self.kwargs.get("url"))
 
         async with AsyncUserDB("tiktok_users.db") as udb:
-            user_path = await self.get_or_add_user_data(secUid, udb)
+            user_path = await self.get_or_add_user_data(
+                secUid=secUid, uniqueId="", db=udb
+            )
 
         async for aweme_data_list in self.fetch_user_collect_videos(
             secUid, cursor, page_counts, max_counts
@@ -507,7 +519,9 @@ class TiktokHandler:
         mixId = await self.select_playlist(playlist)
 
         async with AsyncUserDB("tiktok_users.db") as audb:
-            user_path = await self.get_or_add_user_data(secUid, audb)
+            user_path = await self.get_or_add_user_data(
+                secUid=secUid, uniqueId="", db=audb
+            )
 
         if isinstance(mixId, str):
             mixId = [mixId]
