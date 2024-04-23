@@ -19,12 +19,12 @@ class BaseRequestModel(BaseModel):
     browser_online: str = "true"
     browser_platform: str = "Win32"
     browser_version: str = quote(
-        "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+        "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
         safe="",
     )
     channel: str = "tiktok_web"
     cookie_enabled: str = "true"
-    device_id: str = "7306060721837852167"
+    device_id: str = "7360698239018452498"
     device_platform: str = "web_pc"
     focus_state: str = "true"
     from_page: str = "user"
@@ -36,7 +36,7 @@ class BaseRequestModel(BaseModel):
     priority_region: str = ""
     referer: str = ""
     region: str = "SG"  # SG JP KR...
-    root_referer: str = quote("https://www.tiktok.com/", safe="")
+    # root_referer: str = quote("https://www.tiktok.com/", safe="")
     screen_height: int = 1080
     screen_width: int = 1920
     webcast_language: str = "zh-Hans"
