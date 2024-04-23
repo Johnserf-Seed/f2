@@ -321,7 +321,7 @@ class SecUserIdFetcher:
 
         transport = httpx.AsyncHTTPTransport(retries=5)
         async with httpx.AsyncClient(
-            transport=transport, proxies=TokenManager.proxies, timeout=10
+            transport=transport, proxies=ClientConfManager.proxies(), timeout=10
         ) as client:
             try:
                 response = await client.get(url, follow_redirects=True)
@@ -363,7 +363,7 @@ class SecUserIdFetcher:
                 raise APIConnectionError(
                     _(
                         "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
-                    ).format(url, TokenManager.proxies, cls.__name__, exc)
+                    ).format(url, ClientConfManager.proxies(), cls.__name__, exc)
                 )
 
     @classmethod
@@ -418,7 +418,7 @@ class SecUserIdFetcher:
 
         transport = httpx.AsyncHTTPTransport(retries=5)
         async with httpx.AsyncClient(
-            transport=transport, proxies=TokenManager.proxies, timeout=10
+            transport=transport, proxies=ClientConfManager.proxies(), timeout=10
         ) as client:
             try:
                 response = await client.get(url, follow_redirects=True)
@@ -454,7 +454,7 @@ class SecUserIdFetcher:
                 raise APIConnectionError(
                     _(
                         "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
-                    ).format(url, TokenManager.proxies, cls.__name__),
+                    ).format(url, ClientConfManager.proxies(), cls.__name__),
                 )
 
     @classmethod
@@ -518,7 +518,7 @@ class AwemeIdFetcher:
 
         transport = httpx.AsyncHTTPTransport(retries=5)
         async with httpx.AsyncClient(
-            transport=transport, proxies=TokenManager.proxies, timeout=10
+            transport=transport, proxies=ClientConfManager.proxies(), timeout=10
         ) as client:
             try:
                 response = await client.get(url, follow_redirects=True)
@@ -555,7 +555,7 @@ class AwemeIdFetcher:
                 raise APIConnectionError(
                     _(
                         "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
-                    ).format(url, TokenManager.proxies, cls.__name__, exc)
+                    ).format(url, ClientConfManager.proxies(), cls.__name__, exc)
                 )
 
     @classmethod
