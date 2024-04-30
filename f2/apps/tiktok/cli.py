@@ -229,6 +229,13 @@ def handler_naming(
     help=_("下载日期区间发布的作品，格式：2022-01-01|2023-01-01，'all' 为下载所有作品"),
 )
 @click.option(
+    "--keyword",
+    "-w",
+    type=str,
+    # default="",
+    help=_("搜索关键字，用于搜索作品"),
+)
+@click.option(
     "--timeout",
     "-e",
     type=int,
