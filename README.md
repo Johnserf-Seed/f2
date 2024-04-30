@@ -146,6 +146,7 @@
   |点赞作品|🟣⚫|`fetch_user_like_videos`|🟢|
   |收藏作品|🟣⚫|`fetch_user_collect_videos`|🟢|
   |播放列表作品|🟣⚫|`fetch_user_mix_videos`|🟢|
+  |作品搜索|🟣⚫|`fetch_search_videos`|🟢|
   |...|...|...|...|
  </details>
 
@@ -221,6 +222,9 @@
 
   **ps. 0.0.1.5 relase版本需要拉取这个提交补丁来修复 [05ee1c4](https://github.com/Johnserf-Seed/f2/commit/05ee1c4293d1fb9f01c25739372a2fbac18454cd)**
   **ps. 从main分支安装的不需要更新**
+
+  ### TikTok作品搜索
+  <img src='https://github.com/Johnserf-Seed/f2/assets/40727745/091e66d5-f123-4883-9360-db3dad359d7d'>
 
  </details>
 

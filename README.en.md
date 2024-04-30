@@ -145,6 +145,7 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
   | Liked Works | 🟣⚫ | `fetch_user_like_videos` | 🟢 |
   | Favorite Works | 🟣⚫ | `fetch_user_collect_videos` | 🟢 |
   | Playlist Works | 🟣⚫ | `fetch_user_mix_videos` | 🟢 |
+  |Post Search|🟣⚫|`fetch_search_videos`|🟢|
   | ... | ... | ... | ... |
  </details>
 
@@ -226,6 +227,9 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
   ### TikTok Collected Original Sound
 
   <img src='https://github.com/Johnserf-Seed/f2/assets/40727745/17c9eb02-53b5-4484-8a6d-777a074b99d9'>
+
+  ### TikTok Post Search
+  <img src='https://github.com/Johnserf-Seed/f2/assets/40727745/091e66d5-f123-4883-9360-db3dad359d7d'>
 
 </details>
 
