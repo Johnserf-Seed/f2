@@ -92,3 +92,27 @@ class PostComment(BaseRequestModel):
     count: int = 20
     cursor: int = 0
     current_region: str = ""
+
+
+class PostSearch(BaseRequestModel):
+    count: int = 20
+    keyword: str
+    offset: int = 0
+    from_page: str = "search"
+    search_id: str = ""
+    web_search_code: str = quote(
+        str(
+            {
+                "tiktok": {
+                    "client_params_x": {
+                        "search_engine": {
+                            "ies_mt_user_live_video_card_use_libra": 1,
+                            "mt_search_general_user_live_card": 1,
+                        }
+                    },
+                    "search_server": {},
+                }
+            }
+        ),
+        safe="",
+    )
