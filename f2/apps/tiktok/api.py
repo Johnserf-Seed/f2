@@ -50,3 +50,6 @@ class TiktokAPIEndpoints:
 
     # 作品评论 (Post Comment)
     POST_COMMENT = f"{TIKTOK_DOMAIN}/api/comment/list/"
+
+    # 作品搜索 (Post Search)
+    POST_SEARCH = f"{TIKTOK_DOMAIN}/api/search/item/full/"
