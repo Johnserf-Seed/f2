@@ -3,6 +3,7 @@
 import sys
 
 from pathlib import Path
+from urllib.parse import quote, unquote
 from typing import AsyncGenerator, Union, List, Any
 
 from f2.i18n.translator import _
@@ -19,6 +20,7 @@ from f2.apps.tiktok.model import (
     UserMix,
     UserPlayList,
     PostDetail,
+    PostSearch,
 )
 from f2.apps.tiktok.filter import (
     UserProfileFilter,
@@ -26,6 +28,7 @@ from f2.apps.tiktok.filter import (
     PostDetailFilter,
     UserMixFilter,
     UserPlayListFilter,
+    PostSearchFilter,
 )
 from f2.apps.tiktok.utils import (
     SecUserIdFetcher,
@@ -691,6 +694,121 @@ class TiktokHandler:
             cursor = mix.cursor
 
         logger.debug(_("爬取结束，共爬取 {0} 个作品").format(videos_collected))
+
+    @mode_handler("search")
+    async def handler_search(self):
+        """
+        用于搜索指定关键词的作品信息
+        (Used to search video info of specified keyword)
+
+        Args:
+            kwargs: dict: 参数字典 (Parameter dictionary)
+        """
+
+        cursor = self.kwargs.get("cursor", 0)
+        page_counts = self.kwargs.get("page_counts", 30)
+        max_counts = self.kwargs.get("max_counts")
+        keyword = self.kwargs.get("keyword")
+
+        secUid = await SecUserIdFetcher.get_secuid(self.kwargs.get("url"))
+
+        async with AsyncUserDB("tiktok_users.db") as udb:
+            user_path = await self.get_or_add_user_data(
+                secUid=secUid, uniqueId="", db=udb
+            )
+
+        async for aweme_data_list in self.fetch_search_videos(
+            keyword, cursor, page_counts, max_counts
+        ):
+            # 创建下载任务
+            await self.downloader.create_download_tasks(
+                self.kwargs, aweme_data_list._to_list(), user_path
+            )
+
+    async def fetch_search_videos(
+        self,
+        keyword: str,
+        offset: int,
+        page_counts: int,
+        max_counts: float,
+    ) -> AsyncGenerator[PostSearchFilter, Any]:
+        """
+        用于搜索指定关键词的作品列表
+        (Used to search video list of specified keyword)
+
+        Args:
+            keyword: str: 搜索关键词 (Search keyword)
+            offset: int: 分页游标 (Page offset)
+            page_counts: int: 分页数量 (Page counts)
+            max_counts: float: 最大数量 (Max counts)
+
+        Return:
+            search: AsyncGenerator[PostSearchFilter, Any]: 搜索作品信息过滤器 (Search video info filter)
+        """
+
+        max_counts = max_counts or float("inf")
+        videos_collected = 0
+        search_id = ""
+
+        logger.info(
+            _("开始搜索关键词：{0} 的作品，最大作品数量 {1} ").format(
+                keyword, max_counts
+            )
+        )
+
+        while videos_collected < max_counts:
+            current_request_size = min(page_counts, max_counts - videos_collected)
+
+            logger.debug("===================================")
+            logger.info(
+                _("开始搜索第 {0} 个作品，每次请求数量：{1}").format(
+                    offset + 1, current_request_size
+                )
+            )
+
+            async with TiktokCrawler(self.kwargs) as crawler:
+                params = PostSearch(
+                    keyword=quote(keyword, safe=""),
+                    offset=offset,
+                    count=page_counts,
+                    search_id=search_id,
+                )
+                response = await crawler.fetch_post_search(params)
+                search = PostSearchFilter(response)
+
+            if not search.has_aweme:
+                logger.info(_("第 {0} 个offset没有找到作品").format(offset))
+                if not search.has_more and str(search.api_status_code) == "0":
+                    logger.info(_("关键词：{0} 所有作品采集完毕").format(keyword))
+                    break
+                else:
+                    offset = search.cursor
+                    continue
+
+            logger.debug(_("当前请求的offset：{0}").format(offset))
+            logger.debug(
+                _("作品ID：{0} 作品文案：{1} 作者：{2}").format(
+                    search.aweme_id, search.desc, search.nickname
+                )
+            )
+            logger.debug("===================================")
+
+            if videos_collected >= max_counts:
+                logger.info(
+                    _("关键词：{0} 已达到最大下载数量 {} 个").format(
+                        keyword, max_counts
+                    )
+                )
+                break
+
+            yield search
+
+            # 更新已经处理的作品数量 (Update the number of videos processed)
+            videos_collected += len(search.aweme_id)
+            offset = search.cursor
+            search_id = search.search_id
+
+        logger.info(_("搜索结束，共搜索到 {0} 个作品").format(videos_collected))
 
 
 async def main(kwargs):
