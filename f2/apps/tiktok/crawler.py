@@ -13,6 +13,7 @@ from f2.apps.tiktok.model import (
     PostDetail,
     UserPlayList,
     PostComment,
+    PostSearch,
 )
 from f2.apps.tiktok.utils import XBogusManager, ClientConfManager
 
@@ -114,6 +115,15 @@ class TiktokCrawler(BaseCrawler):
             params.model_dump(),
         )
         logger.debug(_("首页推荐接口地址：{0}").format(endpoint))
+        return await self._fetch_get_json(endpoint)
+
+    async def fetch_post_search(self, params: PostSearch):
+        endpoint = XBogusManager.model_2_endpoint(
+            self.headers.get("User-Agent"),
+            tkendpoint.POST_SEARCH,
+            params.model_dump(),
+        )
+        logger.debug(_("搜索作品接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def __aenter__(self):
