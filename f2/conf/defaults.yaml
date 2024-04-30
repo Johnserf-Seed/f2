@@ -28,6 +28,7 @@ tiktok:
   mode:
   naming:
   cookie:
+  keyword:
   interval:
   timeout:
   max_connections:
