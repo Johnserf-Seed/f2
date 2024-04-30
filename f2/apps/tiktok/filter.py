@@ -686,3 +686,230 @@ class PostDetailFilter(JSONModel):
                 d[key] = attr_values[index] if index < len(attr_values) else None
             list_dicts.append(d)
         return list_dicts
+
+
+class PostSearchFilter(JSONModel):
+    @property
+    def api_status_code(self):
+        return self._get_attr_value("$.status_code")
+
+    @property
+    def has_aweme(self) -> bool:
+        return bool(self._get_attr_value("$.item_list"))
+
+    @property
+    def has_more(self) -> bool:
+        return bool(self._get_attr_value("$.has_more"))
+
+    @property
+    def cursor(self):
+        return self._get_attr_value("$.cursor")
+
+    @property
+    def backtrace(self):
+        return self._get_attr_value("$.backtrace")
+
+    @property
+    def search_id(self):
+        return self._get_attr_value("$.extra.logid")
+
+    @property
+    def aweme_id(self):
+        ids = self._get_list_attr_value("$.item_list[*].id")
+        return ids if isinstance(ids, list) else [ids]
+
+    @property
+    def createTime(self):
+        create_times = self._get_list_attr_value("$.item_list[*].createTime")
+        return (
+            [timestamp_2_str(ct) for ct in create_times]
+            if isinstance(create_times, list)
+            else timestamp_2_str(create_times)
+        )
+
+    @property
+    def desc(self):
+        return replaceT(self._get_list_attr_value("$.item_list[*].desc"))
+
+    @property
+    def desc_raw(self):
+        return self._get_list_attr_value("$.item_list[*].desc")
+
+    @property
+    def textExtra(self):
+        return self._get_list_attr_value("$.item_list[*].textExtra")
+
+    # music
+    @property
+    def music_album(self):
+        return self._get_list_attr_value("$.item_list[*].music.album")
+
+    @property
+    def music_authorName(self):
+        return replaceT(self._get_list_attr_value("$.item_list[*].music.authorName"))
+
+    @property
+    def music_authorName_raw(self):
+        return self._get_list_attr_value("$.item_list[*].music.authorName")
+
+    @property
+    def music_coverLarge(self):
+        return self._get_list_attr_value("$.item_list[*].music.coverLarge")
+
+    @property
+    def music_duration(self):
+        return self._get_list_attr_value("$.item_list[*].music.duration")
+
+    @property
+    def music_id(self):
+        return self._get_list_attr_value("$.item_list[*].music.id")
+
+    @property
+    def music_original(self):
+        return self._get_list_attr_value("$.item_list[*].music.original")
+
+    @property
+    def music_playUrl(self):
+        return self._get_list_attr_value("$.item_list[*].music.playUrl")
+
+    @property
+    def music_title(self):
+        return replaceT(self._get_list_attr_value("$.item_list[*].music.title"))
+
+    @property
+    def music_title_raw(self):
+        return self._get_list_attr_value("$.item_list[*].music.title")
+
+    # video
+    @property
+    def video_bitrate(self):
+        return self._get_list_attr_value("$.item_list[*].video.bitrate")
+
+    @property
+    def video_codecType(self):
+        return self._get_list_attr_value("$.item_list[*].video.codecType")
+
+    @property
+    def video_cover(self):
+        return self._get_list_attr_value("$.item_list[*].video.cover")
+
+    @property
+    def video_dynamicCover(self):
+        return self._get_list_attr_value("$.item_list[*].video.dynamicCover")
+
+    @property
+    def video_playAddr(self):
+        return self._get_list_attr_value("$.item_list[*].video.playAddr")
+
+    @property
+    def video_duration(self):
+        return self._get_list_attr_value("$.item_list[*].video.duration")
+
+    @property
+    def video_height(self):
+        return self._get_list_attr_value("$.item_list[*].video.height")
+
+    @property
+    def video_width(self):
+        return self._get_list_attr_value("$.item_list[*].video.width")
+
+    # author
+    @property
+    def nickname(self):
+        return replaceT(self._get_list_attr_value("$.item_list[*].author.nickname"))
+
+    @property
+    def nickname_raw(self):
+        return self._get_list_attr_value("$.item_list[*].author.nickname")
+
+    @property
+    def uid(self):
+        return self._get_list_attr_value("$.item_list[*].author.id")
+
+    @property
+    def secUid(self):
+        return self._get_list_attr_value("$.item_list[*].author.secUid")
+
+    # your stats
+    @property
+    def collected(self):
+        return self._get_list_attr_value("$.item_list[*].collected")
+
+    @property
+    def digged(self):
+        return self._get_list_attr_value("$.item_list[*].digged")
+
+    @property
+    def duetEnabled(self):
+        return self._get_list_attr_value("$.item_list[*].duetEnabled")
+
+    @property
+    def forFriend(self):
+        return self._get_list_attr_value("$.item_list[*].forFriend")
+
+    @property
+    def itemCommentStatus(self):
+        return self._get_list_attr_value("$.item_list[*].itemCommentStatus")
+
+    @property
+    def privateItem(self):
+        return self._get_list_attr_value("$.item_list[*].privateItem")
+
+    @property
+    def secret(self):
+        return self._get_list_attr_value("$.item_list[*].secret")
+
+    @property
+    def shareEnabled(self):
+        return self._get_list_attr_value("$.item_list[*].shareEnabled")
+
+    # aweme stats
+    @property
+    def collectCount(self):
+        return self._get_list_attr_value("$.item_list[*].stats.collectCount")
+
+    @property
+    def commentCount(self):
+        return self._get_list_attr_value("$.item_list[*].stats.commentCount")
+
+    @property
+    def diggCount(self):
+        return self._get_list_attr_value("$.item_list[*].stats.diggCount")
+
+    @property
+    def playCount(self):
+        return self._get_list_attr_value("$.item_list[*].stats.playCount")
+
+    @property
+    def shareCount(self):
+        return self._get_list_attr_value("$.item_list[*].stats.shareCount")
+
+    def _to_raw(self) -> dict:
+        return self._data
+
+    def _to_dict(self) -> dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
+    def _to_list(self):
+        exclude_list = ["has_more", "cursor", "has_aweme", "api_status_code"]
+        keys = [
+            prop_name
+            for prop_name in dir(self)
+            if not prop_name.startswith("__")
+            and not prop_name.startswith("_")
+            and prop_name not in exclude_list
+        ]
+        aweme_entries = self._get_attr_value("$.item_list") or []
+        list_dicts = []
+        for entry in aweme_entries:
+            d = {"has_more": self.has_more, "cursor": self.cursor}
+            for key in keys:
+                attr_values = getattr(self, key)
+                index = aweme_entries.index(entry)
+                d[key] = attr_values[index] if index < len(attr_values) else None
+            list_dicts.append(d)
+        return list_dicts
