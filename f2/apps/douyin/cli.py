@@ -420,6 +420,7 @@ def douyin(
     # 从低频配置开始到高频配置再到cli参数，逐级覆盖，如果键值不存在使用父级的键值
     kwargs = merge_config(main_conf, custom_conf, **kwargs)
 
+    logger.info(_("模式：{0}").format(kwargs.get("mode")))
     logger.info(_("主配置路径：{0}").format(main_conf_path))
     logger.info(_("自定义配置路径：{0}").format(Path.cwd() / config))
     logger.debug(_("主配置参数：{0}").format(main_conf))
