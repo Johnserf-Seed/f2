@@ -53,3 +53,6 @@ class TiktokAPIEndpoints:
 
     # 作品搜索 (Post Search)
     POST_SEARCH = f"{TIKTOK_DOMAIN}/api/search/item/full/"
+
+    # 用户直播 (User Live)
+    USER_LIVE = f"{TIKTOK_DOMAIN}/api-live/user/room/"
