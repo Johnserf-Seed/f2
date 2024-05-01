@@ -170,3 +170,17 @@ async def get_segments_from_m3u8(url: str):
                 )
             )
     return segments
+
+
+async def get_segments_duration(url: str) -> Union[list, int, float, None]:
+    """
+    从给定的m3u8文件中获取segments的duration
+
+    Args:
+        url (str): m3u8文件的URL
+
+    Returns:
+        segments的duration列表
+    """
+    segments = await get_segments_from_m3u8(url)
+    return [segment.duration for segment in segments]
