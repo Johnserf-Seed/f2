@@ -21,6 +21,7 @@ from f2.apps.tiktok.model import (
     UserPlayList,
     PostDetail,
     PostSearch,
+    UserLive,
 )
 from f2.apps.tiktok.filter import (
     UserProfileFilter,
@@ -29,6 +30,7 @@ from f2.apps.tiktok.filter import (
     UserMixFilter,
     UserPlayListFilter,
     PostSearchFilter,
+    UserLiveFilter,
 )
 from f2.apps.tiktok.utils import (
     SecUserIdFetcher,
@@ -809,6 +811,79 @@ class TiktokHandler:
             search_id = search.search_id
 
         logger.info(_("搜索结束，共搜索到 {0} 个作品").format(videos_collected))
+
+    @mode_handler("live")
+    async def handler_user_live(self):
+        """
+        用于获取指定用户的直播信息
+        (Used to get live info of specified user)
+
+        Args:
+            kwargs: dict: 参数字典 (Parameter dictionary)
+        """
+
+        uniqueId = await SecUserIdFetcher.get_uniqueid(self.kwargs.get("url"))
+
+        webcast_data = await self.fetch_user_live_videos(uniqueId)
+
+        # 判断是否有直播间
+        if not webcast_data.has_live:
+            logger.info(_("用户：{0} 没有直播间").format(uniqueId))
+            return
+
+        # 是否正在直播
+        if webcast_data.live_status != 2:
+            logger.info(_("当前 {0} 直播已结束").format(webcast_data.live_title_raw))
+            return
+
+        async with AsyncUserDB("tiktok_users.db") as udb:
+            user_path = await self.get_or_add_user_data(
+                secUid="", uniqueId=uniqueId, db=udb
+            )
+
+        # 创建下载任务
+        await self.downloader.create_stream_tasks(
+            self.kwargs, webcast_data._to_dict(), user_path
+        )
+
+    async def fetch_user_live_videos(
+        self,
+        uniqueId: str,
+    ) -> UserLiveFilter:
+        """
+        用于获取指定用户直播的作品列表
+        (Used to get live video list of specified user)
+
+        Args:
+            secUid: str: 用户ID (User ID)
+            cursor: int: 分页游标 (Page cursor)
+            page_counts: int: 分页数量 (Page counts)
+            max_counts: float: 最大数量 (Max counts)
+
+        Return:
+            live: [UserLiveFilter: 直播作品信息过滤器 (Live video info filter)
+        """
+
+        logger.info(_("开始爬取用户：{0} 的直播").format(uniqueId))
+        logger.debug("===================================")
+
+        async with TiktokCrawler(self.kwargs) as crawler:
+            params = UserLive(uniqueId=uniqueId)
+            response = await crawler.fetch_user_live(params)
+            live = UserLiveFilter(response)
+
+        logger.debug(
+            _("直播间ID：{0} 直播间标题：{1} 直播状态: {2} 观看人数: {3}").format(
+                live.live_room_id,
+                live.live_title_raw,
+                live.live_status,
+                live.live_user_count,
+            )
+        )
+        logger.debug("===================================")
+        logger.info(_("直播信息爬取结束"))
+
+        return live
 
 
 async def main(kwargs):
