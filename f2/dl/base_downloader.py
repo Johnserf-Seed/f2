@@ -292,7 +292,7 @@ class BaseDownloader(BaseCrawler):
                             if segment.absolute_uri not in downloaded_segments:
                                 ts_url = segment.absolute_uri
                                 ts_content_length = await get_content_length(
-                                    ts_url, self.headers
+                                    ts_url, self.headers,self.proxies
                                 )
                                 if ts_content_length == 0:
                                     ts_content_length = default_chunks
