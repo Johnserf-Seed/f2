@@ -404,5 +404,5 @@ class DouyinDownloader(BaseDownloader):
         webcast_url = webcast_data_dict.get("m3u8_pull_url").get("FULL_HD1")
 
         await self.initiate_m3u8_download(
-            _("直播"), webcast_url, base_path, webcast_name, ".mp4"
+            _("直播"), webcast_url, base_path, webcast_name, ".flv"
         )
