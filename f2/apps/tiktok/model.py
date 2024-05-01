@@ -116,3 +116,8 @@ class PostSearch(BaseRequestModel):
         ),
         safe="",
     )
+
+
+class UserLive(BaseRequestModel):
+    uniqueId: str
+    sourceType: int = 54
