@@ -288,7 +288,7 @@ class TiktokDownloader(BaseDownloader):
         custom_fields = {
             "create": timestamp_2_str(timestamp=get_timestamp(unit="sec")),
             "nickname": webcast_data_dict.get("nickname", ""),
-            "aweme_id": webcast_data_dict.get("room_id", ""),
+            "aweme_id": webcast_data_dict.get("live_room_id", ""),
             "desc": webcast_data_dict.get("live_title", ""),
             "uid": webcast_data_dict.get("user_id", ""),
         }
@@ -303,7 +303,7 @@ class TiktokDownloader(BaseDownloader):
         )
 
         webcast_name = f"{format_file_name(kwargs.get('naming', '{create}_{desc}'), custom_fields=custom_fields)}_live"
-        webcast_url = webcast_data_dict.get("m3u8_pull_url", None).get("FULL_HD1")
+        webcast_url = webcast_data_dict.get("live_hls_url", None)
 
         await self.initiate_m3u8_download(
             _("直播"), webcast_url, base_path, webcast_name, ".mp4"
