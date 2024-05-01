@@ -141,7 +141,7 @@ def get_chunk_size(file_size: int) -> int:
         return 1 * 1024 * 1024  # 使用1MB的块大小 (Use a chunk size of 1MB)
 
 
-async def get_segments_from_m3u8(url: str):
+async def get_segments_from_m3u8(url: str) -> Union[list, str, None]:
     """
     从给定的m3u8文件中获取segments
 
