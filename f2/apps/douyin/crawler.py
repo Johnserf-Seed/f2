@@ -31,7 +31,7 @@ class DouyinCrawler(BaseCrawler):
         kwargs: dict = ...,
     ):
         # 需要与cli同步
-        proxies = kwargs.get("proxies", {"http://": None, "http://": None})
+        proxies = kwargs.get("proxies", {"http://": None, "https://": None})
 
         self.user_agent = ClientConfManager.user_agent()
         self.referrer = ClientConfManager.referer()
