@@ -31,7 +31,7 @@ class BaseDownloader(BaseCrawler):
     """基础下载器 (Base Downloader Class)"""
 
     def __init__(self, kwargs: dict = ...):
-        proxies = kwargs.get("proxies", {"http": None, "https": None})
+        proxies = kwargs.get("proxies", {"http://": None, "https://": None})
 
         self.headers = {
             "User-Agent": kwargs["headers"]["User-Agent"],
