@@ -166,15 +166,68 @@ class BaseCrawler:
                 response.raise_for_status()
                 return response
 
-            except httpx.RequestError:
-                raise APIConnectionError(
+            # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
+            except httpx.TimeoutException as exc:
+                raise APITimeoutError(
                     _(
-                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
-                    ).format(url, self.proxies, self.__class__.__name__)
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求端点超时"),
+                        url,
+                        self.proxies,
+                        self.__class__.__name__,
+                        exc,
+                    )
                 )
 
-            except httpx.HTTPStatusError as http_error:
-                self.handle_http_status_error(http_error, url, attempt + 1)
+            except httpx.NetworkError as exc:
+                raise APIConnectionError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("网络连接失败，请检查当前网络环境"),
+                        url,
+                        self.proxies,
+                        self.__class__.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.ProtocolError as exc:
+                raise APIUnauthorizedError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求协议错误"),
+                        url,
+                        self.proxies,
+                        self.__class__.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.ProxyError as exc:
+                raise APIConnectionError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求代理错误"),
+                        url,
+                        self.proxies,
+                        self.__class__.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.HTTPStatusError as exc:
+                self.handle_http_status_error(exc, url, attempt + 1)
+
+            except httpx.RequestError as req_err:
+                raise APIConnectionError(
+                    _(
+                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2} 异常详细信息：{3}"
+                    ).format(url, self.proxies, self.__class__.__name__, req_err)
+                )
 
             except APIError as e:
                 logger.error(e)
@@ -214,11 +267,11 @@ class BaseCrawler:
                 response.raise_for_status()
                 return response
 
-            except httpx.RequestError:
+            except httpx.RequestError as req_err:
                 raise APIConnectionError(
                     _(
-                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
-                    ).format(url, self.proxies, self.__class__.__name__)
+                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2} 异常详细信息：{3}"
+                    ).format(url, self.proxies, self.__class__.__name__, req_err)
                 )
 
             except httpx.HTTPStatusError as http_error:
@@ -243,11 +296,11 @@ class BaseCrawler:
             response.raise_for_status()
             return response
 
-        except httpx.RequestError:
+        except httpx.RequestError as req_err:
             raise APIConnectionError(
-                _("连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}").format(
-                    url, self.proxies, self.__class__.__name__
-                )
+                _(
+                    "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2} 异常详细信息：{3}"
+                ).format(url, self.proxies, self.__class__.__name__, req_err)
             )
 
         except httpx.HTTPStatusError as http_error:
