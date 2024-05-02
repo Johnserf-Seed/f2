@@ -84,6 +84,7 @@ def handler_auto_cookie(
     finally:
         ctx.exit(0)
 
+
 def handler_language(
     ctx: click.Context,
     param: typing.Union[click.Option, click.Parameter],
