@@ -306,5 +306,5 @@ class TiktokDownloader(BaseDownloader):
         webcast_url = webcast_data_dict.get("live_hls_url", None)
 
         await self.initiate_m3u8_download(
-            _("直播"), webcast_url, base_path, webcast_name, ".mp4"
+            _("直播"), webcast_url, base_path, webcast_name, ".flv"
         )
