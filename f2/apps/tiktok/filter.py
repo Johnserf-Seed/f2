@@ -5,6 +5,7 @@ from f2.utils.utils import (
     _get_first_item_from_list,
     timestamp_2_str,
     replaceT,
+    unescape_json,
 )
 
 
@@ -1019,6 +1020,11 @@ class UserLiveFilter(JSONModel):
             "$.data.liveRoom.streamData.pull_data.options.qualities[*].sdk_key"
         )
 
+    @property
+    def live_stream_data(self):
+        return unescape_json(
+            self._get_attr_value("$.data.liveRoom.streamData.pull_data.stream_data")
+        )
 
     @property
     def live_flv_url(self):

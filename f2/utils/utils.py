@@ -358,3 +358,37 @@ def merge_config(
             merged_conf[key] = value  # CLI 参数会覆盖自定义配置和主配置中的同名参数
 
     return merged_conf
+
+
+def unescape_json(json_text: str) -> dict:
+    """
+    反转义 JSON 文本
+
+    Args:
+        json_text (str): 带有转义字符的 JSON 文本
+
+    Returns:
+        json_obj (dict): 反转义后的 JSON 对象
+    """
+
+    # 反转义 JSON 文本
+    json_text = re.sub(r"\\{2}", r"\\", json_text)
+    json_text = re.sub(r"\\\"", r"\"", json_text)
+    json_text = re.sub(r"\\", r"", json_text)
+    json_text = re.sub(r"\"{", r"{", json_text)
+    json_text = re.sub(r"}\"", r"}", json_text)
+    json_text = re.sub(r"\&", r"&", json_text)
+    json_text = re.sub(r"\\n", r"", json_text)
+    json_text = re.sub(r"\\t", r"", json_text)
+    json_text = re.sub(r"\\r", r"", json_text)
+
+    try:
+        # 尝试解析 JSON 文本
+        import json
+
+        json_obj = json.loads(json_text)
+    except Exception as e:
+        print(f"`unescape_json` error: {e}, raw_json: {json_text}")
+        json_obj = {}
+
+    return json_obj
