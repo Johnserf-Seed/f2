@@ -108,7 +108,7 @@ class TokenManager:
                 msToken = str(httpx.Cookies(response.cookies).get("msToken"))
                 if len(msToken) not in [120, 128]:
                     raise APIResponseError(_("{0} 内容不符合要求").format("msToken"))
-
+                logger.debug(_("生成真实的msToken"))
                 return msToken
 
             except httpx.RequestError as exc:
@@ -146,6 +146,7 @@ class TokenManager:
     @classmethod
     def gen_false_msToken(cls) -> str:
         """生成随机msToken (Generate random msToken)"""
+        logger.debug(_("生成虚假的msToken"))
         return gen_random_str(126) + "=="
 
     @classmethod

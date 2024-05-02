@@ -32,7 +32,11 @@ class BaseRequestModel(BaseModel):
     downlink: int = 10
     effective_type: str = "4g"
     round_trip_time: int = 100
-    msToken: str = TokenManager.gen_real_msToken()
+    try:
+        msToken: str = TokenManager.gen_real_msToken()
+    except:
+        # 返回虚假的msToken (Return a fake msToken)
+        msToken: str = TokenManager.gen_false_msToken()
 
 
 class BaseLiveModel(BaseModel):
