@@ -1,7 +1,11 @@
 # path: f2/apps/tiktok/filter.py
 
 from f2.utils.json_filter import JSONModel
-from f2.utils.utils import _get_first_item_from_list, timestamp_2_str, replaceT
+from f2.utils.utils import (
+    _get_first_item_from_list,
+    timestamp_2_str,
+    replaceT,
+)
 
 
 class UserProfileFilter(JSONModel):
@@ -913,3 +917,127 @@ class PostSearchFilter(JSONModel):
                 d[key] = attr_values[index] if index < len(attr_values) else None
             list_dicts.append(d)
         return list_dicts
+
+
+class UserLiveFilter(JSONModel):
+    @property
+    def api_status_code(self):
+        return self._get_attr_value("$.statusCode")
+
+    @property
+    def has_live(self) -> bool:
+        if len(self._get_attr_value("$.data")) == 4:
+            return False
+        return True
+
+    # user
+    @property
+    def user_avatar_larger(self):
+        return self._get_attr_value("$.data.user.avatarLarger")
+
+    @property
+    def user_id(self):
+        return self._get_attr_value("$.data.user.id")
+
+    @property
+    def nickname(self):
+        return replaceT(self._get_attr_value("$.data.user.nickname"))
+
+    @property
+    def nickname_raw(self):
+        return self._get_attr_value("$.data.user.nickname")
+
+    @property
+    def user_secUid(self):
+        return self._get_attr_value("$.data.user.secUid")
+
+    @property
+    def user_uniqueId(self):
+        return self._get_attr_value("$.data.user.uniqueId")
+
+    @property
+    def user_secret(self):
+        return self._get_attr_value("$.data.user.secret")
+
+    @property
+    def user_verified(self):
+        return self._get_attr_value("$.data.user.verified")
+
+    @property
+    def user_signature(self):
+        return replaceT(self._get_attr_value("$.data.user.signature"))
+
+    # stats
+    @property
+    def live_following_count(self):
+        return self._get_attr_value("$.data.stats.followingCount")
+
+    @property
+    def live_follower_count(self):
+        return self._get_attr_value("$.data.stats.followerCount")
+
+    @property
+    def live_user_count(self):
+        return self._get_attr_value("$.data.liveRoom.liveRoomStats.userCount")
+
+    # live
+    @property
+    def live_title(self):
+        return replaceT(self._get_attr_value("$.data.liveRoom.title"))
+
+    @property
+    def live_title_raw(self):
+        return self._get_attr_value("$.data.liveRoom.title")
+
+    @property
+    def live_startTime(self):
+        return timestamp_2_str(self._get_attr_value("$.data.liveRoom.startTime"))
+
+    @property
+    def live_status(self):
+        return self._get_attr_value("$.data.liveRoom.status")  # 2开播
+
+    @property
+    def live_coverUrl(self):
+        return self._get_attr_value("$.data.liveRoom.coverUrl")
+
+    @property
+    def live_room_mode(self):
+        return self._get_attr_value("$.data.liveRoom.mode")  # 0直播 1聊天室
+
+    @property
+    def live_room_id(self):
+        return self._get_attr_value("$.data.user.roomId")
+
+    @property
+    def live_stream_id(self):
+        return self._get_attr_value("$.data.liveRoom.streamId")
+
+    @property
+    def live_qualities(self):
+        return self._get_list_attr_value(
+            "$.data.liveRoom.streamData.pull_data.options.qualities[*].sdk_key"
+        )
+
+
+    @property
+    def live_flv_url(self):
+        return JSONModel(self.live_stream_data)._get_attr_value(
+            "$.data.origin.main.flv"
+        )
+
+    @property
+    def live_hls_url(self):
+        return JSONModel(self.live_stream_data)._get_attr_value(
+            "$.data.origin.main.hls"
+        )
+
+    def _to_raw(self) -> dict:
+        return self._data
+
+    def _to_dict(self) -> dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
