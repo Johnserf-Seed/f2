@@ -20,11 +20,11 @@ from f2.utils.utils import (
     split_filename,
 )
 from f2.exceptions.api_exceptions import (
-    APIError,
     APIConnectionError,
     APIResponseError,
     APIUnauthorizedError,
     APINotFoundError,
+    APITimeoutError,
 )
 
 
@@ -114,16 +114,62 @@ class TokenManager:
 
                 return msToken
 
-            except httpx.RequestError as exc:
-                # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
-                raise APIConnectionError(
+            # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
+            except httpx.TimeoutException as exc:
+                raise APITimeoutError(
                     _(
-                        "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
-                    ).format(cls.token_conf["url"], cls.proxies, cls.__name__, exc)
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求端点超时"),
+                        cls.token_conf["url"],
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
                 )
 
-            except httpx.HTTPStatusError as e:
+            except httpx.NetworkError as exc:
+                raise APIConnectionError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("网络连接失败，请检查当前网络环境"),
+                        cls.token_conf["url"],
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.ProtocolError as exc:
+                raise APIUnauthorizedError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求协议错误"),
+                        cls.token_conf["url"],
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.ProxyError as exc:
+                raise APIConnectionError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求代理错误"),
+                        cls.token_conf["url"],
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.HTTPStatusError as exc:
                 # 捕获 httpx 的状态代码错误 (captures specific status code errors from httpx)
+                logger.error(_("msToken API错误：{0}").format(exc))
                 if response.status_code == 401:
                     raise APIUnauthorizedError(
                         _(
@@ -136,15 +182,11 @@ class TokenManager:
                 else:
                     raise APIResponseError(
                         _("链接：{0}，状态码 {1}：{2} ").format(
-                            e.response.url, e.response.status_code, e.response.text
+                            exc.response.url,
+                            exc.response.status_code,
+                            exc.response.text,
                         )
                     )
-
-            except APIError as e:
-                # 返回虚假的msToken (Return a fake msToken)
-                logger.error(_("msToken API错误：{0}").format(e))
-                logger.info(_("生成虚假的msToken"))
-                return cls.gen_false_msToken()
 
     @classmethod
     def gen_false_msToken(cls) -> str:
@@ -178,15 +220,60 @@ class TokenManager:
 
                 return ttwid
 
-            except httpx.RequestError as exc:
-                # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
-                raise APIConnectionError(
+            # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
+            except httpx.TimeoutException as exc:
+                raise APITimeoutError(
                     _(
-                        "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
-                    ).format(cls.ttwid_conf["url"], cls.proxies, cls.__name__, exc)
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求端点超时"),
+                        cls.ttwid_conf["url"],
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
                 )
 
-            except httpx.HTTPStatusError as e:
+            except httpx.NetworkError as exc:
+                raise APIConnectionError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("网络连接失败，请检查当前网络环境"),
+                        cls.ttwid_conf["url"],
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.ProtocolError as exc:
+                raise APIUnauthorizedError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求协议错误"),
+                        cls.ttwid_conf["url"],
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.ProxyError as exc:
+                raise APIConnectionError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求代理错误"),
+                        cls.ttwid_conf["url"],
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.HTTPStatusError as exc:
                 # 捕获 httpx 的状态代码错误 (captures specific status code errors from httpx)
                 if response.status_code == 401:
                     raise APIUnauthorizedError(
@@ -200,7 +287,9 @@ class TokenManager:
                 else:
                     raise APIResponseError(
                         _("链接：{0}，状态码 {1}：{2} ").format(
-                            e.response.url, e.response.status_code, e.response.text
+                            exc.response.url,
+                            exc.response.status_code,
+                            exc.response.text,
                         )
                     )
 
@@ -222,15 +311,60 @@ class TokenManager:
 
                 return odin_tt
 
-            except httpx.RequestError as exc:
-                # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
-                raise APIConnectionError(
+            # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
+            except httpx.TimeoutException as exc:
+                raise APITimeoutError(
                     _(
-                        "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
-                    ).format(cls.odin_tt_conf["url"], cls.proxies, cls.__name__, exc)
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求端点超时"),
+                        cls.odin_tt_conf["url"],
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
                 )
 
-            except httpx.HTTPStatusError as e:
+            except httpx.NetworkError as exc:
+                raise APIConnectionError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("网络连接失败，请检查当前网络环境"),
+                        cls.odin_tt_conf["url"],
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.ProtocolError as exc:
+                raise APIUnauthorizedError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求协议错误"),
+                        cls.odin_tt_conf["url"],
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.ProxyError as exc:
+                raise APIConnectionError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求代理错误"),
+                        cls.odin_tt_conf["url"],
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.HTTPStatusError as exc:
                 # 捕获 httpx 的状态代码错误 (captures specific status code errors from httpx)
                 if response.status_code == 401:
                     raise APIUnauthorizedError(
@@ -244,7 +378,9 @@ class TokenManager:
                 else:
                     raise APIResponseError(
                         _("链接：{0}，状态码 {1}：{2} ").format(
-                            e.response.url, e.response.status_code, e.response.text
+                            exc.response.url,
+                            exc.response.status_code,
+                            exc.response.text,
                         )
                     )
 
@@ -358,12 +494,70 @@ class SecUserIdFetcher:
                 else:
                     raise ConnectionError(_("接口状态码异常, 请检查重试"))
 
-            except httpx.RequestError as exc:
-                # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
+            # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
+            except httpx.TimeoutException as exc:
+                raise APITimeoutError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求端点超时"),
+                        url,
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.NetworkError as exc:
                 raise APIConnectionError(
                     _(
-                        "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
-                    ).format(url, ClientConfManager.proxies(), cls.__name__, exc)
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("网络连接失败，请检查当前网络环境"),
+                        url,
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.ProtocolError as exc:
+                raise APIUnauthorizedError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求协议错误"),
+                        url,
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.ProxyError as exc:
+                raise APIConnectionError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求代理错误"),
+                        url,
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.HTTPStatusError as exc:
+                raise APIResponseError(
+                    _(
+                        "{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("状态码错误"),
+                        url,
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
                 )
 
     @classmethod
@@ -422,7 +616,6 @@ class SecUserIdFetcher:
         ) as client:
             try:
                 response = await client.get(url, follow_redirects=True)
-
                 if response.status_code in {200, 444}:
                     if cls._TIKTOK_NOTFOUND_PARREN.search(str(response.url)):
                         raise APINotFoundError(
@@ -445,16 +638,73 @@ class SecUserIdFetcher:
                         )
 
                     return unique_id
-                else:
-                    raise ConnectionError(
-                        _("接口状态码异常 {0}, 请检查重试").format(response.status_code)
-                    )
 
-            except httpx.RequestError:
+                response.raise_for_status()
+
+            # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
+            except httpx.TimeoutException as exc:
+                raise APITimeoutError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求端点超时"),
+                        url,
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.NetworkError as exc:
                 raise APIConnectionError(
                     _(
-                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
-                    ).format(url, ClientConfManager.proxies(), cls.__name__),
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("网络连接失败，请检查当前网络环境"),
+                        url,
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.ProtocolError as exc:
+                raise APIUnauthorizedError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求协议错误"),
+                        url,
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.ProxyError as exc:
+                raise APIConnectionError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求代理错误"),
+                        url,
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.HTTPStatusError as exc:
+                raise APIResponseError(
+                    _(
+                        "{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("状态码错误"),
+                        url,
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
                 )
 
     @classmethod
@@ -550,12 +800,70 @@ class AwemeIdFetcher:
                         _("接口状态码异常 {0}，请检查重试").format(response.status_code)
                     )
 
-            except httpx.RequestError as exc:
-                # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
+            # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
+            except httpx.TimeoutException as exc:
+                raise APITimeoutError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求端点超时"),
+                        url,
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.NetworkError as exc:
                 raise APIConnectionError(
                     _(
-                        "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
-                    ).format(url, ClientConfManager.proxies(), cls.__name__, exc)
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("网络连接失败，请检查当前网络环境"),
+                        url,
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.ProtocolError as exc:
+                raise APIUnauthorizedError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求协议错误"),
+                        url,
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.ProxyError as exc:
+                raise APIConnectionError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求代理错误"),
+                        url,
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.HTTPStatusError as exc:
+                raise APIResponseError(
+                    _(
+                        "{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("状态码错误"),
+                        url,
+                        ClientConfManager.proxies(),
+                        cls.__name__,
+                        exc,
+                    )
                 )
 
     @classmethod
