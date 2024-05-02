@@ -78,7 +78,9 @@ class TiktokHandler:
             response = await crawler.fetch_user_profile(params)
             user = UserProfileFilter(response)
             if user.nickname is None:
-                raise APIResponseError(_("API内容请求失败，请更换新cookie后再试"))
+                raise APIResponseError(
+                    _("`fetch_user_profile`请求失败，请更换cookie或稍后再试")
+                )
             return UserProfileFilter(response)
 
     async def get_or_add_user_data(
