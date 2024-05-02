@@ -41,7 +41,11 @@ class BaseRequestModel(BaseModel):
     screen_width: int = 1920
     webcast_language: str = "zh-Hans"
     tz_name: str = quote("Asia/Hong_Kong", safe="")
-    msToken: str = TokenManager.gen_real_msToken()
+    try:
+        msToken: str = TokenManager.gen_real_msToken()
+    except:
+        # 返回虚假的msToken (Return a fake msToken)
+        msToken: str = TokenManager.gen_false_msToken()
 
 
 # router model

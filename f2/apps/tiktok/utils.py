@@ -111,7 +111,7 @@ class TokenManager:
 
                 if len(msToken) not in [148]:
                     raise APIResponseError(_("{0} 内容不符合要求").format("msToken"))
-
+                logger.debug(_("生成真实的msToken"))
                 return msToken
 
             # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
@@ -191,6 +191,7 @@ class TokenManager:
     @classmethod
     def gen_false_msToken(cls) -> str:
         """生成随机msToken (Generate random msToken)"""
+        logger.debug(_("生成虚假的msToken"))
         return gen_random_str(146) + "=="
 
     @classmethod
