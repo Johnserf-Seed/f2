@@ -111,7 +111,7 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
   | Collected Short Films | 🟣 | `fetch_user_series_collection` | 🟤 |
   | Collection Works | ⚫ | `fetch_user_mix_videos` | 🟢 |
   | Home Page Recommended Works | 🟣⚫ | `fetch_user_feed_videos` | 🟡 |
-  | Similar Recommended Works | ⚫ | `fetch_related_videos` | 🔵 |
+  | Similar Recommended Works | ⚫ | `fetch_related_videos` | 🟢 |
   | Live Room Information (Stream Download) | ⚫ | `fetch_user_live_videos`, `fetch_user_live_videos_by_room_id` | 🟢 |
   | Live Room Danmaku | ⚫ | `fetch_user_live_danmu` | 🔵 |
   | Following Users' Live Broadcasts | 🟣⚫ | `fetch_user_following_lives` | 🔵 |
@@ -198,6 +198,10 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
   ### DouYin Live Room Danmaku
 
   <img src='https://github.com/Johnserf-Seed/f2/assets/40727745/96a586a4-94c4-4866-b2ac-446b58d8f8a0'>
+
+  ### DouYin Related Videos
+
+  <img src="https://github.com/Johnserf-Seed/f2/assets/40727745/e36fb510-39ef-486e-b944-7dbf8cf25c36">
 
 </details>
 
