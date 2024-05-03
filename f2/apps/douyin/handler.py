@@ -1181,7 +1181,7 @@ class DouyinHandler:
         logger.info(_("爬取结束，共爬取 {0} 个首页推荐作品").format(videos_collected))
 
     @mode_handler("related")
-    async def handle_post_related(self):
+    async def handle_related(self):
         """
         用于处理相关作品 (Used to process related videos)
 
@@ -1203,7 +1203,7 @@ class DouyinHandler:
                 / aweme_id
             )
 
-        async for aweme_data_list in self.fetch_post_related_videos(
+        async for aweme_data_list in self.fetch_related_videos(
             aweme_id, "", page_counts, max_counts
         ):
             # 创建下载任务
@@ -1211,7 +1211,7 @@ class DouyinHandler:
                 self.kwargs, aweme_data_list._to_list(), user_path
             )
 
-    async def fetch_post_related_videos(
+    async def fetch_related_videos(
         self,
         aweme_id: str,
         filterGids: str = "",
