@@ -1658,6 +1658,11 @@ class UserLive2Filter(JSONModel):
         }
 
 
+class PostRelatedFilter(UserPostFilter):
+    def __init__(self, data):
+        super().__init__(data)
+
+
 class GetQrcodeFilter(JSONModel):
     @property
     def app_name(self):
