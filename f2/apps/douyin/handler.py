@@ -27,6 +27,7 @@ from f2.apps.douyin.model import (
     LoginCheckQr,
     UserFollowing,
     UserFollower,
+    PostRelated,
 )
 from f2.apps.douyin.filter import (
     UserPostFilter,
@@ -42,6 +43,7 @@ from f2.apps.douyin.filter import (
     CheckQrcodeFilter,
     UserFollowingFilter,
     UserFollowerFilter,
+    PostRelatedFilter,
 )
 from f2.apps.douyin.utils import (
     SecUserIdFetcher,
@@ -1177,6 +1179,110 @@ class DouyinHandler:
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
         logger.info(_("爬取结束，共爬取 {0} 个首页推荐作品").format(videos_collected))
+
+    @mode_handler("related")
+    async def handle_post_related(self):
+        """
+        用于处理相关作品 (Used to process related videos)
+
+        Args:
+            kwargs: dict: 参数字典 (Parameter dictionary)
+        """
+
+        page_counts = self.kwargs.get("page_counts", 20)
+        max_counts = self.kwargs.get("max_counts")
+
+        aweme_id = await AwemeIdFetcher.get_aweme_id(self.kwargs.get("url"))
+        aweme_data = await self.fetch_one_video(aweme_id)
+
+        async with AsyncUserDB("douyin_users.db") as udb:
+            user_path = (
+                await self.get_or_add_user_data(
+                    self.kwargs, aweme_data.sec_user_id, udb
+                )
+                / aweme_id
+            )
+
+        async for aweme_data_list in self.fetch_post_related_videos(
+            aweme_id, "", page_counts, max_counts
+        ):
+            # 创建下载任务
+            await self.downloader.create_download_tasks(
+                self.kwargs, aweme_data_list._to_list(), user_path
+            )
+
+    async def fetch_post_related_videos(
+        self,
+        aweme_id: str,
+        filterGids: str = "",
+        page_counts: int = 20,
+        max_counts: int = None,
+    ) -> AsyncGenerator[PostRelatedFilter, Any]:
+        """
+        用于获取指定作品的相关推荐作品列表。
+
+        Args:
+            aweme_id: str: 作品ID
+            page_counts: int: 每页作品数
+            max_counts: int: 最大作品数
+
+        Return:
+            related: AsyncGenerator[PostRelatedFilter, Any]: 相关推荐作品数据过滤器
+                        ，包含相关作品数据的_to_raw、_to_dict、_to_list方法
+        """
+        from urllib.parse import quote
+
+        max_counts = max_counts or float("inf")
+        videos_collected = 0
+        # aweme_id,awme_id,aweme_id...
+        filterGids = filterGids or f"{aweme_id},"
+
+        logger.info(_("开始爬取作品: {0} 的相关推荐").format(aweme_id))
+
+        while videos_collected < max_counts:
+            current_request_size = min(page_counts, max_counts - videos_collected)
+
+            logger.debug("===================================")
+            logger.debug(
+                _("最大数量: {0} 每次请求数量: {1}").format(
+                    max_counts, current_request_size
+                )
+            )
+            logger.info(_("开始爬取前 {0} 个相关推荐").format(current_request_size))
+
+            async with DouyinCrawler(self.kwargs) as crawler:
+                params = PostRelated(
+                    count=current_request_size,
+                    aweme_id=aweme_id,
+                    filterGids=quote(filterGids),
+                )
+                response = await crawler.fetch_post_related(params)
+                related = PostRelatedFilter(response)
+                yield related
+
+            if not related.has_more:
+                logger.info(_("作品: {0} 的所有相关推荐采集完毕").format(aweme_id))
+                break
+
+            logger.debug(_("当前请求的相关推荐数量: {0}").format(len(related.aweme_id)))
+            logger.debug(
+                _("作品ID: {0} 作品文案: {1} 作者: {2}").format(
+                    related.aweme_id, related.desc, related.nickname
+                )
+            )
+            logger.debug("===================================")
+
+            # 更新已经处理的作品数量 (Update the number of videos processed)
+            videos_collected += len(related.aweme_id)
+
+            # 更新过滤的作品ID (Update the filtered video ID)
+            filterGids = ",".join([str(aweme_id) for aweme_id in related.aweme_id])
+
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(_("爬取结束，共爬取 {0} 个相关推荐").format(videos_collected))
 
     async def fetch_user_following(
         self,
