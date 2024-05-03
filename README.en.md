@@ -53,15 +53,25 @@
 
 ## ✨ New Changes
 
-When upgrading to version `0.0.1.5` of `F2`, please note the following key updates.
+When downloading or upgrading to a different version of `F2`, please note the following critical version updates.
 
-- `XBogus` parameter in `0.0.1.5` version now supports custom User-Agent (UA), please pay attention to UA specification.
-- The rebuilt database contains original data of interfaces, so you need to delete the old database file. If you want to retain records, please pay attention to migration.
-- The return types of all `fetch` methods have been unified to filter types, so you need to pay attention to this change.
-- Filter has added the `_to_raw` method, which can convert the filter to original interface data.
-- The file name template has been updated, and if your file name does not meet the specifications, an exception will be thrown.
-- `douyin` collection page links cannot be resolved, see [Douyin Collection Works](#抖音合集作品).
-- For more changes, see [ChangeLog](https://github.com/Johnserf-Seed/f2/blob/main/CHANGELOG.md#0015---2024-04-04).
+<details>
+  <summary> 📡 v0.0.1.6-pw2 </summary>
+
+  - For more changes, see [ChangeLog](https://github.com/Johnserf-Seed/f2/blob/main/CHANGELOG.md#0015---2024-04-04).
+</details>
+
+<details>
+  <summary> 📡 v0.0.1.5-pw2 </summary>
+
+  - `XBogus` parameter in `0.0.1.5` version now supports custom User-Agent (UA), please pay attention to UA specification.
+  - The rebuilt database contains original data of interfaces, so you need to delete the old database file. If you want to retain records, please pay attention to migration.
+  - The return types of all `fetch` methods have been unified to filter types, so you need to pay attention to this change.
+  - Filter has added the `_to_raw` method, which can convert the filter to original interface data.
+  - The file name template has been updated, and if your file name does not meet the specifications, an exception will be thrown.
+  - `douyin` collection page links cannot be resolved, see [Douyin Collection Works](#抖音合集作品).
+  - For more changes, see [ChangeLog](https://github.com/Johnserf-Seed/f2/blob/main/CHANGELOG.md#0015---2024-04-04).
+</details>
 
 
 ## 📑 Documentation
