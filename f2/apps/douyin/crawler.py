@@ -158,7 +158,7 @@ class DouyinCrawler(BaseCrawler):
             params.model_dump(),
         )
         logger.debug(_("朋友作品接口地址：{0}").format(endpoint))
-        return await self._fetch_get_json(endpoint)
+        return await self._fetch_post_json(endpoint)
 
     async def fetch_post_related(self, params: PostDetail):
         endpoint = XBogusManager.model_2_endpoint(
