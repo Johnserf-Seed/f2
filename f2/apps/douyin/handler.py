@@ -28,6 +28,7 @@ from f2.apps.douyin.model import (
     UserFollowing,
     UserFollower,
     PostRelated,
+    FriendFeed,
 )
 from f2.apps.douyin.filter import (
     UserPostFilter,
@@ -44,6 +45,7 @@ from f2.apps.douyin.filter import (
     UserFollowingFilter,
     UserFollowerFilter,
     PostRelatedFilter,
+    FriendFeedFilter,
 )
 from f2.apps.douyin.utils import (
     SecUserIdFetcher,
@@ -1283,6 +1285,93 @@ class DouyinHandler:
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
         logger.info(_("爬取结束，共爬取 {0} 个相关推荐").format(videos_collected))
+
+    @mode_handler("friend")
+    async def handle_friend_feed(self):
+        """
+        用于处理用户好友作品 (Used to process user friend videos)
+
+        Args:
+            kwargs: dict: 参数字典 (Parameter dictionary)
+        """
+
+        max_counts = self.kwargs.get("max_counts")
+        sec_user_id = await SecUserIdFetcher.get_sec_user_id(self.kwargs.get("url"))
+
+        async with AsyncUserDB("douyin_users.db") as db:
+            user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, db)
+
+        async for aweme_data_list in self.fetch_friend_feed_videos(
+            max_counts=max_counts
+        ):
+            # 创建下载任务
+            await self.downloader.create_download_tasks(
+                self.kwargs, aweme_data_list._to_list(), user_path
+            )
+
+    async def fetch_friend_feed_videos(
+        self,
+        cursor: int = 0,
+        level: int = 1,
+        pull_type: int = 0,
+        max_counts: int = None,
+    ) -> AsyncGenerator[FriendFeedFilter, Any]:
+        """
+        用于获取指定用户好友作品列表。
+
+        Args:
+            cursor: int: 起始页
+            page_counts: int: 每页作品数
+            max_counts: int: 最大作品数
+
+        Return:
+            friend: AsyncGenerator[UserFriendFilter, Any]: 好友作品数据过滤器，包含好友作品数据的_to_raw、_to_dict、_to_list方法
+        """
+
+        max_counts = max_counts or float("inf")
+        videos_collected = 0
+
+        logger.info(_("开始爬取好友作品"))
+
+        while videos_collected < max_counts:
+
+            logger.debug("===================================")
+            logger.debug(_("最大数量：{0} 个").format(max_counts))
+            logger.info(_("开始爬取第：{0} 页").format(cursor))
+
+            async with DouyinCrawler(self.kwargs) as crawler:
+                params = FriendFeed(
+                    cursor=cursor,
+                    level=level,
+                    pull_type=pull_type,
+                )
+                response = await crawler.fetch_friend_feed(params)
+                friend = FriendFeedFilter(response)
+
+            if not friend.has_more:
+                logger.info(_("所有好友作品采集完毕"))
+                break
+
+            logger.debug(_("当前请求的cursor: {0}").format(cursor))
+            logger.debug(
+                _("作品ID: {0} 作品文案: {1} 作者: {2}").format(
+                    friend.aweme_id, friend.desc, friend.nickname
+                )
+            )
+            logger.debug("===================================")
+
+            yield friend
+
+            # 更新已经处理的作品数量 (Update the number of videos processed)
+            videos_collected += len(friend.aweme_id)
+            cursor = friend.cursor
+            level = friend.level
+
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(_("爬取结束，共爬取 {0} 个好友作品").format(videos_collected))
 
     async def fetch_user_following(
         self,
