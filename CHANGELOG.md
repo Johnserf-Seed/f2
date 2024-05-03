@@ -8,6 +8,61 @@
 
 - `0.0.1.6`版本中添加对`weibo`，`x`的支持
 
+
+## [0.0.1.6] - 2024-05-04
+
+### Added
+
+- 添加`douyin`合集`mix_id`获取方法
+- 添加时间戳转换的默认时区设置（`UTC/GMT+08:00`）
+- 添加`ClientConfManager`为每个应用提供方便的配置读取
+- 添加`uniqueId`查询`tiktok`的`user_db`
+- 添加获取`segments`的`duration`列表方法
+- 添加应用运行模式的输出
+- 新增`tiktok`作品搜索
+- 新增`tiktok`用户直播
+- 添加反转义`JSON`方法
+- 新增`douyin`相关推荐
+
+### Changed
+
+- 修改`douyin`，`tiktok`获取用户信息方法名
+- 完善时间戳转换类型，支持30位
+- 修改应用的代理配置名（`http: https: -> http://: https://:`）
+- 更新`xb`算法示例部分
+- 更新`base_crawler`异常捕获与输出
+- 更新应用初始化配置文件后退出 (#70)
+- 更新应用使用`--auto-cookie`命令后退出
+- 更新`douyin`过滤器，将`video_play_addr`返回完整视频列表便于下载失败轮替
+- 更改应用直播下载文件名（`mp4 -> flv`）
+- 更新应用工具类网络错误捕获
+
+### Deprecated
+
+- 类`BaseModel`中的`dict`方法已弃用(`pydantic>=2.6.4`)
+- 类`datetime`中的`utcnow`方法已弃用
+- 弃用`douyin`，`tiktok`获取用户名方法
+
+### Removed
+
+- 删除`tiktok`基础请求模型的无用参数
+- 删除`f2\utils\utils.py`无效导入
+
+### Fixed
+
+- 修复`douyin`下载合集时合集链接无法识别的情况
+- 修复`tiktok`下载播放列表（合辑）的错误
+- 修复`m3u8`流下载时会重复下载`ts`片段的问题
+- 修复`m3u8`流获取`content_length`时没有提供代理参数造成的访问失败
+- 修复`douyin`，`tiktok`因提前引发异常导致无法生成虚假的msToken
+
+### Security
+
+- 更新`pydantic`版本到`2.6.4`
+- 更新`httpx`版本到`0.27.0`
+- 更新`aiosqlite`版本到`0.20.0`
+
+
 ## [0.0.1.5] - 2024-04-04
 
 ### Added
