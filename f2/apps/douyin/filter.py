@@ -131,6 +131,11 @@ class UserProfileFilter(JSONModel):
 
 
 class UserPostFilter(JSONModel):
+
+    @property
+    def status_code(self):
+        return self._get_attr_value("$.status_code")
+
     @property
     def has_aweme(self) -> bool:
         return bool(
@@ -317,6 +322,7 @@ class UserPostFilter(JSONModel):
 
     def _to_list(self):
         exclude_list = [
+            "status_code",
             "has_more",
             "max_cursor",
             "min_cursor",
@@ -337,6 +343,7 @@ class UserPostFilter(JSONModel):
         list_dicts = []
         for entry in aweme_entries:
             d = {
+                "status_code": self.status_code,
                 "has_more": self.has_more,
                 "max_cursor": self.max_cursor,
                 "min_cursor": self.min_cursor,
