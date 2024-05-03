@@ -112,7 +112,7 @@
   |收藏短剧|🟣|`fetch_user_series_collection`|🟤|
   |合集作品|⚫|`fetch_user_mix_videos`|🟢|
   |首页推荐作品|🟣⚫|`fetch_user_feed_videos`|🟡|
-  |相似推荐作品|⚫|`fetch_related_videos`|🔵|
+  |相似推荐作品|⚫|`fetch_related_videos`|🟢|
   |直播间信息（流下载）|⚫|`fetch_user_live_videos`、`fetch_user_live_videos_by_room_id`|🟢|
   |直播间弹幕|⚫|`fetch_user_live_danmu`|🔵|
   |关注用户开播|🟣⚫|`fetch_user_following_lives`|🔵|
@@ -194,6 +194,10 @@
   ### 抖音直播录制
 
   <img src='https://github.com/Johnserf-Seed/f2/assets/40727745/c5276410-89aa-4bed-99f0-1dcf9c34cd4f'>
+
+  ### 抖音相关推荐
+
+  <img src="https://github.com/Johnserf-Seed/f2/assets/40727745/e36fb510-39ef-486e-b944-7dbf8cf25c36">
 
  </details>
 
