@@ -2,6 +2,7 @@
 
 from typing import Any
 from pydantic import BaseModel
+from urllib.parse import quote, unquote
 
 from f2.apps.douyin.utils import TokenManager, VerifyFpManager
 
@@ -165,7 +166,7 @@ class PostRelated(BaseRequestModel):
     aweme_id: str
     count: int = 20
     filterGids: str  # id,id,id
-    awemePcRecRawData: dict = {}  # {"is_client":false}
+    awemePcRecRawData: str = quote('{"is_client":false}', safe="")
     sub_channel_id: int = 3
     # Seo-Flag: int = 0
 
