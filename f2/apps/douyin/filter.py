@@ -1670,6 +1670,284 @@ class PostRelatedFilter(UserPostFilter):
         super().__init__(data)
 
 
+class FriendFeedFilter(JSONModel):
+    # 8 login_expired
+    @property
+    def status_code(self):
+        return self._get_attr_value("$.status_code")
+
+    @property
+    def status_msg(self):
+        return self._get_attr_value("$.status_msg")
+
+    @property
+    def toast(self):
+        return self._get_attr_value("$.toast")
+
+    @property
+    def has_more(self):
+        return bool(self._get_attr_value("$.has_more"))
+
+    @property
+    def has_aweme(self):
+        return bool(self._get_attr_value("$.data"))
+
+    @property
+    def friend_update_count(self):
+        return self._get_attr_value("$.friend_update_count")
+
+    @property
+    def cursor(self):
+        return self._get_attr_value("$.cursor")
+
+    @property
+    def level(self):
+        return self._get_attr_value("$.level")
+
+    @property
+    def friend_feed_type(self):
+        return self._get_list_attr_value("$.data[*].feed_type")
+
+    @property
+    def friend_feed_source(self):
+        return self._get_list_attr_value("$.data[*].source")
+
+    # user
+    @property
+    def avatar_larger(self):
+        return self._get_list_attr_value(
+            "$.data[*].aweme.author.avatar_larger.url_list[0]"
+        )
+
+    @property
+    def nickname(self):
+        return replaceT(self._get_list_attr_value("$.data[*].aweme.author.nickname"))
+
+    @property
+    def nickname_raw(self):
+        return self._get_list_attr_value("$.data[*].aweme.author.nickname")
+
+    @property
+    def sec_uid(self):
+        return self._get_list_attr_value("$.data[*].aweme.author.sec_uid")
+
+    @property
+    def uid(self):
+        return self._get_list_attr_value("$.data[*].aweme.author.uid")
+
+    # aweme
+    @property
+    def aweme_id(self):
+        return self._get_list_attr_value("$.data[*].aweme.aweme_id")
+
+    @property
+    def aweme_type(self):
+        return self._get_list_attr_value("$.data[*].aweme.aweme_type")
+
+    @property
+    def desc(self):
+        return replaceT(self._get_list_attr_value("$.data[*].aweme.desc"))
+
+    @property
+    def desc_raw(self):
+        return self._get_list_attr_value("$.data[*].aweme.desc")
+
+    @property
+    def recommend_reason(self):
+        return self._get_list_attr_value(
+            "$.data[*].aweme.fall_card_struct.recommend_reason"
+        )
+
+    @property
+    def create_time(self):
+        create_times = self._get_list_attr_value("$.data[*].aweme.create_time")
+        return (
+            [timestamp_2_str(str(ct)) for ct in create_times]
+            if isinstance(create_times, list)
+            else timestamp_2_str(str(create_times))
+        )
+
+    @property
+    def is_24_story(self):  # 是否是24小时动态
+        return self._get_list_attr_value("$.data[*].aweme.is_24_story")
+
+    @property
+    def media_type(self):
+        return self._get_list_attr_value("$.data[*].aweme.media_type")
+
+    @property
+    def collect_count(self):
+        return self._get_list_attr_value("$.data[*].aweme.statistics.collect_count")
+
+    @property
+    def comment_count(self):
+        return self._get_list_attr_value("$.data[*].aweme.statistics.comment_count")
+
+    @property
+    def digg_count(self):
+        return self._get_list_attr_value("$.data[*].aweme.statistics.digg_count")
+
+    @property
+    def exposure_count(self):
+        return self._get_list_attr_value("$.data[*].aweme.statistics.exposure_count")
+
+    @property
+    def live_watch_count(self):
+        return self._get_list_attr_value("$.data[*].aweme.statistics.live_watch_count")
+
+    @property
+    def play_count(self):
+        return self._get_list_attr_value("$.data[*].aweme.statistics.play_count")
+
+    @property
+    def share_count(self):
+        return self._get_list_attr_value("$.data[*].aweme.statistics.share_count")
+
+    @property
+    def allow_share(self):
+        return self._get_list_attr_value("$.data[*].aweme.status.allow_share")
+
+    @property
+    def private_status(self):
+        return self._get_list_attr_value("$.data[*].aweme.status.private_status")
+
+    @property
+    def is_prohibited(self):
+        return self._get_list_attr_value("$.data[*].aweme.status.is_prohibited")
+
+    @property
+    def part_see(self):
+        return self._get_list_attr_value("$.data[*].aweme.status.part_see")
+
+    # video
+    @property
+    def animated_cover(self):
+        # 获取所有视频
+        videos = self._get_list_attr_value("$.data[*].aweme.video")
+
+        # 逐个视频判断是否存在animated_cover
+        animated_covers = [
+            (
+                video.get("animated_cover", {}).get("url_list", [None])[0]
+                if video.get("animated_cover")
+                else None
+            )
+            for video in videos
+        ]
+
+        return animated_covers
+
+    @property
+    def cover(self):
+        return self._get_list_attr_value("$.data[*].aweme.video.cover.url_list[0]")
+
+    @property
+    def images(self):
+        images_list = self._get_list_attr_value("$.data[*].aweme.images")
+        return [
+            (
+                [
+                    img["url_list"][0]
+                    for img in images
+                    if isinstance(img, dict) and "url_list" in img and img["url_list"]
+                ]
+                if images
+                else None
+            )
+            for images in images_list
+        ]
+
+    @property
+    def video_play_addr(self):
+        return self._get_list_attr_value("$.data[*].aweme.video.play_addr.url_list")
+
+    # music
+    @property
+    def music_id(self):
+        return self._get_list_attr_value("$.data[*].aweme.music.id")
+
+    @property
+    def music_mid(self):
+        return self._get_list_attr_value("$.data[*].aweme.music.mid")
+
+    @property
+    def music_duration(self):
+        return self._get_list_attr_value("$.data[*].aweme.music.duration")
+
+    @property
+    def music_play_url(self):
+        return self._get_list_attr_value("$.data[*].aweme.music.play_url.url_list[0]")
+
+    @property
+    def music_owner_nickname(self):
+        return replaceT(
+            self._get_list_attr_value("$.data[*].aweme.music.owner_nickname")
+        )
+
+    @property
+    def music_owner_nickname_raw(self):
+        return self._get_list_attr_value("$.data[*].aweme.music.owner_nickname")
+
+    @property
+    def music_sec_uid(self):
+        return self._get_list_attr_value("$.data[*].aweme.music.sec_uid")
+
+    @property
+    def music_title(self):
+        return replaceT(self._get_list_attr_value("$.data[*].aweme.music.title"))
+
+    @property
+    def music_title_raw(self):
+        return self._get_list_attr_value("$.data[*].aweme.music.title")
+
+    def _to_raw(self) -> dict:
+        return self._data
+
+    def _to_dict(self) -> dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
+    def _to_list(self):
+        exclude_list = [
+            "status_code",
+            "status_msg",
+            "has_more",
+            "has_aweme",
+            "friend_update_count",
+            "cursor",
+            "level",
+        ]
+
+        keys = [
+            prop_name
+            for prop_name in dir(self)
+            if not prop_name.startswith("__")
+            and not prop_name.startswith("_")
+            and prop_name not in exclude_list
+        ]
+
+        friend_feed_entries = self._get_attr_value("$.data") or []
+
+        list_dicts = []
+        for entry in friend_feed_entries:
+            d = {
+                "has_more": self.has_more,
+                "has_aweme": self.has_aweme,
+                "friend_update_count": self.friend_update_count,
+                "cursor": self.cursor,
+                "level": self.level,
+            }
+            for key in keys:
+                attr_values = getattr(self, key)
+                index = friend_feed_entries.index(entry)
+                d[key] = attr_values[index] if index < len(attr_values) else None
+            list_dicts.append(d)
+        return list_dicts
+
+
 class GetQrcodeFilter(JSONModel):
     @property
     def app_name(self):
