@@ -23,6 +23,7 @@
 - 新增`tiktok`用户直播
 - 添加反转义`JSON`方法
 - 新增`douyin`相关推荐
+- 新增`douyin`好友作品
 
 ### Changed
 
