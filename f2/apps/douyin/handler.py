@@ -1321,7 +1321,8 @@ class DouyinHandler:
 
         Args:
             cursor: int: 起始页
-            page_counts: int: 每页作品数
+            level: int: 作品等级
+            pull_type: int: 拉取类型
             max_counts: int: 最大作品数
 
         Return:
@@ -1352,6 +1353,19 @@ class DouyinHandler:
                 logger.info(_("所有好友作品采集完毕"))
                 break
 
+            if friend.status_code != 0:
+                logger.warning(
+                    _("请求失败，错误码：{0} 错误信息：{1}").format(
+                        friend.status_code, friend.status_msg
+                    )
+                )
+                break
+            else:
+                # 因为没有好友作品第一页也会返回has_more为False，所以需要访问下一页判断是否有作品
+                if not friend.has_aweme:
+                    logger.info(_("第 {0} 页没有找到作品").format(cursor))
+                    continue
+
             logger.debug(_("当前请求的cursor: {0}").format(cursor))
             logger.debug(
                 _("作品ID: {0} 作品文案: {1} 作者: {2}").format(
@@ -1364,8 +1378,11 @@ class DouyinHandler:
 
             # 更新已经处理的作品数量 (Update the number of videos processed)
             videos_collected += len(friend.aweme_id)
+            # 更新下一页的cursor (Update the cursor of the next page)
             cursor = friend.cursor
+            # 更新其他参数 (Update other parameters)
             level = friend.level
+            pull_type = friend.level
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
