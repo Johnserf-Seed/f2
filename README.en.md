@@ -129,7 +129,7 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
   | Fan User Information | 🟣⚫ | `fetch_user_follower` | 🟢 |
   | Following User Works | 🟣⚫ | `fetch_user_following_videos` | 🟤 |
   | Fan User Works | 🟣⚫ | `fetch_user_follower_videos` | 🟤 |
-  | Friend's Works | 🟣 | `fetch_user_friend_videos` | 🔵 |
+  | Friend's Works | 🟣 | `fetch_friend_feed_videos` | 🟢 |
   | Search Videos | ⚫ | `fetch_search_videos` | 🔵 |
   | Search Users | ⚫ | `fetch_search_users` | 🔵 |
   | Search Lives | ⚫ | `fetch_search_lives` | 🔵 |
@@ -212,6 +212,10 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
   ### DouYin Related Videos
 
   <img src="https://github.com/Johnserf-Seed/f2/assets/40727745/e36fb510-39ef-486e-b944-7dbf8cf25c36">
+
+  ### DouYin Friend Videos
+
+  <img src="https://github.com/Johnserf-Seed/f2/assets/40727745/437fa0ad-9524-4674-9d73-56db815113ef">
 
 </details>
 

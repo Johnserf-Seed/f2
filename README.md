@@ -130,7 +130,7 @@
   |粉丝用户信息|🟣⚫|`fetch_user_follower`|🟢|
   |关注用户作品|🟣⚫|`fetch_user_following_videos`|🟤|
   |粉丝用户作品|🟣⚫|`fetch_user_follower_videos`|🟤|
-  |朋友作品|🟣|`fetch_user_friend_videos`|🔵|
+  |朋友作品|🟣|`fetch_friend_feed_videos`|🟢|
   |搜索视频|⚫|`fetch_search_videos`|🔵|
   |搜索用户|⚫|`fetch_search_users`|🔵|
   |搜索直播|⚫|`fetch_search_lives`|🔵|
@@ -208,6 +208,10 @@
   ### 抖音相关推荐
 
   <img src="https://github.com/Johnserf-Seed/f2/assets/40727745/e36fb510-39ef-486e-b944-7dbf8cf25c36">
+
+  ### 抖音好友作品
+
+  <img src="https://github.com/Johnserf-Seed/f2/assets/40727745/437fa0ad-9524-4674-9d73-56db815113ef">
 
  </details>
 
