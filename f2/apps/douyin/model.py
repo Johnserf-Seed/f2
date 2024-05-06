@@ -80,6 +80,34 @@ class BaseLoginModel(BaseModel):
     language: str = "zh"
 
 
+class BaseWebCastModel(BaseModel):
+    app_name: str = "douyin_web"
+    version_code: str = "180800"
+    device_platform: str = "web"
+    cookie_enabled: str = "true"
+    screen_width: int = 1920
+    screen_height: int = 1080
+    browser_language: str = "zh-CN"
+    browser_platform: str = "Win32"
+    browser_name: str = "Mozilla"
+    browser_version: str = quote(
+        "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0",
+        safe="",
+    )
+    browser_online: str = "true"
+    tz_name: str = "Asia/Hong_Kong"
+    host: str = "https://live.douyin.com"
+    aid: int = 6383
+    live_id: int = 1
+    did_rule: int = 3
+    endpoint: str = "live_pc"
+    support_wrds: int = 1
+    identity: str = "audience"
+    need_persist_msg_count: int = 15
+    insert_task_id: Any = ""
+    live_reason: Any = ""
+
+
 # Model
 class UserProfile(BaseRequestModel):
     sec_user_id: str
