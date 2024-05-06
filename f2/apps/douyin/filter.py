@@ -2055,6 +2055,46 @@ class CheckQrcodeFilter(JSONModel):
             if not prop_name.startswith("__") and not prop_name.startswith("_")
         }
 
+class LiveImFetchFilter(JSONModel):
+    @property
+    def status_code(self):
+        return self._get_attr_value("$.status_code")
+
+    @property
+    def is_show_msg(self):
+        return self._get_attr_value("$.data[0].common.is_show_msg")
+
+    @property
+    def msg_id(self):
+        return self._get_attr_value("$.data[0].common.msg_id")
+
+    @property
+    def room_id(self):
+        return self._get_attr_value("$.data[0].common.room_id")
+
+    @property
+    def internal_ext(self):
+        return self._get_attr_value("$.internal_ext")
+
+    @property
+    def cursor(self):
+        return self._get_attr_value("$.extra.cursor")
+
+    @property
+    def now(self):
+        return timestamp_2_str(str(self._get_attr_value("$.extra.now")))
+
+    def _to_raw(self) -> dict:
+        return self._data
+
+    def _to_dict(self) -> dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
+
 class QueryUserFilter(JSONModel):
     @property
     def status_code(self):
