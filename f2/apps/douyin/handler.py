@@ -29,6 +29,7 @@ from f2.apps.douyin.model import (
     UserFollower,
     PostRelated,
     FriendFeed,
+    QueryUser,
 )
 from f2.apps.douyin.filter import (
     UserPostFilter,
@@ -46,6 +47,7 @@ from f2.apps.douyin.filter import (
     UserFollowerFilter,
     PostRelatedFilter,
     FriendFeedFilter,
+    QueryUserFilter,
 )
 from f2.apps.douyin.utils import (
     SecUserIdFetcher,
@@ -1555,6 +1557,35 @@ class DouyinHandler:
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
         logger.info(_("爬取结束，共爬取 {0} 个用户").format(users_collected))
+
+    async def fetch_query_user(self) -> QueryUserFilter:
+        """
+        用于查询用户信息，仅返回用户的基本信息，若需要获取更多信息请使用`fetch_user_profile`。
+
+        Return:
+            user: QueryUserFilter: 用户数据过滤器，包含用户数据的_to_raw、_to_dict、_to_list方法
+        """
+
+        logger.info(_("开始查询用户信息"))
+        logger.debug("===================================")
+
+        async with DouyinCrawler(self.kwargs) as crawler:
+            params = QueryUser()
+            response = await crawler.fetch_query_user(params)
+            user = QueryUserFilter(response)
+
+        if user.status_code is None:
+            logger.debug(
+                _("用户UniqueID：{0} 用户ID：{1} 用户创建时间：{2}").format(
+                    user.user_unique_id, user.user_uid, user.create_time
+                )
+            )
+            logger.debug("===================================")
+            logger.info(_("用户信息查询结束"))
+        else:
+            logger.warning(_("请提供正确的ttwid")),
+
+        return user
 
 
 async def handle_sso_login():
