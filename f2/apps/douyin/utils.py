@@ -95,15 +95,15 @@ class TokenManager:
         )
         headers = {
             "User-Agent": cls.user_agent,
-            "Content-Type": "application/json",
+            "Content-Type": "application/json; charset=utf-8",
         }
 
         transport = httpx.HTTPTransport(retries=5)
-        with httpx.Client(transport=transport, proxies=cls.proxies) as client:
+        with httpx.Client(
+            transport=transport, headers=headers, proxies=cls.proxies
+        ) as client:
             try:
-                response = client.post(
-                    cls.token_conf["url"], content=payload, headers=headers
-                )
+                response = client.post(cls.token_conf["url"], content=payload)
                 response.raise_for_status()
 
                 msToken = str(httpx.Cookies(response.cookies).get("msToken"))
@@ -199,7 +199,13 @@ class TokenManager:
         """
 
         transport = httpx.HTTPTransport(retries=5)
-        with httpx.Client(transport=transport) as client:
+        headers = {
+            "User-Agent": cls.user_agent,
+            "Content-Type": "application/json; charset=utf-8",
+        }
+        with httpx.Client(
+            transport=transport, headers=headers, proxies=cls.proxies
+        ) as client:
             try:
                 response = client.post(
                     cls.ttwid_conf["url"], content=cls.ttwid_conf["data"]
