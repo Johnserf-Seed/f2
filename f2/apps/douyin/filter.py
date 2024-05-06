@@ -2057,6 +2057,14 @@ class CheckQrcodeFilter(JSONModel):
 
 class QueryUserFilter(JSONModel):
     @property
+    def status_code(self):
+        return self._get_attr_value("$.status_code")
+
+    @property
+    def status_msg(self):
+        return self._get_attr_value("$.status_msg")
+
+    @property
     def browser_name(self):
         return self._get_attr_value("$.browser_name")
 
