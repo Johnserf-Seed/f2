@@ -270,3 +270,8 @@ class UserFollower(BaseRequestModel):
     gps_access: int = 0
     address_book_access: int = 0
     is_top: int = 1
+class QueryUser(BaseRequestModel):
+    publish_video_strategy_type: int = 2
+    update_version_code: str = "170400"
+    version_code: str = "170400"
+    version_name: str = "17.4.0"
