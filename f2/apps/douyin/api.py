@@ -128,3 +128,6 @@ class DouyinAPIEndpoints:
 
     # 点赞评论 (Like Comment)
     POST_COMMENT_DIGG = f"{DOUYIN_DOMAIN}/aweme/v1/web/comment/digg"
+
+    # 查询用户 (Query User)
+    QUERY_USER = f"{DOUYIN_DOMAIN}/aweme/v1/web/query/user/"
