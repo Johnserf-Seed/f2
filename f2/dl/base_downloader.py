@@ -32,14 +32,9 @@ class BaseDownloader(BaseCrawler):
 
     def __init__(self, kwargs: dict = ...):
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})
-
-        self.headers = {
-            "User-Agent": kwargs["headers"]["User-Agent"],
-            "Referer": kwargs["headers"]["Referer"],
-            "Cookie": kwargs["cookie"],
-        }
-
+        self.headers = kwargs.get("headers") | {"Cookie": kwargs["cookie"]}
         super().__init__(proxies=proxies, crawler_headers=self.headers)
+
         self.progress = RichConsoleManager().progress
         self.download_tasks = []
 

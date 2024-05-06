@@ -26,15 +26,7 @@ class TiktokCrawler(BaseCrawler):
     ):
         # 需要与cli同步
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})
-
-        self.user_agent = ClientConfManager.user_agent()
-        self.referrer = ClientConfManager.referer()
-        self.headers = {
-            "User-Agent": self.user_agent,
-            "Referer": self.referrer,
-            "Cookie": kwargs["cookie"],
-        }
-
+        self.headers = kwargs.get("headers") | {"Cookie": kwargs["cookie"]}
         super().__init__(proxies=proxies, crawler_headers=self.headers)
 
     async def fetch_user_profile(self, params: UserProfile):
