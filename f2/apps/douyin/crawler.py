@@ -21,6 +21,7 @@ from f2.apps.douyin.model import (
     LoginCheckQr,
     UserFollowing,
     UserFollower,
+    LiveImFetch,
     QueryUser,
 )
 from f2.apps.douyin.utils import XBogusManager
@@ -247,6 +248,15 @@ class DouyinCrawler(BaseCrawler):
             params.model_dump(),
         )
         logger.debug(_("用户粉丝列表接口地址：{0}").format(endpoint))
+        return await self._fetch_get_json(endpoint)
+
+    async def fetch_live_im_fetch(self, params: LiveImFetch):
+        endpoint = XBogusManager.model_2_endpoint(
+            self.headers.get("User-Agent"),
+            dyendpoint.LIVE_IM_FETCH,
+            params.model_dump(),
+        )
+        logger.debug(_("直播弹幕初始化接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_query_user(self, params: QueryUser):
