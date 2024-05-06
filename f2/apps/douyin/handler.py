@@ -29,6 +29,7 @@ from f2.apps.douyin.model import (
     UserFollower,
     PostRelated,
     FriendFeed,
+    LiveImFetch,
     QueryUser,
 )
 from f2.apps.douyin.filter import (
@@ -47,6 +48,7 @@ from f2.apps.douyin.filter import (
     UserFollowerFilter,
     PostRelatedFilter,
     FriendFeedFilter,
+    LiveImFetchFilter,
     QueryUserFilter,
 )
 from f2.apps.douyin.utils import (
@@ -1586,6 +1588,40 @@ class DouyinHandler:
             logger.warning(_("请提供正确的ttwid")),
 
         return user
+
+    async def fetch_live_im(self, room_id: str, unique_id: str) -> LiveImFetchFilter:
+        """
+        用于获取直播间信息。
+
+        Args:
+            room_id: str: 直播间ID
+
+        Return:
+            live_im: LiveImFetchFilter: 直播间信息数据过滤器，包含直播间信息的_to_raw、_to_dict、_to_list方法
+        """
+
+        logger.info(_("开始查询直播间信息"))
+        logger.debug("===================================")
+
+        # user = await self.fetch_query_user()
+
+        async with DouyinCrawler(self.kwargs) as crawler:
+            params = LiveImFetch(room_id=room_id, user_unique_id=unique_id)
+            response = await crawler.fetch_live_im_fetch(params)
+            live_im = LiveImFetchFilter(response)
+
+        if live_im.status_code == 0:
+            logger.debug(
+                _("直播间Room_ID：{0} 弹幕cursor：{1}").format(
+                    live_im.room_id, live_im.cursor
+                )
+            )
+            logger.debug("===================================")
+            logger.info(_("直播间信息查询结束"))
+        else:
+            logger.warning(_("请提供正确的Room_ID"))
+
+        return live_im
 
 
 async def handle_sso_login():
