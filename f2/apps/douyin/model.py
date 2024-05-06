@@ -298,6 +298,17 @@ class UserFollower(BaseRequestModel):
     gps_access: int = 0
     address_book_access: int = 0
     is_top: int = 1
+class LiveImFetch(BaseWebCastModel):
+    # resp_content_type: str = "protobuf"
+    resp_content_type: str = "json"
+    fetch_rule: int = 1
+    last_rtt: int = 0
+    cursor: str = ""
+    internal_ext: str = ""
+    room_id: str
+    user_unique_id: str
+
+
 class QueryUser(BaseRequestModel):
     publish_video_strategy_type: int = 2
     update_version_code: str = "170400"
