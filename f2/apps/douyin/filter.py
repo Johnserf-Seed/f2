@@ -2054,3 +2054,46 @@ class CheckQrcodeFilter(JSONModel):
             for prop_name in dir(self)
             if not prop_name.startswith("__") and not prop_name.startswith("_")
         }
+
+class QueryUserFilter(JSONModel):
+    @property
+    def browser_name(self):
+        return self._get_attr_value("$.browser_name")
+
+    @property
+    def create_time(self):
+        return timestamp_2_str(str(self._get_attr_value("$.create_time")))
+
+    @property
+    def firebase_instance_id(self):
+        return self._get_attr_value("$.firebase_instance_id")
+
+    @property
+    def user_unique_id(self):
+        return self._get_attr_value("$.id")
+
+    @property
+    def last_time(self):
+        return timestamp_2_str(str(self._get_attr_value("$.last_time")))
+
+    @property
+    def user_agent(self):
+        return self._get_attr_value("$.user_agent")
+
+    @property
+    def user_uid(self):
+        return self._get_attr_value("$.user_uid")
+
+    @property
+    def user_uid_type(self):
+        return self._get_attr_value("$.user_uid_type")
+
+    def _to_raw(self) -> dict:
+        return self._data
+
+    def _to_dict(self) -> dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
