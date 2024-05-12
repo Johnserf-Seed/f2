@@ -410,6 +410,7 @@ def douyin(
     if update_config:  # 如果指定了 update_config，更新配置文件
         update_manger = ConfigManager(config)
         update_manger.update_config_with_args("douyin", **kwargs)
+        return
 
     # 将kwargs["proxies"]中的tuple转换为dict
     if kwargs.get("proxies"):
