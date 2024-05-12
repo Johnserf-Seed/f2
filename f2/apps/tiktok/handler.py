@@ -77,7 +77,7 @@ class TiktokHandler:
             params = UserProfile(secUid=secUid, uniqueId=uniqueId)
             response = await crawler.fetch_user_profile(params)
             user = UserProfileFilter(response)
-            if user.nickname is None:
+            if user.uniqueId is None:
                 raise APIResponseError(
                     _("`fetch_user_profile`请求失败，请更换cookie或稍后再试")
                 )
@@ -112,11 +112,11 @@ class TiktokHandler:
         )
 
         # 获取当前用户最新昵称
-        current_nickname = current_user_data._to_dict().get("nickname")
+        current_uniqueId = current_user_data.uniqueId
 
         # 设置用户目录
         user_path = create_or_rename_user_folder(
-            self.kwargs, local_user_data, current_nickname
+            self.kwargs, local_user_data, current_uniqueId
         )
 
         # 如果用户不在数据库中，将其添加到数据库

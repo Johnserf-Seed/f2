@@ -935,6 +935,7 @@ def format_file_name(
     fields = {
         "create": aweme_data.get("createTime", ""),  # 长度固定19
         "nickname": aweme_data.get("nickname", ""),  # 最长30
+        "uniqueId": aweme_data.get("uniqueId", ""),
         "aweme_id": aweme_data.get("aweme_id", ""),  # 长度固定19
         "desc": split_filename(aweme_data.get("desc", ""), os_limit),
         "uid": aweme_data.get("uid", ""),  # 固定11
@@ -950,14 +951,14 @@ def format_file_name(
         raise KeyError(_("文件名模板字段 {0} 不存在，请检查").format(e))
 
 
-def create_user_folder(kwargs: dict, nickname: Union[str, int]) -> Path:
+def create_user_folder(kwargs: dict, uniqueId: Union[str, int]) -> Path:
     """
-    根据提供的配置文件和昵称，创建对应的保存目录。
-    (Create the corresponding save directory according to the provided conf file and nickname.)
+    根据提供的配置文件和uniqueId，创建对应的保存目录。
+    (Create the corresponding save directory according to the provided conf file and uniqueId.)
 
     Args:
         kwargs (dict): 配置文件，字典格式。(Conf file, dict format)
-        nickname (Union[str, int]): 用户的昵称，允许字符串或整数。  (User nickname, allow strings or integers)
+        uniqueId (Union[str, int]): 用户的uniqueId，允许字符串或整数。  (User uniqueId, allow strings or integers)
 
     Note:
         如果未在配置文件中指定路径，则默认为 "Download"。
@@ -979,7 +980,7 @@ def create_user_folder(kwargs: dict, nickname: Union[str, int]) -> Path:
 
     # 添加下载模式和用户名
     user_path = (
-        base_path / "tiktok" / kwargs.get("mode", "PLEASE_SETUP_MODE") / str(nickname)
+        base_path / "tiktok" / kwargs.get("mode", "PLEASE_SETUP_MODE") / str(uniqueId)
     )
 
     # 获取绝对路径并确保它存在
@@ -991,13 +992,13 @@ def create_user_folder(kwargs: dict, nickname: Union[str, int]) -> Path:
     return resolve_user_path
 
 
-def rename_user_folder(old_path: Path, new_nickname: str) -> Path:
+def rename_user_folder(old_path: Path, new_uniqueId: str) -> Path:
     """
     重命名用户目录 (Rename User Folder).
 
     Args:
         old_path (Path): 旧的用户目录路径 (Path of the old user folder)
-        new_nickname (str): 新的用户昵称 (New user nickname)
+        new_uniqueId (str): 新的用户uniqueId (New user uniqueId)
 
     Returns:
         Path: 重命名后的用户目录路径 (Path of the renamed user folder)
@@ -1006,13 +1007,13 @@ def rename_user_folder(old_path: Path, new_nickname: str) -> Path:
     parent_directory = old_path.parent
 
     # 构建新目录路径 (Construct the new directory path)
-    new_path = old_path.rename(parent_directory / new_nickname).resolve()
+    new_path = old_path.rename(parent_directory / new_uniqueId).resolve()
 
     return new_path
 
 
 def create_or_rename_user_folder(
-    kwargs: dict, local_user_data: dict, current_nickname: str
+    kwargs: dict, local_user_data: dict, current_uniqueId: str
 ) -> Path:
     """
     创建或重命名用户目录 (Create or rename user directory)
@@ -1020,18 +1021,18 @@ def create_or_rename_user_folder(
     Args:
         kwargs (dict): 配置参数 (Conf parameters)
         local_user_data (dict): 本地用户数据 (Local user data)
-        current_nickname (str): 当前用户昵称 (Current user nickname)
+        current_uniqueId (str): 当前用户uniqueId (Current user uniqueId)
 
     Returns:
         user_path (Path): 用户目录路径 (User directory path)
     """
-    user_path = create_user_folder(kwargs, current_nickname)
+    user_path = create_user_folder(kwargs, current_uniqueId)
 
     if not local_user_data:
         return user_path
 
-    if local_user_data.get("nickname") != current_nickname:
-        # 昵称不一致，触发目录更新操作
-        user_path = rename_user_folder(user_path, current_nickname)
+    if local_user_data.get("uniqueId") != current_uniqueId:
+        # uniqueId不一致，触发目录更新操作
+        user_path = rename_user_folder(user_path, current_uniqueId)
 
     return user_path
