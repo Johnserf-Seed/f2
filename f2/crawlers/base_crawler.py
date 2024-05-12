@@ -63,6 +63,16 @@ class BaseCrawler:
         # 异步客户端 / Asynchronous client
         self.aclient = httpx.AsyncClient(
             headers=self.crawler_headers,
+            verify=False,
+            proxies=self.proxies,
+            timeout=self.timeout,
+            limits=self.limits,
+            transport=self.atransport,
+        )
+        # 同步客户端 / Synchronous client
+        self.client = httpx.Client(
+            headers=self.crawler_headers,
+            verify=False,
             proxies=self.proxies,
             timeout=self.timeout,
             limits=self.limits,
