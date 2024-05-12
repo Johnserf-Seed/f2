@@ -74,7 +74,7 @@ async def get_content_length(url: str, headers: dict = {}, proxies: dict = {}) -
                 )
                 return 0
         except httpx.RequestError as e:
-            logger.error(f"httpx 请求错误: {0}, 错误详情: {1}".format(url, e))
+            logger.error("httpx 请求错误: {0}, 错误详情: {1}".format(url, e))
             return 0
         except Exception as e:
             # 处理未知错误 (Handling unknown errors)
