@@ -44,7 +44,6 @@ class BaseDownloader(BaseCrawler):
 
     async def _download_chunks(
         self,
-        client: httpx.AsyncClient,
         request: httpx.Request,
         file: Any,
         content_length: int,
@@ -54,7 +53,6 @@ class BaseDownloader(BaseCrawler):
         为给定的任务ID下载块 (Download chunks for a given task ID)
 
         Args:
-            client (httpx.AsyncClient): HTTP客户端 (HTTP client)
             request (httpx.Request): HTTP请求对象 (HTTP request object)
             file: 文件对象 (File object)
             content_length (int): 内容长度 (Content length)
@@ -62,7 +60,7 @@ class BaseDownloader(BaseCrawler):
         """
 
         try:
-            response = await client.send(request, stream=True)
+            response = await self.aclient.send(request, stream=True)
             async for chunk in response.aiter_bytes(get_chunk_size(content_length)):
                 if SignalManager.is_shutdown_signaled():
                     break
@@ -153,7 +151,7 @@ class BaseDownloader(BaseCrawler):
                     tmp_path, "ab" if start_byte else "wb"
                 ) as file:
                     await self._download_chunks(
-                        self.aclient, range_request, file, content_length, task_id
+                        range_request, file, content_length, task_id
                     )
 
                 # 下载完成后重命名文件 (Rename file after download is complete)
