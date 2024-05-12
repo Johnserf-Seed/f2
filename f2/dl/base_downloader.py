@@ -182,7 +182,7 @@ class BaseDownloader(BaseCrawler):
 
                 await self.progress.update(
                     task_id,
-                    description=_("[  完成  ]："),
+                    description=_("[  完成  ]:"),
                     filename=trim_filename(full_path.name, 45),
                     state="completed",
                 )
@@ -196,7 +196,7 @@ class BaseDownloader(BaseCrawler):
                 logger.warning("所有链接都无法下载")
                 await self.progress.update(
                     task_id,
-                    description=_("[  丢失  ]：所有链接都无法下载"),
+                    description=_("[  丢失  ]："),
                     filename=trim_filename(full_path.name, 45),
                     state="error",
                 )
