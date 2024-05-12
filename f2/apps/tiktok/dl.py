@@ -288,6 +288,7 @@ class TiktokDownloader(BaseDownloader):
         custom_fields = {
             "create": timestamp_2_str(timestamp=get_timestamp(unit="sec")),
             "nickname": webcast_data_dict.get("nickname", ""),
+            "uniqueId": webcast_data_dict.get("uniqueId", ""),
             "aweme_id": webcast_data_dict.get("live_room_id", ""),
             "desc": webcast_data_dict.get("live_title", ""),
             "uid": webcast_data_dict.get("user_id", ""),
