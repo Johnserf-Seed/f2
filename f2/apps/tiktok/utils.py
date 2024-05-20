@@ -430,164 +430,192 @@ class XBogusManager:
         return final_endpoint
 
 
-class SecUserIdFetcher:
-    # 预编译正则表达式
+class SecUserIdFetcher(BaseCrawler):
+    """
+    SecUserIdFetcher 类用于从 TikTok 用户主页链接中提取用户的 sec_uid 和 unique_id。
+
+    该类继承自 BaseCrawler，利用其中的 aclient 进行 HTTP 请求。主要包含四个方法：
+    - get_secuid: 异步类方法，用于获取单个 TikTok 用户的 sec_uid。
+    - get_all_secuid: 异步类方法，用于获取多个 TikTok 用户的 sec_uid 列表。
+    - get_uniqueid: 异步类方法，用于获取单个 TikTok 用户的 unique_id。
+    - get_all_uniqueid: 异步类方法，用于获取多个 TikTok 用户的 unique_id 列表。
+
+    类属性:
+    - _TIKTOK_SECUID_PARREN: 编译后的正则表达式，用于匹配 sec_uid。
+    - _TIKTOK_UNIQUEID_PARREN: 编译后的正则表达式，用于匹配 unique_id。
+    - _TIKTOK_NOTFOUND_PARREN: 编译后的正则表达式，用于检查页面是否不存在。
+    - proxies: 从 ClientConfManager 获取的代理配置。
+
+    方法:
+    - __init__: 初始化 SecUserIdFetcher 实例，并调用父类的初始化方法。
+    - get_secuid: 异步类方法，接受一个用户主页链接，返回对应用户的 sec_uid。
+    - get_all_secuid: 异步类方法，接受一个用户主页链接列表，返回对应用户的 sec_uid 列表。
+    - get_uniqueid: 异步类方法，接受一个用户主页链接，返回对应用户的 unique_id。
+    - get_all_uniqueid: 异步类方法，接受一个用户主页链接列表，返回对应用户的 unique_id 列表。
+
+    异常处理:
+    - 在 HTTP 请求过程中，处理可能出现的 TimeoutException、NetworkError、ProtocolError、ProxyError 和 HTTPStatusError 异常，并记录相应的错误信息。
+
+    使用示例:
+        # 获取单个用户的 sec_uid
+        url = "https://www.tiktok.com/@someuser"
+        sec_uid = await SecUserIdFetcher.get_secuid(url)
+
+        # 获取多个用户的 sec_uid 列表
+        urls = [
+            "https://www.tiktok.com/@user1",
+            "https://www.tiktok.com/@user2",
+            "https://www.tiktok.com/@user3"
+        ]
+        sec_uids = await SecUserIdFetcher.get_all_secuid(urls)
+
+        # 获取单个用户的 unique_id
+        unique_id = await SecUserIdFetcher.get_uniqueid(url)
+
+        # 获取多个用户的 unique_id 列表
+        unique_ids = await SecUserIdFetcher.get_all_uniqueid(urls)
+    """
+
     _TIKTOK_SECUID_PARREN = re.compile(
         r"<script id=\"__UNIVERSAL_DATA_FOR_REHYDRATION__\" type=\"application/json\">(.*?)</script>"
     )
     _TIKTOK_UNIQUEID_PARREN = re.compile(r"/@([^/?]*)")
     _TIKTOK_NOTFOUND_PARREN = re.compile(r"notfound")
 
+    proxies = ClientConfManager.proxies()
+
+    def __init__(self):
+        super().__init__(proxies=self.proxies)
+
     @classmethod
     async def get_secuid(cls, url: str) -> str:
         """
-        获取TikTok用户sec_uid
+        获取TikTok用户sec_uid。
+
         Args:
             url: 用户主页链接
-        Return:
+
+        Returns:
             sec_uid: 用户唯一标识
+
+        Raises:
+            TypeError: 如果输入的 URL 不是字符串。
+            APINotFoundError: 如果输入的 URL 不合法或页面不可用。
+            APIResponseError: 如果在响应中未找到 sec_uid。
+            ConnectionError: 如果接口状态码异常。
+            APITimeoutError: 如果请求端点超时。
+            APIConnectionError: 如果网络连接失败。
+            APIUnauthorizedError: 如果请求协议错误。
         """
 
-        # 进行参数检查
         if not isinstance(url, str):
             raise TypeError("输入参数必须是字符串")
 
-        # 提取有效URL
         url = extract_valid_urls(url)
 
         if url is None:
-            raise (
-                APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
+            raise APINotFoundError("输入的URL不合法。类名：{0}".format(cls.__name__))
+
+        # 创建一个实例以访问 aclient
+        instance = cls()
+
+        try:
+            response = await instance.aclient.get(url, follow_redirects=True)
+            if response.status_code in {200, 444}:
+                if cls._TIKTOK_NOTFOUND_PARREN.search(str(response.url)):
+                    raise APINotFoundError(
+                        "页面不可用，可能是由于区域限制（代理）造成的。"
+                    )
+
+                match = cls._TIKTOK_SECUID_PARREN.search(str(response.text))
+                if not match:
+                    raise APIResponseError(
+                        _(
+                            "未在响应中找到 {0}，检查链接是否为用户主页。类名：{1}"
+                        ).format("sec_uid", cls.__name__)
+                    )
+
+                data = json.loads(match.group(1))
+                default_scope = data.get("__DEFAULT_SCOPE__", {})
+                user_detail = default_scope.get("webapp.user-detail", {})
+                user_info = user_detail.get("userInfo", {}).get("user", {})
+                sec_uid = user_info.get("secUid")
+
+                if sec_uid is None:
+                    raise RuntimeError(_("获取 {0} 失败").format("sec_uid"))
+
+                return sec_uid
+            else:
+                raise ConnectionError("接口状态码异常，请检查重试")
+
+        except httpx.TimeoutException as exc:
+            logger.error(traceback.format_exc())
+            raise APITimeoutError(
+                "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}".format(
+                    "请求端点超时", url, cls.proxies, cls.__name__, exc
+                )
             )
 
-        transport = httpx.AsyncHTTPTransport(retries=5)
-        async with httpx.AsyncClient(
-            transport=transport, proxies=ClientConfManager.proxies(), timeout=10
-        ) as client:
-            try:
-                response = await client.get(url, follow_redirects=True)
-                # 444一般为Nginx拦截，不返回状态 (444 is generally intercepted by Nginx and does not return status)
-                if response.status_code in {200, 444}:
-                    if cls._TIKTOK_NOTFOUND_PARREN.search(str(response.url)):
-                        raise APINotFoundError(
-                            _(
-                                "页面不可用，可能是由于区域限制（代理）造成的。类名: {0}"
-                            ).format(cls.__name__)
-                        )
-
-                    match = cls._TIKTOK_SECUID_PARREN.search(str(response.text))
-                    if not match:
-                        raise APIResponseError(
-                            _(
-                                "未在响应中找到 {0}，检查链接是否为用户主页。类名: {1}"
-                            ).format("sec_uid", cls.__name__)
-                        )
-
-                    # 提取SIGI_STATE对象中的sec_uid
-                    data = json.loads(match.group(1))
-                    default_scope = data.get("__DEFAULT_SCOPE__", {})
-                    user_detail = default_scope.get("webapp.user-detail", {})
-                    user_info = user_detail.get("userInfo", {}).get("user", {})
-                    sec_uid = user_info.get("secUid")
-
-                    if sec_uid is None:
-                        raise RuntimeError(
-                            _("获取 {0} 失败，{1}").format(sec_uid, user_info)
-                        )
-
-                    return sec_uid
-                else:
-                    raise ConnectionError(_("接口状态码异常, 请检查重试"))
-
-            # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
-            except httpx.TimeoutException as exc:
-                raise APITimeoutError(
-                    _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("请求端点超时"),
-                        url,
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
+        except httpx.NetworkError as exc:
+            logger.error(traceback.format_exc())
+            raise APIConnectionError(
+                "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}".format(
+                    "网络连接失败，请检查当前网络环境",
+                    url,
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
                 )
+            )
 
-            except httpx.NetworkError as exc:
-                raise APIConnectionError(
-                    _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("网络连接失败，请检查当前网络环境"),
-                        url,
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
+        except httpx.ProtocolError as exc:
+            logger.error(traceback.format_exc())
+            raise APIUnauthorizedError(
+                "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}".format(
+                    "请求协议错误", url, cls.proxies, cls.__name__, exc
                 )
+            )
 
-            except httpx.ProtocolError as exc:
-                raise APIUnauthorizedError(
-                    _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("请求协议错误"),
-                        url,
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
+        except httpx.ProxyError as exc:
+            logger.error(traceback.format_exc())
+            raise APIConnectionError(
+                "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}".format(
+                    "请求代理错误", url, cls.proxies, cls.__name__, exc
                 )
+            )
 
-            except httpx.ProxyError as exc:
-                raise APIConnectionError(
-                    _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("请求代理错误"),
-                        url,
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
+        except httpx.HTTPStatusError as exc:
+            logger.error(traceback.format_exc())
+            raise APIResponseError(
+                "{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}".format(
+                    "状态码错误", url, cls.proxies, cls.__name__, exc
                 )
-
-            except httpx.HTTPStatusError as exc:
-                raise APIResponseError(
-                    _(
-                        "{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("状态码错误"),
-                        url,
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
-                )
+            )
 
     @classmethod
     async def get_all_secuid(cls, urls: list) -> list:
         """
-        获取列表secuid列表 (Get list sec_user_id list)
+        获取多个TikTok用户的sec_uid。
 
         Args:
-            urls: list: 用户url列表 (User url list)
+            urls: 用户主页链接列表
 
-        Return:
-            secuids: list: 用户secuid列表 (User secuid list)
+        Returns:
+            secuids: 用户sec_uid列表
+
+        Raises:
+            TypeError: 如果输入的 URL 列表不是列表类型。
+            APINotFoundError: 如果输入的 URL 列表不合法。
         """
 
         if not isinstance(urls, list):
-            raise TypeError(_("参数必须是列表类型"))
+            raise TypeError("参数必须是列表类型")
 
-        # 提取有效URL
         urls = extract_valid_urls(urls)
 
         if urls == []:
-            raise (
-                APINotFoundError(
-                    _("输入的URL List不合法。类名：{0}").format(cls.__name__)
-                )
+            raise APINotFoundError(
+                "输入的URL List不合法。类名：{0}".format(cls.__name__)
             )
 
         secuids = [cls.get_secuid(url) for url in urls]
@@ -596,145 +624,151 @@ class SecUserIdFetcher:
     @classmethod
     async def get_uniqueid(cls, url: str) -> str:
         """
-        获取TikTok用户unique_id
+        获取TikTok用户unique_id。
+
         Args:
             url: 用户主页链接
-        Return:
-            unique_id: 用户唯一id
+
+        Returns:
+            unique_id: 用户唯一标识
+
+        Raises:
+            TypeError: 如果输入的 URL 不是字符串。
+            APINotFoundError: 如果输入的 URL 不合法或页面不可用。
+            APIResponseError: 如果在响应中未找到 unique_id。
+            ConnectionError: 如果接口状态码异常。
+            APITimeoutError: 如果请求端点超时。
+            APIConnectionError: 如果网络连接失败。
+            APIUnauthorizedError: 如果请求协议错误。
         """
 
-        # 进行参数检查
         if not isinstance(url, str):
             raise TypeError("输入参数必须是字符串")
 
-        # 提取有效URL
         url = extract_valid_urls(url)
 
         if url is None:
-            raise (
-                APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
+            raise APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
+
+        # 创建一个实例以访问 aclient
+        instance = cls()
+
+        try:
+            response = await instance.aclient.get(url, follow_redirects=True)
+            if response.status_code in {200, 444}:
+                if cls._TIKTOK_NOTFOUND_PARREN.search(str(response.url)):
+                    raise APINotFoundError(
+                        "页面不可用，可能是由于区域限制（代理）造成的。"
+                    )
+
+                match = cls._TIKTOK_UNIQUEID_PARREN.search(str(response.url))
+                if not match:
+                    raise APIResponseError(_("未在响应中找到 {0}").format("unique_id"))
+
+                unique_id = match.group(1)
+
+                if unique_id is None:
+                    raise RuntimeError(
+                        _("获取 {0} 失败，{1}").format("unique_id", response.url)
+                    )
+
+                return unique_id
+
+            else:
+                raise ConnectionError("接口状态码异常，请检查重试")
+
+        except httpx.TimeoutException as exc:
+            logger.error(traceback.format_exc())
+            raise APITimeoutError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    "请求端点超时",
+                    url,
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
+                )
             )
 
-        transport = httpx.AsyncHTTPTransport(retries=5)
-        async with httpx.AsyncClient(
-            transport=transport, proxies=ClientConfManager.proxies(), timeout=10
-        ) as client:
-            try:
-                response = await client.get(url, follow_redirects=True)
-                if response.status_code in {200, 444}:
-                    if cls._TIKTOK_NOTFOUND_PARREN.search(str(response.url)):
-                        raise APINotFoundError(
-                            _(
-                                "页面不可用，可能是由于区域限制（代理）造成的。类名: {0}"
-                            ).format(cls.__name__)
-                        )
-
-                    match = cls._TIKTOK_UNIQUEID_PARREN.search(str(response.url))
-                    if not match:
-                        raise APIResponseError(
-                            _("未在响应中找到 {0}").format("unique_id")
-                        )
-
-                    unique_id = match.group(1)
-
-                    if unique_id is None:
-                        raise RuntimeError(
-                            _("获取 {0} 失败，{1}").format("unique_id", response.url)
-                        )
-
-                    return unique_id
-
-                response.raise_for_status()
-
-            # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
-            except httpx.TimeoutException as exc:
-                raise APITimeoutError(
-                    _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("请求端点超时"),
-                        url,
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
+        except httpx.NetworkError as exc:
+            logger.error(traceback.format_exc())
+            raise APIConnectionError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    "网络连接失败，请检查当前网络环境",
+                    url,
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
                 )
+            )
 
-            except httpx.NetworkError as exc:
-                raise APIConnectionError(
-                    _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("网络连接失败，请检查当前网络环境"),
-                        url,
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
+        except httpx.ProtocolError as exc:
+            logger.error(traceback.format_exc())
+            raise APIUnauthorizedError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    "请求协议错误",
+                    url,
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
                 )
+            )
 
-            except httpx.ProtocolError as exc:
-                raise APIUnauthorizedError(
-                    _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("请求协议错误"),
-                        url,
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
+        except httpx.ProxyError as exc:
+            logger.error(traceback.format_exc())
+            raise APIConnectionError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    "请求代理错误",
+                    url,
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
                 )
+            )
 
-            except httpx.ProxyError as exc:
-                raise APIConnectionError(
-                    _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("请求代理错误"),
-                        url,
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
+        except httpx.HTTPStatusError as exc:
+            logger.error(traceback.format_exc())
+            raise APIResponseError(
+                _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
+                    "状态码错误",
+                    url,
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
                 )
-
-            except httpx.HTTPStatusError as exc:
-                raise APIResponseError(
-                    _(
-                        "{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("状态码错误"),
-                        url,
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
-                )
+            )
 
     @classmethod
     async def get_all_uniqueid(cls, urls: list) -> list:
         """
-        获取列表unique_id列表 (Get list sec_user_id list)
+        获取多个TikTok用户的unique_id。
 
         Args:
-            urls: list: 用户url列表 (User url list)
+            urls: 用户主页链接列表
 
-        Return:
-            unique_ids: list: 用户unique_id列表 (User unique_id list)
+        Returns:
+            unique_ids: 用户unique_id列表
+
+        Raises:
+            TypeError: 如果输入的 URL 列表不是列表类型。
+            APINotFoundError: 如果输入的 URL 列表不合法。
         """
 
         if not isinstance(urls, list):
             raise TypeError(_("参数必须是列表类型"))
 
-        # 提取有效URL
         urls = extract_valid_urls(urls)
 
         if urls == []:
-            raise (
-                APINotFoundError(
-                    _("输入的URL List不合法。类名：{0}").format(cls.__name__)
-                )
+            raise APINotFoundError(
+                _("输入的URL List不合法。类名：{0}").format(cls.__name__)
             )
 
         unique_ids = [cls.get_uniqueid(url) for url in urls]
