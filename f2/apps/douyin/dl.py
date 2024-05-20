@@ -237,7 +237,7 @@ class DouyinDownloader(BaseDownloader):
                 )
 
             # 处理不同类型的作品下载任务
-            if aweme_type in [0, 55, 61, 109]:
+            if aweme_type in [0, 55, 61, 109, 201]:
                 video_name = (
                     format_file_name(
                         kwargs.get("naming", "{create}_{desc}"), aweme_data_dict
