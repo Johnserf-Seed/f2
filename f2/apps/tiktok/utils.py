@@ -775,159 +775,203 @@ class SecUserIdFetcher(BaseCrawler):
         return await asyncio.gather(*unique_ids)
 
 
-class AwemeIdFetcher:
-    # https://www.tiktok.com/@scarlettjonesuk/video/7255716763118226715
-    # https://www.tiktok.com/@scarlettjonesuk/video/7255716763118226715?is_from_webapp=1&sender_device=pc&web_id=7306060721837852167
+class AwemeIdFetcher(BaseCrawler):
+    """
+    AwemeIdFetcher 类用于从 TikTok 视频链接中提取视频的 aweme_id。
 
-    # 预编译正则表达式
+    该类继承自 BaseCrawler，利用其中的 aclient 进行 HTTP 请求。主要包含两个方法：
+    - get_aweme_id: 异步类方法，用于获取单个 TikTok 视频的 aweme_id。
+    - get_all_aweme_id: 异步类方法，用于获取多个 TikTok 视频的 aweme_id 列表。
+
+    类属性:
+    - _TIKTOK_AWEMEID_PARREN: 编译后的正则表达式，用于匹配 aweme_id。
+    - _TIKTOK_NOTFOUND_PARREN: 编译后的正则表达式，用于检查页面是否不存在。
+    - proxies: 从 ClientConfManager 获取的代理配置。
+
+    方法:
+    - __init__: 初始化 AwemeIdFetcher 实例，并调用父类的初始化方法。
+    - get_aweme_id: 异步类方法，接受一个视频链接，返回对应视频的 aweme_id。
+    - get_all_aweme_id: 异步类方法，接受一个视频链接列表，返回对应视频的 aweme_id 列表。
+
+    异常处理:
+    - 在 HTTP 请求过程中，处理可能出现的 TimeoutException、NetworkError、ProtocolError、ProxyError 和 HTTPStatusError 异常，并记录相应的错误信息。
+
+    使用示例:
+        # 获取单个视频的 aweme_id
+        url = "https://www.tiktok.com/@scarlettjonesuk/video/7255716763118226715"
+        aweme_id = await AwemeIdFetcher.get_aweme_id(url)
+
+        # 获取多个视频的 aweme_id 列表
+        urls = [
+            "https://www.tiktok.com/@scarlettjonesuk/video/7255716763118226715",
+            "https://www.tiktok.com/@scarlettjonesuk/video/7255716763118226715?is_from_webapp=1&sender_device=pc&web_id=7306060721837852167"
+        ]
+        aweme_ids = await AwemeIdFetcher.get_all_aweme_id(urls)
+    """
+
     _TIKTOK_AWEMEID_PARREN = re.compile(r"video/(\d*)")
     _TIKTOK_NOTFOUND_PARREN = re.compile(r"notfound")
+
+    proxies = ClientConfManager.proxies()
+
+    def __init__(self):
+        super().__init__(proxies=self.proxies)
 
     @classmethod
     async def get_aweme_id(cls, url: str) -> str:
         """
-        获取TikTok作品aweme_id
+        获取TikTok作品aweme_id。
+
         Args:
             url: 作品链接
-        Return:
+
+        Returns:
             aweme_id: 作品唯一标识
+
+        Raises:
+            TypeError: 如果输入的 URL 不是字符串。
+            APINotFoundError: 如果输入的 URL 不合法或页面不可用。
+            APIResponseError: 如果在响应中未找到 aweme_id。
+            ConnectionError: 如果接口状态码异常。
+            APITimeoutError: 如果请求端点超时。
+            APIConnectionError: 如果网络连接失败。
+            APIUnauthorizedError: 如果请求协议错误。
         """
 
-        # 进行参数检查
         if not isinstance(url, str):
             raise TypeError("输入参数必须是字符串")
 
-        # 提取有效URL
         url = extract_valid_urls(url)
 
         if url is None:
-            raise (
-                APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
+            raise APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
+
+        # 创建一个实例以访问 aclient
+        instance = cls()
+
+        try:
+            response = await instance.aclient.get(url, follow_redirects=True)
+            if response.status_code in {200, 444}:
+                if cls._TIKTOK_NOTFOUND_PARREN.search(str(response.url)):
+                    raise APINotFoundError(
+                        "页面不可用，可能是由于区域限制（代理）造成的。类名：{0}".format(
+                            cls.__name__
+                        )
+                    )
+
+                match = cls._TIKTOK_AWEMEID_PARREN.search(str(response.url))
+                if not match:
+                    raise APIResponseError(
+                        _("未在响应中找到 {0}，请检查链接。类名：{1}").format(
+                            "aweme_id", cls.__name__
+                        )
+                    )
+
+                aweme_id = match.group(1)
+
+                if aweme_id is None:
+                    raise RuntimeError(
+                        _("获取 {0} 失败，{1}").format("aweme_id", response.url)
+                    )
+
+                return aweme_id
+            else:
+                raise ConnectionError(
+                    _("接口状态码异常 {0}，请检查重试").format(response.status_code)
+                )
+
+        except httpx.TimeoutException as exc:
+            logger.error(traceback.format_exc())
+            raise APITimeoutError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    _("请求端点超时"),
+                    url,
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
+                )
             )
 
-        transport = httpx.AsyncHTTPTransport(retries=5)
-        async with httpx.AsyncClient(
-            transport=transport, proxies=ClientConfManager.proxies(), timeout=10
-        ) as client:
-            try:
-                response = await client.get(url, follow_redirects=True)
-
-                if response.status_code in {200, 444}:
-                    if cls._TIKTOK_NOTFOUND_PARREN.search(str(response.url)):
-                        raise APINotFoundError(
-                            _(
-                                "页面不可用，可能是由于区域限制（代理）造成的。类名: {0}"
-                            ).format(cls.__name__)
-                        )
-
-                    match = cls._TIKTOK_AWEMEID_PARREN.search(str(response.url))
-                    if not match:
-                        raise APIResponseError(
-                            _("未在响应中找到 {0}").format("aweme_id")
-                        )
-
-                    aweme_id = match.group(1)
-
-                    if aweme_id is None:
-                        raise RuntimeError(
-                            _("获取 {0} 失败，{1}").format("aweme_id", response.url)
-                        )
-
-                    return aweme_id
-                else:
-                    raise ConnectionError(
-                        _("接口状态码异常 {0}，请检查重试").format(response.status_code)
-                    )
-
-            # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
-            except httpx.TimeoutException as exc:
-                raise APITimeoutError(
-                    _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("请求端点超时"),
-                        url,
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
+        except httpx.NetworkError as exc:
+            logger.error(traceback.format_exc())
+            raise APIConnectionError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    _("网络连接失败，请检查当前网络环境"),
+                    url,
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
                 )
+            )
 
-            except httpx.NetworkError as exc:
-                raise APIConnectionError(
-                    _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("网络连接失败，请检查当前网络环境"),
-                        url,
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
+        except httpx.ProtocolError as exc:
+            logger.error(traceback.format_exc())
+            raise APIUnauthorizedError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    _("请求协议错误"),
+                    url,
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
                 )
+            )
 
-            except httpx.ProtocolError as exc:
-                raise APIUnauthorizedError(
-                    _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("请求协议错误"),
-                        url,
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
+        except httpx.ProxyError as exc:
+            logger.error(traceback.format_exc())
+            raise APIConnectionError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    _("请求代理错误"),
+                    url,
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
                 )
+            )
 
-            except httpx.ProxyError as exc:
-                raise APIConnectionError(
-                    _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("请求代理错误"),
-                        url,
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
+        except httpx.HTTPStatusError as exc:
+            logger.error(traceback.format_exc())
+            raise APIResponseError(
+                _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
+                    _("状态码错误"),
+                    url,
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
                 )
-
-            except httpx.HTTPStatusError as exc:
-                raise APIResponseError(
-                    _(
-                        "{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("状态码错误"),
-                        url,
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
-                )
+            )
 
     @classmethod
     async def get_all_aweme_id(cls, urls: list) -> list:
         """
-        获取视频aweme_id,传入列表url都可以解析出aweme_id (Get video aweme_id, pass in the list url can parse out aweme_id)
+        获取多个TikTok视频的aweme_id。
 
         Args:
-            urls: list: 列表url (list url)
+            urls: 视频链接列表
 
-        Return:
-            aweme_ids: list: 视频的唯一标识，返回列表 (The unique identifier of the video, return list)
+        Returns:
+            aweme_ids: 视频的唯一标识列表
+
+        Raises:
+            TypeError: 如果输入的 URL 列表不是列表类型。
+            APINotFoundError: 如果输入的 URL 列表不合法。
         """
 
         if not isinstance(urls, list):
             raise TypeError(_("参数必须是列表类型"))
 
-        # 提取有效URL
         urls = extract_valid_urls(urls)
 
         if urls == []:
-            raise (
-                APINotFoundError(
-                    _("输入的URL List不合法。类名：{0}").format(cls.__name__)
-                )
+            raise APINotFoundError(
+                _("输入的URL List不合法。类名：{0}").format(cls.__name__)
             )
 
         aweme_ids = [cls.get_aweme_id(url) for url in urls]
