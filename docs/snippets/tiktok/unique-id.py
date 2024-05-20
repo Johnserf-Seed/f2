@@ -2,10 +2,12 @@
 import asyncio
 from f2.apps.tiktok.utils import SecUserIdFetcher
 
+
 async def main():
     raw_url = "https://www.tiktok.com/@vantoan___"
     # 对于单个URL
     return await SecUserIdFetcher.get_uniqueid(raw_url)
+
 
 if __name__ == "__main__":
     print(asyncio.run(main()))
@@ -17,6 +19,7 @@ if __name__ == "__main__":
 import asyncio
 from f2.apps.tiktok.utils import SecUserIdFetcher
 from f2.utils.utils import extract_valid_urls
+
 
 async def main():
     raw_urls = [
@@ -30,6 +33,7 @@ async def main():
 
     # 对于URL列表
     return await SecUserIdFetcher.get_all_uniqueid(urls)
+
 
 if __name__ == "__main__":
     print(asyncio.run(main()))
