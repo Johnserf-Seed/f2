@@ -556,15 +556,15 @@ class SecUserIdFetcher(BaseCrawler):
             if response.status_code in {200, 444}:
                 if cls._TIKTOK_NOTFOUND_PARREN.search(str(response.url)):
                     raise APINotFoundError(
-                        "页面不可用，可能是由于区域限制（代理）造成的。"
-                    )
+                        "页面不可用，可能是由于区域限制（代理）造成的。类名：{0}"
+                    ).format(cls.__name__)
 
                 match = cls._TIKTOK_SECUID_PARREN.search(str(response.text))
                 if not match:
                     raise APIResponseError(
-                        _(
-                            "未在响应中找到 {0}，检查链接是否为用户主页。类名：{1}"
-                        ).format("sec_uid", cls.__name__)
+                        _("未在响应中找到 {0}，请检查链接。类名：{1}").format(
+                            "sec_uid", cls.__name__
+                        )
                     )
 
                 data = json.loads(match.group(1))
@@ -690,12 +690,16 @@ class SecUserIdFetcher(BaseCrawler):
             if response.status_code in {200, 444}:
                 if cls._TIKTOK_NOTFOUND_PARREN.search(str(response.url)):
                     raise APINotFoundError(
-                        "页面不可用，可能是由于区域限制（代理）造成的。"
-                    )
+                        "页面不可用，可能是由于区域限制（代理）造成的。类名：{0}"
+                    ).format(cls.__name__)
 
                 match = cls._TIKTOK_UNIQUEID_PARREN.search(str(response.url))
                 if not match:
-                    raise APIResponseError(_("未在响应中找到 {0}").format("unique_id"))
+                    raise APIResponseError(
+                        _("未在响应中找到 {0}，请检查链接。类名：{1}").format(
+                            "unique_id", cls.__name__
+                        )
+                    )
 
                 unique_id = match.group(1)
 
