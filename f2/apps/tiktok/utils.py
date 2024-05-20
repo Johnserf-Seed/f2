@@ -5,6 +5,7 @@ import re
 import json
 import httpx
 import asyncio
+import traceback
 
 from typing import Union
 from pathlib import Path
@@ -19,6 +20,7 @@ from f2.utils.utils import (
     extract_valid_urls,
     split_filename,
 )
+from f2.crawlers.base_crawler import BaseCrawler
 from f2.exceptions.api_exceptions import (
     APIConnectionError,
     APIResponseError,
@@ -70,239 +72,241 @@ class ClientConfManager:
         return cls.client_conf.get("odin_tt", {})
 
 
-class TokenManager:
+class TokenManager(BaseCrawler):
 
     token_conf = ClientConfManager.msToken()
     ttwid_conf = ClientConfManager.ttwid()
     odin_tt_conf = ClientConfManager.odin_tt()
     proxies = ClientConfManager.proxies()
+    mstoken_headers = {
+        "Content-Type": "application/json",
+        "User-Agent": ClientConfManager.user_agent(),
+    }
+    ttwid_headers = {
+        "Cookie": ttwid_conf.get("cookie"),
+        "Content-Type": "text/plain",
+        "User-Agent": ClientConfManager.user_agent(),
+    }
 
-    @classmethod
-    def gen_real_msToken(cls) -> str:
+    def __init__(self):
+        super().__init__(proxies=self.proxies)
+
+    def gen_real_msToken(self) -> str:
         """
         生成真实的msToken,当出现错误时返回虚假的值
         (Generate a real msToken and return a false value when an error occurs)
         """
 
-        payload = json.dumps(
-            {
-                "magic": cls.token_conf["magic"],
-                "version": cls.token_conf["version"],
-                "dataType": cls.token_conf["dataType"],
-                "strData": cls.token_conf["strData"],
-                "tspFromClient": get_timestamp(),
-            }
-        )
+        try:
+            payload = json.dumps(
+                {
+                    "magic": self.token_conf["magic"],
+                    "version": self.token_conf["version"],
+                    "dataType": self.token_conf["dataType"],
+                    "strData": self.token_conf["strData"],
+                    "tspFromClient": get_timestamp(),
+                }
+            )
+            response = self.client.post(
+                self.token_conf["url"],
+                content=payload,
+                headers=self.mstoken_headers,
+            )
+            response.raise_for_status()
 
-        headers = {
-            "User-Agent": ClientConfManager.user_agent(),
-            "Content-Type": "application/json",
-        }
+            msToken = str(httpx.Cookies(response.cookies).get("msToken"))
 
-        transport = httpx.HTTPTransport(retries=5)
-        with httpx.Client(transport=transport, proxies=cls.proxies) as client:
-            try:
-                response = client.post(
-                    cls.token_conf["url"], headers=headers, content=payload
+            if len(msToken) not in [148]:
+                raise APIResponseError(_("{0} 内容不符合要求").format("msToken"))
+
+            logger.debug(_("生成真实的msToken：{0}").format(msToken))
+            return msToken
+
+        # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
+        except httpx.TimeoutException as exc:
+            logger.error(traceback.format_exc())
+            raise APITimeoutError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    _("请求端点超时"),
+                    self.token_conf["url"],
+                    ClientConfManager.proxies(),
+                    self.__class__.__name__,
+                    exc,
                 )
-                response.raise_for_status()
+            )
 
-                msToken = str(httpx.Cookies(response.cookies).get("msToken"))
-
-                if len(msToken) not in [148]:
-                    raise APIResponseError(_("{0} 内容不符合要求").format("msToken"))
-                logger.debug(_("生成真实的msToken"))
-                return msToken
-
-            # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
-            except httpx.TimeoutException as exc:
-                raise APITimeoutError(
-                    _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("请求端点超时"),
-                        cls.token_conf["url"],
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
+        except httpx.NetworkError as exc:
+            raise APIConnectionError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    _("网络连接失败，请检查当前网络环境"),
+                    self.token_conf["url"],
+                    ClientConfManager.proxies(),
+                    self.__class__.__name__,
+                    exc,
                 )
+            )
 
-            except httpx.NetworkError as exc:
-                raise APIConnectionError(
-                    _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("网络连接失败，请检查当前网络环境"),
-                        cls.token_conf["url"],
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
+        except httpx.ProtocolError as exc:
+            raise APIUnauthorizedError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    _("请求协议错误"),
+                    self.token_conf["url"],
+                    ClientConfManager.proxies(),
+                    self.__name__,
+                    exc,
                 )
+            )
 
-            except httpx.ProtocolError as exc:
+        except httpx.ProxyError as exc:
+            raise APIConnectionError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    _("请求代理错误"),
+                    self.token_conf["url"],
+                    ClientConfManager.proxies(),
+                    self.__name__,
+                    exc,
+                )
+            )
+
+        except httpx.HTTPStatusError as exc:
+            # 捕获 httpx 的状态代码错误 (captures specific status code errors from httpx)
+            logger.error(_("msToken API错误：{0}").format(exc))
+            if response.status_code == 401:
                 raise APIUnauthorizedError(
                     _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("请求协议错误"),
-                        cls.token_conf["url"],
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
+                        "参数验证失败，请更新 F2 配置文件中的 {0}，以匹配 {1} 新规则"
+                    ).format("msToken", "tiktok")
                 )
 
-            except httpx.ProxyError as exc:
-                raise APIConnectionError(
-                    _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("请求代理错误"),
-                        cls.token_conf["url"],
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
+            elif response.status_code == 404:
+                raise APINotFoundError(_("{0} 无法找到API端点").format("msToken"))
+            else:
+                raise APIResponseError(
+                    _("链接：{0}，状态码 {1}：{2} ").format(
+                        exc.response.url,
+                        exc.response.status_code,
+                        exc.response.text,
                     )
                 )
-
-            except httpx.HTTPStatusError as exc:
-                # 捕获 httpx 的状态代码错误 (captures specific status code errors from httpx)
-                logger.error(_("msToken API错误：{0}").format(exc))
-                if response.status_code == 401:
-                    raise APIUnauthorizedError(
-                        _(
-                            "参数验证失败，请更新 F2 配置文件中的 {0}，以匹配 {1} 新规则"
-                        ).format("msToken", "tiktok")
-                    )
-
-                elif response.status_code == 404:
-                    raise APINotFoundError(_("{0} 无法找到API端点").format("msToken"))
-                else:
-                    raise APIResponseError(
-                        _("链接：{0}，状态码 {1}：{2} ").format(
-                            exc.response.url,
-                            exc.response.status_code,
-                            exc.response.text,
-                        )
-                    )
 
     @classmethod
     def gen_false_msToken(cls) -> str:
         """生成随机msToken (Generate random msToken)"""
-        logger.debug(_("生成虚假的msToken"))
-        return gen_random_str(146) + "=="
+        false_msToken = gen_random_str(146) + "=="
+        logger.debug(_("生成虚假的msToken：{0}").format(false_msToken))
+        return false_msToken
 
-    @classmethod
-    def gen_ttwid(cls) -> str:
+    def gen_ttwid(self) -> str:
         """
         生成请求必带的ttwid (Generate the essential ttwid for requests)
         """
-        transport = httpx.HTTPTransport(retries=5)
-        with httpx.Client(transport=transport, proxies=cls.proxies) as client:
-            try:
-                response = client.post(
-                    cls.ttwid_conf["url"],
-                    content=cls.ttwid_conf["data"],
-                    headers={
-                        "Cookie": cls.ttwid_conf.get("cookie"),
-                        "Content-Type": "text/plain",
-                    },
-                )
-                response.raise_for_status()
 
-                ttwid = httpx.Cookies(response.cookies).get("ttwid")
+        try:
+            response = self.client.post(
+                self.ttwid_conf["url"],
+                content=self.ttwid_conf["data"],
+                headers=self.ttwid_headers,
+            )
+            response.raise_for_status()
 
-                if ttwid is None:
-                    raise APIResponseError(
-                        _("ttwid: 检查没有通过, 请更新配置文件中的ttwid")
-                    )
+            ttwid = httpx.Cookies(response.cookies).get("ttwid")
 
-                return ttwid
-
-            # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
-            except httpx.TimeoutException as exc:
-                raise APITimeoutError(
-                    _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("请求端点超时"),
-                        cls.ttwid_conf["url"],
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
+            if ttwid is None:
+                raise APIResponseError(
+                    _("ttwid: 检查没有通过, 请更新配置文件中的ttwid")
                 )
 
-            except httpx.NetworkError as exc:
-                raise APIConnectionError(
-                    _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("网络连接失败，请检查当前网络环境"),
-                        cls.ttwid_conf["url"],
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
-                )
+            logger.debug(_("生成ttwid：{0}").format(str(ttwid)))
+            return str(ttwid)
 
-            except httpx.ProtocolError as exc:
+        # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
+        except httpx.TimeoutException as exc:
+            raise APITimeoutError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    _("请求端点超时"),
+                    self.ttwid_conf["url"],
+                    ClientConfManager.proxies(),
+                    self.__class__.__name__,
+                    exc,
+                )
+            )
+
+        except httpx.NetworkError as exc:
+            raise APIConnectionError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    _("网络连接失败，请检查当前网络环境"),
+                    self.ttwid_conf["url"],
+                    ClientConfManager.proxies(),
+                    self.__class__.__name__,
+                    exc,
+                )
+            )
+
+        except httpx.ProtocolError as exc:
+            raise APIUnauthorizedError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    _("请求协议错误"),
+                    self.ttwid_conf["url"],
+                    ClientConfManager.proxies(),
+                    self.__class__.__name__,
+                    exc,
+                )
+            )
+
+        except httpx.ProxyError as exc:
+            raise APIConnectionError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    _("请求代理错误"),
+                    self.ttwid_conf["url"],
+                    ClientConfManager.proxies(),
+                    self.__class__.__name__,
+                    exc,
+                )
+            )
+
+        except httpx.HTTPStatusError as exc:
+            # 捕获 httpx 的状态代码错误 (captures specific status code errors from httpx)
+            if response.status_code == 401:
                 raise APIUnauthorizedError(
                     _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("请求协议错误"),
-                        cls.ttwid_conf["url"],
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
+                        "参数验证失败，请更新 F2 配置文件中的 {0}，以匹配 {1} 新规则"
+                    ).format("ttwid", "tiktok")
+                )
+
+            elif response.status_code == 404:
+                raise APINotFoundError(_("{0} 无法找到API端点").format("ttwid"))
+            else:
+                raise APIResponseError(
+                    _("链接：{0}，状态码 {1}：{2} ").format(
+                        exc.response.url,
+                        exc.response.status_code,
+                        exc.response.text,
                     )
                 )
 
-            except httpx.ProxyError as exc:
-                raise APIConnectionError(
-                    _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("请求代理错误"),
-                        cls.ttwid_conf["url"],
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
-                )
-
-            except httpx.HTTPStatusError as exc:
-                # 捕获 httpx 的状态代码错误 (captures specific status code errors from httpx)
-                if response.status_code == 401:
-                    raise APIUnauthorizedError(
-                        _(
-                            "参数验证失败，请更新 F2 配置文件中的 {0}，以匹配 {1} 新规则"
-                        ).format("ttwid", "tiktok")
-                    )
-
-                elif response.status_code == 404:
-                    raise APINotFoundError(_("{0} 无法找到API端点").format("ttwid"))
-                else:
-                    raise APIResponseError(
-                        _("链接：{0}，状态码 {1}：{2} ").format(
-                            exc.response.url,
-                            exc.response.status_code,
-                            exc.response.text,
-                        )
-                    )
-
-    @classmethod
-    def gen_odin_tt(cls):
+    def gen_odin_tt(self):
         """
         生成请求必带的odin_tt (Generate the essential odin_tt for requests)
         """
-        transport = httpx.HTTPTransport(retries=5)
-        with httpx.Client(transport=transport, proxies=cls.proxies) as client:
-            try:
-                response = client.get(cls.odin_tt_conf["url"])
+
+        try:
+                response = self.client.get(self.odin_tt_conf["url"])
                 response.raise_for_status()
 
                 odin_tt = httpx.Cookies(response.cookies).get("odin_tt")
@@ -313,59 +317,59 @@ class TokenManager:
                 return odin_tt
 
             # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
-            except httpx.TimeoutException as exc:
+        except httpx.TimeoutException as exc:
                 raise APITimeoutError(
                     _(
                         "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
                     ).format(
                         _("请求端点超时"),
-                        cls.odin_tt_conf["url"],
+                        self.odin_tt_conf["url"],
                         ClientConfManager.proxies(),
-                        cls.__name__,
+                        self.__class__.__name__,
                         exc,
                     )
                 )
 
-            except httpx.NetworkError as exc:
+        except httpx.NetworkError as exc:
                 raise APIConnectionError(
                     _(
                         "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
                     ).format(
                         _("网络连接失败，请检查当前网络环境"),
-                        cls.odin_tt_conf["url"],
+                        self.odin_tt_conf["url"],
                         ClientConfManager.proxies(),
-                        cls.__name__,
+                        self.__class__.__name__,
                         exc,
                     )
                 )
 
-            except httpx.ProtocolError as exc:
+        except httpx.ProtocolError as exc:
                 raise APIUnauthorizedError(
                     _(
                         "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
                     ).format(
                         _("请求协议错误"),
-                        cls.odin_tt_conf["url"],
+                        self.odin_tt_conf["url"],
                         ClientConfManager.proxies(),
-                        cls.__name__,
+                        self.__class__.__name__,
                         exc,
                     )
                 )
 
-            except httpx.ProxyError as exc:
+        except httpx.ProxyError as exc:
                 raise APIConnectionError(
                     _(
                         "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
                     ).format(
                         _("请求代理错误"),
-                        cls.odin_tt_conf["url"],
+                        self.odin_tt_conf["url"],
                         ClientConfManager.proxies(),
-                        cls.__name__,
+                        self.__class__.__name__,
                         exc,
                     )
                 )
 
-            except httpx.HTTPStatusError as exc:
+        except httpx.HTTPStatusError as exc:
                 # 捕获 httpx 的状态代码错误 (captures specific status code errors from httpx)
                 if response.status_code == 401:
                     raise APIUnauthorizedError(
