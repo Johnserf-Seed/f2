@@ -2,6 +2,7 @@
 
 import m3u8
 import httpx
+import traceback
 
 from pathlib import Path
 from typing import Union
@@ -38,6 +39,7 @@ async def get_content_length(url: str, headers: dict = {}, proxies: dict = {}) -
 
         except httpx.ConnectTimeout:
             # 连接超时错误处理 (Handling connection timeout errors)
+            logger.error(traceback.format_exc())
             logger.error(_("连接超时错误: {0}".format(url)))
             logger.debug("===================================")
             logger.debug(f"headers:{headers}, proxies:{proxies}")
@@ -56,6 +58,7 @@ async def get_content_length(url: str, headers: dict = {}, proxies: dict = {}) -
                     response = await client.send(request, stream=True)
                     response.raise_for_status()
                 except Exception as e:
+                    logger.error(traceback.format_exc())
                     logger.error(
                         _(
                             "HTTP状态错误, 尝试GET请求失败: {0}, 错误详情: {1}".format(
@@ -74,10 +77,12 @@ async def get_content_length(url: str, headers: dict = {}, proxies: dict = {}) -
                 )
                 return 0
         except httpx.RequestError as e:
+            logger.error(traceback.format_exc())
             logger.error("httpx 请求错误: {0}, 错误详情: {1}".format(url, e))
             return 0
         except Exception as e:
             # 处理未知错误 (Handling unknown errors)
+            logger.error(traceback.format_exc())
             logger.error(
                 _(
                     "f2 请求 Content-Length 时发生未知错误: {0}, 错误详情: {1}".format(

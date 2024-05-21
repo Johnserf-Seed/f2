@@ -68,10 +68,27 @@ class BaseDownloader(BaseCrawler):
                 await self.progress.update(
                     task_id, advance=len(chunk), total=int(content_length)
                 )
-        except httpx.ReadTimeout as e:
-            logger.warning(_("文件区块下载超时：{0}").format(e))
+        except httpx.TimeoutException as e:
+            logger.error(traceback.format_exc())
+            logger.error(_("文件区块超时：{0}").format(e))
+        except httpx.NetworkError as e:
+            logger.error(traceback.format_exc())
+            logger.error(_("文件区块网络错误：{0}").format(e))
+        except httpx.HTTPStatusError as e:
+            logger.error(traceback.format_exc())
+            logger.error(_("文件区块HTTP错误：{0}").format(e))
+        except httpx.ProxyError as e:
+            logger.error(traceback.format_exc())
+            logger.error(_("文件区块代理错误：{0}").format(e))
+        except httpx.UnsupportedProtocol as e:
+            logger.error(traceback.format_exc())
+            logger.error(_("文件区块协议错误：{0}").format(e))
+        except httpx.StreamError as e:
+            logger.error(traceback.format_exc())
+            logger.error(_("文件区块流错误：{0}").format(e))
         except Exception as e:
-            logger.error(_("文件区块下载失败：{0}").format(e))
+            logger.error(traceback.format_exc())
+            logger.error(_("文件区块下载失败：{0} Exception：{1}").format(request, e))
 
     async def download_file(
         self,
