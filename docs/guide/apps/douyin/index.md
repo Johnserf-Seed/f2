@@ -35,7 +35,7 @@ outline: deep
 | 获取指定用户名         | get_user_nickname      |      🔴     |
 | 创建用户记录与目录      | get_or_add_user_data   |     🟡  |
 | 创建作品下载记录        | get_or_add_video_data  |     🟢      |
-| SSO登录              |  handle_sso_login       |     🟢      |
+| SSO登录              |  handle_sso_login       |     🟢🟡      |
 :::
 
 ::: details utils接口列表
