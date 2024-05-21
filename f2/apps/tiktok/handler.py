@@ -241,7 +241,11 @@ class TiktokHandler:
             )
 
     async def fetch_user_post_videos(
-        self, secUid: str, cursor: int, page_counts: int, max_counts: float
+        self,
+        secUid: str,
+        cursor: int,
+        page_counts: int,
+        max_counts: float,
     ) -> AsyncGenerator[UserPostFilter, Any]:
         """
         用于获取指定用户发布的作品列表
@@ -274,7 +278,11 @@ class TiktokHandler:
             logger.debug(_("开始爬取第 {0} 页").format(cursor))
 
             async with TiktokCrawler(self.kwargs) as crawler:
-                params = UserPost(secUid=secUid, cursor=cursor, count=page_counts)
+                params = UserPost(
+                    secUid=secUid,
+                    cursor=cursor,
+                    count=page_counts,
+                )
                 response = await crawler.fetch_user_post(params)
                 video = UserPostFilter(response)
 

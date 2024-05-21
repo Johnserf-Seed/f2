@@ -16,7 +16,7 @@ from f2.apps.tiktok.model import (
     PostSearch,
     UserLive,
 )
-from f2.apps.tiktok.utils import XBogusManager, ClientConfManager
+from f2.apps.tiktok.utils import XBogusManager
 
 
 class TiktokCrawler(BaseCrawler):

@@ -19,7 +19,7 @@ async def main():
     print("=================_to_raw================")
     print(user._to_raw())
     # print("=================_to_dict===============")
-    # print(aweme_data_list._to_dict())
+    # print(user._to_dict())
 
 
 if __name__ == "__main__":
