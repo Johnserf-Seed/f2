@@ -19,12 +19,12 @@ class BaseRequestModel(BaseModel):
     browser_online: str = "true"
     browser_platform: str = "Win32"
     browser_version: str = quote(
-        "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
         safe="",
     )
     channel: str = "tiktok_web"
     cookie_enabled: str = "true"
-    device_id: str = "7360698239018452498"
+    device_id: str = "7372218823115949569"  # 风控参数 # 7368075886505051694
     device_platform: str = "web_pc"
     focus_state: str = "true"
     from_page: str = "user"
@@ -33,7 +33,7 @@ class BaseRequestModel(BaseModel):
     is_page_visible: str = "true"
     language: str = "zh-Hans"
     os: str = "windows"
-    priority_region: str = ""
+    priority_region: str = "US"
     referer: str = ""
     region: str = "SG"  # SG JP KR...
     # root_referer: str = quote("https://www.tiktok.com/", safe="")
@@ -44,8 +44,8 @@ class BaseRequestModel(BaseModel):
     try:
         msToken: str = TokenManager.gen_real_msToken()
     except:
-        # 返回虚假的msToken (Return a fake msToken)
-        msToken: str = TokenManager.gen_false_msToken()
+        # 发生异常时，重新生成msToken，不生成虚假msToken
+        msToken: str = TokenManager.gen_real_msToken()
 
 
 # router model
