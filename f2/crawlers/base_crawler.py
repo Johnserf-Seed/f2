@@ -56,6 +56,7 @@ class BaseCrawler:
         self._max_retries = max_retries
         # 底层连接重试次数 / Underlying connection retry count
         self.atransport = httpx.AsyncHTTPTransport(retries=max_retries)
+        self.transport = httpx.HTTPTransport(retries=max_retries)
 
         # 超时等待时间 / Timeout waiting time
         self._timeout = timeout
@@ -76,7 +77,7 @@ class BaseCrawler:
             proxies=self.proxies,
             timeout=self.timeout,
             limits=self.limits,
-            transport=self.atransport,
+            transport=self.transport,
         )
 
     async def _fetch_response(self, endpoint: str) -> Response:
