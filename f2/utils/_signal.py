@@ -6,6 +6,7 @@ import asyncio
 from f2.utils._singleton import Singleton
 from f2.cli.cli_console import RichConsoleManager
 
+
 class SignalManager(metaclass=Singleton):
     def __init__(self):
         self._shutdown_event = asyncio.Event()
@@ -33,7 +34,9 @@ class SignalManager(metaclass=Singleton):
     def register_shutdown_signal(self):
         """注册一个处理程序来捕获关闭信号"""
         signal.signal(signal.SIGINT, self._handle_signal)
-        signal.signal(signal.SIGTERM, self._handle_signal)  # 捕获SIGTERM信号，确保更好的跨平台兼容性
+        signal.signal(
+            signal.SIGTERM, self._handle_signal
+        )  # 捕获SIGTERM信号，确保更好的跨平台兼容性
 
     @classmethod
     def is_shutdown_signaled(cls):
