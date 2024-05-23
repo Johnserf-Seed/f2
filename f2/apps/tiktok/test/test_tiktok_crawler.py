@@ -15,7 +15,7 @@ async def test_crawler_by_secUid(cookie_fixture):
     async with TiktokCrawler(cookie_fixture) as crawler:
         params = UserPost(
             cursor=0,
-            count= 5,
+            count=5,
             secUid="MS4wLjABAAAAREbjjYuEFoUJN86G9f2byGC_LSOTz4N7BGdreT_8Cro-NkzZYf_nxpDpLp9R6ElJ",
         )
         response = await crawler.fetch_user_post(params)
