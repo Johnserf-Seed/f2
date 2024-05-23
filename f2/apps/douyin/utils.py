@@ -556,10 +556,28 @@ class SecUserIdFetcher(BaseCrawler):
         return await asyncio.gather(*sec_user_ids)
 
 
-class AwemeIdFetcher:
-    # 预编译正则表达式
+class AwemeIdFetcher(BaseCrawler):
+    """
+    AwemeIdFetcher 用于从给定的 URL 中获取 aweme_id。
+
+    该类继承自 BaseCrawler，并利用其 HTTP 客户端功能来发送请求。
+
+    类属性:
+    - _DOUYIN_VIDEO_URL_PATTERN (re.Pattern): 抖音视频 URL 的正则表达式模式。
+    - _DOUYIN_NOTE_URL_PATTERN (re.Pattern): 抖音笔记 URL 的正则表达式模式。
+    - proxies (dict): 代理配置。
+
+    方法:
+    - get_aweme_id: 从单个 URL 中获取 aweme_id。
+    - get_all_aweme_id: 从 URL 列表中获取所有 aweme_id。
+    """
+
     _DOUYIN_VIDEO_URL_PATTERN = re.compile(r"video/([^/?]*)")
     _DOUYIN_NOTE_URL_PATTERN = re.compile(r"note/([^/?]*)")
+    proxies = ClientConfManager.proxies()
+
+    def __init__(self):
+        super().__init__(proxies=self.proxies)
 
     @classmethod
     async def get_aweme_id(cls, url: str) -> str:
@@ -571,6 +589,14 @@ class AwemeIdFetcher:
 
         Returns:
             str: 匹配到的aweme_id (Matched aweme_id)。
+
+        Raises:
+            TypeError: 参数不是字符串类型。
+            APINotFoundError: 输入的URL不合法。
+            APITimeoutError: 请求超时。
+            APIConnectionError: 网络连接失败。
+            APIUnauthorizedError: 请求协议错误。
+            APIResponseError: 未找到aweme_id或状态码错误。
         """
 
         if not isinstance(url, str):
@@ -580,100 +606,71 @@ class AwemeIdFetcher:
         url = extract_valid_urls(url)
 
         if url is None:
-            raise (
-                APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
-            )
+            raise APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
 
-        # 重定向到完整链接
-        transport = httpx.AsyncHTTPTransport(retries=5)
-        async with httpx.AsyncClient(
-            transport=transport, proxies=ClientConfManager.proxies(), timeout=10
-        ) as client:
-            try:
-                response = await client.get(url, follow_redirects=True)
-                response.raise_for_status()
+        # 创建一个实例以访问 aclient
+        instance = cls()
 
-                video_pattern = cls._DOUYIN_VIDEO_URL_PATTERN
-                note_pattern = cls._DOUYIN_NOTE_URL_PATTERN
+        try:
+            response = await instance.aclient.get(url, follow_redirects=True)
+            response.raise_for_status()
 
-                match = video_pattern.search(str(response.url))
+            video_pattern = cls._DOUYIN_VIDEO_URL_PATTERN
+            note_pattern = cls._DOUYIN_NOTE_URL_PATTERN
+
+            match = video_pattern.search(str(response.url))
+            if match:
+                aweme_id = match.group(1)
+            else:
+                match = note_pattern.search(str(response.url))
                 if match:
                     aweme_id = match.group(1)
                 else:
-                    match = note_pattern.search(str(response.url))
-                    if match:
-                        aweme_id = match.group(1)
-                    else:
-                        raise APIResponseError(
-                            _("未在响应的地址中找到aweme_id，检查链接是否为作品页")
-                        )
-                return aweme_id
-
-            # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
-            except httpx.TimeoutException as exc:
-                raise APITimeoutError(
-                    _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("请求端点超时"),
-                        url,
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
+                    raise APIResponseError(
+                        _("未在响应的地址中找到aweme_id，检查链接是否为作品页")
                     )
-                )
+            return aweme_id
 
-            except httpx.NetworkError as exc:
-                raise APIConnectionError(
-                    _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("网络连接失败，请检查当前网络环境"),
-                        url,
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
-                )
+        except httpx.TimeoutException as exc:
+            raise APITimeoutError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(_("请求端点超时"), url, cls.proxies, cls.__name__, exc)
+            )
 
-            except httpx.ProtocolError as exc:
-                raise APIUnauthorizedError(
-                    _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("请求协议错误"),
-                        url,
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
+        except httpx.NetworkError as exc:
+            raise APIConnectionError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    _("网络连接失败，请检查当前网络环境"),
+                    url,
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
                 )
+            )
 
-            except httpx.ProxyError as exc:
-                raise APIConnectionError(
-                    _(
-                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("请求代理错误"),
-                        url,
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
-                )
+        except httpx.ProtocolError as exc:
+            raise APIUnauthorizedError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(_("请求协议错误"), url, cls.proxies, cls.__name__, exc)
+            )
 
-            except httpx.HTTPStatusError as exc:
-                raise APIResponseError(
-                    _(
-                        "{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                    ).format(
-                        _("状态码错误"),
-                        url,
-                        ClientConfManager.proxies(),
-                        cls.__name__,
-                        exc,
-                    )
+        except httpx.ProxyError as exc:
+            raise APIConnectionError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(_("请求代理错误"), url, cls.proxies, cls.__name__, exc)
+            )
+
+        except httpx.HTTPStatusError as exc:
+            raise APIResponseError(
+                _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
+                    _("状态码错误"), url, cls.proxies, cls.__name__, exc
                 )
+            )
 
     @classmethod
     async def get_all_aweme_id(cls, urls: list) -> list:
@@ -681,10 +678,14 @@ class AwemeIdFetcher:
         获取视频aweme_id,传入列表url都可以解析出aweme_id (Get video aweme_id, pass in the list url can parse out aweme_id)
 
         Args:
-            urls: list: 列表url (list url)
+            urls (list): 列表url (list url)
 
-        Return:
-            aweme_ids: list: 视频的唯一标识，返回列表 (The unique identifier of the video, return list)
+        Returns:
+            list: 视频的唯一标识，返回列表 (The unique identifier of the video, return list)
+
+        Raises:
+            TypeError: 参数不是列表类型。
+            APINotFoundError: 输入的URL List不合法。
         """
 
         if not isinstance(urls, list):
@@ -694,10 +695,8 @@ class AwemeIdFetcher:
         urls = extract_valid_urls(urls)
 
         if urls == []:
-            raise (
-                APINotFoundError(
-                    _("输入的URL List不合法。类名：{0}").format(cls.__name__)
-                )
+            raise APINotFoundError(
+                _("输入的URL List不合法。类名：{0}").format(cls.__name__)
             )
 
         aweme_ids = [cls.get_aweme_id(url) for url in urls]
