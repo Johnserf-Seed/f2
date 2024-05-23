@@ -841,14 +841,30 @@ class MixIdFetcher(BaseCrawler):
         return await asyncio.gather(*mix_ids)
 
 
-class WebCastIdFetcher:
-    # 预编译正则表达式
+class WebCastIdFetcher(BaseCrawler):
+    """
+    WebCastIdFetcher 用于从给定的 URL 中获取 webcast_id。
+
+    该类继承自 BaseCrawler，并利用其 HTTP 客户端功能来发送请求。
+
+    类属性:
+    - _DOUYIN_LIVE_URL_PATTERN (re.Pattern): 抖音直播 URL 的正则表达式模式。
+    - _DOUYIN_LIVE_URL_PATTERN2 (re.Pattern): 抖音直播 URL 的第二种正则表达式模式。
+    - _DOUYIN_LIVE_URL_PATTERN3 (re.Pattern): 抖音直播 URL 的第三种正则表达式模式。
+    - proxies (dict): 代理配置。
+
+    方法:
+    - get_webcast_id: 从单个 URL 中获取 webcast_id。
+    - get_all_webcast_id: 从 URL 列表中获取所有 webcast_id。
+    """
+
     _DOUYIN_LIVE_URL_PATTERN = re.compile(r"live/([^/?]*)")
-    # https://live.douyin.com/766545142636?cover_type=0&enter_from_merge=web_live&enter_method=web_card&game_name=&is_recommend=1&live_type=game&more_detail=&request_id=20231110224012D47CD00C18B4AE4BFF9B&room_id=7299828646049827596&stream_type=vertical&title_type=1&web_live_page=hot_live&web_live_tab=all
-    # https://live.douyin.com/766545142636
     _DOUYIN_LIVE_URL_PATTERN2 = re.compile(r"http[s]?://live.douyin.com/(\d+)")
-    # https://webcast.amemv.com/douyin/webcast/reflow/7318296342189919011?u_code=l1j9bkbd&did=MS4wLjABAAAAEs86TBQPNwAo-RGrcxWyCdwKhI66AK3Pqf3ieo6HaxI&iid=MS4wLjABAAAA0ptpM-zzoliLEeyvWOCUt-_dQza4uSjlIvbtIazXnCY&with_sec_did=1&use_link_command=1&ecom_share_track_params=&extra_params={"from_request_id":"20231230162057EC005772A8EAA0199906","im_channel_invite_id":"0"}&user_id=3644207898042206&liveId=7318296342189919011&from=share&style=share&enter_method=click_share&roomId=7318296342189919011&activity_info={}
     _DOUYIN_LIVE_URL_PATTERN3 = re.compile(r"reflow/([^/?]*)")
+    proxies = ClientConfManager.proxies()
+
+    def __init__(self):
+        super().__init__(proxies=self.proxies)
 
     @classmethod
     async def get_webcast_id(cls, url: str) -> str:
@@ -860,6 +876,14 @@ class WebCastIdFetcher:
 
         Returns:
             str: 匹配到的webcast_id (Matched webcast_id)。
+
+        Raises:
+            TypeError: 参数不是字符串类型。
+            APINotFoundError: 输入的URL不合法。
+            APITimeoutError: 请求超时。
+            APIConnectionError: 网络连接失败。
+            APIUnauthorizedError: 请求协议错误。
+            APIResponseError: 未找到webcast_id或状态码错误。
         """
 
         if not isinstance(url, str):
@@ -869,55 +893,42 @@ class WebCastIdFetcher:
         url = extract_valid_urls(url)
 
         if url is None:
-            raise (
-                APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
-            )
+            raise APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
+
+        instance = cls()
+
         try:
-            # 重定向到完整链接
-            transport = httpx.AsyncHTTPTransport(retries=5)
-            async with httpx.AsyncClient(
-                transport=transport, proxies=ClientConfManager.proxies(), timeout=10
-            ) as client:
-                response = await client.get(url, follow_redirects=True)
-                response.raise_for_status()
-                url = str(response.url)
+            response = await instance.aclient.get(url, follow_redirects=True)
+            response.raise_for_status()
+            url = str(response.url)
 
-                live_pattern = cls._DOUYIN_LIVE_URL_PATTERN
-                live_pattern2 = cls._DOUYIN_LIVE_URL_PATTERN2
-                live_pattern3 = cls._DOUYIN_LIVE_URL_PATTERN3
+            live_pattern = cls._DOUYIN_LIVE_URL_PATTERN
+            live_pattern2 = cls._DOUYIN_LIVE_URL_PATTERN2
+            live_pattern3 = cls._DOUYIN_LIVE_URL_PATTERN3
 
-                if live_pattern.search(url):
-                    match = live_pattern.search(url)
-                elif live_pattern2.search(url):
-                    match = live_pattern2.search(url)
-                elif live_pattern3.search(url):
-                    match = live_pattern3.search(url)
-                    logger.warning(
-                        _(
-                            "该链接返回的是room_id，请使用`fetch_user_live_videos_by_room_id`接口"
-                        )
+            if live_pattern.search(url):
+                match = live_pattern.search(url)
+            elif live_pattern2.search(url):
+                match = live_pattern2.search(url)
+            elif live_pattern3.search(url):
+                match = live_pattern3.search(url)
+                logger.warning(
+                    _(
+                        "该链接返回的是room_id，请使用`fetch_user_live_videos_by_room_id`接口"
                     )
-                else:
-                    raise APIResponseError(
-                        _("未在响应的地址中找到webcast_id，检查链接是否为直播页")
-                    )
+                )
+            else:
+                raise APIResponseError(
+                    _("未在响应的地址中找到webcast_id，检查链接是否为直播页")
+                )
 
-                return match.group(1)
-
-        # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
+            return match.group(1)
         except httpx.TimeoutException as exc:
             raise APITimeoutError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format(
-                    _("请求端点超时"),
-                    url,
-                    ClientConfManager.proxies(),
-                    cls.__name__,
-                    exc,
-                )
+                ).format(_("请求端点超时"), url, cls.proxies, cls.__name__, exc)
             )
-
         except httpx.NetworkError as exc:
             raise APIConnectionError(
                 _(
@@ -925,46 +936,29 @@ class WebCastIdFetcher:
                 ).format(
                     _("网络连接失败，请检查当前网络环境"),
                     url,
-                    ClientConfManager.proxies(),
+                    cls.proxies,
                     cls.__name__,
                     exc,
                 )
             )
-
         except httpx.ProtocolError as exc:
             raise APIUnauthorizedError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format(
-                    _("请求协议错误"),
-                    url,
-                    ClientConfManager.proxies(),
-                    cls.__name__,
-                    exc,
-                )
+                ).format(_("请求协议错误"), url, cls.proxies, cls.__name__, exc)
             )
 
         except httpx.ProxyError as exc:
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format(
-                    _("请求代理错误"),
-                    url,
-                    ClientConfManager.proxies(),
-                    cls.__name__,
-                    exc,
-                )
+                ).format(_("请求代理错误"), url, cls.proxies, cls.__name__, exc)
             )
 
         except httpx.HTTPStatusError as exc:
             raise APIResponseError(
                 _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
-                    _("状态码错误"),
-                    url,
-                    ClientConfManager.proxies(),
-                    cls.__name__,
-                    exc,
+                    _("状态码错误"), url, cls.proxies, cls.__name__, exc
                 )
             )
 
@@ -974,10 +968,14 @@ class WebCastIdFetcher:
         获取直播webcast_id,传入列表url都可以解析出webcast_id (Get live webcast_id, pass in the list url can parse out webcast_id)
 
         Args:
-            urls: list: 列表url (list url)
+            urls (list): 列表url (list url)
 
-        Return:
-            webcast_ids: list: 直播的唯一标识，返回列表 (The unique identifier of the live, return list)
+        Returns:
+            list: 直播的唯一标识，返回列表 (The unique identifier of the live, return list)
+
+        Raises:
+            TypeError: 参数不是列表类型。
+            APINotFoundError: 输入的URL List不合法。
         """
 
         if not isinstance(urls, list):
@@ -987,10 +985,8 @@ class WebCastIdFetcher:
         urls = extract_valid_urls(urls)
 
         if urls == []:
-            raise (
-                APINotFoundError(
-                    _("输入的URL List不合法。类名：{0}").format(cls.__name__)
-                )
+            raise APINotFoundError(
+                _("输入的URL List不合法。类名：{0}").format(cls.__name__)
             )
 
         webcast_ids = [cls.get_webcast_id(url) for url in urls]
