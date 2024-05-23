@@ -211,7 +211,6 @@ class TokenManager(BaseCrawler):
                 )
             )
 
-
     @classmethod
     def gen_false_msToken(cls) -> str:
         """

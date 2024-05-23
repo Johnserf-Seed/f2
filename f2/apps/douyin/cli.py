@@ -19,6 +19,7 @@ from f2.utils.utils import (
 )
 from f2.utils.conf_manager import ConfigManager
 from f2.i18n.translator import TranslationManager, _
+
 # from f2.apps.douyin.handler import handle_sso_login
 from f2.apps.douyin.utils import ClientConfManager
 

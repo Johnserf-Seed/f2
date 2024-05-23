@@ -2,9 +2,11 @@
 import asyncio
 from f2.apps.douyin.utils import WebCastIdFetcher
 
+
 async def main():
     raw_url = "https://live.douyin.com/775841227732"
     return await WebCastIdFetcher.get_webcast_id(raw_url)
+
 
 if __name__ == "__main__":
     print(asyncio.run(main()))
@@ -16,6 +18,7 @@ if __name__ == "__main__":
 import asyncio
 from f2.apps.douyin.utils import WebCastIdFetcher
 from f2.utils.utils import extract_valid_urls
+
 
 async def main():
     raw_urls = [
@@ -31,6 +34,7 @@ async def main():
 
     # 对于URL列表
     return await WebCastIdFetcher.get_all_webcast_id(urls)
+
 
 if __name__ == "__main__":
     print(asyncio.run(main()))

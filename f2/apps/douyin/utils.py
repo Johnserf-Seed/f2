@@ -716,6 +716,21 @@ class MixIdFetcher(BaseCrawler):
     方法:
     - get_mix_id: 从单个 URL 中获取 mix_id。
     - get_all_mix_id: 从 URL 列表中获取所有 mix_id。
+
+    异常处理:
+    - 在 HTTP 请求过程中，处理可能出现的 TimeoutException、NetworkError、ProtocolError、ProxyError 和 HTTPStatusError 异常，并记录相应的错误信息。
+
+    使用示例:
+        # 获取单个合集的 mix_id
+        url = "https://www.douyin.com/collection/7360898383181809676"
+        mix_id = await MixIdFetcher.get_mix_id(url)
+
+        # 获取多个合集的 mix_id
+        urls = [
+            "https://www.douyin.com/collection/6812345678901234567",
+            "https://www.douyin.com/collection/6812345678901234568",
+        ]
+        mix_ids = await MixIdFetcher.get_all_mix_id(urls)
     """
 
     _DOUYIN_MIX_URL_PATTERN = re.compile(r"collection/([^/?]*)")
