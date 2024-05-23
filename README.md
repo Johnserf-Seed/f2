@@ -5,6 +5,8 @@
 
 [![Downloads](https://pepy.tech/badge/f2/month)](https://pepy.tech/project/f2)
 [![PyPI version](https://badge.fury.io/py/f2.svg)](https://badge.fury.io/py/f2)
+[![Dev Branch](https://badgen.net/badge/branch/v0.0.1.6-pw2/blue)](https://github.com/Johnserf-Seed/f2/tree/v0.0.1.6-pw2)
+[![Discord](https://img.shields.io/discord/1146473603450282004?label=Discord)](https://discord.gg/3PhtPmgHf8)
 [![codecov](https://codecov.io/gh/Johnserf-Seed/f2/graph/badge.svg?token=T9DH4QPZSS)](https://codecov.io/gh/Johnserf-Seed/f2)
 [![APACHE-2.0](https://img.shields.io/github/license/johnserf-seed/f2)](https://github.com/Johnserf-Seed/f2/blob/main/LICENSE)
 
