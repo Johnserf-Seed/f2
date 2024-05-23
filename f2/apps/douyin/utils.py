@@ -409,10 +409,28 @@ class XBogusManager:
         return final_endpoint
 
 
-class SecUserIdFetcher:
-    # 预编译正则表达式
+class SecUserIdFetcher(BaseCrawler):
+    """
+    SecUserIdFetcher 用于从给定的 URL 中获取 sec_user_id。
+
+    该类继承自 BaseCrawler，并利用其 HTTP 客户端功能来发送请求。
+
+    类属性:
+    - _DOUYIN_URL_PATTERN (re.Pattern): 抖音用户主页 URL 的正则表达式模式。
+    - _REDIRECT_URL_PATTERN (re.Pattern): 重定向 URL 中 sec_uid 的正则表达式模式。
+    - proxies (dict): 代理配置。
+
+    方法:
+    - get_sec_user_id: 从单个 URL 中获取 sec_user_id。
+    - get_all_sec_user_id: 从 URL 列表中获取所有 sec_user_id。
+    """
+
     _DOUYIN_URL_PATTERN = re.compile(r"user/([^/?]*)")
     _REDIRECT_URL_PATTERN = re.compile(r"sec_uid=([^&]*)")
+    proxies = ClientConfManager.proxies()
+
+    def __init__(self):
+        super().__init__(proxies=self.proxies)
 
     @classmethod
     async def get_sec_user_id(cls, url: str) -> str:
@@ -424,6 +442,14 @@ class SecUserIdFetcher:
 
         Returns:
             str: 匹配到的sec_user_id (Matched sec_user_id)。
+
+        Raises:
+            TypeError: 参数不是字符串类型。
+            APINotFoundError: 输入的URL不合法。
+            APITimeoutError: 请求超时。
+            APIConnectionError: 网络连接失败。
+            APIUnauthorizedError: 请求协议错误。
+            APIResponseError: 未找到sec_user_id或状态码错误。
         """
 
         if not isinstance(url, str):
@@ -433,9 +459,10 @@ class SecUserIdFetcher:
         url = extract_valid_urls(url)
 
         if url is None:
-            raise (
-                APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
-            )
+            raise APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
+
+        # 创建一个实例以访问 aclient
+        instance = cls()
 
         pattern = (
             cls._REDIRECT_URL_PATTERN
@@ -444,36 +471,24 @@ class SecUserIdFetcher:
         )
 
         try:
-            transport = httpx.AsyncHTTPTransport(retries=5)
-            async with httpx.AsyncClient(
-                transport=transport, proxies=ClientConfManager.proxies(), timeout=10
-            ) as client:
-                response = await client.get(url, follow_redirects=True)
-                # 444一般为Nginx拦截，不返回状态 (444 is generally intercepted by Nginx and does not return status)
-                if response.status_code in {200, 444}:
-                    match = pattern.search(str(response.url))
-                    if match:
-                        return match.group(1)
-                    else:
-                        raise APIResponseError(
-                            _(
-                                "未在响应的地址中找到sec_user_id，检查链接是否为用户主页类名：{0}"
-                            ).format(cls.__name__)
-                        )
-                response.raise_for_status()
+            response = await instance.aclient.get(url, follow_redirects=True)
+            if response.status_code in {200, 444}:
+                match = pattern.search(str(response.url))
+                if match:
+                    return match.group(1)
+                else:
+                    raise APIResponseError(
+                        _(
+                            "未在响应的地址中找到sec_user_id，检查链接是否为用户主页类名：{0}"
+                        ).format(cls.__name__)
+                    )
+            response.raise_for_status()
 
-        # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
         except httpx.TimeoutException as exc:
             raise APITimeoutError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format(
-                    _("请求端点超时"),
-                    url,
-                    ClientConfManager.proxies(),
-                    cls.__name__,
-                    exc,
-                )
+                ).format(_("请求端点超时"), url, cls.proxies, cls.__name__, exc)
             )
 
         except httpx.NetworkError as exc:
@@ -483,7 +498,7 @@ class SecUserIdFetcher:
                 ).format(
                     _("网络连接失败，请检查当前网络环境"),
                     url,
-                    ClientConfManager.proxies(),
+                    cls.proxies,
                     cls.__name__,
                     exc,
                 )
@@ -493,36 +508,20 @@ class SecUserIdFetcher:
             raise APIUnauthorizedError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format(
-                    _("请求协议错误"),
-                    url,
-                    ClientConfManager.proxies(),
-                    cls.__name__,
-                    exc,
-                )
+                ).format(_("请求协议错误"), url, cls.proxies, cls.__name__, exc)
             )
 
         except httpx.ProxyError as exc:
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format(
-                    _("请求代理错误"),
-                    url,
-                    ClientConfManager.proxies(),
-                    cls.__name__,
-                    exc,
-                )
+                ).format(_("请求代理错误"), url, cls.proxies, cls.__name__, exc)
             )
 
         except httpx.HTTPStatusError as exc:
             raise APIResponseError(
                 _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
-                    _("状态码错误"),
-                    url,
-                    ClientConfManager.proxies(),
-                    cls.__name__,
-                    exc,
+                    _("状态码错误"), url, cls.proxies, cls.__name__, exc
                 )
             )
 
@@ -532,10 +531,14 @@ class SecUserIdFetcher:
         获取列表sec_user_id列表 (Get list sec_user_id list)
 
         Args:
-            urls: list: 用户url列表 (User url list)
+            urls (list): 用户url列表 (User url list)
 
-        Return:
-            sec_user_ids: list: 用户sec_user_id列表 (User sec_user_id list)
+        Returns:
+            list: 用户sec_user_id列表 (User sec_user_id list)
+
+        Raises:
+            TypeError: 参数不是列表类型。
+            APINotFoundError: 输入的URL List不合法。
         """
 
         if not isinstance(urls, list):
@@ -545,10 +548,8 @@ class SecUserIdFetcher:
         urls = extract_valid_urls(urls)
 
         if urls == []:
-            raise (
-                APINotFoundError(
-                    _("输入的URL List不合法。类名：{0}").format(cls.__name__)
-                )
+            raise APINotFoundError(
+                _("输入的URL List不合法。类名：{0}").format(cls.__name__)
             )
 
         sec_user_ids = [cls.get_sec_user_id(url) for url in urls]
