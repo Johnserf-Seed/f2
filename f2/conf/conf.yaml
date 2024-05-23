@@ -40,7 +40,7 @@ f2:
     ttwid:
       url: https://www.tiktok.com/ttwid/check/
       data: '{"aid":1988,"service":"www.tiktok.com","union":false,"unionHost":"","needFid":false,"fid":"","migrate_priority":0}'
-      cookie: ttwid=1%7CovVQu2St-HXSHAdEfZ7tljPe151SZ88AbrlTirlaC6w%7C1701072604%7C49b17849da69bafc3638e794f3f26b30fe9677c5253e65a2a5f615489846ce02
+      cookie: ttwid=1%7C76h2rDsKzpmjqlO_ca2y9o_tmyKaoGNEwQqPevPtp_E%7C1715513873%7C932348e1f94fcca9ddca030483396dffde91d4f60d430f746c958b74dbb62add; tt_csrf_token=wFbdcvX9-kZblR4Wb8WwiGJww18VZLkhr_3g;
 
     odin_tt:
       url: https://www.tiktok.com/passport/web/account/info/?aid=1459&app_language=zh-Hans&app_name=tiktok_web&browser_language=zh-CN&browser_name=Mozilla&browser_online=true&browser_platform=Win32&browser_version=5.0%20%28Windows%20NT%2010.0%3B%20Win64%3B%20x64%29%20AppleWebKit%2F537.36%20%28KHTML%2C%20like%20Gecko%29%20Chrome%2F119.0.0.0%20Safari%2F537.36&channel=tiktok_web&cookie_enabled=true&device_id=7306060721837852167&root_referer=https%3A%2F%2Fwww.tiktok.com%2Flogin%2F
