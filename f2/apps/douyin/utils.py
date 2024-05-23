@@ -423,6 +423,21 @@ class SecUserIdFetcher(BaseCrawler):
     方法:
     - get_sec_user_id: 从单个 URL 中获取 sec_user_id。
     - get_all_sec_user_id: 从 URL 列表中获取所有 sec_user_id。
+
+    异常处理:
+    - 在 HTTP 请求过程中，处理可能出现的 TimeoutException、NetworkError、ProtocolError、ProxyError 和 HTTPStatusError 异常，并记录相应的错误信息。
+
+    使用示例:
+        # 获取单个用户的 sec_user_id
+        url = "https://www.douyin.com/user/MS4wLjABAAAAEc8EKgWVEpEQoDRRp8_M53psgc-BoKqre-jICyt6aBA"
+        sec_user_id = await SecUserIdFetcher.get_sec_user_id(url)
+
+        # 获取多个用户的 sec_user_id
+        urls = [
+            "https://www.douyin.com/user/MS4wLjABAAAAEc8EKgWVEpEQoDRRp8_M53psgc-BoKqre-jICyt6aBA",
+            "https://v.douyin.com/i2wyU53P/",
+        ]
+        sec_user_ids = await SecUserIdFetcher.get_all_sec_user_id(urls)
     """
 
     _DOUYIN_URL_PATTERN = re.compile(r"user/([^/?]*)")
@@ -570,6 +585,22 @@ class AwemeIdFetcher(BaseCrawler):
     方法:
     - get_aweme_id: 从单个 URL 中获取 aweme_id。
     - get_all_aweme_id: 从 URL 列表中获取所有 aweme_id。
+
+    异常处理:
+    - 在 HTTP 请求过程中，处理可能出现的 TimeoutException、NetworkError、ProtocolError、ProxyError 和 HTTPStatusError 异常，并记录相应的错误信息。
+
+    使用示例:
+        # 获取单个作品的 aweme_id
+        url = "https://www.douyin.com/video/6969696969696969696"
+        aweme_id = await AwemeIdFetcher.get_aweme_id(url)
+
+        # 获取多个作品的 aweme_id
+        urls = [
+            "https://www.douyin.com/video/6969696969696969696",
+            "https://www.douyin.com/note/6969696969696969696",
+            "https://v.douyin.com/tttttttt/",
+        ]
+        aweme_ids = await AwemeIdFetcher.get_all_aweme_id(urls)
     """
 
     _DOUYIN_VIDEO_URL_PATTERN = re.compile(r"video/([^/?]*)")
@@ -871,6 +902,21 @@ class WebCastIdFetcher(BaseCrawler):
     方法:
     - get_webcast_id: 从单个 URL 中获取 webcast_id。
     - get_all_webcast_id: 从 URL 列表中获取所有 webcast_id。
+
+    异常处理:
+    - 在 HTTP 请求过程中，处理可能出现的 TimeoutException、NetworkError、ProtocolError、ProxyError 和 HTTPStatusError 异常，并记录相应的错误信息。
+
+    使用示例:
+        # 获取单个直播的 webcast_id
+        url = "https://live.douyin.com/36299127202"
+        webcast_id = await WebCastIdFetcher.get_webcast_id(url)
+
+        # 获取多个直播的 webcast_id
+        urls = [
+            "https://live.douyin.com/36299127202",
+            "https://live.douyin.com/36299127202?enter_from_merge=link_share&enter_method=copy_link_share&action_type=click&from=web_code_link",
+        ]
+        webcast_ids = await WebCastIdFetcher.get_all_webcast_id(urls)
     """
 
     _DOUYIN_LIVE_URL_PATTERN = re.compile(r"live/([^/?]*)")
