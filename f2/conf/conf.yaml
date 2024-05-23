@@ -39,8 +39,8 @@ f2:
 
     ttwid:
       url: https://www.tiktok.com/ttwid/check/
-      data: '{"aid":1988,"service":"www.tiktok.com","union":false,"unionHost":"","needFid":false,"fid":"","migrate_priority":0}'
-      cookie: ttwid=1%7C76h2rDsKzpmjqlO_ca2y9o_tmyKaoGNEwQqPevPtp_E%7C1715513873%7C932348e1f94fcca9ddca030483396dffde91d4f60d430f746c958b74dbb62add; tt_csrf_token=wFbdcvX9-kZblR4Wb8WwiGJww18VZLkhr_3g;
+      data: '{"unionHost":"https://ttwid-sg.tiktok.com","aid":1459,"service":"www.tiktok.com","needFid":false,"union":true,"fid":"","migrate_priority":0}'
+      cookie: ttwid=1%7CrR_4t3jnUjjqfiQzZRmSkGKf7NjXm2v1U8gRHjPDZho%7C1715513773%7Cf339b15d826ae9a3b02cadf6ce6d453713af3e54a92df722f776626f5a8877df;odin_tt=8b0213106b8f93bfd7ad7fea3f3fa3f1f344e349a1d94d0758cc9ac3c76e394d3a419a98f5814ed65961c65f5441d63111e442eab06ac55b6853009b0e8f9ebd43e28bbd36351e12db4b4a42e4a9a004;msToken=bVb1Oatl-EoYxKLz9nRtAMohyPE1GdPjQf6YAaVpj6_0PaFIemUaxyuhyO9xAB4V9FSGlx1ps6HqsRBzl8-Ko_U85tWZQH7lkFOLTyEZLpH5lrrPvozDoaxy4w%3D%3D
 
     odin_tt:
       url: https://www.tiktok.com/passport/web/account/info/?aid=1459&app_language=zh-Hans&app_name=tiktok_web&browser_language=zh-CN&browser_name=Mozilla&browser_online=true&browser_platform=Win32&browser_version=5.0%20%28Windows%20NT%2010.0%3B%20Win64%3B%20x64%29%20AppleWebKit%2F537.36%20%28KHTML%2C%20like%20Gecko%29%20Chrome%2F119.0.0.0%20Safari%2F537.36&channel=tiktok_web&cookie_enabled=true&device_id=7306060721837852167&root_referer=https%3A%2F%2Fwww.tiktok.com%2Flogin%2F
