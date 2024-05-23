@@ -95,14 +95,15 @@ class TokenManager(BaseCrawler):
     ttwid_conf = ClientConfManager.ttwid()
     odin_tt_conf = ClientConfManager.odin_tt()
     proxies = ClientConfManager.proxies()
+    user_agent = ClientConfManager.user_agent()
     mstoken_headers = {
         "Content-Type": "application/json",
-        "User-Agent": ClientConfManager.user_agent(),
+        "User-Agent": user_agent,
     }
     ttwid_headers = {
         "Cookie": ttwid_conf.get("cookie"),
         "Content-Type": "text/plain",
-        "User-Agent": ClientConfManager.user_agent(),
+        "User-Agent": user_agent,
     }
 
     def __init__(self):
@@ -204,7 +205,6 @@ class TokenManager(BaseCrawler):
                 _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("状态码错误"),
                     instance.token_conf["url"],
-                    cls.token_conf["proxies"],
                     cls.proxies,
                     cls.__name__,
                     exc,
@@ -309,22 +309,15 @@ class TokenManager(BaseCrawler):
 
         except httpx.HTTPStatusError as exc:
             logger.error(traceback.format_exc())
-            if exc.response.status_code == 401:
-                raise APIUnauthorizedError(
-                    _(
-                        "参数验证失败，请更新 F2 配置文件中的 {0}，以匹配 {1} 新规则"
-                    ).format("ttwid", "tiktok")
+            raise APIResponseError(
+                _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
+                    _("状态码错误"),
+                    instance.ttwid_conf["url"],
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
                 )
-            elif exc.response.status_code == 404:
-                raise APINotFoundError(_("{0} 无法找到API端点").format("ttwid"))
-            else:
-                raise APIResponseError(
-                    _("链接：{0}，状态码 {1}：{2} ").format(
-                        exc.response.url,
-                        exc.response.status_code,
-                        exc.response.text,
-                    )
-                )
+            )
 
     @classmethod
     def gen_odin_tt(cls) -> str:
@@ -404,22 +397,15 @@ class TokenManager(BaseCrawler):
 
         except httpx.HTTPStatusError as exc:
             logger.error(traceback.format_exc())
-            if exc.response.status_code == 401:
-                raise APIUnauthorizedError(
-                    _(
-                        "参数验证失败，请更新 F2 配置文件中的 {0}，以匹配 {1} 新规则"
-                    ).format("odin_tt", "tiktok")
+            raise APIResponseError(
+                _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
+                    _("状态码错误"),
+                    instance.odin_tt_conf["url"],
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
                 )
-            elif exc.response.status_code == 404:
-                raise APINotFoundError(_("{0} 无法找到API端点").format("odin_tt"))
-            else:
-                raise APIResponseError(
-                    _("链接：{0}，状态码 {1}：{2} ").format(
-                        exc.response.url,
-                        exc.response.status_code,
-                        exc.response.text,
-                    )
-                )
+            )
 
 
 class XBogusManager:
@@ -1016,7 +1002,7 @@ class AwemeIdFetcher(BaseCrawler):
 
 def format_file_name(
     naming_template: str,
-    aweme_data: dict = {},
+    aweme_data: dict = ...,
     custom_fields: dict = {},
 ) -> str:
     """
