@@ -120,6 +120,10 @@ class TokenManager(BaseCrawler):
         "Content-Type": "text/plain",
         "User-Agent": user_agent,
     }
+    odin_tt_headers = {
+        "Referer": ClientConfManager.referer(),
+        "User-Agent": user_agent,
+    }
 
     def __init__(self):
         super().__init__(proxies=self.proxies)
@@ -160,7 +164,7 @@ class TokenManager(BaseCrawler):
 
             msToken = str(httpx.Cookies(response.cookies).get("msToken"))
 
-            if len(msToken) != 148:
+            if len(msToken) != 148 or msToken is None:
                 raise APIResponseError(_("{0} 内容不符合要求").format("msToken"))
 
             logger.debug(_("生成真实的 msToken：{0}").format(msToken))
@@ -351,7 +355,10 @@ class TokenManager(BaseCrawler):
         instance = cls()
 
         try:
-            response = instance.client.get(instance.odin_tt_conf["url"])
+            response = instance.client.get(
+                instance.odin_tt_conf["url"],
+                headers=instance.odin_tt_headers,
+            )
             response.raise_for_status()
 
             odin_tt = httpx.Cookies(response.cookies).get("odin_tt")
