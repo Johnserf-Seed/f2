@@ -25,6 +25,7 @@ jobs:
       - name: Run ATS
         uses: codecov/codecov-ats@v0
         env:
+          SKIP_IN_CI: ${{ secrets.SKIP_IN_CI }}
           CODECOV_STATIC_TOKEN: ${{ secrets.CODECOV_STATIC_TOKEN }}
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
