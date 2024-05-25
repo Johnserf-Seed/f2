@@ -47,8 +47,40 @@ class ClientConfManager:
         return cls.douyin_conf
 
     @classmethod
-    def version(cls) -> str:
+    def conf_version(cls) -> str:
         return cls.client_conf.get("version", "unknown")
+
+    @classmethod
+    def base_request_model(cls) -> dict:
+        return cls.douyin_conf.get("BaseRequestModel", {})
+
+    @classmethod
+    def base_live_model(cls) -> dict:
+        return cls.douyin_conf.get("BaseLiveModel", {})
+
+    @classmethod
+    def brm_version(cls) -> dict:
+        return cls.base_request_model().get("version", {})
+
+    @classmethod
+    def brm_browser(cls) -> dict:
+        return cls.base_request_model().get("browser", {})
+
+    @classmethod
+    def brm_engine(cls) -> dict:
+        return cls.base_request_model().get("engine", {})
+
+    @classmethod
+    def brm_os(cls) -> str:
+        return cls.base_request_model().get("os", "")
+
+    @classmethod
+    def blm_language(cls) -> str:
+        return cls.base_live_model().get("language", "")
+
+    @classmethod
+    def blm_browser(cls) -> dict:
+        return cls.base_live_model().get("browser", {})
 
     @classmethod
     def proxies(cls) -> dict:
