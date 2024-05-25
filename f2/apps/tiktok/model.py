@@ -14,12 +14,12 @@ class BaseRequestModel(BaseModel):
     aid: str = "1988"
     app_language: str = "zh-Hans"
     app_name: str = "tiktok_web"
-    browser_language: str = ClientConfManager.browser().get("language", "zh-CN")
-    browser_name: str = ClientConfManager.browser().get("name", "Mozilla")
+    browser_language: str = ClientConfManager.brm_browser().get("language", "zh-CN")
+    browser_name: str = ClientConfManager.brm_browser().get("name", "Mozilla")
     browser_online: str = "true"
-    browser_platform: str = ClientConfManager.browser().get("platform", "Win32")
+    browser_platform: str = ClientConfManager.brm_browser().get("platform", "Win32")
     browser_version: str = quote(
-        ClientConfManager.browser().get(
+        ClientConfManager.brm_browser().get(
             "version",
             "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
         ),
@@ -27,25 +27,33 @@ class BaseRequestModel(BaseModel):
     )
     channel: str = "tiktok_web"
     cookie_enabled: str = "true"
-    device_id: str = ClientConfManager.device().get(
+    device_id: str = ClientConfManager.brm_device().get(
         "id", "7372218823115949569"
     )  # 风控参数
-    device_platform: str = ClientConfManager.device().get("platform", "web_pc")
+    device_platform: str = ClientConfManager.brm_device().get("platform", "web_pc")
     focus_state: str = "true"
     from_page: str = "user"
     history_len: int = 4
     is_fullscreen: str = "false"
     is_page_visible: str = "true"
     language: str = "zh-Hans"
-    os: str = ClientConfManager.os()
-    priority_region: str = ClientConfManager.priority_region()
+    os: str = ClientConfManager.base_request_model().get("os", "windows")
+    priority_region: str = ClientConfManager.base_request_model().get(
+        "priority_region", "US"
+    )
     referer: str = ""
-    region: str = ClientConfManager.region()  # SG JP KR...
+    region: str = ClientConfManager.base_request_model().get(
+        "region", "SG"
+    )  # SG JP KR...
     # root_referer: str = quote("https://www.tiktok.com/", safe="")
     screen_height: int = 1080
     screen_width: int = 1920
-    webcast_language: str = ClientConfManager.webcast_language()
-    tz_name: str = quote(ClientConfManager.tz_name(), safe="")
+    webcast_language: str = ClientConfManager.base_request_model().get(
+        "webcast_language", "zh-Hans"
+    )
+    tz_name: str = quote(
+        ClientConfManager.base_request_model().get("tz_name", "Asia/Hong_Kong"), safe=""
+    )
     try:
         msToken: str = TokenManager.gen_real_msToken()
     except Exception as e:

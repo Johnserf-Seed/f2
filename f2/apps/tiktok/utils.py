@@ -47,36 +47,16 @@ class ClientConfManager:
         return cls.client_conf.get("version", "unknown")
 
     @classmethod
-    def model(cls) -> dict:
+    def base_request_model(cls) -> dict:
         return cls.client().get("model", {})
 
     @classmethod
-    def browser(cls) -> dict:
-        return cls.model().get("browser", {})
+    def brm_browser(cls) -> dict:
+        return cls.base_request_model().get("browser", {})
 
     @classmethod
-    def device(cls) -> dict:
+    def brm_device(cls) -> dict:
         return cls.model().get("device", {})
-
-    @classmethod
-    def region(cls) -> str:
-        return cls.model().get("region", "SG")
-
-    @classmethod
-    def priority_region(cls) -> str:
-        return cls.model().get("priority_region", "US")
-
-    @classmethod
-    def webcast_language(cls) -> str:
-        return cls.model().get("webcast_language", "zh-Hans")
-
-    @classmethod
-    def tz_name(cls) -> str:
-        return cls.model().get("tz_name", "Asia/Hong_Kong")
-
-    @classmethod
-    def os(cls) -> str:
-        return cls.model().get("os", "windows")
 
     @classmethod
     def proxies(cls) -> dict:

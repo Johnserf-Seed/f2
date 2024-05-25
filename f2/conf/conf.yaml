@@ -48,7 +48,7 @@ f2:
 
   tiktok:
 
-    model:
+    BaseRequestModel:
       browser:
         language: zh-CN
         name: Mozilla
