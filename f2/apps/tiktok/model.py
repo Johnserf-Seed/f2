@@ -4,7 +4,7 @@ from typing import Any
 from pydantic import BaseModel
 from urllib.parse import quote, unquote
 
-from f2.apps.tiktok.utils import TokenManager
+from f2.apps.tiktok.utils import TokenManager, ClientConfManager
 from f2.utils.utils import get_timestamp
 
 
@@ -14,36 +14,42 @@ class BaseRequestModel(BaseModel):
     aid: str = "1988"
     app_language: str = "zh-Hans"
     app_name: str = "tiktok_web"
-    browser_language: str = "zh-CN"
-    browser_name: str = "Mozilla"
+    browser_language: str = ClientConfManager.browser().get("language", "zh-CN")
+    browser_name: str = ClientConfManager.browser().get("name", "Mozilla")
     browser_online: str = "true"
-    browser_platform: str = "Win32"
+    browser_platform: str = ClientConfManager.browser().get("platform", "Win32")
     browser_version: str = quote(
-        "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        ClientConfManager.browser().get(
+            "version",
+            "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        ),
         safe="",
     )
     channel: str = "tiktok_web"
     cookie_enabled: str = "true"
-    device_id: str = "7372218823115949569"  # 风控参数 # 7368075886505051694
-    device_platform: str = "web_pc"
+    device_id: str = ClientConfManager.device().get(
+        "id", "7372218823115949569"
+    )  # 风控参数
+    device_platform: str = ClientConfManager.device().get("platform", "web_pc")
     focus_state: str = "true"
     from_page: str = "user"
     history_len: int = 4
     is_fullscreen: str = "false"
     is_page_visible: str = "true"
     language: str = "zh-Hans"
-    os: str = "windows"
-    priority_region: str = "US"
+    os: str = ClientConfManager.os()
+    priority_region: str = ClientConfManager.priority_region()
     referer: str = ""
-    region: str = "SG"  # SG JP KR...
+    region: str = ClientConfManager.region()  # SG JP KR...
     # root_referer: str = quote("https://www.tiktok.com/", safe="")
     screen_height: int = 1080
     screen_width: int = 1920
-    webcast_language: str = "zh-Hans"
-    tz_name: str = quote("Asia/Hong_Kong", safe="")
+    webcast_language: str = ClientConfManager.webcast_language()
+    tz_name: str = quote(ClientConfManager.tz_name(), safe="")
     try:
         msToken: str = TokenManager.gen_real_msToken()
-    except:
+    except Exception as e:
+        print(f"Error generating msToken: {e}")
         # 发生异常时，重新生成msToken，不生成虚假msToken
         msToken: str = TokenManager.gen_real_msToken()
 
