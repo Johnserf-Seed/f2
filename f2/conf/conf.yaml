@@ -22,6 +22,24 @@ f2:
 
 
   tiktok:
+
+    model:
+      browser:
+        language: zh-CN
+        name: Mozilla
+        platform: Win32
+        version: 5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
+
+      device:
+        id: 7372218823115949569
+        platform: web_pc
+
+      os: windows
+      region: SG
+      priority_region: US
+      webcast_language: zh-Hans
+      tz_name: Asia/Hong_Kong
+
     headers:
       User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0
       Referer: https://www.tiktok.com/
