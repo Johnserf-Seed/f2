@@ -3,6 +3,8 @@ on: [push, pull_request]
 jobs:
   run:
     runs-on: ubuntu-latest
+    env:
+      SKIP_IN_CI: true  # 添加环境变量，允许在CI中跳过
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,7 +27,6 @@ jobs:
       - name: Run ATS
         uses: codecov/codecov-ats@v0
         env:
-          SKIP_IN_CI: ${{ secrets.SKIP_IN_CI }}
           CODECOV_STATIC_TOKEN: ${{ secrets.CODECOV_STATIC_TOKEN }}
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
