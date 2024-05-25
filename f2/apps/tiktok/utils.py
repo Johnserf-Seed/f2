@@ -56,7 +56,7 @@ class ClientConfManager:
 
     @classmethod
     def brm_device(cls) -> dict:
-        return cls.model().get("device", {})
+        return cls.base_request_model().get("device", {})
 
     @classmethod
     def proxies(cls) -> dict:
