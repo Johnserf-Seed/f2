@@ -39,21 +39,24 @@ class ClientConfManager:
     用于管理客户端配置 (Used to manage client configuration)
     """
 
-    client_conf = (
-        ConfigManager(f2.F2_CONFIG_FILE_PATH).get_config("f2").get("douyin", {})
-    )
+    client_conf = ConfigManager(f2.F2_CONFIG_FILE_PATH).get_config("f2")
+    douyin_conf = client_conf.get("douyin", {})
 
     @classmethod
     def client(cls) -> dict:
-        return cls.client_conf
+        return cls.douyin_conf
+
+    @classmethod
+    def version(cls) -> str:
+        return cls.client_conf.get("version", "unknown")
 
     @classmethod
     def proxies(cls) -> dict:
-        return cls.client_conf.get("proxies", {})
+        return cls.douyin_conf.get("proxies", {})
 
     @classmethod
     def headers(cls) -> dict:
-        return cls.client_conf.get("headers", {})
+        return cls.douyin_conf.get("headers", {})
 
     @classmethod
     def user_agent(cls) -> str:
@@ -65,11 +68,11 @@ class ClientConfManager:
 
     @classmethod
     def msToken(cls) -> str:
-        return cls.client_conf.get("msToken", {})
+        return cls.douyin_conf.get("msToken", {})
 
     @classmethod
     def ttwid(cls) -> str:
-        return cls.client_conf.get("ttwid", {})
+        return cls.douyin_conf.get("ttwid", {})
 
 
 class TokenManager(BaseCrawler):

@@ -35,21 +35,24 @@ class ClientConfManager:
     用于管理客户端配置 (Used to manage client configuration)
     """
 
-    client_conf = (
-        ConfigManager(f2.F2_CONFIG_FILE_PATH).get_config("f2").get("tiktok", {})
-    )
+    client_conf = ConfigManager(f2.F2_CONFIG_FILE_PATH).get_config("f2")
+    tiktok_conf = client_conf.get("tiktok", {})
 
     @classmethod
     def client(cls) -> dict:
-        return cls.client_conf
+        return cls.tiktok_conf
+
+    @classmethod
+    def version(cls) -> str:
+        return cls.client_conf.get("version", "unknown")
 
     @classmethod
     def proxies(cls) -> dict:
-        return cls.client_conf.get("proxies", {})
+        return cls.tiktok_conf.get("proxies", {})
 
     @classmethod
     def headers(cls) -> dict:
-        return cls.client_conf.get("headers", {})
+        return cls.tiktok_conf.get("headers", {})
 
     @classmethod
     def user_agent(cls) -> str:
@@ -61,15 +64,15 @@ class ClientConfManager:
 
     @classmethod
     def msToken(cls) -> str:
-        return cls.client_conf.get("msToken", {})
+        return cls.tiktok_conf.get("msToken", {})
 
     @classmethod
     def ttwid(cls) -> str:
-        return cls.client_conf.get("ttwid", {})
+        return cls.tiktok_conf.get("ttwid", {})
 
     @classmethod
     def odin_tt(cls) -> str:
-        return cls.client_conf.get("odin_tt", {})
+        return cls.tiktok_conf.get("odin_tt", {})
 
 
 class TokenManager(BaseCrawler):
