@@ -1,22 +1,22 @@
 f2:
-  version: 0.0.1.6
+  version: "0.0.1.6"
 
   douyin:
     BaseRequestModel:
       version:
-        code: 190500
-        name: 19.5.0
+        code: "190500"
+        name: "19.5.0"
       browser:
         language: zh-CN
         platform: Win32
         name: Edge
-        version: 122.0.0.0
+        version: "122.0.0.0"
       engine:
         name: Blink
-        version: 122.0.0.0
+        version: "122.0.0.0"
       os:
         name: Windows
-        version: 10
+        version: "10"
 
     BaseLiveModel:
       language: zh-CN
@@ -24,7 +24,7 @@ f2:
         language: zh-CN
         platform: Win32
         name: Edge
-        version: 119.0.0.0
+        version: "119.0.0.0"
 
     headers:
       User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0
@@ -56,7 +56,7 @@ f2:
         version: 5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
 
       device:
-        id: 7372218823115949569
+        id: "7372218823115949569"
         platform: web_pc
 
       os: windows
