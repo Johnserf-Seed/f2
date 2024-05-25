@@ -99,11 +99,11 @@ class ClientConfManager:
         return cls.headers().get("Referer", "")
 
     @classmethod
-    def msToken(cls) -> str:
+    def msToken(cls) -> dict:
         return cls.douyin_conf.get("msToken", {})
 
     @classmethod
-    def ttwid(cls) -> str:
+    def ttwid(cls) -> dict:
         return cls.douyin_conf.get("ttwid", {})
 
 

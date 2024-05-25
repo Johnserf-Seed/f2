@@ -75,15 +75,15 @@ class ClientConfManager:
         return cls.headers().get("Referer", "")
 
     @classmethod
-    def msToken(cls) -> str:
+    def msToken(cls) -> dict:
         return cls.tiktok_conf.get("msToken", {})
 
     @classmethod
-    def ttwid(cls) -> str:
+    def ttwid(cls) -> dict:
         return cls.tiktok_conf.get("ttwid", {})
 
     @classmethod
-    def odin_tt(cls) -> str:
+    def odin_tt(cls) -> dict:
         return cls.tiktok_conf.get("odin_tt", {})
 
 
