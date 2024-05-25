@@ -4,7 +4,7 @@ from typing import Any
 from pydantic import BaseModel
 from urllib.parse import quote, unquote
 
-from f2.apps.douyin.utils import TokenManager, VerifyFpManager
+from f2.apps.douyin.utils import TokenManager, VerifyFpManager, ClientConfManager
 
 
 # Base Model
@@ -13,20 +13,20 @@ class BaseRequestModel(BaseModel):
     aid: str = "6383"
     channel: str = "channel_pc_web"
     pc_client_type: int = 1
-    version_code: str = "190500"
-    version_name: str = "19.5.0"
+    version_code: str = ClientConfManager.brm_version().get("code", "190500")
+    version_name: str = ClientConfManager.brm_version().get("name", "19.5.0")
     cookie_enabled: str = "true"
     screen_width: int = 1920
     screen_height: int = 1080
-    browser_language: str = "zh-CN"
-    browser_platform: str = "Win32"
-    browser_name: str = "Edge"
-    browser_version: str = "122.0.0.0"
+    browser_language: str = ClientConfManager.brm_browser().get("language", "zh-CN")
+    browser_platform: str = ClientConfManager.brm_browser().get("platform", "Win32")
+    browser_name: str = ClientConfManager.brm_browser().get("name", "Edge")
+    browser_version: str = ClientConfManager.brm_browser().get("version", "122.0.0.0")
     browser_online: str = "true"
-    engine_name: str = "Blink"
-    engine_version: str = "122.0.0.0"
-    os_name: str = "Windows"
-    os_version: str = "10"
+    engine_name: str = ClientConfManager.brm_engine().get("name", "Blink")
+    engine_version: str = ClientConfManager.brm_engine().get("version", "122.0.0.0")
+    os_name: str = ClientConfManager.brm_os().get("name", "Windows")
+    os_version: str = ClientConfManager.brm_os().get("version", "10")
     cpu_core_num: int = 12
     device_memory: int = 8
     platform: str = "PC"
@@ -45,14 +45,14 @@ class BaseLiveModel(BaseModel):
     app_name: str = "douyin_web"
     live_id: int = 1
     device_platform: str = "web"
-    language: str = "zh-CN"
+    language: str = ClientConfManager.blm_language()
     cookie_enabled: str = "true"
     screen_width: int = 1920
     screen_height: int = 1080
-    browser_language: str = "zh-CN"
-    browser_platform: str = "Win32"
-    browser_name: str = "Edge"
-    browser_version: str = "119.0.0.0"
+    browser_language: str = ClientConfManager.blm_browser().get("language", "zh-CN")
+    browser_platform: str = ClientConfManager.blm_browser().get("platform", "Win32")
+    browser_name: str = ClientConfManager.blm_browser().get("name", "Edge")
+    browser_version: str = ClientConfManager.blm_browser().get("version", "119.0.0.0")
     enter_source: Any = ""
     is_need_double_stream: str = "false"
     # msToken: str = TokenManager.gen_real_msToken()
