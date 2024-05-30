@@ -2145,3 +2145,155 @@ class QueryUserFilter(JSONModel):
             for prop_name in dir(self)
             if not prop_name.startswith("__") and not prop_name.startswith("_")
         }
+
+
+class FollowUserLiveFilter(JSONModel):
+    @property
+    def status_code(self):
+        return self._get_attr_value("$.status_code")
+
+    @property
+    def status_msg(self):
+        return self._get_attr_value("$.data.message")
+
+    @property
+    def cover_type(self):
+        return self._get_list_attr_value("$.data.data.[*].cover_type")
+
+    @property
+    def is_recommend(self):
+        return self._get_list_attr_value("$.data.data.[*].is_recommend")
+
+    @property
+    def tag_name(self):
+        return self._get_list_attr_value("$.data.data.[*].tag_name")
+
+    @property
+    def title_type(self):
+        return self._get_list_attr_value("$.data.data.[*].title_type")
+
+    @property
+    def uniq_id(self):
+        return self._get_list_attr_value("$.data.data.[*].uniq_id")
+
+    @property
+    def web_rid(self):
+        return self._get_list_attr_value("$.data.data.[*].web_rid")
+
+    @property
+    def cover(self):
+        return self._get_list_attr_value("$.data.data.[*].room.cover.url_list[0]")
+
+    @property
+    def has_commerce_goods(self):
+        return self._get_list_attr_value("$.data.data.[*].room.has_commerce_goods")
+
+    @property
+    def room_id(self):
+        return self._get_list_attr_value("$.data.data.[*].room.id_str")
+
+    @property
+    def live_title(self):
+        return replaceT(self._get_list_attr_value("$.data.data.[*].room.title"))
+
+    @property
+    def live_title_raw(self):
+        return self._get_list_attr_value("$.data.data.[*].room.title")
+
+    @property
+    def live_room_mode(self):
+        return self._get_list_attr_value("$.data.data.[*].room.live_room_mode")
+
+    @property
+    def mosaic_status(self):
+        return self._get_list_attr_value("$.data.data.[*].room.mosaic_status")
+
+    @property
+    def user_count(self):
+        return self._get_list_attr_value("$.data.data.[*].room.stats.user_count_str")
+
+    @property
+    def like_count(self):
+        return self._get_list_attr_value("$.data.data.[*].room.stats.like_count")
+
+    @property
+    def total_count(self):
+        return self._get_list_attr_value("$.data.data.[*].room.stats.total_user_str")
+
+    # user
+    @property
+    def avatar_thumb(self):
+        return self._get_list_attr_value(
+            "$.data.data.[*].room.owner.avatar_thumb.url_list[0]"
+        )
+
+    @property
+    def user_id(self):
+        return self._get_list_attr_value("$.data.data.[*].room.owner.id_str")
+
+    @property
+    def user_sec_uid(self):
+        return self._get_list_attr_value("$.data.data.[*].room.owner.sec_uid")
+
+    @property
+    def nickname(self):
+        return replaceT(
+            self._get_list_attr_value("$.data.data.[*].room.owner.nickname")
+        )
+
+    @property
+    def nickname_raw(self):
+        return self._get_list_attr_value("$.data.data.[*].room.owner.nickname")
+
+    # stream_url
+    @property
+    def flv_pull_url(self):
+        return self._get_list_attr_value("$.data.data.[*].room.stream_url.flv_pull_url")
+
+    @property
+    def hls_pull_url(self):
+        return self._get_list_attr_value(
+            "$.data.data.[*].room.stream_url.hls_pull_url_map"
+        )
+
+    @property
+    def stream_orientation(self):
+        return self._get_list_attr_value(
+            "$.data.data.[*].room.stream_url.stream_orientation"
+        )
+
+    def _to_raw(self) -> dict:
+        return self._data
+
+    def _to_dict(self) -> dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
+    def _to_list(self):
+        exclude_list = [
+            "status_code",
+            "status_msg",
+        ]
+
+        keys = [
+            prop_name
+            for prop_name in dir(self)
+            if not prop_name.startswith("__")
+            and not prop_name.startswith("_")
+            and prop_name not in exclude_list
+        ]
+
+        friend_feed_entries = self._get_attr_value("$.data.data") or []
+
+        list_dicts = []
+        for entry in friend_feed_entries:
+            d = {}
+            for key in keys:
+                attr_values = getattr(self, key)
+                index = friend_feed_entries.index(entry)
+                d[key] = attr_values[index] if index < len(attr_values) else None
+            list_dicts.append(d)
+        return list_dicts
