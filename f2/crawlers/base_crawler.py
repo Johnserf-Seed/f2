@@ -36,10 +36,14 @@ class BaseCrawler:
         crawler_headers: dict = {},
     ):
         if isinstance(proxies, dict):
-            self.proxies = proxies
-            # [f"{k}://{v}" for k, v in proxies.items()]
+            # 设置代理 (Set proxy)
+            self.mounts = {
+                scheme: httpx.Proxy(url)
+                for scheme, url in proxies.items()
+                if url is not None
+            }
         else:
-            self.proxies = None
+            self.mounts = {}
 
         # 爬虫请求头 / Crawler request header
         self.crawler_headers = crawler_headers or {}
