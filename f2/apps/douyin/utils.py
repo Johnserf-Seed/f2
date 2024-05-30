@@ -106,6 +106,10 @@ class ClientConfManager:
     def ttwid(cls) -> dict:
         return cls.douyin_conf.get("ttwid", {})
 
+    @classmethod
+    def webid(cls) -> dict:
+        return cls.douyin_conf.get("webid", {})
+
 
 class TokenManager(BaseCrawler):
     """
@@ -136,6 +140,7 @@ class TokenManager(BaseCrawler):
 
     token_conf = ClientConfManager.msToken()
     ttwid_conf = ClientConfManager.ttwid()
+    webid_conf = ClientConfManager.webid()
     proxies = ClientConfManager.proxies()
     user_agent = ClientConfManager.user_agent()
     mstoken_headers = {
@@ -145,6 +150,11 @@ class TokenManager(BaseCrawler):
     ttwid_headers = {
         "User-Agent": user_agent,
         "Content-Type": "application/json; charset=utf-8",
+    }
+    webid_headers = {
+        "User-Agent": user_agent,
+        "Content-Type": "application/json; charset=UTF-8",
+        "Referer": "https://www.douyin.com/",
     }
 
     def __init__(self):
@@ -362,6 +372,115 @@ class TokenManager(BaseCrawler):
                 _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("状态码错误"),
                     instance.ttwid_conf["url"],
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
+                )
+            )
+
+    @classmethod
+    def gen_webid(cls) -> str:
+        """
+        生成个性化追踪webid (Generate personalized tracking webid)
+
+        Returns:
+            str: 生成的webid (Generated webid)
+
+        Raises:
+            APITimeoutError: 请求超时错误 (Request timeout error)
+            APIConnectionError: 网络连接错误 (Network connection error)
+            APIUnauthorizedError: 请求协议错误 (Request protocol error)
+            APIResponseError: 状态码错误或响应内容不符合要求 (Status code error or response content does not meet the requirements)
+        """
+
+        instance = cls()
+
+        body = json.dumps(
+            {
+                "app_id": instance.webid_conf["body"]["app_id"],
+                "referer": instance.webid_conf["body"]["referer"],
+                "url": instance.webid_conf["body"]["url"],
+                "user_agent": instance.webid_conf["body"]["user_agent"],
+                "user_unique_id": "",
+            }
+        )
+
+        try:
+            response = instance.client.post(
+                instance.webid_conf["url"],
+                content=body,
+                headers=instance.webid_headers,
+            )
+            response.raise_for_status()
+
+            webid = response.json().get("web_id")
+            if not webid:
+                raise APIResponseError(_("{0} 内容不符合要求").format("webid"))
+
+            return webid
+
+        except httpx.TimeoutException as exc:
+            logger.error(traceback.format_exc())
+            raise APITimeoutError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    _("请求端点超时"),
+                    instance.webid_conf["url"],
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
+                )
+            )
+
+        except httpx.NetworkError as exc:
+            logger.error(traceback.format_exc())
+            raise APIConnectionError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    _("网络连接失败，请检查当前网络环境"),
+                    instance.webid_conf["url"],
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
+                )
+            )
+
+        except httpx.ProtocolError as exc:
+            logger.error(traceback.format_exc())
+            raise APIUnauthorizedError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    _("请求协议错误"),
+                    instance.webid_conf["url"],
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
+                )
+            )
+
+        except httpx.ProxyError as exc:
+            logger.error(traceback.format_exc())
+            raise APIConnectionError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    _("请求代理错误"),
+                    instance.webid_conf["url"],
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
+                )
+            )
+
+        except httpx.HTTPStatusError as exc:
+            logger.error(traceback.format_exc())
+            raise APIResponseError(
+                _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
+                    _("状态码错误"),
+                    instance.webid_conf["url"],
                     cls.proxies,
                     cls.__name__,
                     exc,
