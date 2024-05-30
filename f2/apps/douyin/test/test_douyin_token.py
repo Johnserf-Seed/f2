@@ -18,3 +18,9 @@ def test_gen_ttwid():
     ttwid = TokenManager.gen_ttwid()
     assert ttwid is not None, "gen_ttwid() should return a valid ttwid"
     assert isinstance(ttwid, str), "gen_ttwid() should return a string"
+
+
+def test_gen_webid():
+    webid = TokenManager.gen_webid()
+    assert webid is not None, "gen_webid() should return a valid webid"
+    assert isinstance(webid, str), "gen_webid() should return a string"
