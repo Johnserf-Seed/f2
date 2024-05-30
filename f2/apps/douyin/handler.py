@@ -31,6 +31,7 @@ from f2.apps.douyin.model import (
     FriendFeed,
     LiveImFetch,
     QueryUser,
+    FollowingUserLive,
 )
 from f2.apps.douyin.filter import (
     UserPostFilter,
@@ -50,6 +51,7 @@ from f2.apps.douyin.filter import (
     FriendFeedFilter,
     LiveImFetchFilter,
     QueryUserFilter,
+    FollowingUserLiveFilter,
 )
 from f2.apps.douyin.utils import (
     SecUserIdFetcher,
@@ -1622,6 +1624,39 @@ class DouyinHandler:
             logger.warning(_("请提供正确的Room_ID"))
 
         return live_im
+
+    async def fetch_user_following_lives(self) -> FollowingUserLiveFilter:
+        """
+        用于获取关注用户的直播间信息。
+
+        Return:
+            follow_live: FollowingUserLiveFilter: 关注用户直播间信息数据过滤器，包含关注用户直播间信息的_to_raw、_to_dict、_to_list方法
+        """
+
+        logger.info(_("开始查询关注用户直播间信息"))
+        logger.debug("===================================")
+
+        async with DouyinCrawler(self.kwargs) as crawler:
+            params = FollowingUserLive()
+            response = await crawler.fetch_following_live(params)
+            follow_live = FollowingUserLiveFilter(response)
+
+        if follow_live.status_code == 0:
+            logger.debug(
+                _("直播间Room_ID：{0} 直播间标题：{1} 直播间人数：{2}").format(
+                    follow_live.room_id,
+                    follow_live.live_title_raw,
+                    follow_live.user_count,
+                )
+            )
+            logger.debug("===================================")
+            logger.info(_("关注用户直播间信息查询结束"))
+        else:
+            logger.warning(
+                _("获取关注用户直播间信息失败：{0}").format(follow_live.status_msg)
+            )
+
+        return follow_live
 
 
 # async def handle_sso_login():

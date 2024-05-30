@@ -127,7 +127,7 @@
   |相似推荐作品|⚫|`fetch_related_videos`|🟢|
   |直播间信息（流下载）|⚫|`fetch_user_live_videos`、`fetch_user_live_videos_by_room_id`|🟢|
   |直播间弹幕|⚫|`fetch_user_live_danmu`|🔵|
-  |关注用户开播|🟣⚫|`fetch_user_following_lives`|🔵|
+  |关注用户开播|🟣⚫|`fetch_user_following_lives`|🟢|
   |关注用户信息|🟣⚫|`fetch_user_following`|🟢|
   |粉丝用户信息|🟣⚫|`fetch_user_follower`|🟢|
   |关注用户作品|🟣⚫|`fetch_user_following_videos`|🟤|

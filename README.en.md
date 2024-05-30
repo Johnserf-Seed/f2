@@ -126,7 +126,7 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
   | Similar Recommended Works | ⚫ | `fetch_related_videos` | 🟢 |
   | Live Room Information (Stream Download) | ⚫ | `fetch_user_live_videos`, `fetch_user_live_videos_by_room_id` | 🟢 |
   | Live Room Danmaku | ⚫ | `fetch_user_live_danmu` | 🔵 |
-  | Following Users' Live Broadcasts | 🟣⚫ | `fetch_user_following_lives` | 🔵 |
+  | Following Users' Live Broadcasts | 🟣⚫ | `fetch_user_following_lives` | 🟢 |
   | Following User Information | 🟣⚫ | `fetch_user_following` | 🟢 |
   | Fan User Information | 🟣⚫ | `fetch_user_follower` | 🟢 |
   | Following User Works | 🟣⚫ | `fetch_user_following_videos` | 🟤 |
