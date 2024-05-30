@@ -136,6 +136,19 @@ class TokenManager(BaseCrawler):
 
     异常处理:
     - 在 HTTP 请求过程中，处理可能出现的 TimeoutException、NetworkError、ProtocolError、ProxyError 和 HTTPStatusError 异常，并记录相应的错误信息。
+
+    使用示例:
+        # 生成真实的 msToken
+        msToken = TokenManager.gen_real_msToken()
+
+        # 生成虚假的 msToken
+        false_msToken = TokenManager.gen_false_msToken()
+
+        # 生成 ttwid
+        ttwid = TokenManager.gen_ttwid()
+
+        # 生成 webid
+        webid = TokenManager.gen_webid()
     """
 
     token_conf = ClientConfManager.msToken()
