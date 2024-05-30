@@ -65,24 +65,37 @@ class BaseCrawler:
         # 超时等待时间 / Timeout waiting time
         self._timeout = timeout
         self.timeout = httpx.Timeout(timeout)
+
         # 异步客户端 / Asynchronous client
-        self.aclient = httpx.AsyncClient(
-            headers=self.crawler_headers,
-            verify=False,
-            proxies=self.proxies,
-            timeout=self.timeout,
-            limits=self.limits,
-            transport=self.atransport,
-        )
+        self._aclient = None
         # 同步客户端 / Synchronous client
-        self.client = httpx.Client(
-            headers=self.crawler_headers,
-            verify=False,
-            proxies=self.proxies,
-            timeout=self.timeout,
-            limits=self.limits,
-            transport=self.transport,
-        )
+        self._client = None
+
+    @property
+    def aclient(self):
+        if self._aclient is None:
+            self._aclient = httpx.AsyncClient(
+                headers=self.crawler_headers,
+                verify=False,
+                mounts=self.mounts,
+                timeout=self.timeout,
+                limits=self.limits,
+                transport=self.atransport,
+            )
+        return self._aclient
+
+    @property
+    def client(self):
+        if self._client is None:
+            self._client = httpx.Client(
+                headers=self.crawler_headers,
+                verify=False,
+                mounts=self.mounts,
+                timeout=self.timeout,
+                limits=self.limits,
+                transport=self.transport,
+            )
+        return self._client
 
     async def _fetch_response(self, endpoint: str) -> Response:
         """获取数据 (Get data)
