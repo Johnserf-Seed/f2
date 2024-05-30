@@ -45,6 +45,14 @@ f2:
       url: https://ttwid.bytedance.com/ttwid/union/register/
       data: '{"region":"cn","aid":1768,"needFid":false,"service":"www.ixigua.com","migrate_info":{"ticket":"","source":"node"},"cbUrlProtocol":"https","union":true}'
 
+    webid:
+      url: https://mcs.zijieapi.com/webid?aid=6383&sdk_version=5.1.18_zip&device_platform=web
+      body:
+        app_id: 6383
+        referer: "https://www.douyin.com/"
+        url: "https://www.douyin.com/"
+        user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0"
+        user_unique_id: ""
 
   tiktok:
 
