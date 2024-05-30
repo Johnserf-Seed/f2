@@ -84,7 +84,7 @@ outline: deep
 | 相关推荐作品接口地址 | DouyinCrawler | fetch_post_related |  🟡  |
 | 直播接口地址 | DouyinCrawler | fetch_live |  🟢  |
 | 直播接口地址（room_id） | DouyinCrawler | fetch_live_room_id |  🟢  |
-| 关注用户直播接口地址 | DouyinCrawler | fetch_follow_live |  🟡  |
+| 关注用户直播接口地址 | DouyinCrawler | fetch_following_live |  🟡  |
 | 定位上一次作品接口地址 | DouyinCrawler | fetch_locate_post |  🟡  |
 | SSO获取二维码接口地址 | DouyinCrawler | fetch_login_qrcode |  🟢  |
 | SSO检查扫码状态接口地址 | DouyinCrawler | fetch_check_qrcode |  🟢  |

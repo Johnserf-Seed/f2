@@ -233,7 +233,7 @@ class UserLive2(BaseLiveModel2):
     room_id: str
 
 
-class FollowUserLive(BaseRequestModel):
+class FollowingUserLive(BaseRequestModel):
     scene: str = "aweme_pc_follow_top"
 
 

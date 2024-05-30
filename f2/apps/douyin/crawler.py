@@ -16,7 +16,7 @@ from f2.apps.douyin.model import (
     UserMix,
     UserLive,
     UserLive2,
-    FollowUserLive,
+    FollowingUserLive,
     LoginGetQr,
     LoginCheckQr,
     UserFollowing,
@@ -187,7 +187,7 @@ class DouyinCrawler(BaseCrawler):
         finally:
             self.aclient.headers = original_headers
 
-    async def fetch_follow_live(self, params: FollowUserLive):
+    async def fetch_following_live(self, params: FollowingUserLive):
         endpoint = XBogusManager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.FOLLOW_USER_LIVE,
