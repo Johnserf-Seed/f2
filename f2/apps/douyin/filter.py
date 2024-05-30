@@ -2147,7 +2147,7 @@ class QueryUserFilter(JSONModel):
         }
 
 
-class FollowUserLiveFilter(JSONModel):
+class FollowingUserLiveFilter(JSONModel):
     @property
     def status_code(self):
         return self._get_attr_value("$.status_code")
