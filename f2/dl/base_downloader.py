@@ -6,6 +6,7 @@ import asyncio
 import aiofiles
 import traceback
 from pathlib import Path
+from urllib.error import HTTPError as urllib_HTTPError
 from rich.progress import TaskID
 from typing import Union, Optional, Any, List
 
@@ -380,6 +381,26 @@ class BaseDownloader(BaseCrawler):
                             state="completed",
                         )
                         return
+
+                except urllib_HTTPError as e:
+                    if e.code == 404:
+                        logger.warning(_("m3u8文件或ts文件未找到，直播已结束"))
+                        await self.progress.update(
+                            task_id,
+                            description=_("[  完成  ]:"),
+                            filename=trim_filename(full_path.name, 45),
+                            state="completed",
+                        )
+                        return
+                    logger.error(_("m3u8文件下载失败：{0}，但文件已保存").format(e))
+                    logger.error(traceback.format_exc())
+                    await self.progress.update(
+                        task_id,
+                        description=_("[  失败  ]:"),
+                        filename=trim_filename(full_path.name, 45),
+                        state="completed",
+                    )
+                    return
 
                 except Exception as e:
                     logger.error(_("m3u8文件解析失败: {0}").format(e))
