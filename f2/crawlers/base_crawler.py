@@ -202,7 +202,7 @@ class BaseCrawler:
                     ).format(
                         _("请求端点超时"),
                         url,
-                        self.proxies,
+                        self.mounts,
                         self.__class__.__name__,
                         exc,
                     )
@@ -215,7 +215,7 @@ class BaseCrawler:
                     ).format(
                         _("网络连接失败，请检查当前网络环境"),
                         url,
-                        self.proxies,
+                        self.mounts,
                         self.__class__.__name__,
                         exc,
                     )
@@ -228,7 +228,7 @@ class BaseCrawler:
                     ).format(
                         _("请求协议错误"),
                         url,
-                        self.proxies,
+                        self.mounts,
                         self.__class__.__name__,
                         exc,
                     )
@@ -241,7 +241,7 @@ class BaseCrawler:
                     ).format(
                         _("请求代理错误"),
                         url,
-                        self.proxies,
+                        self.mounts,
                         self.__class__.__name__,
                         exc,
                     )
@@ -254,7 +254,7 @@ class BaseCrawler:
                 raise APIConnectionError(
                     _(
                         "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2} 异常详细信息：{3}"
-                    ).format(url, self.proxies, self.__class__.__name__, req_err)
+                    ).format(url, self.mounts, self.__class__.__name__, req_err)
                 )
 
             except APIError as e:
@@ -299,7 +299,7 @@ class BaseCrawler:
                 raise APIConnectionError(
                     _(
                         "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2} 异常详细信息：{3}"
-                    ).format(url, self.proxies, self.__class__.__name__, req_err)
+                    ).format(url, self.mounts, self.__class__.__name__, req_err)
                 )
 
             except httpx.HTTPStatusError as http_error:
@@ -328,7 +328,7 @@ class BaseCrawler:
             raise APIConnectionError(
                 _(
                     "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2} 异常详细信息：{3}"
-                ).format(url, self.proxies, self.__class__.__name__, req_err)
+                ).format(url, self.mounts, self.__class__.__name__, req_err)
             )
 
         except httpx.HTTPStatusError as http_error:
