@@ -11,18 +11,20 @@ from f2.log.logger import logger
 from f2.i18n.translator import _
 
 
-async def get_content_length(url: str, headers: dict = {}, proxies: dict = {}) -> int:
+async def get_content_length(url: str, headers: dict = {}, mounts: dict = {}) -> int:
     """
     获取给定URL的Content-Length (Retrieve the Content-Length for a given URL)
 
     Args:
         url (str): 目标URL (Target URL)
+        headers (dict): 请求头 (Request headers)
+        mounts (dict): 代理 (Proxies)
 
     Returns:
         int: Content-Length的值，如果获取失败则返回0 (Value of Content-Length, or 0 if retrieval fails)
     """
     async with httpx.AsyncClient(
-        timeout=10.0, transport=httpx.AsyncHTTPTransport(retries=5), proxies=proxies
+        timeout=10.0, transport=httpx.AsyncHTTPTransport(retries=5), mounts=mounts
     ) as client:
         try:
             response = await client.head(url, headers=headers, follow_redirects=True)
@@ -42,7 +44,7 @@ async def get_content_length(url: str, headers: dict = {}, proxies: dict = {}) -
             logger.error(traceback.format_exc())
             logger.error(_("连接超时错误: {0}".format(url)))
             logger.debug("===================================")
-            logger.debug(f"headers:{headers}, proxies:{proxies}")
+            logger.debug(f"headers:{headers}, proxies:{mounts}")
             logger.debug("===================================")
             return 0
         # 对HTTP状态错误进行处理 (Handling HTTP status errors)
