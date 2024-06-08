@@ -28,22 +28,28 @@ class BaseCrawler:
 
     def __init__(
         self,
-        proxies: dict = {},
+        proxies: dict = ...,
         max_retries: int = 5,
         max_connections: int = 10,
         timeout: int = 10,
         max_tasks: int = 10,
         crawler_headers: dict = {},
     ):
+        # 设置代理 (Set proxy)
+        self.proxies = proxies
         if isinstance(proxies, dict):
-            # 设置代理 (Set proxy)
-            self.mounts = {
-                scheme: httpx.Proxy(url)
-                for scheme, url in proxies.items()
-                if url is not None
-            }
-        else:
-            self.mounts = {}
+            # 底层连接重试次数 / Underlying connection retry count
+            self.sync_transport = httpx.HTTPTransport(
+                proxy=proxies.get("http://", None),
+                retries=max_retries,
+                local_address="0.0.0.0",
+            )
+            # 底层连接重试次数 / Underlying connection retry count
+            self.async_transport = httpx.AsyncHTTPTransport(
+                proxy=proxies.get("http://", None),
+                retries=max_retries,
+                local_address="0.0.0.0",
+            )
 
         # 爬虫请求头 / Crawler request header
         self.crawler_headers = crawler_headers or {}
@@ -58,9 +64,6 @@ class BaseCrawler:
 
         # 业务逻辑重试次数 / Business logic retry count
         self._max_retries = max_retries
-        # 底层连接重试次数 / Underlying connection retry count
-        self.atransport = httpx.AsyncHTTPTransport(retries=max_retries)
-        self.transport = httpx.HTTPTransport(retries=max_retries)
 
         # 超时等待时间 / Timeout waiting time
         self._timeout = timeout
@@ -68,6 +71,7 @@ class BaseCrawler:
 
         # 异步客户端 / Asynchronous client
         self._aclient = None
+
         # 同步客户端 / Synchronous client
         self._client = None
 
@@ -77,10 +81,8 @@ class BaseCrawler:
             self._aclient = httpx.AsyncClient(
                 headers=self.crawler_headers,
                 verify=False,
-                mounts=self.mounts,
                 timeout=self.timeout,
                 limits=self.limits,
-                transport=self.atransport,
             )
         return self._aclient
 
@@ -90,10 +92,8 @@ class BaseCrawler:
             self._client = httpx.Client(
                 headers=self.crawler_headers,
                 verify=False,
-                mounts=self.mounts,
                 timeout=self.timeout,
                 limits=self.limits,
-                transport=self.transport,
             )
         return self._client
 
@@ -202,7 +202,7 @@ class BaseCrawler:
                     ).format(
                         _("请求端点超时"),
                         url,
-                        self.mounts,
+                        self.proxies,
                         self.__class__.__name__,
                         exc,
                     )
@@ -215,7 +215,7 @@ class BaseCrawler:
                     ).format(
                         _("网络连接失败，请检查当前网络环境"),
                         url,
-                        self.mounts,
+                        self.proxies,
                         self.__class__.__name__,
                         exc,
                     )
@@ -228,7 +228,7 @@ class BaseCrawler:
                     ).format(
                         _("请求协议错误"),
                         url,
-                        self.mounts,
+                        self.proxies,
                         self.__class__.__name__,
                         exc,
                     )
@@ -241,7 +241,7 @@ class BaseCrawler:
                     ).format(
                         _("请求代理错误"),
                         url,
-                        self.mounts,
+                        self.proxies,
                         self.__class__.__name__,
                         exc,
                     )
@@ -254,7 +254,7 @@ class BaseCrawler:
                 raise APIConnectionError(
                     _(
                         "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2} 异常详细信息：{3}"
-                    ).format(url, self.mounts, self.__class__.__name__, req_err)
+                    ).format(url, self.proxies, self.__class__.__name__, req_err)
                 )
 
             except APIError as e:
@@ -299,7 +299,7 @@ class BaseCrawler:
                 raise APIConnectionError(
                     _(
                         "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2} 异常详细信息：{3}"
-                    ).format(url, self.mounts, self.__class__.__name__, req_err)
+                    ).format(url, self.proxies, self.__class__.__name__, req_err)
                 )
 
             except httpx.HTTPStatusError as http_error:
@@ -328,7 +328,7 @@ class BaseCrawler:
             raise APIConnectionError(
                 _(
                     "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2} 异常详细信息：{3}"
-                ).format(url, self.mounts, self.__class__.__name__, req_err)
+                ).format(url, self.proxies, self.__class__.__name__, req_err)
             )
 
         except httpx.HTTPStatusError as http_error:
