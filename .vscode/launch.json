@@ -1,0 +1,31 @@
+{
+    // 使用 IntelliSense 了解相关属性。
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Black 格式化代码",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "black",
+            "args": [
+                "${input:pythonPath}",
+                "--exclude",
+                "venv/*",
+            ],
+            "env": {
+                "PYTHONDEVMODE": "1",
+                "PYDEVD_DISABLE_FILE_VALIDATION": "1"
+            }
+        }
+    ],
+    "inputs": [
+        {
+            "id": "pythonPath",
+            "type": "promptString",
+            "description": "输入需要格式化的目录",
+            "default": "**/*.py"
+        }
+    ]
+}
