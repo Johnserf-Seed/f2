@@ -11,23 +11,33 @@ from f2.log.logger import logger
 from f2.i18n.translator import _
 
 
-async def get_content_length(url: str, headers: dict = {}, mounts: dict = {}) -> int:
+async def get_content_length(url: str, headers: dict = ..., proxies: dict = ...) -> int:
     """
     获取给定URL的Content-Length (Retrieve the Content-Length for a given URL)
 
     Args:
         url (str): 目标URL (Target URL)
         headers (dict): 请求头 (Request headers)
-        mounts (dict): 代理 (Proxies)
+        proxies (dict): 代理 (Proxies)
 
     Returns:
         int: Content-Length的值，如果获取失败则返回0 (Value of Content-Length, or 0 if retrieval fails)
     """
+
+    if proxies is ... or proxies is None:
+        proxies = {"all://": None}
+
+    proxy_url = (
+        proxies.get("http://") or proxies.get("https://") or proxies.get("all://")
+    )
+
     async with httpx.AsyncClient(
-        timeout=10.0, transport=httpx.AsyncHTTPTransport(retries=5), mounts=mounts
-    ) as client:
+        timeout=10.0,
+        transport=httpx.AsyncHTTPTransport(retries=5, proxy=proxy_url),
+        verify=False,
+    ) as aclient:
         try:
-            response = await client.head(url, headers=headers, follow_redirects=True)
+            response = await aclient.head(url, headers=headers, follow_redirects=True)
             # 当head请求被禁止时，释放status异常被捕获 (When head requests are forbidden, release status exceptions are caught)
             response.raise_for_status()
 
@@ -36,7 +46,9 @@ async def get_content_length(url: str, headers: dict = {}, mounts: dict = {}) ->
                 and int(response.headers.get("Content-Length")) == 0
             ):
                 # 如果head请求无法获取Content-Length, 则使用GET请求再次尝试获取
-                response = await client.get(url, headers=headers, follow_redirects=True)
+                response = await aclient.get(
+                    url, headers=headers, follow_redirects=True
+                )
                 response.raise_for_status()
 
         except httpx.ConnectTimeout:
@@ -44,7 +56,7 @@ async def get_content_length(url: str, headers: dict = {}, mounts: dict = {}) ->
             logger.error(traceback.format_exc())
             logger.error(_("连接超时错误: {0}".format(url)))
             logger.debug("===================================")
-            logger.debug(f"headers:{headers}, proxies:{mounts}")
+            logger.debug(f"headers:{headers}, proxies:{proxies}")
             logger.debug("===================================")
             return 0
         # 对HTTP状态错误进行处理 (Handling HTTP status errors)
@@ -54,10 +66,10 @@ async def get_content_length(url: str, headers: dict = {}, mounts: dict = {}) ->
                 try:
                     # 使用GET请求尝试再次获取Content-Length
                     # (Trying to retrieve Content-Length using GET request)
-                    request = client.build_request("GET", url, headers=headers)
+                    request = aclient.build_request("GET", url, headers=headers)
                     # 使用stream=True来避免下载整个内容
                     # (Using stream=True to avoid downloading the entire content)
-                    response = await client.send(request, stream=True)
+                    response = await aclient.send(request, stream=True)
                     response.raise_for_status()
                 except Exception as e:
                     logger.error(traceback.format_exc())
