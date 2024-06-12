@@ -19,6 +19,7 @@ from f2.utils.utils import (
     get_timestamp,
     extract_valid_urls,
     split_filename,
+    split_set_cookie,
 )
 from f2.crawlers.base_crawler import BaseCrawler
 from f2.exceptions.api_exceptions import (
@@ -1019,6 +1020,203 @@ class AwemeIdFetcher(BaseCrawler):
 
         aweme_ids = [cls.get_aweme_id(url) for url in urls]
         return await asyncio.gather(*aweme_ids)
+
+
+class DeviceIdManager(BaseCrawler):
+    """
+    DeviceIdManager 类用于生成设备 ID和 tt_chain_token。
+    设备 ID 和 tt_chain_token 是 TikTok API 请求的必要参数。
+
+    该类继承自 BaseCrawler，利用其中的 aclient 进行 HTTP 请求。主要包含两个方法：
+    - gen_device_id: 异步类方法，用于生成设备 ID。
+    - gen_device_ids: 异步类方法，用于生成多个设备 ID。
+
+    类属性:
+    - _DEVICE_ID_PARTTERN: 编译后的正则表达式，用于匹配设备 ID。
+    - _DEVICE_ID_URL: 设备 ID 生成器的 URL。
+    - _DEVICE_ID_HEADERS: 设备 ID 生成器的请求头。
+    - proxies: 从 ClientConfManager 获取的代理配置。
+
+    方法:
+    - __init__: 初始化 DeviceIdManager 实例，并调用父类的初始化方法。
+    - gen_device_id: 异步类方法，用于生成设备 ID。
+    - gen_device_ids: 异步类方法，用于生成多个设备 ID。
+
+    异常处理:
+    - 在 HTTP 请求过程中，处理可能出现的 TimeoutException、NetworkError、ProtocolError、ProxyError 和 HTTPStatusError 异常，并记录相应的错误信息。
+
+    使用示例:
+        # 生成单个设备 ID
+        device = await DeviceIdManager.gen_device_id()
+        deviceId = device["deviceId"]
+        tt_chain_token = device["cookie"]
+
+        # 生成单个设备 ID，返回完整的 cookie 信息
+        device = await DeviceIdManager.gen_device_id(full_cookie=True)
+        deviceId = device["deviceId"]
+        cookie = device["cookie"]
+
+        # 生成多个设备 ID
+        devices = await DeviceIdManager.gen_device_ids(3)
+        deviceIds = devices["deviceId"]
+        tt_chain_tokens = devices["cookies"]
+
+        # 生成多个设备 ID，返回完整的 cookie 信息
+        devices = await DeviceIdManager.gen_device_ids(3, full_cookie=True)
+        deviceIds = devices["deviceId"]
+        cookies = devices["cookie"]
+    """
+
+    # 预编译正则表达式
+    _DEVICE_ID_PARTTERN = re.compile(
+        r'<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__" type="application/json">\s*(.*?)\s*</script>',
+        re.DOTALL,
+    )
+
+    _DEVICE_ID_URL = "https://www.tiktok.com/"
+    _DEVICE_ID_FULL_URL = "https://www.tiktok.com/explore"
+
+    _DEVICE_ID_HEADERS = {
+        "User-Agent": ClientConfManager.user_agent(),
+        "Cookie": f"msToken={TokenManager.gen_real_msToken()}",
+    }
+    proxies = ClientConfManager.proxies()
+
+    def __init__(self):
+        super().__init__(proxies=self.proxies)
+
+    @classmethod
+    async def gen_device_id(cls, full_cookie: bool = False) -> dict:
+        """
+        生成设备 ID。
+
+        Args:
+            full_cookie(bool): 是否返回完整的 cookie 信息，默认为 False。
+
+        Returns:
+            dict: 生成的设备 ID 和 tt_chain_token
+
+        Notes:
+            full_cookie为True时，返回完整的cookie信息，否则只返回tt_chain_token。默认即可。
+
+        Raises:
+            APITimeoutError: 如果请求超时。
+            APIConnectionError: 如果网络连接失败。
+            APIUnauthorizedError: 如果请求协议错误。
+            APIResponseError: 如果响应不符合要求。
+        """
+
+        instance = cls()
+
+        try:
+            response = await instance.aclient.get(
+                (
+                    instance._DEVICE_ID_URL
+                    if not full_cookie
+                    else instance._DEVICE_ID_FULL_URL
+                ),
+                headers=instance._DEVICE_ID_HEADERS,
+                follow_redirects=True,
+            )
+            response.raise_for_status()
+            data = instance._DEVICE_ID_PARTTERN.search(response.text).group(1).strip()
+
+            cookie = split_set_cookie(response.headers["Set-Cookie"])
+            deviceId = json.loads(data)["__DEFAULT_SCOPE__"]["webapp.app-context"][
+                "wid"
+            ]
+
+            if deviceId is None:
+                raise APIResponseError(_("{0}生成失败").format("deviceId"))
+
+            if cookie is None:
+                raise APIResponseError(_("{0}生成失败").format("tt_chain_token"))
+
+            return {"deviceId": deviceId, "cookie": cookie}
+
+        except httpx.TimeoutException as exc:
+            logger.error(traceback.format_exc())
+            raise APITimeoutError(
+                _("{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
+                    _("请求端点超时"),
+                    instance._DEVICE_ID_URL,
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
+                )
+            )
+
+        except httpx.NetworkError as exc:
+            logger.error(traceback.format_exc())
+            raise APIConnectionError(
+                _("{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
+                    _("网络连接失败，请检查当前网络环境"),
+                    instance._DEVICE_ID_URL,
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
+                )
+            )
+
+        except httpx.ProtocolError as exc:
+            logger.error(traceback.format_exc())
+            raise APIUnauthorizedError(
+                _("{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
+                    _("请求协议错误"),
+                    instance._DEVICE_ID_URL,
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
+                )
+            )
+
+        except httpx.HTTPStatusError as exc:
+            logger.error(traceback.format_exc())
+            raise APIResponseError(
+                _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
+                    _("状态码错误"),
+                    instance._DEVICE_ID_URL,
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
+                )
+            )
+
+    @classmethod
+    async def gen_device_ids(cls, count: int, full_cookie: bool = False) -> dict:
+        """
+        生成多个设备 ID。
+
+        Args:
+            count: 生成的设备 ID 数量
+
+        Returns:
+            device_ids: 生成的设备 ID 字典
+
+        Raises:
+            TypeError: 如果输入的 count 不是整数。
+            ValueError: 如果输入的 count 小于 1。
+        """
+
+        if not isinstance(count, int):
+            raise TypeError(_("count 必须是整数"))
+
+        if not isinstance(full_cookie, bool):
+            raise TypeError(_("full_cookie 必须是布尔值"))
+
+        if count < 1:
+            raise ValueError(_("count 参数必须大于 0"))
+
+        if count > 10:
+            logger.warning(_("生成设备 ID 数量过多，可能会导致请求失败。"))
+
+        tasks = [cls.gen_device_id(full_cookie) for _ in range(count)]
+        results = await asyncio.gather(*tasks)
+
+        device_ids = [result["deviceId"] for result in results]
+        cookies = [result["cookie"] for result in results]
+
+        return {"deviceId": device_ids, "cookie": cookies}
 
 
 def format_file_name(
