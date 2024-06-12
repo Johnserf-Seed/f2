@@ -1,3 +1,5 @@
+# path: f2/__init__.py
+
 __author__ = "JohnserfSeed <johnserf-seed@foxmail.com>"
 __version__ = "0.0.1.5"
 __description_cn__ = "基于[red]异步[/red]的[green]全平台下载工具."
