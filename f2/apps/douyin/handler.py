@@ -6,7 +6,8 @@ from typing import AsyncGenerator, Union, Dict, Any, List
 
 from f2.log.logger import logger
 from f2.i18n.translator import _
-from f2.utils.mode_handler import mode_handler, mode_function_map
+from f2.utils.decorators import mode_handler, mode_function_map
+
 # from f2.utils.utils import split_set_cookie
 from f2.apps.douyin.db import AsyncUserDB, AsyncVideoDB
 from f2.apps.douyin.crawler import DouyinCrawler
