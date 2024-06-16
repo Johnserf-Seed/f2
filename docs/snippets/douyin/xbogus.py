@@ -5,7 +5,7 @@ from f2.apps.douyin.utils import XBogusManager
 
 async def main():
     test_endpoint = "aweme_id=7196239141472980280&aid=1128&version_name=23.5.0&device_platform=android&os_version=2333"
-    return XBogusManager.str_2_endpoint(test_endpoint)
+    return XBogusManager.str_2_endpoint(endpoint=test_endpoint)
 
 if __name__ == "__main__":
     print(asyncio.run(main()))
@@ -22,7 +22,7 @@ from f2.apps.douyin.utils import XBogusManager
 
 async def gen_user_profile(params: UserProfile):
     return XBogusManager.model_2_endpoint(
-        dyendpoint.USER_DETAIL, params.model_dump()
+        base_endpoint=dyendpoint.USER_DETAIL, params=params.model_dump()
     )
 
 async def main():
