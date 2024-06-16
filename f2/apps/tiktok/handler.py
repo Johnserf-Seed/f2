@@ -8,7 +8,7 @@ from typing import AsyncGenerator, Union, List, Any
 
 from f2.i18n.translator import _
 from f2.log.logger import logger
-from f2.utils.mode_handler import mode_handler, mode_function_map
+from f2.utils.decorators import mode_handler, mode_function_map
 from f2.apps.tiktok.db import AsyncUserDB, AsyncVideoDB
 from f2.apps.tiktok.crawler import TiktokCrawler
 from f2.apps.tiktok.dl import TiktokDownloader
