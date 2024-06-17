@@ -304,7 +304,7 @@ def handler_naming(
     "-s",
     type=int,
     # default=20,
-    help=_("从接口每页可获取作品数，不建议超过20"),
+    help=_("从接口每页可获取作品数，不建议超过 20"),
 )
 @click.option(
     "--languages",
@@ -343,7 +343,7 @@ def handler_naming(
 # @click.option(
 #     "--sso-login",
 #     is_flag=True,
-#     help=_("使用SSO扫码登录获取cookie，保存低频主配置文件"),
+#     help=_("使用SSO扫码登录获取cookie，保存低频主配置文件（暂时弃用）"),
 #     callback=handler_sso_login,
 # )
 @click.option(
