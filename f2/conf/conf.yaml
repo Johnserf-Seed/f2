@@ -27,7 +27,7 @@ f2:
         version: "119.0.0.0"
 
     headers:
-      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0
       Referer: https://www.douyin.com/
 
     proxies:
@@ -49,9 +49,9 @@ f2:
       url: https://mcs.zijieapi.com/webid?aid=6383&sdk_version=5.1.18_zip&device_platform=web
       body:
         app_id: 6383
-        referer: "https://www.douyin.com/"
-        url: "https://www.douyin.com/"
-        user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0"
+        referer: https://www.douyin.com/
+        url: https://www.douyin.com/
+        user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0
         user_unique_id: ""
 
   tiktok:
@@ -61,7 +61,7 @@ f2:
         language: zh-CN
         name: Mozilla
         platform: Win32
-        version: 5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
+        version: 5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
 
       device:
         id: "7372218823115949569"
@@ -74,7 +74,7 @@ f2:
       tz_name: Asia/Hong_Kong
 
     headers:
-      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
       Referer: https://www.tiktok.com/
 
     proxies:
