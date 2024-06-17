@@ -91,7 +91,7 @@ class BaseWebCastModel(BaseModel):
     browser_platform: str = "Win32"
     browser_name: str = "Mozilla"
     browser_version: str = quote(
-        "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0",
+        "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0",
         safe="",
     )
     browser_online: str = "true"
