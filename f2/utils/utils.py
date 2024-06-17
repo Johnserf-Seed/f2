@@ -1,15 +1,20 @@
 # path: f2/utils/utils.py
 
+import f2
 import re
 import sys
+import httpx
 import random
 import secrets
 import datetime
+import traceback
 import browser_cookie3
 import importlib_resources
 
 from typing import Union, Any
 from pathlib import Path
+
+from f2.log.logger import logger
 
 # 生成一个 16 字节的随机字节串 (Generate a random byte string of 16 bytes)
 seed_bytes = secrets.token_bytes(16)
@@ -392,3 +397,21 @@ def unescape_json(json_text: str) -> dict:
         json_obj = {}
 
     return json_obj
+
+
+# 获取最新版本号
+async def get_latest_version(package_name):
+    async with httpx.AsyncClient(
+        timeout=10.0,
+        transport=httpx.AsyncHTTPTransport(retries=5),
+        verify=False,
+    ) as aclient:
+        try:
+            response = await aclient.get(f"{f2.PYPI_URL}/{package_name}/json")
+            response.raise_for_status()
+            package_data = response.json()
+            latest_version = package_data["info"]["version"]
+            return latest_version
+        except (httpx.HTTPStatusError, httpx.RequestError, KeyError) as e:
+            logger.error(traceback.format_exc())
+            return None
