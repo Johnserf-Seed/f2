@@ -1047,3 +1047,47 @@ class UserLiveFilter(JSONModel):
             for prop_name in dir(self)
             if not prop_name.startswith("__") and not prop_name.startswith("_")
         }
+
+
+class CheckLiveAliveFilter(JSONModel):
+    @property
+    def api_status_code(self):
+        return self._get_attr_value("$.status_code")
+
+    @property
+    def is_alive(self):
+        return self._get_list_attr_value("$.data[*].alive")
+
+    @property
+    def room_id(self):
+        return self._get_list_attr_value("$.data[*].room_id")
+
+    def _to_raw(self) -> dict:
+        return self._data
+
+    def _to_dict(self) -> dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
+    def _to_list(self):
+        exclude_list = ["api_status_code"]
+        keys = [
+            prop_name
+            for prop_name in dir(self)
+            if not prop_name.startswith("__")
+            and not prop_name.startswith("_")
+            and prop_name not in exclude_list
+        ]
+        aweme_entries = self._get_attr_value("$.data") or []
+        list_dicts = []
+        for entry in aweme_entries:
+            d = {}
+            for key in keys:
+                attr_values = getattr(self, key)
+                index = aweme_entries.index(entry)
+                d[key] = attr_values[index] if index < len(attr_values) else None
+            list_dicts.append(d)
+        return list_dicts
