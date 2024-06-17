@@ -67,14 +67,14 @@ REVERSE_APP_MAPPINGS = {v: k for k, v in APP_MAPPINGS.items()}
 
 
 class DynamicGroup(click.Group):
-    def get_command(self, ctx, cmd_name):
+    def get_command(self, ctx: click.Context, cmd_name: str):
         app_name = (
             cmd_name
             if cmd_name in APP_MAPPINGS
             else REVERSE_APP_MAPPINGS.get(cmd_name, None)
         )
         if not app_name:
-            return None
+            ctx.fail(_("没有找到 {0} 应用").format(cmd_name))
         try:
             if app_name:
                 # 动态导入app的cli模块
@@ -82,9 +82,9 @@ class DynamicGroup(click.Group):
                 logger.info(_("应用：{0}").format(app_name))
                 command = getattr(module, app_name)
                 return command
-        except (ImportError, AttributeError) as e:
-            logger.error("Error: %s" % e)
-            return None
+        except (ImportError, AttributeError):
+            logger.error(traceback.format_exc())
+            return
 
 
 @click.command(cls=DynamicGroup)
