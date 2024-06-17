@@ -15,6 +15,7 @@ from f2.apps.tiktok.model import (
     PostComment,
     PostSearch,
     UserLive,
+    CheckLiveAlive,
 )
 from f2.apps.tiktok.utils import XBogusManager
 
@@ -126,6 +127,15 @@ class TiktokCrawler(BaseCrawler):
             params.model_dump(),
         )
         logger.debug(_("用户直播接口地址：{0}").format(endpoint))
+        return await self._fetch_get_json(endpoint)
+
+    async def fetch_check_live_alive(self, params: CheckLiveAlive):
+        endpoint = XBogusManager.model_2_endpoint(
+            self.headers.get("User-Agent"),
+            tkendpoint.CHECK_LIVE_ALIVE,
+            params.model_dump(),
+        )
+        logger.debug(_("检查开播状态接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def __aenter__(self):
