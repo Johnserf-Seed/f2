@@ -22,6 +22,7 @@ from f2.apps.tiktok.model import (
     PostDetail,
     PostSearch,
     UserLive,
+    CheckLiveAlive,
 )
 from f2.apps.tiktok.filter import (
     UserProfileFilter,
@@ -31,6 +32,7 @@ from f2.apps.tiktok.filter import (
     UserPlayListFilter,
     PostSearchFilter,
     UserLiveFilter,
+    CheckLiveAliveFilter,
 )
 from f2.apps.tiktok.utils import (
     SecUserIdFetcher,
@@ -894,6 +896,29 @@ class TiktokHandler:
         logger.info(_("直播信息爬取结束"))
 
         return live
+
+    async def fetch_check_live_alive(self, room_ids: str) -> CheckLiveAliveFilter:
+        """
+        用于检查直播间是否在线
+        (Used to check if the live room is online)
+
+        Return:
+            check: CheckLiveAliveFilter: 检查直播间在线状态过滤器 (Check live status filter)
+        """
+        logger.info(_("开始检查直播间在线状态"))
+        logger.debug("===================================")
+        async with TiktokCrawler(self.kwargs) as crawler:
+            response = await crawler.fetch_check_live_alive(
+                CheckLiveAlive(room_ids=room_ids)
+            )
+            check = CheckLiveAliveFilter(response)
+
+        logger.info(
+            _("直播间：{0}，在线状态：{1}").format(check.room_id, check.is_alive)
+        )
+        logger.debug("===================================")
+        logger.info(_("直播间在线状态检查结束"))
+        return check
 
 
 async def main(kwargs):
