@@ -404,7 +404,7 @@ def tiktok(
 
     # 尝试从命令行参数或kwargs中获取URL
     if not kwargs.get("url"):
-        logger.error("缺乏URL参数，详情看命令帮助")
+        logger.error(_("缺乏URL参数，详情看命令帮助"))
         handler_help(ctx, None, True)
 
     # 添加app_name到kwargs

@@ -79,7 +79,7 @@ class DynamicGroup(click.Group):
             if app_name:
                 # 动态导入app的cli模块
                 module = importlib.import_module(f"f2.apps.{app_name}.cli")
-                logger.info("App: %s" % app_name)
+                logger.info(_("应用：{0}").format(app_name))
                 command = getattr(module, app_name)
                 return command
         except (ImportError, AttributeError) as e:
