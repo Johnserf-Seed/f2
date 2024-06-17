@@ -61,11 +61,11 @@ class ClientConfManager:
 
     @classmethod
     def proxies(cls) -> dict:
-        return cls.tiktok_conf.get("proxies", {})
+        return cls.client().get("proxies", {})
 
     @classmethod
     def headers(cls) -> dict:
-        return cls.tiktok_conf.get("headers", {})
+        return cls.client().get("headers", {})
 
     @classmethod
     def user_agent(cls) -> str:
@@ -77,15 +77,15 @@ class ClientConfManager:
 
     @classmethod
     def msToken(cls) -> dict:
-        return cls.tiktok_conf.get("msToken", {})
+        return cls.client().get("msToken", {})
 
     @classmethod
     def ttwid(cls) -> dict:
-        return cls.tiktok_conf.get("ttwid", {})
+        return cls.client().get("ttwid", {})
 
     @classmethod
     def odin_tt(cls) -> dict:
-        return cls.tiktok_conf.get("odin_tt", {})
+        return cls.client().get("odin_tt", {})
 
 
 class TokenManager(BaseCrawler):
