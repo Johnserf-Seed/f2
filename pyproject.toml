@@ -40,6 +40,7 @@ dependencies = [
     "browser_cookie3==0.19.1",
     "pydantic==2.6.4",
     "qrcode==7.4.2",
+    "websockets>=11.0",
 ]
 
 [project.scripts]
