@@ -52,11 +52,11 @@ class ClientConfManager:
 
     @classmethod
     def base_request_model(cls) -> dict:
-        return cls.douyin_conf.get("BaseRequestModel", {})
+        return cls.client().get("BaseRequestModel", {})
 
     @classmethod
     def base_live_model(cls) -> dict:
-        return cls.douyin_conf.get("BaseLiveModel", {})
+        return cls.client().get("BaseLiveModel", {})
 
     @classmethod
     def brm_version(cls) -> dict:
@@ -84,11 +84,11 @@ class ClientConfManager:
 
     @classmethod
     def proxies(cls) -> dict:
-        return cls.douyin_conf.get("proxies", {})
+        return cls.client().get("proxies", {})
 
     @classmethod
     def headers(cls) -> dict:
-        return cls.douyin_conf.get("headers", {})
+        return cls.client().get("headers", {})
 
     @classmethod
     def user_agent(cls) -> str:
@@ -100,15 +100,15 @@ class ClientConfManager:
 
     @classmethod
     def msToken(cls) -> dict:
-        return cls.douyin_conf.get("msToken", {})
+        return cls.client().get("msToken", {})
 
     @classmethod
     def ttwid(cls) -> dict:
-        return cls.douyin_conf.get("ttwid", {})
+        return cls.client().get("ttwid", {})
 
     @classmethod
     def webid(cls) -> dict:
-        return cls.douyin_conf.get("webid", {})
+        return cls.client().get("webid", {})
 
 
 class TokenManager(BaseCrawler):
