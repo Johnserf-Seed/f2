@@ -47,3 +47,5 @@ TIKTOK_MODE_LIST = [
     "search",
     "live",
 ]
+
+PYPI_URL = "https://pypi.org/pypi"
