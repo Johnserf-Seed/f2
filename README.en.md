@@ -157,7 +157,8 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
   | Liked Works | 🟣⚫ | `fetch_user_like_videos` | 🟢 |
   | Favorite Works | 🟣⚫ | `fetch_user_collect_videos` | 🟢 |
   | Playlist Works | 🟣⚫ | `fetch_user_mix_videos` | 🟢 |
-  |Post Search|🟣⚫|`fetch_search_videos`|🟢|
+  | Post Search|🟣⚫|`fetch_search_videos`|🟢|
+  | Check If The webcast Is Alive|🟣⚫|`fetch_check_live_alive`|🟢|
   | ... | ... | ... | ... |
  </details>
 

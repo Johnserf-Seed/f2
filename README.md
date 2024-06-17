@@ -159,6 +159,7 @@
   |收藏作品|🟣⚫|`fetch_user_collect_videos`|🟢|
   |播放列表作品|🟣⚫|`fetch_user_mix_videos`|🟢|
   |作品搜索|🟣⚫|`fetch_search_videos`|🟢|
+  |检查开播|🟣⚫|`fetch_check_live_alive`|🟢|
   |...|...|...|...|
  </details>
 
