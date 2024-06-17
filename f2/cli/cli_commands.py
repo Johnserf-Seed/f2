@@ -5,12 +5,14 @@ import click
 import typing
 import asyncio
 import importlib
+import traceback
 
 from f2 import helps
 from f2.apps import __apps__ as apps_module
 from f2.exceptions import APIError
 from f2.cli.cli_console import RichConsoleManager
 from f2.utils._signal import SignalManager
+from f2.utils.utils import get_latest_version
 from f2.i18n.translator import _
 from f2.log.logger import logger
 
@@ -48,12 +50,47 @@ def handle_debug(
 ) -> None:
     if not value or ctx.resilient_parsing:
         return
+
     from rich.traceback import install
 
     install()
 
     logger.setLevel(value)
-    logger.debug("开启调试模式 (Debug mode on)")
+    logger.debug(_("调试模式：{0}").format(value))
+
+
+# 版本检测
+def handle_version(
+    ctx: click.Context,
+    param: typing.Union[click.Option, click.Parameter],
+    value: typing.Any,
+) -> None:
+    if not value or ctx.resilient_parsing:
+        return
+
+    asyncio.run(check_version())
+
+    ctx.exit()
+
+
+async def check_version():
+    """用于检查F2的版本是否最新"""
+
+    latest_version = await get_latest_version("f2")
+
+    if latest_version:
+        if f2.__version__ == latest_version:
+            logger.warning(
+                _(
+                    "您当前使用的版本 {0} 可能已过时，请考虑及时升级到最新版本 {1}，请使用 pip install -U f2 更新"
+                ).format(f2.__version__, latest_version)
+            )
+        elif f2.__version__ == latest_version:
+            logger.info(_("您当前使用的是最新版本：{0}").format(f2.__version__))
+    else:
+        logger.error(_("无法获取最新版本信息"))
+
+    return
 
 
 # 应用映射
@@ -77,6 +114,8 @@ class DynamicGroup(click.Group):
             ctx.fail(_("没有找到 {0} 应用").format(cmd_name))
         try:
             if app_name:
+                # 检查版本
+                asyncio.run(check_version())
                 # 动态导入app的cli模块
                 module = importlib.import_module(f"f2.apps.{app_name}.cli")
                 logger.info(_("应用：{0}").format(app_name))
@@ -113,6 +152,14 @@ class DynamicGroup(click.Group):
     expose_value=False,
     callback=handle_debug,
 )
+@click.option(
+    "--check-version",
+    is_flag=True,
+    expose_value=False,
+    is_eager=True,
+    callback=handle_version,
+    help=_("检查F2版本"),
+)
 def main(**kwargs):
     pass
 
@@ -138,7 +185,6 @@ def set_cli_config(ctx, **kwargs):
 
 
 async def run_app(kwargs):
-    logger.info(f"Version {f2.__version__}")
     app_name = kwargs["app_name"]
     app_module = importlib.import_module(f"f2.apps.{app_name}.handler")
     await app_module.main(kwargs)
