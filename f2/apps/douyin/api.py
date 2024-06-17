@@ -24,6 +24,9 @@ class DouyinAPIEndpoints:
     # WSS域名 (WSS Domain)
     WEBCAST_WSS_DOMAIN = "wss://webcast5-ws-web-lf.douyin.com"
 
+    # 直播弹幕(WSS) (Live Danmaku WSS)
+    LIVE_IM_WSS = f"{WEBCAST_WSS_DOMAIN}/webcast/im/push/v2/"
+
     # 首页Feed (Home Feed)
     TAB_FEED = f"{DOUYIN_DOMAIN}/aweme/v1/web/tab/feed/"
 
