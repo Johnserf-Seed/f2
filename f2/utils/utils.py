@@ -399,8 +399,16 @@ def unescape_json(json_text: str) -> dict:
     return json_obj
 
 
-# 获取最新版本号
-async def get_latest_version(package_name):
+async def get_latest_version(package_name: str) -> str:
+    """
+    获取 Python 包的最新版本号
+
+    Args:
+        package_name (str): Python 包名
+
+    Returns:
+        str: Python 包的最新版本号
+    """
     async with httpx.AsyncClient(
         timeout=10.0,
         transport=httpx.AsyncHTTPTransport(retries=5),
@@ -414,4 +422,4 @@ async def get_latest_version(package_name):
             return latest_version
         except (httpx.HTTPStatusError, httpx.RequestError, KeyError) as e:
             logger.error(traceback.format_exc())
-            return None
+            return "0.0.0.0"
