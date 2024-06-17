@@ -56,3 +56,6 @@ class TiktokAPIEndpoints:
 
     # 用户直播 (User Live)
     USER_LIVE = f"{TIKTOK_DOMAIN}/api-live/user/room/"
+
+    # 检查开播状态 (Check Live Status)
+    CHECK_LIVE_ALIVE = f"{WEBCAST_DOMAIN}/webcast/room/check_alive/"
