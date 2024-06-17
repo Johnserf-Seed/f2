@@ -61,28 +61,28 @@ class UserProfileFilter(JSONModel):
         return self._get_attr_value("$.userInfo.user.uniqueId")
 
     @property
-    def commentSetting(self) -> bool:
-        return bool(self._get_attr_value("$.userInfo.user.commentSetting"))
+    def commentSetting(self):
+        return self._get_attr_value("$.userInfo.user.commentSetting")
 
     @property
-    def followingVisibility(self) -> bool:
-        return bool(self._get_attr_value("$.userInfo.user.followingVisibility"))
+    def followingVisibility(self):
+        return self._get_attr_value("$.userInfo.user.followingVisibility")
 
     @property
-    def openFavorite(self) -> bool:
-        return bool(self._get_attr_value("$.userInfo.user.openFavorite"))
+    def openFavorite(self):
+        return self._get_attr_value("$.userInfo.user.openFavorite")
 
     @property
-    def privateAccount(self) -> bool:
-        return bool(self._get_attr_value("$.userInfo.user.privateAccount"))
+    def privateAccount(self):
+        return self._get_attr_value("$.userInfo.user.privateAccount")
 
     @property
-    def showPlayListTab(self) -> bool:
-        return bool(self._get_attr_value("$.userInfo.user.profileTab.showPlayListTab"))
+    def showPlayListTab(self):
+        return self._get_attr_value("$.userInfo.user.profileTab.showPlayListTab")
 
     @property
-    def relation(self) -> bool:  # follow 1, no follow 0
-        return bool(self._get_attr_value("$.userInfo.user.relation"))
+    def relation(self):  # follow 1, no follow 0
+        return self._get_attr_value("$.userInfo.user.relation")
 
     @property
     def signature(self):
@@ -93,12 +93,12 @@ class UserProfileFilter(JSONModel):
         return self._get_attr_value("$.userInfo.user.signature")
 
     @property
-    def ttSeller(self) -> bool:
-        return bool(self._get_attr_value("$.userInfo.user.ttSeller"))
+    def ttSeller(self):
+        return self._get_attr_value("$.userInfo.user.ttSeller")
 
     @property
-    def verified(self) -> bool:
-        return bool(self._get_attr_value("$.userInfo.user.verified"))
+    def verified(self):
+        return self._get_attr_value("$.userInfo.user.verified")
 
     def _to_raw(self) -> dict:
         return self._data
@@ -525,32 +525,32 @@ class PostDetailFilter(JSONModel):
 
     # aweme stats
     @property
-    def collected(self) -> bool:
-        return bool(self._get_attr_value("$.itemInfo.itemStruct.collected"))
+    def collected(self):
+        return self._get_attr_value("$.itemInfo.itemStruct.collected")
 
     @property
-    def digged(self) -> bool:
-        return bool(self._get_attr_value("$.itemInfo.itemStruct.digged"))
+    def digged(self):
+        return self._get_attr_value("$.itemInfo.itemStruct.digged")
 
     @property
-    def forFriend(self) -> bool:
-        return bool(self._get_attr_value("$.itemInfo.itemStruct.forFriend"))
+    def forFriend(self):
+        return self._get_attr_value("$.itemInfo.itemStruct.forFriend")
 
     @property
-    def itemCommentStatus(self) -> bool:
-        return bool(self._get_attr_value("$.itemInfo.itemStruct.itemCommentStatus"))
+    def itemCommentStatus(self):
+        return self._get_attr_value("$.itemInfo.itemStruct.itemCommentStatus")
 
     @property
-    def privateItem(self) -> bool:
-        return bool(self._get_attr_value("$.itemInfo.itemStruct.privateItem"))
+    def privateItem(self):
+        return self._get_attr_value("$.itemInfo.itemStruct.privateItem")
 
     @property
-    def secret(self) -> bool:
-        return bool(self._get_attr_value("$.itemInfo.itemStruct.secret"))
+    def secret(self):
+        return self._get_attr_value("$.itemInfo.itemStruct.secret")
 
     @property
-    def shareEnabled(self) -> bool:
-        return bool(self._get_attr_value("$.itemInfo.itemStruct.shareEnabled"))
+    def shareEnabled(self):
+        return self._get_attr_value("$.itemInfo.itemStruct.shareEnabled")
 
     # stats
     @property
