@@ -902,8 +902,14 @@ class TiktokHandler:
         用于检查直播间是否在线
         (Used to check if the live room is online)
 
+        Args:
+            room_ids: str: 直播间ID (Live room ID)
+
         Return:
             check: CheckLiveAliveFilter: 检查直播间在线状态过滤器 (Check live status filter)
+
+        Note:
+            房间号参数为字符串形式，多个房间号用逗号分隔，如：7381444193462078214,7381457815116466949,
         """
         logger.info(_("开始检查直播间在线状态"))
         logger.debug("===================================")
