@@ -59,6 +59,7 @@ def help() -> None:
                 "下载日期区间发布的作品，格式：2022-01-01|2023-01-01，'all' 为下载所有作品"
             ),
         ),
+        ("-w --keyword", "[dark_cyan]str", _("搜索关键词，用于搜索作品。")),
         ("-e --timeout", "[dark_cyan]int", _("网络请求超时时间。")),
         ("-r --max-retries", "[dark_cyan]int", _("网络请求超时重试数。")),
         ("-x --max-connections", "[dark_cyan]int", _("网络请求并发连接数。")),
