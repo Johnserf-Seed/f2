@@ -34,7 +34,7 @@ class DouyinCrawler(BaseCrawler):
     ):
         # 需要与cli同步
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})
-        self.headers = kwargs.get("headers") | {"Cookie": kwargs["cookie"]}
+        self.headers = kwargs.get("headers", {}) | {"Cookie": kwargs["cookie"]}
         super().__init__(proxies=proxies, crawler_headers=self.headers)
 
     async def fetch_user_profile(self, params: UserProfile):
