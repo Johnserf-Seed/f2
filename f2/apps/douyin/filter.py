@@ -376,7 +376,7 @@ class UserCollectsFilter(JSONModel):
         return self._get_attr_value("$.status_code")
 
     @property
-    def total_number(self):
+    def collects_total_number(self):
         return self._get_attr_value("$.total_number")
 
     @property

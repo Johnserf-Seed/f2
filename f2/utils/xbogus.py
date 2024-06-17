@@ -23,7 +23,7 @@ import hashlib
 
 
 class XBogus:
-    def __init__(self, user_agent: str = None) -> None:
+    def __init__(self, user_agent: str = "") -> None:
         # fmt: off
         self.Array = [
             None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
