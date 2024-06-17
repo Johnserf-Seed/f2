@@ -67,7 +67,7 @@ def help() -> None:
         (
             "-s --page-counts",
             "[dark_cyan]int",
-            _("从接口每页可获取作品数，不建议超过20"),
+            _("从接口每页可获取作品数，不建议超过 20"),
         ),
         (
             "-l --languages",
@@ -102,7 +102,9 @@ def help() -> None:
         (
             "--sso-login",
             "[dark_cyan]Flag",
-            _("使用SSO扫码登录获取[yellow]cookie[/yellow]，保存低频主配置文件"),
+            _(
+                "使用SSO扫码登录获取[yellow]cookie[/yellow]，保存低频主配置文件[red]（暂时弃用）[/red]"
+            ),
         ),
         ("--help", "[dark_cyan]Flag", _("显示经典帮助信息")),
         (

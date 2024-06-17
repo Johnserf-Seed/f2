@@ -282,7 +282,7 @@ def handler_naming(
     "-s",
     type=int,
     # default=20,
-    help=_("从接口每页可获取作品数，不建议超过20。"),
+    help=_("从接口每页可获取作品数，不建议超过 20"),
 )
 @click.option(
     "--languages",

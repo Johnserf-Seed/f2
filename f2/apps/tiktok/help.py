@@ -72,7 +72,7 @@ def help() -> None:
         (
             "-s --page-counts",
             "[dark_cyan]int",
-            _("从接口每页可获取作品数，不建议超过20。"),
+            _("从接口每页可获取作品数，不建议超过 20"),
         ),
         (
             "-l --languages",
