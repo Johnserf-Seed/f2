@@ -423,3 +423,11 @@ async def get_latest_version(package_name: str) -> str:
         except (httpx.HTTPStatusError, httpx.RequestError, KeyError) as e:
             logger.error(traceback.format_exc())
             return "0.0.0.0"
+
+
+class BaseEndpointManager:
+    @classmethod
+    def model_2_endpoint(cls, base_endpoint: str, params: dict) -> str:
+        param_str = "&".join([f"{k}={v}" for k, v in params.items()])
+        separator = "&" if "?" in base_endpoint else "?"
+        return f"{base_endpoint}{separator}{param_str}"
