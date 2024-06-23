@@ -22,3 +22,18 @@ tiktok:
   page_counts: 5
   path: Download
   timeout: 10
+
+weibo:
+
+  path: Download
+  folderize: yes
+  mode: post
+  naming: '{create}_{desc}'
+  cookie:
+  interval: all
+  timeout: 10
+  max_retries: 5
+  max_connections: 5
+  max_counts: 0
+  max_tasks: 5
+  page_counts: 20
