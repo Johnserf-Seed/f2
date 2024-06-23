@@ -1,3 +1,5 @@
+# path: f2/utils/xbogus.py
+
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 """

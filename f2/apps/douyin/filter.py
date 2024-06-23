@@ -2055,6 +2055,7 @@ class CheckQrcodeFilter(JSONModel):
             if not prop_name.startswith("__") and not prop_name.startswith("_")
         }
 
+
 class LiveImFetchFilter(JSONModel):
     @property
     def status_code(self):

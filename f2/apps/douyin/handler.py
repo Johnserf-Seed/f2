@@ -1576,7 +1576,6 @@ class DouyinHandler:
 
         logger.info(_("开始查询用户信息"))
         logger.debug("===================================")
-
         async with DouyinCrawler(self.kwargs) as crawler:
             params = QueryUser()
             response = await crawler.fetch_query_user(params)
