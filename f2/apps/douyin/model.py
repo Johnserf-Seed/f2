@@ -298,6 +298,21 @@ class UserFollower(BaseRequestModel):
     gps_access: int = 0
     address_book_access: int = 0
     is_top: int = 1
+
+
+class LiveWebcast(BaseWebCastModel):
+    webcast_sdk_version: str = "1.0.12"  # 当前为1.0.14-beta.0
+    update_version_code: str = "1.0.12"
+    compress: str = "gzip"
+    im_path: str = "/webcast/im/fetch/"
+    heartbeatDuration: int = 0
+    room_id: str
+    user_unique_id: str
+    cursor: str
+    internal_ext: str
+    signature: str  # 暂时调用execjs，纯算还在扣
+
+
 class LiveImFetch(BaseWebCastModel):
     # resp_content_type: str = "protobuf"
     resp_content_type: str = "json"
