@@ -10,7 +10,7 @@ from f2.utils.decorators import mode_handler, mode_function_map
 
 # from f2.utils.utils import split_set_cookie
 from f2.apps.douyin.db import AsyncUserDB, AsyncVideoDB
-from f2.apps.douyin.crawler import DouyinCrawler
+from f2.apps.douyin.crawler import DouyinCrawler, DouyinWebSocketCrawler
 from f2.apps.douyin.dl import DouyinDownloader
 from f2.apps.douyin.model import (
     UserPost,
@@ -30,6 +30,7 @@ from f2.apps.douyin.model import (
     UserFollower,
     PostRelated,
     FriendFeed,
+    LiveWebcast,
     LiveImFetch,
     QueryUser,
     FollowingUserLive,
@@ -54,11 +55,13 @@ from f2.apps.douyin.filter import (
     QueryUserFilter,
     FollowingUserLiveFilter,
 )
+from f2.apps.douyin.algorithm.webcast_signature import DouyinWebcastSignature
 from f2.apps.douyin.utils import (
     SecUserIdFetcher,
     AwemeIdFetcher,
     MixIdFetcher,
     WebCastIdFetcher,
+    ClientConfManager,
     # VerifyFpManager,
     create_or_rename_user_folder,
     # show_qrcode,
@@ -1625,6 +1628,63 @@ class DouyinHandler:
             logger.warning(_("请提供正确的Room_ID"))
 
         return live_im
+
+    async def fetch_live_danmaku(
+        self, room_id: str, user_unique_id: str, internal_ext: str, cursor: str
+    ):
+        """
+        通过WebSocket连接获取直播间弹幕，再通过回调函数处理弹幕数据。
+
+        Args:
+            room_id: str: 直播间ID
+            user_unique_id: str: 用户ID
+            internal_ext: str: 内部扩展参数
+            cursor: str: 弹幕cursor
+
+        Return:
+            self.websocket: DouyinWebSocketCrawler: WebSocket连接对象
+        """
+        wss_callbacks = {
+            "WebcastRoomMessage": DouyinWebSocketCrawler.WebcastRoomMessage,
+            "WebcastLikeMessage": DouyinWebSocketCrawler.WebcastLikeMessage,
+            "WebcastMemberMessage": DouyinWebSocketCrawler.WebcastMemberMessage,
+            "WebcastChatMessage": DouyinWebSocketCrawler.WebcastChatMessage,
+            "WebcastGiftMessage": DouyinWebSocketCrawler.WebcastGiftMessage,
+            "WebcastSocialMessage": DouyinWebSocketCrawler.WebcastSocialMessage,
+            "WebcastRoomUserSeqMessage": DouyinWebSocketCrawler.WebcastRoomUserSeqMessage,
+            "WebcastUpdateFanTicketMessage": DouyinWebSocketCrawler.WebcastUpdateFanTicketMessage,
+            "WebcastCommonTextMessage": DouyinWebSocketCrawler.WebcastCommonTextMessage,
+            "WebcastMatchAgainstScoreMessage": DouyinWebSocketCrawler.WebcastMatchAgainstScoreMessage,
+            "WebcastFansclubMessage": DouyinWebSocketCrawler.WebcastFansclubMessage,
+            # TODO: WebcastRanklistHourEntranceMessage
+            # TODO: WebcastRoomStatsMessage
+            # TODO: WebcastRoomMessage
+            # TODO: WebcastLiveShoppingMessage
+            # TODO: WebcastLiveEcomGeneralMessage
+            # TODO: WebcastProductChangeMessage
+            # TODO: WebcastRoomStreamAdaptationMessage
+        }
+        async with DouyinWebSocketCrawler(self.kwargs, callbacks=wss_callbacks) as wss:
+            signature = DouyinWebcastSignature(
+                ClientConfManager.user_agent()
+            ).get_signature(room_id, user_unique_id)
+
+            params = LiveWebcast(
+                room_id=room_id,
+                user_unique_id=user_unique_id,
+                internal_ext=internal_ext,
+                cursor=cursor,
+                signature=signature,
+            )
+
+            result = await wss.fetch_live_danmaku(params)
+
+            if result == "closed":
+                logger.info(_("直播间：{0} 已结束直播").format(room_id))
+            elif result == "error":
+                logger.error(_("直播间：{0} 弹幕连接异常").format(room_id))
+
+            return
 
     async def fetch_user_following_lives(self) -> FollowingUserLiveFilter:
         """
