@@ -54,4 +54,12 @@ WEIBO_MODE_LIST = [
     "like",
 ]
 
+TWITTER_MODE_LIST = [
+    "one",
+    "post",
+    "retweet",
+    "like",
+    "bookmark",
+]
+
 PYPI_URL = "https://pypi.org/pypi"
