@@ -15,3 +15,12 @@ tiktok:
   proxies:
     http://:
     https://:
+
+weibo:
+  headers:
+    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0
+    Referer: https://www.weibo.com/
+  cookie: XSRF-TOKEN=GxMcbrwRytI2afYndoarLKjJ; SUB=_2AkMRJL-Ef8NxqwFRmfwQz2rmZIVywg3EieKneE5fJRMxHRl-yT8XqlEmtRB6OqSRa3vF6f2fdNtQwdZNlAKdlpN1p7dT; SUBP=0033WrSXqPxfM72-Ws9jqgMF55529P9D9W5d3LX86ys6FPw-ljjWXw25; WBPSESS=Wk6CxkYDejV3DDBcnx2LOUWDIoRAGwNtFtgdJsHeFORJjYAOaFsShugP8UQ0ESPFYVi4zv3bd-yDJ_nOUlU6r5tEaTqi9GsMdESNWiZKcFssXVdv8LPGCfF_x1G4jj6N906MaQArmD8_aUiW5-mQXkubESA5BsVyta1YqRA0Jjg=
+  proxies:
+    http://:
+    https://:
