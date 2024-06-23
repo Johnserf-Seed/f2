@@ -17,6 +17,7 @@ from f2.apps.douyin.algorithm import webcast_signature
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.xbogus import XBogus as XB
+from f2.utils.abogus import ABogus as AB, BrowserFingerprintGenerator as BrowserFpGen
 from f2.utils.conf_manager import ConfigManager
 from f2.utils.utils import (
     gen_random_str,
@@ -601,6 +602,55 @@ class XBogusManager:
         separator = "&" if "?" in base_endpoint else "?"
 
         final_endpoint = f"{base_endpoint}{separator}{param_str}&X-Bogus={xb_value[1]}"
+
+        return final_endpoint
+
+
+class ABogusManager:
+    @classmethod
+    def str_2_endpoint(
+        cls,
+        user_agent: str,
+        params: str,
+        request_type: str = "",
+    ) -> str:
+        try:
+            browser_fp = BrowserFpGen.generate_fingerprint("Edge")
+            final_endpoint = AB(fp=browser_fp, user_agent=user_agent).generate_abogus(
+                params, request_type
+            )
+        except Exception as e:
+            logger.error(traceback.format_exc())
+            raise RuntimeError(_("生成A-Bogus失败: {0})").format(e))
+
+        return final_endpoint[0]
+
+    @classmethod
+    def model_2_endpoint(
+        cls,
+        user_agent: str,
+        base_endpoint: str,
+        params: dict,
+        request_type: str = "",
+    ) -> str:
+        if not isinstance(params, dict):
+            raise TypeError(_("参数必须是字典类型"))
+
+        param_str = "&".join([f"{k}={v}" for k, v in params.items()])
+
+        try:
+            browser_fp = BrowserFpGen.generate_fingerprint("Edge")
+            ab_value = AB(fp=browser_fp, user_agent=user_agent).generate_abogus(
+                param_str, request_type
+            )
+        except Exception as e:
+            logger.error(traceback.format_exc())
+            raise RuntimeError(_("生成A-Bogus失败: {0})").format(e))
+
+        # 检查base_endpoint是否已有查询参数 (Check if base_endpoint already has query parameters)
+        separator = "&" if "?" in base_endpoint else "?"
+
+        final_endpoint = f"{base_endpoint}{separator}{param_str}&a_bogus={ab_value[1]}"
 
         return final_endpoint
 
