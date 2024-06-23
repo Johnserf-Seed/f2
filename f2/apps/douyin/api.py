@@ -22,7 +22,7 @@ class DouyinAPIEndpoints:
     SSO_DOMAIN = "https://sso.douyin.com"
 
     # WSS域名 (WSS Domain)
-    WEBCAST_WSS_DOMAIN = "wss://webcast5-ws-web-lf.douyin.com"
+    WEBCAST_WSS_DOMAIN = "wss://webcast5-ws-web-hl.douyin.com"
 
     # 直播弹幕(WSS) (Live Danmaku WSS)
     LIVE_IM_WSS = f"{WEBCAST_WSS_DOMAIN}/webcast/im/push/v2/"
