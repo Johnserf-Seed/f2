@@ -6,14 +6,38 @@
 
 ## [Unreleased]
 
-- `0.0.1.6`版本中添加对`weibo`，`x`的支持
+- `0.0.1.7`版本中添加对`x`的支持，添加更多`douyin`，`tiktok`和`weibo`的接口
 
 
 ## [0.0.1.6] - 2024-05-04
 
 ### Added
 
+- 添加`weibo`应用
+- 添加`abogus(limit ua)`加密
+- 添加`douyin`加密算法切换配置
+- 添加基础接口模型转url类
+- 添加`WebSocket`爬虫客户端
+- 添加`douyin`直播wss签名管理器
+- 添加`douyin`直播wss签名生成类
+- 添加`douyin`工具JS库`webmssdk.es5-1.0.0.53`
+- 添加`douyin`直播间弹幕wss接口
+- 添加`F2`版本检测
+- 添加`tiktok`直播间开播状态
+- 添加`websockets>=11.0`依赖
+- 添加`tiktok` `device_id注册`与`cookie`管理类
+- 添加`douyin`生成`webid`配置
+- 添加`douyin`关注用户直播
+- 添加`douyin`，`tiktok`模型配置
+- 添加`conf.yaml`配置版本号
+- 添加`tiktok`集成测试
+- 添加`traceback`输出
+- 添加`douyin`短剧作品
+- 添加同步客户端的同步`transport`
+- 添加同步客户端
+- 添加`douyin`直播弹幕初始化
 - 添加`douyin`合集`mix_id`获取方法
+- 添加`douyin`查询用户
 - 添加时间戳转换的默认时区设置（`UTC/GMT+08:00`）
 - 添加`ClientConfManager`为每个应用提供方便的配置读取
 - 添加`uniqueId`查询`tiktok`的`user_db`
@@ -27,6 +51,24 @@
 
 ### Changed
 
+- 更新`__aexit__`方法
+- 更新`douyin`加密算法代码片段
+- 更新`weibo`测试用例
+- 优化命令不存在的输出
+- 取消接口数据过滤器对`bool`的预处理
+- 调整停止异步任务信号
+- 更新`douyin`的`xbogus`调用
+- 为装饰器文件重命名
+- 更新获取`Content-Length`的方法
+- 防止`douyin`直播结束时下载崩溃
+- 更新`BaseCrawler`类处理`httpx`即将弃用`proxies`参数
+- 更新`tiktok`的`msToken`配置
+- 修复`ClientConfManager`参数
+- 更新了所有应用配置
+- 重构了所有工具类方法
+- 更新`base_downloader`的区块下载参数
+- 修改`douyin`生成的ttwid将绑定ua
+- 修改`tiktok`用户直播下载流地址
 - 修改`douyin`，`tiktok`获取用户信息方法名
 - 完善时间戳转换类型，支持30位
 - 修改应用的代理配置名（`http: https: -> http://: https://:`）
@@ -40,6 +82,7 @@
 
 ### Deprecated
 
+- 弃用`douyin`SSO扫码登录
 - 类`BaseModel`中的`dict`方法已弃用(`pydantic>=2.6.4`)
 - 类`datetime`中的`utcnow`方法已弃用
 - 弃用`douyin`，`tiktok`获取用户名方法
@@ -51,6 +94,7 @@
 
 ### Fixed
 
+- 修复`_dl`日志输出
 - 修复`douyin`下载合集时合集链接无法识别的情况
 - 修复`tiktok`下载播放列表（合辑）的错误
 - 修复`m3u8`流下载时会重复下载`ts`片段的问题
@@ -59,6 +103,7 @@
 
 ### Security
 
+- 更新`pytest`版本到`8.2.1`
 - 更新`pydantic`版本到`2.6.4`
 - 更新`httpx`版本到`0.27.0`
 - 更新`aiosqlite`版本到`0.20.0`
