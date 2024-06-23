@@ -248,15 +248,17 @@ class SuggestWord(BaseRequestModel):
 
 class PostSearch(BaseRequestModel):
     search_channel: str = "aweme_general"
-    sort_type: int = 0  # 0 综合
-    publish_time: int = 0
+    filter_selected: str
     keyword: str
-    search_source: str = "hot_search_board"
+    search_source: str = "normal_search"
+    # search_sug # tab_search # normal_search # guide_search # hot_search_board
+    search_id: str = ""
     query_correct_type: int = 1
     is_filter_search: int = 0
     from_group_id: str = ""
     offset: int = 0
     count: int = 15
+    need_filter_settings: int = 1
 
 
 class LoginGetQr(BaseLoginModel):
