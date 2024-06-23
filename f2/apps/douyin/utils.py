@@ -13,6 +13,7 @@ import traceback
 from typing import Union
 from pathlib import Path
 
+from f2.apps.douyin.algorithm import webcast_signature
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.xbogus import XBogus as XB
@@ -535,6 +536,30 @@ class VerifyFpManager:
     @classmethod
     def gen_s_v_web_id(cls) -> str:
         return cls.gen_verify_fp()
+
+
+class WebcastSignatureManager:
+    @classmethod
+    def model_2_endpoint(
+        cls,
+        base_endpoint: str,
+        params: dict,
+        request_type: str = "",
+    ) -> str:
+        if not isinstance(params, dict):
+            raise TypeError(_("参数必须是字典类型"))
+
+        param_str = ",".join([f"{k}={v}" for k, v in params.items()])
+
+        try:
+            signature = webcast_signature.get_sign(param_str)
+        except Exception as e:
+            logger.error(traceback.format_exc())
+            raise RuntimeError(_("生成signature失败: {0})").format(e))
+
+        separator = "&" if "?" in base_endpoint else "?"
+
+        return f"{base_endpoint}{separator}{param_str}&signature={signature}"
 
 
 class XBogusManager:
