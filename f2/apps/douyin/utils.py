@@ -52,6 +52,10 @@ class ClientConfManager:
         return cls.client_conf.get("version", "unknown")
 
     @classmethod
+    def encryption(cls) -> dict:
+        return cls.client().get("encryption", "ab")
+
+    @classmethod
     def base_request_model(cls) -> dict:
         return cls.client().get("BaseRequestModel", {})
 
