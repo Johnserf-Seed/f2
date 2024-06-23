@@ -3,7 +3,8 @@
 import f2
 import click
 import typing
-import asyncio
+
+# import asyncio
 
 from pathlib import Path
 

@@ -577,6 +577,7 @@ class XBogusManager:
         try:
             final_endpoint = XB(user_agent).getXBogus(endpoint)
         except Exception as e:
+            logger.error(traceback.format_exc())
             raise RuntimeError(_("生成X-Bogus失败: {0})").format(e))
 
         return final_endpoint[0]
@@ -596,6 +597,7 @@ class XBogusManager:
         try:
             xb_value = XB(user_agent).getXBogus(param_str)
         except Exception as e:
+            logger.error(traceback.format_exc())
             raise RuntimeError(_("生成X-Bogus失败: {0})").format(e))
 
         # 检查base_endpoint是否已有查询参数 (Check if base_endpoint already has query parameters)
