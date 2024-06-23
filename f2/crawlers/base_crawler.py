@@ -392,13 +392,18 @@ class BaseCrawler:
             raise APIResponseError(_("HTTP状态码错误："), status_code)
 
     async def close(self):
-        await self.aclient.aclose()
+        # 如果没有初始化客户端，则不关闭 (If the client is not initialized, do not close)
+        if self._client:
+            await self.client.aclose()
+        if self._aclient:
+            await self.aclient.aclose()
 
     async def __aenter__(self):
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        await self.aclient.aclose()
+        await self.close()
+
 
 class WebSocketCrawler:
     """
