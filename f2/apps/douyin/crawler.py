@@ -62,10 +62,14 @@ class DouyinCrawler(BaseCrawler):
         # 需要与cli同步
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})
         self.headers = kwargs.get("headers", {}) | {"Cookie": kwargs["cookie"]}
+        if ClientConfManager.encryption() == "ab":
+            self.bogus_manager = ABogusManager
+        else:
+            self.bogus_manager = XBogusManager
         super().__init__(proxies=proxies, crawler_headers=self.headers)
 
     async def fetch_user_profile(self, params: UserProfile):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.USER_DETAIL,
             params.model_dump(),
@@ -74,7 +78,7 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_get_json(endpoint)
 
     async def fetch_user_post(self, params: UserPost):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.USER_POST,
             params.model_dump(),
@@ -83,7 +87,7 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_get_json(endpoint)
 
     async def fetch_user_like(self, params: UserLike):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.USER_FAVORITE_A,
             params.model_dump(),
@@ -92,7 +96,7 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_get_json(endpoint)
 
     async def fetch_user_collection(self, params: UserCollection):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.USER_COLLECTION,
             params.model_dump(),
@@ -101,7 +105,7 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_post_json(endpoint, params.model_dump())
 
     async def fetch_user_collects(self, params: UserCollects):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.USER_COLLECTS,
             params.model_dump(),
@@ -110,7 +114,7 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_get_json(endpoint)
 
     async def fetch_user_collects_video(self, params: UserCollectsVideo):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.USER_COLLECTS_VIDEO,
             params.model_dump(),
@@ -119,7 +123,7 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_get_json(endpoint)
 
     async def fetch_user_music_collection(self, params: UserMusicCollection):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.USER_MUSIC_COLLECTION,
             params.model_dump(),
@@ -128,7 +132,7 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_get_json(endpoint)
 
     async def fetch_user_mix(self, params: UserMix):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.MIX_AWEME,
             params.model_dump(),
@@ -137,7 +141,7 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_get_json(endpoint)
 
     async def fetch_post_detail(self, params: PostDetail):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.POST_DETAIL,
             params.model_dump(),
@@ -146,7 +150,7 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_get_json(endpoint)
 
     async def fetch_post_comment(self, params: PostDetail):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.POST_COMMENT,
             params.model_dump(),
@@ -155,7 +159,7 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_get_json(endpoint)
 
     async def fetch_post_feed(self, params: PostDetail):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.TAB_FEED,
             params.model_dump(),
@@ -164,7 +168,7 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_get_json(endpoint)
 
     async def fetch_follow_feed(self, params: PostDetail):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.FOLLOW_FEED,
             params.model_dump(),
@@ -173,7 +177,7 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_get_json(endpoint)
 
     async def fetch_friend_feed(self, params: PostDetail):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.FRIEND_FEED,
             params.model_dump(),
@@ -182,7 +186,7 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_post_json(endpoint)
 
     async def fetch_post_related(self, params: PostDetail):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.POST_RELATED,
             params.model_dump(),
@@ -191,7 +195,7 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_get_json(endpoint)
 
     async def fetch_live(self, params: UserLive):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.LIVE_INFO,
             params.model_dump(),
@@ -204,7 +208,7 @@ class DouyinCrawler(BaseCrawler):
         try:
             # 避免invalid session
             self.aclient.headers.update({"Cookie": ""})
-            endpoint = XBogusManager.model_2_endpoint(
+            endpoint = self.bogus_manager.model_2_endpoint(
                 self.headers.get("User-Agent"),
                 dyendpoint.LIVE_INFO_ROOM_ID,
                 params.model_dump(),
@@ -215,7 +219,7 @@ class DouyinCrawler(BaseCrawler):
             self.aclient.headers = original_headers
 
     async def fetch_following_live(self, params: FollowingUserLive):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.FOLLOW_USER_LIVE,
             params.model_dump(),
@@ -224,7 +228,7 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_get_json(endpoint)
 
     async def fetch_locate_post(self, params: UserPost):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.LOCATE_POST,
             params.model_dump(),
@@ -233,7 +237,7 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_get_json(endpoint)
 
     async def fetch_login_qrcode(self, parms: LoginGetQr):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.SSO_LOGIN_GET_QR,
             parms.model_dump(),
@@ -242,7 +246,7 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_get_json(endpoint)
 
     async def fetch_check_qrcode(self, parms: LoginCheckQr):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.SSO_LOGIN_CHECK_QR,
             parms.model_dump(),
@@ -251,7 +255,7 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_response(endpoint)
 
     async def fetch_check_login(self, parms: LoginCheckQr):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.SSO_LOGIN_CHECK_LOGIN,
             parms.model_dump(),
@@ -260,7 +264,7 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_get_json(endpoint)
 
     async def fetch_user_following(self, params: UserFollowing):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.USER_FOLLOWING,
             params.model_dump(),
@@ -269,7 +273,7 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_get_json(endpoint)
 
     async def fetch_user_follower(self, params: UserFollower):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.USER_FOLLOWER,
             params.model_dump(),
@@ -278,7 +282,7 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_get_json(endpoint)
 
     async def fetch_live_im_fetch(self, params: LiveImFetch):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.LIVE_IM_FETCH,
             params.model_dump(),
@@ -287,7 +291,7 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_get_json(endpoint)
 
     async def fetch_query_user(self, params: QueryUser):
-        endpoint = XBogusManager.model_2_endpoint(
+        endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.QUERY_USER,
             params.model_dump(),
