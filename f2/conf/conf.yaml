@@ -99,3 +99,17 @@ f2:
     odin_tt:
       url: https://www.tiktok.com/passport/web/account/info/?WebIdLastTime=1716637053&aid=1459&app_language=zh-Hans&app_name=tiktok_web&browser_language=zh-CN&browser_name=Mozilla&browser_online=true&browser_platform=Win32&browser_version=5.0%20%28Windows%20NT%2010.0%3B%20Win64%3B%20x64%29%20AppleWebKit%2F537.36%20%28KHTML%2C%20like%20Gecko%29%20Chrome%2F124.0.0.0%20Safari%2F537.36&channel=tiktok_web&cookie_enabled=true&device_id=7372899909097571857&device_platform=web_pc&focus_state=true&from_page=fyp&history_len=2&is_fullscreen=false&is_page_visible=true&odinId=7372898697492972561&os=windows&priority_region=&referer=&region=SG&screen_height=1080&screen_width=1920&tz_name=Asia%2FHong_Kong&webcast_language=zh-Hans
 
+  weibo:
+    headers:
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36 Edg/121.0.0.0
+      Referer: https://weibo.com/
+
+    proxies:
+      http://:
+      https://:
+
+    visitor:
+      url: https://passport.weibo.com/visitor/genvisitor2
+      cb: visitor_gray_callback
+      tid:
+      from: weibo
