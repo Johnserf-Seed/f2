@@ -572,7 +572,10 @@ class BaseDownloader(BaseCrawler):
 
     async def close(self) -> None:
         """关闭下载器 (Close the downloader)"""
-        await self.aclient.aclose()
+        if self.client:
+            await self.client.close()
+        if self.aclient:
+            await self.aclient.aclose()
 
     async def __aenter__(self) -> "BaseDownloader":
         """进入上下文管理器 (Enter the context manager)"""
@@ -582,4 +585,4 @@ class BaseDownloader(BaseCrawler):
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
         """退出上下文管理器 (Exit the context manager)"""
         self.progress.__exit__(exc_type, exc_val, exc_tb)
-        await self.aclient.aclose()
+        await self.close()
