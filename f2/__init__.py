@@ -48,4 +48,10 @@ TIKTOK_MODE_LIST = [
     "live",
 ]
 
+WEIBO_MODE_LIST = [
+    "one",
+    "post",
+    "like",
+]
+
 PYPI_URL = "https://pypi.org/pypi"
