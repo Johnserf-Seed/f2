@@ -5,7 +5,6 @@ from f2.apps.douyin.utils import MixIdFetcher
 
 async def main():
     raw_url = "https://www.douyin.com/collection/7360898383181809676"
-
     return await MixIdFetcher.get_mix_id(raw_url)
 
 
