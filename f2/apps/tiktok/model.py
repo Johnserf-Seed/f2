@@ -140,6 +140,7 @@ class UserLive(BaseRequestModel):
     uniqueId: str
     sourceType: int = 54
 
+
 class CheckLiveAlive(BaseRequestModel):
     from_page: str = "live"
     room_ids: str
