@@ -547,9 +547,9 @@ class WebcastSignatureManager:
     @classmethod
     def model_2_endpoint(
         cls,
+        user_agent: str,
         base_endpoint: str,
         params: dict,
-        request_type: str = "",
     ) -> str:
         if not isinstance(params, dict):
             raise TypeError(_("参数必须是字典类型"))
@@ -557,7 +557,7 @@ class WebcastSignatureManager:
         param_str = ",".join([f"{k}={v}" for k, v in params.items()])
 
         try:
-            signature = webcast_signature.get_sign(param_str)
+            signature = webcast_signature(user_agent).get_signature(param_str)
         except Exception as e:
             logger.error(traceback.format_exc())
             raise RuntimeError(_("生成signature失败: {0})").format(e))
