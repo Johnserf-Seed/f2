@@ -154,7 +154,7 @@ class TiktokHandler:
             await db.add_video_info(ignore_fields=ignore_fields, **aweme_data)
 
     @mode_handler("one")
-    async def handler_one_video(self):
+    async def handle_one_video(self):
         """
         用于获取指定作品的信息
         (Used to get video info of specified video)
@@ -214,7 +214,7 @@ class TiktokHandler:
         return video
 
     @mode_handler("post")
-    async def handler_user_post(self):
+    async def handle_user_post(self):
         """
         用于获取指定用户的作品信息
         (Used to get video info of specified user)
@@ -314,7 +314,7 @@ class TiktokHandler:
         logger.debug(_("爬取结束，共爬取 {0} 个作品").format(videos_collected))
 
     @mode_handler("like")
-    async def handler_user_like(self):
+    async def handle_user_like(self):
         """
         用于获取指定用户的点赞作品信息
         (Used to get liked video info of specified user)
@@ -416,7 +416,7 @@ class TiktokHandler:
         logger.debug(_("爬取结束，共爬取 {0} 个作品").format(videos_collected))
 
     @mode_handler("collect")
-    async def handler_user_collect(self):
+    async def handle_user_collect(self):
         """
         用于获取指定用户的收藏作品信息
         (Used to get collected video info of specified user)
@@ -518,7 +518,7 @@ class TiktokHandler:
         logger.debug(_("爬取结束，共爬取 {0} 个作品").format(videos_collected))
 
     @mode_handler("mix")
-    async def handler_user_mix(self):
+    async def handle_user_mix(self):
         """
         用于获取指定用户的合集作品信息
         (Used to get mix video info of specified user)
@@ -710,7 +710,7 @@ class TiktokHandler:
         logger.debug(_("爬取结束，共爬取 {0} 个作品").format(videos_collected))
 
     @mode_handler("search")
-    async def handler_search(self):
+    async def handle_search(self):
         """
         用于搜索指定关键词的作品信息
         (Used to search video info of specified keyword)
@@ -825,7 +825,7 @@ class TiktokHandler:
         logger.info(_("搜索结束，共搜索到 {0} 个作品").format(videos_collected))
 
     @mode_handler("live")
-    async def handler_user_live(self):
+    async def handle_user_live(self):
         """
         用于获取指定用户的直播信息
         (Used to get live info of specified user)
