@@ -1,7 +1,5 @@
 # path: f2/apps/tiktok/handler.py
 
-import sys
-
 from pathlib import Path
 from urllib.parse import quote, unquote
 from typing import AsyncGenerator, Union, List, Any
@@ -607,7 +605,8 @@ class TiktokHandler:
         """
 
         if playlists == {}:
-            sys.exit(_("用户没有作品合辑"))
+            logger.warning(_("用户没有作品合辑"))
+            return
 
         rich_console.print("[bold]请选择要下载的合辑：[/bold]")
         rich_console.print("0: [bold]全部下载[/bold]")
