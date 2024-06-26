@@ -80,6 +80,7 @@ export default defineConfig({
                 {text: 'DouYin', link: '/guide/apps/douyin/index'},
                 {text: 'TikTok', link: '/guide/apps/tiktok/index'},
                 {text: 'X', link: '/guide/apps/x/index'},
+                {text: 'WeiBo', link: '/guide/apps/weibo/index'},
               ]
             },
 
