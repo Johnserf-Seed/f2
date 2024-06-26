@@ -14,7 +14,7 @@ class DouyinWebcastSignature:
             else "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"
         )  # 自定义 ua，为空则设置一个默认 ua
 
-    def get_signature(self, room_id: str, user_unique_id: str):
+    def get_signature(self, room_id: str, user_unique_id: str) -> str:
         """
         获取直播间签名
 
