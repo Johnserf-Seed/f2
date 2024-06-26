@@ -3,6 +3,7 @@
 import asyncio
 from f2.apps.tiktok.utils import XBogusManager
 
+
 async def main():
     test_endpoint = "aid=1988&app_language=zh-Hans&app_name=tiktok_web&browser_platform=Win32&browser_version=5.0%20%28Windows%20NT%2010.0%3B%20Win64%3B%20x64%29%20AppleWebKit%2F537.36%20%28KHTML%2C%20like%20Gecko%29%20Chrome%2F120.0.0.0%20Safari%2F537.36&channel=tiktok_web&cookie_enabled=true&count=16&coverFormat=2&device_id=7306060721837852167&device_platform=web_pc&itemID=7294298719665622305"
     return XBogusManager.str_2_endpoint(test_endpoint)

@@ -44,7 +44,7 @@ class ClientConfManager:
         return cls.tiktok_conf
 
     @classmethod
-    def version(cls) -> str:
+    def conf_version(cls) -> str:
         return cls.client_conf.get("version", "unknown")
 
     @classmethod

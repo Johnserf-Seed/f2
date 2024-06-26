@@ -2,6 +2,7 @@ import asyncio
 from f2.apps.tiktok.handler import TiktokHandler
 from f2.apps.tiktok.db import AsyncVideoDB
 
+
 # 需要忽略的字段（需过滤掉有时效性的字段）
 ignore_fields = ["video_play_addr", "images", "video_bit_rate", "cover"]
 
