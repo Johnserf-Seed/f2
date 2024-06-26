@@ -3,7 +3,7 @@ from f2.apps.tiktok.handler import TiktokHandler
 
 kwargs = {
     "headers": {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0",
         "Referer": "https://www.tiktok.com/",
     },
     "cookie": "YOUR_COOKIE_HERE",
