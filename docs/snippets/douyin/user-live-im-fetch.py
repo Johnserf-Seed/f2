@@ -1,6 +1,6 @@
 import asyncio
-
 from f2.apps.douyin.handler import DouyinHandler
+
 
 kwargs = {
     "headers": {
@@ -12,6 +12,7 @@ kwargs = {
     "timeout": 10,
     "cookie": "YOUR_COOKIE_HERE",
 }
+
 
 kwargs2 = {
     "headers": {
@@ -28,17 +29,17 @@ kwargs2 = {
 async def main():
     # 获取游客ttwid的user_unique_id，你可以通过TokenManager.gen_ttwid()生成新的游客ttwid
     user = await DouyinHandler(kwargs).fetch_query_user()
-    # print(user.user_unique_id)
+    # print("游客user_unique_id：", user.user_unique_id)
 
     # 通过此接口获取room_id，参数为live_id
     room = await DouyinHandler(kwargs).fetch_user_live_videos("662122193366")
-    # print(room.room_id)
+    # print("直播间ID：", room.room_id)
 
     # 通过该接口获取wss所需的cursor和internal_ext
     live_im = await DouyinHandler(kwargs).fetch_live_im(
         room_id=room.room_id, unique_id=user.user_unique_id
     )
-    # print(live_im.cursor, live_im.internal_ext)
+    # print("直播间IM页码：", live_im.cursor, "直播间IM扩展：", live_im.internal_ext)
 
     # 获取直播弹幕
     await DouyinHandler(kwargs2).fetch_live_danmaku(

@@ -1,5 +1,37 @@
+// #region user-collects-snippet
 import asyncio
 from f2.apps.douyin.handler import DouyinHandler
+
+
+kwargs = {
+    "headers": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0",
+        "Referer": "https://www.douyin.com/",
+    },
+    "proxies": {"http://": None, "https://": None},
+    "timeout": 10,
+    "cookie": "YOUR_COOKIE_HERE",
+}
+
+
+async def main():
+    async for collects in DouyinHandler(kwargs).fetch_user_collects(0, 10, 20):
+        print("=================_to_raw================")
+        print(collects._to_raw())
+        # print("=================_to_dict===============")
+        # print(collects._to_dict())
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+
+// #endregion user-collects-snippet
+
+
+// #region user-collects-videos-snippet
+import asyncio
+from f2.apps.douyin.handler import DouyinHandler
+
 
 kwargs = {
     "headers": {
@@ -27,3 +59,5 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
+// #endregion user-collects-videos-snippet
