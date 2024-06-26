@@ -214,7 +214,7 @@ class DouyinHandler:
             aweme_id: str: 作品ID
 
         Return:
-            video: PostDetailFilter: 单个作品数据过滤器
+            video: PostDetailFilter: 单个作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
         """
 
         logger.info(_("开始爬取作品：{0}").format(aweme_id))
@@ -279,7 +279,7 @@ class DouyinHandler:
             max_counts: int: 最大作品数
 
         Return:
-            video: AsyncGenerator[UserPostFilter, Any]: 作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
+            video: AsyncGenerator[UserPostFilter, Any]: 发布作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
         """
 
         max_counts = max_counts or float("inf")
@@ -386,7 +386,7 @@ class DouyinHandler:
             max_counts: int: 最大作品数
 
         Return:
-            video: AsyncGenerator[UserPostFilter, Any]: 作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
+            video: AsyncGenerator[UserPostFilter, Any]: 喜欢作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
         """
 
         max_counts = max_counts or float("inf")
@@ -580,7 +580,7 @@ class DouyinHandler:
             max_counts: int: 最大作品数 (Maximum number of videos)
 
         Return:
-            collection: AsyncGenerator[UserCollectionFilter, Any]: 作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
+            collection: AsyncGenerator[UserCollectionFilter, Any]: 收藏作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
 
         Note:
             该接口需要用POST且只靠cookie来获取数据。
@@ -744,7 +744,7 @@ class DouyinHandler:
             max_counts: int: 最大收藏夹数 (Max counts)
 
         Return:
-            collects: AsyncGenerator[UserCollectsFilter, Any]: 收藏夹数据过滤器，包含收藏夹数据的_to_raw、_to_dict、_to_list方法)
+            collects: AsyncGenerator[UserCollectsFilter, Any]: 收藏夹数据过滤器，包含收藏夹数据的_to_raw、_to_dict方法)
         """
 
         max_counts = max_counts or float("inf")
@@ -805,7 +805,7 @@ class DouyinHandler:
             max_counts: int: 最大作品数 (Maximum number of videos)
 
         Return:
-            video: AsyncGenerator[UserCollectionFilter, Any]: 作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
+            video: AsyncGenerator[UserCollectionFilter, Any]: 收藏夹作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
         """
 
         max_counts = max_counts or float("inf")
@@ -1571,7 +1571,7 @@ class DouyinHandler:
         用于查询用户信息，仅返回用户的基本信息，若需要获取更多信息请使用`fetch_user_profile`。
 
         Return:
-            user: QueryUserFilter: 用户数据过滤器，包含用户数据的_to_raw、_to_dict、_to_list方法
+            user: QueryUserFilter: 查询用户数据过滤器，包含用户数据的_to_raw、_to_dict方法
         """
 
         logger.info(_("开始查询用户信息"))
@@ -1600,6 +1600,7 @@ class DouyinHandler:
 
         Args:
             room_id: str: 直播间ID
+            unique_id: str: 用户ID
 
         Return:
             live_im: LiveImFetchFilter: 直播间信息数据过滤器，包含直播间信息的_to_raw、_to_dict、_to_list方法
@@ -1657,7 +1658,6 @@ class DouyinHandler:
             "WebcastFansclubMessage": DouyinWebSocketCrawler.WebcastFansclubMessage,
             # TODO: WebcastRanklistHourEntranceMessage
             # TODO: WebcastRoomStatsMessage
-            # TODO: WebcastRoomMessage
             # TODO: WebcastLiveShoppingMessage
             # TODO: WebcastLiveEcomGeneralMessage
             # TODO: WebcastProductChangeMessage
