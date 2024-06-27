@@ -808,7 +808,7 @@ class TiktokHandler:
 
             if videos_collected >= max_counts:
                 logger.info(
-                    _("关键词：{0} 已达到最大下载数量 {} 个").format(
+                    _("关键词：{0} 已达到最大下载数量 {1} 个").format(
                         keyword, max_counts
                     )
                 )

@@ -287,7 +287,7 @@ class BaseDownloader(BaseCrawler):
                     if not segments:
                         await self.progress.update(
                             task_id,
-                            description=_("[  丢失  ]:"),
+                            description=_("[  丢失  ]："),
                             filename=trim_filename(full_path.name, 45),
                             state="completed",
                         )
@@ -371,7 +371,7 @@ class BaseDownloader(BaseCrawler):
                         logger.warning(_("m3u8文件或ts文件未找到，可能直播结束"))
                         await self.progress.update(
                             task_id,
-                            description=_("[  丢失  ]:"),
+                            description=_("[  丢失  ]："),
                             filename=trim_filename(full_path.name, 45),
                             state="completed",
                         )
@@ -380,7 +380,7 @@ class BaseDownloader(BaseCrawler):
                         logger.error(_("HTTP错误: {0}").format(e))
                         await self.progress.update(
                             task_id,
-                            description=_("[  失败  ]:"),
+                            description=_("[  失败  ]："),
                             filename=trim_filename(full_path.name, 45),
                             state="completed",
                         )
@@ -400,7 +400,7 @@ class BaseDownloader(BaseCrawler):
                     logger.error(traceback.format_exc())
                     await self.progress.update(
                         task_id,
-                        description=_("[  失败  ]:"),
+                        description=_("[  失败  ]："),
                         filename=trim_filename(full_path.name, 45),
                         state="completed",
                     )
@@ -411,7 +411,7 @@ class BaseDownloader(BaseCrawler):
                     logger.error(traceback.format_exc())
                     await self.progress.update(
                         task_id,
-                        description=_("[  失败  ]:"),
+                        description=_("[  失败  ]："),
                         filename=trim_filename(full_path.name, 45),
                         state="completed",
                     )
