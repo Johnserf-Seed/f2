@@ -17,7 +17,7 @@ outline: deep
 | 下载用户喜欢作品       | `handle_user_like`      |
 | 下载用户收藏原声       | `handle_user_music_collection` |
 | 下载用户收藏作品       | `handle_user_collection` |
-| 下载用户合辑作品       | `handle_user_mix`       |
+| 下载用户合集作品       | `handle_user_mix`       |
 | 下载用户直播流         | `handle_user_live`      |
 | 下载用户首页推荐作品    | `handle_user_feed`      |
 | 下载相似作品          | `handle_related`        |
@@ -35,7 +35,7 @@ outline: deep
 | 用户收藏作品数据       | `fetch_user_collection_videos` |  🟢      |
 | 用户收藏夹数据         | `fetch_user_collects`    |     🟢      |
 | 用户收藏夹作品数据     | `fetch_user_collects_videos` |     🟢      |
-| 用户合辑作品数据       | `fetch_user_mix_videos`  |     🟢      |
+| 用户合集作品数据       | `fetch_user_mix_videos`  |     🟢      |
 | 用户直播流数据         | `fetch_user_live_videos` |     🟢      |
 | 用户直播流数据2        | `fetch_user_live_videos_by_room_id` |     🟢      |
 | 用户首页推荐作品数据    | `fetch_user_feed_videos` |     🟢      |
@@ -70,8 +70,8 @@ outline: deep
 | 提取列表用户id       | `SecUserIdFetcher` | `get_all_sec_user_id`     |  🟢  |
 | 提取单个作品id       | `AwemeIdFetcher`   | `get_aweme_id`            |  🟢  |
 | 提取列表作品id       | `AwemeIdFetcher`   | `get_all_aweme_id`        |  🟢  |
-| 提取单个合辑id       | `MixIdFetcher`     | `get_mix_id`              |  🟢  |
-| 提取列表合辑id       | `MixIdFetcher`     | `get_all_mix_id`          |  🟢  |
+| 提取单个合集id       | `MixIdFetcher`     | `get_mix_id`              |  🟢  |
+| 提取列表合集id       | `MixIdFetcher`     | `get_all_mix_id`          |  🟢  |
 | 提取单个直播间号      | `WebCastIdFetcher` | `get_webcast_id`          |  🟢  |
 | 提取列表直播间号       | `WebCastIdFetcher` | `get_all_webcast_id`      |  🟢  |
 | 全局格式化文件名      | -                 | `format_file_name`        |  🟢  |
@@ -93,7 +93,7 @@ outline: deep
 | 收藏夹接口地址 | `DouyinCrawler` | `fetch_user_collects` |  🟢  |
 | 收藏夹作品接口地址 | `DouyinCrawler` | `fetch_user_collects_video` |  🟢  |
 | 音乐收藏接口地址 | `DouyinCrawler` | `fetch_user_music_collection` |  🟢  |
-| 合辑作品接口地址 | `DouyinCrawler` | `fetch_user_mix` |  🟢  |
+| 合集作品接口地址 | `DouyinCrawler` | `fetch_user_mix` |  🟢  |
 | 作品详情接口地址 | `DouyinCrawler` | `fetch_post_detail` |  🟢  |
 | 作品评论接口地址 | `DouyinCrawler` | `fetch_post_comment` |  🟢  |
 | 推荐作品接口地址 | `DouyinCrawler` | `fetch_post_feed` |  🟢  |
@@ -309,9 +309,9 @@ outline: deep
 
 <<< @/snippets/douyin/user-collects.py#user-collects-videos-snippet{17-20}
 
-### 用户合辑作品数据 🟢
+### 用户合集作品数据 🟢
 
-异步方法，用于获取指定用户合辑的视频列表，合辑视频的mix_id是一致的，从单个作品数据接口中获取即可。
+异步方法，用于获取指定用户合集的视频列表，合集视频的mix_id是一致的，从单个作品数据接口中获取即可。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -828,31 +828,31 @@ outline: deep
 
 <<< @/snippets/douyin/aweme-id.py#multi-aweme-id-snippet{15,18}
 
-### 提取合辑id 🟢
+### 提取合集id 🟢
 
-类方法，用于从合集链接中提取合辑id。
+类方法，用于从合集链接中提取合集id。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
-| url | str | 合辑地址 |
+| url | str | 合集地址 |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
-| mix_id | str | 合辑ID |
+| mix_id | str | 合集ID |
 
 <<< @/snippets/douyin/mix-id.py#single-mix-id-snippet{6,7}
 
-### 提取列表合辑id 🟢
+### 提取列表合集id 🟢
 
-类方法，用于从合集链接列表中提取合辑id。
+类方法，用于从合集链接列表中提取合集id。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
-| urls | list | 合辑地址列表 |
+| urls | list | 合集地址列表 |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
-| mix_ids | list | 合辑ID列表 |
+| mix_ids | list | 合集ID列表 |
 
 <<< @/snippets/douyin/mix-id.py#multi-mix-id-snippet{7-10,13,16}
 

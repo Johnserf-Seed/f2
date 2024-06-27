@@ -162,7 +162,7 @@ def handler_naming(
     type=str,
     # default="",
     help=_(
-        "根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合辑与直播同上"
+        "根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合集与直播同上"
     ),
 )
 @click.option(
@@ -207,7 +207,7 @@ def handler_naming(
     # default="post",
     # required=True,
     help=_(
-        "下载模式：单个作品(one)，主页作品(post), 点赞作品(like), 收藏作品(collect), 合辑播放列表(mix)"
+        "下载模式：单个作品(one)，主页作品(post), 点赞作品(like), 收藏作品(collect), 合集播放列表(mix)"
     ),
 )
 @click.option(

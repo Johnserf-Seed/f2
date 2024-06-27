@@ -594,21 +594,21 @@ class TiktokHandler:
         playlists: Union[dict, UserPlayListFilter],
     ) -> Union[str, List[str]]:
         """
-        用于选择要下载的作品合辑
+        用于选择要下载的作品合集
         (Used to select the video mix to download)
 
         Args:
-            playlists: Union[dict, UserPlayListFilter]: 作品合辑列表 (Video mix list)
+            playlists: Union[dict, UserPlayListFilter]: 作品合集列表 (Video mix list)
 
         Return:
-            selected_index: Union[str, List[str]]: 选择的作品合辑序号 (Selected video mix index)
+            selected_index: Union[str, List[str]]: 选择的作品合集序号 (Selected video mix index)
         """
 
         if playlists == {}:
-            logger.warning(_("用户没有作品合辑"))
+            logger.warning(_("用户没有作品合集"))
             return
 
-        rich_console.print("[bold]请选择要下载的合辑：[/bold]")
+        rich_console.print("[bold]请选择要下载的合集：[/bold]")
         rich_console.print("0: [bold]全部下载[/bold]")
 
         for i in range(len(playlists.mixId)):
@@ -622,10 +622,10 @@ class TiktokHandler:
             )
 
         # rich_prompt 会有字符刷新问题，暂时使用rich_print
-        rich_console.print(_("[bold yellow]请输入希望下载的合辑序号：[/bold yellow]"))
+        rich_console.print(_("[bold yellow]请输入希望下载的合集序号：[/bold yellow]"))
         selected_index = int(
             rich_prompt.ask(
-                # _("[bold yellow]请输入希望下载的合辑序号:[/bold yellow]"),
+                # _("[bold yellow]请输入希望下载的合集序号:[/bold yellow]"),
                 choices=[str(i) for i in range(len(playlists.mixId) + 1)],
             )
         )
@@ -692,14 +692,14 @@ class TiktokHandler:
                 videos_collected += len(mix.aweme_id)
 
                 if not mix.hasMore and str(mix.api_status_code) == "0":
-                    logger.debug(_("合辑: {0} 所有作品采集完毕").format(mixId))
+                    logger.debug(_("合集: {0} 所有作品采集完毕").format(mixId))
                     break
 
             else:
                 logger.debug(_("第 {0} 页没有找到作品").format(cursor))
 
                 if not mix.hasMore and str(mix.api_status_code) == "0":
-                    logger.debug(_("合辑: {0} 所有作品采集完毕").format(mixId))
+                    logger.debug(_("合集: {0} 所有作品采集完毕").format(mixId))
                     break
 
             # 更新已经处理的作品数量 (Update the number of videos processed)

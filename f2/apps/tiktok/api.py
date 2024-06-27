@@ -33,7 +33,7 @@ class TiktokAPIEndpoints:
     # 用户播放列表 (User Play List)
     USER_PLAY_LIST = f"{TIKTOK_DOMAIN}/api/user/playlist/"
 
-    # 用户合辑 (User Mix)
+    # 用户合集 (User Mix)
     USER_MIX = f"{TIKTOK_DOMAIN}/api/mix/item_list/"
 
     # 猜你喜欢 (Guess You Like)
