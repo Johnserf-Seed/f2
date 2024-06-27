@@ -72,7 +72,7 @@ class TiktokCrawler(BaseCrawler):
             tkendpoint.USER_PLAY_LIST,
             params.model_dump(),
         )
-        logger.debug(_("合辑列表接口地址：{0}").format(endpoint))
+        logger.debug(_("合集列表接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_user_mix(self, params: UserMix):
@@ -81,7 +81,7 @@ class TiktokCrawler(BaseCrawler):
             tkendpoint.USER_MIX,
             params.model_dump(),
         )
-        logger.debug(_("合辑作品接口地址：{0}").format(endpoint))
+        logger.debug(_("合集作品接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_post_detail(self, params: PostDetail):

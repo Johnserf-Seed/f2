@@ -16,7 +16,7 @@ outline: deep
 | 下载用户发布作品       | `handle_user_post`      |
 | 下载用户喜欢作品       | `handle_user_like`      |
 | 下载用户收藏作品       | `handle_user_collect`   |
-| 下载用户合辑(播放列表)作品 | `handle_user_mix`    |
+| 下载用户合集(播放列表)作品 | `handle_user_mix`    |
 | 下载搜索作品          | `handle_search_video`    |
 | 下载用户直播流         | `handle_user_live`      |
 
@@ -30,7 +30,7 @@ outline: deep
 | 用户喜欢作品数据       | `fetch_user_like_videos` |     🟢      |
 | 用户收藏作品数据       | `fetch_user_collect_videos` |  🟢      |
 | 用户播放列表数据       | `fetch_play_list`        |     🟢      |
-| 用户合辑(播放列表)作品数据 | `fetch_user_mix_videos`  |    🟢     |
+| 用户合集(播放列表)作品数据 | `fetch_user_mix_videos`  |    🟢     |
 | 搜索作品数据          | `fetch_search_videos`     |     🟢      |
 | 用户直播流数据         | `fetch_user_live_videos`  |     🟢      |
 | 检查直播流状态         | `fetch_check_live_alive`  |     🟢      |
@@ -70,8 +70,8 @@ outline: deep
 | 主页作品接口地址 | `TiktokCrawler` | `fetch_user_post` |  🟢  |
 | 喜欢作品接口地址 | `TiktokCrawler` | `fetch_user_like` |  🟢  |
 | 收藏作品接口地址 | `TiktokCrawler` | `fetch_user_collect` |  🟢  |
-| 合辑列表接口地址 | `TiktokCrawler` | `fetch_user_play_list` |  🟢  |
-| 合辑作品接口地址 | `TiktokCrawler` | `fetch_user_mix` |  🟢  |
+| 合集列表接口地址 | `TiktokCrawler` | `fetch_user_play_list` |  🟢  |
+| 合集作品接口地址 | `TiktokCrawler` | `fetch_user_mix` |  🟢  |
 | 作品详情接口地址 | `TiktokCrawler` | `fetch_post_detail` |  🟢  |
 | 作品评论接口地址 | `TiktokCrawler` | `fetch_post_comment` |  🟢  |
 | 首页推荐作品接口地址 | `TiktokCrawler` | `fetch_post_feed` |  🟢  |
@@ -175,9 +175,9 @@ outline: deep
 
 <<< @/snippets/tiktok/user-playlist.py{17-18}
 
-### 用户合辑作品数据 🟢
+### 用户合集作品数据 🟢
 
-异步方法，用于获取指定用户合辑的视频列表，合辑视频的mix_id是一致的，从单个作品数据接口中获取即可。
+异步方法，用于获取指定用户合集的视频列表，合集视频的mix_id是一致的，从单个作品数据接口中获取即可。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -193,7 +193,7 @@ outline: deep
 <<< @/snippets/tiktok/user-mix.py#playlist-sinppet{18-19,21-22}
 
 ::: tip 注意
-多个播放列表会包含多个`mix_id`，使用`select_playlist`方法来返回用户输入的合辑下标。
+多个播放列表会包含多个`mix_id`，使用`select_playlist`方法来返回用户输入的合集下标。
 :::
 
 <<< @/snippets/tiktok/user-mix.py#select-playlist-sinppet{19-22}
