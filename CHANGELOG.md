@@ -6,7 +6,7 @@
 
 ## [Unreleased]
 
-- `0.0.1.7`版本中添加对`x`的支持，添加更多`douyin`，`tiktok`和`weibo`的接口
+- `0.0.1.7`版本中将会添加接口本地转发的支持，添加更多`douyin`，`tiktok`，`weibo`和`x`的接口。
 
 
 ## [0.0.1.6] - 2024-05-04
@@ -24,8 +24,10 @@
 - 添加`douyin`直播间弹幕wss接口
 - 添加`F2`版本检测
 - 添加`tiktok`直播间开播状态
+- 添加`PyExecJS==1.5.1`依赖
+- 添加`protobuf==4.23.0`依赖
 - 添加`websockets>=11.0`依赖
-- 添加`tiktok` `device_id注册`与`cookie`管理类
+- 添加`tiktok`的`device_id注册`与`cookie`管理类
 - 添加`douyin`生成`webid`配置
 - 添加`douyin`关注用户直播
 - 添加`douyin`，`tiktok`模型配置
@@ -67,7 +69,7 @@
 - 更新了所有应用配置
 - 重构了所有工具类方法
 - 更新`base_downloader`的区块下载参数
-- 修改`douyin`生成的ttwid将绑定ua
+- 修改`douyin`生成的`ttwid`将绑定`ua`
 - 修改`tiktok`用户直播下载流地址
 - 修改`douyin`，`tiktok`获取用户信息方法名
 - 完善时间戳转换类型，支持30位
@@ -77,6 +79,7 @@
 - 更新应用初始化配置文件后退出 (#70)
 - 更新应用使用`--auto-cookie`命令后退出
 - 更新`douyin`过滤器，将`video_play_addr`返回完整视频列表便于下载失败轮替
+- 更改`douyin`图集文件名（`jpg -> webp`）
 - 更改应用直播下载文件名（`mp4 -> flv`）
 - 更新应用工具类网络错误捕获
 
