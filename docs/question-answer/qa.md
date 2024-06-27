@@ -27,3 +27,8 @@
 ## _ssl.c:975 The handshake operation timed out
 
 <<< @/snippets/QA.md#ssl-faild-02
+
+
+## tiktok 403 Forbidden
+
+<<< @/snippets/QA.md#tiktok-403-forbidden
