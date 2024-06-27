@@ -12,120 +12,121 @@ outline: deep
 
 |     CLI接口             |         方法        |
 | :------------------ | :-------------------  |
-| 下载单个作品          | handle_one_video      |
-| 下载用户发布作品       | handle_user_post      |
-| 下载用户喜欢作品       | handle_user_like      |
-| 下载用户收藏原声       | handle_user_music_collection |
-| 下载用户收藏作品       | handle_user_collection |
-| 下载用户合辑作品       | handle_user_mix       |
-| 下载用户直播流         | handle_user_live      |
-| 下载用户首页推荐作品    | handle_user_feed      |
-| 下载相似作品          | handle_related        |
-| 下载好友作品          | handle_friend_feed      |
+| 下载单个作品          | `handle_one_video`      |
+| 下载用户发布作品       | `handle_user_post`      |
+| 下载用户喜欢作品       | `handle_user_like`      |
+| 下载用户收藏原声       | `handle_user_music_collection` |
+| 下载用户收藏作品       | `handle_user_collection` |
+| 下载用户合辑作品       | `handle_user_mix`       |
+| 下载用户直播流         | `handle_user_live`      |
+| 下载用户首页推荐作品    | `handle_user_feed`      |
+| 下载相似作品          | `handle_related`        |
+| 下载好友作品          | `handle_friend_feed`      |
 
 |     数据方法接口     |         方法           | 开发者接口  |
 | :------------------ | :-------------------   | :--------: |
-| 创建用户记录与目录      | get_or_add_user_data   |     🟢  |
-| 创建作品下载记录        | get_or_add_video_data  |     🟢      |
-| 获取用户信息            | fetch_user_profile     |     🟢      |
-| 单个作品数据          | fetch_one_video        |     🟢      |
-| 用户发布作品数据       | fetch_user_post_videos |     🟢      |
-| 用户喜欢作品数据       | fetch_user_like_videos |     🟢      |
-| 用户收藏原声数据       | fetch_user_music_collection |  🟢      |
-| 用户收藏作品数据       | fetch_user_collection_videos |  🟢      |
-| 用户收藏夹数据         | fetch_user_collects    |     🟢      |
-| 用户收藏夹作品数据     | fetch_user_collects_videos |     🟢      |
-| 用户合辑作品数据       | fetch_user_mix_videos  |     🟢      |
-| 用户直播流数据         | fetch_user_live_videos |     🟢      |
-| 用户直播流数据2        | fetch_user_live_videos_by_room_id |     🟢      |
-| 用户首页推荐作品数据    | fetch_user_feed_videos |     🟢      |
-| 相似作品数据          | fetch_related_videos |     🟢      |
-| 好友作品数据          | fetch_friend_feed_videos |     🟢      |
-| 关注用户数据          | fetch_user_following |     🟢      |
-| 粉丝用户数据          | fetch_user_follower |     🟢      |
-| 查询用户数据          | fetch_query_user   |     🟢      |
-| 直播间wss负载数据      | fetch_live_im      |     🟢      |
-| 直播间wss弹幕         | fetch_live_danmaku |     🟢      |
-| 关注用户的直播间信息    | fetch_user_following_lives |     🟢      |
+| 创建用户记录与目录      | `get_or_add_user_data`   |     🟢  |
+| 创建作品下载记录        | `get_or_add_video_data`  |     🟢      |
+| 获取用户信息            | `fetch_user_profile`     |     🟢      |
+| 单个作品数据          | `fetch_one_video`        |     🟢      |
+| 用户发布作品数据       | `fetch_user_post_videos` |     🟢      |
+| 用户喜欢作品数据       | `fetch_user_like_videos` |     🟢      |
+| 用户收藏原声数据       | `fetch_user_music_collection` |  🟢      |
+| 用户收藏作品数据       | `fetch_user_collection_videos` |  🟢      |
+| 用户收藏夹数据         | `fetch_user_collects`    |     🟢      |
+| 用户收藏夹作品数据     | `fetch_user_collects_videos` |     🟢      |
+| 用户合辑作品数据       | `fetch_user_mix_videos`  |     🟢      |
+| 用户直播流数据         | `fetch_user_live_videos` |     🟢      |
+| 用户直播流数据2        | `fetch_user_live_videos_by_room_id` |     🟢      |
+| 用户首页推荐作品数据    | `fetch_user_feed_videos` |     🟢      |
+| 相似作品数据          | `fetch_related_videos` |     🟢      |
+| 好友作品数据          | `fetch_friend_feed_videos` |     🟢      |
+| 关注用户数据          | `fetch_user_following` |     🟢      |
+| 粉丝用户数据          | `fetch_user_follower` |     🟢      |
+| 查询用户数据          | `fetch_query_user`   |     🟢      |
+| 直播间wss负载数据      | `fetch_live_im`      |     🟢      |
+| 直播间wss弹幕         | `fetch_live_danmaku` |     🟢      |
+| 关注用户的直播间信息    | `fetch_user_following_lives` |     🟢      |
 :::
 
 ::: details utils接口列表
 
 | 工具类接口          | 类名            | 方法               | 状态 |
 | :---------------- | :-------------- | :------------------  | :--: |
-| 管理客户端配置     | ClientConfManager   |                  |  🟢  |
-| 生成真实msToken    | TokenManager     | gen_real_msToken       |  🟢  |
-| 生成虚假msToken     | TokenManager     | gen_false_msToken      |  🟢  |
-| 生成ttwid          | TokenManager     | gen_ttwid              |  🟢  |
-| 生成webid          | TokenManager     | gen_webid              |  🟢  |
-| 生成verify_fp      | VerifyFpManager  | gen_verify_fp          |  🟢  |
-| 生成s_v_web_id     | VerifyFpManager  | gen_s_v_web_id         |  🟢  |
-| 生成直播signature | DouyinWebcastSignature | get_signature |  🟢  |
-| 使用接口模型生成直播wss签名参数 | WebcastSignatureManager | model_2_endpoint |  🟢  |
-| 使用接口地址生成Xb参数      | XBogusManager    | str_2_endpoint   |  🟢  |
-| 使用接口模型生成Xb参数      | XBogusManager    | model_2_endpoint   |  🟢  |
-| 使用接口地址生成Ab参数      | ABogusManager    | str_2_endpoint   |  🟢  |
-| 使用接口模型生成Ab参数      | ABogusManager    | model_2_endpoint   |  🟢  |
-| 提取单个用户id       | SecUserIdFetcher | get_sec_user_id         |  🟢  |
-| 提取列表用户id       | SecUserIdFetcher | get_all_sec_user_id     |  🟢  |
-| 提取单个作品id       | AwemeIdFetcher   | get_aweme_id            |  🟢  |
-| 提取列表作品id       | AwemeIdFetcher   | get_all_aweme_id        |  🟢  |
-| 提取单个合辑id       | MixIdFetcher     | get_mix_id              |  🟢  |
-| 提取列表合辑id       | MixIdFetcher     | get_all_mix_id          |  🟢  |
-| 提取单个直播间号      | WebCastIdFetcher | get_webcast_id          |  🟢  |
-| 提取列表直播间号       | WebCastIdFetcher | get_all_webcast_id      |  🟢  |
-| 全局格式化文件名      | -                 | format_file_name        |  🟢  |
-| 创建用户目录         | -                 | create_user_folder      |  🟢  |
-| 重命名用户目录       | -                 | rename_user_folder      |  🟢  |
-| 创建或重命名用户目录   | -                 | create_or_rename_user_folder | 🟢 |
-| 显示二维码           | -                | show_qrcode             |  🟢  |
-| json歌词转lrc歌词 | -                | json_2_lrc            |  🟢  |
+| 管理客户端配置     | `ClientConfManager`   |                  |  🟢  |
+| 生成真实msToken    | `TokenManager`     | `gen_real_msToken`       |  🟢  |
+| 生成虚假msToken     | `TokenManager`     | `gen_false_msToken`      |  🟢  |
+| 生成ttwid          | `TokenManager`     | `gen_ttwid`              |  🟢  |
+| 生成webid          | `TokenManager`     | `gen_webid`              |  🟢  |
+| 生成verify_fp      | `VerifyFpManager`  | `gen_verify_fp`          |  🟢  |
+| 生成s_v_web_id     | `VerifyFpManager`  | `gen_s_v_web_id`         |  🟢  |
+| 生成直播signature | `DouyinWebcastSignature` | `get_signature` |  🟢  |
+| 使用接口模型生成直播wss签名参数 | `WebcastSignatureManager` | `model_2_endpoint` |  🟢  |
+| 使用接口地址生成Xb参数      | `XBogusManager`    | `str_2_endpoint`   |  🟢  |
+| 使用接口模型生成Xb参数      | `XBogusManager`    | `model_2_endpoint`   |  🟢  |
+| 使用接口地址生成Ab参数      | `ABogusManager`    | `str_2_endpoint`   |  🟢  |
+| 使用接口模型生成Ab参数      | `ABogusManager`    | `model_2_endpoint`   |  🟢  |
+| 提取单个用户id       | `SecUserIdFetcher` | `get_sec_user_id`         |  🟢  |
+| 提取列表用户id       | `SecUserIdFetcher` | `get_all_sec_user_id`     |  🟢  |
+| 提取单个作品id       | `AwemeIdFetcher`   | `get_aweme_id`            |  🟢  |
+| 提取列表作品id       | `AwemeIdFetcher`   | `get_all_aweme_id`        |  🟢  |
+| 提取单个合辑id       | `MixIdFetcher`     | `get_mix_id`              |  🟢  |
+| 提取列表合辑id       | `MixIdFetcher`     | `get_all_mix_id`          |  🟢  |
+| 提取单个直播间号      | `WebCastIdFetcher` | `get_webcast_id`          |  🟢  |
+| 提取列表直播间号       | `WebCastIdFetcher` | `get_all_webcast_id`      |  🟢  |
+| 全局格式化文件名      | -                 | `format_file_name`        |  🟢  |
+| 创建用户目录         | -                 | `create_user_folder`      |  🟢  |
+| 重命名用户目录       | -                 | `rename_user_folder`      |  🟢  |
+| 创建或重命名用户目录   | -                 | `create_or_rename_user_folder` | 🟢 |
+| 显示二维码           | -                | `show_qrcode`             |  🟢  |
+| json歌词转lrc歌词 | -                | `json_2_lrc`            |  🟢  |
+:::
 
 ::: details cralwer接口列表
 
 | 爬虫url接口    | 类名       | 方法          | 状态 |
 | :----------- | :--------- | :----------  | :--: |
-| 用户信息接口地址 | DouyinCrawler | fetch_user_profile |  🟢  |
-| 主页作品接口地址 | DouyinCrawler | fetch_user_post |  🟢  |
-| 喜欢作品接口地址 | DouyinCrawler | fetch_user_like |  🟢  |
-| 收藏作品接口地址 | DouyinCrawler | fetch_user_collection |  🟢  |
-| 收藏夹接口地址 | DouyinCrawler | fetch_user_collects |  🟢  |
-| 收藏夹作品接口地址 | DouyinCrawler | fetch_user_collects_video |  🟢  |
-| 音乐收藏接口地址 | DouyinCrawler | fetch_user_music_collection |  🟢  |
-| 合辑作品接口地址 | DouyinCrawler | fetch_user_mix |  🟢  |
-| 作品详情接口地址 | DouyinCrawler | fetch_post_detail |  🟢  |
-| 作品评论接口地址 | DouyinCrawler | fetch_post_comment |  🟢  |
-| 推荐作品接口地址 | DouyinCrawler | fetch_post_feed |  🟢  |
-| 关注作品接口地址 | DouyinCrawler | fetch_follow_feed |  🟢  |
-| 朋友作品接口地址 | DouyinCrawler | fetch_friend_feed |  🟢  |
-| 相关推荐作品接口地址 | DouyinCrawler | fetch_post_related |  🟢  |
-| 直播接口地址 | DouyinCrawler | fetch_live |  🟢  |
-| 直播接口地址（room_id） | DouyinCrawler | fetch_live_room_id |  🟢  |
-| 关注用户直播接口地址 | DouyinCrawler | fetch_following_live |  🟢  |
-| 定位上一次作品接口地址 | DouyinCrawler | fetch_locate_post |  🟢  |
-| SSO获取二维码接口地址 | DouyinCrawler | fetch_login_qrcode |  🔴  |
-| SSO检查扫码状态接口地址 | DouyinCrawler | fetch_check_qrcode |  🔴  |
-| SSO检查登录状态接口地址 | DouyinCrawler | fetch_check_login |  🔴  |
-| 用户关注列表接口地址 | DouyinCrawler | fetch_user_following |  🟢  |
-| 用户粉丝列表接口地址 | DouyinCrawler | fetch_user_follower |  🟢  |
-| 直播弹幕初始化接口地址 | DouyinCrawler | fetch_live_im_fetch |  🟢  |
-| 查询用户接口地址 | DouyinCrawler | fetch_query_user |  🟢  |
-| 直播弹幕接口地址 | DouyinWebSocketCrawler | fetch_live_danmaku |  🟢  |
-| 处理 WebSocket 消息 | DouyinWebSocketCrawler | handle_wss_message |  🟢  |
-| 发送 ack 包 | DouyinWebSocketCrawler | send_ack |  🟢  |
-| 发送 ping 包 | DouyinWebSocketCrawler | send_ping |  🟢  |
-| 直播间房间消息 | DouyinWebSocketCrawler | WebcastRoomMessage |  🟢  |
-| 直播间点赞消息 | DouyinWebSocketCrawler | WebcastLikeMessage |  🟢  |
-| 直播间观众加入消息 | DouyinWebSocketCrawler | WebcastMemberMessage |  🟢  |
-| 直播间聊天消息 | DouyinWebSocketCrawler | WebcastLeaveMessage |  🟢  |
-| 直播间礼物消息 | DouyinWebSocketCrawler | WebcastGiftMessage |  🟢  |
-| 直播间用户关注消息 | DouyinWebSocketCrawler | WebcastSocialMessage |  🟢  |
-| 直播间用户关注消息 | DouyinWebSocketCrawler | WebcastFollowMessage |  🟢  |
-| 直播间在线观众排行榜 | DouyinWebSocketCrawler | WebcastRoomUserSeqMessage |  🟢  |
-| 直播间粉丝团更新消息 | DouyinWebSocketCrawler | WebcastUpdateFanTicketMessage |  🟢  |
-| 直播间文本消息 | DouyinWebSocketCrawler | WebcastCommonTextMessage |  🟢  |
-| 直播间对战积分消息 | DouyinWebSocketCrawler | WebcastMatchAgainstScoreMessage |  🟢  |
-| 直播间粉丝团消息 | DouyinWebSocketCrawler | WebcastFansclubMessage |  🟢  |
+| 用户信息接口地址 | `DouyinCrawler` | `fetch_user_profile` |  🟢  |
+| 主页作品接口地址 | `DouyinCrawler` | `fetch_user_post` |  🟢  |
+| 喜欢作品接口地址 | `DouyinCrawler` | `fetch_user_like` |  🟢  |
+| 收藏作品接口地址 | `DouyinCrawler` | `fetch_user_collection` |  🟢  |
+| 收藏夹接口地址 | `DouyinCrawler` | `fetch_user_collects` |  🟢  |
+| 收藏夹作品接口地址 | `DouyinCrawler` | `fetch_user_collects_video` |  🟢  |
+| 音乐收藏接口地址 | `DouyinCrawler` | `fetch_user_music_collection` |  🟢  |
+| 合辑作品接口地址 | `DouyinCrawler` | `fetch_user_mix` |  🟢  |
+| 作品详情接口地址 | `DouyinCrawler` | `fetch_post_detail` |  🟢  |
+| 作品评论接口地址 | `DouyinCrawler` | `fetch_post_comment` |  🟢  |
+| 推荐作品接口地址 | `DouyinCrawler` | `fetch_post_feed` |  🟢  |
+| 关注作品接口地址 | `DouyinCrawler` | `fetch_follow_feed` |  🟢  |
+| 朋友作品接口地址 | `DouyinCrawler` | `fetch_friend_feed` |  🟢  |
+| 相关推荐作品接口地址 | `DouyinCrawler` | `fetch_post_related` |  🟢  |
+| 直播接口地址 | `DouyinCrawler` | `fetch_live` |  🟢  |
+| 直播接口地址（room_id） | `DouyinCrawler` | `fetch_live_room_id` |  🟢  |
+| 关注用户直播接口地址 | `DouyinCrawler` | `fetch_following_live` |  🟢  |
+| 定位上一次作品接口地址 | `DouyinCrawler` | `fetch_locate_post` |  🟢  |
+| SSO获取二维码接口地址 | `DouyinCrawler` | `fetch_login_qrcode` |  🔴  |
+| SSO检查扫码状态接口地址 | `DouyinCrawler` | `fetch_check_qrcode` |  🔴  |
+| SSO检查登录状态接口地址 | `DouyinCrawler` | `fetch_check_login` |  🔴  |
+| 用户关注列表接口地址 | `DouyinCrawler` | `fetch_user_following` |  🟢  |
+| 用户粉丝列表接口地址 | `DouyinCrawler` | `fetch_user_follower` |  🟢  |
+| 直播弹幕初始化接口地址 | `DouyinCrawler` | `fetch_live_im_fetch` |  🟢  |
+| 查询用户接口地址 | `DouyinCrawler` | `fetch_query_user` |  🟢  |
+| 直播弹幕接口地址 | `DouyinWebSocketCrawler` | `fetch_live_danmaku` |  🟢  |
+| 处理 WebSocket 消息 | `DouyinWebSocketCrawler` | `handle_wss_message` |  🟢  |
+| 发送 ack 包 | `DouyinWebSocketCrawler` | `send_ack` |  🟢  |
+| 发送 ping 包 | `DouyinWebSocketCrawler` | `send_ping` |  🟢  |
+| 直播间房间消息 | `DouyinWebSocketCrawler` | `WebcastRoomMessage` |  🟢  |
+| 直播间点赞消息 | `DouyinWebSocketCrawler` | `WebcastLikeMessage` |  🟢  |
+| 直播间观众加入消息 | `DouyinWebSocketCrawler` | `WebcastMemberMessage` |  🟢  |
+| 直播间聊天消息 | `DouyinWebSocketCrawler` | `WebcastLeaveMessage` |  🟢  |
+| 直播间礼物消息 | `DouyinWebSocketCrawler` | `WebcastGiftMessage` |  🟢  |
+| 直播间用户关注消息 | `DouyinWebSocketCrawler` | `WebcastSocialMessage` |  🟢  |
+| 直播间用户关注消息 | `DouyinWebSocketCrawler` | `WebcastFollowMessage` |  🟢  |
+| 直播间在线观众排行榜 | `DouyinWebSocketCrawler` | `WebcastRoomUserSeqMessage` |  🟢  |
+| 直播间粉丝团更新消息 | `DouyinWebSocketCrawler` | `WebcastUpdateFanTicketMessage` |  🟢  |
+| 直播间文本消息 | `DouyinWebSocketCrawler` | `WebcastCommonTextMessage` |  🟢  |
+| 直播间对战积分消息 | `DouyinWebSocketCrawler` | `WebcastMatchAgainstScoreMessage` |  🟢  |
+| 直播间粉丝团消息 | `DouyinWebSocketCrawler` | `WebcastFansclubMessage` |  🟢  |
 
 :::
 
@@ -133,14 +134,14 @@ outline: deep
 
 | 下载器接口     | 类名        | 方法          | 状态 |
 | :----------- | :--------- | :----------  | :--: |
-| 保存最后一次请求的aweme_id | DouyinDownloader | save_last_aweme_id |  🟢  |
-| 筛选指定日期区间内的作品 | DouyinDownloader | filter_aweme_datas_by_interval |  🟢  |
-| 创建下载任务   | DouyinDownloader | create_download_task |  🟢  |
-| 处理下载任务   | DouyinDownloader | handler_download |  🟢  |
-| 创建原声下载任务 | DouyinDownloader | create_music_download_tasks |  🟢  |
-| 处理原声下载任务 | DouyinDownloader | handler_music_download |  🟢  |
-| 创建流下载任务  | DouyinDownloader | create_stream_tasks |  🟢  |
-| 处理流下载任务  | DouyinDownloader | handle_stream |  🟢  |
+| 保存最后一次请求的aweme_id | `DouyinDownloader` | `save_last_aweme_id` |  🟢  |
+| 筛选指定日期区间内的作品 | `DouyinDownloader` | `filter_aweme_datas_by_interval` |  🟢  |
+| 创建下载任务   | `DouyinDownloader` | `create_download_task` |  🟢  |
+| 处理下载任务   | `DouyinDownloader` | `handler_download` |  🟢  |
+| 创建原声下载任务 | `DouyinDownloader` | `create_music_download_tasks` |  🟢  |
+| 处理原声下载任务 | `DouyinDownloader` | `handler_music_download` |  🟢  |
+| 创建流下载任务  | `DouyinDownloader` | `create_stream_tasks` |  🟢  |
+| 处理流下载任务  | `DouyinDownloader` | `handle_stream` |  🟢  |
 :::
 
 ## handler接口列表
@@ -981,7 +982,7 @@ r_id是直播间的短链标识，room_id是直播间的唯一标识。
 | user_path | Path | 用户目录路径对象 |
 
 ::: tip 提示
-该接口很好的解决了用户改名之后重复重新下载的问题。集合在hanlder接口的`get_or_add_user_data`中，开发者无需关心直接调用hanlder的数据接口即可。
+该接口很好的解决了用户改名之后重复重新下载的问题。集合在handler接口的`get_or_add_user_data`中，开发者无需关心直接调用handler的数据接口即可。
 :::
 
 
