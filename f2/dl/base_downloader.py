@@ -573,7 +573,7 @@ class BaseDownloader(BaseCrawler):
     async def close(self) -> None:
         """关闭下载器 (Close the downloader)"""
         if self.client:
-            await self.client.close()
+            self.client.close()
         if self.aclient:
             await self.aclient.aclose()
 

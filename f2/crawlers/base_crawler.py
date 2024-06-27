@@ -394,7 +394,7 @@ class BaseCrawler:
     async def close(self):
         # 如果没有初始化客户端，则不关闭 (If the client is not initialized, do not close)
         if self._client:
-            await self.client.aclose()
+            self.client.close()
         if self._aclient:
             await self.aclient.aclose()
 
