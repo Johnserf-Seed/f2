@@ -66,12 +66,12 @@ f2:
         version: 5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
 
       device:
-        id: "7372218823115949569"
+        id: "7377772863376426514"
         platform: web_pc
 
       os: windows
       region: SG
-      priority_region: US
+      priority_region: ""
       webcast_language: zh-Hans
       tz_name: Asia/Hong_Kong
 
