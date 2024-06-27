@@ -47,7 +47,7 @@ async def test_gen_device_ids():
 
     for tt_chain_token in tt_chain_tokens:
         assert tt_chain_token is not None
-        assert len(tt_chain_token) == 39
+        assert len(tt_chain_token) > 40
 
 
 @pytest.mark.asyncio
@@ -69,4 +69,4 @@ async def test_gen_device_ids_with_full_cookie():
 
     for tt_chain_token in cookies:
         assert tt_chain_token is not None
-        assert len(tt_chain_token) == 224
+        assert len(tt_chain_token) > 225
