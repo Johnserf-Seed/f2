@@ -83,6 +83,15 @@ export default defineConfig({
                 {text: 'WeiBo', link: '/guide/apps/weibo/index'},
               ]
             },
+            {
+              text: '命令行指引',
+              items: [
+                {text: 'DouyYin', link: '/guide/apps/douyin/cli'},
+                {text: 'TikTok', link: '/guide/apps/tiktok/cli'},
+                {text: 'X', link: '/guide/apps/x/cli'},
+                {text: 'WeiBo', link: '/guide/apps/weibo/cli'},
+              ]
+            }
 
           ],
           '/question-answer/': [
