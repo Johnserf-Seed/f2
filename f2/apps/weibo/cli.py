@@ -186,12 +186,6 @@ def handler_naming(
     help=_("登录后的[yellow]cookie[/yellow]"),
 )
 @click.option(
-    "--interval",
-    "-i",
-    type=str,
-    help=_("下载日期区间发布的微博，格式：2022-01-01|2023-01-01，'all' 为下载所有作品"),
-)
-@click.option(
     "--timeout",
     "-e",
     type=int,
