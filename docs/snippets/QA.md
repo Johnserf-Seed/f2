@@ -73,3 +73,20 @@ https://github.com/Johnserf-Seed/TikTokDownload/issues/660
 
 这个问题可能涉及到多个方面，需要自己逐步排查和解决。
 // #endregion ssl-faild-02
+
+
+// #region tiktok-403-forbidden
+当下载`tiktok`视频时出现`403 Forbidden`错误时，是由于`设备id`被封禁导致的。
+
+`设备id`与生成的`cookie`是一一对应的，如果`设备id`被封禁，那么生成的`cookie`也会被封禁。
+
+解决办法：
+1. 运行生成`device_Id`的代码片段，获取新的`device_Id`。
+2. 将新的`device_Id`替换到配置文件中。
+3. 将新的`cookie`里的值替换到配置文件的`cookie`中（增量非覆盖）。
+4. 重新运行下载命令。
+
+代码片段：
+https://johnserf-seed.github.io/f2/guide/apps/tiktok/#%E7%94%9F%E6%88%90deviceid-%F0%9F%9F%A2
+
+// #endregion tiktok-403-forbidden
