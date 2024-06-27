@@ -43,6 +43,7 @@ dependencies = [
     "websockets>=11.0",
     "PyExecJS==1.5.1",
     "protobuf==4.23.0",
+    "gmssl==3.2.2",
 ]
 
 [project.scripts]
