@@ -401,7 +401,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
 
     # 定义所有的回调消息函数
     @classmethod
-    async def WebcastRoomMessage(self, data: bytes):
+    async def WebcastRoomMessage(cls, data: bytes):
         roomMessage = RoomMessage()
         roomMessage.ParseFromString(data)
         data_dict = json_format.MessageToDict(
@@ -413,7 +413,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_dict
 
     @classmethod
-    async def WebcastLikeMessage(self, data: bytes):
+    async def WebcastLikeMessage(cls, data: bytes):
         likeMessage = LikeMessage()
         likeMessage.ParseFromString(data)
         data_dict = json_format.MessageToDict(
@@ -430,7 +430,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_dict
 
     @classmethod
-    async def WebcastMemberMessage(self, data: bytes):
+    async def WebcastMemberMessage(cls, data: bytes):
         memberMessage = MemberMessage()
         memberMessage.ParseFromString(data)
         data_dict = json_format.MessageToDict(
@@ -442,7 +442,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_dict
 
     @classmethod
-    async def WebcastChatMessage(self, data: bytes):
+    async def WebcastChatMessage(cls, data: bytes):
         chatMessage = ChatMessage()
         chatMessage.ParseFromString(data)
         data_dict = json_format.MessageToDict(
@@ -456,7 +456,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data
 
     @classmethod
-    async def WebcastGiftMessage(self, data: bytes):
+    async def WebcastGiftMessage(cls, data: bytes):
         giftMessage = GiftMessage()
         giftMessage.ParseFromString(data)
         data_dict = json_format.MessageToDict(
@@ -470,7 +470,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_dict
 
     @classmethod
-    async def WebcastSocialMessage(self, data: bytes):
+    async def WebcastSocialMessage(cls, data: bytes):
         socialMessage = SocialMessage()
         socialMessage.ParseFromString(data)
         data_dict = json_format.MessageToDict(
@@ -484,7 +484,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_dict
 
     @classmethod
-    async def WebcastRoomUserSeqMessage(self, data: bytes):
+    async def WebcastRoomUserSeqMessage(cls, data: bytes):
         roomUserSeqMessage = RoomUserSeqMessage()
         roomUserSeqMessage.ParseFromString(data)
         data_dict = json_format.MessageToDict(
@@ -501,7 +501,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_dict
 
     @classmethod
-    async def WebcastUpdateFanTicketMessage(self, data: bytes):
+    async def WebcastUpdateFanTicketMessage(cls, data: bytes):
         updateFanTicketMessage = UpdateFanTicketMessage()
         updateFanTicketMessage.ParseFromString(data)
         data_dict = json_format.MessageToDict(
@@ -516,7 +516,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_dict
 
     @classmethod
-    async def WebcastCommonTextMessage(self, data: bytes):
+    async def WebcastCommonTextMessage(cls, data: bytes):
         commonTextMessage = CommonTextMessage()
         commonTextMessage.ParseFromString(data)
         data_dict = json_format.MessageToDict(
@@ -529,7 +529,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_dict
 
     @classmethod
-    async def WebcastMatchAgainstScoreMessage(self, data: bytes):
+    async def WebcastMatchAgainstScoreMessage(cls, data: bytes):
         matchAgainstScoreMessage = MatchAgainstScoreMessage()
         matchAgainstScoreMessage.ParseFromString(data)
         data_dict = json_format.MessageToDict(
@@ -544,7 +544,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_dict
 
     @classmethod
-    async def WebcastFansclubMessage(self, data: bytes):
+    async def WebcastFansclubMessage(cls, data: bytes):
         fansClubMessage = FansClubMessage()
         fansClubMessage.ParseFromString(data)
         data_dict = json_format.MessageToDict(
