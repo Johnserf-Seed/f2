@@ -245,18 +245,19 @@ class UserPostFilter(JSONModel):
     def video_bit_rate(self):
         bit_rate_data = self._get_list_attr_value("$.aweme_list[*].video.bit_rate")
 
-        return [
-            (
-                [aweme["bit_rate"]]
-                if isinstance(aweme, dict)
-                else (
-                    [aweme[0]["bit_rate"]]
-                    if len(aweme) == 1
-                    else [item["bit_rate"] for item in aweme]
-                )
-            )
-            for aweme in bit_rate_data
-        ]
+        def extract_bit_rate(aweme):
+            if not aweme:
+                return []
+
+            if isinstance(aweme, dict):
+                return [aweme.get("bit_rate", 0)]
+
+            if isinstance(aweme, list):
+                return [item.get("bit_rate", 0) for item in aweme]
+
+            return []
+
+        return [extract_bit_rate(aweme) for aweme in bit_rate_data]
 
     @property
     def video_duration(self):
@@ -1388,22 +1389,21 @@ class PostDetailFilter(JSONModel):
 
     @property
     def video_bit_rate(self):
-        bit_rate_data = self._get_list_attr_value(
-            "$.aweme_detail.video.bit_rate",
-        )
+        bit_rate_data = self._get_list_attr_value("$.aweme_detail.video.bit_rate")
 
-        return [
-            (
-                [aweme["bit_rate"]]
-                if isinstance(aweme, dict)
-                else (
-                    [aweme[0]["bit_rate"]]
-                    if len(aweme) == 1
-                    else [item["bit_rate"] for item in aweme]
-                )
-            )
-            for aweme in bit_rate_data
-        ]
+        def extract_bit_rate(aweme):
+            if not aweme:
+                return []
+
+            if isinstance(aweme, dict):
+                return [aweme.get("bit_rate", 0)]
+
+            if isinstance(aweme, list):
+                return [item.get("bit_rate", 0) for item in aweme]
+
+            return []
+
+        return [extract_bit_rate(aweme) for aweme in bit_rate_data]
 
     @property
     def video_play_addr(self):
