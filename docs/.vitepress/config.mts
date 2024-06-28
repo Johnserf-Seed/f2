@@ -79,7 +79,7 @@ export default defineConfig({
               items: [
                 {text: 'DouYin', link: '/guide/apps/douyin/index'},
                 {text: 'TikTok', link: '/guide/apps/tiktok/index'},
-                {text: 'X', link: '/guide/apps/x/index'},
+                {text: 'Twitter', link: '/guide/apps/twitter/index'},
                 {text: 'WeiBo', link: '/guide/apps/weibo/index'},
               ]
             },
@@ -88,7 +88,7 @@ export default defineConfig({
               items: [
                 {text: 'DouyYin', link: '/guide/apps/douyin/cli'},
                 {text: 'TikTok', link: '/guide/apps/tiktok/cli'},
-                {text: 'X', link: '/guide/apps/x/cli'},
+                {text: 'Twitter', link: '/guide/apps/twitter/cli'},
                 {text: 'WeiBo', link: '/guide/apps/weibo/cli'},
               ]
             }
