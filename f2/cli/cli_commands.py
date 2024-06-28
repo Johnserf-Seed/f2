@@ -79,7 +79,7 @@ async def check_version():
     latest_version = await get_latest_version("f2")
 
     if latest_version:
-        if f2.__version__ == latest_version:
+        if f2.__version__ < latest_version:
             logger.warning(
                 _(
                     "您当前使用的版本 {0} 可能已过时，请考虑及时升级到最新版本 {1}，请使用 pip install -U f2 更新"
