@@ -7,6 +7,7 @@
 [![Dev Branch](https://badgen.net/badge/branch/v0.0.1.6-pw2/blue)](https://github.com/Johnserf-Seed/f2/tree/v0.0.1.6-pw2)
 [![Discord](https://img.shields.io/discord/1146473603450282004?label=Discord)](https://discord.gg/3PhtPmgHf8)
 [![codecov](https://codecov.io/gh/Johnserf-Seed/f2/graph/badge.svg?token=T9DH4QPZSS)](https://codecov.io/gh/Johnserf-Seed/f2)
+[![TikHub](https://img.shields.io/badge/Sponsor-TikHub-orange?style=flat-square&logo=tiktok)](https://beta-web.tikhub.io/users/signup?referral_code=6hLcGD94)
 [![APACHE-2.0](https://img.shields.io/github/license/johnserf-seed/f2)](https://github.com/Johnserf-Seed/f2/blob/main/LICENSE)
 
 
@@ -578,6 +579,21 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
   ```
 
 </details>
+
+
+## 💰 Sponsor
+
+<a href="https://tikhub.io/"><img style="border-radius:20px" src="https://github.com/Johnserf-Seed/f2/assets/40727745/70a67dd1-dccb-44a9-b635-c29a950f1daf"></a>
+
+[TikHub](https://tikhub.io/) is a provider of premium data interface services. You can get free credits by signing up daily. You can use my signup invite link: [https://beta-web.tikhub.io/users/signup?referral_code=6hLcGD94](https://beta-web.tikhub.io/users/signup?referral_code=6hLcGD94) or Invitation code: `6hLcGD94` to get `$2` credit by signing up and recharging.
+
+[TikHub](https://tikhub.io/) offers the following services:
+
+- Rich data interface
+- Sign up daily to get free credits
+- High quality API service
+- Official website: https://tikhub.io/
+- Project address: https://github.com/TikHubIO/
 
 
 ## 👨‍💻 Contributions
