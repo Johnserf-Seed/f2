@@ -8,6 +8,7 @@
 [![Dev Branch](https://badgen.net/badge/branch/v0.0.1.6-pw2/blue)](https://github.com/Johnserf-Seed/f2/tree/v0.0.1.6-pw2)
 [![Discord](https://img.shields.io/discord/1146473603450282004?label=Discord)](https://discord.gg/3PhtPmgHf8)
 [![codecov](https://codecov.io/gh/Johnserf-Seed/f2/graph/badge.svg?token=T9DH4QPZSS)](https://codecov.io/gh/Johnserf-Seed/f2)
+[![TikHub](https://img.shields.io/badge/%E8%B5%9E%E5%8A%A9%E5%95%86-TikHub-orange?style=flat-square&logo=tiktok)](https://beta-web.tikhub.io/users/signup?referral_code=6hLcGD94)
 [![APACHE-2.0](https://img.shields.io/github/license/johnserf-seed/f2)](https://github.com/Johnserf-Seed/f2/blob/main/LICENSE)
 
 
@@ -567,6 +568,21 @@
   ```
 
 </details>
+
+
+## 💰 赞助商
+
+<a href="https://tikhub.io/"><img style="border-radius:20px" src="https://github.com/Johnserf-Seed/f2/assets/40727745/70a67dd1-dccb-44a9-b635-c29a950f1daf"></a>
+
+[TikHub](https://tikhub.io/) 是一家提供优质数据接口服务的供应商。通过每日签到，可以获取免费额度。可以使用我的注册邀请链接：[https://beta-web.tikhub.io/users/signup?referral_code=6hLcGD94](https://beta-web.tikhub.io/users/signup?referral_code=6hLcGD94) 或 邀请码：`6hLcGD94`，注册并充值即可获得`$2`额度。
+
+[TikHub](https://tikhub.io/) 提供以下服务：
+
+- 丰富的数据接口
+- 每日签到免费获取额度
+- 高质量的API服务
+- 官网：https://tikhub.io/
+- 项目地址：https://github.com/TikHubIO/
 
 
 ## 👨‍💻 贡献
