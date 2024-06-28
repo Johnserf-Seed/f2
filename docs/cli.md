@@ -104,3 +104,21 @@ $ f2 dy -M one -u '7.64 gOX:/ w@f.oD 05/14 世界这本书 又多读了一页。
 ' -c conf/app.yaml
 ```
 :::
+
+## 应用命令行
+
+### DouYin
+
+- [CLI 参考](/guide/apps/douyin/cli)
+
+### TikTok
+
+- [CLI 参考](/guide/apps/tiktok/cli)
+
+### Twitter
+
+- [CLI 参考](/guide/apps/twitter/cli)
+
+### WeiBo
+
+- [CLI 参考](/guide/apps/weibo/cli)

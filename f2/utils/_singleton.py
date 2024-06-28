@@ -1,3 +1,5 @@
+# path: f2/utils/_singleton.py
+
 import threading
 
 

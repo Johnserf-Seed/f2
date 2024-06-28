@@ -2,8 +2,9 @@
 
 from typing import Any
 from pydantic import BaseModel
+from urllib.parse import quote, unquote
 
-from f2.apps.douyin.utils import TokenManager, VerifyFpManager
+from f2.apps.douyin.utils import TokenManager, VerifyFpManager, ClientConfManager
 
 
 # Base Model
@@ -12,27 +13,31 @@ class BaseRequestModel(BaseModel):
     aid: str = "6383"
     channel: str = "channel_pc_web"
     pc_client_type: int = 1
-    version_code: str = "190500"
-    version_name: str = "19.5.0"
+    version_code: str = ClientConfManager.brm_version().get("code", "190500")
+    version_name: str = ClientConfManager.brm_version().get("name", "19.5.0")
     cookie_enabled: str = "true"
     screen_width: int = 1920
     screen_height: int = 1080
-    browser_language: str = "zh-CN"
-    browser_platform: str = "Win32"
-    browser_name: str = "Edge"
-    browser_version: str = "122.0.0.0"
+    browser_language: str = ClientConfManager.brm_browser().get("language", "zh-CN")
+    browser_platform: str = ClientConfManager.brm_browser().get("platform", "Win32")
+    browser_name: str = ClientConfManager.brm_browser().get("name", "Edge")
+    browser_version: str = ClientConfManager.brm_browser().get("version", "122.0.0.0")
     browser_online: str = "true"
-    engine_name: str = "Blink"
-    engine_version: str = "122.0.0.0"
-    os_name: str = "Windows"
-    os_version: str = "10"
+    engine_name: str = ClientConfManager.brm_engine().get("name", "Blink")
+    engine_version: str = ClientConfManager.brm_engine().get("version", "122.0.0.0")
+    os_name: str = ClientConfManager.brm_os().get("name", "Windows")
+    os_version: str = ClientConfManager.brm_os().get("version", "10")
     cpu_core_num: int = 12
     device_memory: int = 8
     platform: str = "PC"
     downlink: int = 10
     effective_type: str = "4g"
     round_trip_time: int = 100
-    msToken: str = TokenManager.gen_real_msToken()
+    try:
+        msToken: str = TokenManager.gen_real_msToken()
+    except:
+        # 返回虚假的msToken (Return a fake msToken)
+        msToken: str = TokenManager.gen_false_msToken()
 
 
 class BaseLiveModel(BaseModel):
@@ -40,14 +45,14 @@ class BaseLiveModel(BaseModel):
     app_name: str = "douyin_web"
     live_id: int = 1
     device_platform: str = "web"
-    language: str = "zh-CN"
+    language: str = ClientConfManager.blm_language()
     cookie_enabled: str = "true"
     screen_width: int = 1920
     screen_height: int = 1080
-    browser_language: str = "zh-CN"
-    browser_platform: str = "Win32"
-    browser_name: str = "Edge"
-    browser_version: str = "119.0.0.0"
+    browser_language: str = ClientConfManager.blm_browser().get("language", "zh-CN")
+    browser_platform: str = ClientConfManager.blm_browser().get("platform", "Win32")
+    browser_name: str = ClientConfManager.blm_browser().get("name", "Edge")
+    browser_version: str = ClientConfManager.blm_browser().get("version", "119.0.0.0")
     enter_source: Any = ""
     is_need_double_stream: str = "false"
     # msToken: str = TokenManager.gen_real_msToken()
@@ -73,6 +78,34 @@ class BaseLoginModel(BaseModel):
     account_sdk_source: str = "sso"
     sdk_version: str = "2.2.7-beta.6"
     language: str = "zh"
+
+
+class BaseWebCastModel(BaseModel):
+    app_name: str = "douyin_web"
+    version_code: str = "180800"
+    device_platform: str = "web"
+    cookie_enabled: str = "true"
+    screen_width: int = 1920
+    screen_height: int = 1080
+    browser_language: str = "zh-CN"
+    browser_platform: str = "Win32"
+    browser_name: str = "Mozilla"
+    browser_version: str = quote(
+        "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0",
+        safe="",
+    )
+    browser_online: str = "true"
+    tz_name: str = "Asia/Hong_Kong"
+    host: str = "https://live.douyin.com"
+    aid: int = 6383
+    live_id: int = 1
+    did_rule: int = 3
+    endpoint: str = "live_pc"
+    support_wrds: int = 1
+    identity: str = "audience"
+    need_persist_msg_count: int = 15
+    insert_task_id: Any = ""
+    live_reason: Any = ""
 
 
 # Model
@@ -161,7 +194,7 @@ class PostRelated(BaseRequestModel):
     aweme_id: str
     count: int = 20
     filterGids: str  # id,id,id
-    awemePcRecRawData: dict = {}  # {"is_client":false}
+    awemePcRecRawData: str = quote('{"is_client":false}', safe="")
     sub_channel_id: int = 3
     # Seo-Flag: int = 0
 
@@ -200,7 +233,7 @@ class UserLive2(BaseLiveModel2):
     room_id: str
 
 
-class FollowUserLive(BaseRequestModel):
+class FollowingUserLive(BaseRequestModel):
     scene: str = "aweme_pc_follow_top"
 
 
@@ -215,15 +248,17 @@ class SuggestWord(BaseRequestModel):
 
 class PostSearch(BaseRequestModel):
     search_channel: str = "aweme_general"
-    sort_type: int = 0  # 0 综合
-    publish_time: int = 0
+    filter_selected: str
     keyword: str
-    search_source: str = "hot_search_board"
+    search_source: str = "normal_search"
+    # search_sug # tab_search # normal_search # guide_search # hot_search_board
+    search_id: str = ""
     query_correct_type: int = 1
     is_filter_search: int = 0
     from_group_id: str = ""
     offset: int = 0
     count: int = 15
+    need_filter_settings: int = 1
 
 
 class LoginGetQr(BaseLoginModel):
@@ -265,3 +300,34 @@ class UserFollower(BaseRequestModel):
     gps_access: int = 0
     address_book_access: int = 0
     is_top: int = 1
+
+
+class LiveWebcast(BaseWebCastModel):
+    webcast_sdk_version: str = "1.0.12"  # 当前为1.0.14-beta.0
+    update_version_code: str = "1.0.12"
+    compress: str = "gzip"
+    im_path: str = "/webcast/im/fetch/"
+    heartbeatDuration: int = 0
+    room_id: str
+    user_unique_id: str
+    cursor: str
+    internal_ext: str
+    signature: str  # 暂时调用execjs，纯算还在扣
+
+
+class LiveImFetch(BaseWebCastModel):
+    # resp_content_type: str = "protobuf"
+    resp_content_type: str = "json"
+    fetch_rule: int = 1
+    last_rtt: int = 0
+    cursor: str = ""
+    internal_ext: str = ""
+    room_id: str
+    user_unique_id: str
+
+
+class QueryUser(BaseRequestModel):
+    publish_video_strategy_type: int = 2
+    update_version_code: str = "170400"
+    version_code: str = "170400"
+    version_name: str = "17.4.0"

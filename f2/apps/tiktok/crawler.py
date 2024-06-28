@@ -1,10 +1,7 @@
 # path: f2/apps/tiktok/crawler.py
 
-import f2
-
 from f2.log.logger import logger
 from f2.i18n.translator import _
-from f2.utils.conf_manager import ConfigManager
 from f2.crawlers.base_crawler import BaseCrawler
 from f2.apps.tiktok.api import TiktokAPIEndpoints as tkendpoint
 from f2.apps.tiktok.model import (
@@ -16,6 +13,9 @@ from f2.apps.tiktok.model import (
     PostDetail,
     UserPlayList,
     PostComment,
+    PostSearch,
+    UserLive,
+    CheckLiveAlive,
 )
 from f2.apps.tiktok.utils import XBogusManager
 
@@ -25,27 +25,16 @@ class TiktokCrawler(BaseCrawler):
         self,
         kwargs: dict = ...,
     ):
-        f2_manager = ConfigManager(f2.F2_CONFIG_FILE_PATH)
-        f2_conf = f2_manager.get_config("f2").get("tiktok")
-        proxies_conf = kwargs.get("proxies", {"http": None, "https": None})
-        proxies = {
-            "http://": proxies_conf.get("http", None),
-            "https://": proxies_conf.get("https", None),
-        }
-
-        self.headers = {
-            "User-Agent": f2_conf["headers"]["User-Agent"],
-            "Referer": f2_conf["headers"]["Referer"],
-            "Cookie": kwargs["cookie"],
-        }
-
+        # 需要与cli同步
+        proxies = kwargs.get("proxies", {"http://": None, "https://": None})
+        self.headers = kwargs.get("headers") | {"Cookie": kwargs["cookie"]}
         super().__init__(proxies=proxies, crawler_headers=self.headers)
 
     async def fetch_user_profile(self, params: UserProfile):
         endpoint = XBogusManager.model_2_endpoint(
             self.headers.get("User-Agent"),
             tkendpoint.USER_DETAIL,
-            params.dict(),
+            params.model_dump(),
         )
         logger.debug(_("用户信息接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
@@ -54,7 +43,7 @@ class TiktokCrawler(BaseCrawler):
         endpoint = XBogusManager.model_2_endpoint(
             self.headers.get("User-Agent"),
             tkendpoint.USER_POST,
-            params.dict(),
+            params.model_dump(),
         )
         logger.debug(_("主页作品接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
@@ -63,7 +52,7 @@ class TiktokCrawler(BaseCrawler):
         endpoint = XBogusManager.model_2_endpoint(
             self.headers.get("User-Agent"),
             tkendpoint.USER_LIKE,
-            params.dict(),
+            params.model_dump(),
         )
         logger.debug(_("喜欢作品接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
@@ -72,7 +61,7 @@ class TiktokCrawler(BaseCrawler):
         endpoint = XBogusManager.model_2_endpoint(
             self.headers.get("User-Agent"),
             tkendpoint.USER_COLLECT,
-            params.dict(),
+            params.model_dump(),
         )
         logger.debug(_("收藏作品接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
@@ -81,25 +70,25 @@ class TiktokCrawler(BaseCrawler):
         endpoint = XBogusManager.model_2_endpoint(
             self.headers.get("User-Agent"),
             tkendpoint.USER_PLAY_LIST,
-            params.dict(),
+            params.model_dump(),
         )
-        logger.debug(_("合辑列表接口地址：{0}").format(endpoint))
+        logger.debug(_("合集列表接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_user_mix(self, params: UserMix):
         endpoint = XBogusManager.model_2_endpoint(
             self.headers.get("User-Agent"),
             tkendpoint.USER_MIX,
-            params.dict(),
+            params.model_dump(),
         )
-        logger.debug(_("合辑作品接口地址：{0}").format(endpoint))
+        logger.debug(_("合集作品接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_post_detail(self, params: PostDetail):
         endpoint = XBogusManager.model_2_endpoint(
             self.headers.get("User-Agent"),
             tkendpoint.AWEME_DETAIL,
-            params.dict(),
+            params.model_dump(),
         )
         logger.debug(_("作品详情接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
@@ -108,7 +97,7 @@ class TiktokCrawler(BaseCrawler):
         endpoint = XBogusManager.model_2_endpoint(
             self.headers.get("User-Agent"),
             tkendpoint.POST_COMMENT,
-            params.dict(),
+            params.model_dump(),
         )
         logger.debug(_("作品评论接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
@@ -117,9 +106,36 @@ class TiktokCrawler(BaseCrawler):
         endpoint = XBogusManager.model_2_endpoint(
             self.headers.get("User-Agent"),
             tkendpoint.HOME_RECOMMEND,
-            params.dict(),
+            params.model_dump(),
         )
         logger.debug(_("首页推荐接口地址：{0}").format(endpoint))
+        return await self._fetch_get_json(endpoint)
+
+    async def fetch_post_search(self, params: PostSearch):
+        endpoint = XBogusManager.model_2_endpoint(
+            self.headers.get("User-Agent"),
+            tkendpoint.POST_SEARCH,
+            params.model_dump(),
+        )
+        logger.debug(_("搜索作品接口地址：{0}").format(endpoint))
+        return await self._fetch_get_json(endpoint)
+
+    async def fetch_user_live(self, params: UserLive):
+        endpoint = XBogusManager.model_2_endpoint(
+            self.headers.get("User-Agent"),
+            tkendpoint.USER_LIVE,
+            params.model_dump(),
+        )
+        logger.debug(_("用户直播接口地址：{0}").format(endpoint))
+        return await self._fetch_get_json(endpoint)
+
+    async def fetch_check_live_alive(self, params: CheckLiveAlive):
+        endpoint = XBogusManager.model_2_endpoint(
+            self.headers.get("User-Agent"),
+            tkendpoint.CHECK_LIVE_ALIVE,
+            params.model_dump(),
+        )
+        logger.debug(_("检查开播状态接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def __aenter__(self):

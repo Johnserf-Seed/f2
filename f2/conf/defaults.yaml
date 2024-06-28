@@ -28,11 +28,45 @@ tiktok:
   mode:
   naming:
   cookie:
+  keyword:
   interval:
   timeout:
   max_connections:
   max_counts:
   max_retries:
+  max_tasks:
+  page_counts:
+  languages:
+
+weibo:
+  url:
+  path:
+  folderize:
+  mode:
+  naming:
+  cookie:
+  keyword:
+  interval:
+  timeout:
+  max_retries:
+  max_connections:
+  max_counts:
+  max_tasks:
+  page_counts:
+  languages:
+
+x:
+  url:
+  path:
+  folderize:
+  mode:
+  naming:
+  cookie:
+  interval:
+  timeout:
+  max_retries:
+  max_connections:
+  max_counts:
   max_tasks:
   page_counts:
   languages:

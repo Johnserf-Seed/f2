@@ -18,6 +18,7 @@ from f2.utils.utils import (
 )
 from f2.utils.conf_manager import ConfigManager
 from f2.i18n.translator import TranslationManager, _
+from f2.apps.tiktok.utils import ClientConfManager
 
 
 def handler_help(
@@ -77,6 +78,8 @@ def handler_auto_cookie(
     except Exception as e:
         logger.error(_("自动获取Cookie失败：{0}").format(str(e)))
         ctx.abort()
+    finally:
+        ctx.exit(0)
 
 
 def handler_language(
@@ -123,7 +126,14 @@ def handler_naming(
         return
 
     # 允许的模式和分隔符
-    ALLOWED_PATTERNS = ["{nickname}", "{create}", "{aweme_id}", "{desc}", "{uid}"]
+    ALLOWED_PATTERNS = [
+        "{nickname}",
+        "{uniqueId}",
+        "{create}",
+        "{aweme_id}",
+        "{desc}",
+        "{uid}",
+    ]
     ALLOWED_SEPARATORS = ["-", "_"]
 
     # 检查命名是否符合命名规范
@@ -152,7 +162,7 @@ def handler_naming(
     type=str,
     # default="",
     help=_(
-        "根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合辑与直播同上"
+        "根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合集与直播同上"
     ),
 )
 @click.option(
@@ -197,7 +207,7 @@ def handler_naming(
     # default="post",
     # required=True,
     help=_(
-        "下载模式：单个作品(one)，主页作品(post), 点赞作品(like), 收藏作品(collect), 合辑播放列表(mix)"
+        "下载模式：单个作品(one)，主页作品(post), 点赞作品(like), 收藏作品(collect), 合集播放列表(mix)"
     ),
 )
 @click.option(
@@ -224,6 +234,13 @@ def handler_naming(
     type=str,
     # default="all",
     help=_("下载日期区间发布的作品，格式：2022-01-01|2023-01-01，'all' 为下载所有作品"),
+)
+@click.option(
+    "--keyword",
+    "-w",
+    type=str,
+    # default="",
+    help=_("搜索关键字，用于搜索作品"),
 )
 @click.option(
     "--timeout",
@@ -265,7 +282,7 @@ def handler_naming(
     "-s",
     type=int,
     # default=20,
-    help=_("从接口每页可获取作品数，不建议超过20。"),
+    help=_("从接口每页可获取作品数，不建议超过 20"),
 )
 @click.option(
     "--languages",
@@ -281,7 +298,7 @@ def handler_naming(
     type=str,
     nargs=2,
     help=_(
-        "代理服务器，最多 2 个参数，http与https。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"
+        "代理服务器，最多 2 个参数，http://与https://。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"
     ),
 )
 @click.option(
@@ -334,27 +351,18 @@ def tiktok(
     main_conf_path = get_resource_path(f2.APP_CONFIG_FILE_PATH)
     main_conf = main_manager.get_config("tiktok")
 
-    # 读取f2低频配置文件
-    f2_manager = ConfigManager(f2.F2_CONFIG_FILE_PATH)
-
-    f2_conf = f2_manager.get_config("f2").get("tiktok")
-    f2_proxies = f2_conf.get("proxies")
-
     # 更新主配置文件中的代理参数
-    main_conf["proxies"] = {
-        "http": f2_proxies.get("http"),
-        "https": f2_proxies.get("https"),
-    }
+    main_conf["proxies"] = ClientConfManager.proxies()
 
     # 更新主配置文件中的headers参数
     kwargs.setdefault("headers", {})
-    kwargs["headers"]["User-Agent"] = f2_conf["headers"].get("User-Agent", "")
-    kwargs["headers"]["Referer"] = f2_conf["headers"].get("Referer", "")
+    kwargs["headers"]["User-Agent"] = ClientConfManager.user_agent()
+    kwargs["headers"]["Referer"] = ClientConfManager.referer()
 
     # 如果初始化配置文件，则与更新配置文件互斥
     if init_config and not update_config:
         main_manager.generate_config("tiktok", init_config)
-        # return
+        return
     elif init_config:
         raise click.UsageError(_("不能同时初始化和更新配置文件"))
     # 如果没有初始化配置文件，但是更新配置文件，则需要提供配置文件路径
@@ -375,17 +383,19 @@ def tiktok(
     if update_config:  # 如果指定了 update_config，更新配置文件
         update_manger = ConfigManager(config)
         update_manger.update_config_with_args("tiktok", **kwargs)
+        return
 
     # 将kwargs["proxies"]中的tuple转换为dict
     if kwargs.get("proxies"):
         kwargs["proxies"] = {
-            "http": kwargs["proxies"][0],
-            "https": kwargs["proxies"][1],
+            "http://": kwargs["proxies"][0],
+            "https://": kwargs["proxies"][1],
         }
 
     # 从低频配置开始到高频配置再到cli参数，逐级覆盖，如果键值不存在使用父级的键值
     kwargs = merge_config(main_conf, custom_conf, **kwargs)
 
+    logger.info(_("模式：{0}").format(kwargs.get("mode")))
     logger.info(_("主配置路径：{0}").format(main_conf_path))
     logger.info(_("自定义配置路径：{0}").format(Path.cwd() / config))
     logger.debug(_("主配置参数：{0}").format(main_conf))
@@ -394,7 +404,7 @@ def tiktok(
 
     # 尝试从命令行参数或kwargs中获取URL
     if not kwargs.get("url"):
-        logger.error("缺乏URL参数，详情看命令帮助")
+        logger.error(_("缺乏URL参数，详情看命令帮助"))
         handler_help(ctx, None, True)
 
     # 添加app_name到kwargs

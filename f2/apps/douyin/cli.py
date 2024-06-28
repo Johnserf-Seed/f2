@@ -3,7 +3,8 @@
 import f2
 import click
 import typing
-import asyncio
+
+# import asyncio
 
 from pathlib import Path
 
@@ -19,7 +20,9 @@ from f2.utils.utils import (
 )
 from f2.utils.conf_manager import ConfigManager
 from f2.i18n.translator import TranslationManager, _
-from f2.apps.douyin.handler import handle_sso_login
+
+# from f2.apps.douyin.handler import handle_sso_login
+from f2.apps.douyin.utils import ClientConfManager
 
 
 def handler_help(
@@ -80,6 +83,8 @@ def handler_auto_cookie(
     except Exception as e:
         logger.error(_("自动获取Cookie失败：{0}").format(str(e)))
         ctx.abort()
+    finally:
+        ctx.exit(0)
 
 
 def handler_language(
@@ -142,39 +147,39 @@ def handler_naming(
     return value
 
 
-def handler_sso_login(
-    ctx: click.Context,
-    param: typing.Union[click.Option, click.Parameter],
-    value: typing.Any,
-) -> None:
-    """处理SSO登录 (Handle SSO login)
+# def handler_sso_login(
+#     ctx: click.Context,
+#     param: typing.Union[click.Option, click.Parameter],
+#     value: typing.Any,
+# ) -> None:
+#     """处理SSO登录 (Handle SSO login)
 
-    Args:
-        ctx (click.Context): click的上下文对象 (Click's context object)
-        param (typing.Union[click.Option, click.Parameter]): 提供的参数或选项 (The provided parameter or option)
-        value (typing.Any): 参数或选项的值 (The value of the parameter or option)
+#     Args:
+#         ctx (click.Context): click的上下文对象 (Click's context object)
+#         param (typing.Union[click.Option, click.Parameter]): 提供的参数或选项 (The provided parameter or option)
+#         value (typing.Any): 参数或选项的值 (The value of the parameter or option)
 
-    Raises:
-        click.UsageError: 如果SSO登录失败 (If SSO login failed)
+#     Raises:
+#         click.UsageError: 如果SSO登录失败 (If SSO login failed)
 
-    Returns:
-        更新配置文件 (Update the configuration file)
-    """
-    if not value or ctx.resilient_parsing:
-        return
+#     Returns:
+#         更新配置文件 (Update the configuration file)
+#     """
+#     if not value or ctx.resilient_parsing:
+#         return
 
-    if ctx.params.get("cookie"):
-        return
+#     if ctx.params.get("cookie"):
+#         return
 
-    is_login, login_cookie = asyncio.run(handle_sso_login())
+#     is_login, login_cookie = asyncio.run(handle_sso_login())
 
-    if is_login:
-        manager = ConfigManager(
-            ctx.params.get("config", get_resource_path(f2.APP_CONFIG_FILE_PATH))
-        )
-        manager.update_config_with_args("douyin", cookie=login_cookie)
-    else:
-        raise click.UsageError(_("SSO登录失败，请重试！"))
+#     if is_login:
+#         manager = ConfigManager(
+#             ctx.params.get("config", get_resource_path(f2.APP_CONFIG_FILE_PATH))
+#         )
+#         manager.update_config_with_args("douyin", cookie=login_cookie)
+#     else:
+#         raise click.UsageError(_("SSO登录失败，请重试！"))
 
 
 @click.command(name="douyin", help=_("抖音无水印解析"))
@@ -190,7 +195,7 @@ def handler_sso_login(
     type=str,
     # default="",
     help=_(
-        "根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合辑与直播同上"
+        "根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合集与直播同上"
     ),
 )
 @click.option(
@@ -235,7 +240,7 @@ def handler_sso_login(
     # default="post",
     # required=True,
     help=_(
-        "下载模式：单个作品(one)，主页作品(post)，点赞作品(like)，收藏作品(collection)，收藏夹作品(collects)，收藏音乐(music)，合辑(mix)，直播(live)"
+        "下载模式：单个作品(one)，主页作品(post)，点赞作品(like)，收藏作品(collection)，收藏夹作品(collects)，收藏音乐(music)，合集(mix)，直播(live)"
     ),
 )
 @click.option(
@@ -300,7 +305,7 @@ def handler_sso_login(
     "-s",
     type=int,
     # default=20,
-    help=_("从接口每页可获取作品数，不建议超过20"),
+    help=_("从接口每页可获取作品数，不建议超过 20"),
 )
 @click.option(
     "--languages",
@@ -316,7 +321,7 @@ def handler_sso_login(
     type=str,
     nargs=2,
     help=_(
-        "代理服务器，最多 2 个参数，http与https。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"
+        "代理服务器，最多 2 个参数，http://与https://。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"
     ),
 )
 @click.option("--lyric", "-L", type=bool, help=_("是否保存原声歌词"))
@@ -336,12 +341,12 @@ def handler_sso_login(
     help=_("自动从浏览器获取cookie，使用该命令前请确保关闭所选的浏览器"),
     callback=handler_auto_cookie,
 )
-@click.option(
-    "--sso-login",
-    is_flag=True,
-    help=_("使用SSO扫码登录获取cookie，保存低频主配置文件"),
-    callback=handler_sso_login,
-)
+# @click.option(
+#     "--sso-login",
+#     is_flag=True,
+#     help=_("使用SSO扫码登录获取cookie，保存低频主配置文件（暂时弃用）"),
+#     callback=handler_sso_login,
+# )
 @click.option(
     "-h",
     is_flag=True,
@@ -375,27 +380,18 @@ def douyin(
     main_conf_path = get_resource_path(f2.APP_CONFIG_FILE_PATH)
     main_conf = main_manager.get_config("douyin")
 
-    # 读取f2低频配置文件
-    f2_manager = ConfigManager(f2.F2_CONFIG_FILE_PATH)
-
-    f2_conf = f2_manager.get_config("f2").get("douyin")
-    f2_proxies = f2_conf.get("proxies")
-
     # 更新主配置文件中的代理参数
-    main_conf["proxies"] = {
-        "http": f2_proxies.get("http"),
-        "https": f2_proxies.get("https"),
-    }
+    main_conf["proxies"] = ClientConfManager.proxies()
 
     # 更新主配置文件中的headers参数
     kwargs.setdefault("headers", {})
-    kwargs["headers"]["User-Agent"] = f2_conf["headers"].get("User-Agent", "")
-    kwargs["headers"]["Referer"] = f2_conf["headers"].get("Referer", "")
+    kwargs["headers"]["User-Agent"] = ClientConfManager.user_agent()
+    kwargs["headers"]["Referer"] = ClientConfManager.referer()
 
     # 如果初始化配置文件，则与更新配置文件互斥
     if init_config and not update_config:
         main_manager.generate_config("douyin", init_config)
-        # return
+        return
     elif init_config:
         raise click.UsageError(_("不能同时初始化和更新配置文件"))
     # 如果没有初始化配置文件，但是更新配置文件，则需要提供配置文件路径
@@ -416,17 +412,19 @@ def douyin(
     if update_config:  # 如果指定了 update_config，更新配置文件
         update_manger = ConfigManager(config)
         update_manger.update_config_with_args("douyin", **kwargs)
+        return
 
     # 将kwargs["proxies"]中的tuple转换为dict
     if kwargs.get("proxies"):
         kwargs["proxies"] = {
-            "http": kwargs["proxies"][0],
-            "https": kwargs["proxies"][1],
+            "http://": kwargs["proxies"][0],
+            "https://": kwargs["proxies"][1],
         }
 
     # 从低频配置开始到高频配置再到cli参数，逐级覆盖，如果键值不存在使用父级的键值
     kwargs = merge_config(main_conf, custom_conf, **kwargs)
 
+    logger.info(_("模式：{0}").format(kwargs.get("mode")))
     logger.info(_("主配置路径：{0}").format(main_conf_path))
     logger.info(_("自定义配置路径：{0}").format(Path.cwd() / config))
     logger.debug(_("主配置参数：{0}").format(main_conf))
@@ -435,7 +433,7 @@ def douyin(
 
     # 尝试从命令行参数或kwargs中获取URL
     if not kwargs.get("url"):
-        logger.error("缺乏URL参数，详情看命令帮助")
+        logger.error(_("缺乏URL参数，详情看命令帮助"))
         handler_help(ctx, None, True)
 
     # 添加app_name到kwargs
