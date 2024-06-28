@@ -21,7 +21,7 @@ def help() -> None:
             "-u --url",
             "[dark_cyan]str",
             _(
-                "根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合辑与直播同上"
+                "根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合集与直播同上"
             ),
         ),
         ("-m --music", "[dark_cyan]Bool", _("是否保存视频原声")),
@@ -37,7 +37,7 @@ def help() -> None:
             "-M --mode",
             "[dark_cyan]Choice",
             _(
-                "下载模式：单个作品(one)，主页作品(post)，点赞作品(like)，收藏作品(collection)，收藏夹作品(collects)，合辑(mix)，直播(live)"
+                "下载模式：单个作品(one)，主页作品(post)，点赞作品(like)，收藏作品(collection)，收藏夹作品(collects)，合集(mix)，直播(live)"
             ),
         ),
         (
@@ -67,7 +67,7 @@ def help() -> None:
         (
             "-s --page-counts",
             "[dark_cyan]int",
-            _("从接口每页可获取作品数，不建议超过20"),
+            _("从接口每页可获取作品数，不建议超过 20"),
         ),
         (
             "-l --languages",
@@ -78,7 +78,7 @@ def help() -> None:
             "-P --proxies",
             "[dark_cyan]str",
             _(
-                "代理服务器，最多 2 个参数，http与https。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"
+                "代理服务器，最多 2 个参数，http://与https://。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"
             ),
         ),
         ("-L --lyric", "[dark_cyan]Bool", _("是否保存视频歌词")),
@@ -102,7 +102,9 @@ def help() -> None:
         (
             "--sso-login",
             "[dark_cyan]Flag",
-            _("使用SSO扫码登录获取[yellow]cookie[/yellow]，保存低频主配置文件"),
+            _(
+                "使用SSO扫码登录获取[yellow]cookie[/yellow]，保存低频主配置文件[red]（暂时弃用）[/red]"
+            ),
         ),
         ("--help", "[dark_cyan]Flag", _("显示经典帮助信息")),
         (

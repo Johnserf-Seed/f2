@@ -237,7 +237,7 @@ class DouyinDownloader(BaseDownloader):
                 )
 
             # 处理不同类型的作品下载任务
-            if aweme_type in [0, 55, 61, 109]:
+            if aweme_type in [0, 55, 61, 109, 201]:
                 video_name = (
                     format_file_name(
                         kwargs.get("naming", "{create}_{desc}"), aweme_data_dict
@@ -404,5 +404,5 @@ class DouyinDownloader(BaseDownloader):
         webcast_url = webcast_data_dict.get("m3u8_pull_url").get("FULL_HD1")
 
         await self.initiate_m3u8_download(
-            _("直播"), webcast_url, base_path, webcast_name, ".mp4"
+            _("直播"), webcast_url, base_path, webcast_name, ".flv"
         )

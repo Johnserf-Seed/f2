@@ -21,7 +21,7 @@ def help() -> None:
             "-u --url",
             "[dark_cyan]str",
             _(
-                "根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合辑与直播同上"
+                "根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合集与直播同上"
             ),
         ),
         ("-m --music", "[dark_cyan]Choice", _("是否保存视频原声。可选：'yes'、'no'")),
@@ -37,7 +37,7 @@ def help() -> None:
             "-M --mode",
             "[dark_cyan]Choice",
             _(
-                "下载模式：单个作品(one)，主页作品(post), 点赞作品(like), 收藏作品(collect), 合辑播放列表(mix)"
+                "下载模式：单个作品(one)，主页作品(post), 点赞作品(like), 收藏作品(collect), 合集播放列表(mix)"
             ),
         ),
         (
@@ -59,6 +59,7 @@ def help() -> None:
                 "下载日期区间发布的作品，格式：2022-01-01|2023-01-01，'all' 为下载所有作品"
             ),
         ),
+        ("-w --keyword", "[dark_cyan]str", _("搜索关键词，用于搜索作品。")),
         ("-e --timeout", "[dark_cyan]int", _("网络请求超时时间。")),
         ("-r --max-retries", "[dark_cyan]int", _("网络请求超时重试数。")),
         ("-x --max-connections", "[dark_cyan]int", _("网络请求并发连接数。")),
@@ -71,7 +72,7 @@ def help() -> None:
         (
             "-s --page-counts",
             "[dark_cyan]int",
-            _("从接口每页可获取作品数，不建议超过20。"),
+            _("从接口每页可获取作品数，不建议超过 20"),
         ),
         (
             "-l --languages",
@@ -82,7 +83,7 @@ def help() -> None:
             "-P --proxies",
             "[dark_cyan]str",
             _(
-                "代理服务器，最多 2 个参数，http与https。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"
+                "代理服务器，最多 2 个参数，http://与https://。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"
             ),
         ),
         (

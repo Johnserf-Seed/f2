@@ -1,10 +1,12 @@
+# path: f2/utils/xbogus.py
+
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 """
 @Description:xbogus.py
 @Date       :2023/02/09 00:29:30
 @Author     :JohnserfSeed
-@version    :0.0.2
+@version    :0.0.3
 @License    :Apache License 2.0
 @Github     :https://github.com/johnserf-seed
 @Mail       :johnserf-seed@foxmail.com
@@ -13,6 +15,7 @@ Change Log  :
 2023/02/09 00:29:30 - Create XBogus class
 2023/06/07 17:26:02 - Refactor the XB algorithm using Python.
 2024/04/01 00:32:30 - Black Code Style & Support custom ua
+2024/04/13 14:42:10 - Correction examples
 -------------------------------------------------
 """
 
@@ -22,7 +25,7 @@ import hashlib
 
 
 class XBogus:
-    def __init__(self, user_agent: str = None) -> None:
+    def __init__(self, user_agent: str = "") -> None:
         # fmt: off
         self.Array = [
             None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
@@ -59,15 +62,15 @@ class XBogus:
                 idx += 2
             return array
 
-    def md5_encrypt(self, url_path):
+    def md5_encrypt(self, url_params):
         """
         使用多轮md5哈希算法对URL路径进行加密。
         Encrypt the URL path using multiple rounds of md5 hashing.
         """
-        hashed_url_path = self.md5_str_to_array(
-            self.md5(self.md5_str_to_array(self.md5(url_path)))
+        hashed_url_params = self.md5_str_to_array(
+            self.md5(self.md5_str_to_array(self.md5(url_params)))
         )
-        return hashed_url_path
+        return hashed_url_params
 
     def md5(self, input_data):
         """
@@ -147,7 +150,7 @@ class XBogus:
             + self.character[x3 & 63]
         )
 
-    def getXBogus(self, url_path):
+    def getXBogus(self, url_params):
         """
         获取 X-Bogus 值。
         Get the X-Bogus value.
@@ -164,7 +167,7 @@ class XBogus:
         array2 = self.md5_str_to_array(
             self.md5(self.md5_str_to_array("d41d8cd98f00b204e9800998ecf8427e"))
         )
-        url_path_array = self.md5_encrypt(url_path)
+        url_params_array = self.md5_encrypt(url_params)
 
         timer = int(time.time())
         ct = 536919696
@@ -174,7 +177,7 @@ class XBogus:
         # fmt: off
         new_array = [
             64, 0.00390625, 1, 12,
-            url_path_array[14], url_path_array[15], array2[14], array2[15], array1[14], array1[15],
+            url_params_array[14], url_params_array[15], array2[14], array2[15], array1[14], array1[15],
             timer >> 24 & 255, timer >> 16 & 255, timer >> 8 & 255, timer & 255,
             ct >> 24 & 255, ct >> 16 & 255, ct >> 8 & 255, ct & 255
         ]
@@ -216,16 +219,21 @@ class XBogus:
                 ord(garbled_code[idx + 2]),
             )
             idx += 3
-        self.params = "%s&X-Bogus=%s" % (url_path, xb_)
+        self.params = "%s&X-Bogus=%s" % (url_params, xb_)
         self.xb = xb_
         return (self.params, self.xb, self.user_agent)
 
 
 if __name__ == "__main__":
-    url_path = "https://www.douyin.com/aweme/v1/web/aweme/post/?device_platform=webapp&aid=6383&channel=channel_pc_web&sec_user_id=MS4wLjABAAAAW9FWcqS7RdQAWPd2AA5fL_ilmqsIFUCQ_Iym6Yh9_cUa6ZRqVLjVQSUjlHrfXY1Y&max_cursor=0&locate_query=false&show_live_replay_strategy=1&need_time_list=1&time_list_query=0&whale_cut_token=&cut_version=1&count=18&publish_video_strategy_type=2&pc_client_type=1&version_code=170400&version_name=17.4.0&cookie_enabled=true&screen_width=1920&screen_height=1080&browser_language=zh-CN&browser_platform=Win32&browser_name=Edge&browser_version=122.0.0.0&browser_online=true&engine_name=Blink&engine_version=122.0.0.0&os_name=Windows&os_version=10&cpu_core_num=12&device_memory=8&platform=PC&downlink=10&effective_type=4g&round_trip_time=50&webid=7335414539335222835&msToken=p9Y7fUBuq9DKvAuN27Peml6JbaMqG2ZcXfFiyDv1jcHrCN00uidYqUgSuLsKl1onC-E_n82m-aKKYE0QGEmxIWZx9iueQ6WLbvzPfqnMk4GBAlQIHcDzxb38FLXXQxAm"
     # ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
-    ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
-
+    ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
     XB = XBogus(user_agent=ua)
-    xbogus = XB.getXBogus(url_path)
-    print(f"url: {xbogus[0]}, xbogus:{xbogus[1]}, ua: {xbogus[2]}")
+
+    dy_url_params = "device_platform=webapp&aid=6383&channel=channel_pc_web&sec_user_id=MS4wLjABAAAAW9FWcqS7RdQAWPd2AA5fL_ilmqsIFUCQ_Iym6Yh9_cUa6ZRqVLjVQSUjlHrfXY1Y&max_cursor=0&locate_query=false&show_live_replay_strategy=1&need_time_list=1&time_list_query=0&whale_cut_token=&cut_version=1&count=18&publish_video_strategy_type=2&pc_client_type=1&version_code=170400&version_name=17.4.0&cookie_enabled=true&screen_width=1920&screen_height=1080&browser_language=zh-CN&browser_platform=Win32&browser_name=Edge&browser_version=122.0.0.0&browser_online=true&engine_name=Blink&engine_version=122.0.0.0&os_name=Windows&os_version=10&cpu_core_num=12&device_memory=8&platform=PC&downlink=10&effective_type=4g&round_trip_time=50&webid=7335414539335222835&msToken=p9Y7fUBuq9DKvAuN27Peml6JbaMqG2ZcXfFiyDv1jcHrCN00uidYqUgSuLsKl1onC-E_n82m-aKKYE0QGEmxIWZx9iueQ6WLbvzPfqnMk4GBAlQIHcDzxb38FLXXQxAm"
+    tk_url_params = "WebIdLastTime=1713796127&abTestVersion=%5Bobject%20Object%5D&aid=1988&appType=t&app_language=zh-Hans&app_name=tiktok_web&browser_name=Mozilla&browser_online=true&browser_platform=Win32&browser_version=5.0%20%28Windows%20NT%2010.0%3B%20Win64%3B%20x64%29%20AppleWebKit%2F537.36%20%28KHTML%2C%20like%20Gecko%29%20Chrome%2F123.0.0.0%20Safari%2F537.36&channel=tiktok_web&device_id=7360698239018452498&odinId=7360698115047851026&region=TW&tz_name=Asia%2FHong_Kong&uniqueId=rei_toy625"
+
+    dy_xbogus = XB.getXBogus(dy_url_params)
+    print(f"url: {dy_xbogus[0]}, xbogus:{dy_xbogus[1]}, ua: {dy_xbogus[2]}")
+
+    tk_xbogus = XB.getXBogus(tk_url_params)
+    print(f"url: {tk_xbogus[0]}, xbogus:{tk_xbogus[1]}, ua: {tk_xbogus[2]}")

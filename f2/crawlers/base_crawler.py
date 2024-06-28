@@ -3,8 +3,11 @@
 import httpx
 import json
 import asyncio
+import traceback
+import websockets
 
 from httpx import Response
+from websockets.exceptions import ConnectionClosedError, ConnectionClosedOK
 
 from f2.i18n.translator import _
 from f2.log.logger import logger
@@ -28,18 +31,28 @@ class BaseCrawler:
 
     def __init__(
         self,
-        proxies: dict = {},
+        proxies: dict = ...,
         max_retries: int = 5,
         max_connections: int = 10,
         timeout: int = 10,
         max_tasks: int = 10,
         crawler_headers: dict = {},
     ):
+        # 设置代理 (Set proxy)
+        self.proxies = proxies
         if isinstance(proxies, dict):
-            self.proxies = proxies
-            # [f"{k}://{v}" for k, v in proxies.items()]
-        else:
-            self.proxies = None
+            # 底层连接重试次数 / Underlying connection retry count
+            self.sync_transport = httpx.HTTPTransport(
+                proxy=proxies.get("http://", None),
+                retries=max_retries,
+                local_address="0.0.0.0",
+            )
+            # 底层连接重试次数 / Underlying connection retry count
+            self.async_transport = httpx.AsyncHTTPTransport(
+                proxy=proxies.get("http://", None),
+                retries=max_retries,
+                local_address="0.0.0.0",
+            )
 
         # 爬虫请求头 / Crawler request header
         self.crawler_headers = crawler_headers or {}
@@ -54,20 +67,38 @@ class BaseCrawler:
 
         # 业务逻辑重试次数 / Business logic retry count
         self._max_retries = max_retries
-        # 底层连接重试次数 / Underlying connection retry count
-        self.atransport = httpx.AsyncHTTPTransport(retries=max_retries)
 
         # 超时等待时间 / Timeout waiting time
         self._timeout = timeout
         self.timeout = httpx.Timeout(timeout)
+
         # 异步客户端 / Asynchronous client
-        self.aclient = httpx.AsyncClient(
-            headers=self.crawler_headers,
-            proxies=self.proxies,
-            timeout=self.timeout,
-            limits=self.limits,
-            transport=self.atransport,
-        )
+        self._aclient = None
+
+        # 同步客户端 / Synchronous client
+        self._client = None
+
+    @property
+    def aclient(self):
+        if self._aclient is None:
+            self._aclient = httpx.AsyncClient(
+                headers=self.crawler_headers,
+                verify=False,
+                timeout=self.timeout,
+                limits=self.limits,
+            )
+        return self._aclient
+
+    @property
+    def client(self):
+        if self._client is None:
+            self._client = httpx.Client(
+                headers=self.crawler_headers,
+                verify=False,
+                timeout=self.timeout,
+                limits=self.limits,
+            )
+        return self._client
 
     async def _fetch_response(self, endpoint: str) -> Response:
         """获取数据 (Get data)
@@ -121,14 +152,16 @@ class BaseCrawler:
             try:
                 return response.json()
             except json.JSONDecodeError as e:
-                logger.error(_("解析 {0} 接口 JSON 失败： {1}").format(response.url, e))
+                logger.error(_("解析 {0} 接口 JSON 失败：{1}").format(response.url, e))
+            except UnicodeDecodeError as e:
+                logger.error(_("解析 {0} 接口 JSON 失败：{1}").format(response.url, e))
         else:
             if isinstance(response, Response):
                 logger.error(
                     _("获取数据失败。状态码: {0}").format(response.status_code)
                 )
             else:
-                logger.error(_("无效响应类型。响应类型: {0}").format(type(response)))
+                logger.error(_("无效响应类型"))
 
         return {}
 
@@ -164,15 +197,68 @@ class BaseCrawler:
                 response.raise_for_status()
                 return response
 
-            except httpx.RequestError:
-                raise APIConnectionError(
+            # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
+            except httpx.TimeoutException as exc:
+                raise APITimeoutError(
                     _(
-                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
-                    ).format(url, self.proxies, self.__class__.__name__)
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求端点超时"),
+                        url,
+                        self.proxies,
+                        self.__class__.__name__,
+                        exc,
+                    )
                 )
 
-            except httpx.HTTPStatusError as http_error:
-                self.handle_http_status_error(http_error, url, attempt + 1)
+            except httpx.NetworkError as exc:
+                raise APIConnectionError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("网络连接失败，请检查当前网络环境"),
+                        url,
+                        self.proxies,
+                        self.__class__.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.ProtocolError as exc:
+                raise APIUnauthorizedError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求协议错误"),
+                        url,
+                        self.proxies,
+                        self.__class__.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.ProxyError as exc:
+                raise APIConnectionError(
+                    _(
+                        "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                    ).format(
+                        _("请求代理错误"),
+                        url,
+                        self.proxies,
+                        self.__class__.__name__,
+                        exc,
+                    )
+                )
+
+            except httpx.HTTPStatusError as exc:
+                self.handle_http_status_error(exc, url, attempt + 1)
+
+            except httpx.RequestError as req_err:
+                raise APIConnectionError(
+                    _(
+                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2} 异常详细信息：{3}"
+                    ).format(url, self.proxies, self.__class__.__name__, req_err)
+                )
 
             except APIError as e:
                 logger.error(e)
@@ -212,11 +298,11 @@ class BaseCrawler:
                 response.raise_for_status()
                 return response
 
-            except httpx.RequestError:
+            except httpx.RequestError as req_err:
                 raise APIConnectionError(
                     _(
-                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}"
-                    ).format(url, self.proxies, self.__class__.__name__)
+                        "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2} 异常详细信息：{3}"
+                    ).format(url, self.proxies, self.__class__.__name__, req_err)
                 )
 
             except httpx.HTTPStatusError as http_error:
@@ -241,11 +327,11 @@ class BaseCrawler:
             response.raise_for_status()
             return response
 
-        except httpx.RequestError:
+        except httpx.RequestError as req_err:
             raise APIConnectionError(
-                _("连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2}").format(
-                    url, self.proxies, self.__class__.__name__
-                )
+                _(
+                    "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2} 异常详细信息：{3}"
+                ).format(url, self.proxies, self.__class__.__name__, req_err)
             )
 
         except httpx.HTTPStatusError as http_error:
@@ -306,10 +392,158 @@ class BaseCrawler:
             raise APIResponseError(_("HTTP状态码错误："), status_code)
 
     async def close(self):
-        await self.aclient.aclose()
+        # 如果没有初始化客户端，则不关闭 (If the client is not initialized, do not close)
+        if self._client:
+            self.client.close()
+        if self._aclient:
+            await self.aclient.aclose()
 
     async def __aenter__(self):
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        await self.aclient.aclose()
+        await self.close()
+
+
+class WebSocketCrawler:
+    """
+    WebSocket爬虫客户端 (WebSocket crawler client)
+    """
+
+    def __init__(self, wss_headers: dict, callbacks: dict = None, timeout: int = 10):
+        """
+        初始化 WebSocketCrawler 实例
+
+        Args:
+            wss_headers: WebSocket 连接头信息
+            callbacks: WebSocket 回调函数
+            timeout: WebSocket 超时时间
+        """
+        self.websocket = None
+        self.wss_headers = wss_headers
+        self.callbacks = callbacks or {}  # 存储回调函数
+        self.timeout = timeout
+
+    async def connect_websocket(
+        self,
+        websocket_uri: str,
+    ):
+        """
+        连接 WebSocket
+
+        Args:
+            websocket_uri: WebSocket URI (ws:// or wss://)
+        """
+        try:
+            # https://websockets.readthedocs.io/en/stable/reference/features.html#client 暂不支持代理
+            self.websocket = await websockets.connect(
+                websocket_uri, extra_headers=self.wss_headers
+            )
+            logger.info(_("已连接 WebSocket"))
+        except ConnectionRefusedError as exc:
+            logger.error(traceback.format_exc())
+            logger.error(_("WebSocket 连接被拒绝：{0}").format(exc))
+            raise APIConnectionError(_("连接 WebSocket 失败：{0}").format(exc))
+
+        except websockets.InvalidStatusCode as exc:
+            logger.error(traceback.format_exc())
+            logger.error(_("WebSocket 连接状态码无效：{0}").format(exc))
+            await asyncio.sleep(2)
+            await self.connect_websocket(websocket_uri)
+
+    async def receive_messages(self):
+        """
+        接收 WebSocket 消息并处理
+        """
+        timeout_count = 0
+        try:
+            while True:
+                try:
+                    # 为wss连接设置10秒超时机制
+                    logger.info(
+                        _("等待接收消息，超时时间：{0} 秒").format(self.timeout)
+                    )
+                    message = await asyncio.wait_for(
+                        self.websocket.recv(), timeout=self.timeout
+                    )
+                    timeout_count = 0  # 重置超时计数
+                    await self.on_message(message)
+                except asyncio.TimeoutError:
+                    logger.warning(_("接收消息超时"))
+                    timeout_count += 1
+                    if timeout_count >= 3:
+                        await self.on_close(_("即将关闭 WebSocket 连接"))
+                        return "closed"
+                    if self.websocket.closed:
+                        await self.on_close(_("即将关闭 WebSocket 连接"))
+                        return "closed"
+                except ConnectionClosedError as exc:
+                    logger.error(traceback.format_exc())
+                    await self.on_close(_("WebSocket 连接被关闭：{0}").format(exc))
+                    return "closed"
+                except ConnectionClosedOK:
+                    await self.on_close(_("WebSocket 连接正常关闭"))
+                    return "closed"
+                except Exception as exc:
+                    logger.error(traceback.format_exc())
+                    logger.error(_("处理消息时出错：{0}").format(exc))
+                    await self.on_error(exc)
+                    return "error"
+
+        except Exception as e:
+            logger.error(traceback.format_exc())
+            logger.error(_("接收消息过程中出错：{0}").format(e))
+            return "error"
+
+    async def close_websocket(self):
+        """
+        关闭 WebSocket 连接
+        """
+        if self.websocket:
+            await self.websocket.close()
+            logger.info(_("已关闭 WebSocket 连接"))
+
+    async def on_message(self, message):
+        """
+        处理 WebSocket 消息
+
+        Args:
+            message: WebSocket 消息
+        """
+        logger.debug(_("收到消息：{0}").format(message))
+
+    async def on_error(self, message):
+        """
+        处理 WebSocket 错误
+
+        Args:
+            message: WebSocket 错误
+        """
+        logger.error(_("WebSocket 错误：{0}").format(message))
+
+    async def on_close(self, message):
+        """
+        处理 WebSocket 关闭
+
+        Args:
+            message: WebSocket 关闭消息
+        """
+        logger.warning(message)
+
+    async def on_open(self):
+        """
+        处理 WebSocket 打开
+        """
+        logger.info(_("WebSocket 连接已打开"))
+
+    async def __aenter__(self):
+        """
+        进入异步上下文：连接WebSocket
+        """
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        """
+        退出异步上下文：关闭WebSocket连接
+        """
+        await self.close_websocket()

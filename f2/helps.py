@@ -4,7 +4,7 @@
 @Description:helps.py
 @Date       :2023/02/06 17:36:41
 @Author     :JohnserfSeed
-@version    :0.0.1.5
+@version    :0.0.1.6
 @License    :Apache License 2.0
 @Github     :https://github.com/johnserf-seed
 @Mail       :johnserf-seed@foxmail.com
@@ -66,14 +66,14 @@ def main() -> None:
     table.add_row(
         _("douyin 或 dy"),
         _(
-            "- 单个作品，主页作品，点赞作品，收藏作品，合辑作品，图文，文案，封面，直播，原声。"
+            "- 单个作品，主页作品，点赞作品，收藏作品，合集作品，图文，文案，封面，直播，原声。"
         ),
         _("✔"),
     )
     table.add_row(
         _("tiktok 或 tk"),
         _(
-            "- 单个作品，主页作品，点赞作品，收藏作品，播放列表（合辑）作品，文案，封面，原声。"
+            "- 单个作品，主页作品，点赞作品，收藏作品，播放列表（合集）作品，文案，封面，原声。"
         ),
         _("✔"),
     )

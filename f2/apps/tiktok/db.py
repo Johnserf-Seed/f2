@@ -89,19 +89,25 @@ class AsyncUserDB(BaseDB):
             )
             await self.commit()
 
-    async def get_user_info(self, secUid: str) -> dict:
+    async def get_user_info(self, secUid: str = "", uniqueId: str = "") -> dict:
         """
         获取用户信息
 
         Args:
             secUid (str): 用户唯一标识
+            uniqueId (str): 用户名
 
         Returns:
             dict: 对应的用户信息，如果不存在则返回 None
         """
-        cursor = await self.execute(
-            f"SELECT * FROM {self.TABLE_NAME} WHERE secUid=?", (secUid,)
-        )
+        if secUid:
+            cursor = await self.execute(
+                f"SELECT * FROM {self.TABLE_NAME} WHERE secUid=?", (secUid,)
+            )
+        elif uniqueId:
+            cursor = await self.execute(
+                f"SELECT * FROM {self.TABLE_NAME} WHERE uniqueId=?", (uniqueId,)
+            )
         result = await cursor.fetchone()
         if not result:
             return {}

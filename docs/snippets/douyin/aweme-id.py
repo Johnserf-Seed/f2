@@ -2,9 +2,13 @@
 import asyncio
 from f2.apps.douyin.utils import AwemeIdFetcher
 
+
 async def main():
-    raw_url = "https://www.douyin.com/video/7298145681699622182?previous_page=web_code_link"
+    raw_url = (
+        "https://www.douyin.com/video/7298145681699622182?previous_page=web_code_link"
+    )
     return await AwemeIdFetcher.get_aweme_id(raw_url)
+
 
 if __name__ == "__main__":
     print(asyncio.run(main()))
@@ -16,6 +20,7 @@ if __name__ == "__main__":
 import asyncio
 from f2.apps.douyin.utils import AwemeIdFetcher
 from f2.utils.utils import extract_valid_urls
+
 
 async def main():
     raw_urls = [
@@ -31,6 +36,7 @@ async def main():
 
     # 对于URL列表
     return await AwemeIdFetcher.get_all_aweme_id(urls)
+
 
 if __name__ == "__main__":
     print(asyncio.run(main()))

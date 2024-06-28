@@ -3,12 +3,12 @@ from f2.apps.douyin.handler import DouyinHandler
 
 kwargs = {
     "headers": {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0",
         "Referer": "https://www.douyin.com/",
     },
-    "proxies": {"http": None, "https": None},
     "cookie": "YOUR_COOKIE_HERE",
     "timeout": 10,
+    "proxies": {"http://": None, "https://": None},
 }
 
 

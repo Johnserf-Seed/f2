@@ -6,7 +6,7 @@ const require = createRequire(import.meta.url)
 
 const pkg = require('vitepress/package.json')
 
-const version = "v0.0.1.5-pw.2"
+const version = "v0.0.1.6-pw.2"
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -78,9 +78,20 @@ export default defineConfig({
               text: '开发者接口',
               items: [
                 {text: 'DouYin', link: '/guide/apps/douyin/index'},
-                {text: 'TikTok', link: '/guide/apps/tiktok/index'}
+                {text: 'TikTok', link: '/guide/apps/tiktok/index'},
+                {text: 'X', link: '/guide/apps/x/index'},
+                {text: 'WeiBo', link: '/guide/apps/weibo/index'},
               ]
             },
+            {
+              text: '命令行指引',
+              items: [
+                {text: 'DouyYin', link: '/guide/apps/douyin/cli'},
+                {text: 'TikTok', link: '/guide/apps/tiktok/cli'},
+                {text: 'X', link: '/guide/apps/x/cli'},
+                {text: 'WeiBo', link: '/guide/apps/weibo/cli'},
+              ]
+            }
 
           ],
           '/question-answer/': [
