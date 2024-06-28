@@ -38,7 +38,7 @@ dependencies = [
     "pytest==7.4.2",
     "pytest-asyncio==0.21.1",
     "browser_cookie3==0.19.1",
-    "pydantic==1.10.12",
+    "pydantic>=1.10.12",
     "qrcode==7.4.2",
 ]
 
