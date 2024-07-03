@@ -45,7 +45,7 @@ class DouyinWebcastSignature:
         raw_string = f"live_id=1,aid=6383,version_code=180800,webcast_sdk_version=1.0.14-beta.0,room_id={room_id},sub_room_id=,sub_channel_id=,did_rule=3,user_unique_id={user_unique_id},device_platform=web,device_type=,ac=,identity=audience"
 
         # md5 计算 X-MS-STUB
-        x_ms_stub = {"X-MS-STUB": hashlib.md5(raw_string.encode("utf-8")).hexdigest()}
+        x_ms_stub = hashlib.md5(raw_string.encode("utf-8")).hexdigest()
 
         # 调用 js 函数计算 signature
         result = ctx.call("get_signature", x_ms_stub)

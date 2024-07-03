@@ -7098,5 +7098,9 @@ if (!window.byted_acrawler) {
 // console.log(get_signature("7382517534467115826","7382524529011246630"))
 
 function get_signature(x_ms_stub) {
-    return window.byted_acrawler.frontierSign(x_ms_stub)
+    return window.byted_acrawler.frontierSign({
+        "X-MS-STUB": x_ms_stub
+    })
 }
+
+console.log(get_signature("dfc40239294909a536d77ff9d213d92a"))
