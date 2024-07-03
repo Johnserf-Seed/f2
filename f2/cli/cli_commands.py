@@ -16,6 +16,11 @@ from f2.utils.utils import get_latest_version
 from f2.i18n.translator import _
 from f2.log.logger import logger
 
+from concurrent.futures import ThreadPoolExecutor
+
+from rich.panel import Panel
+from rich.console import Console
+
 
 # 处理帮助信息
 def handle_help(
@@ -79,18 +84,42 @@ async def check_version():
     latest_version = await get_latest_version("f2")
 
     if latest_version:
-        if f2.__version__ < latest_version:
-            logger.warning(
-                _(
-                    "您当前使用的版本 {0} 可能已过时，请考虑及时升级到最新版本 {1}，请使用 pip install -U f2 更新"
-                ).format(f2.__version__, latest_version)
+        if f2.__version__ > latest_version:
+            message = (
+                f"您当前使用的版本 {f2.__version__} 可能已过时，请考虑及时升级到最新版本 {latest_version}，"
+                "使用 pip install -U f2 更新"
+            )
+            Console().print(
+                Panel(
+                    message,
+                    title="版本警告",
+                    subtitle="请及时更新",
+                    style="bold red",
+                    border_style="red",
+                )
             )
         elif f2.__version__ == latest_version:
-            logger.info(_("您当前使用的是最新版本：{0}").format(f2.__version__))
+            message = f"您当前使用的是最新版本：{f2.__version__}"
+            Console().print(
+                Panel(
+                    message, title="版本检查", style="bold green", border_style="green"
+                )
+            )
     else:
-        logger.error(_("无法获取最新版本信息"))
+        message = "无法获取最新版本信息"
+        Console().print(
+            Panel(
+                message, title=_("网络超时"), style="bold yellow", border_style="yellow"
+            )
+        )
 
-    return
+
+def run_async_in_thread(coro):
+    """在单独的线程中运行异步任务"""
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(coro)
+    loop.close()
 
 
 # 应用映射
@@ -114,8 +143,10 @@ class DynamicGroup(click.Group):
             ctx.fail(_("没有找到 {0} 应用").format(cmd_name))
         try:
             if app_name:
-                # 检查版本
-                asyncio.run(check_version())
+                # 使用线程池执行异步任务
+                executor = ThreadPoolExecutor(max_workers=1)
+                executor.submit(run_async_in_thread, check_version())
+
                 # 动态导入app的cli模块
                 module = importlib.import_module(f"f2.apps.{app_name}.cli")
                 logger.info(_("应用：{0}").format(app_name))
