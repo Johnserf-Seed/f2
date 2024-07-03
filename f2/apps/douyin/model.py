@@ -303,8 +303,8 @@ class UserFollower(BaseRequestModel):
 
 
 class LiveWebcast(BaseWebCastModel):
-    webcast_sdk_version: str = "1.0.12"  # 当前为1.0.14-beta.0
-    update_version_code: str = "1.0.12"
+    webcast_sdk_version: str = "1.0.14-beta.0"
+    update_version_code: str = "1.0.14-beta.0"
     compress: str = "gzip"
     im_path: str = "/webcast/im/fetch/"
     heartbeatDuration: int = 0

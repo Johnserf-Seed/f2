@@ -42,7 +42,7 @@ class DouyinWebcastSignature:
         ctx = execjs.compile(js_code)
 
         # 构造待 signature 的字符串
-        raw_string = f"live_id=1,aid=6383,version_code=180800,webcast_sdk_version=1.0.12,room_id={room_id},sub_room_id=,sub_channel_id=,did_rule=3,user_unique_id={user_unique_id},device_platform=web,device_type=,ac=,identity=audience"
+        raw_string = f"live_id=1,aid=6383,version_code=180800,webcast_sdk_version=1.0.14-beta.0,room_id={room_id},sub_room_id=,sub_channel_id=,did_rule=3,user_unique_id={user_unique_id},device_platform=web,device_type=,ac=,identity=audience"
 
         # md5 计算 X-MS-STUB
         x_ms_stub = {"X-MS-STUB": hashlib.md5(raw_string.encode("utf-8")).hexdigest()}
