@@ -3,7 +3,7 @@
  * Author: Johnserf-Seed <johnserf-seed@foxmail.com>
  * Created: 2024-06-23
  * Update: 2024-06-23
- * Version: 1.0.0
+ * Version: 1.0.1
  * Description:
  * The source file is from douyin.com, with the necessary environment added and some of the obfuscation restored.
  * Can be used to generate webcast_signature.
