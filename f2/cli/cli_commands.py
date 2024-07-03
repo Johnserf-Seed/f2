@@ -60,7 +60,7 @@ def handle_debug(
 
 
 # 版本检测
-def handle_version(
+def handle_last_version(
     ctx: click.Context,
     param: typing.Union[click.Option, click.Parameter],
     value: typing.Any,
@@ -157,7 +157,7 @@ class DynamicGroup(click.Group):
     is_flag=True,
     expose_value=False,
     is_eager=True,
-    callback=handle_version,
+    callback=handle_last_version,
     help=_("检查F2版本"),
 )
 def main(**kwargs):
