@@ -3995,7 +3995,9 @@ if (!window.byted_acrawler) {
                                 throw _0x1f977a;
                             }
                             return e[r(684)] === ArrayBuffer && (e = new Uint8Array(e)),
-                                Array[r(687)](e) || ArrayBuffer[r(711)](e) || e[r(684)] === _0x5bfe7e ? _0x3e0a6e[r(458)](r(860)).update(new _0x5bfe7e(e))[r(411)](r(850)) : _0x1afe1b(e);
+                                Array[r(687)](e) || ArrayBuffer[r(711)](e) || e[r(684)] === _0x5bfe7e ?
+                                    _0x3e0a6e[r(458)](r(860)).update(Buffer.from(e))[r(411)](r(850)) :
+                                    _0x1afe1b(e);
                         };
                         return _0x3d7396;
                     };
