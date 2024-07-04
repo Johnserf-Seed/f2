@@ -44,7 +44,8 @@ jobs:
       - name: Install dependencies
         run: |
           cd docs
-          npm ci # or pnpm install / yarn install / bun install
+          npm add -D vitepress
+          # npm ci # or pnpm install / yarn install / bun install
       - name: Build with VitePress
         run: |
           cd docs
