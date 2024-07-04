@@ -43,6 +43,7 @@ jobs:
         uses: actions/configure-pages@v3
       - name: Install dependencies
         run: |
+          cd docs
           npm ci # or pnpm install / yarn install / bun install
       - name: Build with VitePress
         run: |
