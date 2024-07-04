@@ -410,7 +410,7 @@ async def get_latest_version(package_name: str) -> str:
         str: Python 包的最新版本号
     """
     async with httpx.AsyncClient(
-        timeout=10.0,
+        timeout=5.0,
         transport=httpx.AsyncHTTPTransport(retries=5),
         verify=False,
     ) as aclient:
@@ -421,8 +421,8 @@ async def get_latest_version(package_name: str) -> str:
             latest_version = package_data["info"]["version"]
             return latest_version
         except (httpx.HTTPStatusError, httpx.RequestError, KeyError) as e:
-            logger.error(traceback.format_exc())
-            return "0.0.0.0"
+            # logger.error(traceback.format_exc())
+            return None
 
 
 class BaseEndpointManager:

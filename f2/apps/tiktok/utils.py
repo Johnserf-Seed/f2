@@ -49,7 +49,7 @@ class ClientConfManager:
 
     @classmethod
     def base_request_model(cls) -> dict:
-        return cls.client().get("model", {})
+        return cls.client().get("BaseRequestModel", {})
 
     @classmethod
     def brm_browser(cls) -> dict:

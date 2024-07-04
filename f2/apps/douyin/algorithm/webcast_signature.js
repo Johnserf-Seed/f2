@@ -3,7 +3,7 @@
  * Author: Johnserf-Seed <johnserf-seed@foxmail.com>
  * Created: 2024-06-23
  * Update: 2024-06-23
- * Version: 1.0.0
+ * Version: 1.0.1
  * Description:
  * The source file is from douyin.com, with the necessary environment added and some of the obfuscation restored.
  * Can be used to generate webcast_signature.
@@ -3995,7 +3995,9 @@ if (!window.byted_acrawler) {
                                 throw _0x1f977a;
                             }
                             return e[r(684)] === ArrayBuffer && (e = new Uint8Array(e)),
-                                Array[r(687)](e) || ArrayBuffer[r(711)](e) || e[r(684)] === _0x5bfe7e ? _0x3e0a6e[r(458)](r(860)).update(new _0x5bfe7e(e))[r(411)](r(850)) : _0x1afe1b(e);
+                                Array[r(687)](e) || ArrayBuffer[r(711)](e) || e[r(684)] === _0x5bfe7e ?
+                                    _0x3e0a6e[r(458)](r(860)).update(Buffer.from(e))[r(411)](r(850)) :
+                                    _0x1afe1b(e);
                         };
                         return _0x3d7396;
                     };
@@ -7098,5 +7100,9 @@ if (!window.byted_acrawler) {
 // console.log(get_signature("7382517534467115826","7382524529011246630"))
 
 function get_signature(x_ms_stub) {
-    return window.byted_acrawler.frontierSign(x_ms_stub)
+    return window.byted_acrawler.frontierSign({
+        "X-MS-STUB": x_ms_stub
+    })
 }
+
+console.log(get_signature("dfc40239294909a536d77ff9d213d92a"))
