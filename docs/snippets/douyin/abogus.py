@@ -9,8 +9,8 @@ async def main():
     test_endpoint = "device_platform=webapp&aid=6383&channel=channel_pc_web&aweme_id=7380308675841297704&update_version_code=170400&pc_client_type=1&version_code=190500&version_name=19.5.0&cookie_enabled=true&screen_width=1920&screen_height=1080&browser_language=zh-CN&browser_platform=Win32&browser_name=Edge&browser_version=125.0.0.0&browser_online=true&engine_name=Blink&engine_version=125.0.0.0&os_name=Windows&os_version=10&cpu_core_num=12&device_memory=8&platform=PC&downlink=10&effective_type=4g&round_trip_time=50&webid=7376294349792396827"
     return ABogusManager.str_2_endpoint(
         ClientConfManager.user_agent(),
-        endpoint=test_endpoint,
-        request=request,
+        params=test_endpoint,
+        request_type=request,
     )
 
 
@@ -33,7 +33,7 @@ async def gen_user_profile(params: UserProfile):
         ClientConfManager.user_agent(),
         base_endpoint=dyendpoint.USER_DETAIL,
         params=params.model_dump(),
-        request = "GET",
+        request_type = "GET",
     )
 
 
