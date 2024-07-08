@@ -35,7 +35,7 @@ dependencies = [
     "jsonpath-ng==1.6.0",
     "importlib_resources==6.4.0",
     "m3u8==3.6.0",
-    "pytest==8.2.1",
+    "pytest==8.2.2",
     "pytest-asyncio==0.21.1",
     "browser_cookie3==0.19.1",
     "pydantic==2.6.4",
