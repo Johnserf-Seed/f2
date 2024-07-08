@@ -22,7 +22,37 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Intended Audience :: Developers",
     "Intended Audience :: Customer Service",
-    "License :: OSI Approved :: Apache Software License"
+    "License :: OSI Approved :: Apache Software License",
+    "Framework :: AsyncIO",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Internet :: WWW/HTTP",
+    "Typing :: Typed",
+    "Development Status :: 4 - Beta",
+    "Operating System :: OS Independent",
+    "Environment :: Console",
+    "Environment :: Web Environment",
+    "Environment :: Plugins",
+    "Natural Language :: Chinese (Simplified)",
+    "Natural Language :: English",
+]
+
+keywords = [
+    "async",
+    "websockets",
+    "crawler",
+    "downloader",
+    "internat",
+    "download",
+    "f2",
+    "http",
+    "https",
+    "ws",
+    "wss",
+    "tiktok",
+    "douyin",
+    "http proxy",
+    "watermark",
 ]
 
 dependencies = [
