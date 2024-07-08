@@ -34,13 +34,13 @@ jobs:
           fetch-depth: 0 
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: npm
 
       - name: Setup Pages
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v5
 
       - name: Install dependencies
         run: |
@@ -52,7 +52,7 @@ jobs:
         working-directory: ./docs
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: docs/.vitepress/dist
 
@@ -71,4 +71,7 @@ jobs:
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifact_name: github-pages
