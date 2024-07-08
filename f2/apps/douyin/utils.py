@@ -730,7 +730,9 @@ class SecUserIdFetcher(BaseCrawler):
         host = parsed_url.hostname
 
         if host is None:
-            raise APINotFoundError("无法解析URL的主机部分。类名：{0}".format(cls.__name__))
+            raise APINotFoundError(
+                "无法解析URL的主机部分。类名：{0}".format(cls.__name__)
+            )
 
         if "v.douyin.com" in host:
             pattern = cls._REDIRECT_URL_PATTERN

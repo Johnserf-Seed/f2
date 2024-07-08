@@ -1,4 +1,4 @@
-// #region str-2-endpoint-snippet
+# region str-2-endpoint-snippet
 # 使用接口地址直接生成请求链接
 import asyncio
 from f2.apps.douyin.utils import ABogusManager, ClientConfManager
@@ -17,10 +17,10 @@ async def main():
 if __name__ == "__main__":
     print(asyncio.run(main()))
 
-// #endregion str-2-endpoint-snippet
+# endregion str-2-endpoint-snippet
 
 
-// #region model-2-endpoint-snippet
+# region model-2-endpoint-snippet
 # 使用用户信息模型生成请求链接
 import asyncio
 from f2.apps.douyin.api import DouyinAPIEndpoints as dyendpoint
@@ -33,12 +33,12 @@ async def gen_user_profile(params: UserProfile):
         ClientConfManager.user_agent(),
         base_endpoint=dyendpoint.USER_DETAIL,
         params=params.model_dump(),
-        request_type = "GET",
+        request_type="GET",
     )
 
 
 async def main():
-    sec_user_id="MS4wLjABAAAANXSltcLCzDGmdNFI2Q_QixVTr67NiYzjKOIP5s03CAE"
+    sec_user_id = "MS4wLjABAAAANXSltcLCzDGmdNFI2Q_QixVTr67NiYzjKOIP5s03CAE"
     params = UserProfile(sec_user_id=sec_user_id)
     return await gen_user_profile(params)
 
@@ -46,10 +46,10 @@ async def main():
 if __name__ == "__main__":
     print(asyncio.run(main()))
 
-// #endregion model-2-endpoint-snippet
+# endregion model-2-endpoint-snippet
 
 
-// #region model-2-endpoint-2-filter-snippet
+# region model-2-endpoint-2-filter-snippet
 # 使用用户信息模型生成请求链接，请求接口并使用自定义过滤器输出所需接口数据
 import asyncio
 from f2.apps.douyin.api import DouyinAPIEndpoints as dyendpoint
@@ -70,14 +70,15 @@ kwargs = {
 
 async def main():
     async with DouyinCrawler(kwargs) as crawler:
-        sec_user_id="MS4wLjABAAAANXSltcLCzDGmdNFI2Q_QixVTr67NiYzjKOIP5s03CAE"
+        sec_user_id = "MS4wLjABAAAANXSltcLCzDGmdNFI2Q_QixVTr67NiYzjKOIP5s03CAE"
         params = UserProfile(sec_user_id=sec_user_id)
         response = await crawler.fetch_user_profile(params)
         user = UserProfileFilter(response)
         # return user # user为UserProfileFilter对象，需要调用_to_dict()方法转为字典格式
         return user._to_dict()
 
+
 if __name__ == "__main__":
     print(asyncio.run(main()))
 
-// #endregion model-2-endpoint-2-filter-snippet
+# endregion model-2-endpoint-2-filter-snippet

@@ -1,4 +1,4 @@
-// #region user-collects-snippet
+# region user-collects-snippet
 import asyncio
 from f2.apps.douyin.handler import DouyinHandler
 
@@ -25,10 +25,10 @@ async def main():
 if __name__ == "__main__":
     asyncio.run(main())
 
-// #endregion user-collects-snippet
+# endregion user-collects-snippet
 
 
-// #region user-collects-videos-snippet
+# region user-collects-videos-snippet
 import asyncio
 from f2.apps.douyin.handler import DouyinHandler
 
@@ -60,4 +60,4 @@ async def main():
 if __name__ == "__main__":
     asyncio.run(main())
 
-// #endregion user-collects-videos-snippet
+# endregion user-collects-videos-snippet
