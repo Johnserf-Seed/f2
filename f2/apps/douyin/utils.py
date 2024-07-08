@@ -12,6 +12,7 @@ import traceback
 
 from typing import Union
 from pathlib import Path
+from urllib.parse import urlparse
 
 from f2.apps.douyin.algorithm import webcast_signature
 from f2.i18n.translator import _
@@ -724,14 +725,19 @@ class SecUserIdFetcher(BaseCrawler):
         if url is None:
             raise APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
 
-        # 创建一个实例以访问 aclient
-        instance = cls()
+        # 解析URL并检查主机
+        parsed_url = urlparse(url)
+        host = parsed_url.hostname
 
-        pattern = (
-            cls._REDIRECT_URL_PATTERN
-            if "v.douyin.com" in url
-            else cls._DOUYIN_URL_PATTERN
-        )
+        if host is None:
+            raise APINotFoundError("无法解析URL的主机部分。类名：{0}".format(cls.__name__))
+
+        if "v.douyin.com" in host:
+            pattern = cls._REDIRECT_URL_PATTERN
+        else:
+            pattern = cls._DOUYIN_URL_PATTERN
+
+        instance = cls()
 
         try:
             response = await instance.aclient.get(url, follow_redirects=True)
