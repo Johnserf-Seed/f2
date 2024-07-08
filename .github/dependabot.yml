@@ -14,6 +14,3 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
-    # 添加对 pyproject.toml 的支持
-    file-extensions:
-      - "toml"
