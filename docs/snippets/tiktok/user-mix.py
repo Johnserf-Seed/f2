@@ -1,4 +1,4 @@
-// #region playlist-sinppet
+# region playlist-sinppet
 import asyncio
 from f2.apps.tiktok.handler import TiktokHandler
 from f2.apps.tiktok.utils import SecUserIdFetcher
@@ -28,12 +28,13 @@ async def main():
             # print("=================_to_list===============")
             # print(aweme_data_list._to_list())
 
+
 if __name__ == "__main__":
     asyncio.run(main())
 
-// #endregion playlist-sinppet
+# endregion playlist-sinppet
 
-// #region select-playlist-sinppet
+# region select-playlist-sinppet
 import asyncio
 from f2.apps.tiktok.handler import TiktokHandler
 
@@ -53,9 +54,11 @@ async def main():
     secUid = await SecUserIdFetcher.get_secuid("https://www.tiktok.com/@vantoan___")
     playlist = await TiktokHandler(kwargs).fetch_play_list(secUid)
 
-    selected_index = await TiktokHandler(kwargs).select_playlist(playlist)  # [!code focus]
-    if selected_index != 0: # [!code focus]
-        mixId = playlist.get("mixId", [])[selected_index - 1] # [!code focus]
+    selected_index = await TiktokHandler(kwargs).select_playlist(
+        playlist
+    )  # [!code focus]
+    if selected_index != 0:  # [!code focus]
+        mixId = playlist.get("mixId", [])[selected_index - 1]  # [!code focus]
 
         async for aweme_data_list in TiktokHandler(kwargs).fetch_user_mix_videos(mixId):
             print(aweme_data_list._to_raw())
@@ -64,7 +67,8 @@ async def main():
             # print("=================_to_list===============")
             # print(aweme_data_list._to_list())
 
+
 if __name__ == "__main__":
     asyncio.run(main())
 
-// #endregion select-playlist-sinppet
+# endregion select-playlist-sinppet

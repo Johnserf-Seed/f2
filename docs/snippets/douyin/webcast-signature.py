@@ -1,4 +1,4 @@
-// #region webcast-signature-snippet
+# region webcast-signature-snippet
 from f2.apps.douyin.algorithm.webcast_signature import DouyinWebcastSignature
 
 if __name__ == "__main__":
@@ -9,10 +9,10 @@ if __name__ == "__main__":
     ).get_signature(room_id, user_unique_id)
     print(signature)
 
-// #endregion webcast-signature-snippet
+# endregion webcast-signature-snippet
 
 
-// #region webcast-signature-manager-snippet
+# region webcast-signature-manager-snippet
 # fetch_live_danmaku
 
 import asyncio
@@ -33,4 +33,4 @@ async def main(params: LiveWebcast):
 if __name__ == "__main__":
     print(asyncio.run(main()))
 
-// #endregion webcast-signature-manager-snippet
+# endregion webcast-signature-manager-snippet
