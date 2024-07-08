@@ -55,7 +55,7 @@ weibo:
   page_counts:
   languages:
 
-x:
+twitter:
   url:
   path:
   folderize:
