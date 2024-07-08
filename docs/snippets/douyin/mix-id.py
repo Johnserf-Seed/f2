@@ -1,4 +1,4 @@
-// #region single-mix-id-snippet
+# region single-mix-id-snippet
 import asyncio
 from f2.apps.douyin.utils import MixIdFetcher
 
@@ -11,10 +11,10 @@ async def main():
 if __name__ == "__main__":
     print(asyncio.run(main()))
 
-// #endregion single-mix-id-snippet
+# endregion single-mix-id-snippet
 
 
-// #region multi-mix-id-snippet
+# region multi-mix-id-snippet
 import asyncio
 from f2.apps.douyin.utils import MixIdFetcher
 from f2.utils.utils import extract_valid_urls
@@ -36,4 +36,4 @@ async def main():
 if __name__ == "__main__":
     print(asyncio.run(main()))
 
-// #endregion multi-mix-id-snippet
+# endregion multi-mix-id-snippet

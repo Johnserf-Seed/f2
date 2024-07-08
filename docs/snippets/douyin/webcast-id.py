@@ -1,4 +1,4 @@
-// #region single-webcast-id-snippet
+# region single-webcast-id-snippet
 import asyncio
 from f2.apps.douyin.utils import WebCastIdFetcher
 
@@ -11,10 +11,10 @@ async def main():
 if __name__ == "__main__":
     print(asyncio.run(main()))
 
-// #endregion single-webcast-id-snippet
+# endregion single-webcast-id-snippet
 
 
-// #region multi-webcast-id-snippet
+# region multi-webcast-id-snippet
 import asyncio
 from f2.apps.douyin.utils import WebCastIdFetcher
 from f2.utils.utils import extract_valid_urls
@@ -39,4 +39,4 @@ async def main():
 if __name__ == "__main__":
     print(asyncio.run(main()))
 
-// #endregion multi-webcast-id-snippet
+# endregion multi-webcast-id-snippet

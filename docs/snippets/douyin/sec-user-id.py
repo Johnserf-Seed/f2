@@ -1,22 +1,25 @@
-// #region single-user-id-snippet
+# region single-user-id-snippet
 import asyncio
 from f2.apps.douyin.utils import SecUserIdFetcher
+
 
 async def main():
     raw_url = "https://www.douyin.com/user/MS4wLjABAAAANXSltcLCzDGmdNFI2Q_QixVTr67NiYzjKOIP5s03CAE?vid=7285950278132616463"
     # 对于单个URL
     return await SecUserIdFetcher.get_sec_user_id(raw_url)
 
+
 if __name__ == "__main__":
     print(asyncio.run(main()))
 
-// #endregion single-user-id-snippet
+# endregion single-user-id-snippet
 
 
-// #region multi-user-id-snippet
+# region multi-user-id-snippet
 import asyncio
 from f2.apps.douyin.utils import SecUserIdFetcher
 from f2.utils.utils import extract_valid_urls
+
 
 async def main():
     raw_urls = [
@@ -32,7 +35,8 @@ async def main():
     # 对于URL列表
     return await SecUserIdFetcher.get_all_sec_user_id(urls)
 
+
 if __name__ == "__main__":
     print(asyncio.run(main()))
 
-// #endregion multi-user-id-snippet
+# endregion multi-user-id-snippet

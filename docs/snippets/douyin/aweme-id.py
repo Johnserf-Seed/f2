@@ -1,4 +1,4 @@
-// #region single-aweme-id-snippet
+# region single-aweme-id-snippet
 import asyncio
 from f2.apps.douyin.utils import AwemeIdFetcher
 
@@ -13,10 +13,10 @@ async def main():
 if __name__ == "__main__":
     print(asyncio.run(main()))
 
-// #endregion single-aweme-id-snippet
+# endregion single-aweme-id-snippet
 
 
-// #region multi-aweme-id-snippet
+# region multi-aweme-id-snippet
 import asyncio
 from f2.apps.douyin.utils import AwemeIdFetcher
 from f2.utils.utils import extract_valid_urls
@@ -41,4 +41,4 @@ async def main():
 if __name__ == "__main__":
     print(asyncio.run(main()))
 
-// #endregion multi-aweme-id-snippet
+# endregion multi-aweme-id-snippet
