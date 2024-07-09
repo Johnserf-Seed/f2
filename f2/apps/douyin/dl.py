@@ -69,9 +69,6 @@ class DouyinDownloader(BaseDownloader):
         # 检查是否有符合条件的作品
         if not aweme_datas_list:
             return
-            # import sys
-
-            # sys.exit(0)
 
         # 创建下载任务
         for aweme_data in aweme_datas_list:
