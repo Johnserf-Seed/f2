@@ -11,8 +11,8 @@ import traceback
 import browser_cookie3
 import importlib_resources
 
-from typing import Union, Any
 from pathlib import Path
+from typing import Any, Dict, List, Union
 
 from f2.log.logger import logger
 from f2.i18n.translator import _
@@ -42,7 +42,7 @@ def gen_random_str(randomlength: int) -> str:
     return "".join(random.choice(base_str) for _ in range(randomlength))
 
 
-def get_timestamp(unit: str = "milli"):
+def get_timestamp(unit: str = "milli") -> int:
     """
     根据给定的单位获取当前时区的时间戳 (Get the current time based on the given unit)
 
@@ -76,16 +76,15 @@ def timestamp_2_str(
     将 UNIX 时间戳转换为东八区北京时间格式化字符串使用
 
     Args:
-        timestamp (int): 要转换的 UNIX 时间戳 (The UNIX timestamp to be converted)
-        format (str, optional): 返回的日期时间字符串的格式。
-                                默认为 '%Y-%m-%d %H-%M-%S'。
-                                (The format for the returned date-time string
-                                Defaults to '%Y-%m-%d %H-%M-%S')
-        tz (datetime.timezone, optional): 时区，默认为东八区北京时间。
+        timestamp (Union[str, int, float]): 要转换的 UNIX 时间戳 (The UNIX timestamp to be converted)
+        format (str, optional): 返回的日期时间字符串的格式，默认为 '%Y-%m-%d %H-%M-%S'。
+                                (The format for the returned date-time string, defaults to '%Y-%m-%d %H-%M-%S')
+        tz (datetime.timezone, optional): 时区，默认为东八区北京时间 (The timezone, defaults to UTC+8)
 
     Returns:
         str: 格式化的日期时间字符串 (The formatted date-time string)
     """
+
     if timestamp is None or timestamp == "None":
         return "Invalid timestamp"
 
@@ -94,9 +93,10 @@ def timestamp_2_str(
             date_obj = datetime.datetime.strptime(timestamp, "%a %b %d %H:%M:%S %z %Y")
         else:
             date_obj = datetime.datetime.fromtimestamp(float(timestamp), tz=tz)
-
     elif isinstance(timestamp, (int, float)):
         date_obj = datetime.datetime.fromtimestamp(float(timestamp), tz=tz)
+    else:
+        raise TypeError(_("不支持的时间戳类型：{0}").format(type(timestamp)))
 
     return date_obj.strftime(format)
 
@@ -118,7 +118,6 @@ def split_set_cookie(cookie_str: str) -> str:
         str: 拼接后的Cookie字符串 (Concatenated cookie string)
     """
 
-    # 判断是否为字符串 / Check if it's a string
     if not isinstance(cookie_str, str):
         raise TypeError(_("cookie_str 参数应为字符串"))
 
@@ -130,12 +129,22 @@ def split_set_cookie(cookie_str: str) -> str:
     )
 
 
-def split_dict_cookie(cookie_dict: dict) -> str:
+def split_dict_cookie(cookie_dict: Dict) -> str:
+    """
+    拆分Cookie字典并拼接 (Split the Cookie dictionary and concatenate)
+
+    Args:
+        cookie_dict (dict): 待拆分的Cookie字典 (The Cookie dictionary to be split)
+
+    Returns:
+        str: 拼接后的Cookie字符串 (Concatenated cookie string)
+    """
     return "; ".join(f"{key}={value}" for key, value in cookie_dict.items())
 
 
-def extract_valid_urls(inputs: Union[str, list[str]]) -> Union[str, list[str], None]:
-    """从输入中提取有效的URL (Extract valid URLs from input)
+def extract_valid_urls(inputs: Union[str, List[str]]) -> Union[str, List[str], None]:
+    """
+    从输入中提取有效的URL (Extract valid URLs from input)
 
     Args:
         inputs (Union[str, list[str]]): 输入的字符串或字符串列表 (Input string or list of strings)
@@ -162,7 +171,16 @@ def extract_valid_urls(inputs: Union[str, list[str]]) -> Union[str, list[str], N
         return valid_urls
 
 
-def _get_first_item_from_list(_list) -> list:
+def _get_first_item_from_list(_list: List) -> List:
+    """
+    从列表中提取第一个项目 (Extract the first item from a list)
+
+    Args:
+        _list (List): 输入的列表 (Input list)
+
+    Returns:
+        List: 提取出的第一个项目 (The extracted first item)
+    """
     # 检查是否是列表 (Check if it's a list)
     if _list and isinstance(_list, list):
         # 如果列表里第一个还是列表则提起每一个列表的第一个值
@@ -176,8 +194,9 @@ def _get_first_item_from_list(_list) -> list:
     return []
 
 
-def get_resource_path(filepath: str):
-    """获取资源文件的路径 (Get the path of the resource file)
+def get_resource_path(filepath: str) -> Path:
+    """
+    获取资源文件的路径 (Get the path of the resource file)
 
     Args:
         filepath: str: 文件路径 (file path)
@@ -209,7 +228,7 @@ def replaceT(obj: Union[str, Any]) -> Union[str, Any]:
     # raise TypeError("输入应为字符串或字符串列表")
 
 
-def split_filename(text: str, os_limit: dict) -> str:
+def split_filename(text: str, os_limit: Dict) -> str:
     """
     根据操作系统的字符限制分割文件名，并用 '......' 代替。
 
