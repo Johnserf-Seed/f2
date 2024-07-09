@@ -5,6 +5,7 @@ import json
 import asyncio
 import traceback
 import websockets
+import websockets_proxy
 
 from httpx import Response
 from websockets.exceptions import ConnectionClosedError, ConnectionClosedOK
@@ -410,7 +411,13 @@ class WebSocketCrawler:
     WebSocket爬虫客户端 (WebSocket crawler client)
     """
 
-    def __init__(self, wss_headers: dict, callbacks: dict = None, timeout: int = 10):
+    def __init__(
+        self,
+        wss_headers: dict,
+        callbacks: dict = None,
+        timeout: int = 10,
+        proxy: str = None,
+    ):
         """
         初始化 WebSocketCrawler 实例
 
@@ -421,6 +428,7 @@ class WebSocketCrawler:
         """
         self.websocket = None
         self.wss_headers = wss_headers
+        self.proxy = websockets_proxy.Proxy.from_url(proxy) if proxy else None
         self.callbacks = callbacks or {}  # 存储回调函数
         self.timeout = timeout
 
@@ -435,10 +443,20 @@ class WebSocketCrawler:
             websocket_uri: WebSocket URI (ws:// or wss://)
         """
         try:
-            # https://websockets.readthedocs.io/en/stable/reference/features.html#client 暂不支持代理
-            self.websocket = await websockets.connect(
-                websocket_uri, extra_headers=self.wss_headers
-            )
+            # https://websockets.readthedocs.io/en/stable/reference/features.html#client websockets库暂不支持代理
+            # https://github.com/racinette/websockets_proxy 使用websockets_proxy库进行代理
+            if self.proxy:
+                self.websocket = await websockets_proxy.proxy_connect(
+                    websocket_uri,
+                    extra_headers=self.wss_headers,
+                    proxy=self.proxy,
+                    ping_interval=10,
+                    ping_timeout=None,
+                )
+            else:
+                self.websocket = await websockets.connect(
+                    websocket_uri, extra_headers=self.wss_headers
+                )
             logger.info(_("已连接 WebSocket"))
         except ConnectionRefusedError as exc:
             logger.error(traceback.format_exc())
