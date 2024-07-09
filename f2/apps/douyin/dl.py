@@ -1,13 +1,11 @@
 # path: f2/apps/douyin/dl.py
 
-import sys
-from datetime import datetime
-from typing import Any, Union
+from typing import Any, Dict, Union
 
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.dl.base_downloader import BaseDownloader
-from f2.utils.utils import get_timestamp, timestamp_2_str
+from f2.utils.utils import get_timestamp, timestamp_2_str, filter_by_date_interval
 from f2.apps.douyin.db import AsyncUserDB
 from f2.apps.douyin.utils import format_file_name, json_2_lrc
 
@@ -35,66 +33,6 @@ class DouyinDownloader(BaseDownloader):
         async with AsyncUserDB("douyin_users.db") as db:
             await db.update_user_info(sec_user_id=sec_user_id, last_aweme_id=aweme_id)
 
-    async def filter_aweme_datas_by_interval(
-        self, aweme_datas: Union[list, dict], interval: str
-    ) -> Union[list[dict], dict, None]:
-        """
-        筛选指定日期区间内的作品
-
-        Args:
-            aweme_datas (Union[list, dict]): 作品数据列表
-            interval (str): 日期区间，格式：2022-01-01|2023-01-01
-
-        Returns:
-            filtered_aweme_datas (Union[list, dict]): 筛选后的作品数据列表
-        """
-
-        if not aweme_datas or not interval:
-            return None
-
-        start_str, end_str = interval.split("|")
-
-        try:
-            start_date = datetime.strptime(start_str + " 00-00-00", "%Y-%m-%d %H-%M-%S")
-            end_date = datetime.strptime(end_str + " 23-59-59", "%Y-%m-%d %H-%M-%S")
-            logger.info(_("筛选日期区间：{0} 至 {1}").format(start_date, end_date))
-        except ValueError:
-            logger.error(_("日期区间参数格式错误，请查阅文档后重试"))
-            return None
-
-        if isinstance(aweme_datas, dict):
-            aweme_date_str = aweme_datas.get("create_time")
-            try:
-                aweme_date = datetime.strptime(aweme_date_str, "%Y-%m-%d %H-%M-%S")
-            except ValueError:
-                logger.warning(_("无法解析作品发布时间：{0}").format(aweme_date_str))
-                return None
-
-            # 检查作品发布时间是否在指定区间内
-            if start_date <= aweme_date <= end_date:
-                logger.info(
-                    _("作品发布时间在指定区间内：作品id {0} 发布时间 {1}").format(
-                        aweme_datas.get("aweme_id"), aweme_date_str
-                    )
-                )
-                return aweme_datas
-            else:
-                logger.warning(
-                    _("作品发布时间不在指定区间内：{0}").format(aweme_date_str)
-                )
-                return None
-
-        elif isinstance(aweme_datas, list):
-            # 遍历列表中的每个字典
-            filtered_list = []
-            for aweme_data in aweme_datas:
-                filtered_data = await self.filter_aweme_datas_by_interval(
-                    aweme_data, interval
-                )
-                if filtered_data:
-                    filtered_list.append(filtered_data)
-            return filtered_list
-
     async def create_download_tasks(
         self, kwargs: dict, aweme_datas: Union[list, dict], user_path: Any
     ) -> None:
@@ -121,16 +59,19 @@ class DouyinDownloader(BaseDownloader):
         )
 
         # 筛选指定日期区间内的作品
-        if kwargs.get("interval") != "all":
-            aweme_datas_list = await self.filter_aweme_datas_by_interval(
+        if kwargs.get("interval") is None:
+            logger.warning(_("未提供日期区间参数，将下载所有作品"))
+        elif kwargs.get("interval") != "all":
+            aweme_datas_list = await filter_by_date_interval(
                 aweme_datas_list, kwargs.get("interval")
             )
 
         # 检查是否有符合条件的作品
         if not aweme_datas_list:
-            logger.warning(_("没有找到符合条件的作品"))
-            await self.close()
-            sys.exit(0)
+            return
+            # import sys
+
+            # sys.exit(0)
 
         # 创建下载任务
         for aweme_data in aweme_datas_list:
