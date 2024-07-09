@@ -263,7 +263,7 @@ def handler_naming(
     "-i",
     type=str,
     # default="all",
-    help=_("下载日期区间发布的作品，格式：2022-01-01|2023-01-01，'all' 为下载所有作品"),
+    help=_("下载日期区间发布的作品，格式：YYYY-MM-DD|YYYY-MM-DD，'all' 为下载所有作品"),
 )
 @click.option(
     "--timeout",
