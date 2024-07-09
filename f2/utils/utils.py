@@ -12,6 +12,8 @@ import browser_cookie3
 import importlib_resources
 
 from pathlib import Path
+from rich.console import Console
+from rich.panel import Panel
 from typing import Any, Dict, List, Union
 
 from f2.log.logger import logger
@@ -474,6 +476,73 @@ def unescape_json(json_text: str) -> dict:
         json_obj = {}
 
     return json_obj
+
+
+def check_python_version(min_version: tuple = (3, 9)) -> None:
+    """
+    检查当前 Python 版本是否满足最低要求
+
+    Args:
+        min_version (tuple, optional): 最低 Python 版本要求，默认为 (3, 9)
+
+    Raises:
+        SystemExit: 当 Python 版本不满足最低要求时，退出程序
+    """
+
+    console = Console()
+    if sys.version_info < min_version:
+        message = _("当前 Python 版本：{0} 不满足最低要求：{1}").format(
+            sys.version.split()[0], ".".join(map(str, min_version))
+        )
+        panel = Panel(
+            f"[bold red]{message}[/bold red]",
+            title=_("[bold red]Python 版本错误[/bold red]"),
+            border_style="red",
+        )
+        console.print(panel)
+        sys.exit(1)
+
+
+async def check_f2_version():
+    """用于检查F2的版本是否最新"""
+
+    latest_version = await get_latest_version("f2")
+
+    if latest_version:
+        if f2.__version__ > latest_version:
+            message = _(
+                "您当前使用的版本 {0} 可能已过时，请考虑及时升级到最新版本 {1}，"
+                "使用 pip install -U f2 更新"
+            ).format(f2.__version__, latest_version)
+            Console().print(
+                Panel(
+                    message,
+                    title=_("F2 低版本警告"),
+                    subtitle=_("请及时更新"),
+                    style="bold red",
+                    border_style="red",
+                )
+            )
+        elif f2.__version__ == latest_version:
+            message = _("您当前使用的是最新版本：{0}").format(f2.__version__)
+            Console().print(
+                Panel(
+                    message,
+                    title=_("F2 版本检查"),
+                    style="bold green",
+                    border_style="green",
+                )
+            )
+    else:
+        message = _("无法获取最新版本信息")
+        Console().print(
+            Panel(
+                message,
+                title=_("F2 版本检查网络超时"),
+                style="bold yellow",
+                border_style="yellow",
+            )
+        )
 
 
 async def get_latest_version(package_name: str) -> str:
