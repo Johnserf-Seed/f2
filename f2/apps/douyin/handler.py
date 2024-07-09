@@ -217,7 +217,7 @@ class DouyinHandler:
             video: PostDetailFilter: 单个作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
         """
 
-        logger.info(_("开始爬取作品：{0}").format(aweme_id))
+        logger.info(_("开始处理作品：{0}").format(aweme_id))
         async with DouyinCrawler(self.kwargs) as crawler:
             params = PostDetail(aweme_id=aweme_id)
             response = await crawler.fetch_post_detail(params)
@@ -285,7 +285,7 @@ class DouyinHandler:
         max_counts = max_counts or float("inf")
         videos_collected = 0
 
-        logger.info(_("开始爬取用户：{0} 发布的作品").format(sec_user_id))
+        logger.info(_("开始处理用户：{0} 发布的作品").format(sec_user_id))
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
@@ -333,7 +333,7 @@ class DouyinHandler:
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
-        logger.info(_("爬取结束，共爬取 {0} 个作品").format(videos_collected))
+        logger.info(_("处理结束，共处理 {0} 个作品").format(videos_collected))
 
     @mode_handler("like")
     async def handle_user_like(self):
@@ -392,7 +392,7 @@ class DouyinHandler:
         max_counts = max_counts or float("inf")
         videos_collected = 0
 
-        logger.info(_("开始爬取用户：{0} 喜欢的作品").format(sec_user_id))
+        logger.info(_("开始处理用户：{0} 喜欢的作品").format(sec_user_id))
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
@@ -403,7 +403,7 @@ class DouyinHandler:
                     max_counts, current_request_size
                 )
             )
-            logger.info(_("开始爬取第 {0} 页").format(max_cursor))
+            logger.info(_("开始处理第 {0} 页").format(max_cursor))
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserLike(
@@ -440,7 +440,7 @@ class DouyinHandler:
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
-        logger.info(_("爬取结束，共爬取 {0} 个点赞作品").format(videos_collected))
+        logger.info(_("处理结束，共处理 {0} 个点赞作品").format(videos_collected))
 
     @mode_handler("music")
     async def handle_user_music_collection(self):
@@ -493,7 +493,7 @@ class DouyinHandler:
         max_counts = max_counts or float("inf")
         music_collected = 0
 
-        logger.info(_("开始爬取用户收藏的音乐作品"))
+        logger.info(_("开始处理用户收藏的音乐作品"))
 
         while music_collected < max_counts:
             current_request_size = min(page_counts, max_counts - music_collected)
@@ -504,7 +504,7 @@ class DouyinHandler:
                     max_counts, current_request_size
                 )
             )
-            logger.info(_("开始爬取第 {0} 页").format(max_cursor))
+            logger.info(_("开始处理第 {0} 页").format(max_cursor))
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserMusicCollection(
@@ -534,7 +534,7 @@ class DouyinHandler:
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
-        logger.info(_("爬取结束，共爬取 {0} 个音乐作品").format(music_collected))
+        logger.info(_("处理结束，共处理 {0} 个音乐作品").format(music_collected))
 
     @mode_handler("collection")
     async def handle_user_collection(self):
@@ -590,7 +590,7 @@ class DouyinHandler:
         max_counts = max_counts or float("inf")
         videos_collected = 0
 
-        logger.info(_("开始爬取用户收藏的作品"))
+        logger.info(_("开始处理用户收藏的作品"))
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
@@ -601,7 +601,7 @@ class DouyinHandler:
                     max_counts, current_request_size
                 )
             )
-            logger.info(_("开始爬取第 {0} 页").format(max_cursor))
+            logger.info(_("开始处理第 {0} 页").format(max_cursor))
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserCollection(cursor=max_cursor, count=current_request_size)
@@ -629,7 +629,7 @@ class DouyinHandler:
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
-        logger.info(_("爬取结束，共爬取 {0} 个收藏作品").format(videos_collected))
+        logger.info(_("处理结束，共处理 {0} 个收藏作品").format(videos_collected))
 
     @mode_handler("collects")
     async def handle_user_collects(self):
@@ -684,7 +684,7 @@ class DouyinHandler:
                     )
 
             logger.info(
-                _("爬取结束，共爬取 {0} 个收藏夹").format(len(choose_collects_id))
+                _("处理结束，共处理 {0} 个收藏夹").format(len(choose_collects_id))
             )
 
     async def select_user_collects(
@@ -750,7 +750,7 @@ class DouyinHandler:
         max_counts = max_counts or float("inf")
         collected = 0
 
-        logger.info(_("开始爬取用户收藏夹"))
+        logger.info(_("开始处理用户收藏夹"))
 
         while collected < max_counts:
             logger.debug("===================================")
@@ -785,7 +785,7 @@ class DouyinHandler:
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
-        logger.info(_("爬取结束，共找到 {0} 个收藏夹").format(collected))
+        logger.info(_("处理结束，共找到 {0} 个收藏夹").format(collected))
 
     async def fetch_user_collects_videos(
         self,
@@ -811,7 +811,7 @@ class DouyinHandler:
         max_counts = max_counts or float("inf")
         videos_collected = 0
 
-        logger.info(_("开始爬取收藏夹：{0} 的作品").format(collects_id))
+        logger.info(_("开始处理收藏夹：{0} 的作品").format(collects_id))
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
@@ -822,7 +822,7 @@ class DouyinHandler:
                     max_counts, current_request_size
                 )
             )
-            logger.info(_("开始爬取第 {0} 页").format(max_cursor))
+            logger.info(_("开始处理第 {0} 页").format(max_cursor))
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserCollectsVideo(
@@ -864,7 +864,7 @@ class DouyinHandler:
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
         logger.info(
-            _("收藏夹：{0} 所有作品采集完毕，共爬取 {1} 个作品").format(
+            _("收藏夹：{0} 所有作品采集完毕，共处理 {1} 个作品").format(
                 collects_id, videos_collected
             )
         )
@@ -936,7 +936,7 @@ class DouyinHandler:
         max_counts = max_counts or float("inf")
         videos_collected = 0
 
-        logger.info(_("开始爬取合集: {0} 的作品").format(mix_id))
+        logger.info(_("开始处理合集: {0} 的作品").format(mix_id))
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
@@ -947,7 +947,7 @@ class DouyinHandler:
                     max_counts, current_request_size
                 )
             )
-            logger.info(_("开始爬取第 {0} 页").format(max_cursor))
+            logger.info(_("开始处理第 {0} 页").format(max_cursor))
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserMix(
@@ -977,7 +977,7 @@ class DouyinHandler:
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
-        logger.info(_("爬取结束，共爬取 {0} 个合集作品").format(videos_collected))
+        logger.info(_("处理结束，共处理 {0} 个合集作品").format(videos_collected))
 
     @mode_handler("live")
     async def handle_user_live(self):
@@ -1026,7 +1026,7 @@ class DouyinHandler:
             sub-partition, anchor nickname)
         """
 
-        logger.info(_("开始爬取直播: {0} 的数据").format(webcast_id))
+        logger.info(_("开始处理直播: {0} 的数据").format(webcast_id))
         logger.debug("===================================")
 
         async with DouyinCrawler(self.kwargs) as crawler:
@@ -1045,7 +1045,7 @@ class DouyinHandler:
             )
         )
         logger.debug("===================================")
-        logger.info(_("直播信息爬取结束"))
+        logger.info(_("直播信息处理结束"))
 
         return live
 
@@ -1066,7 +1066,7 @@ class DouyinHandler:
             anchor nickname)
         """
 
-        logger.info(_("开始爬取房间号: {0} 的数据").format(room_id))
+        logger.info(_("开始处理房间号: {0} 的数据").format(room_id))
         logger.debug("===================================")
 
         async with DouyinCrawler(self.kwargs) as crawler:
@@ -1089,7 +1089,7 @@ class DouyinHandler:
             )
         )
         logger.debug("===================================")
-        logger.info(_("直播信息爬取结束"))
+        logger.info(_("直播信息处理结束"))
 
         return live
 
@@ -1142,7 +1142,7 @@ class DouyinHandler:
         max_counts = max_counts or float("inf")
         videos_collected = 0
 
-        logger.info(_("开始爬取用户: {0} feed的作品").format(sec_user_id))
+        logger.info(_("开始处理用户: {0} feed的作品").format(sec_user_id))
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
@@ -1153,7 +1153,7 @@ class DouyinHandler:
                     max_counts, current_request_size
                 )
             )
-            logger.info(_("开始爬取第 {0} 页").format(max_cursor))
+            logger.info(_("开始处理第 {0} 页").format(max_cursor))
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserPost(
@@ -1190,7 +1190,7 @@ class DouyinHandler:
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
-        logger.info(_("爬取结束，共爬取 {0} 个首页推荐作品").format(videos_collected))
+        logger.info(_("处理结束，共处理 {0} 个首页推荐作品").format(videos_collected))
 
     @mode_handler("related")
     async def handle_related(self):
@@ -1249,7 +1249,7 @@ class DouyinHandler:
         # aweme_id,awme_id,aweme_id...
         filterGids = filterGids or f"{aweme_id},"
 
-        logger.info(_("开始爬取作品: {0} 的相关推荐").format(aweme_id))
+        logger.info(_("开始处理作品: {0} 的相关推荐").format(aweme_id))
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
@@ -1260,7 +1260,7 @@ class DouyinHandler:
                     max_counts, current_request_size
                 )
             )
-            logger.info(_("开始爬取前 {0} 个相关推荐").format(current_request_size))
+            logger.info(_("开始处理前 {0} 个相关推荐").format(current_request_size))
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = PostRelated(
@@ -1294,7 +1294,7 @@ class DouyinHandler:
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
-        logger.info(_("爬取结束，共爬取 {0} 个相关推荐").format(videos_collected))
+        logger.info(_("处理结束，共处理 {0} 个相关推荐").format(videos_collected))
 
     @mode_handler("friend")
     async def handle_friend_feed(self):
@@ -1342,13 +1342,13 @@ class DouyinHandler:
         max_counts = max_counts or float("inf")
         videos_collected = 0
 
-        logger.info(_("开始爬取好友作品"))
+        logger.info(_("开始处理好友作品"))
 
         while videos_collected < max_counts:
 
             logger.debug("===================================")
             logger.debug(_("最大数量：{0} 个").format(max_counts))
-            logger.info(_("开始爬取第：{0} 页").format(cursor))
+            logger.info(_("开始处理第：{0} 页").format(cursor))
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = FriendFeed(
@@ -1398,7 +1398,7 @@ class DouyinHandler:
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
-        logger.info(_("爬取结束，共爬取 {0} 个好友作品").format(videos_collected))
+        logger.info(_("处理结束，共处理 {0} 个好友作品").format(videos_collected))
 
     async def fetch_user_following(
         self,
@@ -1432,7 +1432,7 @@ class DouyinHandler:
         max_counts = max_counts or float("inf")
         users_collected = 0
 
-        logger.info(_("开始爬取用户：{0} 的关注用户").format(sec_user_id))
+        logger.info(_("开始处理用户：{0} 的关注用户").format(sec_user_id))
 
         while users_collected < max_counts:
             current_request_size = min(count, max_counts - users_collected)
@@ -1461,7 +1461,7 @@ class DouyinHandler:
                 break
 
             logger.info(_("当前请求的offset：{0}").format(offset))
-            logger.info(_("爬取了 {0} 个关注用户").format(offset + 1))
+            logger.info(_("处理了 {0} 个关注用户").format(offset + 1))
             logger.debug(
                 _("用户ID：{0} 用户昵称：{1} 用户作品数：{2} 额外内容：{3}").format(
                     following.sec_uid,
@@ -1480,7 +1480,7 @@ class DouyinHandler:
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
-        logger.info(_("爬取结束，共爬取 {0} 个用户").format(users_collected))
+        logger.info(_("处理结束，共处理 {0} 个用户").format(users_collected))
 
     async def fetch_user_follower(
         self,
@@ -1514,7 +1514,7 @@ class DouyinHandler:
         max_counts = max_counts or float("inf")
         users_collected = 0
 
-        logger.info(_("开始爬取用户：{0} 的粉丝").format(sec_user_id))
+        logger.info(_("开始处理用户：{0} 的粉丝").format(sec_user_id))
 
         while users_collected < max_counts:
             current_request_size = min(count, max_counts - users_collected)
@@ -1545,7 +1545,7 @@ class DouyinHandler:
             logger.info(
                 _("当前请求的offset：{0} max_time：{1}").format(offset, max_time)
             )
-            logger.info(_("爬取了 {0} 个粉丝用户").format(users_collected + 1))
+            logger.info(_("处理了 {0} 个粉丝用户").format(users_collected + 1))
             logger.debug(
                 _("用户ID：{0} 用户昵称：{1} 用户作品数：{2}").format(
                     follower.sec_uid, follower.nickname, follower.aweme_count
@@ -1564,7 +1564,7 @@ class DouyinHandler:
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
-        logger.info(_("爬取结束，共爬取 {0} 个用户").format(users_collected))
+        logger.info(_("处理结束，共处理 {0} 个用户").format(users_collected))
 
     async def fetch_query_user(self) -> QueryUserFilter:
         """
