@@ -1,5 +1,6 @@
 # path: f2/apps/douyin/filter.py
 
+from typing import List, Dict, Any
 from f2.utils.json_filter import JSONModel
 from f2.utils.utils import _get_first_item_from_list, timestamp_2_str, replaceT
 
@@ -119,10 +120,10 @@ class UserProfileFilter(JSONModel):
     def user_age(self):
         return self._get_attr_value("$.user.user_age")
 
-    def _to_raw(self) -> dict:
+    def _to_raw(self) -> Dict:
         return self._data
 
-    def _to_dict(self) -> dict:
+    def _to_dict(self) -> Dict:
         return {
             prop_name: getattr(self, prop_name)
             for prop_name in dir(self)
@@ -311,10 +312,10 @@ class UserPostFilter(JSONModel):
     def min_cursor(self):
         return self._get_attr_value("$.min_cursor")
 
-    def _to_raw(self) -> dict:
+    def _to_raw(self) -> Dict:
         return self._data
 
-    def _to_dict(self) -> dict:
+    def _to_dict(self) -> Dict:
         return {
             prop_name: getattr(self, prop_name)
             for prop_name in dir(self)
@@ -479,10 +480,10 @@ class UserCollectsFilter(JSONModel):
     def uid(self):
         return self._get_list_attr_value("$.collects_list[*].user_info.uid")
 
-    def _to_raw(self) -> dict:
+    def _to_raw(self) -> Dict:
         return self._data
 
-    def _to_dict(self) -> dict:
+    def _to_dict(self) -> Dict:
         return {
             prop_name: getattr(self, prop_name)
             for prop_name in dir(self)
@@ -605,10 +606,10 @@ class UserMusicCollectionFilter(JSONModel):
     def sec_uid(self):
         return self._get_list_attr_value("$.mc_list[*].sec_uid")
 
-    def _to_raw(self) -> dict:
+    def _to_raw(self) -> Dict:
         return self._data
 
-    def _to_dict(self) -> dict:
+    def _to_dict(self) -> Dict:
         return {
             prop_name: getattr(self, prop_name)
             for prop_name in dir(self)
@@ -835,10 +836,10 @@ class UserFollowingFilter(JSONModel):
     def unique_id(self):
         return self._get_list_attr_value("$.followings[*].unique_id")
 
-    def _to_raw(self) -> dict:
+    def _to_raw(self) -> Dict:
         return self._data
 
-    def _to_dict(self) -> dict:
+    def _to_dict(self) -> Dict:
         return {
             prop_name: getattr(self, prop_name)
             for prop_name in dir(self)
@@ -1414,10 +1415,10 @@ class PostDetailFilter(JSONModel):
     def images(self):
         return self._get_list_attr_value("$.aweme_detail.images[*].url_list[0]")
 
-    def _to_raw(self) -> dict:
+    def _to_raw(self) -> Dict:
         return self._data
 
-    def _to_dict(self) -> dict:
+    def _to_dict(self) -> Dict:
         return {
             prop_name: getattr(self, prop_name)
             for prop_name in dir(self)
@@ -1536,10 +1537,10 @@ class UserLiveFilter(JSONModel):
     def ShareAuth(self):
         return self._get_attr_value("$.data.data[0].room_auth.Share")
 
-    def _to_raw(self) -> dict:
+    def _to_raw(self) -> Dict:
         return self._data
 
-    def _to_dict(self) -> dict:
+    def _to_dict(self) -> Dict:
         return {
             prop_name: getattr(self, prop_name)
             for prop_name in dir(self)
@@ -1654,10 +1655,10 @@ class UserLive2Filter(JSONModel):
     def sec_uid(self):
         return self._get_attr_value("$.data.room.owner.sec_uid")
 
-    def _to_raw(self) -> dict:
+    def _to_raw(self) -> Dict:
         return self._data
 
-    def _to_dict(self) -> dict:
+    def _to_dict(self) -> Dict:
         return {
             prop_name: getattr(self, prop_name)
             for prop_name in dir(self)
@@ -1900,10 +1901,10 @@ class FriendFeedFilter(JSONModel):
     def music_title_raw(self):
         return self._get_list_attr_value("$.data[*].aweme.music.title")
 
-    def _to_raw(self) -> dict:
+    def _to_raw(self) -> Dict:
         return self._data
 
-    def _to_dict(self) -> dict:
+    def _to_dict(self) -> Dict:
         return {
             prop_name: getattr(self, prop_name)
             for prop_name in dir(self)
@@ -2005,10 +2006,10 @@ class GetQrcodeFilter(JSONModel):
     def message(self):
         return self._get_attr_value("$.message")
 
-    def _to_raw(self) -> dict:
+    def _to_raw(self) -> Dict:
         return self._data
 
-    def _to_dict(self) -> dict:
+    def _to_dict(self) -> Dict:
         return {
             prop_name: getattr(self, prop_name)
             for prop_name in dir(self)
@@ -2045,10 +2046,10 @@ class CheckQrcodeFilter(JSONModel):
     def verify_ticket(self):
         return self._get_attr_value("$.verify_ticket")
 
-    def _to_raw(self) -> dict:
+    def _to_raw(self) -> Dict:
         return self._data
 
-    def _to_dict(self) -> dict:
+    def _to_dict(self) -> Dict:
         return {
             prop_name: getattr(self, prop_name)
             for prop_name in dir(self)
@@ -2085,10 +2086,10 @@ class LiveImFetchFilter(JSONModel):
     def now(self):
         return timestamp_2_str(str(self._get_attr_value("$.extra.now")))
 
-    def _to_raw(self) -> dict:
+    def _to_raw(self) -> Dict:
         return self._data
 
-    def _to_dict(self) -> dict:
+    def _to_dict(self) -> Dict:
         return {
             prop_name: getattr(self, prop_name)
             for prop_name in dir(self)
@@ -2137,10 +2138,10 @@ class QueryUserFilter(JSONModel):
     def user_uid_type(self):
         return self._get_attr_value("$.user_uid_type")
 
-    def _to_raw(self) -> dict:
+    def _to_raw(self) -> Dict:
         return self._data
 
-    def _to_dict(self) -> dict:
+    def _to_dict(self) -> Dict:
         return {
             prop_name: getattr(self, prop_name)
             for prop_name in dir(self)
@@ -2263,10 +2264,10 @@ class FollowingUserLiveFilter(JSONModel):
             "$.data.data.[*].room.stream_url.stream_orientation"
         )
 
-    def _to_raw(self) -> dict:
+    def _to_raw(self) -> Dict:
         return self._data
 
-    def _to_dict(self) -> dict:
+    def _to_dict(self) -> Dict:
         return {
             prop_name: getattr(self, prop_name)
             for prop_name in dir(self)

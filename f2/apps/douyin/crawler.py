@@ -3,6 +3,7 @@
 import gzip
 import traceback
 
+from typing import Dict
 from google.protobuf import json_format
 
 from f2.log.logger import logger
@@ -57,7 +58,7 @@ from f2.apps.douyin.proto.douyin_webcast_pb2 import (
 class DouyinCrawler(BaseCrawler):
     def __init__(
         self,
-        kwargs: dict = ...,
+        kwargs: Dict = ...,
     ):
         # 需要与cli同步
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})
@@ -307,7 +308,7 @@ class DouyinCrawler(BaseCrawler):
 
 
 class DouyinWebSocketCrawler(WebSocketCrawler):
-    def __init__(self, kwargs: dict = ..., callbacks: dict = None):
+    def __init__(self, kwargs: Dict = ..., callbacks: Dict = None):
         # 需要与cli同步
         self.headers = kwargs.get("headers", {}) | {
             "Cookie": f"ttwid={TokenManager.gen_ttwid()};"
