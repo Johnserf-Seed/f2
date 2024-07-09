@@ -78,7 +78,7 @@ class DouyinHandler:
     # 需要忽略的字段（需过滤掉有时效性的字段）
     ignore_fields = ["video_play_addr", "images", "video_bit_rate", "cover"]
 
-    def __init__(self, kwargs: dict = ...) -> None:
+    def __init__(self, kwargs: Dict = ...) -> None:
         self.kwargs = kwargs
         self.downloader = DouyinDownloader(kwargs)
 
@@ -109,7 +109,7 @@ class DouyinHandler:
 
     async def get_or_add_user_data(
         self,
-        kwargs: dict,
+        kwargs: Dict,
         sec_user_id: str,
         db: AsyncUserDB,
     ) -> Path:
@@ -118,7 +118,7 @@ class DouyinHandler:
         (Get or create user data and create user directory)
 
         Args:
-            kwargs (dict): 配置参数 (Conf parameters)
+            kwargs (Dict): 配置参数 (Conf parameters)
             sec_user_id (str): 用户ID (User ID)
             db (AsyncUserDB): 用户数据库 (User database)
 
@@ -149,16 +149,16 @@ class DouyinHandler:
     @classmethod
     async def get_or_add_video_data(
         cls,
-        aweme_data: dict,
+        aweme_data: Dict,
         db: AsyncVideoDB,
-        ignore_fields: list = None,
+        ignore_fields: List = None,
     ):
         """
         获取或创建作品数据库数据
         (Get or create user data and create user directory)
 
         Args:
-            aweme_data (dict): 作品数据 (User data)
+            aweme_data (Dict): 作品数据 (User data)
             db (AsyncVideoDB): 作品数据库 (User database)
             ignore_fields (list): 剔除的字段
         """
@@ -179,7 +179,7 @@ class DouyinHandler:
         (Used to process a single video.)
 
         Args:
-            kwargs: dict: 参数字典 (Parameter dictionary)
+            kwargs: Dict: 参数字典 (Parameter dictionary)
         """
 
         aweme_id = await AwemeIdFetcher.get_aweme_id(self.kwargs.get("url"))
@@ -238,7 +238,7 @@ class DouyinHandler:
         (Used to process videos published by users.)
 
         Args:
-            kwargs: dict: 参数字典 (Parameter dictionary)
+            kwargs: Dict: 参数字典 (Parameter dictionary)
         """
 
         max_cursor = self.kwargs.get("max_cursor", 0)
@@ -341,7 +341,7 @@ class DouyinHandler:
         用于处理用户喜欢的作品 (Used to process videos liked by users)
 
         Args:
-            kwargs: dict: 参数字典 (Parameter dictionary)
+            kwargs: Dict: 参数字典 (Parameter dictionary)
         """
 
         max_cursor = self.kwargs.get("max_cursor", 0)
@@ -448,7 +448,7 @@ class DouyinHandler:
         用于处理用户收藏的音乐 (Used to process music collected by users)
 
         Args:
-            kwargs: dict: 参数字典 (Parameter dictionary)
+            kwargs: Dict: 参数字典 (Parameter dictionary)
         """
 
         max_cursor = self.kwargs.get("max_cursor", 0)
@@ -542,7 +542,7 @@ class DouyinHandler:
         用于处理用户收藏的作品 (Used to process videos collected by users)
 
         Args:
-            kwargs: dict: 参数字典 (Parameter dictionary)
+            kwargs: Dict: 参数字典 (Parameter dictionary)
         """
 
         max_cursor = self.kwargs.get("max_cursor", 0)
@@ -637,7 +637,7 @@ class DouyinHandler:
         用于处理用户收藏夹的作品 (Used to process videos in user collections)
 
         Args:
-            kwargs: dict: 参数字典 (Parameter dictionary)
+            kwargs: Dict: 参数字典 (Parameter dictionary)
         """
 
         max_cursor = self.kwargs.get("max_cursor", 0)
@@ -875,7 +875,7 @@ class DouyinHandler:
         用于处理用户合集的作品 (Used to process videos of users' mix)
 
         Args:
-            kwargs: dict: 参数字典 (Parameter dictionary)
+            kwargs: Dict: 参数字典 (Parameter dictionary)
         """
 
         max_cursor = self.kwargs.get("max_cursor", 0)
@@ -985,7 +985,7 @@ class DouyinHandler:
         用于处理用户直播 (Used to process user live)
 
         Args:
-            kwargs: dict: 参数字典 (Parameter dictionary)
+            kwargs: Dict: 参数字典 (Parameter dictionary)
         """
 
         # 获取直播相关信息与主播信息
@@ -1021,8 +1021,8 @@ class DouyinHandler:
             webcast_id: str: 直播ID (Live ID)
 
         Return:
-            webcast_data: dict: 直播数据字典，包含直播ID、直播标题、直播状态、观看人数、子分区、主播昵称
-            (Live data dict, including live ID, live title, live status, number of viewers,
+            webcast_data: Dict: 直播数据字典，包含直播ID、直播标题、直播状态、观看人数、子分区、主播昵称
+            (Live data Dict, including live ID, live title, live status, number of viewers,
             sub-partition, anchor nickname)
         """
 
@@ -1061,8 +1061,8 @@ class DouyinHandler:
             room_id: str: 直播ID (Live ID)
 
         Return:
-            webcast_data: dict: 直播数据字典，包含直播ID、直播标题、直播状态、观看人数、主播昵称
-            (Live data dict, including live ID, live title, live status, number of viewers,
+            webcast_data: Dict: 直播数据字典，包含直播ID、直播标题、直播状态、观看人数、主播昵称
+            (Live data Dict, including live ID, live title, live status, number of viewers,
             anchor nickname)
         """
 
@@ -1099,7 +1099,7 @@ class DouyinHandler:
         用于处理用户feed (Used to process user feed)
 
         Args:
-            kwargs: dict: 参数字典 (Parameter dictionary)
+            kwargs: Dict: 参数字典 (Parameter dictionary)
         """
 
         max_cursor = self.kwargs.get("max_cursor", 0)
@@ -1198,7 +1198,7 @@ class DouyinHandler:
         用于处理相关作品 (Used to process related videos)
 
         Args:
-            kwargs: dict: 参数字典 (Parameter dictionary)
+            kwargs: Dict: 参数字典 (Parameter dictionary)
         """
 
         page_counts = self.kwargs.get("page_counts", 20)
@@ -1302,7 +1302,7 @@ class DouyinHandler:
         用于处理用户好友作品 (Used to process user friend videos)
 
         Args:
-            kwargs: dict: 参数字典 (Parameter dictionary)
+            kwargs: Dict: 参数字典 (Parameter dictionary)
         """
 
         max_counts = self.kwargs.get("max_counts")
