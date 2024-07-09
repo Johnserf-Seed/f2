@@ -101,9 +101,35 @@ def timestamp_2_str(
     return date_obj.strftime(format)
 
 
+def str_2_timestamp(
+    date_str: str,
+    format: str = "%Y-%m-%d %H-%M-%S",
+    unit: str = "milli",
+    tz: datetime.timezone = datetime.timezone(datetime.timedelta(hours=8)),
+) -> int:
+    """
+    将日期时间字符串转换为 UNIX 时间戳
 
+    Args:
+        date_str (str): 要转换的日期时间字符串 (The date-time string to be converted)
+        format (str, optional): 日期时间字符串的格式，默认为 '%Y-%m-%d %H-%M-%S'。
+                                (The format for the date-time string, defaults to '%Y-%m-%d %H-%M-%S')
+        unit (str, optional): 时间单位，默认为 'milli'。 (The time unit, defaults to 'milli')
+        tz (datetime.timezone, optional): 时区，默认为东八区北京时间 (The timezone, defaults to UTC+8)
 
+    Returns:
+        int: UNIX 时间戳 (The UNIX timestamp)
+    """
 
+    date_obj = datetime.datetime.strptime(date_str, format)
+    if unit == "milli":
+        return int(date_obj.replace(tzinfo=tz).timestamp() * 1000)
+    elif unit == "sec":
+        return int(date_obj.replace(tzinfo=tz).timestamp())
+    elif unit == "min":
+        return int(date_obj.replace(tzinfo=tz).timestamp() / 60)
+    else:
+        raise ValueError(_("不支持的时间单位：{0}").format(unit))
 
 
 
