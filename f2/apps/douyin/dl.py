@@ -91,125 +91,120 @@ class DouyinDownloader(BaseDownloader):
             aweme_data_dict (dict): 作品数据字典
             user_path (Any): 用户目录路径
         """
-
-        # 构建文件夹路径
-        base_path = (
+        self.base_path = (
             user_path
             / format_file_name(kwargs.get("naming", "{create}_{desc}"), aweme_data_dict)
             if kwargs.get("folderize")
             else user_path
         )
 
-        sec_user_id = str(aweme_data_dict.get("sec_user_id"))  # 用户ID
-        aweme_prohibited = aweme_data_dict.get("is_prohibited")  # 作品状态 0正常, 1屏蔽
-        aweme_part_see = aweme_data_dict.get(
-            "part_see"
-        )  # 部分可见 part_see 1, private_status 1
-        aweme_status = aweme_data_dict.get(
-            "private_status"
-        )  # 视频权限 0公开或不给谁看, 1私密, 2互关朋友
-        aweme_type = aweme_data_dict.get(
-            "aweme_type"
-        )  # 视频类型 0视频, 55动图或关闭下载, 61挑战， 109日常, 68图集
-        aweme_id = str(aweme_data_dict.get("aweme_id"))  # 视频ID
+        self.sec_user_id = str(aweme_data_dict.get("sec_user_id"))
+        self.aweme_id = str(aweme_data_dict.get("aweme_id"))
+        self.kwargs = kwargs
+        self.aweme_data_dict = aweme_data_dict
 
-        logger.debug(f"========{aweme_id}========")
-        logger.debug(aweme_data_dict)
-        logger.debug("===================================")
+        aweme_prohibited = aweme_data_dict.get("is_prohibited")
+        aweme_status = aweme_data_dict.get("private_status")
+        aweme_type = aweme_data_dict.get("aweme_type")
 
-        # 检查作品是否被屏蔽
         if aweme_prohibited:
-            logger.warning(_("该 {0} 作品已被屏蔽，无法下载").format(aweme_id))
+            logger.warning(_("[{0}] 该作品已被屏蔽，无法下载").format(self.aweme_id))
             return
 
-        # 检查作品是否可见
         if aweme_status in [0, 1, 2]:
-            # 处理音乐下载任务
-            if kwargs.get("music"):
-                if aweme_data_dict.get("music_status") == 1:  # 原声状态 1 正常 0 失效
-                    music_name = (
-                        format_file_name(
-                            kwargs.get("naming", "{create}_{desc}"), aweme_data_dict
-                        )
-                        + "_music"
-                    )
+            download_tasks = [
+                ("music", self.download_music),
+                ("cover", self.download_cover),
+                ("desc", self.download_desc),
+            ]
 
-                    music_url = aweme_data_dict.get("music_play_url")
-                    if music_url != None:
-                        await self.initiate_download(
-                            _("原声"), music_url, base_path, music_name, ".mp3"
-                        )
-                else:
-                    logger.warning(_("{0} 该原声已被屏蔽，无法下载").format(aweme_id))
+            for task_name, task_func in download_tasks:
+                if self.kwargs.get(task_name):
+                    await task_func()
 
-            # 处理封面下载任务
-            if kwargs.get("cover"):
-                cover_name = (
-                    format_file_name(
-                        kwargs.get("naming", "{create}_{desc}"), aweme_data_dict
-                    )
-                    + "_cover"
-                )
-                animated_cover_url = aweme_data_dict.get("animated_cover")
-                cover_url = aweme_data_dict.get("cover")
-                if animated_cover_url != None:
-                    await self.initiate_download(
-                        _("封面"), animated_cover_url, base_path, cover_name, ".webp"
-                    )
-                elif cover_url != None:
-                    logger.warning(_("{0} 该作品没有动态封面").format(aweme_id))
-                    await self.initiate_download(
-                        _("封面"), cover_url, base_path, cover_name, ".jpeg"
-                    )
-                else:
-                    logger.warning(_("{0} 该作品没有封面").format(aweme_id))
-
-            # 处理文案下载任务
-            if kwargs.get("desc"):
-                desc_name = (
-                    format_file_name(
-                        kwargs.get("naming", "{create}_{desc}"), aweme_data_dict
-                    )
-                    + "_desc"
-                )
-                desc_content = aweme_data_dict.get("desc")
-                await self.initiate_static_download(
-                    _("文案"), desc_content, base_path, desc_name, ".txt"
-                )
-
-            # 处理不同类型的作品下载任务
             if aweme_type in [0, 55, 61, 109, 201]:
-                video_name = (
-                    format_file_name(
-                        kwargs.get("naming", "{create}_{desc}"), aweme_data_dict
-                    )
-                    + "_video"
+                await self.download_video()
+            elif aweme_type == 68:
+                await self.download_images()
+
+        # 保存最后一个 aweme_id
+        await self.save_last_aweme_id(self.sec_user_id, self.aweme_id)
+
+    async def download_music(self):
+        if self.aweme_data_dict.get("music_status") == 1:
+            music_name = (
+                format_file_name(
+                    self.kwargs.get("naming", "{create}_{desc}"), self.aweme_data_dict
                 )
-                # video_play_addr 现在为一个list，第一个链接下载失败，则下载第二个链接
-                video_url = aweme_data_dict.get("video_play_addr")
-                if video_url != None:
-                    await self.initiate_download(
-                        _("视频"), video_url, base_path, video_name, ".mp4"
-                    )
-                else:
-                    logger.warning(
-                        _("{0} 该作品没有视频链接，无法下载").format(aweme_id)
-                    )
+                + "_music"
+            )
+            music_url = self.aweme_data_dict.get("music_play_url")
+            if music_url:
+                await self.initiate_download(
+                    _("原声"), music_url, self.base_path, music_name, ".mp3"
+                )
+        else:
+            logger.warning(_("[{0}] 该原声已被屏蔽，无法下载").format(self.aweme_id))
 
-            elif aweme_type in [68]:
-                for i, image_url in enumerate(aweme_data_dict.get("images", None)):
-                    image_name = f"{format_file_name(kwargs.get('naming'), aweme_data_dict)}_image_{i + 1}"
-                    if image_url != None:
-                        await self.initiate_download(
-                            _("图集"), image_url, base_path, image_name, ".jpg"
-                        )
-                    else:
-                        logger.warning(
-                            _("{0} 该图集没有图片链接，无法下载").format(aweme_id)
-                        )
+    async def download_cover(self):
+        cover_name = (
+            format_file_name(
+                self.kwargs.get("naming", "{create}_{desc}"), self.aweme_data_dict
+            )
+            + "_cover"
+        )
+        animated_cover_url = self.aweme_data_dict.get("animated_cover")
+        cover_url = self.aweme_data_dict.get("cover")
+        if animated_cover_url:
+            await self.initiate_download(
+                _("封面"), animated_cover_url, self.base_path, cover_name, ".webp"
+            )
+        elif cover_url:
+            logger.debug(_("[{0}] 该作品没有动态封面").format(self.aweme_id))
+            await self.initiate_download(_("封面"), cover_url, cover_name, ".jpeg")
+        else:
+            logger.warning(_("[{0}] 该作品没有封面").format(self.aweme_id))
 
-        # 保存最后一个aweme_id
-        await self.save_last_aweme_id(sec_user_id, aweme_id)
+    async def download_desc(self):
+        desc_name = (
+            format_file_name(
+                self.kwargs.get("naming", "{create}_{desc}"), self.aweme_data_dict
+            )
+            + "_desc"
+        )
+        desc_content = self.aweme_data_dict.get("desc")
+        await self.initiate_static_download(
+            _("文案"), desc_content, self.base_path, desc_name, ".txt"
+        )
+
+    async def download_video(self):
+        video_name = (
+            format_file_name(
+                self.kwargs.get("naming", "{create}_{desc}"), self.aweme_data_dict
+            )
+            + "_video"
+        )
+        video_url = self.aweme_data_dict.get("video_play_addr")
+        if video_url:
+            await self.initiate_download(
+                _("视频"), video_url, self.base_path, video_name, ".mp4"
+            )
+        else:
+            logger.warning(
+                _("[{0}] 该作品没有视频链接，无法下载").format(self.aweme_id)
+            )
+
+    async def download_images(self):
+        for i, image_url in enumerate(self.aweme_data_dict.get("images", [])):
+            image_name = f"{format_file_name(self.kwargs.get('naming'), self.aweme_data_dict)}_image_{i + 1}"
+            if image_url:
+                await self.initiate_download(
+                    _("图集"), image_url, self.base_path, image_name, ".jpg"
+                )
+            else:
+                logger.warning(
+                    _("[{0}] 该图集没有图片链接，无法下载").format(self.aweme_id)
+                )
 
     async def create_music_download_tasks(
         self, kwargs: dict, music_datas: Union[list, dict], user_path: Any
