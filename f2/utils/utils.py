@@ -132,6 +132,47 @@ def str_2_timestamp(
         raise ValueError(_("不支持的时间单位：{0}").format(unit))
 
 
+def interval_2_timestamp(
+    interval: str,
+    date_type: str = "start",
+    format: str = "%Y-%m-%d %H-%M-%S",
+    unit: str = "milli",
+    tz: datetime.timezone = datetime.timezone(datetime.timedelta(hours=8)),
+) -> int:
+    """
+    将日期区间字符串转换为 UNIX 时间戳
+
+    Args:
+        interval (str): 日期区间字符串，格式为 '2022-01-01|2023-01-01' (The date range string, formatted as '2022-01-01|2023-01-01')
+        date_type (str, optional): 'start' 表示使用开始日期，'end' 表示使用结束日期 (Whether to use the start or end date, defaults to 'start')
+        format (str, optional): 日期字符串的格式，默认为 '%Y-%m-%d' (The date string format, defaults to '%Y-%m-%d')
+        unit (str, optional): 时间单位，默认为 'milli' (The time unit, defaults to 'milli')
+        tz (datetime.timezone, optional): 时区，默认为东八区北京时间 (The timezone, defaults to UTC+8)
+
+    Returns:
+        int: UNIX 时间戳 (The UNIX timestamp)
+    """
+
+    if not interval:
+        logger.warning(_("日期区间为空，无法转换为时间戳"))
+        return 0
+
+    try:
+        start_date, end_date = interval.split("|")
+        if date_type == "start":
+            date_str = f"{start_date} 00-00-00"
+        elif date_type == "end":
+            date_str = f"{end_date} 23-59-59"
+        else:
+            logger.warning(_("不支持的日期类型：{0}").format(date_type))
+            return 0
+
+        return str_2_timestamp(date_str, format, unit, tz)
+    except ValueError:
+        logger.error(_("日期区间参数格式错误，请查阅文档后重试"))
+        logger.error(traceback.format_exc())
+    return 0
+
 
 def split_set_cookie(cookie_str: str) -> str:
     """
