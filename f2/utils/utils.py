@@ -101,20 +101,10 @@ def timestamp_2_str(
     return date_obj.strftime(format)
 
 
-def num_to_base36(num: int) -> str:
-    """数字转换成base32 (Convert number to base 36)"""
 
-    base_str = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 
-    if num == 0:
-        return "0"
 
-    base36 = []
-    while num:
-        num, i = divmod(num, 36)
-        base36.append(base_str[i])
 
-    return "".join(reversed(base36))
 
 
 def split_set_cookie(cookie_str: str) -> str:
