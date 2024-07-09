@@ -15,6 +15,7 @@ from typing import Union, Any
 from pathlib import Path
 
 from f2.log.logger import logger
+from f2.i18n.translator import _
 
 # 生成一个 16 字节的随机字节串 (Generate a random byte string of 16 bytes)
 seed_bytes = secrets.token_bytes(16)
@@ -63,7 +64,7 @@ def get_timestamp(unit: str = "milli"):
     elif unit == "min":
         return int(now.total_seconds() / 60)
     else:
-        raise ValueError("Unsupported time unit")
+        raise ValueError(_("不支持的时间单位：{0}").format(unit))
 
 
 def timestamp_2_str(
@@ -129,7 +130,7 @@ def split_set_cookie(cookie_str: str) -> str:
 
     # 判断是否为字符串 / Check if it's a string
     if not isinstance(cookie_str, str):
-        raise TypeError("`set-cookie` must be str")
+        raise TypeError(_("cookie_str 参数应为字符串"))
 
     # 拆分Set-Cookie字符串,避免错误地在expires字段的值中分割字符串 (Split the Set-Cookie string, avoiding incorrect splitting on the value of the 'expires' field)
     # 拆分每个Cookie字符串，只获取第一个分段（即key=value部分） / Split each Cookie string, only getting the first segment (i.e., key=value part)
