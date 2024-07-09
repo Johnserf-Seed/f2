@@ -1,7 +1,7 @@
 # path: f2/i18n/translator.py
 
 import gettext
-from f2.utils.utils import get_resource_path
+import pathlib
 
 
 class TranslationManager:
@@ -24,7 +24,9 @@ class TranslationManager:
         if lang not in self.translations:
             try:
                 translation = gettext.translation(
-                    lang, get_resource_path("languages/"), languages=[lang]
+                    lang,
+                    localedir=pathlib.Path(__file__).parent / "languages",
+                    languages=[lang],
                 )
                 self.translations[lang] = translation.gettext
             except FileNotFoundError:
