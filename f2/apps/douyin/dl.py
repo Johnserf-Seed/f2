@@ -1,6 +1,6 @@
 # path: f2/apps/douyin/dl.py
 
-from typing import Any, Dict, Union
+from typing import Any, Dict, List, Union
 
 from f2.i18n.translator import _
 from f2.log.logger import logger
@@ -11,7 +11,7 @@ from f2.apps.douyin.utils import format_file_name, json_2_lrc
 
 
 class DouyinDownloader(BaseDownloader):
-    def __init__(self, kwargs: dict = {}):
+    def __init__(self, kwargs: Dict = {}):
         if kwargs["cookie"] is None:
             raise ValueError(
                 _(
@@ -34,14 +34,14 @@ class DouyinDownloader(BaseDownloader):
             await db.update_user_info(sec_user_id=sec_user_id, last_aweme_id=aweme_id)
 
     async def create_download_tasks(
-        self, kwargs: dict, aweme_datas: Union[list, dict], user_path: Any
+        self, kwargs: Dict, aweme_datas: Union[List, Dict], user_path: Any
     ) -> None:
         """
         创建下载任务
 
         Args:
-            kwargs (dict): 命令行参数
-            aweme_datas (list, dict): 作品数据列表或字典
+            kwargs (Dict): 命令行参数
+            aweme_datas (List, Dict): 作品数据列表或字典
             user_path (str): 用户目录路径
         """
 
@@ -78,14 +78,14 @@ class DouyinDownloader(BaseDownloader):
         await self.execute_tasks()
 
     async def handler_download(
-        self, kwargs: dict, aweme_data_dict: dict, user_path: Any
+        self, kwargs: Dict, aweme_data_dict: Dict, user_path: Any
     ) -> None:
         """
         处理下载任务
 
         Args:
-            kwargs (dict): 命令行参数
-            aweme_data_dict (dict): 作品数据字典
+            kwargs (Dict): 命令行参数
+            aweme_data_dict (Dict): 作品数据字典
             user_path (Any): 用户目录路径
         """
         self.base_path = (
@@ -204,14 +204,14 @@ class DouyinDownloader(BaseDownloader):
                 )
 
     async def create_music_download_tasks(
-        self, kwargs: dict, music_datas: Union[list, dict], user_path: Any
+        self, kwargs: Dict, music_datas: Union[List, Dict], user_path: Any
     ) -> None:
         """
         创建音乐下载任务
 
         Args:
-            kwargs (dict): 命令行参数
-            music_datas (list, dict): 音乐数据列表或字典
+            kwargs (Dict): 命令行参数
+            music_datas (List, Dict): 音乐数据列表或字典
             user_path (Any): 用户目录路径
         """
 
@@ -233,14 +233,14 @@ class DouyinDownloader(BaseDownloader):
         await self.execute_tasks()
 
     async def handler_music_download(
-        self, kwargs: dict, music_data_dict: dict, user_path: Any
+        self, kwargs: Dict, music_data_dict: Dict, user_path: Any
     ) -> None:
         """
         处理音乐下载任务
 
         Args:
-            kwargs (dict): 命令行参数
-            music_data_dict (dict): 音乐数据字典
+            kwargs (Dict): 命令行参数
+            music_data_dict (Dict): 音乐数据字典
             user_path (Any): 用户目录路径
         """
 
@@ -277,14 +277,14 @@ class DouyinDownloader(BaseDownloader):
             )
 
     async def create_stream_tasks(
-        self, kwargs: dict, webcast_datas: Union[list, dict], user_path: Any
+        self, kwargs: Dict, webcast_datas: Union[List, Dict], user_path: Any
     ) -> None:
         """
         创建视频流下载任务
 
         Args:
-            kwargs (dict): 命令行参数
-            aweme_datas (list, dict): 作品数据列表或字典
+            kwargs (Dict): 命令行参数
+            aweme_datas (List, Dict): 作品数据列表或字典
             user_path (Any): 用户目录路径
         """
 
@@ -306,14 +306,14 @@ class DouyinDownloader(BaseDownloader):
         await self.execute_tasks()
 
     async def handler_stream(
-        self, kwargs: dict, webcast_data_dict: dict, user_path: Any
+        self, kwargs: Dict, webcast_data_dict: Dict, user_path: Any
     ) -> None:
         """
         处理视频流下载任务
 
         Args:
-            kwargs (dict): 命令行参数
-            aweme_data_dict (dict): 直播数据字典
+            kwargs (Dict): 命令行参数
+            aweme_data_dict (Dict): 直播数据字典
             user_path (Any): 用户目录路径
         """
         custom_fields = {

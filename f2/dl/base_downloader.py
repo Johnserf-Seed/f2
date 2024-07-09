@@ -9,7 +9,7 @@ import traceback
 from pathlib import Path
 from urllib.error import HTTPError as urllib_HTTPError
 from rich.progress import TaskID
-from typing import Union, Optional, Any, List
+from typing import Union, Optional, Any, List, Set
 
 from f2.log.logger import logger
 from f2.i18n.translator import _
@@ -285,7 +285,7 @@ class BaseDownloader(BaseCrawler):
             default_chunks = 409600
             # 记录已经下载的片段序号
             # (Record the segment number that has been downloaded)
-            downloaded_segments = set()
+            downloaded_segments: Set = set()
 
             while not SignalManager.is_shutdown_signaled():
                 try:
