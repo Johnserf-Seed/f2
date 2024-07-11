@@ -66,7 +66,7 @@ def test_get_timestamp():
     )
 
     # Test invalid unit
-    with pytest.raises(ValueError, match="Unsupported time unit"):
+    with pytest.raises(ValueError, match="不支持的时间单位"):
         get_timestamp("invalid_unit")
 
 
