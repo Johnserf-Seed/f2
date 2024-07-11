@@ -25,7 +25,7 @@ class TranslationManager:
             try:
                 translation = gettext.translation(
                     lang,
-                    localedir=pathlib.Path(__file__).parent / "languages",
+                    localedir=pathlib.Path(__file__).parents[1] / "languages",
                     languages=[lang],
                 )
                 self.translations[lang] = translation.gettext
