@@ -71,6 +71,7 @@ dependencies = [
     "pydantic==2.6.4",
     "qrcode==7.4.2",
     "websockets>=11.0",
+    "websockets_proxy==0.1.2",
     "PyExecJS==1.5.1",
     "protobuf==5.27.2",
     "gmssl==3.2.2",
