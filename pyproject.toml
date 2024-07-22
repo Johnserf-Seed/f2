@@ -36,7 +36,7 @@ dependencies = [
     "importlib_resources==6.4.0",
     "m3u8==3.6.0",
     "pytest==8.2.2",
-    "pytest-asyncio==0.21.1",
+    "pytest-asyncio==0.23.8",
     "browser_cookie3==0.19.1",
     "pydantic==2.6.4",
     "qrcode==7.4.2",
