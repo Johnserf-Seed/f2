@@ -285,6 +285,7 @@ class TiktokDownloader(BaseDownloader):
         Args:
             kwargs (dict): 命令行参数
         """
+        # 构建自定义字段
         custom_fields = {
             "create": timestamp_2_str(timestamp=get_timestamp(unit="sec")),
             "nickname": webcast_data_dict.get("nickname", ""),
@@ -293,17 +294,18 @@ class TiktokDownloader(BaseDownloader):
             "desc": webcast_data_dict.get("live_title", ""),
             "uid": webcast_data_dict.get("user_id", ""),
         }
-        # 构建文件夹路径
-        base_path = (
-            user_path
-            / format_file_name(
-                kwargs.get("naming", "{create}_{desc}"), custom_fields=custom_fields
-            )
-            if kwargs.get("folderize")
-            else user_path
+
+        # 格式化文件名
+        formated_name = format_file_name(
+            kwargs.get("naming", "{create}_{desc}"),
+            webcast_data_dict,
+            custom_fields=custom_fields,
         )
 
-        webcast_name = f"{format_file_name(kwargs.get('naming', '{create}_{desc}'), custom_fields=custom_fields)}_live"
+        # 构建文件夹路径
+        base_path = user_path / formated_name if kwargs.get("folderize") else user_path
+
+        webcast_name = f"{formated_name}_live"
         webcast_url = webcast_data_dict.get("live_hls_url", None)
 
         await self.initiate_m3u8_download(
