@@ -839,7 +839,7 @@ class TiktokHandler:
 
         # 判断是否有直播间
         if not webcast_data.has_live:
-            logger.info(_("用户：{0} 没有直播间").format(uniqueId))
+            logger.info(_("用户：{0} 未直播").format(uniqueId))
             return
 
         # 是否正在直播
