@@ -54,7 +54,7 @@ class TiktokAPIEndpoints:
     # 作品搜索 (Post Search)
     POST_SEARCH = f"{TIKTOK_DOMAIN}/api/search/item/full/"
 
-    # 用户直播 (User Live)
+    # 用户直播间 (User Live Room)
     USER_LIVE = f"{TIKTOK_DOMAIN}/api-live/user/room/"
 
     # 检查开播状态 (Check Live Status)
