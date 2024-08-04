@@ -927,9 +927,8 @@ class UserLiveFilter(JSONModel):
 
     @property
     def has_live(self) -> bool:
-        if len(self._get_attr_value("$.data")) == 4:
-            return False
-        return True
+        data = self._get_attr_value("$.data")
+        return bool(data) and len(data) != 4
 
     # user
     @property
