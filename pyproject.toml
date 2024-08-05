@@ -42,7 +42,7 @@ dependencies = [
     "qrcode==7.4.2",
     "websockets>=11.0",
     "PyExecJS==1.5.1",
-    "protobuf==5.27.2",
+    "protobuf==5.27.3",
     "gmssl==3.2.2",
 ]
 
