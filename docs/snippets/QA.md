@@ -49,3 +49,44 @@ https://datatracker.ietf.org/doc/html/rfc6585#section-7.2
 https://github.com/Johnserf-Seed/f2/issues/42
 https://github.com/Johnserf-Seed/TikTokDownload/issues/660
 // #endregion no-matching-videos-found
+
+
+// #region ssl-faild-01
+出现`EOF occurred in violation of protocol (_ssl.c:992)`说明SSL握手失败。
+
+解决办法：
+1. 请检查你的网络环境是否支持SSL协议。
+2. 确保代理网络连接稳定。
+
+这个问题可能涉及到多个方面，需要自己逐步排查和解决。
+// #endregion ssl-faild-01
+
+
+// #region ssl-faild-02
+出现`_ssl.c:975: The handshake operation timed out`说明SSL握手超时。可能是网络连接不稳定或延迟过高导致。
+
+解决办法：
+1. 检查网络连接: 确保网络连接稳定，尽量减少网络延迟。
+2. 检查服务器状态: 确保服务器运行正常，并且响应速度良好。
+3. 检查防火墙和代理设置: 确保防火墙和代理服务器的设置正确，并且不会影响 SSL/TLS 握手过程。
+4. 调整超时设置
+
+这个问题可能涉及到多个方面，需要自己逐步排查和解决。
+// #endregion ssl-faild-02
+
+
+// #region tiktok-403-forbidden
+当下载`tiktok`视频时出现`403 Forbidden`错误时，是由于`设备id`被封禁导致的。
+
+`设备id`与生成的`cookie`是一一对应的，如果`设备id`被封禁，那么生成的`cookie`也会被封禁。
+
+解决办法：
+1. 运行生成`device_Id`的代码片段，获取新的`device_Id`。
+2. 将新的`device_Id`替换到配置文件中。
+3. 将新的`cookie`里的值替换到配置文件的`cookie`中（增量非覆盖）。
+4. 重新运行下载命令。
+
+代码片段：
+https://johnserf-seed.github.io/f2/guide/apps/tiktok/#%E7%94%9F%E6%88%90deviceid-%F0%9F%9F%A2
+
+// #endregion tiktok-403-forbidden

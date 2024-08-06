@@ -22,7 +22,10 @@ class DouyinAPIEndpoints:
     SSO_DOMAIN = "https://sso.douyin.com"
 
     # WSS域名 (WSS Domain)
-    WEBCAST_WSS_DOMAIN = "wss://webcast5-ws-web-lf.douyin.com"
+    WEBCAST_WSS_DOMAIN = "wss://webcast5-ws-web-hl.douyin.com"
+
+    # 直播弹幕(WSS) (Live Danmaku WSS)
+    LIVE_IM_WSS = f"{WEBCAST_WSS_DOMAIN}/webcast/im/push/v2/"
 
     # 首页Feed (Home Feed)
     TAB_FEED = f"{DOUYIN_DOMAIN}/aweme/v1/web/tab/feed/"
@@ -99,6 +102,9 @@ class DouyinAPIEndpoints:
     # 直播用户信息 (Live User Info)
     LIVE_USER_INFO = f"{LIVE_DOMAIN}/webcast/user/me/"
 
+    # 直播弹幕初始化 (Live Danmaku Init)
+    LIVE_IM_FETCH = f"{LIVE_DOMAIN}/webcast/im/fetch/"
+
     # 推荐搜索词 (Suggest Words)
     SUGGEST_WORDS = f"{DOUYIN_DOMAIN}/aweme/v1/web/api/suggest_words/"
 
@@ -128,3 +134,6 @@ class DouyinAPIEndpoints:
 
     # 点赞评论 (Like Comment)
     POST_COMMENT_DIGG = f"{DOUYIN_DOMAIN}/aweme/v1/web/comment/digg"
+
+    # 查询用户 (Query User)
+    QUERY_USER = f"{DOUYIN_DOMAIN}/aweme/v1/web/query/user/"

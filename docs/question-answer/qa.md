@@ -19,3 +19,16 @@
 ## WARNING  没有找到符合条件的作品
 
 <<< @/snippets/QA.md#no-matching-videos-found
+
+## EOF occurred in violation of protocol (_ssl.c:992)
+
+<<< @/snippets/QA.md#ssl-faild-01
+
+## _ssl.c:975 The handshake operation timed out
+
+<<< @/snippets/QA.md#ssl-faild-02
+
+
+## tiktok 403 Forbidden
+
+<<< @/snippets/QA.md#tiktok-403-forbidden

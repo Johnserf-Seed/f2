@@ -6,10 +6,11 @@ from typing import AsyncGenerator, Union, Dict, Any, List
 
 from f2.log.logger import logger
 from f2.i18n.translator import _
-from f2.utils.mode_handler import mode_handler, mode_function_map
-from f2.utils.utils import split_set_cookie
+from f2.utils.decorators import mode_handler, mode_function_map
+
+# from f2.utils.utils import split_set_cookie
 from f2.apps.douyin.db import AsyncUserDB, AsyncVideoDB
-from f2.apps.douyin.crawler import DouyinCrawler
+from f2.apps.douyin.crawler import DouyinCrawler, DouyinWebSocketCrawler
 from f2.apps.douyin.dl import DouyinDownloader
 from f2.apps.douyin.model import (
     UserPost,
@@ -23,10 +24,16 @@ from f2.apps.douyin.model import (
     PostDetail,
     UserLive,
     UserLive2,
-    LoginGetQr,
-    LoginCheckQr,
+    # LoginGetQr,
+    # LoginCheckQr,
     UserFollowing,
     UserFollower,
+    PostRelated,
+    FriendFeed,
+    LiveWebcast,
+    LiveImFetch,
+    QueryUser,
+    FollowingUserLive,
 )
 from f2.apps.douyin.filter import (
     UserPostFilter,
@@ -38,19 +45,26 @@ from f2.apps.douyin.filter import (
     PostDetailFilter,
     UserLiveFilter,
     UserLive2Filter,
-    GetQrcodeFilter,
-    CheckQrcodeFilter,
+    # GetQrcodeFilter,
+    # CheckQrcodeFilter,
     UserFollowingFilter,
     UserFollowerFilter,
+    PostRelatedFilter,
+    FriendFeedFilter,
+    LiveImFetchFilter,
+    QueryUserFilter,
+    FollowingUserLiveFilter,
 )
+from f2.apps.douyin.algorithm.webcast_signature import DouyinWebcastSignature
 from f2.apps.douyin.utils import (
     SecUserIdFetcher,
     AwemeIdFetcher,
     MixIdFetcher,
     WebCastIdFetcher,
-    VerifyFpManager,
+    ClientConfManager,
+    # VerifyFpManager,
     create_or_rename_user_folder,
-    show_qrcode,
+    # show_qrcode,
 )
 from f2.cli.cli_console import RichConsoleManager
 from f2.exceptions.api_exceptions import APIResponseError
@@ -68,7 +82,7 @@ class DouyinHandler:
         self.kwargs = kwargs
         self.downloader = DouyinDownloader(kwargs)
 
-    async def handler_user_profile(
+    async def fetch_user_profile(
         self,
         sec_user_id: str,
     ) -> UserProfileFilter:
@@ -88,31 +102,10 @@ class DouyinHandler:
             response = await crawler.fetch_user_profile(params)
             user = UserProfileFilter(response)
             if user.nickname is None:
-                raise APIResponseError(_("API内容请求失败，请更换新cookie后再试"))
+                raise APIResponseError(
+                    _("`fetch_user_profile`请求失败，请更换cookie或稍后再试")
+                )
             return UserProfileFilter(response)
-
-    async def get_user_nickname(
-        self,
-        sec_user_id: str,
-        db: AsyncUserDB,
-    ) -> str:
-        """
-        获取指定用户的昵称，如果不存在，则从服务器获取并存储到数据库中
-        (Used to get personal info of specified users)
-
-        Args:
-            sec_user_id (str): 用户ID (User ID)
-            db (AsyncUserDB): 用户数据库 (User database)
-
-        Returns:
-            user_nickname: (str): 用户昵称 (User nickname)
-        """
-
-        user_dict = await db.get_user_info(sec_user_id)
-        if not user_dict:
-            user_dict = await self.handler_user_profile(sec_user_id)
-            await db.add_user_info(**user_dict._to_dict())
-        return user_dict.get("nickname")
 
     async def get_or_add_user_data(
         self,
@@ -137,10 +130,10 @@ class DouyinHandler:
         local_user_data = await db.get_user_info(sec_user_id)
 
         # 从服务器获取当前用户最新数据
-        current_user_data = await self.handler_user_profile(sec_user_id)
+        current_user_data = await self.fetch_user_profile(sec_user_id)
 
         # 获取当前用户最新昵称
-        current_nickname = current_user_data._to_dict().get("nickname")
+        current_nickname = current_user_data.nickname
 
         # 设置用户目录
         user_path = create_or_rename_user_folder(
@@ -221,7 +214,7 @@ class DouyinHandler:
             aweme_id: str: 作品ID
 
         Return:
-            video: PostDetailFilter: 单个作品数据过滤器
+            video: PostDetailFilter: 单个作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
         """
 
         logger.info(_("开始爬取作品：{0}").format(aweme_id))
@@ -286,7 +279,7 @@ class DouyinHandler:
             max_counts: int: 最大作品数
 
         Return:
-            video: AsyncGenerator[UserPostFilter, Any]: 作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
+            video: AsyncGenerator[UserPostFilter, Any]: 发布作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
         """
 
         max_counts = max_counts or float("inf")
@@ -393,7 +386,7 @@ class DouyinHandler:
             max_counts: int: 最大作品数
 
         Return:
-            video: AsyncGenerator[UserPostFilter, Any]: 作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
+            video: AsyncGenerator[UserPostFilter, Any]: 喜欢作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
         """
 
         max_counts = max_counts or float("inf")
@@ -587,7 +580,7 @@ class DouyinHandler:
             max_counts: int: 最大作品数 (Maximum number of videos)
 
         Return:
-            collection: AsyncGenerator[UserCollectionFilter, Any]: 作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
+            collection: AsyncGenerator[UserCollectionFilter, Any]: 收藏作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
 
         Note:
             该接口需要用POST且只靠cookie来获取数据。
@@ -751,7 +744,7 @@ class DouyinHandler:
             max_counts: int: 最大收藏夹数 (Max counts)
 
         Return:
-            collects: AsyncGenerator[UserCollectsFilter, Any]: 收藏夹数据过滤器，包含收藏夹数据的_to_raw、_to_dict、_to_list方法)
+            collects: AsyncGenerator[UserCollectsFilter, Any]: 收藏夹数据过滤器，包含收藏夹数据的_to_raw、_to_dict方法)
         """
 
         max_counts = max_counts or float("inf")
@@ -812,7 +805,7 @@ class DouyinHandler:
             max_counts: int: 最大作品数 (Maximum number of videos)
 
         Return:
-            video: AsyncGenerator[UserCollectionFilter, Any]: 作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
+            video: AsyncGenerator[UserCollectionFilter, Any]: 收藏夹作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
         """
 
         max_counts = max_counts or float("inf")
@@ -891,15 +884,15 @@ class DouyinHandler:
 
         # 先假定合集链接获取合集ID
         try:
+            logger.info(_("正在从合集链接获取合集ID"))
             mix_id = await MixIdFetcher.get_mix_id(self.kwargs.get("url"))
             async for aweme_data in self.fetch_user_mix_videos(mix_id, 0, 20, 1):
-                logger.info(_("正在从合集链接获取合集ID"))
+                logger.info(_("正在从合集作品里获取sec_user_id"))
                 sec_user_id = aweme_data.sec_user_id[0]  # 注意这里是一个列表
         except Exception as e:
-            logger.warning(
-                _("获取合集ID失败，尝试解析作品链接。错误信息：{0}").format(e)
-            )
+            logger.warning(_("获取合集ID失败，尝试从合集作品链接中解析。"))
             # 如果获取失败，则假定作品链接获取作品ID
+            logger.info(_("正在从合集作品链接获取合集ID"))
             aweme_id = await AwemeIdFetcher.get_aweme_id(self.kwargs.get("url"))
             aweme_data = await self.fetch_one_video(aweme_id)
             sec_user_id = aweme_data.sec_user_id
@@ -1199,6 +1192,214 @@ class DouyinHandler:
 
         logger.info(_("爬取结束，共爬取 {0} 个首页推荐作品").format(videos_collected))
 
+    @mode_handler("related")
+    async def handle_related(self):
+        """
+        用于处理相关作品 (Used to process related videos)
+
+        Args:
+            kwargs: dict: 参数字典 (Parameter dictionary)
+        """
+
+        page_counts = self.kwargs.get("page_counts", 20)
+        max_counts = self.kwargs.get("max_counts")
+
+        aweme_id = await AwemeIdFetcher.get_aweme_id(self.kwargs.get("url"))
+        aweme_data = await self.fetch_one_video(aweme_id)
+
+        async with AsyncUserDB("douyin_users.db") as udb:
+            user_path = (
+                await self.get_or_add_user_data(
+                    self.kwargs, aweme_data.sec_user_id, udb
+                )
+                / aweme_id
+            )
+
+        async for aweme_data_list in self.fetch_related_videos(
+            aweme_id, "", page_counts, max_counts
+        ):
+            # 创建下载任务
+            await self.downloader.create_download_tasks(
+                self.kwargs, aweme_data_list._to_list(), user_path
+            )
+
+    async def fetch_related_videos(
+        self,
+        aweme_id: str,
+        filterGids: str = "",
+        page_counts: int = 20,
+        max_counts: int = None,
+    ) -> AsyncGenerator[PostRelatedFilter, Any]:
+        """
+        用于获取指定作品的相关推荐作品列表。
+
+        Args:
+            aweme_id: str: 作品ID
+            page_counts: int: 每页作品数
+            max_counts: int: 最大作品数
+
+        Return:
+            related: AsyncGenerator[PostRelatedFilter, Any]: 相关推荐作品数据过滤器
+                        ，包含相关作品数据的_to_raw、_to_dict、_to_list方法
+        """
+        from urllib.parse import quote
+
+        max_counts = max_counts or float("inf")
+        videos_collected = 0
+        # aweme_id,awme_id,aweme_id...
+        filterGids = filterGids or f"{aweme_id},"
+
+        logger.info(_("开始爬取作品: {0} 的相关推荐").format(aweme_id))
+
+        while videos_collected < max_counts:
+            current_request_size = min(page_counts, max_counts - videos_collected)
+
+            logger.debug("===================================")
+            logger.debug(
+                _("最大数量: {0} 每次请求数量: {1}").format(
+                    max_counts, current_request_size
+                )
+            )
+            logger.info(_("开始爬取前 {0} 个相关推荐").format(current_request_size))
+
+            async with DouyinCrawler(self.kwargs) as crawler:
+                params = PostRelated(
+                    count=current_request_size,
+                    aweme_id=aweme_id,
+                    filterGids=quote(filterGids),
+                )
+                response = await crawler.fetch_post_related(params)
+                related = PostRelatedFilter(response)
+                yield related
+
+            if not related.has_more:
+                logger.info(_("作品: {0} 的所有相关推荐采集完毕").format(aweme_id))
+                break
+
+            logger.debug(_("当前请求的相关推荐数量: {0}").format(len(related.aweme_id)))
+            logger.debug(
+                _("作品ID: {0} 作品文案: {1} 作者: {2}").format(
+                    related.aweme_id, related.desc, related.nickname
+                )
+            )
+            logger.debug("===================================")
+
+            # 更新已经处理的作品数量 (Update the number of videos processed)
+            videos_collected += len(related.aweme_id)
+
+            # 更新过滤的作品ID (Update the filtered video ID)
+            filterGids = ",".join([str(aweme_id) for aweme_id in related.aweme_id])
+
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(_("爬取结束，共爬取 {0} 个相关推荐").format(videos_collected))
+
+    @mode_handler("friend")
+    async def handle_friend_feed(self):
+        """
+        用于处理用户好友作品 (Used to process user friend videos)
+
+        Args:
+            kwargs: dict: 参数字典 (Parameter dictionary)
+        """
+
+        max_counts = self.kwargs.get("max_counts")
+        sec_user_id = await SecUserIdFetcher.get_sec_user_id(self.kwargs.get("url"))
+
+        async with AsyncUserDB("douyin_users.db") as db:
+            user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, db)
+
+        async for aweme_data_list in self.fetch_friend_feed_videos(
+            max_counts=max_counts
+        ):
+            # 创建下载任务
+            await self.downloader.create_download_tasks(
+                self.kwargs, aweme_data_list._to_list(), user_path
+            )
+
+    async def fetch_friend_feed_videos(
+        self,
+        cursor: int = 0,
+        level: int = 1,
+        pull_type: int = 0,
+        max_counts: int = None,
+    ) -> AsyncGenerator[FriendFeedFilter, Any]:
+        """
+        用于获取指定用户好友作品列表。
+
+        Args:
+            cursor: int: 起始页
+            level: int: 作品等级
+            pull_type: int: 拉取类型
+            max_counts: int: 最大作品数
+
+        Return:
+            friend: AsyncGenerator[UserFriendFilter, Any]: 好友作品数据过滤器，包含好友作品数据的_to_raw、_to_dict、_to_list方法
+        """
+
+        max_counts = max_counts or float("inf")
+        videos_collected = 0
+
+        logger.info(_("开始爬取好友作品"))
+
+        while videos_collected < max_counts:
+
+            logger.debug("===================================")
+            logger.debug(_("最大数量：{0} 个").format(max_counts))
+            logger.info(_("开始爬取第：{0} 页").format(cursor))
+
+            async with DouyinCrawler(self.kwargs) as crawler:
+                params = FriendFeed(
+                    cursor=cursor,
+                    level=level,
+                    pull_type=pull_type,
+                )
+                response = await crawler.fetch_friend_feed(params)
+                friend = FriendFeedFilter(response)
+
+            if not friend.has_more:
+                logger.info(_("所有好友作品采集完毕"))
+                break
+
+            if friend.status_code != 0:
+                logger.warning(
+                    _("请求失败，错误码：{0} 错误信息：{1}").format(
+                        friend.status_code, friend.status_msg
+                    )
+                )
+                break
+            else:
+                # 因为没有好友作品第一页也会返回has_more为False，所以需要访问下一页判断是否有作品
+                if not friend.has_aweme:
+                    logger.info(_("第 {0} 页没有找到作品").format(cursor))
+                    continue
+
+            logger.debug(_("当前请求的cursor: {0}").format(cursor))
+            logger.debug(
+                _("作品ID: {0} 作品文案: {1} 作者: {2}").format(
+                    friend.aweme_id, friend.desc, friend.nickname
+                )
+            )
+            logger.debug("===================================")
+
+            yield friend
+
+            # 更新已经处理的作品数量 (Update the number of videos processed)
+            videos_collected += len(friend.aweme_id)
+            # 更新下一页的cursor (Update the cursor of the next page)
+            cursor = friend.cursor
+            # 更新其他参数 (Update other parameters)
+            level = friend.level
+            pull_type = friend.level
+
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(_("爬取结束，共爬取 {0} 个好友作品").format(videos_collected))
+
     async def fetch_user_following(
         self,
         user_id: str = "",
@@ -1365,129 +1566,281 @@ class DouyinHandler:
 
         logger.info(_("爬取结束，共爬取 {0} 个用户").format(users_collected))
 
-
-async def handle_sso_login():
-    """
-    用于处理用户登录 (Used to process user login)
-    """
-
-    kwargs = {
-        "proxies": {"http": None, "https": None},
-        "cookie": "",
-        "headers": {
-            "Referer": "https://www.douyin.com/",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,like Gecko) Chrome/104.0.0.0 Safari/537.36",
-        },
-    }
-
-    async def get_qrcode() -> str:
-        params = LoginGetQr(verifyFp=verify_fp, fp=verify_fp)
-        async with DouyinCrawler(kwargs) as crawler:
-            response = await crawler.fetch_login_qrcode(params)
-            sso = GetQrcodeFilter(response)
-            show_qrcode(sso.qrcode_index_url)
-            return await check_qrcode(sso.token, crawler)
-
-    async def check_qrcode(token: str, crawler) -> bool:
+    async def fetch_query_user(self) -> QueryUserFilter:
         """
-        检查二维码状态
+        用于查询用户信息，仅返回用户的基本信息，若需要获取更多信息请使用`fetch_user_profile`。
 
-        Args:
-            token (str): 二维码token
-
-        Returns:
-            bool: 是否成功登录
+        Return:
+            user: QueryUserFilter: 查询用户数据过滤器，包含用户数据的_to_raw、_to_dict方法
         """
-        logger.debug(f"check_qrcode token:{token}")
 
-        status_mapping = {
-            "1": {"message": _("[  登录  ]:等待二维码扫描！"), "log": logger.info},
-            "2": {"message": _("[  登录  ]:扫描二维码成功！"), "log": logger.info},
-            "3": {"message": _("[  登录  ]:确认二维码登录！"), "log": logger.info},
-            "4": {
-                "message": _("[  登录  ]:访问频繁，请检查参数！"),
-                "log": logger.warning,
-            },
-            "5": {
-                "message": _("[  登录  ]:二维码过期，重新获取！"),
-                "log": logger.warning,
-            },
-            "2046": {
-                "messages": _("[  登录  ]:扫码环境异常，请前往app验证！"),
-                "log": logger.warning,
-            },
-        }
+        logger.info(_("开始查询用户信息"))
+        logger.debug("===================================")
+        async with DouyinCrawler(self.kwargs) as crawler:
+            params = QueryUser()
+            response = await crawler.fetch_query_user(params)
+            user = QueryUserFilter(response)
 
-        while True:
-            params = LoginCheckQr(token=token, verifyFp=verify_fp, fp=verify_fp)
-            check_response = await crawler.fetch_check_qrcode(params)
-            check = CheckQrcodeFilter(check_response.json())
-            check_status = check.status
-            check_status = "2046" if check_status is None else check_status
-
-            status_info = status_mapping.get(check_status, {})
-            message = status_info.get("message", "")
-            log_func = status_info.get("log", logger.info)
-            logger.info(message)
-            log_func(message)
-
-            if check_status == "3":
-                login_cookies = split_set_cookie(
-                    check_response.headers.get("set-cookie", "")
-                )
-                is_login, login_cookie = await login_redirect(
-                    check.redirect_url, login_cookies, crawler
-                )
-                return is_login, login_cookie
-            elif check_status == "5":
-                get_qrcode()
-                break
-            elif check_status is None:
-                break
-
-            await asyncio.sleep(5)
-
-    async def login_redirect(redirect_url: str, login_cookies: str, crawler):
-        """
-        登录重定向，获取登录后Cookie
-
-        Args:
-            redirect_url (str): 重定向url
-            login_cookies (str): 登录cookie
-
-        Returns:
-            is_login (bool): 是否成功登录
-            login_cookie (str): 登录cookie
-        """
-        crawler.headers["Cookie"] = login_cookies
-        redirect_response = await crawler.get_fetch_data(redirect_url)
-
-        if redirect_response.history and len(redirect_response.history) > 1:
-            logger.debug(f"login_redirect headers:{redirect_response.headers}")
-            logger.debug(f"login_redirect history:{redirect_response.history}")
+        if user.status_code is None:
             logger.debug(
-                f"login_redirect history[0] headers:{redirect_response.history[0].headers}"
+                _("用户UniqueID：{0} 用户ID：{1} 用户创建时间：{2}").format(
+                    user.user_unique_id, user.user_uid, user.create_time
+                )
             )
-            logger.debug(
-                f"login_redirect history[1] headers:{redirect_response.history[1].headers}"
-            )
-            # 获取重最后一个重定向里的Cookie
-            login_cookie = split_set_cookie(
-                redirect_response.history[1].headers.get("set-cookie", "")
-            )
-            logger.debug(f"login_cookie:{login_cookie}")
-            return True, login_cookie
+            logger.debug("===================================")
+            logger.info(_("用户信息查询结束"))
         else:
-            logger.warning("[  登录  ]:自动重定向登录失败")
-            if redirect_response:
-                error_message = f"网络异常: 自动重定向登录失败。 状态码: {redirect_response.status_code}, 响应体: {redirect_response.text}"
-            else:
-                error_message = f"网络异常: 自动重定向登录失败。 无法连接到服务器。"
-            logger.warning(error_message)
-            return False, ""
+            logger.warning(_("请提供正确的ttwid")),
 
-    verify_fp = VerifyFpManager.gen_verify_fp()
-    return await get_qrcode()
+        return user
+
+    async def fetch_live_im(self, room_id: str, unique_id: str) -> LiveImFetchFilter:
+        """
+        用于获取直播间信息。
+
+        Args:
+            room_id: str: 直播间ID
+            unique_id: str: 用户ID
+
+        Return:
+            live_im: LiveImFetchFilter: 直播间信息数据过滤器，包含直播间信息的_to_raw、_to_dict、_to_list方法
+        """
+
+        logger.info(_("开始查询直播间信息"))
+        logger.debug("===================================")
+
+        # user = await self.fetch_query_user()
+
+        async with DouyinCrawler(self.kwargs) as crawler:
+            params = LiveImFetch(room_id=room_id, user_unique_id=unique_id)
+            response = await crawler.fetch_live_im_fetch(params)
+            live_im = LiveImFetchFilter(response)
+
+        if live_im.status_code == 0:
+            logger.debug(
+                _("直播间Room_ID：{0} 弹幕cursor：{1}").format(
+                    live_im.room_id, live_im.cursor
+                )
+            )
+            logger.debug("===================================")
+            logger.info(_("直播间信息查询结束"))
+        else:
+            logger.warning(_("请提供正确的Room_ID"))
+
+        return live_im
+
+    async def fetch_live_danmaku(
+        self, room_id: str, user_unique_id: str, internal_ext: str, cursor: str
+    ):
+        """
+        通过WebSocket连接获取直播间弹幕，再通过回调函数处理弹幕数据。
+
+        Args:
+            room_id: str: 直播间ID
+            user_unique_id: str: 用户ID
+            internal_ext: str: 内部扩展参数
+            cursor: str: 弹幕cursor
+
+        Return:
+            self.websocket: DouyinWebSocketCrawler: WebSocket连接对象
+        """
+        wss_callbacks = {
+            "WebcastRoomMessage": DouyinWebSocketCrawler.WebcastRoomMessage,
+            "WebcastLikeMessage": DouyinWebSocketCrawler.WebcastLikeMessage,
+            "WebcastMemberMessage": DouyinWebSocketCrawler.WebcastMemberMessage,
+            "WebcastChatMessage": DouyinWebSocketCrawler.WebcastChatMessage,
+            "WebcastGiftMessage": DouyinWebSocketCrawler.WebcastGiftMessage,
+            "WebcastSocialMessage": DouyinWebSocketCrawler.WebcastSocialMessage,
+            "WebcastRoomUserSeqMessage": DouyinWebSocketCrawler.WebcastRoomUserSeqMessage,
+            "WebcastUpdateFanTicketMessage": DouyinWebSocketCrawler.WebcastUpdateFanTicketMessage,
+            "WebcastCommonTextMessage": DouyinWebSocketCrawler.WebcastCommonTextMessage,
+            "WebcastMatchAgainstScoreMessage": DouyinWebSocketCrawler.WebcastMatchAgainstScoreMessage,
+            "WebcastFansclubMessage": DouyinWebSocketCrawler.WebcastFansclubMessage,
+            # TODO: WebcastRanklistHourEntranceMessage
+            # TODO: WebcastRoomStatsMessage
+            # TODO: WebcastLiveShoppingMessage
+            # TODO: WebcastLiveEcomGeneralMessage
+            # TODO: WebcastProductChangeMessage
+            # TODO: WebcastRoomStreamAdaptationMessage
+        }
+        async with DouyinWebSocketCrawler(self.kwargs, callbacks=wss_callbacks) as wss:
+            signature = DouyinWebcastSignature(
+                ClientConfManager.user_agent()
+            ).get_signature(room_id, user_unique_id)
+
+            params = LiveWebcast(
+                room_id=room_id,
+                user_unique_id=user_unique_id,
+                internal_ext=internal_ext,
+                cursor=cursor,
+                signature=signature,
+            )
+
+            result = await wss.fetch_live_danmaku(params)
+
+            if result == "closed":
+                logger.info(_("直播间：{0} 已结束直播").format(room_id))
+            elif result == "error":
+                logger.error(_("直播间：{0} 弹幕连接异常").format(room_id))
+
+            return
+
+    async def fetch_user_following_lives(self) -> FollowingUserLiveFilter:
+        """
+        用于获取关注用户的直播间信息。
+
+        Return:
+            follow_live: FollowingUserLiveFilter: 关注用户直播间信息数据过滤器，包含关注用户直播间信息的_to_raw、_to_dict、_to_list方法
+        """
+
+        logger.info(_("开始查询关注用户直播间信息"))
+        logger.debug("===================================")
+
+        async with DouyinCrawler(self.kwargs) as crawler:
+            params = FollowingUserLive()
+            response = await crawler.fetch_following_live(params)
+            follow_live = FollowingUserLiveFilter(response)
+
+        if follow_live.status_code == 0:
+            logger.debug(
+                _("直播间Room_ID：{0} 直播间标题：{1} 直播间人数：{2}").format(
+                    follow_live.room_id,
+                    follow_live.live_title_raw,
+                    follow_live.user_count,
+                )
+            )
+            logger.debug("===================================")
+            logger.info(_("关注用户直播间信息查询结束"))
+        else:
+            logger.warning(
+                _("获取关注用户直播间信息失败：{0}").format(follow_live.status_msg)
+            )
+
+        return follow_live
+
+
+# async def handle_sso_login():
+#     """
+#     用于处理用户登录 (Used to process user login)
+#     """
+
+#     kwargs = {
+#         "proxies": {"http://": None, "https://": None},
+#         "cookie": "",
+#         "headers": {
+#             "Referer": "https://www.douyin.com/",
+#             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,like Gecko) Chrome/104.0.0.0 Safari/537.36",
+#         },
+#     }
+
+#     async def get_qrcode() -> str:
+#         params = LoginGetQr(verifyFp=verify_fp, fp=verify_fp)
+#         async with DouyinCrawler(kwargs) as crawler:
+#             response = await crawler.fetch_login_qrcode(params)
+#             sso = GetQrcodeFilter(response)
+#             show_qrcode(sso.qrcode_index_url)
+#             return await check_qrcode(sso.token, crawler)
+
+#     async def check_qrcode(token: str, crawler) -> bool:
+#         """
+#         检查二维码状态
+
+#         Args:
+#             token (str): 二维码token
+
+#         Returns:
+#             bool: 是否成功登录
+#         """
+#         logger.debug(f"check_qrcode token:{token}")
+
+#         status_mapping = {
+#             "1": {"message": _("[  登录  ]:等待二维码扫描！"), "log": logger.info},
+#             "2": {"message": _("[  登录  ]:扫描二维码成功！"), "log": logger.info},
+#             "3": {"message": _("[  登录  ]:确认二维码登录！"), "log": logger.info},
+#             "4": {
+#                 "message": _("[  登录  ]:访问频繁，请检查参数！"),
+#                 "log": logger.warning,
+#             },
+#             "5": {
+#                 "message": _("[  登录  ]:二维码过期，重新获取！"),
+#                 "log": logger.warning,
+#             },
+#             "2046": {
+#                 "messages": _("[  登录  ]:扫码环境异常，请前往app验证！"),
+#                 "log": logger.warning,
+#             },
+#         }
+
+#         while True:
+#             params = LoginCheckQr(token=token, verifyFp=verify_fp, fp=verify_fp)
+#             check_response = await crawler.fetch_check_qrcode(params)
+#             check = CheckQrcodeFilter(check_response.json())
+#             check_status = check.status
+#             check_status = "2046" if check_status is None else check_status
+
+#             status_info = status_mapping.get(check_status, {})
+#             message = status_info.get("message", "")
+#             log_func = status_info.get("log", logger.info)
+#             logger.info(message)
+#             log_func(message)
+
+#             if check_status == "3":
+#                 login_cookies = split_set_cookie(
+#                     check_response.headers.get("set-cookie", "")
+#                 )
+#                 is_login, login_cookie = await login_redirect(
+#                     check.redirect_url, login_cookies, crawler
+#                 )
+#                 return is_login, login_cookie
+#             elif check_status == "5":
+#                 get_qrcode()
+#                 break
+#             elif check_status is None:
+#                 break
+
+#             await asyncio.sleep(5)
+
+#     async def login_redirect(redirect_url: str, login_cookies: str, crawler):
+#         """
+#         登录重定向，获取登录后Cookie
+
+#         Args:
+#             redirect_url (str): 重定向url
+#             login_cookies (str): 登录cookie
+
+#         Returns:
+#             is_login (bool): 是否成功登录
+#             login_cookie (str): 登录cookie
+#         """
+#         crawler.headers["Cookie"] = login_cookies
+#         redirect_response = await crawler.get_fetch_data(redirect_url)
+
+#         if redirect_response.history and len(redirect_response.history) > 1:
+#             logger.debug(f"login_redirect headers:{redirect_response.headers}")
+#             logger.debug(f"login_redirect history:{redirect_response.history}")
+#             logger.debug(
+#                 f"login_redirect history[0] headers:{redirect_response.history[0].headers}"
+#             )
+#             logger.debug(
+#                 f"login_redirect history[1] headers:{redirect_response.history[1].headers}"
+#             )
+#             # 获取重最后一个重定向里的Cookie
+#             login_cookie = split_set_cookie(
+#                 redirect_response.history[1].headers.get("set-cookie", "")
+#             )
+#             logger.debug(f"login_cookie:{login_cookie}")
+#             return True, login_cookie
+#         else:
+#             logger.warning("[  登录  ]:自动重定向登录失败")
+#             if redirect_response:
+#                 error_message = f"网络异常: 自动重定向登录失败。 状态码: {redirect_response.status_code}, 响应体: {redirect_response.text}"
+#             else:
+#                 error_message = f"网络异常: 自动重定向登录失败。 无法连接到服务器。"
+#             logger.warning(error_message)
+#             return False, ""
+
+#     verify_fp = VerifyFpManager.gen_verify_fp()
+#     return await get_qrcode()
 
 
 async def main(kwargs):

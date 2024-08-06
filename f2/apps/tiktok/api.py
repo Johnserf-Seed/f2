@@ -33,7 +33,7 @@ class TiktokAPIEndpoints:
     # 用户播放列表 (User Play List)
     USER_PLAY_LIST = f"{TIKTOK_DOMAIN}/api/user/playlist/"
 
-    # 用户合辑 (User Mix)
+    # 用户合集 (User Mix)
     USER_MIX = f"{TIKTOK_DOMAIN}/api/mix/item_list/"
 
     # 猜你喜欢 (Guess You Like)
@@ -50,3 +50,12 @@ class TiktokAPIEndpoints:
 
     # 作品评论 (Post Comment)
     POST_COMMENT = f"{TIKTOK_DOMAIN}/api/comment/list/"
+
+    # 作品搜索 (Post Search)
+    POST_SEARCH = f"{TIKTOK_DOMAIN}/api/search/item/full/"
+
+    # 用户直播 (User Live)
+    USER_LIVE = f"{TIKTOK_DOMAIN}/api-live/user/room/"
+
+    # 检查开播状态 (Check Live Status)
+    CHECK_LIVE_ALIVE = f"{WEBCAST_DOMAIN}/webcast/room/check_alive/"

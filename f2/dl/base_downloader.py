@@ -6,6 +6,7 @@ import asyncio
 import aiofiles
 import traceback
 from pathlib import Path
+from urllib.error import HTTPError as urllib_HTTPError
 from rich.progress import TaskID
 from typing import Union, Optional, Any, List
 
@@ -22,24 +23,19 @@ from f2.utils._dl import (
     get_segments_from_m3u8,
 )
 
+# 最大片段缓存数量，超过这个数量就会进行清理
+# (Maximum segment cache count, clear when it exceeds this count)
+MAX_SEGMENT_COUNT = 1000
+
 
 class BaseDownloader(BaseCrawler):
     """基础下载器 (Base Downloader Class)"""
 
     def __init__(self, kwargs: dict = ...):
-        proxies_conf = kwargs.get("proxies", {"http": None, "https": None})
-        proxies = {
-            "http://": proxies_conf.get("http", None),
-            "https://": proxies_conf.get("https", None),
-        }
-
-        self.headers = {
-            "User-Agent": kwargs["headers"]["User-Agent"],
-            "Referer": kwargs["headers"]["Referer"],
-            "Cookie": kwargs["cookie"],
-        }
-
+        proxies = kwargs.get("proxies", {"http://": None, "https://": None})
+        self.headers = kwargs.get("headers") | {"Cookie": kwargs["cookie"]}
         super().__init__(proxies=proxies, crawler_headers=self.headers)
+
         self.progress = RichConsoleManager().progress
         self.download_tasks = []
 
@@ -49,7 +45,6 @@ class BaseDownloader(BaseCrawler):
 
     async def _download_chunks(
         self,
-        client: httpx.AsyncClient,
         request: httpx.Request,
         file: Any,
         content_length: int,
@@ -59,7 +54,6 @@ class BaseDownloader(BaseCrawler):
         为给定的任务ID下载块 (Download chunks for a given task ID)
 
         Args:
-            client (httpx.AsyncClient): HTTP客户端 (HTTP client)
             request (httpx.Request): HTTP请求对象 (HTTP request object)
             file: 文件对象 (File object)
             content_length (int): 内容长度 (Content length)
@@ -67,7 +61,7 @@ class BaseDownloader(BaseCrawler):
         """
 
         try:
-            response = await client.send(request, stream=True)
+            response = await self.aclient.send(request, stream=True)
             async for chunk in response.aiter_bytes(get_chunk_size(content_length)):
                 if SignalManager.is_shutdown_signaled():
                     break
@@ -75,10 +69,27 @@ class BaseDownloader(BaseCrawler):
                 await self.progress.update(
                     task_id, advance=len(chunk), total=int(content_length)
                 )
-        except httpx.ReadTimeout as e:
-            logger.warning(_("文件区块下载超时：{0}").format(e))
+        except httpx.TimeoutException as e:
+            logger.error(traceback.format_exc())
+            logger.error(_("文件区块超时：{0}").format(e))
+        except httpx.NetworkError as e:
+            logger.error(traceback.format_exc())
+            logger.error(_("文件区块网络错误：{0}").format(e))
+        except httpx.HTTPStatusError as e:
+            logger.error(traceback.format_exc())
+            logger.error(_("文件区块HTTP错误：{0}").format(e))
+        except httpx.ProxyError as e:
+            logger.error(traceback.format_exc())
+            logger.error(_("文件区块代理错误：{0}").format(e))
+        except httpx.UnsupportedProtocol as e:
+            logger.error(traceback.format_exc())
+            logger.error(_("文件区块协议错误：{0}").format(e))
+        except httpx.StreamError as e:
+            logger.error(traceback.format_exc())
+            logger.error(_("文件区块流错误：{0}").format(e))
         except Exception as e:
-            logger.error(_("文件区块下载失败：{0}").format(e))
+            logger.error(traceback.format_exc())
+            logger.error(_("文件区块下载失败：{0} Exception：{1}").format(request, e))
 
     async def download_file(
         self,
@@ -111,7 +122,9 @@ class BaseDownloader(BaseCrawler):
             for link in urls:
                 # 获取文件内容大小 (Get the size of the file content)
                 content_length = await get_content_length(
-                    link, self.headers, self.proxies
+                    link,
+                    self.headers,
+                    self.proxies,
                 )
 
                 logger.debug(
@@ -158,7 +171,7 @@ class BaseDownloader(BaseCrawler):
                     tmp_path, "ab" if start_byte else "wb"
                 ) as file:
                     await self._download_chunks(
-                        self.aclient, range_request, file, content_length, task_id
+                        range_request, file, content_length, task_id
                     )
 
                 # 下载完成后重命名文件 (Rename file after download is complete)
@@ -189,7 +202,7 @@ class BaseDownloader(BaseCrawler):
 
                 await self.progress.update(
                     task_id,
-                    description=_("[  完成  ]："),
+                    description=_("[  完成  ]:"),
                     filename=trim_filename(full_path.name, 45),
                     state="completed",
                 )
@@ -203,7 +216,7 @@ class BaseDownloader(BaseCrawler):
                 logger.warning("所有链接都无法下载")
                 await self.progress.update(
                     task_id,
-                    description=_("[  丢失  ]：所有链接都无法下载"),
+                    description=_("[  丢失  ]："),
                     filename=trim_filename(full_path.name, 45),
                     state="error",
                 )
@@ -259,8 +272,13 @@ class BaseDownloader(BaseCrawler):
         """
         async with self.semaphore:
             full_path = self._ensure_path(full_path)
-            total_downloaded = 1024000
+            # 设置默认下载总量 (Set default total download)
+            total_downloaded = 10240000
+            # 默认块大小 (Default chunk size)
             default_chunks = 409600
+            # 记录已经下载的片段序号
+            # (Record the segment number that has been downloaded)
+            downloaded_segments = set()
 
             while not SignalManager.is_shutdown_signaled():
                 try:
@@ -269,7 +287,7 @@ class BaseDownloader(BaseCrawler):
                     if not segments:
                         await self.progress.update(
                             task_id,
-                            description=_("[  丢失  ]:"),
+                            description=_("[  丢失  ]："),
                             filename=trim_filename(full_path.name, 45),
                             state="completed",
                         )
@@ -283,57 +301,77 @@ class BaseDownloader(BaseCrawler):
                             if SignalManager.is_shutdown_signaled():
                                 break
 
-                            ts_url = segment.absolute_uri
-                            ts_content_length = await get_content_length(
-                                ts_url, self.headers
-                            )
-                            if ts_content_length == 0:
-                                ts_content_length = default_chunks
-                                logger.warning(
-                                    _(
-                                        "无法读取该TS文件字节长度，将使用默认400kb块大小处理数据"
+                            # 检查是否已经下载过该片段 (Check if the segment has been downloaded)
+                            if segment.absolute_uri not in downloaded_segments:
+                                ts_url = segment.absolute_uri
+                                ts_content_length = await get_content_length(
+                                    ts_url,
+                                    self.headers,
+                                    self.proxies,
+                                )
+                                if ts_content_length == 0:
+                                    ts_content_length = default_chunks
+                                    logger.warning(
+                                        _(
+                                            "无法读取该TS文件字节长度，将使用默认400kb块大小处理数据"
+                                        )
+                                    )
+                                ts_request = self.aclient.build_request(
+                                    "GET", ts_url, headers=self.headers
+                                )
+                                ts_response = await self.aclient.send(
+                                    ts_request, stream=True
+                                )
+
+                                try:
+                                    async for chunk in ts_response.aiter_bytes(
+                                        get_chunk_size(ts_content_length)
+                                    ):
+                                        if SignalManager.is_shutdown_signaled():
+                                            break
+
+                                        # 直播流分块下载，每次下载后更新进度条
+                                        # (Live stream block download, update progress bar after each download)
+                                        await file.write(chunk)
+                                        total_downloaded += len(chunk)
+                                        await self.progress.update(
+                                            task_id,
+                                            advance=len(chunk),
+                                            total=total_downloaded,
+                                        )
+
+                                    # 记录已经下载的片段序号
+                                    # (Record the segment number that has been downloaded)
+                                    downloaded_segments.add(segment.absolute_uri)
+
+                                except httpx.ReadTimeout as e:
+                                    logger.warning(_("TS文件下载超时: {0}").format(e))
+                                except Exception as e:
+                                    logger.error(_("TS文件下载失败: {0}").format(e))
+                                    logger.error(traceback.format_exc())
+                                finally:
+                                    await ts_response.aclose()
+                            else:
+                                logger.debug(
+                                    _("为你跳过已下载的片段，URI: {0}").format(
+                                        segment.absolute_uri
                                     )
                                 )
-                            ts_request = self.aclient.build_request(
-                                "GET", ts_url, headers=self.headers
-                            )
-                            ts_response = await self.aclient.send(
-                                ts_request, stream=True
-                            )
 
-                            try:
-                                async for chunk in ts_response.aiter_bytes(
-                                    get_chunk_size(ts_content_length)
-                                ):
-                                    if SignalManager.is_shutdown_signaled():
-                                        break
+                            # 每下载一定数量的片段后，清理一次集合
+                            # (After downloading a certain number of segments, clean up the collection)
+                            if len(downloaded_segments) > MAX_SEGMENT_COUNT:
+                                downloaded_segments = set()
 
-                                    # 直播流分块下载，每次下载后更新进度条
-                                    # (Live stream block download, update progress bar after each download)
-                                    await file.write(chunk)
-                                    total_downloaded += len(chunk)
-                                    await self.progress.update(
-                                        task_id,
-                                        advance=len(chunk),
-                                        total=total_downloaded,
-                                    )
-
-                            except httpx.ReadTimeout as e:
-                                logger.warning(_("TS文件下载超时: {0}").format(e))
-                            except Exception as e:
-                                logger.error(_("TS文件下载失败: {0}").format(e))
-                                logger.error(traceback.format_exc())
-                            finally:
-                                await ts_response.aclose()
                     # 等待一段时间后再次请求更新 (Request update again after waiting for a while)
-                    await asyncio.sleep(5)
+                    await asyncio.sleep(segment.duration)
 
                 except httpx.HTTPStatusError as e:
                     if e.response.status_code == 404:
                         logger.warning(_("m3u8文件或ts文件未找到，可能直播结束"))
                         await self.progress.update(
                             task_id,
-                            description=_("[  丢失  ]:"),
+                            description=_("[  丢失  ]："),
                             filename=trim_filename(full_path.name, 45),
                             state="completed",
                         )
@@ -342,18 +380,38 @@ class BaseDownloader(BaseCrawler):
                         logger.error(_("HTTP错误: {0}").format(e))
                         await self.progress.update(
                             task_id,
-                            description=_("[  失败  ]:"),
+                            description=_("[  失败  ]："),
                             filename=trim_filename(full_path.name, 45),
                             state="completed",
                         )
                         return
+
+                except urllib_HTTPError as e:
+                    if e.code == 404:
+                        logger.warning(_("m3u8文件或ts文件未找到，直播已结束"))
+                        await self.progress.update(
+                            task_id,
+                            description=_("[  完成  ]:"),
+                            filename=trim_filename(full_path.name, 45),
+                            state="completed",
+                        )
+                        return
+                    logger.error(_("m3u8文件下载失败：{0}，但文件已保存").format(e))
+                    logger.error(traceback.format_exc())
+                    await self.progress.update(
+                        task_id,
+                        description=_("[  失败  ]："),
+                        filename=trim_filename(full_path.name, 45),
+                        state="completed",
+                    )
+                    return
 
                 except Exception as e:
                     logger.error(_("m3u8文件解析失败: {0}").format(e))
                     logger.error(traceback.format_exc())
                     await self.progress.update(
                         task_id,
-                        description=_("[  失败  ]:"),
+                        description=_("[  失败  ]："),
                         filename=trim_filename(full_path.name, 45),
                         state="completed",
                     )
@@ -514,7 +572,10 @@ class BaseDownloader(BaseCrawler):
 
     async def close(self) -> None:
         """关闭下载器 (Close the downloader)"""
-        await self.aclient.aclose()
+        if self.client:
+            self.client.close()
+        if self.aclient:
+            await self.aclient.aclose()
 
     async def __aenter__(self) -> "BaseDownloader":
         """进入上下文管理器 (Enter the context manager)"""
@@ -524,4 +585,4 @@ class BaseDownloader(BaseCrawler):
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
         """退出上下文管理器 (Exit the context manager)"""
         self.progress.__exit__(exc_type, exc_val, exc_tb)
-        await self.aclient.aclose()
+        await self.close()

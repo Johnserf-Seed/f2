@@ -4,7 +4,10 @@
 
 [![Downloads](https://pepy.tech/badge/f2/month)](https://pepy.tech/project/f2)
 [![PyPI version](https://badge.fury.io/py/f2.svg)](https://badge.fury.io/py/f2)
+[![Dev Branch](https://badgen.net/badge/branch/v0.0.1.6-pw2/blue)](https://github.com/Johnserf-Seed/f2/tree/v0.0.1.6-pw2)
+[![Discord](https://img.shields.io/discord/1146473603450282004?label=Discord)](https://discord.gg/3PhtPmgHf8)
 [![codecov](https://codecov.io/gh/Johnserf-Seed/f2/graph/badge.svg?token=T9DH4QPZSS)](https://codecov.io/gh/Johnserf-Seed/f2)
+[![TikHub](https://img.shields.io/badge/Sponsor-TikHub-orange?style=flat-square&logo=tiktok)](https://beta-web.tikhub.io/users/signup?referral_code=6hLcGD94)
 [![APACHE-2.0](https://img.shields.io/github/license/johnserf-seed/f2)](https://github.com/Johnserf-Seed/f2/blob/main/LICENSE)
 
 
@@ -53,15 +56,30 @@
 
 ## ✨ New Changes
 
-When upgrading to version `0.0.1.5` of `F2`, please note the following key updates.
+When downloading or upgrading to a different version of `F2`, please note the following critical version updates.
 
-- `XBogus` parameter in `0.0.1.5` version now supports custom User-Agent (UA), please pay attention to UA specification.
-- The rebuilt database contains original data of interfaces, so you need to delete the old database file. If you want to retain records, please pay attention to migration.
-- The return types of all `fetch` methods have been unified to filter types, so you need to pay attention to this change.
-- Filter has added the `_to_raw` method, which can convert the filter to original interface data.
-- The file name template has been updated, and if your file name does not meet the specifications, an exception will be thrown.
-- `douyin` collection page links cannot be resolved, see [Douyin Collection Works](#抖音合集作品).
-- For more changes, see [ChangeLog](https://github.com/Johnserf-Seed/f2/blob/main/CHANGELOG.md#0015---2024-04-04).
+<details>
+  <summary> 📡 v0.0.1.6-pw2 </summary>
+
+  - The configuration file format has been updated. If you are using an old configuration file, please migrate accordingly.
+  - The default timezone for all timestamps is now (`UTC/GMT+08:00`).
+  - The `douyin` live stream filenames have been adjusted to `flv`, and albums have been reverted to `webp`.
+  - The 403 error for `tiktok` video URLs has been fixed. [Solution for TikTok video URL 403](https://johnserf-seed.github.io/f2/question-answer/qa.html#tiktok-403-forbidden)
+  - `douyin` now defaults to using the `ab` algorithm for requests. (The full-powered ab algorithm will be open-sourced later).
+  - For more changes, see [ChangeLog](https://github.com/Johnserf-Seed/f2/blob/main/CHANGELOG.md#0015---2024-04-04).
+</details>
+
+<details>
+  <summary> 📡 v0.0.1.5-pw2 </summary>
+
+  - `XBogus` parameter in `0.0.1.5` version now supports custom User-Agent (UA), please pay attention to UA specification.
+  - The rebuilt database contains original data of interfaces, so you need to delete the old database file. If you want to retain records, please pay attention to migration.
+  - The return types of all `fetch` methods have been unified to filter types, so you need to pay attention to this change.
+  - Filter has added the `_to_raw` method, which can convert the filter to original interface data.
+  - The file name template has been updated, and if your file name does not meet the specifications, an exception will be thrown.
+  - `douyin` collection page links cannot be resolved, see [Douyin Collection Works](#抖音合集作品).
+  - For more changes, see [ChangeLog](https://github.com/Johnserf-Seed/f2/blob/main/CHANGELOG.md#0015---2024-04-04).
+</details>
 
 
 ## 📑 Documentation
@@ -77,9 +95,9 @@ Many features are not fully developed in the `preview` version. If you find any 
 
 ## 🗓️ Todo
 
-- Support for `weibo` and `x` will be added in version `0.0.1.6`.
-- More `douyin` and `tiktok` interfaces will be added in version `0.0.1.6`.
-- Known issues from previous versions will be fixed in version `0.0.1.6`.
+- Local forwarding functionality will be added in version `0.0.1.7`.
+- More interfaces for `douyin`, `tiktok`, `weibo`, and `x` will be added in version `0.0.1.7`.
+- Known issues with `x` will be fixed in version `0.0.1.7`.
 
 
 ## 🐛 Updates
@@ -98,37 +116,62 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
   - 🟣 Indicates that login is required to download works that are only visible to oneself, favorited works, works in collection folders, or liked works. (After login, ignores own privacy settings and obtains personalized content)
   - ⚫ Indicates that login is not required to download public works, works in collection folders, liked works, etc. (Only downloads works visible to others and pages)
 
-  | Feature | Account Status | Interface | Feature Status |
+  | Feature | Account Status | API | Status |
   | --- | --- | --- | --- |
-  | User Information | 🟣⚫ | `handler_user_profile` | 🟢 |
-  | Single Work (Video, Album, Daily) | 🟣⚫ | `fetch_one_video` | 🟢 |
-  | Home Page Works | 🟣⚫ | `fetch_user_post_videos` | 🟢 |
-  | Liked Works | 🟣⚫ | `fetch_user_like_videos` | 🟢 |
-  | Favorite Works | 🟣 | `fetch_user_collects_videos` | 🟢 |
-  | Collection Works | 🟣 | `fetch_user_collection_videos` | 🟢 |
-  | Collected Original Sound | 🟣 | `fetch_user_music_collection` | 🟢 |
-  | Collected Collections | 🟣 | `fetch_user_mix_collection` | 🔵 |
-  | Collected Short Films | 🟣 | `fetch_user_series_collection` | 🟤 |
-  | Collection Works | ⚫ | `fetch_user_mix_videos` | 🟢 |
-  | Home Page Recommended Works | 🟣⚫ | `fetch_user_feed_videos` | 🟡 |
-  | Similar Recommended Works | ⚫ | `fetch_related_videos` | 🔵 |
+  | User Information | 🟣⚫ | `fetch_user_profile` | 🟢 |
+  | Single Video (Video, Album, Daily) | 🟣⚫ | `fetch_one_video` | 🟢 |
+  | Homepage Videos | 🟣⚫ | `fetch_user_post_videos` | 🟢 |
+  | Liked Videos | 🟣⚫ | `fetch_user_like_videos` | 🟢 |
+  | Collection Folder Videos | 🟣⚫ | `fetch_user_collects_videos` | 🟢 |
+  | Collected Videos | 🟣 | `fetch_user_collection_videos` | 🟢 |
+  | Collected Music | 🟣 | `fetch_user_music_collection` | 🟢 |
+  | Collected Playlist | 🟣 | `fetch_user_mix_collection` | 🔵 |
+  | Collected Series | 🟣 | `fetch_user_series_collection` | 🟤 |
+  | Playlist Videos | ⚫ | `fetch_user_mix_videos` | 🟢 |
+  | Recommended Videos | 🟣⚫ | `fetch_user_feed_videos` | 🟢 |
+  | Related Videos | ⚫ | `fetch_related_videos` | 🟢 |
   | Live Room Information (Stream Download) | ⚫ | `fetch_user_live_videos`, `fetch_user_live_videos_by_room_id` | 🟢 |
-  | Live Room Danmaku | ⚫ | `fetch_user_live_danmu` | 🔵 |
-  | Following Users' Live Broadcasts | 🟣⚫ | `fetch_user_following_lives` | 🔵 |
-  | Following User Information | 🟣⚫ | `fetch_user_following` | 🟢 |
-  | Fan User Information | 🟣⚫ | `fetch_user_follower` | 🟢 |
-  | Following User Works | 🟣⚫ | `fetch_user_following_videos` | 🟤 |
-  | Fan User Works | 🟣⚫ | `fetch_user_follower_videos` | 🟤 |
-  | Friend's Works | 🟣 | `fetch_user_friend_videos` | 🔵 |
+  | Live Room Load | ⚫ | `fetch_live_im` | 🟢 |
+  | Live Room Danmaku | ⚫ | `fetch_user_live_danmu` | 🟢 |
+  | Followed Users Live | 🟣⚫ | `fetch_user_following_lives` | 🟢 |
+  | Followed Users Information | 🟣⚫ | `fetch_user_following` | 🟢 |
+  | Followers Information | 🟣⚫ | `fetch_user_follower` | 🟢 |
+  | Followed Users Videos | 🟣⚫ | `fetch_user_following_videos` | 🟤 |
+  | Followers Videos | 🟣⚫ | `fetch_user_follower_videos` | 🟤 |
+  | Friends' Videos | 🟣 | `fetch_friend_feed_videos` | 🟢 |
   | Search Videos | ⚫ | `fetch_search_videos` | 🔵 |
   | Search Users | ⚫ | `fetch_search_users` | 🔵 |
-  | Search Lives | ⚫ | `fetch_search_lives` | 🔵 |
-  | Guess What You Want to Search (Related Search) | ⚫ | `fetch_search_suggest` | 🟤 |
-  | DouYin Hotspot | ⚫ | `fetch_hot_search` | 🟤 |
-  | Work Comments | 🟣⚫ | `fetch_video_comments` | 🔵 |
-  | Viewing History | 🟣 | `fetch_user_history_read` | 🟤 |
+  | Search Live | ⚫ | `fetch_search_lives` | 🔵 |
+  | Search Suggestions | ⚫ | `fetch_search_suggest` | 🟤 |
+  | Douyin Hot Search | ⚫ | `fetch_hot_search` | 🟤 |
+  | Video Comments | 🟣⚫ | `fetch_video_comments` | 🔵 |
+  | Watch History | 🟣 | `fetch_user_history_read` | 🟤 |
   | Watch Later | 🟣 | `fetch_user_watch_later` | 🟤 |
   | ... | ... | ... | ... |
+
+  | Tool | Class | API | Status |
+  | --- | --- | --- | --- |
+  | Manage Client Configuration | `ClientConfManager` | | 🟢 |
+  | Generate Real msToken | `TokenManager` | `gen_real_msToken` | 🟢 |
+  | Generate Fake msToken | `TokenManager` | `gen_false_msToken` | 🟢 |
+  | Generate ttwid | `TokenManager` | `gen_ttwid` | 🟢 |
+  | Generate webid | `TokenManager` | `gen_webid` | 🟢 |
+  | Generate verify_fp | `VerifyFpManager` | `gen_verify_fp` | 🟢 |
+  | Generate s_v_web_id | `VerifyFpManager` | `gen_s_v_web_id` | 🟢 |
+  | Generate Live Signature | `DouyinWebcastSignature` | `get_signature` | 🟢 |
+  | Generate wss Signature Parameters from API Model | `WebcastSignatureManager` | `model_2_endpoint` | 🟢 |
+  | Generate Xb Parameters from API URL | `XBogusManager` | `str_2_endpoint` | 🟢 |
+  | Generate Xb Parameters from API Model | `XBogusManager` | `model_2_endpoint` | 🟢 |
+  | Generate Ab Parameters from API URL | `ABogusManager` | `str_2_endpoint` | 🟢 |
+  | Generate Ab Parameters from API Model | `ABogusManager` | `model_2_endpoint` | 🟢 |
+  | Extract Single User ID | `SecUserIdFetcher` | `get_sec_user_id` | 🟢 |
+  | Extract User IDs from List | `SecUserIdFetcher` | `get_all_sec_user_id` | 🟢 |
+  | Extract Single Video ID | `AwemeIdFetcher` | `get_aweme_id` | 🟢 |
+  | Extract Video IDs from List | `AwemeIdFetcher` | `get_all_aweme_id` | 🟢 |
+  | Extract Single Playlist ID | `MixIdFetcher` | `get_mix_id` | 🟢 |
+  | Extract Playlist IDs from List | `MixIdFetcher` | `get_all_mix_id` | 🟢 |
+  | Extract Single Live Room ID | `WebCastIdFetcher` | `get_webcast_id` | 🟢 |
+  | Extract Live Room IDs from List | `WebCastIdFetcher` | `get_all_webcast_id` | 🟢 |
  </details>
 
 <details>
@@ -139,12 +182,16 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
 
   | Feature | Account Status | Interface | Feature Status |
   | --- | --- | --- | --- |
-  | User Information | 🟣⚫ | `handler_user_profile` | 🟢 |
+  | User Information | 🟣⚫ | `fetch_user_profile` | 🟢 |
   | Single Work | 🟣⚫ | `fetch_one_video` | 🟢 |
   | Home Page Works | 🟣⚫ | `fetch_user_post_videos` | 🟢 |
   | Liked Works | 🟣⚫ | `fetch_user_like_videos` | 🟢 |
   | Favorite Works | 🟣⚫ | `fetch_user_collect_videos` | 🟢 |
+  | Playlist  | 🟣⚫ | `fetch_play_list` | 🟢 |
   | Playlist Works | 🟣⚫ | `fetch_user_mix_videos` | 🟢 |
+  | Post Search|🟣⚫|`fetch_search_videos`|🟢|
+  | Live Room Information (Stream Download) |⚫|`fetch_user_live_videos`|🟢|
+  | Check If The webcast Is Alive|🟣⚫|`fetch_check_live_alive`|🟢|
   | ... | ... | ... | ... |
  </details>
 
@@ -198,6 +245,18 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
 
   <img src='https://github.com/Johnserf-Seed/f2/assets/40727745/96a586a4-94c4-4866-b2ac-446b58d8f8a0'>
 
+  ### DouYin Related Videos
+
+  <img src="https://github.com/Johnserf-Seed/f2/assets/40727745/e36fb510-39ef-486e-b944-7dbf8cf25c36">
+
+  ### DouYin Friend Videos
+
+  <img src="https://github.com/Johnserf-Seed/f2/assets/40727745/437fa0ad-9524-4674-9d73-56db815113ef">
+
+  ### DouYin Webcast Danmaku
+
+  https://github.com/Johnserf-Seed/f2/assets/40727745/500d1eaf-59ba-44ba-849b-666c0ddf8469
+
 </details>
 
 <details>
@@ -227,6 +286,9 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
 
   <img src='https://github.com/Johnserf-Seed/f2/assets/40727745/17c9eb02-53b5-4484-8a6d-777a074b99d9'>
 
+  ### TikTok Post Search
+  <img src='https://github.com/Johnserf-Seed/f2/assets/40727745/091e66d5-f123-4883-9360-db3dad359d7d'>
+
 </details>
 
 
@@ -237,17 +299,6 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
 
   ```bash
   .
-  ├── .github
-  │   ├── ISSUE_TEMPLATE
-  │   │   ├── ask-question.md
-  │   │   ├── bug-report.md
-  │   │   └── feature_request.md
-  │   └── workflows
-  │       └── Codecov.yml
-  │       └── deploy.yml
-  ├── .gitignore
-  ├── .vscode
-  │   └── settings.json
   ├── CHANGELOG.md
   ├── CODE_OF_CONDUCT.md
   ├── CONTRIBUTING.md
@@ -256,13 +307,9 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
   ├── README.en.md
   ├── README.md
   ├── SECURITY.md
+  ├── babel.cfg
+  ├── coverage.xml
   ├── docs
-  │   ├── .vitepress
-  │   │   ├── config.mts
-  │   │   └── theme
-  │   │       ├── index.ts
-  │   │       └── styles
-  │   │           └── vars.css
   │   ├── advance-guide.md
   │   ├── cli.md
   │   ├── en
@@ -281,11 +328,14 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
   │   │   ├── apps
   │   │   │   ├── douyin
   │   │   │   │   └── index.md
-  │   │   │   └── tiktok
+  │   │   │   ├── tiktok
+  │   │   │   │   └── index.md
+  │   │   │   ├── weibo
+  │   │   │   │   └── index.md
+  │   │   │   └── x
   │   │   │       └── index.md
   │   │   └── what-is-f2.md
   │   ├── index.md
-  │   ├── install.md
   │   ├── package-lock.json
   │   ├── package.json
   │   ├── public
@@ -317,11 +367,17 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
   │   ├── snippets
   │   │   ├── QA.md
   │   │   ├── douyin
+  │   │   │   ├── abogus.py
   │   │   │   ├── aweme-id.py
+  │   │   │   ├── aweme-related.py
+  │   │   │   ├── client-config.py
   │   │   │   ├── format-file-name.py
+  │   │   │   ├── json-2-lrc.py
+  │   │   │   ├── mix-id.py
   │   │   │   ├── mstoken-false.py
   │   │   │   ├── mstoken-real.py
   │   │   │   ├── one-video.py
+  │   │   │   ├── query-user.py
   │   │   │   ├── s_v_web_id.py
   │   │   │   ├── sec-user-id.py
   │   │   │   ├── show-qrcode.py
@@ -330,24 +386,32 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
   │   │   │   ├── ttwid.py
   │   │   │   ├── user-collection.py
   │   │   │   ├── user-collects.py
+  │   │   │   ├── user-feed.py
   │   │   │   ├── user-folder.py
+  │   │   │   ├── user-follow-live.py
   │   │   │   ├── user-follower.py
   │   │   │   ├── user-following.py
+  │   │   │   ├── user-friend.py
   │   │   │   ├── user-get-add.py
   │   │   │   ├── user-like.py
+  │   │   │   ├── user-live-im-fetch.py
   │   │   │   ├── user-live-room-id.py
   │   │   │   ├── user-live.py
   │   │   │   ├── user-mix.py
-  │   │   │   ├── user-nickname.py
   │   │   │   ├── user-post.py
   │   │   │   ├── user-profile.py
   │   │   │   ├── verify_fp.py
   │   │   │   ├── video-get-add.py
   │   │   │   ├── webcast-id.py
+  │   │   │   ├── webcast-signature.py
+  │   │   │   ├── webid.py
   │   │   │   └── xbogus.py
   │   │   ├── set-debug.py
   │   │   ├── tiktok
   │   │   │   ├── aweme-id.py
+  │   │   │   ├── check-live-alive.py
+  │   │   │   ├── client-config.py
+  │   │   │   ├── device-id.py
   │   │   │   ├── format-file-name.py
   │   │   │   ├── one-video.py
   │   │   │   ├── sec-uid.py
@@ -359,13 +423,16 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
   │   │   │   ├── user-get-add.py
   │   │   │   ├── user-like.py
   │   │   │   ├── user-mix.py
-  │   │   │   ├── user-nickname.py
   │   │   │   ├── user-playlist.py
   │   │   │   ├── user-post.py
   │   │   │   ├── user-profile.py
   │   │   │   ├── video-get-add.py
   │   │   │   └── xbogus.py
-  │   │       └── user-profile.py
+  │   │   ├── twitter
+  │   │   └── weibo
+  │   │       ├── user-profile.py
+  │   │       └── user-weibo.py
+  │   └── vite-.zip
   ├── f2
   │   ├── __init__.py
   │   ├── __main__.py
@@ -373,6 +440,9 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
   │   │   ├── __apps__.py
   │   │   ├── __init__.py
   │   │   ├── douyin
+  │   │   │   ├── algorithm
+  │   │   │   │   ├── webcast_signature.js
+  │   │   │   │   └── webcast_signature.py
   │   │   │   ├── api.py
   │   │   │   ├── cli.py
   │   │   │   ├── crawler.py
@@ -382,15 +452,20 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
   │   │   │   ├── handler.py
   │   │   │   ├── help.py
   │   │   │   ├── model.py
+  │   │   │   ├── proto
+  │   │   │   │   ├── douyin_webcast.proto
+  │   │   │   │   └── douyin_webcast_pb2.py
   │   │   │   ├── test
-  │   │   │   │   ├── test_apps_model.py
-  │   │   │   │   ├── test_aweme_id.py
-  │   │   │   │   ├── test_crawler.py
-  │   │   │   │   ├── test_handler.py
-  │   │   │   │   ├── test_lrc.py
-  │   │   │   │   ├── test_room_id.py
-  │   │   │   │   ├── test_sec_user_id.py
-  │   │   │   │   └── test_webcast_id.py
+  │   │   │   │   ├── test_douyin_apps_model.py
+  │   │   │   │   ├── test_douyin_aweme_id.py
+  │   │   │   │   ├── test_douyin_crawler.py
+  │   │   │   │   ├── test_douyin_handler.py
+  │   │   │   │   ├── test_douyin_lrc.py
+  │   │   │   │   ├── test_douyin_room_id.py
+  │   │   │   │   ├── test_douyin_sec_user_id.py
+  │   │   │   │   ├── test_douyin_token.py
+  │   │   │   │   ├── test_douyin_webcast_id.py
+  │   │   │   │   └── test_douyin_webcast_signature.py
   │   │   │   └── utils.py
   │   │   ├── tiktok
   │   │   │   ├── api.py
@@ -402,6 +477,10 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
   │   │   │   ├── handler.py
   │   │   │   ├── help.py
   │   │   │   ├── model.py
+  │   │   │   ├── test
+  │   │   │   │   ├── test_tiktok_crawler.py
+  │   │   │   │   ├── test_tiktok_device_id.py
+  │   │   │   │   └── test_tiktok_token.py
   │   │   │   └── utils.py
   │   │   ├── twitter
   │   │   │   ├── api.py
@@ -413,7 +492,27 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
   │   │   │   ├── handler.py
   │   │   │   ├── help.py
   │   │   │   ├── model.py
+  │   │   │   ├── test
+  │   │   │   │   ├── test_model.py
+  │   │   │   │   ├── test_tweet_id.py
+  │   │   │   │   └── ttt.py
   │   │   │   └── utils.py
+  │   │   └── weibo
+  │   │       ├── api.py
+  │   │       ├── cli.py
+  │   │       ├── crawler.py
+  │   │       ├── db.py
+  │   │       ├── dl.py
+  │   │       ├── filter.py
+  │   │       ├── handler.py
+  │   │       ├── help.py
+  │   │       ├── model.py
+  │   │       ├── test
+  │   │       │   ├── test_gen_visitor.py
+  │   │       │   ├── test_handler.py
+  │   │       │   ├── test_weibo_id.py
+  │   │       │   └── test_weibo_uid.py
+  │   │       └── utils.py
   │   ├── cli
   │   │   ├── __init__.py
   │   │   ├── cli_commands.py
@@ -451,17 +550,19 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
   │       ├── _dl.py
   │       ├── _signal.py
   │       ├── _singleton.py
+  │       ├── abogus.py
+  │       ├── abogus_async.py
+  │       ├── abogus_full.py
   │       ├── conf_manager.py
+  │       ├── decorators.py
   │       ├── json_filter.py
-  │       ├── mode_handler.py
   │       ├── utils.py
   │       └── xbogus.py
-  │   ├── app.yaml
-  │   ├── conf.yaml
-  │   └── defaults.yaml
+  ├── messages.pot
   ├── package-lock.json
   ├── package.json
   ├── pyproject.toml
+  ├── pytest.ini
   ├── tests
   │   ├── test_cli_console.py
   │   ├── test_desc_limit.py
@@ -471,12 +572,28 @@ Account status: ⚪ Represents unknown, 🟣 Represents login required (ignores 
   │   ├── test_logger.py
   │   ├── test_signal.py
   │   ├── test_singleton.py
+  │   ├── test_timestamp.py
   │   ├── test_utils.py
   │   └── test_xbogus.py
 
   ```
 
 </details>
+
+
+## 💰 Sponsor
+
+<a href="https://tikhub.io/"><img style="border-radius:20px" src="https://github.com/Johnserf-Seed/f2/assets/40727745/70a67dd1-dccb-44a9-b635-c29a950f1daf"></a>
+
+[TikHub](https://tikhub.io/) is a provider of premium data interface services. You can get free credits by signing up daily. You can use my signup invite link: [https://beta-web.tikhub.io/users/signup?referral_code=6hLcGD94](https://beta-web.tikhub.io/users/signup?referral_code=6hLcGD94) or Invitation code: `6hLcGD94` to get `$2` credit by signing up and recharging.
+
+[TikHub](https://tikhub.io/) offers the following services:
+
+- Rich data interface
+- Sign up daily to get free credits
+- High quality API service
+- Official website: https://tikhub.io/
+- Project address: https://github.com/TikHubIO/
 
 
 ## 👨‍💻 Contributions
@@ -501,6 +618,9 @@ If you are interested in extending new applications for `F2`, please refer to th
 - [pydantic](https://github.com/samuelcolvin/pydantic)
 - [qrcode](https://github.com/lincolnloop/python-qrcode)
 - [vitepress](https://github.com/vuejs/vitepress)
+- [websockets](https://github.com/python-websockets/websockets)
+- [protobuf](https://github.com/protocolbuffers/protobuf)
+- [PyExecJS](https://github.com/doloopwhile/PyExecJS)
 
 Without these libraries and programs, `F2` would not be able to achieve these functionalities. Sincere thanks for their contributions and efforts.
 

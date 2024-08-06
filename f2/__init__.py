@@ -1,5 +1,7 @@
+# path: f2/__init__.py
+
 __author__ = "JohnserfSeed <johnserf-seed@foxmail.com>"
-__version__ = "0.0.1.5"
+__version__ = "0.0.1.6"
 __description_cn__ = "基于[red]异步[/red]的[green]全平台下载工具."
 __description_en__ = "[yellow]Asynchronous based [/yellow]full-platform download tool."
 __reponame__ = "f2"
@@ -32,6 +34,32 @@ DOUYIN_MODE_LIST = [
     "music",
     "mix",
     "live",
+    "related",
+    "friend",
 ]
 
-TIKTOK_MODE_LIST = ["one", "post", "like", "collect", "mix"]
+TIKTOK_MODE_LIST = [
+    "one",
+    "post",
+    "like",
+    "collect",
+    "mix",
+    "search",
+    "live",
+]
+
+WEIBO_MODE_LIST = [
+    "one",
+    "post",
+    "like",
+]
+
+TWITTER_MODE_LIST = [
+    "one",
+    "post",
+    "retweet",
+    "like",
+    "bookmark",
+]
+
+PYPI_URL = "https://pypi.org/pypi"

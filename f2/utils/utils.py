@@ -1,15 +1,20 @@
 # path: f2/utils/utils.py
 
+import f2
 import re
 import sys
+import httpx
 import random
 import secrets
 import datetime
+import traceback
 import browser_cookie3
 import importlib_resources
 
 from typing import Union, Any
 from pathlib import Path
+
+from f2.log.logger import logger
 
 # 生成一个 16 字节的随机字节串 (Generate a random byte string of 16 bytes)
 seed_bytes = secrets.token_bytes(16)
@@ -38,7 +43,7 @@ def gen_random_str(randomlength: int) -> str:
 
 def get_timestamp(unit: str = "milli"):
     """
-    根据给定的单位获取当前时间 (Get the current time based on the given unit)
+    根据给定的单位获取当前时区的时间戳 (Get the current time based on the given unit)
 
     Args:
         unit (str): 时间单位，可以是 "milli"、"sec"、"min" 等
@@ -48,7 +53,9 @@ def get_timestamp(unit: str = "milli"):
         int: 根据给定单位的当前时间 (The current time based on the given unit)
     """
 
-    now = datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)
+    now = datetime.datetime.now(datetime.timezone.utc) - datetime.datetime(
+        1970, 1, 1, tzinfo=datetime.timezone.utc
+    )
     if unit == "milli":
         return int(now.total_seconds() * 1000)
     elif unit == "sec":
@@ -60,10 +67,12 @@ def get_timestamp(unit: str = "milli"):
 
 
 def timestamp_2_str(
-    timestamp: Union[str, int, float], format: str = "%Y-%m-%d %H-%M-%S"
+    timestamp: Union[str, int, float],
+    format: str = "%Y-%m-%d %H-%M-%S",
+    tz: datetime.timezone = datetime.timezone(datetime.timedelta(hours=8)),
 ) -> str:
     """
-    将 UNIX 时间戳转换为格式化字符串 (Convert a UNIX timestamp to a formatted string)
+    将 UNIX 时间戳转换为东八区北京时间格式化字符串使用
 
     Args:
         timestamp (int): 要转换的 UNIX 时间戳 (The UNIX timestamp to be converted)
@@ -71,18 +80,24 @@ def timestamp_2_str(
                                 默认为 '%Y-%m-%d %H-%M-%S'。
                                 (The format for the returned date-time string
                                 Defaults to '%Y-%m-%d %H-%M-%S')
+        tz (datetime.timezone, optional): 时区，默认为东八区北京时间。
 
     Returns:
         str: 格式化的日期时间字符串 (The formatted date-time string)
     """
     if timestamp is None or timestamp == "None":
-        return ""
+        return "Invalid timestamp"
 
     if isinstance(timestamp, str):
         if len(timestamp) == 30:
-            return datetime.datetime.strptime(timestamp, "%a %b %d %H:%M:%S %z %Y")
+            date_obj = datetime.datetime.strptime(timestamp, "%a %b %d %H:%M:%S %z %Y")
+        else:
+            date_obj = datetime.datetime.fromtimestamp(float(timestamp), tz=tz)
 
-    return datetime.datetime.fromtimestamp(float(timestamp)).strftime(format)
+    elif isinstance(timestamp, (int, float)):
+        date_obj = datetime.datetime.fromtimestamp(float(timestamp), tz=tz)
+
+    return date_obj.strftime(format)
 
 
 def num_to_base36(num: int) -> str:
@@ -348,3 +363,71 @@ def merge_config(
             merged_conf[key] = value  # CLI 参数会覆盖自定义配置和主配置中的同名参数
 
     return merged_conf
+
+
+def unescape_json(json_text: str) -> dict:
+    """
+    反转义 JSON 文本
+
+    Args:
+        json_text (str): 带有转义字符的 JSON 文本
+
+    Returns:
+        json_obj (dict): 反转义后的 JSON 对象
+    """
+
+    # 反转义 JSON 文本
+    json_text = re.sub(r"\\{2}", r"\\", json_text)
+    json_text = re.sub(r"\\\"", r"\"", json_text)
+    json_text = re.sub(r"\\", r"", json_text)
+    json_text = re.sub(r"\"{", r"{", json_text)
+    json_text = re.sub(r"}\"", r"}", json_text)
+    json_text = re.sub(r"\&", r"&", json_text)
+    json_text = re.sub(r"\\n", r"", json_text)
+    json_text = re.sub(r"\\t", r"", json_text)
+    json_text = re.sub(r"\\r", r"", json_text)
+
+    try:
+        # 尝试解析 JSON 文本
+        import json
+
+        json_obj = json.loads(json_text)
+    except Exception as e:
+        print(f"`unescape_json` error: {e}, raw_json: {json_text}")
+        json_obj = {}
+
+    return json_obj
+
+
+async def get_latest_version(package_name: str) -> str:
+    """
+    获取 Python 包的最新版本号
+
+    Args:
+        package_name (str): Python 包名
+
+    Returns:
+        str: Python 包的最新版本号
+    """
+    async with httpx.AsyncClient(
+        timeout=5.0,
+        transport=httpx.AsyncHTTPTransport(retries=5),
+        verify=False,
+    ) as aclient:
+        try:
+            response = await aclient.get(f"{f2.PYPI_URL}/{package_name}/json")
+            response.raise_for_status()
+            package_data = response.json()
+            latest_version = package_data["info"]["version"]
+            return latest_version
+        except (httpx.HTTPStatusError, httpx.RequestError, KeyError) as e:
+            # logger.error(traceback.format_exc())
+            return None
+
+
+class BaseEndpointManager:
+    @classmethod
+    def model_2_endpoint(cls, base_endpoint: str, params: dict) -> str:
+        param_str = "&".join([f"{k}={v}" for k, v in params.items()])
+        separator = "&" if "?" in base_endpoint else "?"
+        return f"{base_endpoint}{separator}{param_str}"

@@ -5,7 +5,10 @@
 
 [![Downloads](https://pepy.tech/badge/f2/month)](https://pepy.tech/project/f2)
 [![PyPI version](https://badge.fury.io/py/f2.svg)](https://badge.fury.io/py/f2)
+[![Dev Branch](https://badgen.net/badge/branch/v0.0.1.6-pw2/blue)](https://github.com/Johnserf-Seed/f2/tree/v0.0.1.6-pw2)
+[![Discord](https://img.shields.io/discord/1146473603450282004?label=Discord)](https://discord.gg/3PhtPmgHf8)
 [![codecov](https://codecov.io/gh/Johnserf-Seed/f2/graph/badge.svg?token=T9DH4QPZSS)](https://codecov.io/gh/Johnserf-Seed/f2)
+[![TikHub](https://img.shields.io/badge/%E8%B5%9E%E5%8A%A9%E5%95%86-TikHub-orange?style=flat-square&logo=tiktok)](https://beta-web.tikhub.io/users/signup?referral_code=6hLcGD94)
 [![APACHE-2.0](https://img.shields.io/github/license/johnserf-seed/f2)](https://github.com/Johnserf-Seed/f2/blob/main/LICENSE)
 
 
@@ -54,15 +57,30 @@
 
 ## ✨ 新变化
 
-当升级到`F2`的`0.0.1.5`版本时，请注意以下关键更新。
+当下载或升级到`F2`的不同版本时，请注意以下关键的版本更新。
 
-- `0.0.1.5`的`XBogus`参数支持了自定义UA，请注意UA规范。
-- 重建的数据库包含接口的原始数据，所以你需要删除旧的数据库文件。如果你想保留记录请注意迁移。
-- 所有的`fetch`方法返回的类型已统一为过滤器类型，所以你需要注意这个变化。
-- 过滤器添加了`_to_raw`方法，可以将过滤器转换为原始接口数据。
-- 文件名模板已经更新，如果你的文件名不符合规范，将会抛出异常。
-- `douyin`合集页链接无法解析的查看[抖音合集作品](#抖音合集作品)。
-- 更多变化查看[ChangeLog](https://github.com/Johnserf-Seed/f2/blob/main/CHANGELOG.md#0015---2024-04-04)。
+<details>
+  <summary> 📡 v0.0.1.6-pw2 </summary>
+
+  - 配置文件格式已经更新，如果你使用了旧的配置文件，请注意迁移。
+  - 所有时间戳的默认时区为（`UTC/GMT+08:00`）。
+  - `douyin`直播流文件名调整为`flv`，图集调整回`webp`。
+  - `tiktok`视频地址`403`的错误已经修复。[TikTok视频地址403解决办法](https://johnserf-seed.github.io/f2/question-answer/qa.html#tiktok-403-forbidden)
+  - 现在`douyin`默认会使用`ab`算法来请求。（满血版ab算法待时开源）。
+  - 更多变化查看[ChangeLog](https://github.com/Johnserf-Seed/f2/blob/main/CHANGELOG.md#0016---2024-05-04)。
+</details>
+
+<details>
+  <summary> 📡 v0.0.1.5-pw2 </summary>
+
+  - `0.0.1.5`的`XBogus`参数支持了自定义UA，请注意UA规范。
+  - 重建的数据库包含接口的原始数据，所以你需要删除旧的数据库文件。如果你想保留记录请注意迁移。
+  - 所有的`fetch`方法返回的类型已统一为过滤器类型，所以你需要注意这个变化。
+  - 过滤器添加了`_to_raw`方法，可以将过滤器转换为原始接口数据。
+  - 文件名模板已经更新，如果你的文件名不符合规范，将会抛出异常。
+  - `douyin`合集页链接无法解析的查看[抖音合集作品](#抖音合集作品)。
+  - 更多变化查看[ChangeLog](https://github.com/Johnserf-Seed/f2/blob/main/CHANGELOG.md#0015---2024-04-04)。
+</details>
 
 
 ## 📑 文档
@@ -78,9 +96,9 @@
 
 ## 🗓️ Todo
 
-- 将在`0.0.1.6`版本中添加对`weibo`，`x`的支持。
-- 将在`0.0.1.6`版本中添加更多`douyin`，`tiktok`的接口。
-- 将在`0.0.1.6`版本中修复旧版本已知的问题。
+- 将在`0.0.1.7`版本中添加本地转发功能。
+- 将在`0.0.1.7`版本中添加更多`douyin`，`tiktok`，`weibo`，`x`的接口。
+- 将在`0.0.1.7`版本中修复`x`已知的问题。
 
 
 ## 🐛 更新
@@ -101,7 +119,7 @@
 
   |功能|账号状态|接口|功能状态|
   |---|---|---|---|
-  |用户信息|🟣⚫|`handler_user_profile`|🟢|
+  |用户信息|🟣⚫|`fetch_user_profile`|🟢|
   |单个作品（视频、图集、日常）|🟣⚫|`fetch_one_video`|🟢|
   |主页作品|🟣⚫|`fetch_user_post_videos`|🟢|
   |点赞作品|🟣⚫|`fetch_user_like_videos`|🟢|
@@ -111,16 +129,17 @@
   |收藏合集|🟣|`fetch_user_mix_collection`|🔵|
   |收藏短剧|🟣|`fetch_user_series_collection`|🟤|
   |合集作品|⚫|`fetch_user_mix_videos`|🟢|
-  |首页推荐作品|🟣⚫|`fetch_user_feed_videos`|🟡|
-  |相似推荐作品|⚫|`fetch_related_videos`|🔵|
+  |首页推荐作品|🟣⚫|`fetch_user_feed_videos`|🟢|
+  |相似推荐作品|⚫|`fetch_related_videos`|🟢|
   |直播间信息（流下载）|⚫|`fetch_user_live_videos`、`fetch_user_live_videos_by_room_id`|🟢|
-  |直播间弹幕|⚫|`fetch_user_live_danmu`|🔵|
-  |关注用户开播|🟣⚫|`fetch_user_following_lives`|🔵|
+  |直播间弹幕负载|⚫|`fetch_live_im`|🟢|
+  |直播间弹幕|⚫|`fetch_user_live_danmu`|🟢|
+  |关注用户开播|🟣⚫|`fetch_user_following_lives`|🟢|
   |关注用户信息|🟣⚫|`fetch_user_following`|🟢|
   |粉丝用户信息|🟣⚫|`fetch_user_follower`|🟢|
   |关注用户作品|🟣⚫|`fetch_user_following_videos`|🟤|
   |粉丝用户作品|🟣⚫|`fetch_user_follower_videos`|🟤|
-  |朋友作品|🟣|`fetch_user_friend_videos`|🔵|
+  |朋友作品|🟣|`fetch_friend_feed_videos`|🟢|
   |搜索视频|⚫|`fetch_search_videos`|🔵|
   |搜索用户|⚫|`fetch_search_users`|🔵|
   |搜索直播|⚫|`fetch_search_lives`|🔵|
@@ -130,6 +149,30 @@
   |观看历史|🟣|`fetch_user_history_read`|🟤|
   |稍后再看|🟣|`fetch_user_watch_later`|🟤|
   |...|...|...|...|
+
+  |工具类|类名|接口|功能状态|
+  |---|---|---|---|
+  | 管理客户端配置     | `ClientConfManager`   |                  |  🟢  |
+  | 生成真实msToken    | `TokenManager`     | `gen_real_msToken`       |  🟢  |
+  | 生成虚假msToken     | `TokenManager`     | `gen_false_msToken`      |  🟢  |
+  | 生成ttwid          | `TokenManager`     | `gen_ttwid`              |  🟢  |
+  | 生成webid          | `TokenManager`     | `gen_webid`              |  🟢  |
+  | 生成verify_fp      | `VerifyFpManager`  | `gen_verify_fp`          |  🟢  |
+  | 生成s_v_web_id     | `VerifyFpManager`  | `gen_s_v_web_id`         |  🟢  |
+  | 生成直播signature | `DouyinWebcastSignature` | `get_signature` |  🟢  |
+  | 使用接口模型生成直播wss签名参数 | `WebcastSignatureManager` | `model_2_endpoint` |  🟢  |
+  | 使用接口地址生成Xb参数      | `XBogusManager`    | `str_2_endpoint`   |  🟢  |
+  | 使用接口模型生成Xb参数      | `XBogusManager`    | `model_2_endpoint`   |  🟢  |
+  | 使用接口地址生成Ab参数      | `ABogusManager`    | `str_2_endpoint`   |  🟢  |
+  | 使用接口模型生成Ab参数      | `ABogusManager`    | `model_2_endpoint`   |  🟢  |
+  | 提取单个用户id       | `SecUserIdFetcher` | `get_sec_user_id`         |  🟢  |
+  | 提取列表用户id       | `SecUserIdFetcher` | `get_all_sec_user_id`     |  🟢  |
+  | 提取单个作品id       | `AwemeIdFetcher`   | `get_aweme_id`            |  🟢  |
+  | 提取列表作品id       | `AwemeIdFetcher`   | `get_all_aweme_id`        |  🟢  |
+  | 提取单个合集id       | `MixIdFetcher`     | `get_mix_id`              |  🟢  |
+  | 提取列表合集id       | `MixIdFetcher`     | `get_all_mix_id`          |  🟢  |
+  | 提取单个直播间号      | `WebCastIdFetcher` | `get_webcast_id`          |  🟢  |
+  | 提取列表直播间号       | `WebCastIdFetcher` | `get_all_webcast_id`      |  🟢  |
  </details>
 
 <details>
@@ -140,12 +183,16 @@
 
   |功能|账号状态|接口|功能状态|
   |---|---|---|---|
-  |用户信息|🟣⚫|`handler_user_profile`|🟢|
+  |用户信息|🟣⚫|`fetch_user_profile`|🟢|
   |单个作品|🟣⚫|`fetch_one_video`|🟢|
   |主页作品|🟣⚫|`fetch_user_post_videos`|🟢|
   |点赞作品|🟣⚫|`fetch_user_like_videos`|🟢|
   |收藏作品|🟣⚫|`fetch_user_collect_videos`|🟢|
+  |播放列表|🟣⚫|`fetch_play_list`|🟢|
   |播放列表作品|🟣⚫|`fetch_user_mix_videos`|🟢|
+  |作品搜索|🟣⚫|`fetch_search_videos`|🟢|
+  |直播间信息（流下载）|⚫|`fetch_user_live_videos`|🟢|
+  |检查开播|🟣⚫|`fetch_check_live_alive`|🟢|
   |...|...|...|...|
  </details>
 
@@ -187,14 +234,23 @@
   合集链接解析
   <img src='https://github.com/Johnserf-Seed/f2/assets/40727745/1dd41daa-f375-448f-a3aa-55c14eb28d2c'>
 
-  **ps. 0.0.1.5 relase版本需要拉取这2个提交补丁来修复 [4b81457](https://github.com/Johnserf-Seed/f2/commit/4b81457a66f629eb8e1bf5c79b96445e9f6f0f9e) [eb763eb](https://github.com/Johnserf-Seed/f2/commit/eb763ebe67d9b71e597b95959416c149b7d67d88)**
-  **ps. 从main分支安装的不需要更新**
-
   ### 抖音直播录制
 
   <img src='https://github.com/Johnserf-Seed/f2/assets/40727745/c5276410-89aa-4bed-99f0-1dcf9c34cd4f'>
 
- </details>
+  ### 抖音相关推荐
+
+  <img src="https://github.com/Johnserf-Seed/f2/assets/40727745/e36fb510-39ef-486e-b944-7dbf8cf25c36">
+
+  ### 抖音好友作品
+
+  <img src="https://github.com/Johnserf-Seed/f2/assets/40727745/437fa0ad-9524-4674-9d73-56db815113ef">
+
+  ### 抖音直播弹幕
+
+  https://github.com/Johnserf-Seed/f2/assets/40727745/500d1eaf-59ba-44ba-849b-666c0ddf8469
+
+</details>
 
 <details>
   <summary> 🎬 TikTok </summary>
@@ -219,8 +275,8 @@
 
   <img src='https://github.com/Johnserf-Seed/f2/assets/40727745/653d33cc-ba7f-4abf-8f6f-7c3f5a0b3cd1'>
 
-  **ps. 0.0.1.5 relase版本需要拉取这个提交补丁来修复 [05ee1c4](https://github.com/Johnserf-Seed/f2/commit/05ee1c4293d1fb9f01c25739372a2fbac18454cd)**
-  **ps. 从main分支安装的不需要更新**
+  ### TikTok作品搜索
+  <img src='https://github.com/Johnserf-Seed/f2/assets/40727745/091e66d5-f123-4883-9360-db3dad359d7d'>
 
  </details>
 
@@ -232,17 +288,6 @@
 
   ```bash
   .
-  ├── .github
-  │   ├── ISSUE_TEMPLATE
-  │   │   ├── ask-question.md
-  │   │   ├── bug-report.md
-  │   │   └── feature_request.md
-  │   └── workflows
-  │       └── Codecov.yml
-  │       └── deploy.yml
-  ├── .gitignore
-  ├── .vscode
-  │   └── settings.json
   ├── CHANGELOG.md
   ├── CODE_OF_CONDUCT.md
   ├── CONTRIBUTING.md
@@ -251,13 +296,9 @@
   ├── README.en.md
   ├── README.md
   ├── SECURITY.md
+  ├── babel.cfg
+  ├── coverage.xml
   ├── docs
-  │   ├── .vitepress
-  │   │   ├── config.mts
-  │   │   └── theme
-  │   │       ├── index.ts
-  │   │       └── styles
-  │   │           └── vars.css
   │   ├── advance-guide.md
   │   ├── cli.md
   │   ├── en
@@ -276,11 +317,14 @@
   │   │   ├── apps
   │   │   │   ├── douyin
   │   │   │   │   └── index.md
-  │   │   │   └── tiktok
+  │   │   │   ├── tiktok
+  │   │   │   │   └── index.md
+  │   │   │   ├── weibo
+  │   │   │   │   └── index.md
+  │   │   │   └── x
   │   │   │       └── index.md
   │   │   └── what-is-f2.md
   │   ├── index.md
-  │   ├── install.md
   │   ├── package-lock.json
   │   ├── package.json
   │   ├── public
@@ -312,11 +356,17 @@
   │   ├── snippets
   │   │   ├── QA.md
   │   │   ├── douyin
+  │   │   │   ├── abogus.py
   │   │   │   ├── aweme-id.py
+  │   │   │   ├── aweme-related.py
+  │   │   │   ├── client-config.py
   │   │   │   ├── format-file-name.py
+  │   │   │   ├── json-2-lrc.py
+  │   │   │   ├── mix-id.py
   │   │   │   ├── mstoken-false.py
   │   │   │   ├── mstoken-real.py
   │   │   │   ├── one-video.py
+  │   │   │   ├── query-user.py
   │   │   │   ├── s_v_web_id.py
   │   │   │   ├── sec-user-id.py
   │   │   │   ├── show-qrcode.py
@@ -325,24 +375,32 @@
   │   │   │   ├── ttwid.py
   │   │   │   ├── user-collection.py
   │   │   │   ├── user-collects.py
+  │   │   │   ├── user-feed.py
   │   │   │   ├── user-folder.py
+  │   │   │   ├── user-follow-live.py
   │   │   │   ├── user-follower.py
   │   │   │   ├── user-following.py
+  │   │   │   ├── user-friend.py
   │   │   │   ├── user-get-add.py
   │   │   │   ├── user-like.py
+  │   │   │   ├── user-live-im-fetch.py
   │   │   │   ├── user-live-room-id.py
   │   │   │   ├── user-live.py
   │   │   │   ├── user-mix.py
-  │   │   │   ├── user-nickname.py
   │   │   │   ├── user-post.py
   │   │   │   ├── user-profile.py
   │   │   │   ├── verify_fp.py
   │   │   │   ├── video-get-add.py
   │   │   │   ├── webcast-id.py
+  │   │   │   ├── webcast-signature.py
+  │   │   │   ├── webid.py
   │   │   │   └── xbogus.py
   │   │   ├── set-debug.py
   │   │   ├── tiktok
   │   │   │   ├── aweme-id.py
+  │   │   │   ├── check-live-alive.py
+  │   │   │   ├── client-config.py
+  │   │   │   ├── device-id.py
   │   │   │   ├── format-file-name.py
   │   │   │   ├── one-video.py
   │   │   │   ├── sec-uid.py
@@ -354,13 +412,16 @@
   │   │   │   ├── user-get-add.py
   │   │   │   ├── user-like.py
   │   │   │   ├── user-mix.py
-  │   │   │   ├── user-nickname.py
   │   │   │   ├── user-playlist.py
   │   │   │   ├── user-post.py
   │   │   │   ├── user-profile.py
   │   │   │   ├── video-get-add.py
   │   │   │   └── xbogus.py
-  │   │       └── user-profile.py
+  │   │   ├── twitter
+  │   │   └── weibo
+  │   │       ├── user-profile.py
+  │   │       └── user-weibo.py
+  │   └── vite-.zip
   ├── f2
   │   ├── __init__.py
   │   ├── __main__.py
@@ -368,6 +429,9 @@
   │   │   ├── __apps__.py
   │   │   ├── __init__.py
   │   │   ├── douyin
+  │   │   │   ├── algorithm
+  │   │   │   │   ├── webcast_signature.js
+  │   │   │   │   └── webcast_signature.py
   │   │   │   ├── api.py
   │   │   │   ├── cli.py
   │   │   │   ├── crawler.py
@@ -377,15 +441,20 @@
   │   │   │   ├── handler.py
   │   │   │   ├── help.py
   │   │   │   ├── model.py
+  │   │   │   ├── proto
+  │   │   │   │   ├── douyin_webcast.proto
+  │   │   │   │   └── douyin_webcast_pb2.py
   │   │   │   ├── test
-  │   │   │   │   ├── test_apps_model.py
-  │   │   │   │   ├── test_aweme_id.py
-  │   │   │   │   ├── test_crawler.py
-  │   │   │   │   ├── test_handler.py
-  │   │   │   │   ├── test_lrc.py
-  │   │   │   │   ├── test_room_id.py
-  │   │   │   │   ├── test_sec_user_id.py
-  │   │   │   │   └── test_webcast_id.py
+  │   │   │   │   ├── test_douyin_apps_model.py
+  │   │   │   │   ├── test_douyin_aweme_id.py
+  │   │   │   │   ├── test_douyin_crawler.py
+  │   │   │   │   ├── test_douyin_handler.py
+  │   │   │   │   ├── test_douyin_lrc.py
+  │   │   │   │   ├── test_douyin_room_id.py
+  │   │   │   │   ├── test_douyin_sec_user_id.py
+  │   │   │   │   ├── test_douyin_token.py
+  │   │   │   │   ├── test_douyin_webcast_id.py
+  │   │   │   │   └── test_douyin_webcast_signature.py
   │   │   │   └── utils.py
   │   │   ├── tiktok
   │   │   │   ├── api.py
@@ -397,6 +466,10 @@
   │   │   │   ├── handler.py
   │   │   │   ├── help.py
   │   │   │   ├── model.py
+  │   │   │   ├── test
+  │   │   │   │   ├── test_tiktok_crawler.py
+  │   │   │   │   ├── test_tiktok_device_id.py
+  │   │   │   │   └── test_tiktok_token.py
   │   │   │   └── utils.py
   │   │   ├── twitter
   │   │   │   ├── api.py
@@ -408,7 +481,27 @@
   │   │   │   ├── handler.py
   │   │   │   ├── help.py
   │   │   │   ├── model.py
+  │   │   │   ├── test
+  │   │   │   │   ├── test_model.py
+  │   │   │   │   ├── test_tweet_id.py
+  │   │   │   │   └── ttt.py
   │   │   │   └── utils.py
+  │   │   └── weibo
+  │   │       ├── api.py
+  │   │       ├── cli.py
+  │   │       ├── crawler.py
+  │   │       ├── db.py
+  │   │       ├── dl.py
+  │   │       ├── filter.py
+  │   │       ├── handler.py
+  │   │       ├── help.py
+  │   │       ├── model.py
+  │   │       ├── test
+  │   │       │   ├── test_gen_visitor.py
+  │   │       │   ├── test_handler.py
+  │   │       │   ├── test_weibo_id.py
+  │   │       │   └── test_weibo_uid.py
+  │   │       └── utils.py
   │   ├── cli
   │   │   ├── __init__.py
   │   │   ├── cli_commands.py
@@ -446,17 +539,19 @@
   │       ├── _dl.py
   │       ├── _signal.py
   │       ├── _singleton.py
+  │       ├── abogus.py
+  │       ├── abogus_async.py
+  │       ├── abogus_full.py
   │       ├── conf_manager.py
+  │       ├── decorators.py
   │       ├── json_filter.py
-  │       ├── mode_handler.py
   │       ├── utils.py
   │       └── xbogus.py
-  │   ├── app.yaml
-  │   ├── conf.yaml
-  │   └── defaults.yaml
+  ├── messages.pot
   ├── package-lock.json
   ├── package.json
   ├── pyproject.toml
+  ├── pytest.ini
   ├── tests
   │   ├── test_cli_console.py
   │   ├── test_desc_limit.py
@@ -466,12 +561,28 @@
   │   ├── test_logger.py
   │   ├── test_signal.py
   │   ├── test_singleton.py
+  │   ├── test_timestamp.py
   │   ├── test_utils.py
   │   └── test_xbogus.py
 
   ```
 
 </details>
+
+
+## 💰 赞助商
+
+<a href="https://tikhub.io/"><img style="border-radius:20px" src="https://github.com/Johnserf-Seed/f2/assets/40727745/70a67dd1-dccb-44a9-b635-c29a950f1daf"></a>
+
+[TikHub](https://tikhub.io/) 是一家提供优质数据接口服务的供应商。通过每日签到，可以获取免费额度。可以使用我的注册邀请链接：[https://beta-web.tikhub.io/users/signup?referral_code=6hLcGD94](https://beta-web.tikhub.io/users/signup?referral_code=6hLcGD94) 或 邀请码：`6hLcGD94`，注册并充值即可获得`$2`额度。
+
+[TikHub](https://tikhub.io/) 提供以下服务：
+
+- 丰富的数据接口
+- 每日签到免费获取额度
+- 高质量的API服务
+- 官网：https://tikhub.io/
+- 项目地址：https://github.com/TikHubIO/
 
 
 ## 👨‍💻 贡献
@@ -496,6 +607,9 @@
 - [pydantic](https://github.com/samuelcolvin/pydantic)
 - [qrcode](https://github.com/lincolnloop/python-qrcode)
 - [vitepress](https://github.com/vuejs/vitepress)
+- [websockets](https://github.com/python-websockets/websockets)
+- [protobuf](https://github.com/protocolbuffers/protobuf)
+- [PyExecJS](https://github.com/doloopwhile/PyExecJS)
 
 没有这些库和程序，`F2`将无法实现这些功能，对于他们的贡献和努力，表示由衷的感谢。
 
