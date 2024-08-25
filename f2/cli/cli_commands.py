@@ -16,8 +16,6 @@ from f2.utils.utils import check_f2_version
 from f2.i18n.translator import _
 from f2.log.logger import logger
 
-from concurrent.futures import ThreadPoolExecutor
-
 
 # 处理帮助信息
 def handle_help(
@@ -105,9 +103,7 @@ class DynamicGroup(click.Group):
         try:
             if app_name:
                 # 使用线程池执行异步任务
-                executor = ThreadPoolExecutor(max_workers=1)
-                executor.submit(run_async_in_thread, check_f2_version())
-
+                asyncio.run(check_f2_version())
                 # 动态导入app的cli模块
                 module = importlib.import_module(f"f2.apps.{app_name}.cli")
                 logger.info(_("应用：{0}").format(app_name))
