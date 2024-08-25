@@ -68,6 +68,7 @@ from f2.apps.douyin.utils import (
 )
 from f2.cli.cli_console import RichConsoleManager
 from f2.exceptions.api_exceptions import APIResponseError
+from f2.utils.utils import interval_2_timestamp
 
 rich_console = RichConsoleManager().rich_console
 rich_prompt = RichConsoleManager().rich_prompt
@@ -241,9 +242,17 @@ class DouyinHandler:
             kwargs: Dict: 参数字典 (Parameter dictionary)
         """
 
+        min_cursor = 0
         max_cursor = self.kwargs.get("max_cursor", 0)
         page_counts = self.kwargs.get("page_counts", 20)
         max_counts = self.kwargs.get("max_counts")
+        interval = self.kwargs.get("interval")
+
+        # 判断是否提供了interval参数，如果有则获取start_date转时间戳提供给max_cursor
+        if interval is not None and interval != "all":
+            # 倒序查找
+            min_cursor = interval_2_timestamp(interval, date_type="start")
+            max_cursor = interval_2_timestamp(interval, date_type="end")
 
         # 获取用户数据并返回创建用户目录
         sec_user_id = await SecUserIdFetcher.get_sec_user_id(self.kwargs.get("url"))
@@ -251,7 +260,7 @@ class DouyinHandler:
             user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, udb)
 
         async for aweme_data_list in self.fetch_user_post_videos(
-            sec_user_id, max_cursor, page_counts, max_counts
+            sec_user_id, min_cursor, max_cursor, page_counts, max_counts
         ):
             # 创建下载任务
             await self.downloader.create_download_tasks(
@@ -265,6 +274,7 @@ class DouyinHandler:
     async def fetch_user_post_videos(
         self,
         sec_user_id: str,
+        min_cursor: int = 0,
         max_cursor: int = 0,
         page_counts: int = 20,
         max_counts: int = None,
@@ -307,6 +317,10 @@ class DouyinHandler:
                 response = await crawler.fetch_user_post(params)
                 video = UserPostFilter(response)
                 yield video
+
+            if max_cursor < min_cursor:
+                logger.info(_("已经处理到指定时间范围内的作品"))
+                break
 
             if not video.has_aweme:
                 logger.info(_("第 {0} 页没有找到作品").format(max_cursor))
@@ -857,7 +871,7 @@ class DouyinHandler:
                     if not video.has_more:
                         break
 
-                max_cursor = video.max_cursor
+            max_cursor = video.max_cursor
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
