@@ -99,6 +99,8 @@ class DouyinHandler:
         Return:
             user: UserProfileFilter: 用户信息过滤器 (User info filter)
         """
+        if not sec_user_id:
+            raise ValueError(_("`sec_user_id`不能为空"))
 
         async with DouyinCrawler(self.kwargs) as crawler:
             params = UserProfile(sec_user_id=sec_user_id)
@@ -1669,7 +1671,12 @@ class DouyinHandler:
         return live_im
 
     async def fetch_live_danmaku(
-        self, room_id: str, user_unique_id: str, internal_ext: str, cursor: str
+        self,
+        room_id: str,
+        user_unique_id: str,
+        internal_ext: str,
+        cursor: str,
+        wss_callbacks: Dict = {},
     ):
         """
         通过WebSocket连接获取直播间弹幕，再通过回调函数处理弹幕数据。
@@ -1683,25 +1690,48 @@ class DouyinHandler:
         Return:
             self.websocket: DouyinWebSocketCrawler: WebSocket连接对象
         """
-        wss_callbacks = {
-            "WebcastRoomMessage": DouyinWebSocketCrawler.WebcastRoomMessage,
-            "WebcastLikeMessage": DouyinWebSocketCrawler.WebcastLikeMessage,
-            "WebcastMemberMessage": DouyinWebSocketCrawler.WebcastMemberMessage,
-            "WebcastChatMessage": DouyinWebSocketCrawler.WebcastChatMessage,
-            "WebcastGiftMessage": DouyinWebSocketCrawler.WebcastGiftMessage,
-            "WebcastSocialMessage": DouyinWebSocketCrawler.WebcastSocialMessage,
-            "WebcastRoomUserSeqMessage": DouyinWebSocketCrawler.WebcastRoomUserSeqMessage,
-            "WebcastUpdateFanTicketMessage": DouyinWebSocketCrawler.WebcastUpdateFanTicketMessage,
-            "WebcastCommonTextMessage": DouyinWebSocketCrawler.WebcastCommonTextMessage,
-            "WebcastMatchAgainstScoreMessage": DouyinWebSocketCrawler.WebcastMatchAgainstScoreMessage,
-            "WebcastFansclubMessage": DouyinWebSocketCrawler.WebcastFansclubMessage,
-            # TODO: WebcastRanklistHourEntranceMessage
-            # TODO: WebcastRoomStatsMessage
-            # TODO: WebcastLiveShoppingMessage
-            # TODO: WebcastLiveEcomGeneralMessage
-            # TODO: WebcastProductChangeMessage
-            # TODO: WebcastRoomStreamAdaptationMessage
-        }
+
+        if not wss_callbacks:
+            logger.warning(_("没有设置回调函数，默认使用所有回调函数"))
+            wss_callbacks = {
+                "WebcastRoomMessage": DouyinWebSocketCrawler.WebcastRoomMessage,
+                "WebcastLikeMessage": DouyinWebSocketCrawler.WebcastLikeMessage,
+                "WebcastMemberMessage": DouyinWebSocketCrawler.WebcastMemberMessage,
+                "WebcastChatMessage": DouyinWebSocketCrawler.WebcastChatMessage,
+                "WebcastGiftMessage": DouyinWebSocketCrawler.WebcastGiftMessage,
+                "WebcastSocialMessage": DouyinWebSocketCrawler.WebcastSocialMessage,
+                "WebcastRoomUserSeqMessage": DouyinWebSocketCrawler.WebcastRoomUserSeqMessage,
+                "WebcastUpdateFanTicketMessage": DouyinWebSocketCrawler.WebcastUpdateFanTicketMessage,
+                "WebcastCommonTextMessage": DouyinWebSocketCrawler.WebcastCommonTextMessage,
+                "WebcastMatchAgainstScoreMessage": DouyinWebSocketCrawler.WebcastMatchAgainstScoreMessage,
+                "WebcastEcomFansClubMessage": DouyinWebSocketCrawler.WebcastEcomFansClubMessage,
+                "WebcastRanklistHourEntranceMessage": DouyinWebSocketCrawler.WebcastRanklistHourEntranceMessage,
+                "WebcastRoomStatsMessage": DouyinWebSocketCrawler.WebcastRoomStatsMessage,
+                "WebcastLiveShoppingMessage": DouyinWebSocketCrawler.WebcastLiveShoppingMessage,
+                "WebcastLiveEcomGeneralMessage": DouyinWebSocketCrawler.WebcastLiveEcomGeneralMessage,
+                "WebcastProductChangeMessage": DouyinWebSocketCrawler.WebcastProductChangeMessage,
+                "WebcastRoomStreamAdaptationMessage": DouyinWebSocketCrawler.WebcastRoomStreamAdaptationMessage,
+                "WebcastNotifyEffectMessage": DouyinWebSocketCrawler.WebcastNotifyEffectMessage,
+                "WebcastLightGiftMessage": DouyinWebSocketCrawler.WebcastLightGiftMessage,
+                "WebcastProfitInteractionScoreMessage": DouyinWebSocketCrawler.WebcastProfitInteractionScoreMessage,
+                "WebcastRoomRankMessage": DouyinWebSocketCrawler.WebcastRoomRankMessage,
+                "WebcastFansclubMessage": DouyinWebSocketCrawler.WebcastFansclubMessage,
+                "WebcastHotRoomMessage": DouyinWebSocketCrawler.WebcastHotRoomMessage,
+                "WebcastLinkMicMethod": DouyinWebSocketCrawler.WebcastLinkMicMethod,
+                "LinkMicMethod": DouyinWebSocketCrawler.WebcastLinkMicMethod,
+                "WebcastLinkerContributeMessage": DouyinWebSocketCrawler.WebcastLinkerContributeMessage,
+                "WebcastEmojiChatMessage": DouyinWebSocketCrawler.WebcastEmojiChatMessage,
+                "WebcastScreenChatMessage": DouyinWebSocketCrawler.WebcastScreenChatMessage,
+                "WebcastRoomDataSyncMessage": DouyinWebSocketCrawler.WebcastRoomDataSyncMessage,
+                "WebcastInRoomBannerMessage": DouyinWebSocketCrawler.WebcastInRoomBannerMessage,
+                "WebcastLinkMessage": DouyinWebSocketCrawler.WebcastLinkMessage,
+                # TODO: WebcastLinkMicArmiesMethod
+                # TODO: WebcastLinkmicPlayModeUpdateScoreMessage
+                # TODO: WebcastSandwichBorderMessage
+                # TODO: WebcastLuckyBoxTempStatusMessage
+                # TODO: WebcastLinkMicBattleMethod
+                # TODO: WebcastBattleTeamTaskMessage
+            }
         async with DouyinWebSocketCrawler(self.kwargs, callbacks=wss_callbacks) as wss:
             signature = DouyinWebcastSignature(
                 ClientConfManager.user_agent()
