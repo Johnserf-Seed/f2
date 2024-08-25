@@ -1,6 +1,8 @@
 # path: f2/apps/douyin/handler.py
 
 import asyncio
+
+from rich.rule import Rule
 from pathlib import Path
 from typing import AsyncGenerator, Union, Dict, Any, List
 
@@ -306,7 +308,7 @@ class DouyinHandler:
                     max_counts, current_request_size
                 )
             )
-            logger.info(_("开始爬取第 {0} 页").format(max_cursor))
+            rich_console.print(Rule(_("开始处理第 {0} 页").format(max_cursor)))
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserPost(
@@ -343,6 +345,7 @@ class DouyinHandler:
             videos_collected += len(video.aweme_id)
             max_cursor = video.max_cursor
 
+            rich_console.print(Rule())
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
@@ -417,7 +420,7 @@ class DouyinHandler:
                     max_counts, current_request_size
                 )
             )
-            logger.info(_("开始处理第 {0} 页").format(max_cursor))
+            rich_console.print(Rule(_("开始处理第 {0} 页").format(max_cursor)))
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserLike(
@@ -449,6 +452,8 @@ class DouyinHandler:
             # 更新已经处理的作品数量 (Update the number of videos processed)
             videos_collected += len(like.aweme_id)
             max_cursor = like.max_cursor
+
+            rich_console.print(Rule())
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -518,7 +523,7 @@ class DouyinHandler:
                     max_counts, current_request_size
                 )
             )
-            logger.info(_("开始处理第 {0} 页").format(max_cursor))
+            rich_console.print(Rule(_("开始处理第 {0} 页").format(max_cursor)))
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserMusicCollection(
@@ -543,6 +548,8 @@ class DouyinHandler:
             # 更新已经处理的音乐数量 (Update the number of music processed)
             music_collected += len(music.music_id)
             max_cursor = music.max_cursor
+
+            rich_console.print(Rule())
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -615,7 +622,7 @@ class DouyinHandler:
                     max_counts, current_request_size
                 )
             )
-            logger.info(_("开始处理第 {0} 页").format(max_cursor))
+            rich_console.print(Rule(_("开始处理第 {0} 页").format(max_cursor)))
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserCollection(cursor=max_cursor, count=current_request_size)
@@ -638,6 +645,8 @@ class DouyinHandler:
             # 更新已经处理的作品数量 (Update the number of videos processed)
             videos_collected += len(collection.aweme_id)
             max_cursor = collection.max_cursor
+
+            rich_console.print(Rule())
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -773,6 +782,7 @@ class DouyinHandler:
                     max_cursor, max_counts
                 )
             )
+            rich_console.print(Rule(_("开始处理第 {0} 页").format(max_cursor)))
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserCollects(cursor=max_cursor, count=page_counts)
@@ -794,6 +804,8 @@ class DouyinHandler:
             logger.debug("===================================")
 
             max_cursor = collects.max_cursor
+
+            rich_console.print(Rule())
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -836,7 +848,7 @@ class DouyinHandler:
                     max_counts, current_request_size
                 )
             )
-            logger.info(_("开始处理第 {0} 页").format(max_cursor))
+            rich_console.print(Rule(_("开始处理第 {0} 页").format(max_cursor)))
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserCollectsVideo(
@@ -872,6 +884,8 @@ class DouyinHandler:
                         break
 
             max_cursor = video.max_cursor
+
+            rich_console.print(Rule())
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -961,7 +975,7 @@ class DouyinHandler:
                     max_counts, current_request_size
                 )
             )
-            logger.info(_("开始处理第 {0} 页").format(max_cursor))
+            rich_console.print(Rule(_("开始处理第 {0} 页").format(max_cursor)))
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserMix(
@@ -986,6 +1000,8 @@ class DouyinHandler:
             # 更新已经处理的作品数量 (Update the number of videos processed)
             videos_collected += len(mix.aweme_id)
             max_cursor = mix.max_cursor
+
+            rich_console.print(Rule())
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -1040,8 +1056,8 @@ class DouyinHandler:
             sub-partition, anchor nickname)
         """
 
-        logger.info(_("开始处理直播: {0} 的数据").format(webcast_id))
         logger.debug("===================================")
+        rich_console.print(Rule(_("开始处理直播: {0} 的数据").format(webcast_id)))
 
         async with DouyinCrawler(self.kwargs) as crawler:
             params = UserLive(web_rid=webcast_id, room_id_str="")
@@ -1058,8 +1074,8 @@ class DouyinHandler:
                 live.sub_partition_title, live.nickname
             )
         )
-        logger.debug("===================================")
         logger.info(_("直播信息处理结束"))
+        logger.debug("===================================")
 
         return live
 
@@ -1080,8 +1096,8 @@ class DouyinHandler:
             anchor nickname)
         """
 
-        logger.info(_("开始处理房间号: {0} 的数据").format(room_id))
         logger.debug("===================================")
+        logger.info(_("开始处理房间号: {0} 的数据").format(room_id))
 
         async with DouyinCrawler(self.kwargs) as crawler:
             params = UserLive2(room_id=room_id)
@@ -1102,8 +1118,8 @@ class DouyinHandler:
                 ),
             )
         )
-        logger.debug("===================================")
         logger.info(_("直播信息处理结束"))
+        logger.debug("===================================")
 
         return live
 
@@ -1167,7 +1183,7 @@ class DouyinHandler:
                     max_counts, current_request_size
                 )
             )
-            logger.info(_("开始处理第 {0} 页").format(max_cursor))
+            rich_console.print(Rule(_("开始处理第 {0} 页").format(max_cursor)))
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserPost(
@@ -1199,6 +1215,8 @@ class DouyinHandler:
             # 更新已经处理的作品数量 (Update the number of videos processed)
             videos_collected += len(feed.aweme_id)
             max_cursor = feed.max_cursor
+
+            rich_console.print(Rule())
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -1274,7 +1292,9 @@ class DouyinHandler:
                     max_counts, current_request_size
                 )
             )
-            logger.info(_("开始处理前 {0} 个相关推荐").format(current_request_size))
+            rich_console.print(
+                Rule(_("开始处理前 {0} 个相关推荐").format(current_request_size))
+            )
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = PostRelated(
@@ -1300,6 +1320,8 @@ class DouyinHandler:
 
             # 更新已经处理的作品数量 (Update the number of videos processed)
             videos_collected += len(related.aweme_id)
+
+            rich_console.print(Rule())
 
             # 更新过滤的作品ID (Update the filtered video ID)
             filterGids = ",".join([str(aweme_id) for aweme_id in related.aweme_id])
@@ -1362,7 +1384,8 @@ class DouyinHandler:
 
             logger.debug("===================================")
             logger.debug(_("最大数量：{0} 个").format(max_counts))
-            logger.info(_("开始处理第：{0} 页").format(cursor))
+
+            rich_console.print(Rule(_("开始处理第 {0} 页").format(cursor)))
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = FriendFeed(
@@ -1407,6 +1430,8 @@ class DouyinHandler:
             # 更新其他参数 (Update other parameters)
             level = friend.level
             pull_type = friend.level
+
+            rich_console.print(Rule())
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
