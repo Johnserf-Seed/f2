@@ -1,10 +1,15 @@
 # path: f2/apps/douyin/crawler.py
 
+import json
 import gzip
+import asyncio
 import traceback
 
 from typing import Dict
 from google.protobuf import json_format
+from google.protobuf.message import DecodeError as ProtoDecodeError
+
+from websockets import ConnectionClosedOK, WebSocketServerProtocol, serve
 
 from f2.log.logger import logger
 from f2.i18n.translator import _
@@ -336,6 +341,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         }
         self.callbacks = callbacks or {}
         self.timeout = kwargs.get("timeout", 10)
+        self.connected_clients = set()  # 管理连接的客户端
         super().__init__(
             wss_headers=self.headers, callbacks=self.callbacks, timeout=self.timeout
         )
@@ -347,7 +353,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         )
         logger.debug(_("直播弹幕接口地址：{0}").format(endpoint))
         await self.connect_websocket(endpoint)
-        return await self.receive_messages()
+        # await self.start_server()
+
+        server_task = asyncio.create_task(
+            self.start_server()
+        )  # 在后台启动 WebSocket 服务器
+        try:
+            return await self.receive_messages()
+        finally:
+            server_task.cancel()  # 确保在完成时取消服务器任务
+            await server_task
+        # return await self.receive_messages()
 
     async def handle_wss_message(self, message: bytes):
         """
@@ -365,17 +381,20 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
             payload_package.ParseFromString(decompressed)
 
             # 发送 ack 包
-            if payload_package.needAck:
-                await self.send_ack(log_id, payload_package.internalExt)
+            if payload_package.need_ack:
+                await self.send_ack(log_id, payload_package.internal_ext)
 
             # 处理每个消息
-            for msg in payload_package.messagesList:
+            for msg in payload_package.messages:
                 method = msg.method
                 payload = msg.payload
 
                 # 调用对应的回调函数处理消息
                 if method in self.callbacks:
-                    await self.callbacks[method](data=payload)
+                    processed_data = await self.callbacks[method](data=payload)
+                    # 转发处理后的数据
+                    if processed_data is not None:
+                        await self.broadcast_message(processed_data)
                 else:
                     logger.warning(
                         _("未找到对应的回调函数处理消息：{0}").format(method)
@@ -420,6 +439,82 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
 
     async def on_open(self):
         return await super().on_open()
+
+    async def start_server(self):
+        """
+        启动 WebSocket 服务器
+        """
+        server = await serve(self.register_client, "localhost", 8765)
+        logger.info(
+            _("本地 WebSocket 服务器已启动，端口：8765，连接地址：ws://localhost:8765")
+        )
+
+        try:
+            # await self._timeout_check(server)
+            await asyncio.Future()  # 这里保持服务器运行
+        except asyncio.CancelledError:
+            logger.info(_("本地 WebSocket 服务器任务被取消"))
+        finally:
+            server.close()
+            await server.wait_closed()
+            logger.info(_("本地 WebSocket 服务器已关闭"))
+
+    async def _timeout_check(self, server):
+        timeout = 10  # 设置超时时间，单位为秒
+        while True:
+            await asyncio.sleep(timeout)
+            if not self.connected_clients:
+                logger.info(_("在 {0} 秒内无客户端连接，关闭服务器。").format(timeout))
+                break
+        server.close()
+        await server.wait_closed()
+        logger.info(_("本地服务器由于超时无连接而关闭"))
+        await self.close_websocket()
+
+    async def register_client(self, websocket: WebSocketServerProtocol):
+        """
+        注册新的客户端连接
+
+        Args:
+            websocket: WebSocketServerProtocol 实例
+        """
+        self.connected_clients.add(websocket)
+        try:
+            logger.info(
+                _("[RegisterClient] [🔗新的客户端连接] ｜ {0}").format(
+                    websocket.remote_address
+                )
+            )
+            async for message in websocket:
+                # 如果需要处理验证信息，可以在这里处理
+                pass
+        except ConnectionClosedOK:
+            pass
+        finally:
+            self.connected_clients.remove(websocket)
+
+    async def broadcast_message(self, message: str):
+        """
+        转发消息给所有连接的客户端
+
+        Args:
+            message: 要转发的消息（字符串格式）
+        """
+        try:
+            if isinstance(message, dict):
+                message = json.dumps(message, ensure_ascii=False)
+        except json.JSONDecodeError:
+            pass
+        except TypeError:
+            pass
+
+        if self.connected_clients:
+            await asyncio.wait(
+                [
+                    asyncio.create_task(client.send(message))
+                    for client in self.connected_clients
+                ]
+            )
 
     # 定义所有的回调消息函数
     @classmethod
