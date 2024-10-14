@@ -1,12 +1,7 @@
 # path: f2/apps/tiktok/filter.py
 
 from f2.utils.json_filter import JSONModel
-from f2.utils.utils import (
-    _get_first_item_from_list,
-    timestamp_2_str,
-    replaceT,
-    unescape_json,
-)
+from f2.utils.utils import timestamp_2_str, replaceT, unescape_json
 
 
 class UserProfileFilter(JSONModel):
