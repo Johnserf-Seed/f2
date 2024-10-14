@@ -13,6 +13,7 @@ class BaseRequestModel(BaseModel):
     aid: str = "6383"
     channel: str = "channel_pc_web"
     pc_client_type: int = 1
+    publish_video_strategy_type: int = 2
     version_code: str = ClientConfManager.brm_version().get("code", "290100")
     version_name: str = ClientConfManager.brm_version().get("name", "29.1.0")
     cookie_enabled: str = "true"

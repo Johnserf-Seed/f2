@@ -192,6 +192,27 @@ class DouyinDownloader(BaseDownloader):
             )
 
     async def download_images(self):
+        # 处理实况视频下载
+        images_video_list = self.aweme_data_dict.get("images_video", [])
+        if images_video_list:
+            for i, images_video_url in enumerate(images_video_list):
+                image_video_name = f"{format_file_name(self.kwargs.get('naming'), self.aweme_data_dict)}_live_{i + 1}"
+                if images_video_url:
+                    await self.initiate_download(
+                        _("实况"),
+                        images_video_url,
+                        self.base_path,
+                        image_video_name,
+                        ".mp4",
+                    )
+                else:
+                    logger.warning(
+                        _("[{0}] 该图集没有实况链接，无法下载").format(self.aweme_id)
+                    )
+        else:
+            logger.info(_("[{0}] 非实况图集，跳过实况下载").format(self.aweme_id))
+
+        # 处理图片下载
         for i, image_url in enumerate(self.aweme_data_dict.get("images", [])):
             image_name = f"{format_file_name(self.kwargs.get('naming'), self.aweme_data_dict)}_image_{i + 1}"
             if image_url:
