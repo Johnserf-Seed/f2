@@ -2,7 +2,7 @@
 
 from typing import List, Dict, Any
 from f2.utils.json_filter import JSONModel
-from f2.utils.utils import _get_first_item_from_list, timestamp_2_str, replaceT
+from f2.utils.utils import timestamp_2_str, replaceT
 
 # Filter
 
@@ -314,8 +314,7 @@ class UserPostFilter(JSONModel):
 
     @property
     def music_play_url(self):
-        url_list = self._get_list_attr_value("$.aweme_list[*].music.play_url.url_list")
-        return _get_first_item_from_list(url_list)
+        return self._get_list_attr_value("$.aweme_list[*].music.play_url.url_list[0]")
 
     @property
     def has_more(self) -> bool:
