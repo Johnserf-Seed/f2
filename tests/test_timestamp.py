@@ -28,6 +28,9 @@ class TestTimestamp2Str:
     def test_timestamp_2_str_with_invalid_timestamp(self):
         assert timestamp_2_str("1620000000") == "2021-05-03 08-00-00"
 
+    def test_millisecond_timestamp_2_str(self):
+        assert timestamp_2_str(1697889407000) == "2023-10-21 19-56-47"
+
     def test_long_timestamp_2_str(self):
         assert (
             timestamp_2_str("Sun Apr 07 18:43:48 +0800 2024") == "2024-04-07 18-43-48"
