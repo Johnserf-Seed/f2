@@ -87,17 +87,23 @@ def timestamp_2_str(
         str: 格式化的日期时间字符串 (The formatted date-time string)
     """
 
-    if timestamp is None or timestamp == "None":
+    if timestamp in [None, "None"]:
         return "Invalid timestamp"
 
-    if isinstance(timestamp, str):
-        if len(timestamp) == 30:
-            date_obj = datetime.datetime.strptime(timestamp, "%a %b %d %H:%M:%S %z %Y")
+    if timestamp in [0, "0"]:
+        return datetime.datetime.now(tz=tz).strftime(format)
+
+    try:
+        if isinstance(timestamp, str):
+            if len(timestamp) == 30:
+                date_obj = datetime.datetime.strptime(
+                    timestamp, "%a %b %d %H:%M:%S %z %Y"
+                )
+            else:
+                date_obj = datetime.datetime.fromtimestamp(float(timestamp), tz=tz)
         else:
             date_obj = datetime.datetime.fromtimestamp(float(timestamp), tz=tz)
-    elif isinstance(timestamp, (int, float)):
-        date_obj = datetime.datetime.fromtimestamp(float(timestamp), tz=tz)
-    else:
+    except (ValueError, TypeError):
         raise TypeError(_("不支持的时间戳类型：{0}").format(type(timestamp)))
 
     return date_obj.strftime(format)
