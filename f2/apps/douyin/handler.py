@@ -79,7 +79,13 @@ rich_prompt = RichConsoleManager().rich_prompt
 class DouyinHandler:
 
     # 需要忽略的字段（需过滤掉有时效性的字段）
-    ignore_fields = ["video_play_addr", "images", "video_bit_rate", "cover"]
+    ignore_fields = [
+        "video_play_addr",
+        "images",
+        "video_bit_rate",
+        "cover",
+        "images_video",
+    ]
 
     def __init__(self, kwargs: Dict = ...) -> None:
         self.kwargs = kwargs
