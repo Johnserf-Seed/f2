@@ -256,12 +256,27 @@ def _get_first_item_from_list(_list: List) -> List:
     """
     从列表中提取第一个项目 (Extract the first item from a list)
 
+    .. deprecated:: 0.0.1.6
+        `_get_first_item_from_list` 在 0.0.1.7 版本及之后将被移除。
+        本方法不再有替代方案。 (This function will be removed in version 0.0.1.7 or later.
+        No replacement will be provided.)
+
     Args:
         _list (List): 输入的列表 (Input list)
 
     Returns:
         List: 提取出的第一个项目 (The extracted first item)
     """
+    import warnings
+
+    warnings.warn(
+        _(
+            "_get_first_item_from_list is deprecated and will be removed in version 0.0.1.7. "
+        ),
+        _("No replacement will be provided."),
+        DeprecationWarning,
+        stacklevel=2,
+    )
     # 检查是否是列表 (Check if it's a list)
     if _list and isinstance(_list, list):
         # 如果列表里第一个还是列表则提起每一个列表的第一个值
