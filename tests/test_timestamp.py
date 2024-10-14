@@ -58,9 +58,9 @@ class TestTimestamp2Str:
         )
 
     def test_invalid_timestamp_2_str(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(TypeError):
             timestamp_2_str("invalid_timestamp")
 
     def test_invalid_timestamp_2_str_with_format(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(TypeError):
             timestamp_2_str("invalid_timestamp", "%Y-%m-%d %H-%M-%S")
