@@ -100,9 +100,15 @@ def timestamp_2_str(
                     timestamp, "%a %b %d %H:%M:%S %z %Y"
                 )
             else:
-                date_obj = datetime.datetime.fromtimestamp(float(timestamp), tz=tz)
+                timestamp_value = float(timestamp)
+                if timestamp_value > 1e10:
+                    timestamp_value /= 1000
+                date_obj = datetime.datetime.fromtimestamp(timestamp_value, tz=tz)
         else:
-            date_obj = datetime.datetime.fromtimestamp(float(timestamp), tz=tz)
+            timestamp_value = float(timestamp)
+            if timestamp_value > 1e10:
+                timestamp_value /= 1000
+            date_obj = datetime.datetime.fromtimestamp(timestamp_value, tz=tz)
     except (ValueError, TypeError):
         raise TypeError(_("不支持的时间戳类型：{0}").format(type(timestamp)))
 
