@@ -213,6 +213,23 @@ class UserPostFilter(JSONModel):
         ]
 
     @property
+    def images_video(self):
+        images_video_list = self._get_list_attr_value("$.aweme_list[*].images")
+
+        return [
+            (
+                [
+                    live["video"]["play_addr"]["url_list"][0]
+                    for live in images_video
+                    if isinstance(live, dict) and "video" in live
+                ]
+                if images_video
+                else None
+            )
+            for images_video in images_video_list
+        ]
+
+    @property
     def animated_cover(self):
         # 临时办法
         # https://github.com/h2non/jsonpath-ng/issues/82
@@ -1415,6 +1432,12 @@ class PostDetailFilter(JSONModel):
     def images(self):
         return self._get_list_attr_value("$.aweme_detail.images[*].url_list[0]")
 
+    @property
+    def images_video(self):
+        return self._get_list_attr_value(
+            "$.aweme_detail.images[*].video.play_addr.url_list[0]"
+        )
+
     def _to_raw(self) -> Dict:
         return self._data
 
@@ -1851,6 +1874,22 @@ class FriendFeedFilter(JSONModel):
                     img["url_list"][0]
                     for img in images
                     if isinstance(img, dict) and "url_list" in img and img["url_list"]
+                ]
+                if images
+                else None
+            )
+            for images in images_list
+        ]
+
+    @property
+    def images_video(self):
+        images_list = self._get_list_attr_value("$.data[*].aweme.images")
+        return [
+            (
+                [
+                    img["video"]["play_addr"]["url_list"][0]
+                    for img in images
+                    if isinstance(img, dict) and "video" in img
                 ]
                 if images
                 else None
