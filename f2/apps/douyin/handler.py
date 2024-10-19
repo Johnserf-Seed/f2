@@ -70,7 +70,7 @@ from f2.apps.douyin.utils import (
 )
 from f2.cli.cli_console import RichConsoleManager
 from f2.exceptions.api_exceptions import APIResponseError
-from f2.utils.utils import interval_2_timestamp
+from f2.utils.utils import interval_2_timestamp, timestamp_2_str
 
 rich_console = RichConsoleManager().rich_console
 rich_prompt = RichConsoleManager().rich_prompt
@@ -316,7 +316,13 @@ class DouyinHandler:
                     max_counts, current_request_size
                 )
             )
-            rich_console.print(Rule(_("开始处理第 {0} 页").format(max_cursor)))
+            rich_console.print(
+                Rule(
+                    _("开始处理第 {0} 页 ({1})").format(
+                        max_cursor, timestamp_2_str(max_cursor)
+                    )
+                )
+            )
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserPost(
@@ -428,7 +434,13 @@ class DouyinHandler:
                     max_counts, current_request_size
                 )
             )
-            rich_console.print(Rule(_("开始处理第 {0} 页").format(max_cursor)))
+            rich_console.print(
+                Rule(
+                    _("开始处理第 {0} 页 ({1})").format(
+                        max_cursor, timestamp_2_str(max_cursor)
+                    )
+                )
+            )
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserLike(
@@ -531,7 +543,13 @@ class DouyinHandler:
                     max_counts, current_request_size
                 )
             )
-            rich_console.print(Rule(_("开始处理第 {0} 页").format(max_cursor)))
+            rich_console.print(
+                Rule(
+                    _("开始处理第 {0} 页 ({1})").format(
+                        max_cursor, timestamp_2_str(max_cursor)
+                    )
+                )
+            )
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserMusicCollection(
@@ -630,7 +648,13 @@ class DouyinHandler:
                     max_counts, current_request_size
                 )
             )
-            rich_console.print(Rule(_("开始处理第 {0} 页").format(max_cursor)))
+            rich_console.print(
+                Rule(
+                    _("开始处理第 {0} 页 ({1})").format(
+                        max_cursor, timestamp_2_str(max_cursor)
+                    )
+                )
+            )
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserCollection(cursor=max_cursor, count=current_request_size)
@@ -790,7 +814,13 @@ class DouyinHandler:
                     max_cursor, max_counts
                 )
             )
-            rich_console.print(Rule(_("开始处理第 {0} 页").format(max_cursor)))
+            rich_console.print(
+                Rule(
+                    _("开始处理第 {0} 页 ({1})").format(
+                        max_cursor, timestamp_2_str(max_cursor)
+                    )
+                )
+            )
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserCollects(cursor=max_cursor, count=page_counts)
@@ -856,7 +886,13 @@ class DouyinHandler:
                     max_counts, current_request_size
                 )
             )
-            rich_console.print(Rule(_("开始处理第 {0} 页").format(max_cursor)))
+            rich_console.print(
+                Rule(
+                    _("开始处理第 {0} 页 ({1})").format(
+                        max_cursor, timestamp_2_str(max_cursor)
+                    )
+                )
+            )
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserCollectsVideo(
@@ -983,7 +1019,13 @@ class DouyinHandler:
                     max_counts, current_request_size
                 )
             )
-            rich_console.print(Rule(_("开始处理第 {0} 页").format(max_cursor)))
+            rich_console.print(
+                Rule(
+                    _("开始处理第 {0} 页 ({1})").format(
+                        max_cursor, timestamp_2_str(max_cursor)
+                    )
+                )
+            )
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserMix(
@@ -1191,7 +1233,13 @@ class DouyinHandler:
                     max_counts, current_request_size
                 )
             )
-            rich_console.print(Rule(_("开始处理第 {0} 页").format(max_cursor)))
+            rich_console.print(
+                Rule(
+                    _("开始处理第 {0} 页 ({1})").format(
+                        max_cursor, timestamp_2_str(max_cursor)
+                    )
+                )
+            )
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserPost(
@@ -1392,8 +1440,11 @@ class DouyinHandler:
 
             logger.debug("===================================")
             logger.debug(_("最大数量：{0} 个").format(max_counts))
-
-            rich_console.print(Rule(_("开始处理第 {0} 页").format(cursor)))
+            rich_console.print(
+                Rule(
+                    _("开始处理第 {0} 页 ({1})").format(cursor, timestamp_2_str(cursor))
+                )
+            )
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = FriendFeed(
