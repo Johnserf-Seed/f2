@@ -37,6 +37,11 @@ f2:
       http://:
       https://:
 
+    wss:
+      domain: localhost
+      port: 8765
+      verify: false
+
     msToken:
       url: https://mssdk.bytedance.com/web/report
       magic: 538969122
