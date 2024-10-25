@@ -217,7 +217,7 @@ class DouyinDownloader(BaseDownloader):
             image_name = f"{format_file_name(self.kwargs.get('naming'), self.aweme_data_dict)}_image_{i + 1}"
             if image_url:
                 await self.initiate_download(
-                    _("图集"), image_url, self.base_path, image_name, ".jpg"
+                    _("图集"), image_url, self.base_path, image_name, ".webp"
                 )
             else:
                 logger.warning(
