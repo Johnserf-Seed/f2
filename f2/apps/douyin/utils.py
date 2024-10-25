@@ -98,6 +98,10 @@ class ClientConfManager:
         return cls.client().get("headers", {})
 
     @classmethod
+    def wss(cls) -> dict:
+        return cls.client().get("wss", {})
+
+    @classmethod
     def user_agent(cls) -> str:
         return cls.headers().get("User-Agent", "")
 
