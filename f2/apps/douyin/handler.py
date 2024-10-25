@@ -1782,13 +1782,21 @@ class DouyinHandler:
                 "WebcastRoomDataSyncMessage": DouyinWebSocketCrawler.WebcastRoomDataSyncMessage,
                 "WebcastInRoomBannerMessage": DouyinWebSocketCrawler.WebcastInRoomBannerMessage,
                 "WebcastLinkMessage": DouyinWebSocketCrawler.WebcastLinkMessage,
-                # TODO: WebcastLinkMicArmiesMethod
-                # TODO: WebcastLinkmicPlayModeUpdateScoreMessage
-                # TODO: WebcastSandwichBorderMessage
-                # TODO: WebcastLuckyBoxTempStatusMessage
-                # TODO: WebcastLinkMicBattleMethod
-                # TODO: WebcastBattleTeamTaskMessage
+                "WebcastBattleTeamTaskMessage": DouyinWebSocketCrawler.WebcastBattleTeamTaskMessage,
+                "WebcastHotChatMessage": DouyinWebSocketCrawler.WebcastHotChatMessage,
+                # TODO: 以下消息类型暂未实现
+                # WebcastLinkMicArmiesMethod
+                # WebcastLinkmicPlayModeUpdateScoreMessage
+                # WebcastSandwichBorderMessage
+                # WebcastLuckyBoxTempStatusMessage
+                # WebcastLotteryEventMessage
+                # WebcastLotteryEventNewMessage
+                # WebcastDecorationUpdateMessage
+                # WebcastDecorationModifyMethod
+                # WebcastLinkSettingNotifyMessage
+                # WebcastLinkMicBattleMethod
             }
+
         async with DouyinWebSocketCrawler(self.kwargs, callbacks=wss_callbacks) as wss:
             signature = DouyinWebcastSignature(
                 ClientConfManager.user_agent()
