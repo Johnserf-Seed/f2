@@ -841,41 +841,80 @@ message BattleTeamTaskMessage {
 }
 
 message TeamTask {
-  Config config = 1;
-  string battle_id = 2;
-  string trigger_user_id = 3;
-  int32 battle_type = 4;
+    string battle_id = 3;
+    string trigger_user_id = 4;
+    int32 battle_type = 5;
+    string webcast_trigger_uid = 6;
+    string trigger_open_id = 5001;
+    map<string, Info> info = 2;
+    map<string, Info> open_info = 5000;
 
-  message Config {
-    map<int64, PeriodConfig> period_config = 1;
-    int64 reward_buff_multiple = 2;
-    int32 task_type = 3;
-    ExtraConfig extra_config = 4;
-    int32 target_type = 5;
-    int32 reward_type = 6;
-    int32 team_work_team_task_type = 7;
-    repeated int64 stage_reward_buff_multiple = 8;
-  }
+    message Config {
+        map<int64, PeriodConfig> period_config = 1;
+        int64 reward_buff_multiple = 2;
+        int32 task_type = 3;
+        ExtraConfig extra_config = 4;
+        int32 target_type = 5;
+        int32 reward_type = 6;
+        int32 team_work_team_task_type = 7;
+        repeated int64 stage_reward_buff_multiple = 8;
+        GiftPanelConfig gift_panel_config = 9;
+        map<string, string> tracking_params = 10;
+    }
 
-  message PeriodConfig {
-    int64 begin_second_relative_battle_finish = 1;
-    int64 end_second_relative_battle_finish = 2;
-  }
+    message ExtraConfig {
+        SpecialGiftCountConfig special_gift_count_config = 5;
+    }
 
-  message ExtraConfig {
-    SpecialGiftCountConfig special_gift_count_config = 5;
-  }
+    message PeriodConfig {
+        int64 begin_second_relative_battle_finish = 1;
+        int64 end_second_relative_battle_finish = 2;
+    }
 
-  message SpecialGiftCountConfig {
-    int64 gift_id = 1;
-    string gift_name = 2;
-    Image icon = 3;
-    int64 max_gift_count_per_user = 4;
-    int64 current_gift_count = 5;
-  }
+    message SpecialGiftCountConfig {
+        int64 gift_id = 1;
+        string gift_name = 2;
+        Image icon = 3;
+        int64 max_gift_count_per_user = 4;
+        int64 current_gift_count = 5;
+    }
+
+    message GiftPanelConfig {
+        int64 panel_tab_id = 1;
+    }
+
+    message Info {
+        int64 target_user_count = 1;
+        int64 finish_user_count = 2;
+        int32 result = 3;
+        Reward reward = 4;
+        int64 ratio = 5;
+        int32 role = 6;
+        ItemCardInfo item_card_info = 7;
+        string value_text = 8;
+        string progress_blur_text = 9;
+    }
+
+    message Reward {
+        int64 begin_second_relative_battle_finish = 1;
+        int64 end_second_relative_battle_finish = 2;
+        int64 reward_score = 3;
+        int64 current_reward_buff_multiple = 4;
+    }
 }
 
-
+message ItemCardInfo {
+    int32 item_card_type = 1;
+    int32 card_play_type = 2;
+    string card_value = 3;
+    int64 rest_duration = 4;
+    int64 failure_time = 5;
+    string progress_text = 6;
+    int32 item_card_status = 7;
+    int64 mystery_rank_n = 8;
+    int64 total_duration = 9;
+    string card_name = 10;
+}
 
 
 // 
