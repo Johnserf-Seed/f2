@@ -362,7 +362,10 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
             return await self.receive_messages()
         finally:
             server_task.cancel()  # 确保在完成时取消服务器任务
-            await server_task
+            try:
+                await server_task
+            except asyncio.CancelledError:
+                pass  # 抑制 CancelledError 异常
         # return await self.receive_messages()
 
     async def handle_wss_message(self, message: bytes):
@@ -444,13 +447,21 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         """
         启动 WebSocket 服务器
         """
-        server = await serve(self.register_client, "localhost", 8765)
-        logger.info(
-            _("本地 WebSocket 服务器已启动，端口：8765，连接地址：ws://localhost:8765")
-        )
+
+        wss_conf = ClientConfManager.wss()
+        wss_domain = wss_conf.get("domain")
+        wss_port = wss_conf.get("port")
+        # wss_verify = wss_conf.get("verify")
+        # 暂不支持wss本地证书验证
 
         try:
-            # await self._timeout_check(server)
+            server = await serve(self.register_client, wss_domain, wss_port)
+            logger.info(
+                _(
+                    f"本地 WebSocket 服务器已启动，连接地址：ws://{wss_domain}:{wss_port}"
+                )
+            )
+            await self._timeout_check(server)
             await asyncio.Future()  # 这里保持服务器运行
         except asyncio.CancelledError:
             logger.info(_("本地 WebSocket 服务器任务被取消"))
@@ -479,17 +490,21 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
             websocket: WebSocketServerProtocol 实例
         """
         self.connected_clients.add(websocket)
-        try:
-            logger.info(
-                _("[RegisterClient] [🔗新的客户端连接] ｜ {0}").format(
-                    websocket.remote_address
-                )
+        logger.info(
+            _("[RegisterClient] [🔗新的客户端连接] ｜ {0}").format(
+                websocket.remote_address
             )
+        )
+        try:
             async for message in websocket:
                 # 如果需要处理验证信息，可以在这里处理
                 pass
         except ConnectionClosedOK:
-            pass
+            logger.info(
+                _("[RegisterClient] [⛓客户端已断开连接] ｜ {0}").format(
+                    websocket.remote_address
+                )
+            )
         finally:
             self.connected_clients.remove(websocket)
 
@@ -500,21 +515,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         Args:
             message: 要转发的消息（字符串格式）
         """
-        try:
-            if isinstance(message, dict):
+        if not isinstance(message, str):
+            try:
                 message = json.dumps(message, ensure_ascii=False)
-        except json.JSONDecodeError:
-            pass
-        except TypeError:
-            pass
+            except (json.JSONDecodeError, TypeError):
+                logger.error(
+                    _("[BroadcastMessage] [❌消息格式错误] ｜ {0}").format(message)
+                )
+                return
 
-        if self.connected_clients:
-            await asyncio.wait(
-                [
-                    asyncio.create_task(client.send(message))
-                    for client in self.connected_clients
-                ]
-            )
+        tasks = [client.send(message) for client in self.connected_clients]
+        await asyncio.gather(*tasks, return_exceptions=True)
 
     # 定义所有的回调消息函数
     @classmethod
