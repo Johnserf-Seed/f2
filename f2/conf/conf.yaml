@@ -2,6 +2,10 @@ f2:
   version: "0.0.1.6"
   show_update: true
 
+  bark:
+    url: https://api.day.app
+    key: ""
+
   douyin:
     encryption: ab
 
