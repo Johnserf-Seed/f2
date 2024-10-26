@@ -8,7 +8,6 @@ import traceback
 from typing import Dict
 from google.protobuf import json_format
 from google.protobuf.message import DecodeError as ProtoDecodeError
-
 from websockets import ConnectionClosedOK, WebSocketServerProtocol, serve
 
 from f2.log.logger import logger
@@ -351,9 +350,10 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
             dyendpoint.LIVE_IM_WSS,
             params.model_dump(),
         )
-        logger.debug(_("直播弹幕接口地址：{0}").format(endpoint))
+        logger.debug(
+            _("[FetchLiveDanmaku] [🔗 直播弹幕接口地址] | [地址：{0}]").format(endpoint)
+        )
         await self.connect_websocket(endpoint)
-        # await self.start_server()
 
         server_task = asyncio.create_task(
             self.start_server()
@@ -366,7 +366,6 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
                 await server_task
             except asyncio.CancelledError:
                 pass  # 抑制 CancelledError 异常
-        # return await self.receive_messages()
 
     async def handle_wss_message(self, message: bytes):
         """
@@ -400,11 +399,16 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
                         await self.broadcast_message(processed_data)
                 else:
                     logger.warning(
-                        _("未找到对应的回调函数处理消息：{0}").format(method)
+                        _(
+                            "[HandleWssMessage] [❌未找到对应的回调函数] | [方法：{0}]"
+                        ).format(method)
                     )
 
-        except Exception:
-            logger.error(traceback.format_exc())
+        except Exception as exc:
+            logger.debug(traceback.format_exc())
+            logger.error(
+                _("[HandleWssMessage] [⚠️ 处理消息出错] | [错误：{0}]").format(exc)
+            )
 
     async def send_ack(self, log_id: str, internal_ext: str):
         """
@@ -418,7 +422,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         ack.logId = log_id
         ack.payloadType = internal_ext
         data = ack.SerializeToString()
-        logger.debug(_("[SendAck] [💓发送ack包]"))
+        logger.debug(_("[SendAck] [💓 发送 ack 包] | [日志ID：{0}]").format(log_id))
         await self.websocket.send(data)
 
     async def send_ping(self):
@@ -428,7 +432,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         ping = PushFrame()
         ping.payloadType = "hb"
         data = ping.SerializeToString()
-        logger.debug(_("[SendPing] [📤发送ping包]"))
+        logger.debug(_("[SendPing] [📤 发送 ping 包]"))
         await self.websocket.ping(data)
 
     async def on_message(self, message):
@@ -444,10 +448,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return await super().on_open()
 
     async def start_server(self):
-        """
-        启动 WebSocket 服务器
-        """
-
+        """启动 WebSocket 服务器"""
         wss_conf = ClientConfManager.wss()
         wss_domain = wss_conf.get("domain")
         wss_port = wss_conf.get("port")
@@ -458,24 +459,33 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
             server = await serve(self.register_client, wss_domain, wss_port)
             logger.info(
                 _(
-                    f"本地 WebSocket 服务器已启动，连接地址：ws://{wss_domain}:{wss_port}"
-                )
+                    "[StartServer] [🚀本地 WebSocket 服务器已启动] ｜ 连接地址：ws://{0}:{1}"
+                ).format(wss_domain, wss_port)
             )
             await self._timeout_check(server)
             await asyncio.Future()  # 这里保持服务器运行
         except asyncio.CancelledError:
-            logger.info(_("本地 WebSocket 服务器任务被取消"))
+            logger.debug(_("[StartServer] [⚠️ 服务器任务被取消]"))
+        except Exception as exc:
+            logger.debug(traceback.format_exc())
+            logger.error(
+                _("[StartServer] [❌ 服务器启动失败] | [错误：{0}]").format(exc)
+            )
         finally:
             server.close()
             await server.wait_closed()
-            logger.info(_("本地 WebSocket 服务器已关闭"))
+            logger.info(_("[StartServer] [🔒 本地 WebSocket 服务器已关闭]"))
 
     async def _timeout_check(self, server):
         timeout = 10  # 设置超时时间，单位为秒
         while True:
             await asyncio.sleep(timeout)
             if not self.connected_clients:
-                logger.info(_("在 {0} 秒内无客户端连接，关闭服务器。").format(timeout))
+                logger.info(
+                    _(
+                        "[TimeoutCheck] [⏳ 无客户端连接超时关闭] | [超时时间：{0} 秒]"
+                    ).format(self.timeout)
+                )
                 break
         server.close()
         await server.wait_closed()
@@ -491,8 +501,8 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         """
         self.connected_clients.add(websocket)
         logger.info(
-            _("[RegisterClient] [🔗新的客户端连接] ｜ {0}").format(
-                websocket.remote_address
+            _("[RegisterClient] [🔗 新的客户端连接] ｜ [Ip：{0} Port：{1}]").format(
+                *websocket.remote_address
             )
         )
         try:
@@ -501,8 +511,8 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
                 pass
         except ConnectionClosedOK:
             logger.info(
-                _("[RegisterClient] [⛓客户端已断开连接] ｜ {0}").format(
-                    websocket.remote_address
+                _("[RegisterClient] [⛓ 客户端断开连接] | [Ip：{0} Port：{1}]").format(
+                    *websocket.remote_address
                 )
             )
         finally:
@@ -520,7 +530,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
                 message = json.dumps(message, ensure_ascii=False)
             except (json.JSONDecodeError, TypeError):
                 logger.error(
-                    _("[BroadcastMessage] [❌消息格式错误] ｜ {0}").format(message)
+                    _("[BroadcastMessage] [❌ 消息格式错误] | [错误：{0}]").format(exc)
                 )
                 return
 
