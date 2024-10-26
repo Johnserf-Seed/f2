@@ -1,5 +1,6 @@
 # path: f2/crawlers/base_crawler.py
 
+import time
 import httpx
 import json
 import asyncio
@@ -23,6 +24,7 @@ from f2.exceptions.api_exceptions import (
     APIRateLimitError,
     APIRetryExhaustedError,
 )
+from f2.utils.utils import timestamp_2_str
 
 
 class BaseCrawler:
@@ -457,15 +459,29 @@ class WebSocketCrawler:
                 self.websocket = await websockets.connect(
                     websocket_uri, extra_headers=self.wss_headers
                 )
-            logger.info(_("已连接 WebSocket"))
+            logger.debug(
+                _("[ConnectWebsocket] [🌐 已连接 WebSocket] | [服务器：{0}]").format(
+                    websocket_uri
+                )
+            )
         except ConnectionRefusedError as exc:
-            logger.error(traceback.format_exc())
-            logger.error(_("WebSocket 连接被拒绝：{0}").format(exc))
-            raise APIConnectionError(_("连接 WebSocket 失败：{0}").format(exc))
+            logger.debug(traceback.format_exc())
+            logger.error(
+                _("[ConnectWebSocket] [🚫 WebSocket 连接被拒绝] | [错误：{0}]").format(
+                    exc
+                )
+            )
+            raise APIConnectionError(
+                _("[ConnectWebSocket] [❌ WebSocket 连接失败] | [服务器：{0}]").format(
+                    exc
+                )
+            )
 
         except websockets.InvalidStatusCode as exc:
-            logger.error(traceback.format_exc())
-            logger.error(_("WebSocket 连接状态码无效：{0}").format(exc))
+            logger.debug(traceback.format_exc())
+            logger.error(
+                _("[ConnectWebSocket] [⚠️ 无效状态码] | [状态码：{0}]").format(exc)
+            )
             await asyncio.sleep(2)
             await self.connect_websocket(websocket_uri)
 
@@ -473,45 +489,58 @@ class WebSocketCrawler:
         """
         接收 WebSocket 消息并处理
         """
-        timeout_count = 0
-        try:
-            while True:
-                try:
-                    # 为wss连接设置10秒超时机制
-                    logger.info(
-                        _("等待接收消息，超时时间：{0} 秒").format(self.timeout)
-                    )
-                    message = await asyncio.wait_for(
-                        self.websocket.recv(), timeout=self.timeout
-                    )
-                    timeout_count = 0  # 重置超时计数
-                    await self.on_message(message)
-                except asyncio.TimeoutError:
-                    logger.warning(_("接收消息超时"))
-                    timeout_count += 1
-                    if timeout_count >= 3:
-                        await self.on_close(_("即将关闭 WebSocket 连接"))
-                        return "closed"
-                    if self.websocket.closed:
-                        await self.on_close(_("即将关闭 WebSocket 连接"))
-                        return "closed"
-                except ConnectionClosedError as exc:
-                    logger.error(traceback.format_exc())
-                    await self.on_close(_("WebSocket 连接被关闭：{0}").format(exc))
-                    return "closed"
-                except ConnectionClosedOK:
-                    await self.on_close(_("WebSocket 连接正常关闭"))
-                    return "closed"
-                except Exception as exc:
-                    logger.error(traceback.format_exc())
-                    logger.error(_("处理消息时出错：{0}").format(exc))
-                    await self.on_error(exc)
-                    return "error"
 
-        except Exception as e:
-            logger.error(traceback.format_exc())
-            logger.error(_("接收消息过程中出错：{0}").format(e))
-            return "error"
+        logger.info(_("[ReceiveMessages] [📩 开始接收消息]"))
+        logger.info(
+            _("[ReceiveMessages] [⏱ 消息等待超时：{0} 秒]").format(self.timeout)
+        )
+
+        timeout_count = 0
+        while True:
+            try:
+                message = await asyncio.wait_for(
+                    self.websocket.recv(), timeout=self.timeout
+                )
+                # 为wss连接设置10秒超时机制
+                logger.info(
+                    _("[ReceiveMessages] | [⏳ 接收消息 {0}]").format(
+                        timestamp_2_str(time.time(), "%Y-%m-%d %H:%M:%S")
+                    )
+                )
+                timeout_count = 0  # 重置超时计数
+                await self.on_message(message)
+            except asyncio.TimeoutError:
+                timeout_count += 1
+                logger.warning(
+                    _("[ReceiveMessages] [⚠️ 超时] | [超时次数：{0} / 3]").format(
+                        timeout_count
+                    )
+                )
+                if timeout_count >= 3:
+                    logger.warning(_("[ReceiveMessages] [❌ 多次超时，关闭连接]"))
+                    return "closed"
+                if self.websocket.closed:
+                    logger.warning(
+                        _("[ReceiveMessages] [🔒 服务器关闭] | [WebSocket 连接结束]")
+                    )
+                    return "closed"
+            except ConnectionClosedError as exc:
+                logger.debug(traceback.format_exc())
+                logger.warning(
+                    _("[ReceiveMessages] [🔌 连接关闭] | [原因：{0}]").format(exc)
+                )
+                return "closed"
+            except ConnectionClosedOK:
+                logger.info(
+                    _("[ReceiveMessages] [✔️ 正常关闭] | [WebSocket 连接正常关闭]")
+                )
+                return "closed"
+            except Exception as exc:
+                logger.debug(traceback.format_exc())
+                logger.error(
+                    _("[ReceiveMessages] [⚠️ 消息处理错误] | [错误：{0}]").format(exc)
+                )
+                return "error"
 
     async def close_websocket(self):
         """
@@ -519,7 +548,7 @@ class WebSocketCrawler:
         """
         if self.websocket:
             await self.websocket.close()
-            logger.info(_("已关闭 WebSocket 连接"))
+            logger.debug(_("[CloseWebSocket] [🔒 WebSocket 已关闭]"))
 
     async def on_message(self, message):
         """
@@ -528,7 +557,7 @@ class WebSocketCrawler:
         Args:
             message: WebSocket 消息
         """
-        logger.debug(_("收到消息：{0}").format(message))
+        logger.debug(_("[OnMessage] [📩 收到消息] | [内容：{0}]").format(message))
 
     async def on_error(self, message):
         """
@@ -537,7 +566,7 @@ class WebSocketCrawler:
         Args:
             message: WebSocket 错误
         """
-        logger.error(_("WebSocket 错误：{0}").format(message))
+        logger.error(_("[OnError] [⚠️ 错误] | [内容：{0}]").format(message))
 
     async def on_close(self, message):
         """
@@ -546,13 +575,13 @@ class WebSocketCrawler:
         Args:
             message: WebSocket 关闭消息
         """
-        logger.warning(message)
+        logger.info(_("[OnClose] [🔒 连接关闭] | [关闭原因：{0}]").format(message))
 
     async def on_open(self):
         """
         处理 WebSocket 打开
         """
-        logger.info(_("WebSocket 连接已打开"))
+        logger.info(_("[OnOpen] [🌐 连接已打开] | [WebSocket 连接成功]"))
 
     async def __aenter__(self):
         """
