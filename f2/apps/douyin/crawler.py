@@ -365,9 +365,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         )
         await self.connect_websocket(endpoint)
 
-        server_task = asyncio.create_task(
-            self.start_server()
-        )  # 在后台启动 WebSocket 服务器
+        server_task = asyncio.create_task(self.start_server())
         try:
             return await self.receive_messages()
         finally:
@@ -487,9 +485,15 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
             logger.info(_("[StartServer] [🔒 本地 WebSocket 服务器已关闭]"))
 
     async def _timeout_check(self, server):
-        timeout = 10  # 设置超时时间，单位为秒
+        """
+        检查本地服务器是否超时无连接
+
+        Args:
+            server: WebSocketServer 对象
+
+        """
         while True:
-            await asyncio.sleep(timeout)
+            await asyncio.sleep(self.timeout)
             if not self.connected_clients:
                 logger.info(
                     _(
@@ -498,8 +502,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
                 )
                 break
         server.close()
-        await server.wait_closed()
-        logger.info(_("本地服务器由于超时无连接而关闭"))
+        # await server.wait_closed()
         await self.close_websocket()
 
     async def register_client(self, websocket: WebSocketServerProtocol):
