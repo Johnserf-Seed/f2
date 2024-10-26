@@ -333,7 +333,11 @@ class DouyinCrawler(BaseCrawler):
 
 
 class DouyinWebSocketCrawler(WebSocketCrawler):
+    # 是否显示直播间消息
+    show_message = False
+
     def __init__(self, kwargs: Dict = ..., callbacks: Dict = None):
+        self.__class__.show_message = bool(kwargs.get("show_message", False))
         # 需要与cli同步
         self.headers = kwargs.get("headers", {}) | {
             "Cookie": f"ttwid={TokenManager.gen_ttwid()};"
@@ -344,6 +348,12 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         super().__init__(
             wss_headers=self.headers, callbacks=self.callbacks, timeout=self.timeout
         )
+
+    @classmethod
+    def _log(cls, message, level="info"):
+        """控制消息日志输出的辅助方法"""
+        if cls.show_message:
+            getattr(logger, level)(message)
 
     async def fetch_live_danmaku(self, params: LiveWebcast):
         endpoint = BaseEndpointManager.model_2_endpoint(
@@ -547,10 +557,9 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
             preserving_proto_field_name=True,
             ensure_ascii=False,
         )
-        # logger.info(
-        #     _("[WebcastRoomMessage] [🏠房间消息] ｜ {0}").format(data_dict.get("room"))
-        # )
-        return data_dict
+        cls._log(
+            _("[WebcastRoomMessage] [🏠房间消息] ｜ {0}").format(data_json.get("room"))
+        )
 
     @classmethod
     async def WebcastLikeMessage(cls, data: bytes):
@@ -561,15 +570,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
             preserving_proto_field_name=True,
             ensure_ascii=False,
         )
-        # logger.info(
-        #     "[WebcastLikeMessage] [👍点赞消息] ｜ "
-        #     + "[用户Id：{0}] [当前用户点赞：{1}] [总点赞：{2}]".format(
-        #         data_dict.get("user").get("id"),
-        #         data_dict.get("count"),
-        #         data_dict.get("total"),
-        #     )
-        # )
         return data_dict
+        cls._log(
+            _(
+                "[WebcastLikeMessage] [👍点赞消息] ｜ "
+                + "[用户昵称：{0}] [当前用户点赞：{1}] [直播间总点赞：{2}]".format(
+                    data_json.get("user").get("nickname"),
+                    data_json.get("count"),
+                    data_json.get("total"),
+                ),
+            )
+        )
 
     @classmethod
     async def WebcastMemberMessage(cls, data: bytes):
