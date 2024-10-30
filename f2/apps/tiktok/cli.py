@@ -15,6 +15,7 @@ from f2.utils.utils import (
     get_cookie_from_browser,
     check_invalid_naming,
     merge_config,
+    check_proxy_avail,
 )
 from f2.utils.conf_manager import ConfigManager
 from f2.i18n.translator import TranslationManager, _
@@ -145,6 +146,40 @@ def handler_naming(
                 value, "".join(invalid_patterns)
             )
         )
+
+    return value
+
+
+def validate_proxies(
+    ctx: click.Context,
+    param: typing.Union[click.Option, click.Parameter],
+    value: typing.Any,
+) -> typing.Any:
+    """验证代理参数 (Validate proxy parameters)
+
+    Args:
+        ctx: click的上下文对象 (Click's context object)
+        param: 提供的参数或选项 (The provided parameter or option)
+        value: 参数或选项的值 (The value of the parameter or option)
+    """
+
+    if value:
+        # 校验代理参数是否合法的代理参数
+        if not all([value[0].startswith("http://"), value[1].startswith("http://")]):
+            raise click.BadParameter(
+                _(
+                    "代理参数应该以'http://'和'http://'开头，在大多数情况下，https:// 应使用 http:// 方案"
+                )
+            )
+        # 校验代理服务器是否可用
+        if not check_proxy_avail(
+            http_proxy=value[0],
+            https_proxy=value[1],
+            test_url="https://www.tiktok.com/",
+            # 例如HK的代理服务器会跳转至/about，所以页面中没有webmssdk
+            expected_content="webmssdk",
+        ):
+            raise click.BadParameter(_("代理服务器不可用"))
 
     return value
 
@@ -300,6 +335,7 @@ def handler_naming(
     help=_(
         "代理服务器，最多 2 个参数，http://与https://。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"
     ),
+    callback=validate_proxies,
 )
 @click.option(
     "--update-config",
