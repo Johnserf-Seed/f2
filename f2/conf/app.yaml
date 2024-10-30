@@ -52,3 +52,22 @@ weibo:
   max_counts: 0
   max_tasks: 5
   page_counts: 20
+
+bark:
+
+  token:
+  mode: get
+  retry: 3
+  ringtones: 1
+  icon: https://johnserf-seed.github.io/f2/f2-logo-with-shadow.png
+  level: active
+  call: 0
+  isArchive: 1
+  sound: birdsong
+  autoCopy: 1
+  title: F2
+  body: ""
+  call: 0
+  copy: ""
+  group: 下载统计
+  badge: 1

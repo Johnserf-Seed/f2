@@ -8,6 +8,7 @@ _bilibili = ["bilibili", "bili"]
 _twitch = ["twitch", "tv"]
 _neteasy_music = ["neteasy_music", "ntm"]
 _little_red_book = ["little_red_book", "lrb"]
+_bark = ["bark", "bk"]
 
 __all__ = [
     "_douyin",
@@ -20,4 +21,5 @@ __all__ = [
     "_twitch",
     "_neteasy_music",
     "_little_red_book",
+    "_bark",
 ]
