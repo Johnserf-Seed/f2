@@ -88,6 +88,7 @@ def main() -> None:
     table.add_row(_("bilibili 或 bili"), _("- 获取BiliBili的作品"))
     table.add_row(_("neteasy_music 或 nem"), _("- 获取网易云音乐作品"))
     table.add_row(_("little_red_book 或 lrb"), _("- 获取小红书的作品"))
+    table.add_row(_("bark 或 bk"), _("- 发送Bark通知"), _("✔"))
     table.add_row("\n")
     table.add_row(
         "f2 -d DEBUG",
