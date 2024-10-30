@@ -438,9 +438,15 @@ def tiktok(
     logger.debug(_("自定义配置参数：{0}").format(custom_conf))
     logger.debug(_("CLI参数：{0}").format(kwargs))
 
-    # 尝试从命令行参数或kwargs中获取URL
-    if not kwargs.get("url"):
-        logger.error(_("缺乏URL参数，详情看命令帮助"))
+    # 尝试从命令行参数或kwargs中获取url和mode
+    missing_params = [param for param in ["url", "mode"] if not kwargs.get(param)]
+
+    if missing_params:
+        logger.error(
+            _(
+                "TikTok CLI 缺乏必要参数：[cyan]{0}[/cyan]。详情请查看帮助，[yellow]f2 tiktok -h/--help[/yellow]"
+            ).format("，".join(missing_params))
+        )
         handler_help(ctx, None, True)
 
     # 添加app_name到kwargs
