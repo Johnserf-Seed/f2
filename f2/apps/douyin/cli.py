@@ -354,7 +354,7 @@ def validate_proxies(
     type=str,
     nargs=2,
     help=_(
-        "代理服务器，最多 2 个参数，http://与https://。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"
+        "代理服务器，空格区分 2 个参数 http://x.x.x.x:xxxx http://x.x.x.x:xxxx (某些情况下，https:// 应使用 http:// 方案)"
     ),
     callback=validate_proxies,
 )

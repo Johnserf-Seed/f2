@@ -51,7 +51,7 @@ def help() -> None:
             "-P --proxies",
             "[dark_cyan]str",
             _(
-                "代理服务器，最多 2 个参数，http://与https://。空格区分 2 个参数 http://x.x.x.x https://x.x.x.x"
+                "代理服务器，空格区分 2 个参数 http://x.x.x.x:xxxx http://x.x.x.x:xxxx (某些情况下，https:// 应使用 http:// 方案)"
             ),
         ),
         ("--update-config", "[dark_cyan]Flag", _("使用命令行选项更新配置文件")),
