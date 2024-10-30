@@ -12,6 +12,7 @@
 Change Log  :
 2023/02/06 17:36:41 - create output help
 2024/03/11 18:23:30 - change get_help @ importlib path
+2024/10/30 13:40:01 - make terminal more readable
 -------------------------------------------------
 """
 
@@ -23,6 +24,9 @@ from rich.panel import Panel
 from rich.table import Table
 from f2.i18n.translator import _
 
+# 真彩色终端
+console = Console(color_system="truecolor")
+
 
 def get_help(app_name: str) -> None:
     try:
@@ -30,14 +34,14 @@ def get_help(app_name: str) -> None:
         if hasattr(module, "help"):
             module.help()
         else:
-            print(_("在 {0} 应用里没有找到帮助文件").format(app_name))
+            console.print(
+                _("[red]在 {0} 应用里没有找到帮助文件[/red]").format(app_name)
+            )
     except ImportError:
-        print(_("没有找到 {0} 应用").format(app_name))
+        console.print(_("[red]没有找到 {0} 应用[/red]").format(app_name))
 
 
 def main() -> None:
-    # 真彩
-    console = Console(color_system="truecolor")
     console.print(f"\n:rocket: [bold]f2 {f2.__version__} :rocket:", justify="center")
     console.print(f"\n[i]{f2.__description_cn__}", justify="center")
     console.print(f"[i]{f2.__description_en__}", justify="center")
@@ -104,6 +108,6 @@ def main() -> None:
             border_style="bold",
             title="应用 | apps",
             title_align="left",
-            subtitle=_("欢迎提交PR适配更多网站"),
+            subtitle=_("欢迎提交PR适配更多应用"),
         )
     )
