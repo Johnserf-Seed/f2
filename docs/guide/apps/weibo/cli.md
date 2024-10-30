@@ -52,7 +52,7 @@
 
 #### `--proxies`
 
-代理服务器，最多 2 个参数，`http://`与`https://`。空格区分 2 个参数，例如：`http://x.x.x.x https://x.x.x.x`。如果你的代理不支持`出口HTTPS`，那么请使用`http://x.x.x.x http://x.x.x.x`。
+代理服务器，空格区分 2 个参数 http://x.x.x.x:xxxx http://x.x.x.x:xxxx (某些情况下如你的代理不支持`出口HTTPS`，https:// 应使用 http:// 方案)。
 
 #### `--auto-cookie`
 
