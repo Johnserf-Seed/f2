@@ -70,3 +70,21 @@ twitter:
   max_tasks:
   page_counts:
   languages:
+
+bark:
+  token:
+  title:
+  body:
+  mode:
+  retry:
+  ringtones:
+  icon:
+  level:
+  call:
+  isArchive:
+  sound:
+  autoCopy:
+  call:
+  copy:
+  group:
+  badge:
