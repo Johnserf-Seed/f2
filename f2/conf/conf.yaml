@@ -3,8 +3,16 @@ f2:
   show_update: true
 
   bark:
-    url: https://api.day.app
+    url: https://api.day.app/
     key: ""
+
+    encryption:
+      enable: false
+      algorithms: AES128
+      mode: CBC
+      padding: PKCS7
+      key: ""
+      iv: ""
 
   douyin:
     encryption: ab
