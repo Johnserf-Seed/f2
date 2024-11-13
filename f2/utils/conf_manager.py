@@ -1,10 +1,13 @@
 # path: f2/utils/conf_manager.py
 
 import f2
+import sys
 import yaml
 import click
+import traceback
 
 from pathlib import Path
+
 from f2.exceptions.file_exceptions import (
     FileNotFound,
     FilePermissionError,
@@ -28,8 +31,14 @@ class ConfigManager:
 
         if not self.filepath.exists():
             raise FileNotFound(_("配置文件不存在"), self.filepath)
-
-        return yaml.safe_load(self.filepath.read_text(encoding="utf-8")) or {}
+        try:
+            return yaml.safe_load(self.filepath.read_text(encoding="utf-8")) or {}
+        except PermissionError:
+            raise FilePermissionError(_("配置文件路径无读权限"), self.filepath)
+        except yaml.YAMLError:
+            logger.error(_("配置文件解析错误"))
+            logger.debug(traceback.format_exc())
+            sys.exit(1)
 
     def get_config(self, app_name: str, default=None) -> dict:
         """
