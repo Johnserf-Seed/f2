@@ -1124,18 +1124,26 @@ class DeviceIdManager(BaseCrawler):
                 follow_redirects=True,
             )
             response.raise_for_status()
-            data = instance._DEVICE_ID_PARTTERN.search(response.text).group(1).strip()
 
-            cookie = split_set_cookie(response.headers["Set-Cookie"])
-            deviceId = json.loads(data)["__DEFAULT_SCOPE__"]["webapp.app-context"][
-                "wid"
-            ]
+            # 增加检查匹配结果是否为 None 的逻辑
+            match = instance._DEVICE_ID_PARTTERN.search(response.text)
+            if match is None:
+                raise APIResponseError(_("未能找到所需的设备 ID 信息"))
+
+            data = match.group(1).strip()
+            cookie = split_set_cookie(response.headers.get("Set-Cookie", ""))
+            deviceId = (
+                json.loads(data)
+                .get("__DEFAULT_SCOPE__", {})
+                .get("webapp.app-context", {})
+                .get("wid")
+            )
 
             if deviceId is None:
-                raise APIResponseError(_("{0}生成失败").format("deviceId"))
+                raise APIResponseError(_("{0} 生成失败").format("deviceId"))
 
             if cookie is None:
-                raise APIResponseError(_("{0}生成失败").format("tt_chain_token"))
+                raise APIResponseError(_("{0} 生成失败").format("tt_chain_token"))
 
             return {"deviceId": deviceId, "cookie": cookie}
 
@@ -1214,6 +1222,7 @@ class DeviceIdManager(BaseCrawler):
 
         if count > 10:
             logger.warning(_("生成设备 ID 数量过多，可能会导致请求失败。"))
+            count = 10
 
         tasks = [cls.gen_device_id(full_cookie) for _ in range(count)]
         results = await asyncio.gather(*tasks)
