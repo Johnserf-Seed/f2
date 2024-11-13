@@ -315,13 +315,12 @@ def replaceT(obj: Union[str, Any]) -> Union[str, Any]:
     reSub = r"[^\u4e00-\u9fa5a-zA-Z0-9#]"
 
     if isinstance(obj, list):
-        return [re.sub(reSub, "_", i) for i in obj]
+        return [re.sub(reSub, "_", i) if isinstance(i, str) else i or "" for i in obj]
 
     if isinstance(obj, str):
         return re.sub(reSub, "_", obj)
 
     return obj
-    # raise TypeError("输入应为字符串或字符串列表")
 
 
 def split_filename(text: str, os_limit: Dict) -> str:
