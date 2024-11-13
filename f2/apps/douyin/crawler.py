@@ -337,7 +337,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
     show_message = False
 
     def __init__(self, kwargs: Dict = ..., callbacks: Dict = None):
-        self.__class__.show_message = bool(kwargs.get("show_message", False))
+        self.__class__.show_message = bool(kwargs.get("show_message", True))
         # 需要与cli同步
         self.headers = kwargs.get("headers", {}) | {
             "Cookie": f"ttwid={TokenManager.gen_ttwid()};"
@@ -434,9 +434,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         await self.websocket.send(data)
 
     async def send_ping(self):
-        """
-        发送 ping 包
-        """
+        """发送 ping 包"""
         ping = PushFrame()
         ping.payloadType = "hb"
         data = ping.SerializeToString()
@@ -541,7 +539,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         if not isinstance(message, str):
             try:
                 message = json.dumps(message, ensure_ascii=False)
-            except (json.JSONDecodeError, TypeError):
+            except (json.JSONDecodeError, TypeError) as exc:
                 logger.error(
                     _("[BroadcastMessage] [❌ 消息格式错误] | [错误：{0}]").format(exc)
                 )
@@ -555,504 +553,664 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
     async def WebcastRoomMessage(cls, data: bytes):
         roomMessage = RoomMessage()
         roomMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            roomMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                roomMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
+
         cls._log(
-            _("[WebcastRoomMessage] [🏠房间消息] ｜ {0}").format(data_json.get("room"))
+            _("[WebcastRoomMessage] [🏠房间消息] | [房间信息：{0}]").format(
+                data_json.get("room")
+            )
         )
+        return data_json
 
     @classmethod
     async def WebcastLikeMessage(cls, data: bytes):
         likeMessage = LikeMessage()
         likeMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            likeMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
-        )
-        return data_dict
-        cls._log(
-            _(
-                "[WebcastLikeMessage] [👍点赞消息] ｜ "
-                + "[用户昵称：{0}] [当前用户点赞：{1}] [直播间总点赞：{2}]".format(
-                    data_json.get("user").get("nickname"),
-                    data_json.get("count"),
-                    data_json.get("total"),
-                ),
+        data_json = json.loads(
+            json_format.MessageToJson(
+                likeMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
             )
         )
+
+        cls._log(
+            _(
+                "[WebcastLikeMessage] [👍点赞消息] | [用户昵称：{0}] [当前用户点赞：{1}] [直播间总点赞：{2}]"
+            ).format(
+                data_json.get("user", {}).get("nickname"),
+                data_json.get("count"),
+                data_json.get("total"),
+            )
+        )
+        return data_json
 
     @classmethod
     async def WebcastMemberMessage(cls, data: bytes):
         memberMessage = MemberMessage()
         memberMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            memberMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                memberMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
-        # logger.info(
-        #     f"[WebcastMemberMessage] [🚺观众加入消息] ｜ [用户Id：{data_dict.get('user').get('id')} 用户名：{data_dict.get('user').get('nickname')}]"
-        # )
-        return data_dict
+
+        cls._log(
+            _(
+                "[WebcastMemberMessage] [🚺观众加入消息] | [用户ID：{0}] [用户名：{1}]"
+            ).format(
+                data_json.get("user", {}).get("id"),
+                data_json.get("user", {}).get("nickname"),
+            )
+        )
+        return data_json
 
     @classmethod
     async def WebcastChatMessage(cls, data: bytes):
         chatMessage = ChatMessage()
         chatMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            chatMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                chatMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
 
-        # logger.info(
-        #     _("[WebcastChatMessage] [💬聊天消息] ｜ {0}").format(
-        #         data_dict.get("content")
-        #     )
-        # )
-        return data_dict
+        cls._log(
+            _("[WebcastChatMessage] [💬聊天消息] | [内容：{0}]").format(
+                data_json.get("content")
+            )
+        )
+        return data_json
 
     @classmethod
     async def WebcastGiftMessage(cls, data: bytes):
         giftMessage = GiftMessage()
         giftMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            giftMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                giftMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
-        # logger.info(
-        #     _("[WebcastGiftMessage] [🎁礼物消息] | [{0}]").format(
-        #         data_dict.get("common").get("describe")
-        #     )
-        # )
-        return data_dict
+
+        cls._log(
+            _("[WebcastGiftMessage] [🎁礼物消息] | [描述：{0}]").format(
+                data_json.get("common", {}).get("describe")
+            )
+        )
+        return data_json
 
     @classmethod
     async def WebcastSocialMessage(cls, data: bytes):
         socialMessage = SocialMessage()
         socialMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            socialMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                socialMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
-        # logger.info(
-        #     _("[WebcastSocialMessage] [➕用户关注消息] | [{0}]").format(
-        #         data_dict.get("user").get("id")
-        #     )
-        # )
-        return data_dict
+
+        cls._log(
+            _("[WebcastSocialMessage] [➕用户关注消息] | [用户ID：{0}]").format(
+                data_json.get("user", {}).get("id")
+            )
+        )
+        return data_json
 
     @classmethod
     async def WebcastRoomUserSeqMessage(cls, data: bytes):
         roomUserSeqMessage = RoomUserSeqMessage()
         roomUserSeqMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            roomUserSeqMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                roomUserSeqMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
+        )
+        ranks = data_json.get("ranksList", [])
+        top_users = ", ".join(
+            f"用户ID：{rank.get('user', {}).get('id')}" for rank in ranks[:3]
         )
 
-        # logger.info(
-        #     _("[WebcastRoomUserSeqMessage] [👥在线观众排行榜] | [{0} {1} {2}]").format(
-        #         data_dict.get("ranksList")[0].get("user").get("id"),
-        #         data_dict.get("ranksList")[1].get("user").get("id"),
-        #         data_dict.get("ranksList")[2].get("user").get("id"),
-        #     )
-        # )
-        return data_dict
+        cls._log(
+            _("[WebcastRoomUserSeqMessage] [👥在线观众排行榜] | [{0}]").format(
+                top_users
+            )
+        )
+        return data_json
 
     @classmethod
     async def WebcastUpdateFanTicketMessage(cls, data: bytes):
         updateFanTicketMessage = UpdateFanTicketMessage()
         updateFanTicketMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            updateFanTicketMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                updateFanTicketMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
 
-        # logger.info(
-        #     _("[WebcastUpdateFanTicketMessage] [🎟️粉丝票更新消息] | [{0}]").format(
-        #         data_dict.get("roomFanTicketCount")
-        #     )
-        # )
-        return data_dict
+        cls._log(
+            _(
+                "[WebcastUpdateFanTicketMessage] [🎟️粉丝票更新消息] | [粉丝票数量：{0}]"
+            ).format(data_json.get("roomFanTicketCount"))
+        )
+        return data_json
 
     @classmethod
     async def WebcastCommonTextMessage(cls, data: bytes):
         commonTextMessage = CommonTextMessage()
         commonTextMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            commonTextMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                commonTextMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
 
-        # logger.info(
-        #     _("[WebcastCommonTextMessage] [📝文本消息] | [{0}]").format(data_dict)
-        # )
-        return data_dict
+        cls._log(
+            _("[WebcastCommonTextMessage] [📝文本消息] | [内容：{0}]").format(data_json)
+        )
+        return data_json
 
     @classmethod
     async def WebcastMatchAgainstScoreMessage(cls, data: bytes):
         matchAgainstScoreMessage = MatchAgainstScoreMessage()
         matchAgainstScoreMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            matchAgainstScoreMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                matchAgainstScoreMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
 
-        # logger.info(
-        #     _("[WebcastMatchAgainstScoreMessage] [🏆对战积分消息] | [{0}]").format(
-        #         data_dict
-        #     )
-        # )
-        return data_dict
+        cls._log(
+            _(
+                "[WebcastMatchAgainstScoreMessage] [🏆对战积分消息] | [内容：{0}]"
+            ).format(data_json)
+        )
+        return data_json
 
     @classmethod
     async def WebcastEcomFansClubMessage(cls, data: bytes):
         fansClubMessage = EcomFansClubMessage()
         fansClubMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            fansClubMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                fansClubMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
 
-        # logger.info(
-        #     _("[WebcastFansclubMessage] [🎉粉丝团消息] | [{0}]").format(
-        #         data_dict.get("content")
-        #     )
-        # )
-        return data_dict
+        cls._log(
+            _("[WebcastFansclubMessage] [🎉粉丝团消息] | [内容：{0}]").format(
+                data_json.get("content")
+            )
+        )
+        return data_json
 
     @classmethod
     async def WebcastRoomStatsMessage(cls, data: bytes):
         statsMessage = RoomStatsMessage()
         statsMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            statsMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                statsMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
 
-        # logger.info(_("[WebcastStatsMessage] [📊统计消息] | [{0}]").format(data_dict))
-        return data_dict
+        # 提取关键信息
+        common_info = data_json.get("common", {})
+        create_time = common_info.get("create_time", "N/A")
+        display_value = data_json.get("display_value", "N/A")
+        total = data_json.get("total", "N/A")
+
+        cls._log(
+            _(
+                "[WebcastStatsMessage] [📊统计消息] | [创建时间：{0}] | [在线观众数：{1}] [总计：{2}]"
+            ).format(create_time, display_value, total)
+        )
+        return data_json
 
     @classmethod
     async def WebcastLiveShoppingMessage(cls, data: bytes):
         liveShoppingMessage = LiveShoppingMessage()
         liveShoppingMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            liveShoppingMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                liveShoppingMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
 
-        logger.info(
-            _("[WebcastLiveShoppingMessage] [🛒直播购物消息] | [{0}]").format(data_dict)
+        msg_type = data_json.get("msg_type", "N/A")
+        promotion_id = data_json.get("promotion_id", "N/A")
+
+        cls._log(
+            _(
+                "[WebcastLiveShoppingMessage] [🛒直播购物消息] | [消息类型：{0}] [促销ID：{1}]"
+            ).format(msg_type, promotion_id)
         )
-        return data_dict
+        return data_json
 
     @classmethod
     async def WebcastLiveEcomGeneralMessage(cls, data: bytes):
         liveEcomGeneralMessage = LiveEcomGeneralMessage()
         liveEcomGeneralMessage.ParseFromString(data)
-        data_dict = json_format.MessageToDict(
-            liveEcomGeneralMessage, preserving_proto_field_name=True
+        data_json = json.loads(
+            json_format.MessageToJson(
+                liveEcomGeneralMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
+        # # data字段由Base64编码了
+        # content_type = data_json.get("content_type", "N/A")
 
-        # logger.info(
-        #     _("[WebcastLiveEcomGeneralMessage] [🛍️直播电商通用消息] | [{0}]").format(
-        #         data_dict
-        #     )
+        # cls._log(
+        #     _(
+        #         "[WebcastLiveEcomGeneralMessage] [🛍️直播电商通用消息] | [内容类型：{0}]"
+        #     ).format(content_type)
         # )
-        return data_dict
+
+        return data_json
 
     @classmethod
     async def WebcastRoomStreamAdaptationMessage(cls, data: bytes):
         roomStreamAdaptationMessage = RoomStreamAdaptationMessage()
         roomStreamAdaptationMessage.ParseFromString(data)
-        data_dict = json_format.MessageToDict(
-            roomStreamAdaptationMessage, preserving_proto_field_name=True
+        data_json = json.loads(
+            json_format.MessageToJson(
+                roomStreamAdaptationMessage, preserving_proto_field_name=True
+            )
         )
 
-        # logger.info(
-        #     _("[WebcastRoomStreamAdaptationMessage] [📡直播流适配消息] | [{0}]").format(
-        #         data_dict
-        #     )
+        # adaptation_type = data_json.get("adaptation_type", "N/A")
+
+        # cls._log(
+        #     _(
+        #         "[WebcastRoomStreamAdaptationMessage] [📡直播流适配消息] | "
+        #         "[消息ID：{0}] [房间ID：{1}] [适配类型：{2}]"
+        #     ).format(adaptation_type)
         # )
-        return data_dict
+        return data_json
 
     @classmethod
     async def WebcastRanklistHourEntranceMessage(cls, data: bytes):
         ranklistHourEntranceMessage = RanklistHourEntranceMessage()
         ranklistHourEntranceMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            ranklistHourEntranceMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                ranklistHourEntranceMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
 
-        # logger.info(
-        #     _("[WebcastRanklistHourEntranceMessage] [🕒小时榜入口消息] | [{0}]").format(
-        #         data_dict
-        #     )
-        # )
-        return data_dict
+        # 提取关键信息
+        common_info = data_json.get("common", {})
+        create_time = common_info.get("create_time", "N/A")
+        ranklist_types = []
+
+        for global_info in data_json.get("info", {}).get("global_infos", []):
+            for detail in global_info.get("details", []):
+                for page in detail.get("pages", []):
+                    content = page.get("content", "N/A")
+                    ranklist_type = detail.get("ranklist_type", "N/A")
+                    ranklist_types.append(f"{content} (Type: {ranklist_type})")
+
+        cls._log(
+            _(
+                "[WebcastRanklistHourEntranceMessage] [🕒小时榜入口消息] | "
+                "[创建时间：{0}] | [榜单类型：{1}]"
+            ).format(create_time, ", ".join(ranklist_types))
+        )
+        return data_json
 
     @classmethod
     async def WebcastProductChangeMessage(cls, data: bytes):
         productChangeMessage = ProductChangeMessage()
         productChangeMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            productChangeMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                productChangeMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
-
-        # logger.info(
-        #     _("[WebcastProductChangeMessage] [🔄商品变更消息] | [{0}]").format(
-        #         data_dict
-        #     )
-        # )
-        return data_dict
+        cls._log(
+            _("[WebcastProductChangeMessage] [🔄商品变更消息] | [内容：{0}]").format(
+                data_json
+            )
+        )
+        return data_json
 
     @classmethod
     async def WebcastNotifyEffectMessage(cls, data: bytes):
         notifyEffectMessage = NotifyEffectMessage()
         notifyEffectMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            notifyEffectMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                notifyEffectMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
-
-        # logger.info(
-        #     _("[WebcastNotifyEffectMessage] [📢通知效果消息] | [{0}]").format(data_dict)
-        # )
-        return data_dict
+        cls._log(
+            _("[WebcastNotifyEffectMessage] [📢通知效果消息] | [内容：{0}]").format(
+                data_json
+            )
+        )
+        return data_json
 
     @classmethod
     async def WebcastLightGiftMessage(cls, data: bytes):
         lightGiftMessage = LightGiftMessage()
         lightGiftMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            lightGiftMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                lightGiftMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
 
-        # logger.info(
-        #     _("[WebcastLightGiftMessage] [💡轻礼物消息] | [{0}]").format(data_dict)
-        # )
-        return data_dict
+        gift_id = data_json.get("gift_info", {}).get("gift_id", "N/A")
+        to_user_id = data_json.get("to_user_id", "N/A")
+        diamond_count = data_json.get("gift_info", {}).get("diamond_count", "N/A")
+
+        cls._log(
+            _(
+                "[WebcastLightGiftMessage] [💡轻礼物消息] | [礼物ID：{0}] [赠送给用户ID：{1}] [钻石数量：{2}]"
+            ).format(gift_id, to_user_id, diamond_count)
+        )
+
+        return data_json
 
     @classmethod
     async def WebcastProfitInteractionScoreMessage(cls, data: bytes):
         profitInteractionScoreMessage = ProfitInteractionScoreMessage()
         profitInteractionScoreMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            profitInteractionScoreMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                profitInteractionScoreMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
 
-        # logger.info(
-        #     _("[WebcastProfitInteractionScoreMessage] [💰互动分数消息] | [{0}]").format(
-        #         data_dict
-        #     )
-        # )
-        return data_dict
+        interaction_score_status = data_json.get("interaction_score_status", "N/A")
+
+        cls._log(
+            _(
+                "[WebcastProfitInteractionScoreMessage] [💰互动分数消息] | "
+                "[互动分数状态：{0}]"
+            ).format(interaction_score_status)
+        )
+
+        return data_json
 
     @classmethod
     async def WebcastRoomRankMessage(cls, data: bytes):
         roomRankMessage = RoomRankMessage()
         roomRankMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            roomRankMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                roomRankMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
 
-        # logger.info(
-        #     _("[WebcastRoomRankMessage] [🏆房间排行榜消息] | [{0}]").format(data_dict)
-        # )
-        return data_dict
+        # 获取前三名用户的 ID
+        ranks = data_json.get("ranks", [])
+        top_user_ids = [rank.get("user", {}).get("id_str", "N/A") for rank in ranks[:3]]
+
+        cls._log(
+            _(
+                "[WebcastRoomRankMessage] [🏆房间排行榜消息] | [前三名用户ID：{0}]"
+            ).format(top_user_ids)
+        )
+
+        return data_json
 
     @classmethod
     async def WebcastFansclubMessage(cls, data: bytes):
         fansclubMessage = FansclubMessage()
         fansclubMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            fansclubMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                fansclubMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
-
-        # logger.info(
-        #     _("[WebcastFansclubMessage] [🎉粉丝团消息] | [{0}]").format(data_dict)
-        # )
-        return data_dict
+        cls._log(
+            _("[WebcastFansclubMessage] [🎉粉丝团消息] | [内容：{0}]").format(data_json)
+        )
+        return data_json
 
     @classmethod
     async def WebcastHotRoomMessage(cls, data: bytes):
         hotRoomMessage = HotRoomMessage()
         hotRoomMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            hotRoomMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                hotRoomMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
-
-        # logger.info(
-        #     _("[WebcastHotRoomMessage] [🔥热门房间消息] | [{0}]").format(data_dict)
-        # )
-        return data_dict
+        cls._log(
+            _("[WebcastHotRoomMessage] [🔥热门房间消息] | [内容：{0}]").format(
+                data_json
+            )
+        )
+        return data_json
 
     @classmethod
     async def WebcastInRoomBannerMessage(cls, data: bytes):
         inRoomBannerMessage = InRoomBannerMessage()
         inRoomBannerMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            inRoomBannerMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                inRoomBannerMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
-
-        # logger.info(
-        #     _("[WebcastInRoomBannerMessage] [🚩房间内横幅消息] | [{0}]").format(data_dict)
+        # cls._log(
+        #     _("[WebcastInRoomBannerMessage] [🚩房间内横幅消息] | [内容：{0}]").format(
+        #         data_json
+        #     )
         # )
-        return data_dict
+        return data_json
 
     @classmethod
     async def WebcastScreenChatMessage(cls, data: bytes):
         screenChatMessage = ScreenChatMessage()
         screenChatMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            screenChatMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                screenChatMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
-
-        # logger.info(
-        #     _("[WebcastScreenChatMessage] [📺管理员全局聊天消息] | [{0}]").format(data_dict)
-        # )
-        return data_dict
+        cls._log(
+            _("[WebcastScreenChatMessage] [📺管理员全局聊天消息] | [内容：{0}]").format(
+                data_json
+            )
+        )
+        return data_json
 
     @classmethod
     async def WebcastRoomDataSyncMessage(cls, data: bytes):
         roomDataSyncMessage = RoomDataSyncMessage()
         roomDataSyncMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            roomDataSyncMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                roomDataSyncMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
 
-        # logger.info(
-        #     _("[WebcastRoomDataSyncMessage] [🔄房间数据同步消息] | [{0}]").format(
-        #         data_dict
-        #     )
+        # sync_key = data_json.get("syncKey", "N/A")
+        # version = data_json.get("version", "N/A")
+
+        # cls._log(
+        #     _(
+        #         "[WebcastRoomDataSyncMessage] [🔄房间数据同步消息] | [同步键：{0}] [版本：{1}]"
+        #     ).format(sync_key, version)
         # )
-        return data_dict
+        return data_json
 
     @classmethod
     async def WebcastLinkerContributeMessage(cls, data: bytes):
         linkerContributeMessage = LinkerContributeMessage()
         linkerContributeMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            linkerContributeMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                linkerContributeMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
 
-        # logger.info(
-        #     _("[WebcastLinkerContributeMessage] [🔗连麦贡献消息] | [{0}]").format(
-        #         data_dict
-        #     )
-        # )
-        return data_dict
+        user_id = data_json.get("user_id", "N/A")
+        total_score = data_json.get("total_score", "N/A")
+
+        cls._log(
+            _(
+                "[WebcastLinkerContributeMessage] [🔗连麦贡献消息] | "
+                "[用户ID：{0}] [总贡献分数：{1}]"
+            ).format(user_id, total_score)
+        )
+        return data_json
 
     @classmethod
     async def WebcastEmojiChatMessage(cls, data: bytes):
         emojiChatMessage = EmojiChatMessage()
         emojiChatMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            emojiChatMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                emojiChatMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
-
-        logger.info(
-            _("[WebcastEmojiChatMessage] [😊表情聊天消息] | [{0}]").format(data_dict)
+        cls._log(
+            _("[WebcastEmojiChatMessage] [😊表情聊天消息] | [内容：{0}]").format(
+                data_json
+            )
         )
-        return data_dict
+        return data_json
 
     @classmethod
     async def WebcastLinkMicMethod(cls, data: bytes):
         linkMicMethod = LinkMicMethod()
         linkMicMethod.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            linkMicMethod,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                linkMicMethod,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
 
-        # logger.info(
-        #     _("[WebcastLinkMicMethod] [🎤连麦PK对战消息] | [{0}]").format(data_dict)
-        # )
-        return data_dict
+        message_type = data_json.get("message_type", "N/A")
+        channel_id = data_json.get("channel_id", "N/A")
+
+        cls._log(
+            _(
+                "[WebcastLinkMicMethod] [🎤连麦PK对战消息] | [消息类型：{0}] [频道ID：{1}]"
+            ).format(message_type, channel_id)
+        )
+
+        return data_json
 
     @classmethod
     async def WebcastLinkMessage(cls, data: bytes):
         linkMessage = LinkMessage()
         linkMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            linkMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                linkMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
 
-        logger.info(_("[WebcastLinkMessage] [🔗连麦消息] | [{0}]").format(data_dict))
-        return data_dict
+        message_type = data_json.get("message_type", "N/A")
+        linker_id = data_json.get("linker_id", "N/A")
+
+        cls._log(
+            _(
+                "[WebcastLinkMessage] [🔗连麦消息] | [消息类型：{0}] [连麦ID：{1}]"
+            ).format(message_type, linker_id)
+        )
+        return data_json
 
     @classmethod
     async def WebcastBattleTeamTaskMessage(cls, data: bytes):
         battleTeamTaskMessage = BattleTeamTaskMessage()
         battleTeamTaskMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            battleTeamTaskMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
-        )
-
-        logger.info(
-            _("[WebcastBattleTeamTaskMessage] [🎯战队任务消息] | [{0}]").format(
-                data_dict
+        data_json = json.loads(
+            json_format.MessageToJson(
+                battleTeamTaskMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
             )
         )
-        return data_dict
+        # 提取关键信息
+        battle_id = data_json.get("team_task", {}).get("battle_id", "N/A")
+        battle_type = data_json.get("team_task", {}).get("battle_type", "N/A")
+
+        cls._log(
+            _(
+                "[WebcastBattleTeamTaskMessage] [🎯战队任务消息] | "
+                "[战斗ID：{0}] [战斗类型：{1}]"
+            ).format(battle_id, battle_type)
+        )
+        return data_json
 
     @classmethod
     async def WebcastHotChatMessage(cls, data: bytes):
         hotChatMessage = HotChatMessage()
         hotChatMessage.ParseFromString(data)
-        data_dict = json_format.MessageToJson(
-            hotChatMessage,
-            preserving_proto_field_name=True,
-            ensure_ascii=False,
+        data_json = json.loads(
+            json_format.MessageToJson(
+                hotChatMessage,
+                preserving_proto_field_name=True,
+                ensure_ascii=False,
+            )
         )
-
-        logger.info(_("[WebcastHotChatMessage] [🔥热聊消息] | [{0}]").format(data_dict))
-        return data_dict
+        cls._log(
+            _("[WebcastHotChatMessage] [🔥热聊消息] | [内容：{0}]").format(data_json)
+        )
+        return data_json
 
     async def __aenter__(self):
         await super().__aenter__()
