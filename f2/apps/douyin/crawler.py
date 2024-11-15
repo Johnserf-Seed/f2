@@ -92,7 +92,7 @@ class DouyinCrawler(BaseCrawler):
             self.bogus_manager = ABogusManager
         else:
             self.bogus_manager = XBogusManager
-        super().__init__(proxies=proxies, crawler_headers=self.headers)
+        super().__init__(kwargs, proxies=proxies, crawler_headers=self.headers)
 
     async def fetch_user_profile(self, params: UserProfile):
         endpoint = self.bogus_manager.model_2_endpoint(
