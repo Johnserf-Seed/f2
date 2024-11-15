@@ -1,5 +1,7 @@
 # path: f2/exceptions/file_exceptions.py
+
 from f2.log.logger import logger
+from f2.i18n.translator import _
 
 
 class FileError(Exception):
@@ -7,7 +9,9 @@ class FileError(Exception):
 
     def __init__(self, message, filepath=None):
         logger.error(
-            "请前往QA文档 https://johnserf-seed.github.io/f2/question-answer/qa.html 查看相关帮助"
+            _(
+                "请前往QA文档 https://johnserf-seed.github.io/f2/question-answer/qa.html 查看相关帮助"
+            )
         )
         self.filepath = filepath
         super().__init__(message)
