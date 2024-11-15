@@ -798,9 +798,9 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         )
 
         cls._log(
-            _(
-                "[WebcastEcomFansClubMessage] [🛍️电商粉丝团消息] | [内容：{0}]"
-            ).format(data_json.get("content"))
+            _("[WebcastEcomFansClubMessage] [🛍️电商粉丝团消息] | [内容：{0}]").format(
+                data_json.get("content")
+            )
         )
         return data_json
 
