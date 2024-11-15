@@ -394,17 +394,16 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
             if payload_package.need_ack:
                 await self.send_ack(log_id, payload_package.internal_ext)
 
-            # 处理每个消息
+            # 并发处理每个消息
+            tasks = []
             for msg in payload_package.messages:
                 method = msg.method
                 payload = msg.payload
 
                 # 调用对应的回调函数处理消息
                 if method in self.callbacks:
-                    processed_data = await self.callbacks[method](data=payload)
-                    # 转发处理后的数据
-                    if processed_data is not None:
-                        await self.broadcast_message(processed_data)
+                    # 创建异步任务
+                    tasks.append(self.callbacks[method](data=payload))
                 else:
                     logger.warning(
                         _(
@@ -414,6 +413,23 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
 
         except Exception as exc:
             logger.debug(traceback.format_exc())
+            # 并发运行所有回调
+            if tasks:
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+
+                # 处理每个任务的结果
+                for i, result in enumerate(results):
+                    if isinstance(result, Exception):
+                        logger.error(
+                            _(
+                                "[HandleWssMessage] [⚠️ 回调执行出错] | [方法：{0}] | [错误：{1}]"
+                            ).format(payload_package.messages[i].method, result)
+                        )
+                    else:
+                        if result is not None:
+                            # 转发处理后的数据
+                            await self.broadcast_message(result)
+
             logger.error(
                 _("[HandleWssMessage] [⚠️ 处理消息出错] | [错误：{0}]").format(exc)
             )
