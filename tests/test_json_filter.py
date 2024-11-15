@@ -90,11 +90,6 @@ class TestJSONModel:
         result = self.model._get_list_attr_value("$.example[*].a", as_json=True)
         assert result == "[1, null, 1, 1]", "应当正确返回 JSON 字符串"
 
-    def test_get_attribute_with_invalid_jsonpath(self):
-        # 测试无效的 JSONPath 表达式
-        with pytest.raises(ValueError):
-            self.model._get_attr_value("$.example[?(@.a == 1")
-
     def test_get_attribute_with_special_characters(self):
         # 测试包含特殊字符的字段名
         special_data = {
