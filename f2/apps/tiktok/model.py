@@ -174,3 +174,24 @@ class UserLive(BaseRequestModel):
 class CheckLiveAlive(BaseRequestModel):
     from_page: str = "live"
     room_ids: str
+
+
+class LiveImFetch(BaseWebCastModel):
+    # resp_content_type: str = "protobuf"
+    device_id: str = ""
+    did_rule: int = 3
+    resp_content_type: str = "protobuf"
+    fetch_rule: int = 1
+    cursor: str = ""
+    last_rtt: int = 0
+    internal_ext: str = ""
+    room_id: str
+    history_comment_count: int = 6
+    history_comment_cursor: str = "7386962392254958354"
+    try:
+        msToken: str = TokenManager.gen_real_msToken()
+    except Exception as e:
+        # 发生异常时，重新生成msToken，不生成虚假msToken
+        msToken: str = TokenManager.gen_real_msToken()
+    _signature: str
+
