@@ -37,7 +37,7 @@ class TwitterCrawler(BaseCrawler):
             "X-Csrf-Token": self.x_csrf_token,
         }
 
-        super().__init__(proxies=proxies, crawler_headers=self.headers)
+        super().__init__(kwargs, proxies=proxies, crawler_headers=self.headers)
 
     async def fetch_tweet_detail(self, params: TweetDetailEncode):
         endpoint = ModelManager.model_2_endpoint(
