@@ -1,5 +1,8 @@
 import asyncio
+
+from f2.apps.douyin.crawler import DouyinWebSocketCrawler
 from f2.apps.douyin.handler import DouyinHandler
+from f2.log.logger import logger
 
 
 kwargs = {
@@ -23,6 +26,55 @@ kwargs2 = {
     "proxies": {"http://": None, "https://": None},
     "timeout": 10,
     "cookie": "DO_NOT_USE_COOKIE_HERE",
+    # 是否显示消息
+    "show_message": True,
+
+wss_callbacks = {
+    "WebcastRoomMessage": DouyinWebSocketCrawler.WebcastRoomMessage,
+    "WebcastLikeMessage": DouyinWebSocketCrawler.WebcastLikeMessage,
+    "WebcastMemberMessage": DouyinWebSocketCrawler.WebcastMemberMessage,
+    "WebcastChatMessage": DouyinWebSocketCrawler.WebcastChatMessage,
+    "WebcastGiftMessage": DouyinWebSocketCrawler.WebcastGiftMessage,
+    "WebcastSocialMessage": DouyinWebSocketCrawler.WebcastSocialMessage,
+    "WebcastRoomUserSeqMessage": DouyinWebSocketCrawler.WebcastRoomUserSeqMessage,
+    "WebcastUpdateFanTicketMessage": DouyinWebSocketCrawler.WebcastUpdateFanTicketMessage,
+    "WebcastCommonTextMessage": DouyinWebSocketCrawler.WebcastCommonTextMessage,
+    "WebcastMatchAgainstScoreMessage": DouyinWebSocketCrawler.WebcastMatchAgainstScoreMessage,
+    "WebcastEcomFansClubMessage": DouyinWebSocketCrawler.WebcastEcomFansClubMessage,
+    "WebcastRanklistHourEntranceMessage": DouyinWebSocketCrawler.WebcastRanklistHourEntranceMessage,
+    "WebcastRoomStatsMessage": DouyinWebSocketCrawler.WebcastRoomStatsMessage,
+    "WebcastLiveShoppingMessage": DouyinWebSocketCrawler.WebcastLiveShoppingMessage,
+    "WebcastLiveEcomGeneralMessage": DouyinWebSocketCrawler.WebcastLiveEcomGeneralMessage,
+    "WebcastProductChangeMessage": DouyinWebSocketCrawler.WebcastProductChangeMessage,
+    "WebcastRoomStreamAdaptationMessage": DouyinWebSocketCrawler.WebcastRoomStreamAdaptationMessage,
+    "WebcastNotifyEffectMessage": DouyinWebSocketCrawler.WebcastNotifyEffectMessage,
+    "WebcastLightGiftMessage": DouyinWebSocketCrawler.WebcastLightGiftMessage,
+    "WebcastProfitInteractionScoreMessage": DouyinWebSocketCrawler.WebcastProfitInteractionScoreMessage,
+    "WebcastRoomRankMessage": DouyinWebSocketCrawler.WebcastRoomRankMessage,
+    "WebcastFansclubMessage": DouyinWebSocketCrawler.WebcastFansclubMessage,
+    "WebcastHotRoomMessage": DouyinWebSocketCrawler.WebcastHotRoomMessage,
+    "WebcastLinkMicMethod": DouyinWebSocketCrawler.WebcastLinkMicMethod,
+    "LinkMicMethod": DouyinWebSocketCrawler.WebcastLinkMicMethod,
+    "WebcastLinkerContributeMessage": DouyinWebSocketCrawler.WebcastLinkerContributeMessage,
+    "WebcastEmojiChatMessage": DouyinWebSocketCrawler.WebcastEmojiChatMessage,
+    "WebcastScreenChatMessage": DouyinWebSocketCrawler.WebcastScreenChatMessage,
+    "WebcastRoomDataSyncMessage": DouyinWebSocketCrawler.WebcastRoomDataSyncMessage,
+    "WebcastInRoomBannerMessage": DouyinWebSocketCrawler.WebcastInRoomBannerMessage,
+    "WebcastLinkMessage": DouyinWebSocketCrawler.WebcastLinkMessage,
+    "WebcastBattleTeamTaskMessage": DouyinWebSocketCrawler.WebcastBattleTeamTaskMessage,
+    "WebcastHotChatMessage": DouyinWebSocketCrawler.WebcastHotChatMessage,
+    # TODO: 以下消息类型暂未实现
+    # WebcastLinkMicArmiesMethod
+    # WebcastLinkmicPlayModeUpdateScoreMessage
+    # WebcastSandwichBorderMessage
+    # WebcastLuckyBoxTempStatusMessage
+    # WebcastLotteryEventMessage
+    # WebcastLotteryEventNewMessage
+    # WebcastDecorationUpdateMessage
+    # WebcastDecorationModifyMethod
+    # WebcastLinkSettingNotifyMessage
+    # WebcastLinkMicBattleMethod
+    # WebcastExhibitionChatMessage
 }
 
 
@@ -32,8 +84,12 @@ async def main():
     # print("游客user_unique_id：", user.user_unique_id)
 
     # 通过此接口获取room_id，参数为live_id
-    room = await DouyinHandler(kwargs).fetch_user_live_videos("662122193366")
+    room = await DouyinHandler(kwargs).fetch_user_live_videos("277303127629")
     # print("直播间ID：", room.room_id)
+
+    if room.live_status != 2:
+        logger.info("直播已结束")
+        return
 
     # 通过该接口获取wss所需的cursor和internal_ext
     live_im = await DouyinHandler(kwargs).fetch_live_im(
@@ -47,6 +103,7 @@ async def main():
         user_unique_id=user.user_unique_id,
         internal_ext=live_im.internal_ext,
         cursor=live_im.cursor,
+        wss_callbacks=wss_callbacks,
     )
 
 
