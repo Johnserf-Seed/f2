@@ -385,10 +385,18 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         try:
             wss_package = PushFrame()
             wss_package.ParseFromString(message)
+
+            logger.debug(_("[WssPackage] [📦Wss包] | [{0}]").format(wss_package))
+
             log_id = wss_package.logId
             decompressed = gzip.decompress(wss_package.payload)
+
             payload_package = Response()
             payload_package.ParseFromString(decompressed)
+
+            logger.debug(
+                _("[PayloadPackage] [📦Payload包] | [{0}]").format(payload_package)
+            )
 
             # 发送 ack 包
             if payload_package.need_ack:
@@ -411,8 +419,6 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
                         ).format(method)
                     )
 
-        except Exception as exc:
-            logger.debug(traceback.format_exc())
             # 并发运行所有回调
             if tasks:
                 results = await asyncio.gather(*tasks, return_exceptions=True)
@@ -430,8 +436,18 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
                             # 转发处理后的数据
                             await self.broadcast_message(result)
 
+        except ProtoDecodeError as e:
             logger.error(
-                _("[HandleWssMessage] [⚠️ 处理消息出错] | [错误：{0}]").format(exc)
+                _(
+                    "[HandleWssMessage] [❌ 解析消息格式出错] | [错误：{0}] | [消息：{1}]"
+                ).format(e, message)
+            )
+
+        except Exception:
+            logger.error(
+                _("[HandleWssMessage] [⚠️ 处理消息出错] | [错误：{0}]").format(
+                    traceback.format_exc()
+                )
             )
 
     async def send_ack(self, log_id: str, internal_ext: str):
@@ -534,7 +550,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         )
         try:
             async for message in websocket:
-                # 如果需要处理验证信息，可以在这里处理
+                # TODO: 处理客户端消息或鉴权
                 pass
         except ConnectionClosedOK:
             logger.info(
