@@ -522,19 +522,21 @@ class WebSocketCrawler:
         )
 
         timeout_count = 0
+
         while True:
             try:
                 message = await asyncio.wait_for(
                     self.websocket.recv(), timeout=self.timeout
                 )
                 # 为wss连接设置10秒超时机制
+                timestamp = timestamp_2_str(time.time(), "%Y-%m-%d %H:%M:%S")
                 logger.info(
-                    _("[ReceiveMessages] | [⏳ 接收消息 {0}]").format(
-                        timestamp_2_str(time.time(), "%Y-%m-%d %H:%M:%S")
-                    )
+                    _("[ReceiveMessages] | [⏳ 接收消息 {0}]").format(timestamp)
                 )
+
                 timeout_count = 0  # 重置超时计数
                 await self.on_message(message)
+
             except asyncio.TimeoutError:
                 timeout_count += 1
                 logger.warning(
@@ -543,11 +545,18 @@ class WebSocketCrawler:
                     )
                 )
                 if timeout_count >= 3:
-                    logger.warning(_("[ReceiveMessages] [❌ 多次超时，关闭连接]"))
+                    logger.warning(
+                        _(
+                            "[ReceiveMessages] [❌ 超时关闭连接] | "
+                            "[超时次数：{0}] [连接状态：{1}]"
+                        ).format(timeout_count, self.websocket.closed)
+                    )
                     return "closed"
                 if self.websocket.closed:
                     logger.warning(
-                        _("[ReceiveMessages] [🔒 服务器关闭] | [WebSocket 连接结束]")
+                        _(
+                            "[ReceiveMessages] [🔒 远程服务器关闭] | [WebSocket 连接结束]"
+                        )
                     )
                     return "closed"
             except ConnectionClosedError as exc:
@@ -556,11 +565,13 @@ class WebSocketCrawler:
                     _("[ReceiveMessages] [🔌 连接关闭] | [原因：{0}]").format(exc)
                 )
                 return "closed"
+
             except ConnectionClosedOK:
                 logger.info(
                     _("[ReceiveMessages] [✔️ 正常关闭] | [WebSocket 连接正常关闭]")
                 )
                 return "closed"
+
             except Exception as exc:
                 logger.debug(traceback.format_exc())
                 logger.error(
