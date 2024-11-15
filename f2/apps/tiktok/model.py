@@ -195,3 +195,14 @@ class LiveImFetch(BaseWebCastModel):
         msToken: str = TokenManager.gen_real_msToken()
     _signature: str
 
+
+class LiveWebcast(BaseWebCastModel):
+    compress: str = "gzip"
+    heartbeatDuration: int = 0
+    imprp: str = ""
+    room_id: str
+    cursor: str
+    internal_ext: str
+    update_version_code: str = "1.3.0"
+    webcast_sdk_version: str = "1.3.0"
+    wrss: str
