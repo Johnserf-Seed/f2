@@ -1,11 +1,15 @@
 # path: f2/apps/tiktok/models.py
 
+import traceback
+
 from typing import Any
 from pydantic import BaseModel
 from urllib.parse import quote, unquote
 
 from f2.apps.tiktok.utils import TokenManager, ClientConfManager
 from f2.utils.utils import get_timestamp
+from f2.i18n.translator import _
+from f2.log.logger import logger
 
 
 # Model
@@ -56,8 +60,9 @@ class BaseRequestModel(BaseModel):
     )
     try:
         msToken: str = TokenManager.gen_real_msToken()
-    except Exception as e:
-        print(f"Error generating msToken: {e}")
+    except Exception:
+        logger.warning(_("msToken 生成失败，使用虚假 msToken"))
+        logger.debug(traceback.format_exc())
         # 发生异常时，重新生成msToken，不生成虚假msToken
         msToken: str = TokenManager.gen_real_msToken()
 
