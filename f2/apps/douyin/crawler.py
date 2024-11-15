@@ -346,7 +346,12 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         self.timeout = kwargs.get("timeout", 10)
         self.connected_clients = set()  # 管理连接的客户端
         super().__init__(
-            wss_headers=self.headers, callbacks=self.callbacks, timeout=self.timeout
+            wss_headers=self.headers,
+            callbacks=self.callbacks,
+            timeout=self.timeout,
+            proxy=kwargs.get("proxies", {"http://": None, "https://": None}).get(
+                "http://"
+            ),
         )
 
     @classmethod
