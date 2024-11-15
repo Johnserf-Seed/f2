@@ -22,7 +22,9 @@ class BarkCrawler(BaseCrawler):
         )
         if ClientConfManager.encryption().get("enable"):
             self.encryption = ClientConfManager.encryption()
-        super().__init__(proxies=proxies, crawler_headers=kwargs.get("headers", {}))
+        super().__init__(
+            kwargs, proxies=proxies, crawler_headers=kwargs.get("headers", {})
+        )
 
     async def fetch_bark_notification(self, params: BarkModel) -> Dict:
         endpoint = BaseEndpointManager.model_2_endpoint(
