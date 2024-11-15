@@ -13,8 +13,8 @@ from websockets.exceptions import ConnectionClosedError, ConnectionClosedOK
 
 from f2.i18n.translator import _
 from f2.log.logger import logger
+from f2.exceptions.conf_exceptions import InvalidEncodingError
 from f2.exceptions.api_exceptions import (
-    APIError,
     APIConnectionError,
     APIResponseError,
     APITimeoutError,
@@ -34,46 +34,33 @@ class BaseCrawler:
 
     def __init__(
         self,
-        proxies: dict = ...,
-        max_retries: int = 5,
-        max_connections: int = 10,
-        timeout: int = 10,
-        max_tasks: int = 10,
+        kwargs: dict = {},
+        *,
+        proxies: dict = {},
         crawler_headers: dict = {},
     ):
         # 设置代理 (Set proxy)
         self.proxies = proxies
-        if isinstance(proxies, dict):
-            # 底层连接重试次数 / Underlying connection retry count
-            self.sync_transport = httpx.HTTPTransport(
-                proxy=proxies.get("http://", None),
-                retries=max_retries,
-                local_address="0.0.0.0",
-            )
-            # 底层连接重试次数 / Underlying connection retry count
-            self.async_transport = httpx.AsyncHTTPTransport(
-                proxy=proxies.get("http://", None),
-                retries=max_retries,
-                local_address="0.0.0.0",
-            )
+        self.http_proxy = self.proxies.get("http://", None)
+        self.https_proxy = self.proxies.get("https://", None)
 
         # 爬虫请求头 / Crawler request header
         self.crawler_headers = crawler_headers or {}
 
         # 异步的任务数 / Number of asynchronous tasks
-        self._max_tasks = max_tasks
-        self.semaphore = asyncio.Semaphore(max_tasks)
+        self._max_tasks = kwargs.get("max_tasks", 10)
+        self.semaphore = asyncio.Semaphore(self._max_tasks)
 
         # 限制最大连接数 / Limit the maximum number of connections
-        self._max_connections = max_connections
-        self.limits = httpx.Limits(max_connections=max_connections)
+        self._max_connections = kwargs.get("max_connections", 10)
+        self.limits = httpx.Limits(max_connections=self._max_connections)
 
         # 业务逻辑重试次数 / Business logic retry count
-        self._max_retries = max_retries
+        self._max_retries = kwargs.get("max_retries", 5)
 
         # 超时等待时间 / Timeout waiting time
-        self._timeout = timeout
-        self.timeout = httpx.Timeout(timeout)
+        self._timeout = kwargs.get("timeout", 10)
+        self.timeout = httpx.Timeout(self._timeout)
 
         # 异步客户端 / Asynchronous client
         self._aclient = None
@@ -81,26 +68,67 @@ class BaseCrawler:
         # 同步客户端 / Synchronous client
         self._client = None
 
+    def _create_mount(self, async_mode=False) -> dict:
+        """
+        创建挂载配置，根据 async_mode 切换异步或同步的 HTTPTransport
+
+        Args:
+            async_mode: bool: 是否异步模式
+
+        Returns:
+            dict: 挂载配置
+        """
+
+        transport_class = (
+            httpx.AsyncHTTPTransport if async_mode else httpx.HTTPTransport
+        )
+        if isinstance(self.proxies, dict) and self.http_proxy:
+            return {
+                "all://": transport_class(
+                    verify=False,
+                    limits=self.limits,
+                    proxy=httpx.Proxy(url=self.http_proxy),
+                    local_address="0.0.0.0",
+                    retries=self._max_retries,
+                ),
+            }
+        else:
+            return {
+                "all://": transport_class(
+                    verify=False,
+                    limits=self.limits,
+                    retries=self._max_retries,
+                ),
+            }
+
     @property
     def aclient(self):
         if self._aclient is None:
-            self._aclient = httpx.AsyncClient(
-                headers=self.crawler_headers,
-                verify=False,
-                timeout=self.timeout,
-                limits=self.limits,
-            )
+            try:
+                self._aclient = httpx.AsyncClient(
+                    headers=self.crawler_headers,
+                    mounts=self._create_mount(async_mode=True),
+                    timeout=self.timeout,
+                )
+            except UnicodeDecodeError:
+                raise InvalidEncodingError(
+                    _("请确保所有配置项和值均为ASCII或UTF-8编码的字符串")
+                )
         return self._aclient
 
     @property
     def client(self):
         if self._client is None:
-            self._client = httpx.Client(
-                headers=self.crawler_headers,
-                verify=False,
-                timeout=self.timeout,
-                limits=self.limits,
-            )
+            try:
+                self._client = httpx.Client(
+                    headers=self.crawler_headers,
+                    mounts=self._create_mount(),
+                    timeout=self.timeout,
+                )
+            except UnicodeDecodeError:
+                raise InvalidEncodingError(
+                    _("请确保所有配置项和值均为ASCII或UTF-8编码的字符串")
+                )
         return self._client
 
     async def _fetch_response(self, endpoint: str) -> Response:
@@ -157,14 +185,16 @@ class BaseCrawler:
             except json.JSONDecodeError as e:
                 logger.error(_("解析 {0} 接口 JSON 失败：{1}").format(response.url, e))
             except UnicodeDecodeError as e:
-                logger.error(_("解析 {0} 接口 JSON 失败：{1}").format(response.url, e))
+                raise InvalidEncodingError(
+                    _("解析 {0} 接口 JSON 失败：{1}").format(response.url, e)
+                )
         else:
             if isinstance(response, Response):
                 logger.error(
                     _("获取数据失败。状态码: {0}").format(response.status_code)
                 )
             else:
-                logger.error(_("无效响应类型"))
+                logger.error(_("无效的Json响应"))
 
         return {}
 
@@ -183,14 +213,19 @@ class BaseCrawler:
                 response = await self.aclient.get(url, follow_redirects=True)
                 if not response.text.strip() or not response.content:
                     error_message = _(
-                        "第 {0} 次响应内容为空, 状态码: {1}, URL:{2}"
+                        "第 {0} 次请求响应内容为空, 状态码: {1}, URL:{2}"
                     ).format(attempt + 1, response.status_code, response.url)
 
                     logger.warning(error_message)
 
                     if attempt == self._max_retries - 1:
                         raise APIRetryExhaustedError(
-                            _("获取端点数据失败, 次数达到上限")
+                            _(
+                                "获取端点数据失败，重试次数达到上限。代理：{0}，异常类名：{1}"
+                            ).format(
+                                self.proxies,
+                                self.__class__.__name__,
+                            )
                         )
 
                     await asyncio.sleep(self._timeout)
@@ -263,9 +298,6 @@ class BaseCrawler:
                     ).format(url, self.proxies, self.__class__.__name__, req_err)
                 )
 
-            except APIError as e:
-                logger.error(e)
-
     async def post_fetch_data(self, url: str, params: dict = {}):
         """
         获取POST端点数据 (Get POST endpoint data)
@@ -284,7 +316,7 @@ class BaseCrawler:
                 )
                 if not response.text.strip() or not response.content:
                     error_message = _(
-                        "第 {0} 次响应内容为空, 状态码: {1}, URL:{2}"
+                        "第 {0} 次请求响应内容为空, 状态码: {1}, URL:{2}"
                     ).format(attempt + 1, response.status_code, response.url)
 
                     logger.warning(error_message)
@@ -311,9 +343,6 @@ class BaseCrawler:
             except httpx.HTTPStatusError as http_error:
                 self.handle_http_status_error(http_error, url, attempt + 1)
 
-            except APIError as e:
-                logger.error(e)
-
     async def head_fetch_data(self, url: str):
         """
         获取HEAD端点数据 (Get HEAD endpoint data)
@@ -339,9 +368,6 @@ class BaseCrawler:
 
         except httpx.HTTPStatusError as http_error:
             self.handle_http_status_error(http_error, url, 1)
-
-        except APIError as e:
-            logger.error(e)
 
     def handle_http_status_error(self, http_error, url: str, attempt):
         """
