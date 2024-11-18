@@ -14,7 +14,8 @@ class BarkModel(BaseModel):
     icon: Optional[str]
     group: Optional[str]
     # ciphertext: Optional[str] = ""
-    level: Optional[Literal["active", "timeSensitive", "passive"]]
+    level: Optional[Literal["active", "timeSensitive", "passive", "critical"]]
+    volume: Optional[int]
     url: Optional[str]
     copy_text: Optional[str] = Field(
         "", alias="copy"

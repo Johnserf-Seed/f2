@@ -37,9 +37,10 @@ def help() -> None:
             "-l --level",
             "[dark_cyan]Choice",
             _(
-                "推送中断级别。active：默认，timeSensitive：时效性通知，passive：被动通知"
+                "推送级别。active：默认，timeSensitive：时效性通知，passive：被动通知，critical：紧急通知"
             ),
         ),
+        ("-v --volume", "[dark_cyan]str", _("推送音量，范围 0-10")),
         ("-bd --badge", "[dark_cyan]str", _("推送的角标数量")),
         (
             "-ac --autoCopy",
