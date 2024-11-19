@@ -11,7 +11,7 @@ class DouyinWebcastSignature:
         self.user_agent = (
             user_agent
             if user_agent is not None and user_agent != ""
-            else "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"
+            else "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0"
         )  # 自定义 ua，为空则设置一个默认 ua
 
     def get_signature(self, room_id: str, user_unique_id: str) -> str:
@@ -56,7 +56,7 @@ class DouyinWebcastSignature:
 
 if __name__ == "__main__":
     signature_handler = DouyinWebcastSignature(
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0"
     )
     signature = signature_handler.get_signature(
         "7382517534467115826", "7382524529011246630"
