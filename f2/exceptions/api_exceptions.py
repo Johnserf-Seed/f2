@@ -51,6 +51,13 @@ class APIResponseError(APIError):
         super().__init__(message, status_code)
 
 
+class APIFilterError(APIError):
+    """当API返回的数据无法通过过滤器时抛出"""
+
+    def __init__(self, message=None, status_code=None):
+        super().__init__(message, status_code)
+
+
 class APIRateLimitError(APIError):
     """当达到API的请求速率限制时抛出"""
 
