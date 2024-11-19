@@ -5,6 +5,7 @@ import re
 import sys
 import httpx
 import random
+import asyncio
 import secrets
 import datetime
 import traceback
@@ -607,8 +608,10 @@ async def get_latest_version(package_name: str) -> str:
             package_data = response.json()
             latest_version = package_data["info"]["version"]
             return latest_version
+        except asyncio.CancelledError:
+            logger.warning(_("取消检查更新"))
         except (httpx.HTTPStatusError, httpx.RequestError, KeyError) as e:
-            # logger.error(traceback.format_exc())
+            logger.debug(traceback.format_exc())
             return None
 
 
