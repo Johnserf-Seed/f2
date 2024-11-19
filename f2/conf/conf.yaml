@@ -5,6 +5,7 @@ f2:
   bark:
     url: https://api.day.app/
     key: ""
+    token: ""
 
     encryption:
       enable: false
