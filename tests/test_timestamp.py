@@ -1,4 +1,5 @@
 import pytest
+from f2.i18n.translator import _
 from f2.utils.utils import get_timestamp, timestamp_2_str
 
 
@@ -61,9 +62,9 @@ class TestTimestamp2Str:
         )
 
     def test_invalid_timestamp_2_str(self):
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError, match=_("无效的时间戳字符串")):
             timestamp_2_str("invalid_timestamp")
 
     def test_invalid_timestamp_2_str_with_format(self):
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError, match=_("无效的时间戳字符串")):
             timestamp_2_str("invalid_timestamp", "%Y-%m-%d %H-%M-%S")
