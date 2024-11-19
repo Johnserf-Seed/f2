@@ -1,35 +1,35 @@
 douyin:
   headers:
-    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0
+    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0
     Referer: https://www.douyin.com/
-  cookie: ttwid=1%7CmA00PxWh-zoEXR6YIC77BSmyQ96T7QextS6YFZ9Ocgg%7C1717076775%7C22722d2a9b78b258483ab482ed7d58c0cdd69c75a951b2bb67ec58d00c6b57d6; home_can_add_dy_2_desktop=%220%22; stream_recommend_feed_params=%22%7B%5C%22cookie_enabled%5C%22%3Atrue%2C%5C%22screen_width%5C%22%3A1920%2C%5C%22screen_height%5C%22%3A1080%2C%5C%22browser_online%5C%22%3Atrue%2C%5C%22cpu_core_num%5C%22%3A12%2C%5C%22device_memory%5C%22%3A8%2C%5C%22downlink%5C%22%3A10%2C%5C%22effective_type%5C%22%3A%5C%224g%5C%22%2C%5C%22round_trip_time%5C%22%3A200%7D%22; FORCE_LOGIN=%7B%22videoConsumedRemainSeconds%22%3A180%7D; strategyABtestKey=%221717076781.199%22; volume_info=%7B%22isUserMute%22%3Afalse%2C%22isMute%22%3Afalse%2C%22volume%22%3A0.5%7D; passport_csrf_token=28a44ba980807da79b895df1ac4e16ea; passport_csrf_token_default=28a44ba980807da79b895df1ac4e16ea; bd_ticket_guard_client_data=eyJiZC10aWNrZXQtZ3VhcmQtdmVyc2lvbiI6MiwiYmQtdGlja2V0LWd1YXJkLWl0ZXJhdGlvbi12ZXJzaW9uIjoxLCJiZC10aWNrZXQtZ3VhcmQtcmVlLXB1YmxpYy1rZXkiOiJCSFVoWGRMd0dkaVUvQmdOU2xXa2U3b2tmS0NlRkxOQ0o0Vk9ieGFMclNwNWhkTzdTK3RpazdZZU0xQmpCYWVhZmJFeVA2YjZndm1seDBxTktTVC9hWUU9IiwiYmQtdGlja2V0LWd1YXJkLXdlYi12ZXJzaW9uIjoxfQ%3D%3D; bd_ticket_guard_client_web_domain=2; download_guide=%221%2F20240530%2F0%22; IsDouyinActive=true; stream_player_status_params=%22%7B%5C%22is_auto_play%5C%22%3A0%2C%5C%22is_full_screen%5C%22%3A0%2C%5C%22is_full_webscreen%5C%22%3A0%2C%5C%22is_mute%5C%22%3A0%2C%5C%22is_speed%5C%22%3A1%2C%5C%22is_visible%5C%22%3A1%7D%22; odin_tt=9e666e08aa7c209164e2c3192087a9b9d9b72860dfa94785cd0d5d24d812e598b06848fa210bc71c3ed59f8ea381839a18a47c99dda8b3b6a28c95f9b3e52663336fec7ab8aeea181e5be0287392027f; msToken=fxUIQB8U7zUO7ec0ZI4OsvWRqHUExFN-bPUapHIvRDvL1s3F4Ywzz8fDj5MWoJnutglkgdxV2AZux90jpq1cBwELFWrQu9myVyylg94=
+  cookie: __ac_nonce=06734bf0700b85dc71528; __ac_signature=_02B4Z6wo00f01fS3HbAAAIDBw5PZ7ILbc2X0lxkAABobd3; ttwid=1%7CpZ_d0NYOVJM_7hw7cUnXm9J7M6JbjWN00xzT63e6RrY%7C1731510023%7Cea3717909a45f90ec8f454b4fb413e8df00662d719a2750c548e981f828e0aea; UIFID_TEMP=ad7b1e526ce029fae15c4fe388b5a88a6cfc5b31e687fc2dca11932336017cb52929980b946861787e72ba6b09c321daf07985e6856721736287f6750755a81897b86e29115d53c8248b3bff8a153e0d; hevc_supported=true; IsDouyinActive=true; home_can_add_dy_2_desktop=%220%22; dy_swidth=1920; dy_sheight=1080; stream_recommend_feed_params=%22%7B%5C%22cookie_enabled%5C%22%3Atrue%2C%5C%22screen_width%5C%22%3A1920%2C%5C%22screen_height%5C%22%3A1080%2C%5C%22browser_online%5C%22%3Atrue%2C%5C%22cpu_core_num%5C%22%3A12%2C%5C%22device_memory%5C%22%3A8%2C%5C%22downlink%5C%22%3A10%2C%5C%22effective_type%5C%22%3A%5C%224g%5C%22%2C%5C%22round_trip_time%5C%22%3A50%7D%22; csrf_session_id=db3759128e8175313483d6ecd7ed2da5
   proxies:
     http://:
     https://:
 
 tiktok:
   headers:
-    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
+    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0
     Referer: https://www.tiktok.com/
-  cookie: tt_csrf_token=NZdFHVu4-KtYghBEQDgHh_JKjgAdFhKIcgDU; ak_bmsc=165BFF3A4E2C445E031EEB9B347F3F99~000000000000000000000000000000~YAAQ3pPMF8pAiaiPAQAAWY/dyReR/C9ddS4mWedMGCN7W2a+ascE+7v5dTEEgGTrODWuBLEcqqPZyYRBBiVm99rjTDUSJi2P+0NziV9Ffe2olLI8uakawsAZkpKpZp0dsMpUlWCZ1lIlNgiLQ4OorRsxCrosSr6A56MOf6Q+X1cfFW5b4f3slHhUAgeUHJhNLZc2tN+zdBpIqRrK6Dc96MNa7IKVi6CNoYR/NRksJfINehDW3K3d2bDi//Et1nUcHFcKuw7L2hFhJQoILib/WjJmWOVomf3LSPfGEYZLHkm35SgskCTBlOMDX7oKaELbi98m5z00flHkvHwuyb0yltQjkvIZDA4DIvqBwqENAPesJQpIOULclJI5OIm69tYQGcE+sZ5u9ME=; tt_chain_token=zccwp7dvS61dC917u98Qdg==; bm_sv=2C218A189C99A8C0A7322DC4A6B52B2B~YAAQ3pPMF8tAiaiPAQAAz5HdyReH0vsS+BfXu7TAPBrd5wGaSHIGCvQj0n3LR/iub7ol4bhsXslOpYHY0pg/n6ZhD/yThWgU5wYI4InC/XCE85uuompY2T82hCGIC4zdMsyZ7JJpqerUagxgDTjTbxqPByQDNweuF7cLkzQisuCqfLNVoeId8LB7d2Jg+skOJoaUtDvY4r42wQH0pV/tZ0L7kRBfdJcbzbp2zGHKTNSrpgiPuPN550RtYLLv44QM~1; tiktok_webapp_theme_auto_dark_ab=1; tiktok_webapp_theme=system; ttwid=1%7C3skh2Vk1U1g6e8OS4OPTE7jZOHBW7MakDYrcBah14Ws%7C1717078699%7C449ad7f65ea5e1f1b014fbf3b4674e7bac68db6fd10201b6b3302c74274059ae; msToken=TxDdrpwkvfiXZJYTL4mrRxUhHJhSBKyd9cwgsI7zxYL4Cs9yyMXPRLGbw1nyaUI2iXjURwZaGT6fy3uztCVp6AIL8O9lqLxKerC6RxCdR9zh2umdd9JoAXSxK-EY; msToken=TxDdrpwkvfiXZJYTL4mrRxUhHJhSBKyd9cwgsI7zxYL4Cs9yyMXPRLGbw1nyaUI2iXjURwZaGT6fy3uztCVp6AIL8O9lqLxKerC6RxCdR9zh2umdd9JoAXSxK-EY
+  cookie: tt_csrf_token=R61bvyBp-7EBZ6VoAa0isjS2WHi55yuWGDlQ; tt_chain_token=/1IuMMEHfG5unsiCxf5jXw==; ak_bmsc=AB652209216A52A8A00847DE4BBA1638~000000000000000000000000000000~YAAQBfN0aHJicyWTAQAAkLAJJhmk1LaFOSdl5XFkQhsRUx+Eo0Y0nIhIAHgfgcZLgQo6vNP0NOo4MmPdWtrzoAN+jSIhCr9mVwoYfLaCmWL9APJng69C7nNEMP+zF3MedTkkxsyppLEUFx85OEMS/AQNWm1KoVEdYRfra1nQn0UFVmfALqMiXZ0AFUPI8MGnXh4DYVKqk2ymE6e/1f/7XiTAPb/eQp0pZ6GB1TuWt79e72ktoQHYpLjEGOb0lM4JHyaXxvgSrF293yEg1AWXezNPQLX2C5nVcvXUpNB9QyNKc9NhI3mToocckjXXUpkEdsLKwFOwzurJy3wELflEgw1SuZuMWMRm0fXJsG/zXn23Q/N1Bh0Mol9tLvDt4+Mt8XRd3XOuOehGbA==; tiktok_webapp_theme_source=system; tiktok_webapp_theme=light; delay_guest_mode_vid=8; ttwid=1%7C775YmjphMbnEpIJh5RUZdENOoj1EWtC5Wg05sCRIWIs%7C1731509991%7C05ba7f254f46e95f5e0ec53d58b7a7da2114160d5bb1d138a2e4a9c50fb6adfb; msToken=1lG0IYajhnIDtmn8BLNRuP9ePnKe_FuTcoIeHuxCeAryFTx_ZnMlRG4ZZl2M3LIghPuVqUSBf0oTkVohwebz_T_GZeFVGIfs2STCmv010QiWq8H_hltJBDpuYDWoog==; odin_tt=1f522d7d34d5e9635a51790061c3e7386bc6dd27ab22f7d6d07d914c8cbeb589a6bafec53620d7135c475cfddfb10c4d1c8398d3e0b2b3f4445193971dda91c68d265c091b84a560974c4681e1d0bd67; msToken=iI_arzGTaVf-tynHK_Gu8y8flpeBTlO_gZPRKT3FPWGmT81SGMCbM8hRxive_2QIaDCt5WucCOdMSsaZXKsMChPvPuOYtlkcrN9dlk9T8YP6S7YOK9cDMHAaQrDxYQ==
   proxies:
-    http://:
-    https://:
+    http://: http://127.0.0.1:3580
+    https://: http://127.0.0.1:3580
 
 weibo:
   headers:
-    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0
+    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0
     Referer: https://www.weibo.com/
-  cookie: XSRF-TOKEN=GxMcbrwRytI2afYndoarLKjJ; SUB=_2AkMRJL-Ef8NxqwFRmfwQz2rmZIVywg3EieKneE5fJRMxHRl-yT8XqlEmtRB6OqSRa3vF6f2fdNtQwdZNlAKdlpN1p7dT; SUBP=0033WrSXqPxfM72-Ws9jqgMF55529P9D9W5d3LX86ys6FPw-ljjWXw25; WBPSESS=Wk6CxkYDejV3DDBcnx2LOUWDIoRAGwNtFtgdJsHeFORJjYAOaFsShugP8UQ0ESPFYVi4zv3bd-yDJ_nOUlU6r5tEaTqi9GsMdESNWiZKcFssXVdv8LPGCfF_x1G4jj6N906MaQArmD8_aUiW5-mQXkubESA5BsVyta1YqRA0Jjg=
+  cookie: SUB=_2AkMQaDAYf8NxqwFRmf4UxG7rboR1wgrEieKmNMHDJRMxHRl-yT9yqnYMtRB6O-ge955FLqzUiEFenCdkOvNEgDwsLeFM; SUBP=0033WrSXqPxfM72-Ws9jqgMF55529P9D9W5G8LyPWDsc5OCIr_MCwe8R; XSRF-TOKEN=fzRTnyG4iZwWIdKiECgsKG59; WBPSESS=UpRpmiZuabnjxMaPsrZiV2m3DuXoShcO4fJeJI5agP249nwFEaX3z43hE2XSx1OJiyvcNGQwUvDiiu0Y_q3bXqDAmF-xMT2nYsf45ccpfRb5qqJuvFKipszC0fSEtaR_
   proxies:
     http://:
     https://:
 
 twitter:
   headers:
-    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/12
+    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0
     Referer: https://twitter.com/
-  cookie: guest_id=171949133021733050; night_mode=2; guest_id_marketing=v1%3A171949133021733050; guest_id_ads=v1%3A171949133021733050; gt=1806303677675958490; personalization_id="v1_jd7qHm6d2VrljV2ulxzSMw=="
+  cookie: guest_id=173151010866237469; night_mode=2; guest_id_marketing=v1%3A173151010866237469; guest_id_ads=v1%3A173151010866237469; personalization_id="v1_r5DM4xJRdR2s6G2YSbkB4A=="; gt=1856714093782270305
   proxies:
     http://:
     https://:
