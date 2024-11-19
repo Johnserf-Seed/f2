@@ -70,49 +70,64 @@ def get_timestamp(unit: str = "milli") -> int:
 
 
 def timestamp_2_str(
-    timestamp: Union[str, int, float],
+    timestamp: Union[str, int, float, list],
     format: str = "%Y-%m-%d %H-%M-%S",
     tz: datetime.timezone = datetime.timezone(datetime.timedelta(hours=8)),
-) -> str:
+) -> Union[str, int, float, list]:
     """
     将 UNIX 时间戳转换为东八区北京时间格式化字符串使用
 
     Args:
-        timestamp (Union[str, int, float]): 要转换的 UNIX 时间戳 (The UNIX timestamp to be converted)
+        timestamp (Union[str, int, float, list]): 要转换的 UNIX 时间戳
         format (str, optional): 返回的日期时间字符串的格式，默认为 '%Y-%m-%d %H-%M-%S'。
-                                (The format for the returned date-time string, defaults to '%Y-%m-%d %H-%M-%S')
-        tz (datetime.timezone, optional): 时区，默认为东八区北京时间 (The timezone, defaults to UTC+8)
+        tz (datetime.timezone, optional): 时区，默认为东八区北京时间
 
     Returns:
-        str: 格式化的日期时间字符串 (The formatted date-time string)
+        Union[str, int, float, list]: 格式化的日期时间字符串
     """
 
+    # 处理空或无效时间戳
     if timestamp in [None, "None"]:
-        return "Invalid timestamp"
+        return _("Invalid timestamp")
 
     if timestamp in [0, "0"]:
         return datetime.datetime.now(tz=tz).strftime(format)
 
-    try:
-        if isinstance(timestamp, str):
-            if len(timestamp) == 30:
-                date_obj = datetime.datetime.strptime(
-                    timestamp, "%a %b %d %H:%M:%S %z %Y"
-                )
+    # 递归处理列表中的时间戳
+    def convert(ts):
+        if isinstance(ts, str):
+            # 处理类似 "Wed Jun 01 10:23:01 +0800 2022" 的格式
+            if len(ts) == 30:
+                return datetime.datetime.strptime(ts, "%a %b %d %H:%M:%S %z %Y")
             else:
-                timestamp_value = float(timestamp)
-                if timestamp_value > 1e10:
-                    timestamp_value /= 1000
-                date_obj = datetime.datetime.fromtimestamp(timestamp_value, tz=tz)
-        else:
-            timestamp_value = float(timestamp)
+                try:
+                    timestamp_value = float(ts)
+                    if timestamp_value > 1e10:
+                        timestamp_value /= 1000
+                    return datetime.datetime.fromtimestamp(timestamp_value, tz=tz)
+                except ValueError:
+                    raise TypeError(_("无效的时间戳字符串: {0}").format(ts))
+        elif isinstance(ts, (int, float)):
+            timestamp_value = float(ts)
             if timestamp_value > 1e10:
                 timestamp_value /= 1000
-            date_obj = datetime.datetime.fromtimestamp(timestamp_value, tz=tz)
-    except (ValueError, TypeError):
-        raise TypeError(_("不支持的时间戳类型：{0}").format(type(timestamp)))
+            return datetime.datetime.fromtimestamp(timestamp_value, tz=tz)
+        else:
+            raise TypeError(_("不支持的时间戳类型: {0}").format(type(ts)))
 
-    return date_obj.strftime(format)
+    # 如果是列表，则递归处理每个时间戳
+    if isinstance(timestamp, list):
+        return [
+            (
+                convert(ts).strftime(format)
+                if not isinstance(ts, list)
+                else [convert(t).strftime(format) for t in ts]
+            )
+            for ts in timestamp
+        ]
+
+    # 处理单个时间戳
+    return convert(timestamp).strftime(format)
 
 
 def str_2_timestamp(
