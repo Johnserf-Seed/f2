@@ -1,14 +1,17 @@
 # path: f2/apps/tiktok/handler.py
 
+import asyncio
+
+from rich.rule import Rule
 from pathlib import Path
-from urllib.parse import quote, unquote
+from urllib.parse import quote
 from typing import AsyncGenerator, Union, List, Any
 
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.decorators import mode_handler, mode_function_map
 from f2.apps.tiktok.db import AsyncUserDB, AsyncVideoDB
-from f2.apps.tiktok.crawler import TiktokCrawler
+from f2.apps.tiktok.crawler import TiktokCrawler, TiktokWebSocketCrawler
 from f2.apps.tiktok.dl import TiktokDownloader
 from f2.apps.tiktok.model import (
     UserProfile,
@@ -21,6 +24,8 @@ from f2.apps.tiktok.model import (
     PostSearch,
     UserLive,
     CheckLiveAlive,
+    LiveImFetch,
+    LiveWebcast,
 )
 from f2.apps.tiktok.filter import (
     UserProfileFilter,
@@ -39,6 +44,7 @@ from f2.apps.tiktok.utils import (
 )
 from f2.cli.cli_console import RichConsoleManager
 from f2.exceptions.api_exceptions import APIResponseError
+from f2.utils.utils import interval_2_timestamp, timestamp_2_str
 
 rich_console = RichConsoleManager().rich_console
 rich_prompt = RichConsoleManager().rich_prompt
@@ -197,7 +203,7 @@ class TiktokHandler:
             video: PostDetailFilter: 作品信息过滤器 (Video info filter)
         """
 
-        logger.debug(_("开始爬取作品：{0}").format(itemId))
+        logger.debug(_("处理作品：{0}").format(itemId))
         async with TiktokCrawler(self.kwargs) as crawler:
             params = PostDetail(itemId=itemId)
             response = await crawler.fetch_post_detail(params)
@@ -264,18 +270,21 @@ class TiktokHandler:
         max_counts = max_counts or float("inf")
         videos_collected = 0
 
-        logger.debug(_("开始爬取用户：{0} 发布的作品").format(secUid))
+        logger.info(_("处理用户：{0} 发布的作品").format(secUid))
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("===================================")
             logger.debug(
                 _("最大数量: {0} 每次请求数量: {1}").format(
                     max_counts, current_request_size
                 )
             )
-            logger.debug(_("开始爬取第 {0} 页").format(cursor))
+            rich_console.print(
+                Rule(
+                    _("处理第 {0} 页 ({1})").format(cursor, timestamp_2_str(cursor))
+                )
+            )
 
             async with TiktokCrawler(self.kwargs) as crawler:
                 params = UserPost(
@@ -287,9 +296,10 @@ class TiktokHandler:
                 video = UserPostFilter(response)
 
             if not video.has_aweme:
-                logger.debug(_("第 {0} 页没有找到作品").format(cursor))
+                logger.info(_("第 {0} 页没有找到作品").format(cursor))
+                logger.info(video._to_raw())
                 if not video.hasMore and str(video.api_status_code) == "0":
-                    logger.debug(_("用户：{0} 所有作品采集完毕").format(secUid))
+                    logger.info(_("用户：{0} 所有作品采集完毕").format(secUid))
                     break
                 else:
                     cursor = video.cursor
@@ -301,7 +311,6 @@ class TiktokHandler:
                     video.aweme_id, video.desc, video.nickname
                 )
             )
-            logger.debug("===================================")
 
             yield video
 
@@ -364,18 +373,21 @@ class TiktokHandler:
         max_counts = max_counts or float("inf")
         videos_collected = 0
 
-        logger.debug(_("开始爬取用户：{0} 点赞的作品").format(secUid))
+        logger.info(_("处理用户：{0} 点赞的作品").format(secUid))
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("===================================")
             logger.debug(
                 _("最大数量：{0} 每次请求数量：{1}").format(
                     max_counts, current_request_size
                 )
             )
-            logger.debug(_("开始爬取第 {0} 页").format(cursor))
+            rich_console.print(
+                Rule(
+                    _("处理第 {0} 页 ({1})").format(cursor, timestamp_2_str(cursor))
+                )
+            )
 
             async with TiktokCrawler(self.kwargs) as crawler:
                 params = UserLike(secUid=secUid, cursor=cursor, count=page_counts)
@@ -389,7 +401,6 @@ class TiktokHandler:
                         like.aweme_id, like.desc, like.nickname
                     )
                 )
-                logger.debug("===================================")
 
                 yield like
 
@@ -466,18 +477,21 @@ class TiktokHandler:
         max_counts = max_counts or float("inf")
         videos_collected = 0
 
-        logger.debug(_("开始爬取用户：{0} 收藏的作品").format(secUid))
+        logger.info(_("处理用户：{0} 收藏的作品").format(secUid))
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("===================================")
             logger.debug(
                 _("最大数量：{0} 每次请求数量：{1}").format(
                     max_counts, current_request_size
                 )
             )
-            logger.debug(_("开始爬取第 {0} 页").format(cursor))
+            rich_console.print(
+                Rule(
+                    _("处理第 {0} 页 ({1})").format(cursor, timestamp_2_str(cursor))
+                )
+            )
 
             async with TiktokCrawler(self.kwargs) as crawler:
                 params = UserCollect(secUid=secUid, cursor=cursor, count=page_counts)
@@ -569,7 +583,7 @@ class TiktokHandler:
             playlist: UserPlayListFilter: 作品合集列表 (Video mix list)
         """
 
-        logger.debug(_("开始爬取用户：{0} 的作品合集列表").format(secUid))
+        logger.debug(_("处理用户：{0} 的作品合集列表").format(secUid))
 
         async with TiktokCrawler(self.kwargs) as crawler:
             params = UserPlayList(secUid=secUid, cursor=cursor, count=page_counts)
@@ -586,7 +600,6 @@ class TiktokHandler:
                 playlist.mixId, playlist.mixName
             )
         )
-        logger.debug("===================================")
         return playlist
 
     async def select_playlist(
@@ -659,18 +672,21 @@ class TiktokHandler:
         max_counts = max_counts or float("inf")
         videos_collected = 0
 
-        logger.debug(_("开始爬取用户: {0} 合集的作品").format(mixId))
+        logger.info(_("处理合集: {0} 的作品").format(mixId))
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("===================================")
             logger.debug(
                 _("最大数量: {0} 每次请求数量: {1}").format(
                     max_counts, current_request_size
                 )
             )
-            logger.debug(_("开始爬取第 {0} 页").format(cursor))
+            rich_console.print(
+                Rule(
+                    _("处理第 {0} 页 ({1})").format(cursor, timestamp_2_str(cursor))
+                )
+            )
 
             async with TiktokCrawler(self.kwargs) as crawler:
                 params = UserMix(mixId=mixId, cursor=cursor, count=page_counts)
@@ -684,7 +700,6 @@ class TiktokHandler:
                         mix.aweme_id, mix.desc, mix.nickname
                     )
                 )
-                logger.debug("===================================")
 
                 yield mix
 
@@ -764,17 +779,14 @@ class TiktokHandler:
         search_id = ""
 
         logger.info(
-            _("开始搜索关键词：{0} 的作品，最大作品数量 {1} ").format(
-                keyword, max_counts
-            )
+            _("搜索关键词：{0} 的作品，最大作品数量 {1} ").format(keyword, max_counts)
         )
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
-            logger.debug("===================================")
             logger.info(
-                _("开始搜索第 {0} 个作品，每次请求数量：{1}").format(
+                _("搜索第 {0} 个作品，每次请求数量：{1}").format(
                     offset + 1, current_request_size
                 )
             )
@@ -804,7 +816,6 @@ class TiktokHandler:
                     search.aweme_id, search.desc, search.nickname
                 )
             )
-            logger.debug("===================================")
 
             if videos_collected >= max_counts:
                 logger.info(
@@ -844,7 +855,7 @@ class TiktokHandler:
 
         # 是否正在直播
         if webcast_data.live_status != 2:
-            logger.info(_("当前 {0} 直播已结束").format(webcast_data.live_title_raw))
+            logger.info(_("直播: {0} 已结束").format(webcast_data.live_title_raw))
             return
 
         async with AsyncUserDB("tiktok_users.db") as udb:
@@ -875,8 +886,7 @@ class TiktokHandler:
             live: [UserLiveFilter: 直播作品信息过滤器 (Live video info filter)
         """
 
-        logger.info(_("开始爬取用户：{0} 的直播").format(uniqueId))
-        logger.debug("===================================")
+        logger.info(_("处理用户：{0} 的直播").format(uniqueId))
 
         async with TiktokCrawler(self.kwargs) as crawler:
             params = UserLive(uniqueId=uniqueId)
@@ -891,8 +901,7 @@ class TiktokHandler:
                 live.live_user_count,
             )
         )
-        logger.debug("===================================")
-        logger.info(_("直播信息爬取结束"))
+        logger.info(_("结束直播信息处理"))
 
         return live
 
@@ -910,8 +919,8 @@ class TiktokHandler:
         Note:
             房间号参数为字符串形式，多个房间号用逗号分隔，如：7381444193462078214,7381457815116466949,
         """
-        logger.info(_("开始检查直播间在线状态"))
-        logger.debug("===================================")
+
+        logger.info(_("检查直播间在线状态"))
         async with TiktokCrawler(self.kwargs) as crawler:
             response = await crawler.fetch_check_live_alive(
                 CheckLiveAlive(room_ids=room_ids)
@@ -921,8 +930,7 @@ class TiktokHandler:
         logger.info(
             _("直播间：{0}，在线状态：{1}").format(check.room_id, check.is_alive)
         )
-        logger.debug("===================================")
-        logger.info(_("直播间在线状态检查结束"))
+        logger.info(_("结束直播间在线状态检查"))
         return check
 
     async def fetch_live_im(self, room_id: str):
@@ -931,14 +939,12 @@ class TiktokHandler:
 
         Args:
             room_id: str: 直播间ID
-            unique_id: str: 用户ID
 
         Return:
             live_im: LiveImFetchFilter: 直播间信息数据过滤器，包含直播间信息的_to_raw、_to_dict、_to_list方法
         """
 
-        logger.info(_("开始查询直播间信息"))
-        logger.debug("===================================")
+        logger.info(_("查询直播间信息"))
 
         async with TiktokCrawler(self.kwargs) as crawler:
             params = LiveImFetch(room_id=room_id)
@@ -946,12 +952,11 @@ class TiktokHandler:
 
         if live_im:
             logger.debug(
-                _("直播间Room_ID：{0} 弹幕cursor：{1}").format(room_id, live_im)
+                _("直播间room_id：{0} 弹幕cursor：{1}").format(room_id, live_im)
             )
-            logger.debug("===================================")
-            logger.info(_("直播间信息查询结束"))
+            logger.info(_("结束直播间信息查询"))
         else:
-            logger.warning(_("请提供正确的Room_ID"))
+            logger.warning(_("请提供正确的room_id"))
 
         return live_im
 
@@ -970,6 +975,7 @@ class TiktokHandler:
         Return:
             self.websocket: TiktokWebSocketCrawler: WebSocket连接对象
         """
+
         wss_callbacks = {
             "WebcastChatMessage": TiktokWebSocketCrawler.WebcastChatMessage,
             "WebcastMemberMessage": TiktokWebSocketCrawler.WebcastMemberMessage,
