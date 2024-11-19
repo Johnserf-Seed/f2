@@ -25,10 +25,10 @@ f2:
         language: zh-CN
         platform: Win32
         name: Edge
-        version: "126.0.0.0"
+        version: "130.0.0.0"
       engine:
         name: Blink
-        version: "126.0.0.0"
+        version: "130.0.0.0"
       os:
         name: Windows
         version: "10"
@@ -39,10 +39,10 @@ f2:
         language: zh-CN
         platform: Win32
         name: Edge
-        version: "126.0.0.0"
+        version: "130.0.0.0"
 
     headers:
-      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0
       Referer: https://www.douyin.com/
 
     proxies:
@@ -71,7 +71,7 @@ f2:
         app_id: 6383
         referer: https://www.douyin.com/
         url: https://www.douyin.com/
-        user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0
+        user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0
         user_unique_id: ""
 
   tiktok:
@@ -81,7 +81,7 @@ f2:
         language: zh-CN
         name: Mozilla
         platform: Win32
-        version: 5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+        version: 5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36
 
       device:
         id: "7377772863376426514"
@@ -94,7 +94,7 @@ f2:
       tz_name: Asia/Hong_Kong
 
     headers:
-      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36
       Referer: https://www.tiktok.com/
 
     proxies:
@@ -119,7 +119,7 @@ f2:
 
   twitter:
     headers:
-      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0
       Referer: https://twitter.com/
       Authorization: Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA
       X-Csrf-Token: ""
@@ -130,7 +130,7 @@ f2:
 
   weibo:
     headers:
-      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36 Edg/121.0.0.0
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0
       Referer: https://weibo.com/
 
     proxies:
