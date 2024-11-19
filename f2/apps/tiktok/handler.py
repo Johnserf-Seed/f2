@@ -318,7 +318,14 @@ class TiktokHandler:
             videos_collected += len(video.aweme_id)
             cursor = video.cursor
 
-        logger.debug(_("爬取结束，共爬取 {0} 个作品").format(videos_collected))
+            rich_console.print(Rule())
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(
+            _("结束处理用户发布的作品，共处理 {0} 个作品").format(videos_collected)
+        )
 
     @mode_handler("like")
     async def handle_user_like(self):
@@ -422,7 +429,14 @@ class TiktokHandler:
             videos_collected += len(like.aweme_id)
             cursor = like.cursor
 
-        logger.debug(_("爬取结束，共爬取 {0} 个作品").format(videos_collected))
+            rich_console.print(Rule())
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(
+            _("结束处理用户点赞的作品，共处理 {0} 个作品").format(videos_collected)
+        )
 
     @mode_handler("collect")
     async def handle_user_collect(self):
@@ -527,7 +541,14 @@ class TiktokHandler:
             videos_collected += len(collect.aweme_id)
             cursor = collect.cursor
 
-        logger.debug(_("爬取结束，共爬取 {0} 个作品").format(videos_collected))
+            rich_console.print(Rule())
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(
+            _("结束处理用户收藏作品，共处理 {0} 个作品").format(videos_collected)
+        )
 
     @mode_handler("mix")
     async def handle_user_mix(self):
@@ -721,7 +742,14 @@ class TiktokHandler:
             videos_collected += len(mix.aweme_id)
             cursor = mix.cursor
 
-        logger.debug(_("爬取结束，共爬取 {0} 个作品").format(videos_collected))
+            rich_console.print(Rule())
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(
+            _("结束处理用户合集作品，共处理 {0} 个作品").format(videos_collected)
+        )
 
     @mode_handler("search")
     async def handle_search(self):
@@ -832,7 +860,12 @@ class TiktokHandler:
             offset = search.cursor
             search_id = search.search_id
 
-        logger.info(_("搜索结束，共搜索到 {0} 个作品").format(videos_collected))
+            rich_console.print(Rule())
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(_("结束搜索，共搜索到 {0} 个作品").format(videos_collected))
 
     @mode_handler("live")
     async def handle_user_live(self):
