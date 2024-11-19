@@ -61,6 +61,7 @@ bark:
   ringtones: 1
   icon: https://johnserf-seed.github.io/f2/f2-logo-with-shadow.png
   level: active
+  volume: 5
   call: 0
   isArchive: 1
   sound: birdsong
