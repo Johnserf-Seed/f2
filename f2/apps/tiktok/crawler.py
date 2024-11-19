@@ -174,6 +174,18 @@ class TiktokCrawler(BaseCrawler):
         logger.debug(_("检查开播状态接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
+    async def fetch_live_im_fetch(self, params: LiveImFetch):
+        endpoint = XBogusManager.model_2_endpoint(
+            self.headers.get("User-Agent"),
+            tkendpoint.LIVE_IM_FETCH,
+            params.model_dump(),
+        )
+        logger.debug(_("直播弹幕初始化接口地址：{0}").format(endpoint))
+        response = await self._fetch_response(endpoint)
+        payload_package = Response()
+        payload_package.ParseFromString(response.content)
+        return payload_package
+
     async def __aenter__(self):
         return self
 
