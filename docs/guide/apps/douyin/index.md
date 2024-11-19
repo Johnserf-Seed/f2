@@ -769,7 +769,7 @@ outline: deep
 更加抽象的高级方法可以直接调用handler接口的`fetch_user_profile`。
 
 ::: tip 提示
-本项目的残血版Ab算法的UA参数为固定值，`Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0`。
+本项目的残血版Ab算法的UA参数为固定值，`Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0`。
 :::
 
 ### 提取单个用户id 🟢

@@ -28,7 +28,7 @@ def test_abogus_manager():
     )
 
     final_endpoint = ABogusManager.model_2_endpoint(
-        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0",
+        user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0",
         base_endpoint=dyendpoint.USER_DETAIL,
         params=params.model_dump(),
     )

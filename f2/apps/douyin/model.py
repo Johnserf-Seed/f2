@@ -22,10 +22,10 @@ class BaseRequestModel(BaseModel):
     browser_language: str = ClientConfManager.brm_browser().get("language", "zh-CN")
     browser_platform: str = ClientConfManager.brm_browser().get("platform", "Win32")
     browser_name: str = ClientConfManager.brm_browser().get("name", "Edge")
-    browser_version: str = ClientConfManager.brm_browser().get("version", "126.0.0.0")
+    browser_version: str = ClientConfManager.brm_browser().get("version", "130.0.0.0")
     browser_online: str = "true"
     engine_name: str = ClientConfManager.brm_engine().get("name", "Blink")
-    engine_version: str = ClientConfManager.brm_engine().get("version", "126.0.0.0")
+    engine_version: str = ClientConfManager.brm_engine().get("version", "130.0.0.0")
     os_name: str = ClientConfManager.brm_os().get("name", "Windows")
     os_version: str = ClientConfManager.brm_os().get("version", "10")
     cpu_core_num: int = 12
@@ -52,7 +52,7 @@ class BaseLiveModel(BaseModel):
     browser_language: str = ClientConfManager.blm_browser().get("language", "zh-CN")
     browser_platform: str = ClientConfManager.blm_browser().get("platform", "Win32")
     browser_name: str = ClientConfManager.blm_browser().get("name", "Edge")
-    browser_version: str = ClientConfManager.blm_browser().get("version", "126.0.0.0")
+    browser_version: str = ClientConfManager.blm_browser().get("version", "130.0.0.0")
     enter_source: Any = ""
     is_need_double_stream: str = "false"
     # msToken: str = TokenManager.gen_real_msToken()
@@ -90,7 +90,7 @@ class BaseWebCastModel(BaseModel):
     browser_platform: str = "Win32"
     browser_name: str = "Mozilla"
     browser_version: str = quote(
-        "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0",
+        "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0",
         safe="",
     )
     browser_online: str = "true"
