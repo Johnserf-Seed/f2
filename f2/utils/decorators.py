@@ -1,3 +1,5 @@
+# path: f2/utils/decorators.py
+
 mode_function_map = {}
 
 
