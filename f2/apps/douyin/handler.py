@@ -408,7 +408,7 @@ class DouyinHandler:
         max_counts: int = None,
     ) -> AsyncGenerator[UserPostFilter, Any]:
         """
-        用于获取指定用户喜欢的作品列表。
+        用于获取指定用户点赞的作品列表。
 
         Args:
             sec_user_id: str: 用户ID
@@ -417,13 +417,13 @@ class DouyinHandler:
             max_counts: int: 最大作品数
 
         Return:
-            video: AsyncGenerator[UserPostFilter, Any]: 喜欢作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
+            video: AsyncGenerator[UserPostFilter, Any]: 点赞作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法
         """
 
         max_counts = max_counts or float("inf")
         videos_collected = 0
 
-        logger.info(_("处理用户：{0} 喜欢的作品").format(sec_user_id))
+        logger.info(_("处理用户：{0} 点赞的作品").format(sec_user_id))
 
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
@@ -478,7 +478,7 @@ class DouyinHandler:
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
         logger.info(
-            _("结束处理用户喜欢的作品，共处理 {0} 个喜欢作品").format(videos_collected)
+            _("结束处理用户点赞的作品，共处理 {0} 个作品").format(videos_collected)
         )
 
     @mode_handler("music")
