@@ -9,10 +9,9 @@ import traceback
 
 from f2 import helps
 from f2.apps import __apps__ as apps_module
-from f2.exceptions import APIError
 from f2.cli.cli_console import RichConsoleManager
 from f2.utils._signal import SignalManager
-from f2.utils.utils import check_f2_version
+from f2.utils.utils import check_f2_version, check_python_version
 from f2.i18n.translator import _
 from f2.log.logger import logger
 
@@ -149,29 +148,25 @@ class DynamicGroup(click.Group):
     help=_("检查F2版本"),
 )
 def main(**kwargs):
-    from f2.utils.utils import check_python_version
-
+    # 注册关闭信号
+    SignalManager().register_shutdown_signal()
+    # 检查Python版本是否符合要求
     check_python_version()
 
 
 @click.pass_context
-def set_cli_config(ctx, **kwargs):
+def set_cli_config(ctx: click.Context, **kwargs):
     """
     设置CLI的配置参数, 使其可以在后续的命令或操作中使用
     (Set the conf of the CLI so that it can be used in subsequent commands)
 
     Args:
-    - ctx: click的上下文对象
-    - **kwargs: 关键字参数，代表CLI的各种设置选项
+        ctx: click的上下文对象
+        **kwargs: 关键字参数，代表CLI的各种设置选项
     """
 
-    SignalManager().register_shutdown_signal()
-
     with RichConsoleManager().progress:
-        try:
-            asyncio.run(run_app(kwargs))
-        except APIError as e:
-            logger.error(e)
+        asyncio.run(run_app(kwargs))
 
 
 async def run_app(kwargs):
