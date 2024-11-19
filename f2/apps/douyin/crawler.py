@@ -8,7 +8,12 @@ import traceback
 from typing import Dict
 from google.protobuf import json_format
 from google.protobuf.message import DecodeError as ProtoDecodeError
-from websockets import ConnectionClosedOK, WebSocketServerProtocol, serve
+from websockets import (
+    ConnectionClosedOK,
+    WebSocketServerProtocol,
+    WebSocketServer,
+    serve,
+)
 
 from f2.log.logger import logger
 from f2.i18n.translator import _
@@ -360,7 +365,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         if cls.show_message:
             getattr(logger, level)(message)
 
-    async def fetch_live_danmaku(self, params: LiveWebcast):
+    async def fetch_live_danmaku(self, params: LiveWebcast) -> None:
         endpoint = BaseEndpointManager.model_2_endpoint(
             dyendpoint.LIVE_IM_WSS,
             params.model_dump(),
@@ -380,7 +385,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
             except asyncio.CancelledError:
                 pass  # 抑制 CancelledError 异常
 
-    async def handle_wss_message(self, message: bytes):
+    async def handle_wss_message(self, message: bytes) -> None:
         """
         处理 WebSocket 消息
 
@@ -455,7 +460,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
                 )
             )
 
-    async def send_ack(self, log_id: str, internal_ext: str):
+    async def send_ack(self, log_id: str, internal_ext: str) -> None:
         """
         发送 ack 包
 
@@ -470,7 +475,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         logger.debug(_("[SendAck] [💓 发送 ack 包] | [日志ID：{0}]").format(log_id))
         await self.websocket.send(data)
 
-    async def send_ping(self):
+    async def send_ping(self) -> None:
         """发送 ping 包"""
         ping = PushFrame()
         ping.payloadType = "hb"
@@ -490,7 +495,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
     async def on_open(self):
         return await super().on_open()
 
-    async def start_server(self):
+    async def start_server(self) -> None:
         """启动 WebSocket 服务器"""
         wss_conf = ClientConfManager.wss()
         wss_domain = wss_conf.get("domain")
@@ -519,14 +524,14 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
             await server.wait_closed()
             logger.info(_("[StartServer] [🔒 本地 WebSocket 服务器已关闭]"))
 
-    async def _timeout_check(self, server):
+    async def _timeout_check(self, server: WebSocketServer) -> None:
         """
         检查本地服务器是否超时无连接
 
         Args:
             server: WebSocketServer 对象
-
         """
+
         while True:
             await asyncio.sleep(self.timeout)
             if not self.connected_clients:
@@ -540,13 +545,14 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         # await server.wait_closed()
         await self.close_websocket()
 
-    async def register_client(self, websocket: WebSocketServerProtocol):
+    async def register_client(self, websocket: WebSocketServerProtocol) -> None:
         """
         注册新的客户端连接
 
         Args:
             websocket: WebSocketServerProtocol 实例
         """
+
         self.connected_clients.add(websocket)
         logger.info(
             _("[RegisterClient] [🔗 新的客户端连接] ｜ [Ip：{0} Port：{1}]").format(
@@ -566,13 +572,14 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         finally:
             self.connected_clients.remove(websocket)
 
-    async def broadcast_message(self, message: str):
+    async def broadcast_message(self, message: str) -> None:
         """
         转发消息给所有连接的客户端
 
         Args:
             message: 要转发的消息（字符串格式）
         """
+
         if not isinstance(message, str):
             try:
                 message = json.dumps(message, ensure_ascii=False)
@@ -587,7 +594,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
 
     # 定义所有的回调消息函数
     @classmethod
-    async def WebcastRoomMessage(cls, data: bytes):
+    async def WebcastRoomMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间消息
+
+        Args:
+            data (bytes): 直播间消息的字节数据
+
+        Returns:
+            dict: 解析后的直播间消息数据
+        """
+
         roomMessage = RoomMessage()
         roomMessage.ParseFromString(data)
         data_json = json.loads(
@@ -606,7 +623,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastLikeMessage(cls, data: bytes):
+    async def WebcastLikeMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间点赞消息
+
+        Args:
+            data (bytes): 直播间点赞消息的字节数据
+
+        Returns:
+            dict: 解析后的点赞消息数据
+        """
+
         likeMessage = LikeMessage()
         likeMessage.ParseFromString(data)
         data_json = json.loads(
@@ -629,7 +656,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastMemberMessage(cls, data: bytes):
+    async def WebcastMemberMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间成员消息
+
+        Args:
+            data (bytes): 直播间成员消息的字节数据
+
+        Returns:
+            dict: 解析后的成员消息数据
+        """
+
         memberMessage = MemberMessage()
         memberMessage.ParseFromString(data)
         data_json = json.loads(
@@ -651,7 +688,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastChatMessage(cls, data: bytes):
+    async def WebcastChatMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间聊天消息
+
+        Args:
+            data (bytes): 直播间聊天消息的字节数据
+
+        Returns:
+            dict: 解析后的聊天消息数据
+        """
+
         chatMessage = ChatMessage()
         chatMessage.ParseFromString(data)
         data_json = json.loads(
@@ -670,7 +717,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastGiftMessage(cls, data: bytes):
+    async def WebcastGiftMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间礼物消息
+
+        Args:
+            data (bytes): 直播间礼物消息的字节数据
+
+        Returns:
+            dict: 解析后的礼物消息数据
+        """
+
         giftMessage = GiftMessage()
         giftMessage.ParseFromString(data)
         data_json = json.loads(
@@ -689,7 +746,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastSocialMessage(cls, data: bytes):
+    async def WebcastSocialMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间关注消息
+
+        Args:
+            data (bytes): 直播间关注消息的字节数据
+
+        Returns:
+            dict: 解析后的关注消息数据
+        """
+
         socialMessage = SocialMessage()
         socialMessage.ParseFromString(data)
         data_json = json.loads(
@@ -708,7 +775,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastRoomUserSeqMessage(cls, data: bytes):
+    async def WebcastRoomUserSeqMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间用户序列消息
+
+        Args:
+            data (bytes): 直播间用户序列消息的字节数据
+
+        Returns:
+            dict: 解析后的用户序列消息数据
+        """
+
         roomUserSeqMessage = RoomUserSeqMessage()
         roomUserSeqMessage.ParseFromString(data)
         data_json = json.loads(
@@ -731,7 +808,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastUpdateFanTicketMessage(cls, data: bytes):
+    async def WebcastUpdateFanTicketMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间粉丝票更新消息
+
+        Args:
+            data (bytes): 直播间粉丝票更新消息的字节数据
+
+        Returns:
+            dict: 解析后的粉丝票更新消息数据
+        """
+
         updateFanTicketMessage = UpdateFanTicketMessage()
         updateFanTicketMessage.ParseFromString(data)
         data_json = json.loads(
@@ -750,7 +837,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastCommonTextMessage(cls, data: bytes):
+    async def WebcastCommonTextMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间文本消息
+
+        Args:
+            data (bytes): 直播间文本消息的字节数据
+
+        Returns:
+            dict: 解析后的文本消息数据
+        """
+
         commonTextMessage = CommonTextMessage()
         commonTextMessage.ParseFromString(data)
         data_json = json.loads(
@@ -767,7 +864,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastMatchAgainstScoreMessage(cls, data: bytes):
+    async def WebcastMatchAgainstScoreMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间对战积分消息
+
+        Args:
+            data (bytes): 直播间对战积分消息的字节数据
+
+        Returns:
+            dict: 解析后的对战积分消息数据
+        """
+
         matchAgainstScoreMessage = MatchAgainstScoreMessage()
         matchAgainstScoreMessage.ParseFromString(data)
         data_json = json.loads(
@@ -786,7 +893,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastEcomFansClubMessage(cls, data: bytes):
+    async def WebcastEcomFansClubMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间电商粉丝团消息
+
+        Args:
+            data (bytes): 直播间电商粉丝团消息的字节数据
+
+        Returns:
+            dict: 解析后的电商粉丝团消息数据
+        """
+
         fansClubMessage = EcomFansClubMessage()
         fansClubMessage.ParseFromString(data)
         data_json = json.loads(
@@ -805,7 +922,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastRoomStatsMessage(cls, data: bytes):
+    async def WebcastRoomStatsMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间统计消息
+
+        Args:
+            data (bytes): 直播间统计消息的字节数据
+
+        Returns:
+            dict: 解析后的统计消息数据
+        """
+
         statsMessage = RoomStatsMessage()
         statsMessage.ParseFromString(data)
         data_json = json.loads(
@@ -830,7 +957,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastLiveShoppingMessage(cls, data: bytes):
+    async def WebcastLiveShoppingMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间购物消息
+
+        Args:
+            data (bytes): 直播间购物消息的字节数据
+
+        Returns:
+            dict: 解析后的购物消息数据
+        """
+
         liveShoppingMessage = LiveShoppingMessage()
         liveShoppingMessage.ParseFromString(data)
         data_json = json.loads(
@@ -852,7 +989,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastLiveEcomGeneralMessage(cls, data: bytes):
+    async def WebcastLiveEcomGeneralMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间电商通用消息
+
+        Args:
+            data (bytes): 直播间电商通用消息的字节数据
+
+        Returns:
+            dict: 解析后的电商通用消息数据
+        """
+
         liveEcomGeneralMessage = LiveEcomGeneralMessage()
         liveEcomGeneralMessage.ParseFromString(data)
         data_json = json.loads(
@@ -874,7 +1021,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastRoomStreamAdaptationMessage(cls, data: bytes):
+    async def WebcastRoomStreamAdaptationMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间流适配消息
+
+        Args:
+            data (bytes): 直播间流适配消息的字节数据
+
+        Returns:
+            dict: 解析后的流适配消息数据
+        """
+
         roomStreamAdaptationMessage = RoomStreamAdaptationMessage()
         roomStreamAdaptationMessage.ParseFromString(data)
         data_json = json.loads(
@@ -894,7 +1051,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastRanklistHourEntranceMessage(cls, data: bytes):
+    async def WebcastRanklistHourEntranceMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间小时榜入口消息
+
+        Args:
+            data (bytes): 直播间小时榜入口消息的字节数据
+
+        Returns:
+            dict: 解析后的小时榜入口消息数据
+        """
+
         ranklistHourEntranceMessage = RanklistHourEntranceMessage()
         ranklistHourEntranceMessage.ParseFromString(data)
         data_json = json.loads(
@@ -926,7 +1093,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastProductChangeMessage(cls, data: bytes):
+    async def WebcastProductChangeMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间商品变更消息
+
+        Args:
+            data (bytes): 直播间商品变更消息的字节数据
+
+        Returns:
+            dict: 解析后的商品变更消息数据
+        """
+
         productChangeMessage = ProductChangeMessage()
         productChangeMessage.ParseFromString(data)
         data_json = json.loads(
@@ -944,7 +1121,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastNotifyEffectMessage(cls, data: bytes):
+    async def WebcastNotifyEffectMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间通知效果消息
+
+        Args:
+            data (bytes): 直播间通知效果消息的字节数据
+
+        Returns:
+            dict: 解析后的通知效果消息数据
+        """
+
         notifyEffectMessage = NotifyEffectMessage()
         notifyEffectMessage.ParseFromString(data)
         data_json = json.loads(
@@ -962,7 +1149,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastLightGiftMessage(cls, data: bytes):
+    async def WebcastLightGiftMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间轻礼物消息
+
+        Args:
+            data (bytes): 直播间轻礼物消息的字节数据
+
+        Returns:
+            dict: 解析后的轻礼物消息数据
+        """
+
         lightGiftMessage = LightGiftMessage()
         lightGiftMessage.ParseFromString(data)
         data_json = json.loads(
@@ -986,7 +1183,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastProfitInteractionScoreMessage(cls, data: bytes):
+    async def WebcastProfitInteractionScoreMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间互动分数消息
+
+        Args:
+            data (bytes): 直播间互动分数消息的字节数据
+
+        Returns:
+            dict: 解析后的互动分数消息数据
+        """
+
         profitInteractionScoreMessage = ProfitInteractionScoreMessage()
         profitInteractionScoreMessage.ParseFromString(data)
         data_json = json.loads(
@@ -1009,7 +1216,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastRoomRankMessage(cls, data: bytes):
+    async def WebcastRoomRankMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间排行榜消息
+
+        Args:
+            data (bytes): 直播间排行榜消息的字节数据
+
+        Returns:
+            dict: 解析后的排行榜消息数据
+        """
+
         roomRankMessage = RoomRankMessage()
         roomRankMessage.ParseFromString(data)
         data_json = json.loads(
@@ -1033,7 +1250,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastFansclubMessage(cls, data: bytes):
+    async def WebcastFansclubMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间粉丝团消息
+
+        Args:
+            data (bytes): 直播间粉丝团消息的字节数据
+
+        Returns:
+            dict: 解析后的粉丝团消息数据
+        """
+
         fansclubMessage = FansclubMessage()
         fansclubMessage.ParseFromString(data)
         data_json = json.loads(
@@ -1052,7 +1279,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastHotRoomMessage(cls, data: bytes):
+    async def WebcastHotRoomMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间热门房间消息
+
+        Args:
+            data (bytes): 直播间热门房间消息的字节数据
+
+        Returns:
+            dict: 解析后的热门房间消息数据
+        """
+
         hotRoomMessage = HotRoomMessage()
         hotRoomMessage.ParseFromString(data)
         data_json = json.loads(
@@ -1070,7 +1307,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastInRoomBannerMessage(cls, data: bytes):
+    async def WebcastInRoomBannerMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间内横幅消息
+
+        Args:
+            data (bytes): 直播间内横幅消息的字节数据
+
+        Returns:
+            dict: 解析后的内横幅消息数据
+        """
+
         inRoomBannerMessage = InRoomBannerMessage()
         inRoomBannerMessage.ParseFromString(data)
         data_json = json.loads(
@@ -1088,7 +1335,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastScreenChatMessage(cls, data: bytes):
+    async def WebcastScreenChatMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间全局聊天消息
+
+        Args:
+            data (bytes): 直播间全局聊天消息的字节数据
+
+        Returns:
+            dict: 解析后的全局聊天消息数据
+        """
+
         screenChatMessage = ScreenChatMessage()
         screenChatMessage.ParseFromString(data)
         data_json = json.loads(
@@ -1106,7 +1363,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastRoomDataSyncMessage(cls, data: bytes):
+    async def WebcastRoomDataSyncMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间数据同步消息
+
+        Args:
+            data (bytes): 直播间数据同步消息的字节数据
+
+        Returns:
+            dict: 解析后的数据同步消息数据
+        """
+
         roomDataSyncMessage = RoomDataSyncMessage()
         roomDataSyncMessage.ParseFromString(data)
         data_json = json.loads(
@@ -1128,7 +1395,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastLinkerContributeMessage(cls, data: bytes):
+    async def WebcastLinkerContributeMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间连麦贡献消息
+
+        Args:
+            data (bytes): 直播间连麦贡献消息的字节数据
+
+        Returns:
+            dict: 解析后的连麦贡献消息数据
+        """
+
         linkerContributeMessage = LinkerContributeMessage()
         linkerContributeMessage.ParseFromString(data)
         data_json = json.loads(
@@ -1151,7 +1428,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastEmojiChatMessage(cls, data: bytes):
+    async def WebcastEmojiChatMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间表情聊天消息
+
+        Args:
+            data (bytes): 直播间表情聊天消息的字节数据
+
+        Returns:
+            dict: 解析后的表情聊天消息数据
+        """
+
         emojiChatMessage = EmojiChatMessage()
         emojiChatMessage.ParseFromString(data)
         data_json = json.loads(
@@ -1169,7 +1456,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastLinkMicMethod(cls, data: bytes):
+    async def WebcastLinkMicMethod(cls, data: bytes) -> dict:
+        """
+        处理直播间连麦消息(Mic)
+
+        Args:
+            data (bytes): 直播间连麦消息的字节数据
+
+        Returns:
+            dict: 解析后的连麦消息数据
+        """
+
         linkMicMethod = LinkMicMethod()
         linkMicMethod.ParseFromString(data)
         data_json = json.loads(
@@ -1188,11 +1485,20 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
                 "[WebcastLinkMicMethod] [🎤连麦PK对战消息] | [消息类型：{0}] [频道ID：{1}]"
             ).format(message_type, channel_id)
         )
-
         return data_json
 
     @classmethod
-    async def WebcastLinkMessage(cls, data: bytes):
+    async def WebcastLinkMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间连麦消息
+
+        Args:
+            data (bytes): 直播间连麦消息的字节数据
+
+        Returns:
+            dict: 解析后的连麦消息数据
+        """
+
         linkMessage = LinkMessage()
         linkMessage.ParseFromString(data)
         data_json = json.loads(
@@ -1214,7 +1520,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastBattleTeamTaskMessage(cls, data: bytes):
+    async def WebcastBattleTeamTaskMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间战队任务消息
+
+        Args:
+            data (bytes): 直播间战队任务消息的字节数据
+
+        Returns:
+            dict: 解析后的战队任务消息数据
+        """
+
         battleTeamTaskMessage = BattleTeamTaskMessage()
         battleTeamTaskMessage.ParseFromString(data)
         data_json = json.loads(
@@ -1237,7 +1553,17 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         return data_json
 
     @classmethod
-    async def WebcastHotChatMessage(cls, data: bytes):
+    async def WebcastHotChatMessage(cls, data: bytes) -> dict:
+        """
+        处理直播间热聊消息
+
+        Args:
+            data (bytes): 直播间热聊消息的字节数据
+
+        Returns:
+            dict: 解析后的热聊消息数据
+        """
+
         hotChatMessage = HotChatMessage()
         hotChatMessage.ParseFromString(data)
         data_json = json.loads(
