@@ -102,6 +102,11 @@ f2:
       http://:
       https://:
 
+    wss:
+      domain: localhost
+      port: 8766
+      verify: false
+
     msToken:
       url: https://mssdk-sg.tiktok.com/web/common?msToken=QnC7zMMh1cpaDTxHDHnabNOrqaWv49JwA1IAq3AIFvrdaqQi8Rs_YlXSya1vN-4b6C1MgpWpS2cL1oakaUEDe3pUDMLpCbdSc3b3V98Fux0AuwXn_9Ns3FyMTnFRmSOOOVeGg6bVXMSGoMG6dq3k
       url2: https://mssdk-sg.tiktok.com/web/report?msToken=QnC7zMMh1cpaDTxHDHnabNOrqaWv49JwA1IAq3AIFvrdaqQi8Rs_YlXSya1vN-4b6C1MgpWpS2cL1oakaUEDe3pUDMLpCbdSc3b3V98Fux0AuwXn_9Ns3FyMTnFRmSOOOVeGg6bVXMSGoMG6dq3k
