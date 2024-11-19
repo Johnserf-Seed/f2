@@ -230,8 +230,15 @@ class TiktokHandler:
         cursor = self.kwargs.get("cursor", 0)
         page_counts = self.kwargs.get("page_counts", 35)
         max_counts = self.kwargs.get("max_counts")
+        interval = self.kwargs.get("interval")
 
         secUid = await SecUserIdFetcher.get_secuid(self.kwargs.get("url"))
+
+        # 判断是否提供了interval参数，如果有则获取start_date转时间戳提供给max_cursor
+        if interval is not None and interval != "all":
+            # 倒序查找
+            min_cursor = interval_2_timestamp(interval, date_type="start")
+            cursor = interval_2_timestamp(interval, date_type="end")
 
         async with AsyncUserDB("tiktok_users.db") as udb:
             user_path = await self.get_or_add_user_data(
@@ -239,7 +246,7 @@ class TiktokHandler:
             )
 
         async for aweme_data_list in self.fetch_user_post_videos(
-            secUid, cursor, page_counts, max_counts
+            secUid, cursor, min_cursor, page_counts, max_counts
         ):
             # 创建下载任务
             await self.downloader.create_download_tasks(
@@ -250,6 +257,7 @@ class TiktokHandler:
         self,
         secUid: str,
         cursor: int,
+        min_cursor: int,
         page_counts: int,
         max_counts: float,
     ) -> AsyncGenerator[UserPostFilter, Any]:
@@ -260,6 +268,7 @@ class TiktokHandler:
         Args:
             secUid: str: 用户ID (User ID)
             cursor: int: 分页游标 (Page cursor)
+            min_cursor: int: 最小游标 (Min cursor)
             page_counts: int: 分页数量 (Page counts)
             max_counts: float: 最大数量 (Max counts)
 
@@ -313,6 +322,10 @@ class TiktokHandler:
             )
 
             yield video
+
+            if cursor < min_cursor:
+                logger.info(_("已经处理到指定时间范围内的作品"))
+                break
 
             # 更新已经处理的作品数量 (Update the number of videos processed)
             videos_collected += len(video.aweme_id)
