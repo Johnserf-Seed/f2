@@ -1,0 +1,2448 @@
+// author: JohnserfSeed
+// date: 2024/11/15
+// description: 还原TikTok网页版直播proto结构
+// version: 1.0.1.7
+
+syntax = "proto3";
+
+package tiktok;
+
+
+message Response{
+    repeated Message messages = 1;
+    string cursor = 2;
+    int64 fetchInterval = 3;
+    int64 now = 4;
+    string internalExt = 5;
+    int32 fetchType = 6;
+    WebsocketParam routeParams = 7;
+    int64 heartbeatDuration = 8;
+    bool needAck = 9;
+    string pushServer = 10;
+    string liveCursor = 11;
+    bool historyNoMore = 12;
+}
+
+message Message{
+    string method = 1;
+    bytes payload = 2;
+    int64 msgId = 3;
+    int32 msgType = 4;
+    int64 offset = 5;
+	bool needWrdsStore = 6;
+	int64 wrdsVersion = 7;
+	string wrdsSubKey = 8;
+}
+
+message PushFrame {
+    uint64 seqid = 1;
+    uint64 logid = 2;
+    int32 service = 3;
+    int32 method = 4;
+    repeated ExtendedEntry headers = 5;
+    string payload_encoding = 6;
+    string payload_type = 7;
+    bytes payload = 8;
+}
+
+message ExtendedEntry {
+    string key = 1;
+    string value = 2;
+}
+
+message WebsocketParam {
+  string imprp = 4;
+  string wrss = 2;
+}
+
+// RequestBody message
+message RequestBody {
+    AckMessageBody ack_message_body = 1;
+}
+
+// AckMessageBody message
+message AckMessageBody {
+    int64 start_timestamp = 1;
+    string cmd = 2;
+    string conv_type = 3;
+    string msg_type = 4;
+    string push_type = 5;
+    string id = 6;
+}
+
+// ok
+message RoomUserSeqMessage {
+    Common common = 1;
+    repeated Contributor ranks = 2;
+    int64 total = 3;
+    string pop_str = 4;
+    repeated Contributor seats = 5;
+    int64 popularity = 6;
+    int64 total_user = 7;
+    int64 anonymous = 8;
+
+    message Contributor {
+        int64 score = 1;
+        User user = 2;
+        int64 rank = 3;
+        int64 delta = 4;
+    }
+}
+
+// ok
+message RoomMessage {
+    Common common = 1;
+    string content = 2;
+    bool support_landscape = 3;
+    int64 source = 4;
+    Image icon = 5;
+    string scene = 6;
+    bool is_welcome = 7;
+}
+
+
+// ok
+message GiftMessage {
+    Common common = 1;
+    int64 giftId = 2;
+    int64 fanTicketCount = 3;
+    int64 groupCount = 4;
+    int64 repeatCount = 5;
+    int64 comboCount = 6;
+    User user = 7;
+    User toUser = 8;
+    int32 repeatEnd = 9;
+    TextEffect textEffect = 10;
+    int64 groupId = 11;
+    int64 incomeTaskgifts = 12;
+    int64 roomFanTicketCount = 13;
+    GiftIMPriority priority = 14;
+    GiftStruct gift = 15;
+    string logId = 16;
+    int64 sendType = 17;
+    PublicAreaCommon publicAreaCommon = 18;
+    Text trayDisplayText = 19;
+    int64 bannedDisplayEffects = 20;
+    GiftTrayInfo trayInfo = 21;
+    string monitorExtra = 22;
+    GiftMonitorInfo monitorInfo = 23;
+    int64 colorId = 24;
+    bool isFirstSent = 25;
+    Text displayTextForAnchor = 26;
+    Text displayTextForAudience = 27;
+    string orderId = 28;
+    GiftsInBox giftsInBox = 29;
+    MsgFilter msgFilter = 30;
+    repeated LynxGiftExtra lynxExtraList = 31;
+    UserIdentity userIdentity = 32;
+    MatchInfo matchInfo = 33;
+    int32 linkmicGiftExpressionStrategy = 34;
+    FlyingMicResources flyingMicResources = 35;
+    bool disableGiftTracking = 36;
+    AssetStruct asset = 37;
+    int32 version = 38;
+    repeated SponsorshipInfo sponsorshipInfoList = 39;
+    FlyingMicResources flyingMicResourcesV2 = 40;
+    PublicAreaMessageCommon publicAreaMessageCommon = 41;
+
+    message TextEffect {
+        Detail portrait = 1;
+        Detail landscape = 2;
+
+        message Detail {
+            Text text = 1;
+            int32 textFontSize = 2;
+            Image background = 3;
+            int32 start = 4;
+            int32 duration = 5;
+            int32 x = 6;
+            int32 y = 7;
+            int32 width = 8;
+            int32 height = 9;
+            int32 shadowDx = 10;
+            int32 shadowDy = 11;
+            int32 shadowRadius = 12;
+            string shadowColor = 13;
+            string strokeColor = 14;
+            int32 strokeWidth = 15;
+        }
+    }
+
+    message SponsorshipInfo {
+        int64 giftId = 1;
+        int64 sponsorId = 2;
+        bool lightGiftUp = 3;
+        string unlightedGiftIcon = 4;
+        string giftGalleryDetailPageSchemeUrl = 5;
+        bool giftGalleryClickSponsor = 6;
+        bool becomeAllSponsored = 21;
+    }
+
+	message LynxGiftExtra {
+		int64 extraId = 1;
+		string extraData = 2;
+	}
+
+	message FlyingMicResources {
+		string resourceId = 1;
+		string resourceUrl = 2;
+		int32 resourceType = 3;
+	}
+
+}
+
+message MatchInfo {
+    int64 matchId = 1;
+    string matchName = 2;
+    int32 matchType = 3;
+    int64 startTime = 4;
+    int64 endTime = 5;
+    string matchStatus = 6;
+    repeated Participant participants = 7;
+
+    message Participant {
+        int64 userId = 1;
+        string userName = 2;
+        int32 score = 3;
+    }
+}
+
+message AssetStruct {
+	string assetId = 1;
+	string assetUrl = 2;
+	int32 assetType = 3;
+}
+
+message GiftsInBox {
+    repeated GiftInBox gifts = 1;
+
+	message GiftInBox {
+		int64 giftId = 1;
+		int32 count = 2;
+	}
+}
+
+message BindingGiftMessage {
+    GiftMessage msg = 1;
+    Common common = 2;
+}
+
+message GiftMonitorInfo {
+    int64 anchorId = 1;
+    int64 profitapiMessageDur = 2;
+    int64 sendGiftProfitApiStartMs = 3;
+    int64 sendGiftProfitCoreStartMs = 4;
+    int64 sendGiftReqStartMs = 5;
+    int64 sendGiftSendMessageSuccessMs = 6;
+    int64 sendProfitapiDur = 7;
+    int64 toUserId = 8;
+    int64 sendGiftStartClientLocalMs = 9;
+    string fromPlatform = 10;
+    string fromVersion = 11;
+}
+
+enum GiftDisplayEffect {
+    UNUSED = 0;
+    CHAT = 1;
+    TRAY = 2;
+    EFFECT = 4;
+}
+
+enum GiftMessageVersion {
+    GIFT_MESSAGE_VERSION_0 = 0;
+    GIFT_MESSAGE_VERSION_1 = 1;
+}
+
+message LikeMessage {
+	Common common = 1;
+	string count = 2;
+	string total = 3;
+	string color = 4;
+	User user = 5;
+	string icon = 6;
+	repeated Image iconsList = 7;
+	repeated SpecifiedDisplayText specifiedDisplayTextList = 8;
+	string effectCnt = 9;
+	repeated LikeEffect likeEffectList = 10;
+	PublicAreaMessageCommon publicAreaMessageCommon = 11;
+	string roomMessageHeatLevel = 12;
+
+	message LikeEffect {
+	  string version = 1;
+	  string effectCnt = 2;
+	  string effectIntervalMs = 3;
+	  string level = 4;
+	}
+
+	message SpecifiedDisplayText {
+	    string uid = 1;
+	    Text displayText = 2;
+	}
+}
+
+// ok
+message ChatMessage {
+    Common common = 1;
+    User user = 2;
+    string content = 3;
+    bool visible_to_sender = 4;
+    Image background_image = 5;
+    string full_screen_text_color = 6;
+    Image background_image_v2 = 7;
+    PublicAreaCommon public_area_common = 8;
+    Image gift_image = 9;
+    int32 input_type = 11;
+    User at_user = 12;
+    repeated EmoteWithIndex emotes_list = 13;
+    string content_language = 14;
+    MsgFilter msg_filter = 15;
+    int32 quick_chat_scene = 16;
+    int32 community_flagged_status = 17;
+    UserIdentity user_identity = 18;
+    repeated CommentQualityScore comment_quality_scores_list = 19;
+    repeated int32 comment_tag_list = 20;
+    PublicAreaMessageCommon public_area_message_common = 21;
+    int64 screen_time = 22;
+
+    message Emote {
+        string emote_id = 1;
+        Image image = 2;
+        int32 audit_status = 3;
+        string uuid = 4;
+        int32 emote_type = 5;
+        int32 content_source = 6;
+        int32 emote_private_type = 7;
+        string package_id = 8;
+        AuditInfo audit_info = 9;
+        int32 reward_condition = 10;
+        EmoteUploadInfo emote_upload_info = 11;
+        int64 create_time = 12;
+    }
+
+    message EmoteUploadInfo {
+        int64 userId = 1;
+        EmoteUploadSource emoteUploadSource = 2;
+        User userInfo = 3;
+        string userIdStr = 4;
+    }
+
+	message EmoteWithIndex {
+		int64 index = 1;
+		Emote emote = 2;
+	}
+
+	message CommentQualityScore {
+		string version = 1;
+		int64 score = 2;
+	}
+}
+
+enum EmoteUploadSource{
+    EMOTE_UPLOAD_SOURCE_ANCHOR = 0;
+    EMOTE_UPLOAD_SOURCE_SUBSCRIBER = 1;
+    EMOTE_UPLOAD_SOURCE_MODERATOR = 2;
+}
+
+message AuditInfo {
+    int64 violationId = 1;
+    AuditTaskType taskType = 2;
+}
+
+enum AuditTaskType {
+    AUDIT_TASK_TYPE_DEFAULT = 0;
+    AUDIT_TASK_TYPE_APPEAL = 1;
+}
+
+// public
+message MsgFilter {
+	bool isGifter = 1;
+	bool isSubscribedToAnchor = 2;
+}
+
+message UserIdentity {
+	bool isGiftGiverOfAnchor = 1;
+	bool isSubscriberOfAnchor = 2;
+	bool isMutualFollowingWithAnchor = 3;
+	bool isFollowerOfAnchor = 4;
+	bool isModeratorOfAnchor = 5;
+	bool isAnchor = 6;
+}
+
+message PublicAreaCommon {
+    Image userLabel = 1;
+    int64 userConsumeInRoom = 2;
+}
+
+message PublicAreaMessageCommon {
+	string messageId = 1;
+	string senderId = 2;
+	string messageText = 3;
+}
+
+message LandscapeAreaCommon {
+  bool showHead = 1;
+  bool showNickname = 2;
+  bool showFontColor = 3;
+  repeated string colorValueList = 4;
+  repeated CommentTypeTag commentTypeTagsList = 5;
+}
+
+message SocialMessage {
+  Common common = 1;
+  User user = 2;
+  string shareType = 3;
+  string action = 4;
+  string shareTarget = 5;
+  string followCount = 6;
+  string shareDisplayStyle = 7;
+  string shareCount = 8;
+  PublicAreaMessageCommon publicAreaMessageCommon = 9;
+}
+
+message TimeStampContainer {
+  int64 timestamp1 = 1;
+  int64 timestamp2 = 2;
+  int64 timestamp3 = 3;
+}
+
+message ValueLabel {
+  int32 data = 1;
+  string label = 2;
+  string label2 = 3;
+  string label3 = 11;
+}
+
+message OecLiveShoppingMessage {
+  Common common = 1;
+  int32 data1 = 2;
+  LiveShoppingData shopData = 4;
+  TimeStampContainer shopTimings = 5; // Uses index 1, 2 & 3
+  LiveShoppingDetails details = 9;
+  // special_fields
+
+  message LiveShoppingData {
+    string title = 1;
+    string priceString = 2; // $55.99
+    string imageUrl = 3;
+    string shopUrl = 4;
+    int64 productId = 6;
+    string shopName = 7; // "Shopify"
+    int64 data2 = 8;
+    string shopUrl2 = 9;
+    int64 data3 = 10;
+    int64 data4 = 11;
+  }
+
+  message LiveShoppingDetails {
+    string id1 = 1;
+    string data1 = 3;
+    int32 data2 = 4;
+    int64 timestamp = 5;
+    ValueLabel data = 6;
+  }
+}
+
+
+// ok
+message MemberMessage{
+    Common common = 1;
+    User user = 2;
+    int64 memberCount = 3;
+    User operator = 4;
+    bool isSetToAdmin = 5;
+    bool isTopUser = 6;
+    int64 rankScore = 7;
+    int64 topUserNo = 8;
+    int64 enterType = 9;
+    int64 action = 10;
+    string actionDescription = 11;
+    int64 userId = 12;
+    EffectConfig effectConfig = 13;
+    string popStr = 14;
+    EffectConfig enterEffectConfig = 15;
+    Image backgroundImage = 16;
+    Image backgroundImageV2 = 17;
+    Text anchorDisplayText = 18;
+    string clientEnterSource = 19;
+    string clientEnterType = 20;
+    string clientLiveReason = 21;
+    int64 actionDuration = 22;
+    string userShareType = 23;
+    DisplayStyle displayStyle = 24;
+    map<int32, int32> adminPermissionsMap = 25;
+    int32 kickSource = 26;
+    int64 allowPreviewTime = 27;
+    int64 lastSubscriptionAction = 28;
+    PublicAreaMessageCommon publicAreaMessageCommon = 29;
+
+    message EffectConfig {
+        int64 type = 1;
+        Image icon = 2;
+        int64 avatarPos = 3;
+        Text text = 4;
+        Image textIcon = 5;
+        int32 stayTime = 6;
+        int64 animAssetId = 7;
+        Image badge = 8;
+        repeated int64 flexSettingArrayList = 9;
+    }
+}
+
+enum DisplayStyle {
+    DISPLAYSTYLENORMAL = 0;
+    DISPLAYSTYLESTAY = 1;
+    DISPLAYSTYLECHAT = 2;
+}
+
+message ControlMessage {
+    Common common = 1;
+    int32 status = 2;
+}
+
+message FansclubMessage {
+	Common commonInfo = 1;
+	// 升级是1，加入是2
+	int32 type = 2;
+	string content = 3;
+	User user = 4;
+}
+
+
+// LinkLayerMessage.proto
+message LinkLayerMessage {
+    Common common = 1;
+    int32 message_type = 2;
+    int64 channel_id = 3;
+    int32 scene = 4;
+    string source = 5;
+    string centerized_idc = 6;
+    int64 rtc_room_id = 7;
+    CreateChannelContent create_channel_content = 100;
+    ListChangeContent list_change_content = 102;
+    InviteContent invite_content = 103;
+    ApplyContent apply_content = 104;
+    PermitApplyContent permit_apply_content = 105;
+    ReplyInviteContent reply_invite_content = 106;
+    KickOutContent kick_out_content = 107;
+    CancelApplyContent cancel_apply_content = 108;
+    CancelInviteContent cancel_invite_content = 109;
+    LeaveContent leave_content = 110;
+    FinishChannelContent finish_content = 111;
+    JoinDirectContent join_direct_content = 112;
+    JoinGroupContent join_group_content = 113;
+    PermitJoinGroupContent permit_group_content = 114;
+    CancelJoinGroupContent cancel_group_content = 115;
+    LeaveJoinGroupContent leave_group_content = 116;
+    P2PGroupChangeContent p2p_group_change_content = 117;
+    GroupChangeContent group_change_content = 118;
+    BusinessContent business_content = 200;
+
+	message CreateChannelContent {
+		optional Player owner = 1;
+		optional string owner_link_mic_id = 2;
+	}
+
+	message ListChangeContent {
+		optional int32 type = 1;
+		optional AllListUser list = 2;
+		repeated int32 linked_user_ui_positions = 3;
+		repeated ContentPosition content_pos = 4;
+	}
+
+
+	message PermitApplyContent {
+		Player permiter = 1;
+		string permiterLinkMicId = 2;
+		Position applierPos = 3;
+		int32 replyStatus = 4;
+		DSLConfig dsl = 5;
+		Player applier = 6;
+		Player operator = 7;
+		string applierLinkMicId = 8;
+		repeated string linkedUserUiPositionsList = 9;
+		string applierRtcToken = 10;
+	}
+
+	message ReplyInviteContent {
+		Player invitee = 1;
+		int32 replyStatus = 2;
+		string inviteeLinkMicId = 3;
+		Position inviteePos = 4;
+		Player inviteOperatorUser = 5;
+		repeated string linkedUserUiPositionsList = 6;
+	}
+
+	message KickOutContent {
+		Player offliner = 1;
+		int32 kickoutReason = 2;
+		repeated string linkedUserUiPositionsList = 3;
+	}
+	message CancelApplyContent {
+		Player applier = 1;
+		string applierLinkMicId = 2;
+	}
+
+	message CancelInviteContent {
+		Player invitor = 1;
+		string invitorLinkMicId = 2;
+		string inviteeLinkMicId = 3;
+		string inviteSeqId = 4;
+		Player invitee = 5;
+	}
+
+	message LeaveContent {
+		Player leaver = 1;
+		string leaveReason = 2;
+		repeated string linkedUserUiPositionsList = 3;
+	}
+
+	message FinishChannelContent {
+		Player owner = 1;
+		string finishReason = 2;
+	}
+
+	message JoinDirectContent {
+		LinkLayerListUser joiner = 1;
+		AllListUser allUsers = 2;
+	}
+
+	message JoinGroupContent {
+		GroupChannelAllUser groupUser = 1;
+		GroupPlayer joinUser = 2;
+		int32 type = 3;
+		repeated RTCExtraInfo groupExtInfoList = 4;
+	}
+
+	message PermitJoinGroupContent {
+		GroupPlayer approver = 1;
+		int32 agreeStatus = 2;
+		int32 type = 3;
+		repeated RTCExtraInfo groupExtInfoList = 4;
+		GroupChannelAllUser groupUser = 5;
+		MigrationDetails migrationDetails = 6;
+		repeated int32 linkedUserUiPositionsList = 7;
+	}
+
+	message GroupChannelAllUser {
+		string groupChannelId = 1;
+		repeated GroupChannelUser userList = 2;
+		string contentVersion = 3;
+	}
+
+	message MigrationDetails {
+		bool isMigrate = 1;
+		string sourceGroupChannelId = 2;
+		string targetGroupChannelId = 3;
+	}
+
+	message CancelJoinGroupContent {
+		repeated GroupPlayer leaverList = 1;
+		GroupPlayer operator = 2;
+		int32 type = 3;
+		GroupChannelAllUser groupUser = 4;
+	}
+
+	message LeaveJoinGroupContent {
+		GroupPlayer operator = 1;
+		string groupChannelId = 2;
+		string leaveSource = 3;
+		repeated string linkedUserUiPositionsList = 4;
+	}
+
+	message P2PGroupChangeContent {
+		repeated RTCExtraInfo groupExtInfoList = 1;
+		GroupChannelAllUser groupUser = 2;
+		MigrationDetails migrationDetails = 3;
+	}
+
+	message GroupChangeContent {
+		GroupChannelAllUser groupUser = 1;
+		repeated string linkedUserUiPositionsList = 2;
+	}
+
+	message BusinessContent {
+		string overLength = 1;
+		MultiLiveContent multiLiveContent = 2;
+		CohostContent cohostContent = 3;
+
+		message MultiLiveContent {
+			ApplyBizContent applyBizContent = 1;
+			InviteBizContent inviteBizContent = 2;
+			ReplyBizContent replyBizContent = 3;
+			PermitBizContent permitBizContent = 4;
+			JoinDirectBizContent joinDirectBizContent = 5;
+			KickOutBizContent kickOutBizContent = 6;
+		}
+
+		message JoinDirectBizContent {
+
+		}
+
+		message KickOutBizContent {
+
+		}
+
+		message CohostContent {
+			JoinGroupBizContent joinGroupBizContent = 1;
+			PermitJoinGroupBizContent permitJoinGroupBizContent = 2;
+			ListChangeBizContent listChangeBizContent = 3;
+		}
+
+		message JoinGroupBizContent {
+
+		}
+
+		message ListChangeBizContent {
+
+		}
+
+		message ApplyBizContent {
+			User user = 1;
+		}
+
+		message InviteBizContent {
+			LinkmicUserSettingInfo anchor_setting_info = 1;
+			int32 invite_source = 2;
+			User operator_user_info = 3;
+			int32 operator_link_admin_type = 4;
+			User invitee_user_info = 5;
+			int32 share_revenue_setting = 6;
+		}
+
+		message ReplyBizContent {
+			int32 link_type = 1;
+			int32 is_turn_off_invitation = 2;
+			User reply_user_info = 3;
+		}
+
+		message PermitBizContent {
+			LinkmicUserSettingInfo anchor_setting_info = 1;
+			string expire_timestamp = 2;
+			User operator_user_info = 3;
+			int32 operator_link_admin_type = 4;
+			int32 link_user_type = 5;
+		}
+
+
+        message LinkmicUserSettingInfo {
+            string userId = 1;
+            int32 layout = 2;
+            int32 fixMicNum = 3;
+            int32 allowRequestFromUser = 4;
+            int32 allowRequestFromFollowerOnly = 5;
+            int32 applierSortSetting = 7;
+            string applierSortGiftScoreThreshold = 8;
+            int32 allowRequestFromFriends = 9;
+            int32 allowRequestFromFollowers = 10;
+            int32 allowRequestFromOthers = 11;
+        }
+
+
+	}
+
+}
+
+message InviteContent {
+    Player invitor = 1;
+    RTCExtraInfo invitee_rtc_ext_info = 2;
+    string invitor_link_mic_id = 3;
+    string invitee_link_mic_id = 4;
+    bool is_owner = 5;
+    Position pos = 6;
+    DSLConfig dsl = 7;
+    Player invitee = 8;
+    Player operator = 9;
+}
+
+message RTCVideoParam {
+    int32 width = 1;
+    int32 height = 2;
+    int32 fps = 3;
+    int32 bitrateKbps = 4;
+}
+
+message PermitJoinGroupBizContent {
+    int32 replyStatus = 1;
+    int32 sourceType = 2;
+}
+
+
+message LinkPosition {
+	int32 position = 1;
+	int32 opt = 2;
+}
+
+
+message LinkLayerListUser {
+	Player user = 1;
+	string linkmicId = 2;
+	Position pos = 3;
+	string linkedTimeNano = 4;
+	string appVersion = 5;
+}
+
+message Position {
+  int32 type = 1;
+  LinkPosition link = 2;
+}
+
+message DSLConfig {
+  int32 sceneVersion = 1;
+  string layoutId = 2;
+}
+
+message ApplyContent {
+  Player applier = 1;
+  string applierLinkMicId = 2;
+}
+
+message RTCBitrateMap {
+    int32 xx1 = 1;
+    int32 xx2 = 2;
+    int32 xx3 = 3;
+    int32 xx4 = 4;
+}
+
+message RTCMixBase {
+    int32 bitrate = 1;
+}
+
+message RTCExtraInfo {
+	RTCEngineConfig liveRtcEngineConfig = 1;
+	repeated RTCLiveVideoParam liveRtcVideoParamList = 2;
+	RTCBitrateMap rtcBitrateMap = 3;
+	int32 rtcFps = 4;
+	RTCMixBase rtcMixBase = 5;
+	ByteRTCExtInfo byteRtcExtInfo = 6;
+	RTCInfoExtra extra = 7;
+	string rtcBusinessId = 8;
+	RTCOther rtcOther = 9;
+	int32 interactClientType = 10;
+
+	message RTCEngineConfig {
+		string rtcAppId = 1;
+		string rtcUserId = 2;
+		string rtcToken = 3;
+		string rtcChannelId = 4;
+	}
+
+	message RTCLiveVideoParam {
+		int32 strategyId = 1;
+		RTCVideoParam params = 2;
+	}
+
+	message RTCInfoExtra {
+		string version = 1;
+	}
+
+	message RTCOther {
+		int32 max_transcoding_cb_interval_second = 1;
+	}
+
+    message ByteRTCExtInfo {
+        int32 defaultSignalingServerFirst = 1;
+    }
+}
+
+
+
+
+message LinkmicInfo {
+    string accessKey = 1;
+    string linkMicId = 2;
+    bool joinable = 3;
+    int32 confluenceType = 4;
+    string rtcExtInfo = 5;
+    string rtcAppId = 6;
+    string rtcAppSign = 7;
+    string linkmicIdStr = 8;
+    string vendor = 9;
+}
+
+message ContentPosition {
+	string contentID = 1;
+	int32 contentType = 2;
+	Position pos = 3;
+	string contentLinkmicID = 4;
+	string startTimeNano = 5;
+}
+
+
+message AllListUser {
+  repeated LinkLayerListUser linkedList = 1;
+  repeated LinkLayerListUser appliedList = 2;
+  repeated LinkLayerListUser invitedList = 3;
+  repeated LinkLayerListUser readyList = 4;
+}
+
+message GroupChannelUser {
+    string channelId = 1;
+    int32 status = 2;
+    int32 type = 3;
+    AllListUser allUser = 4;
+    string joinTime = 5;
+    string linkedTime = 6;
+    GroupPlayer ownerUser = 7;
+    string groupLinkmicId = 8;
+}
+
+message GroupPlayer {
+    string channelId = 1;
+    Player user = 2;
+}
+
+message Player {
+  string roomId = 1;
+  string userId = 2;
+}
+
+// ok
+message LinkMessage {
+    optional Common common = 1;
+    optional string messageType = 2;
+    optional string linkerId = 3;
+    optional string scene = 4;
+    optional LinkerInviteContent inviteContent = 5;
+    optional LinkerReplyContent replyContent = 6;
+    optional LinkerCreateContent createContent = 7;
+    optional LinkerCloseContent closeContent = 8;
+    optional LinkerEnterContent enterContent = 9;
+    optional LinkerLeaveContent leaveContent = 10;
+    optional LinkerCancelContent cancelContent = 11;
+    optional LinkerKickOutContent kickOutContent = 12;
+    optional LinkerLinkedListChangeContent linkedListChangeContent = 13;
+    optional LinkerUpdateUserContent updateUserContent = 14;
+    optional LinkerWaitingListChangeContent waitingListChangeContent = 15;
+    optional LinkerMuteContent muteContent = 16;
+    optional LinkerRandomMatchContent randomMatchContent = 17;
+    optional LinkerUpdateUserSettingContent updateUserSettingContent = 18;
+    optional LinkerMicIdxUpdateContent micIdxUpdateContent = 19;
+    optional LinkerListChangeContent listChangeContent = 20;
+    optional CohostListChangeContent cohostListChangeContent = 21;
+    optional LinkerMediaChangeContent mediaChangeContent = 22;
+    optional LinkerAcceptNoticeContent replyAcceptNoticeContent = 23;
+    optional LinkerSysKickOutContent sysKickOutContent = 24;
+    optional LinkmicUserToastContent userToastContent = 25;
+    optional string extra = 200;
+    optional string expireTimestamp = 201;
+    optional string transferExtra = 202;
+
+	message LinkerInviteContent {
+		string fromUserId = 1;
+		string fromRoomId = 2;
+		string toRtcExtInfo = 3;
+		bool rtcJoinChannel = 4;
+		string vendor = 5;
+		string secFromUserId = 6;
+		string toLinkmicIdStr = 7;
+		User fromUser = 8;
+		string requiredMicIdx = 9;
+		map<string, string> rtcExtInfoMapMap = 10;
+		int32 anchorMultiLiveEnum = 11;
+		LinkmicUserSettingInfo anchorSettingInfo = 12;
+		string inviterLinkmicIdStr = 13;
+		InviteTopHostInfo fromTopHostInfo = 14;
+		string actionId = 15;
+		repeated LinkmicUserInfo linkedUsersList = 16;
+		PerceptionDialogInfo dialog = 17;
+		PunishEventInfo punishInfo = 18;
+		int32 fromRoomAgeRestricted = 21;
+		Tag fromTag = 22;
+		repeated CohostABTestSetting abTestSettingList = 23;
+		LinkerInviteMessageExtra linkerInviteMsgExtra = 24;
+	}
+
+    message InviteTopHostInfo {
+        string rankType = 1;
+        int64 topIndex = 2;
+    }
+
+	message LinkerReplyContent {
+		string fromUserId = 1;
+		string fromRoomId = 2;
+		LinkmicInfo fromUserLinkmicInfo = 3;
+		string toUserId = 4;
+		LinkmicInfo toUserLinkmicInfo = 5;
+		string linkType = 6;
+		string replyStatus = 7;
+		LinkerSetting linkerSetting = 8;
+		User fromUser = 9;
+		User toUser = 10;
+		map<string, string> rtcExtInfoMapMap = 11;
+		LinkerMicIdxUpdateInfo inviteeMicIdxUpdateInfo = 12;
+		// map<string, LinkerMicIdxInfo> applierMicIdxInfoMapMap = 13;
+		int32 anchorMultiLiveEnum = 14;
+		LinkmicUserSettingInfo anchorSettingInfo = 15;
+		string actionId = 16;
+		repeated LinkmicUserInfo linkedUsersList = 17;
+		string sourceType = 18;
+	}
+
+
+}
+
+message LinkerSetting {
+
+}
+
+
+message LinkerEnterContent {
+
+}
+
+message LinkerCloseContent {
+
+}
+
+message LinkerKickOutContent {
+
+}
+
+message LinkerUpdateUserContent {}
+
+message LinkerMuteContent {}
+
+message LinkerUpdateUserSettingContent {}
+
+message LinkerRandomMatchContent {}
+
+message LinkerMediaChangeContent {}
+
+message LinkerWaitingListChangeContent {}
+
+message CohostListChangeContent {
+
+}
+
+message LinkerAcceptNoticeContent {
+
+}
+
+message LinkerLinkedListChangeContent {
+
+}
+
+message PerceptionDialogInfo {
+
+}
+
+message LinkerInviteMessageExtra {
+
+}
+
+message LinkerCancelContent {
+
+}
+
+message LinkerListChangeContent {
+
+}
+
+message LinkerMicIdxUpdateContent {
+    LinkerMicIdxUpdateInfo micIdxUpdateInfo = 1;
+}
+
+message LinkerMicIdxUpdateInfo {
+    int32 op = 1;
+    string userId = 2;
+    string micIdx = 3;
+}
+
+message CohostABTestSetting {
+
+}
+
+message PunishEventInfo {
+
+}
+
+message LinkmicUserSettingInfo {
+
+}
+
+message LinkmicUserInfo {
+    string userId = 1;
+    string linkmicIdStr = 2;
+    string roomId = 3;
+    string linkedTime = 4;
+}
+
+message LinkerCreateContent {
+
+}
+
+message LinkerLeaveContent {
+
+}
+
+message LinkerSysKickOutContent {
+
+}
+
+message LinkmicUserToastContent {
+
+}
+
+message LinkMicFanTicketMethod {
+    optional Common common = 1;
+    optional FanTicketRoomNoticeContent fan_ticket_room_notice = 2;
+
+	message FanTicketRoomNoticeContent {
+		repeated UserFanTicket user_fan_ticket_list = 1;
+		optional string total_linkmic_fan_ticket = 2;
+		optional string match_id = 3;
+		optional string event_time = 4;
+		optional string fan_ticket_icon_url = 5;
+		optional string play_id = 6;
+		optional int32 play_scene = 7;
+	}
+
+	message UserFanTicket {
+		optional string user_id = 1;
+		optional string fan_ticket = 2;
+		optional string match_total_score = 3;
+		optional int32 match_rank = 4;
+		optional UserCountdownInfo countdown_info = 5;
+		optional UserPlayInfo play_info = 6;
+	}
+
+	message UserCountdownInfo {
+		optional string countdown_id = 1;
+		optional string score = 2;
+		optional string target_score = 3;
+		optional int32 completion_progress_percent = 4;
+	}
+
+	message UserPlayInfo {
+		optional string play_id = 1;
+		optional int32 play_scene = 2;
+		optional string score = 3;
+		optional int32 rank = 4;
+		optional string target_score = 5;
+	}
+}
+
+
+// ok
+message LinkMicMethod {
+    Common common = 1;
+    string messageType = 2;
+    string accessKey = 3;
+    string anchorLinkmicId = 4;
+    string userId = 5;
+    string fanTicket = 6;
+    string totalLinkmicFanTicket = 7;
+    string channelId = 8;
+    string layout = 9;
+    string vendor = 10;
+    string dimension = 11;
+    string theme = 12;
+    string inviteUid = 13;
+    string answer = 14;
+    string startTime = 15;
+    string duration = 16;
+    repeated UserScores userScoresList = 17;
+    string matchType = 18;
+    bool win = 19;
+    string prompts = 20;
+    string toUserId = 21;
+    map<int32, ContributorList> contributorsMap = 22;
+    string linkmicLayout = 23;
+    string fromUserId = 24;
+    string tips = 25;
+    string startTimeMs = 26;
+    int32 confluenceType = 27;
+    string fromRoomId = 28;
+    string inviteType = 29;
+    string subType = 30;
+    RivalExtraInfo inviterRivalExtra = 31;
+    string rtcExtInfo = 32;
+    string rtcAppId = 33;
+    string appId = 34;
+    string appSign = 35;
+    string rtcAppSign = 36;
+    string anchorLinkmicIdStr = 37;
+    string rivalAnchorId = 38;
+    string rivalLinkmicId = 39;
+    string rivalLinkmicIdStr = 40;
+    bool showPopup = 41;
+    string secInviteUid = 42;
+    string scene = 43;
+    string secApplyUid = 44;
+    repeated User linkedUsersList = 45;
+    string secFromUserId = 46;
+    int32 replyType = 47;
+    string replyPrompts = 48;
+    string secToUserId = 49;
+    InvitorInfo invitorInfo = 50;
+    bool rtcJoinChannel = 51;
+    int32 fanTicketIconType = 52;
+
+	message ContributorList {
+		repeated Contributor contributor_list = 1;
+	}
+
+	message Contributor {
+		optional string score = 1;
+		optional string rank = 2;
+		optional string user_id = 3;
+		optional User user = 4;
+	}
+
+	message UserScores {
+		string score = 1;
+		string userId = 2;
+		string weeklyRank = 3;
+	}
+
+	message RivalExtraInfo {
+		string text = 1;
+		int32 textType = 2;
+		string label = 3;
+		int32 anchorLayer = 4;
+		LinkerInfo linkerInfo = 5;
+		AnchorLinkmicUserSettings linkmicUserSettings = 6;
+		BattleUserSettings battleUserSettings = 7;
+		int32 inviteBlockReason = 8;
+		int32 showPlayType = 9;
+		TopHostInfo topHostInfo = 10;
+		Tag tag = 11;
+		ReserveInfo reserveInfo = 12;
+		int32 detailBlockReason = 13;
+		OptPairInfo optPairInfo = 14;
+		TagV2 tagV2 = 15;
+		string eoyLevel = 16;
+		BattleInfo battleInfo = 17;
+	}
+	message InvitorInfo {
+		string invitorNickName = 1;
+		Image invitorAvatar = 2;
+	}
+	
+	message LinkerInfo {
+		repeated UserInfo linkedUsersList = 1;
+		bool inQuickPairing = 2;
+	}
+}
+
+message AnchorLinkmicUserSettings {
+    bool is_turn_on = 1;
+    bool accept_multi_linkmic = 2;
+    bool accept_not_follower_invite = 3;
+    bool allow_gift_to_other_anchors = 4;
+    bool block_invitation_of_this_live = 5;
+    bool receive_friend_multi_host_invites = 6;
+    bool receive_friend_multi_host_application = 7;
+    bool block_this_multi_host_invites = 8;
+    bool block_this_multi_host_application = 9;
+    bool receive_not_friend_multi_host_invites = 10;
+    bool receive_not_friend_multi_host_application = 11;
+    bool allow_live_notice_of_friends = 12;
+    bool allow_friend_invites = 13;
+    bool allow_suggested_invites = 14;
+}
+
+message RivalExtraInfo {
+    message LinkerInfo {
+        repeated UserInfo linked_users_list = 1;
+        bool in_quick_pairing = 2;
+    }
+
+
+}
+
+message InviteTopHostInfo {
+    string rank_type = 1;
+    string top_index = 2;
+}
+
+message Tag {
+    int32 tag_type = 1;
+    string tag_value = 2;
+    string tag_text = 3;
+}
+
+message TagV2 {
+    int32 tag_classification = 1;
+    int32 tag_type = 2;
+    string tag_value = 3;
+    string starling_key = 4;
+    // Assuming SecondDegreeRelationContent is defined elsewhere
+    // message SecondDegreeRelationContent {}
+    string second_degree_relation_content = 5;
+    string cohost_history_day = 11;
+}
+
+message BattleUserSettings {
+    bool is_turn_on = 1;
+    bool accept_not_follower_invite = 2;
+    bool allow_gift_to_other_anchors = 3;
+}
+
+message BattleInfo {
+    int32 info_type = 1;
+    string value = 2;
+}
+
+message UserInfo {
+	string userId = 1;
+	string nickName = 2;
+	Image avatarThumb = 3;
+}
+
+
+message TopHostInfo {
+    string rank_type = 1;
+    string top_index = 2;
+}
+
+message ReserveInfo {
+    string reservation_id = 1;
+    int32 reply_status = 2;
+    string bubble_tip = 3;
+    string response_time = 4;
+    bool is_reservation_sender = 5;
+    string created_timestamp = 6;
+    bool viewed = 7;
+}
+
+message OptPairInfo {
+    string mapping_id = 1;
+    string expected_time_sec = 2;
+    int32 opt_pair_status = 3;
+    string opt_pair_type = 4;
+    repeated TeamInfo team_info_list = 5;
+
+	message TeamInfo {
+		string team_id = 1;
+		repeated string user_id_list = 2;
+	}
+}
+
+
+message Common {
+    string method = 1;
+    int64 msgId = 2;
+    int64 roomId = 3;
+    int64 createTime = 4;
+    int32 monitor = 5;
+    bool isShowMsg = 6;
+    string describe = 7;
+    Text displayText = 8;
+    int64 foldType = 9;
+    int64 anchorFoldType = 10;
+    int64 priorityScore = 11;
+    string logId = 12;
+    string msgProcessFilterK = 13;
+    string msgProcessFilterV = 14;
+    string fromIdc = 15;
+    string toIdc = 16;
+    repeated string filterMsgTagsList = 17;
+    LiveMessageSEI sei = 18;
+    LiveMessageID dependRootId = 19;
+    LiveMessageID dependId = 20;
+    int64 anchorPriorityScore = 21;
+    int64 roomMessageHeatLevel = 22;
+    int64 foldTypeForWeb = 23;
+    int64 anchorFoldTypeForWeb = 24;
+    int64 clientSendTime = 25;
+    IMDispatchStrategy dispatchStrategy = 26;
+}
+
+message Text {
+    string content = 1;
+    string fontColor = 2;
+}
+
+message LiveMessageSEI {
+    int64 id = 1;
+    string data = 2;
+}
+
+message LiveMessageID {
+    int64 id = 1;
+}
+
+enum IMDispatchStrategy {
+    IM_DISPATCH_STRATEGY_DEFAULT = 0;
+    IM_DISPATCH_STRATEGY_BYPASS_DISPATCH_QUEUE = 1;
+}
+
+message Room {
+    int64 id = 1;
+    string idStr = 2;
+    int64 status = 3;
+    int64 ownerUserId = 4;
+    string title = 5;
+    int64 userCount = 6;
+    int64 createTime = 7;
+    int64 linkmicLayout = 8;
+    int64 finishTime = 9;
+    RoomExtra extra = 10;
+    string dynamicCoverUri = 11;
+    map<int64, string> dynamicCoverDict = 12;
+    int64 lastPingTime = 13;
+    int64 liveId = 14;
+    int64 streamProvider = 15;
+    int64 osType = 16;
+    int64 clientVersion = 17;
+    bool withLinkmic = 18;
+    bool enableRoomPerspective = 19;
+    Image cover = 20;
+    Image dynamicCover = 21;
+    Image dynamicCoverLow = 22;
+    string shareUrl = 23;
+    string anchorShareText = 24;
+    string userShareText = 25;
+    int64 streamId = 26;
+    string streamIdStr = 27;
+    StreamUrl streamUrl = 28;
+    int64 mosaicStatus = 29;
+    string mosaicTip = 30;
+    int64 cellStyle = 31;
+    LinkMic linkMic = 32;
+    int64 luckymoneyNum = 33;
+    repeated Decoration decoList = 34;
+    repeated TopFan topFans = 35;
+    RoomStats stats = 36;
+    string sunDailyIconContent = 37;
+    string distance = 38;
+    string distanceCity = 39;
+    string location = 40;
+    string realDistance = 41;
+    Image feedRoomLabel = 42;
+    string commonLabelList = 43;
+    RoomUserAttr livingRoomAttrs = 44;
+    repeated int64 adminUserIds = 45;
+    User owner = 46;
+    string privateInfo = 47;
+}
+
+message RoomExtra{
+
+}
+
+message RoomStats{
+
+}
+
+message RoomUserAttr{
+
+}
+
+message StreamUrl{
+
+}
+
+message LinkMic {
+
+}
+
+message Decoration{
+
+}
+
+message TopFan {
+
+}
+
+message User {
+    int64 id = 1;
+    int64 deprecated1 = 2;
+    string nickname = 3;
+    int32 deprecated2 = 4;
+    string bioDescription = 5;
+    int32 deprecated3 = 6;
+    int64 deprecated4 = 7;
+    string deprecated5 = 8;
+    Image avatarThumb = 9;
+    Image avatarMedium = 10;
+    Image avatarLarge = 11;
+    bool verified = 12;
+    int32 deprecated6 = 13;
+    string deprecated7 = 14;
+    int32 status = 15;
+    int64 createTime = 16;
+    int64 modifyTime = 17;
+    int32 secret = 18;
+    string shareQrcodeUri = 19;
+    int32 deprecated8 = 20;
+    repeated Image badgeImageList = 21;
+    FollowInfo followInfo = 22;
+    PayGrade payGrade = 23;
+    FansClub fansClub = 24;
+    Border border = 25;
+    string specialId = 26;
+    Image avatarBorder = 27;
+    Image medal = 28;
+    repeated Image realTimeIconsList = 29;
+    repeated Image newRealTimeIconsList = 30;
+    int64 topVipNo = 31;
+    UserAttr userAttr = 32;
+    OwnRoom ownRoom = 33;
+    int64 payScore = 34;
+    int64 ticketCount = 35;
+    AnchorInfo anchorInfo = 36;
+    int32 linkMicStats = 37;
+    string displayId = 38;
+    bool withCommercePermission = 39;
+    bool withFusionShopEntry = 40;
+    int64 deprecated21 = 41;
+    AnchorLevel webcastAnchorLevel = 42;
+    string verifiedContent = 43;
+    AuthorStats authorStats = 44;
+    repeated User topFansList = 45;
+    string secUid = 46;
+    int32 userRole = 47;
+    DeprecatedType1 deprecated9 = 48;
+    ActivityInfo activityReward = 49;
+    DeprecatedType4 deprecated10 = 50;
+    DeprecatedType5 deprecated11 = 51;
+    Image personalCard = 52;
+    AuthenticationInfo authenticationInfo = 53;
+    int32 deprecated12 = 54;
+    int32 deprecated13 = 55;
+    DeprecatedType6 deprecated14 = 56;
+    repeated Image mediaBadgeImageList = 57;
+    int32 deprecated15 = 58;
+    UserVIPInfo userVipInfo = 59;
+    repeated int64 commerceWebcastConfigIdsList = 60;
+    repeated Border borderList = 61;
+    ComboBadgeInfo comboBadgeInfo = 62;
+    SubscribeInfo subscribeInfo = 63;
+    repeated BadgeStruct badgeList = 64;
+    repeated int64 mintTypeLabelList = 65;
+    FansClubInfo fansClubInfo = 66;
+    bool deprecated19 = 1001;
+    bool allowFindByContacts = 1002;
+    bool allowOthersDownloadVideo = 1003;
+    bool allowOthersDownloadWhenSharingVideo = 1004;
+    bool allowShareShowProfile = 1005;
+    bool allowShowInGossip = 1006;
+    bool allowShowMyAction = 1007;
+    bool allowStrangeComment = 1008;
+    bool allowUnfollowerComment = 1009;
+    bool allowUseLinkmic = 1010;
+    AnchorLevel anchorLevel = 1011;
+    Image avatarJpg = 1012;
+    string bgImgUrl = 1013;
+    string deprecated18 = 1014;
+    bool deprecated16 = 1015;
+    int32 blockStatus = 1016;
+    int32 commentRestrict = 1017;
+    string constellation = 1018;
+    int32 disableIchat = 1019;
+    int64 enableIchatImg = 1020;
+    int32 exp = 1021;
+    int64 fanTicketCount = 1022;
+    bool foldStrangerChat = 1023;
+    int64 followStatus = 1024;
+    bool deprecated28 = 1025;
+    string deprecated29 = 1026;
+    int32 ichatRestrictType = 1027;
+    string idStr = 1028;
+    bool isFollower = 1029;
+    bool isFollowing = 1030;
+    bool needProfileGuide = 1031;
+    int64 payScores = 1032;
+    bool pushCommentStatus = 1033;
+    bool pushDigg = 1034;
+    bool pushFollow = 1035;
+    bool pushFriendAction = 1036;
+    bool pushIchat = 1037;
+    bool pushStatus = 1038;
+    bool pushVideoPost = 1039;
+    bool pushVideoRecommend = 1040;
+    UserStats stats = 1041;
+    bool deprecated17 = 1042;
+    string verifiedReason = 1043;
+    bool withCarManagementPermission = 1044;
+    repeated LiveEventInfo upcomingEventList = 1045;
+    string scmLabel = 1046;
+    EcommerceEntrance ecommerceEntrance = 1047;
+    bool isBlock = 1048;
+    bool isSubscribe = 1090;
+
+	message AnchorLevel {
+		int32 level = 1;
+		int32 points = 2;
+	}
+
+	message AuthorStats {
+		int64 totalViews = 1;
+		int64 totalLikes = 2;
+		int64 totalShares = 3;
+	}
+
+	message Border {
+		Image icon = 1;
+		string level = 2;
+		string source = 3;
+		Image profileDecorationRibbon = 4;
+		PrivilegeLogExtra borderPrivilegeLogExtra = 5;
+		PrivilegeLogExtra profilePrivilegeLogExtra = 6;
+		string avatarBackgroundColor = 7;
+		string avatarBackgroundBorderColor = 8;
+	}
+
+	message FansClubInfo {
+		int32 level = 1;
+		string name = 2;
+	}
+
+	message EcommerceEntrance {
+		string entranceUrl = 1;
+	}
+
+	message ActivityInfo {
+		int32 activityId = 1;
+		string activityName = 2;
+	}
+
+	message UserAttr {
+		bool isMuted = 1;
+		bool isAdmin = 2;
+		bool isSuperAdmin = 3;
+		string muteDuration = 4;
+		map<string, string> adminPermissionsMap = 5;
+	}
+
+	message DeprecatedType1 {
+		string deprecated1 = 1;
+		string deprecated2 = 2;
+		string deprecated3 = 3;
+		string deprecated4 = 4;
+		string deprecated5 = 5;
+		bool deprecated6 = 6;
+		DeprecatedType2 deprecated7 = 7;
+
+		message DeprecatedType2 {
+			string deprecated1 = 1;
+			string deprecated2 = 2;
+			DeprecatedType3 deprecated3 = 3;
+
+			message DeprecatedType3 {
+				string deprecated1 = 1;
+				string deprecated2 = 2;
+				string deprecated3 = 3;
+			}
+		}
+	}
+
+	message DeprecatedType4 {
+		Image deprecated1 = 1;
+		string deprecated2 = 2;
+		Image deprecated3 = 3;
+		string deprecated4 = 4;
+		string deprecated5 = 5;
+		Image deprecated6 = 6;
+		Image deprecated7 = 7;
+		Image deprecated8 = 8;
+		repeated string deprecated9List = 9;
+	}
+
+	message DeprecatedType5 {
+		string deprecated1 = 1;
+		string deprecated2 = 2;
+		Image deprecated3 = 3;
+		string deprecated4 = 4;
+	}
+
+	message DeprecatedType6 {
+		bool deprecated1 = 1;
+		string deprecated2 = 2;
+		string deprecated3 = 3;
+		string deprecated4 = 4;
+	}
+
+	message LiveEventInfo {
+		string eventId = 1;
+		string startTime = 2;
+		string duration = 3;
+		string title = 4;
+		string description = 5;
+		bool hasSubscribed = 6;
+		bool isPaidEvent = 7;
+		string ticketAmount = 8;
+		int32 payMethod = 9;
+		map<string, WalletPackage> walletPkgDictMap = 10;
+
+		message WalletPackage {
+			string packageId = 1;
+			string packageName = 2;
+			string packageAmount = 3;
+		}
+	}
+    message AuthenticationInfo {
+        string customVerify = 1;
+        string enterpriseVerifyReason = 2;
+        Image authenticationBadge = 3;
+        bool hasCert = 4;
+    }
+
+    message SubscribeInfo {
+        bool qualification = 1;
+        bool isSubscribe = 2;
+        SubscribeBadge badge = 3;
+        bool enableSubscription = 4;
+        string subscriberCount = 5;
+        bool isInGracePeriod = 6;
+        bool isSubscribedToAnchor = 7;
+        TimerDetail timerDetail = 8;
+        bool userGiftSubAuth = 9;
+        bool anchorGiftSubAuth = 10;
+        int32 status = 11;
+        string subEndTime = 12;
+        string packageId = 13;
+    }
+
+    message UserStats {
+        string id = 1;
+        string idStr = 2;
+        string followingCount = 3;
+        string followerCount = 4;
+        string recordCount = 5;
+        string totalDuration = 6;
+        string dailyFanTicketCount = 7;
+        string dailyIncome = 8;
+        string itemCount = 9;
+        string favoriteItemCount = 10;
+        string deprecated27 = 11;
+        string diamondConsumedCount = 12;
+        string tuwenItemCount = 13;
+    }
+
+	message BadgeStruct {
+		int32 displayType = 1;
+		int32 priorityType = 2;
+		int32 sceneType = 3;
+		int32 position = 4;
+		int32 displayStatus = 5;
+		string greyedByClient = 6;
+		int32 exhibitionType = 7;
+		string openweburl = 10;
+		bool display = 11;
+		PrivilegeLogExtra privilegeLogExtra = 12;
+		bool isCustomized = 24;
+		ImageBadge image = 20;
+		TextBadge text = 21;
+		StringBadge str = 22;
+		CombineBadge combine = 23;
+	}
+
+    message FollowInfo {
+        int64 followingCount = 1;
+        int64 followerCount = 2;
+        int64 followStatus = 3;
+        int64 pushStatus = 4;
+        string remarkName = 5;
+    }
+
+    message FansClub{
+        FansClubData data = 1;
+        map<int32, FansClubData> preferData = 2;
+
+        message FansClubData {
+            string clubName = 1;
+            int32 level = 2;
+            int32 userFansClubStatus = 3;
+            UserBadge badge = 4;
+            repeated int64 availableGiftIds = 5;
+            int64 anchorId = 6;
+
+            message UserBadge {
+                map<int32, Image> icons = 1;
+                string title = 2;
+            }
+        }
+    }
+
+	message ComboBadgeInfo {
+		Image icon = 1;
+		string comboCount = 2;
+	}
+
+	// SubscribeBadge message definition
+	message SubscribeBadge {
+		Image originImg = 1;
+		Image previewImg = 2;
+		bool isCustomized = 5;
+	}
+
+	// TimerDetail message definition
+	message TimerDetail {
+		string timerId = 1;
+		string anchorId = 2;
+		string startTimestampS = 3;
+		string startCountdownTimeS = 4;
+		string anchorSideTitle = 5;
+		string userSideTitle = 6;
+		string timeIncreasePerSubS = 7;
+		string timeIncreaseCapS = 8;
+		int32 subCount = 9;
+		bool timeIncreaseReachCap = 10;
+		string totalPauseTimeS = 11;
+		string lastPauseTimestampS = 12;
+		string totalTimeS = 13;
+		string remainingTimeS = 14;
+		string timestampS = 15;
+		string stickerX = 16;
+		string stickerY = 17;
+		string screenW = 18;
+		string screenH = 19;
+		int32 timerStatus = 20;
+		int32 antidirtStatus = 21;
+		int32 auditStatus = 22;
+		AuditInfo auditInfo = 23;
+
+		message AuditInfo {
+			string violationId = 1;
+			int32 taskType = 2;
+		}
+	}
+
+	message PrivilegeLogExtra {
+		string dataVersion = 1;
+		string privilegeId = 2;
+		string privilegeVersion = 3;
+		string privilegeOrderId = 4;
+		string level = 5;
+	}
+
+	message ImageBadge {
+		int32 displayType = 1;
+		Image image = 2;
+	}
+
+	message AnchorInfo {
+		string level = 1;
+	}
+
+	message TextBadge {
+		int32 displayType = 1;
+		string key = 2;
+		string defaultPattern = 3;
+		repeated string piecesList = 4;
+	}
+
+	message StringBadge {
+		int32 displayType = 1;
+		string str = 2;
+	}
+
+	message CombineBadge {
+		int32 displayType = 1;
+		Image icon = 2;
+		BadgeText text = 3;
+		string str = 4;
+		PaddingInfo padding = 5;
+		FontStyle fontStyle = 6;
+		ProfileCardPanel profileCardPanel = 7;
+		CombineBadgeBackground background = 8;
+		CombineBadgeBackground backgroundDarkMode = 9;
+		bool iconAutoMirrored = 13;
+		bool backgroundAutoMirrored = 14;
+		int32 publicScreenShowStyle = 15;
+		int32 personalCardShowStyle = 16;
+		int32 ranklistOnlineAudienceShowStyle = 17;
+		int32 multiGuestShowStyle = 18;
+		ArrowConfig arrowConfig = 19;
+		PaddingInfo paddingNewFont = 20;
+
+        message BadgeText {
+            string key = 1;
+            string default_pattern = 2;
+            repeated string pieces = 3;
+        }
+
+        message PaddingInfo {
+            bool useSpecific = 1;
+            int32 middlePadding = 2;
+            int32 badgeWidth = 3;
+            int32 leftPadding = 4;
+            int32 rightPadding = 5;
+            int32 iconTopPadding = 6;
+            int32 iconBottomPadding = 7;
+            HorizontalPaddingRule horizontalPaddingRule = 8;
+            VerticalPaddingRule verticalPaddingRule = 9;
+        }
+
+        enum HorizontalPaddingRule {
+            HORIZONTALPADDINGRULEUSEMIDDLEANDWIDTH = 0;
+            HORIZONTALPADDINGRULEUSELEFTANDMIDDLEANDRIGHT = 1;
+        }
+
+        enum VerticalPaddingRule {
+            VERTICALPADDINGRULEUSEDEFAULT = 0;
+            VERTICALPADDINGRULEUSETOPANDBOTTOM = 1;
+        }
+
+		message FontStyle {
+            int32 fontSize = 1;
+            int32 fontWidth = 2;
+            string fontColor = 3;
+            string borderColor = 4;
+		}
+
+        message ProfileCardPanel {
+            bool use_new_profile_card_style = 1;
+            int32 badge_text_position = 2;
+            ProjectionConfig projection_config = 3;
+            ProfileContent profile_content = 4;
+            SeparatorConfig separator_config = 5;
+        }
+
+        message ProjectionConfig {
+            bool useProjection = 1;
+            Image icon = 2;
+        }
+
+        message ProfileContent {
+            bool use_content = 1;
+            repeated IconConfig icon_list = 2;
+            NumberConfig number_config = 3;
+        }
+
+        message IconConfig {
+            Image icon = 1;
+            CombineBadgeBackground background = 2;
+        }
+
+        message CombineBadgeBackground {
+            Image image = 1;
+            string background_color_code = 2;
+            string border_color_code = 3;
+        }
+
+        message NumberConfig {
+            int64 number = 1;
+            FontStyle font_style = 2;
+            CombineBadgeBackground background = 3;
+        }
+
+        message SeparatorConfig {
+            string color = 1;
+        }
+
+        message ArrowConfig {
+            Image icon = 1;
+        }
+
+	}
+
+	message OwnRoom {
+		repeated string roomIdsList = 1;
+		repeated string roomIdsStrList = 2;
+	}
+
+
+    message GradeBuffInfo {
+        int64 buffLevel = 1;
+        int32 status = 2;
+        int64 endTime = 3;
+        map<int64, int64> statsInfo = 4;
+        Image buffBadge = 5;
+    }
+
+    message PayGrade {
+        string deprecated20 = 1;
+        Image diamondIcon = 2;
+        string name = 3;
+        Image icon = 4;
+        string nextName = 5;
+        string level = 6;
+        Image nextIcon = 7;
+        string deprecated22 = 8;
+        string deprecated23 = 9;
+        string deprecated24 = 10;
+        string deprecated25 = 11;
+        string deprecated26 = 12;
+        string gradeDescribe = 13;
+        repeated GradeIcon gradeIconList = 14;
+        string screenChatType = 15;
+        Image imIcon = 16;
+        Image imIconWithLevel = 17;
+        Image liveIcon = 18;
+        Image newImIconWithLevel = 19;
+        Image newLiveIcon = 20;
+        string upgradeNeedConsume = 21;
+        string nextPrivileges = 22;
+        Image background = 23;
+        Image backgroundBack = 24;
+        string score = 25;
+        string gradeBanner = 1001;
+        Image profileDialogBg = 1002;
+        Image profileDialogBgBack = 1003;
+
+        message GradeIcon{
+            Image icon = 1;
+            int64 iconDiamond = 2;
+            int64 level = 3;
+            string levelStr = 4;
+        }
+    }
+}
+
+
+message VIPBadge {
+    map<int64, Image> icons = 1;
+}
+
+message UserVIPInfo {
+    int64 vipLevel = 1;
+    string vipLevelName = 2;
+    VIPStatus status = 3;
+    int64 startTime = 4;
+    int64 endTime = 5;
+    int64 remainingDays = 6;
+    int64 totalConsume = 7;
+    int64 targetConsume = 8;
+    VIPBadge badge = 9;
+    map<int64, bool> privileges = 10;
+}
+
+enum VIPStatus {
+    VIPSTATUS_UNKNOWN = 0;
+    RENEWING = 1;
+    RENEWSUCCESS = 2;
+    PROTECTIVE = 3;
+}
+
+enum VIPPrivilegeDefinition {
+    VIPPRIVILEGEDEFINITION_UNKNOWN = 0;
+    VIDEOBADGE = 1;
+    LIVEBADGE = 201;
+    ROOMNOTIFY = 202;
+    VIPSEAT = 203;
+    VIPRANK = 204;
+    EXCLUSIVEVIPGIFT = 205;
+    ENTEREFFECT = 206;
+    LIVECOMMENTSHADING = 207;
+    EXCLUSIVECUSTOMERSERVICE = 208;
+    ALLROOMNOTIFY = 209;
+    PREVENTKICKOFF = 210;
+}
+
+enum VIPBadgeType {
+    VIPBADGETYPE_UNKNOWN = 0;
+    VIPDEFAULT = 1;
+    RANKBIGBADGE = 2;
+}
+
+
+
+message TextFormat{
+    string color = 1;
+    bool bold = 2;
+    bool italic = 3;
+    int32 weight = 4;
+    int32 italicAngle = 5;
+    int32 fontSize = 6;
+    bool userHeightLightColor = 7;
+    bool useRemoteClor = 8;
+}
+
+message TextPiece{
+    int32 type = 1;
+    TextFormat format = 2;
+    string stringValue = 11;
+    TextPieceUser userValue = 21;
+}
+
+message Image{
+    repeated string urlList = 1;
+    string uri = 2;
+    int64 height = 3;
+    int64 width = 4;
+    string avgColor = 5;
+    int32 imageType = 6;
+    string openWebUrl = 7;
+    Content content = 8;
+    bool isAnimated = 9;
+
+    message Content {
+        string name = 1;
+        string fontColor = 2;
+        int64 level = 3;
+        string alternativeText = 4;
+    }
+}
+
+message TextPieceUser{
+    User user = 1;
+    bool withColon = 2;
+}
+
+
+
+message GiftIMPriority {
+    repeated int64 queueSizes = 1;
+    int64 selfQueuePriority = 2;
+    int64 priority = 3;
+}
+
+message GiftTrayInfo{
+    Text trayDisplayText = 1;
+    Image trayBaseImg = 2;
+    Image trayHeadImg = 3;
+    Image trayRightImg = 4;
+    int64 trayLevel = 5;
+    Image trayDynamicImg = 6;
+}
+
+// GiftStruct message definition
+message GiftStruct {
+    Image image = 1;
+    string describe = 2;
+    string duration = 4;
+    string id = 5;
+    bool forLinkmic = 7;
+    bool combo = 10;
+    int32 type = 11;
+    int32 diamondCount = 12;
+    bool isDisplayedOnPanel = 13;
+    string primaryEffectId = 14;
+    Image giftLabelIcon = 15;
+    string name = 16;
+    Image icon = 17;
+    string goldEffect = 24;
+    Image previewImage = 25;
+    GiftPanelBanner giftPanelBanner = 26;
+    bool isBroadcastGift = 49;
+    bool isEffectBefview = 50;
+    bool isRandomGift = 51;
+    bool isBoxGift = 52;
+    bool canPutInGiftBox = 53;
+    GiftBoxInfo giftBoxInfo = 54;
+    map<string, string> trackerParamsMap = 55;
+    GiftLockInfo lockInfo = 56;
+    repeated GiftColorInfo colorInfosList = 57;
+    string giftRankRecommendInfo = 103;
+    GiftRandomEffectInfo randomEffectInfo = 104;
+    int32 giftSubType = 105;
+    repeated string giftVerticalScenariosList = 106;
+    int32 groupInTab = 107;
+    bool isGalleryGift = 108;
+    GiftSponsorInfo giftSponsorInfo = 109;
+    repeated GiftSkin giftSkinsList = 110;
+    int32 giftLabelType = 111;
+    repeated GiftText giftTextsList = 112;
+    repeated GiftSkinToGiftTextsInfo giftSkinToGiftTextsInfosList = 113;
+    string expirationTimestamp = 114;
+
+	message GiftPanelBanner {
+		Text displayText = 1;
+		Image leftIcon = 2;
+		string schemaUrl = 3;
+		string deprecated = 4;
+		repeated string bgColorValuesList = 5;
+		string bannerLynxUrl = 6;
+		int32 bannerPriority = 7;
+		string bannerLynxExtra = 8;
+		Image bgImage = 9;
+	}
+
+	message GiftBoxInfo {
+		string capacity = 1;
+		bool isPrimaryBox = 2;
+		string schemeUrl = 3;
+		repeated GiftInfoInBox giftInfosInBoxList = 4;
+	}
+
+	message GiftLockInfo {
+		bool lock = 1;
+		int32 lockType = 2;
+		int32 giftLevel = 3;
+	}
+
+	message GiftColorInfo {
+		string colorId = 1;
+		string colorName = 2;
+		repeated string colorValuesList = 3;
+		Image colorImage = 4;
+		Image giftImage = 5;
+		string colorEffectId = 6;
+		bool isDefault = 7;
+	}
+
+	message GiftRandomEffectInfo {
+		RandomGiftPanelBanner randomGiftPanelBanner = 1;
+		repeated string effectIdsList = 2;
+		string hostKey = 3;
+		string audienceKey = 4;
+		RandomGiftBubble randomGiftBubble = 5;
+	}
+
+	message GiftSponsorInfo {
+		string sponsorId = 1;
+		string sponsorCount = 2;
+		string currentCount = 3;
+		string leftCountToSponsor = 4;
+		bool canSponsor = 5;
+	}
+
+	message GiftSkin {
+		string giftSkinId = 1;
+		string giftSkinName = 2;
+		Image staticImage = 3;
+		Image animatedImage = 4;
+	}
+
+	message GiftText {
+		string giftTextId = 1;
+		string giftTextName = 2;
+	}
+
+	message GiftSkinToGiftTextsInfo {
+		string giftSkinId = 1;
+		repeated string giftTextIdsList = 2;
+	}
+
+	message GiftInfoInBox {
+		string giftId = 1;
+		string effectId = 2;
+		string colorId = 3;
+		int32 remainTimes = 4;
+		AssetStruct asset = 5;
+	}
+
+	message RandomGiftPanelBanner {
+		Image bgImage = 1;
+		Image shadingImage = 2;
+		string targetNum = 3;
+		string collectNum = 4;
+		string displayText = 5;
+		Image leftIcon = 6;
+		string schemaUrl = 7;
+		repeated string bgColorValuesList = 8;
+		string round = 9;
+		int32 bannerPriority = 10;
+	}
+
+	message RandomGiftBubble {
+		string displayText = 1;
+		Image iconDynamicEffect = 2;
+	}
+
+}
+
+enum CommentTypeTag {
+  COMMENTTYPETAGUNKNOWN = 0;
+  COMMENTTYPETAGSTAR = 1;
+}
+
+
+message UserFanTicket {
+    string user_id = 1;
+    string fan_ticket = 2;
+    string match_total_score = 3;
+    int32 match_rank = 4;
+    UserCountdownInfo countdown_info = 5;
+    UserPlayInfo play_info = 6;
+}
+
+message UserCountdownInfo {
+    string countdown_id = 1;
+    string score = 2;
+    string target_score = 3;
+    int32 completion_progress_percent = 4;
+}
+
+message UserPlayInfo {
+    string play_id = 1;
+    int32 play_scene = 2;
+    string score = 3;
+    int32 rank = 4;
+    string target_score = 5;
+}
+
+// ok
+message LinkMicBattle {
+    Common common = 1;
+    int64 battle_id = 2;
+    BattleSettings battle_settings = 3;
+    int32 action = 4;
+    map<int64, BattleResult> battle_result_map = 5;
+    DisplayConfig fuzzy_display_config = 6;
+    map<int64, BattleComboInfo> battle_combo_map = 7;
+    int32 invitee_gift_permission_type = 8;
+    repeated UserArmiesWrapper armies_list = 9;
+    repeated BattleUserInfoWrapper anchors_info_list = 10;
+    string bubble_text = 11;
+    repeated SupportedActionsWrapper supported_actions_list = 12;
+    map<int64, BattleComboInfoV2> battle_combo_v2_map = 13;
+    repeated TeamUser team_member_list = 14;
+    repeated InviteeGiftPermission invitees_gift_permission_type_list = 15;
+    int64 action_by_user_id = 16;
+    repeated TeamBattleResult team_battle_result_list = 17;
+    repeated TeamUserArmies team_armies_list = 18;
+    repeated BattleABTestSetting ab_test_setting_list = 19;
+    TeamMatchCampaign team_match_campaign = 20;
+    // LinkMicBattle.TeamUser
+    message TeamUser {
+        int64 team_id = 1;
+        repeated int64 user_id_list = 2;
+    }
+
+    message InviteeGiftPermission {
+        int64 user_id = 1;
+        int32 gift_permission_type = 2;
+    }
+}
+
+
+//data.TeamUser
+message TeamUser {
+    int64 user_id = 1;
+    int64 score = 2;
+    string user_id_str = 3;
+}
+
+message BattleResult {
+    int64 user_id = 1;
+    int32 result = 2;
+    int64 score = 3;
+    int64 diamond_score = 4;
+}
+
+message BattleComboInfo {
+    int64 user_id = 1;
+    int64 combo_status = 2;
+    int64 combo_count = 3;
+    string combo_icon_url = 4;
+    string combo_rule_guide_url = 5;
+}
+
+message BattleComboInfoV2 {
+    int64 user_id = 1;
+    int64 combo_status = 2;
+    int64 combo_count = 3;
+    string combo_icon_url = 4;
+    int32 combo_type = 5;
+    string combo_rule_guide_schema = 6;
+}
+
+message BattleSettings {
+    int64 battle_id = 2;
+    int64 start_time_ms = 3;
+    int64 duration = 4;
+    string theme = 5;
+    int64 channel_id = 6;
+    int64 match_type = 7;
+    string banner_url = 8;
+    int64 sub_type = 9;
+    int32 mode = 10;
+    string config = 11;
+}
+
+message DisplayConfig {
+    int64 threshold = 1;
+    string text = 2;
+    int64 diff_threshold = 3;
+    string diff_text = 4;
+    ExemptStrategy exempt_strategy = 5;
+
+    message ExemptStrategy {
+        bool exemptBothHost = 1;
+        int32 exemptAudienceTop = 2;
+    }
+}
+
+message UserArmiesWrapper {
+    int64 key = 1;
+    UserArmies value = 2;
+}
+
+message BattleUserInfoWrapper {
+    int64 key = 1;
+    BattleUserInfo value = 2;
+}
+
+message SupportedActionsWrapper {
+    int64 key = 1;
+    bool value = 2;
+}
+
+message TeamUserArmies {
+    int64 team_id = 1;
+    repeated TeamUser team_user_list = 2;
+    int64 team_total_score = 3;
+    UserArmies user_armies = 4;
+    int64 host_rank = 5;
+}
+
+message TeamBattleResult {
+    int64 team_id = 1;
+    repeated TeamUser team_user_list = 2;
+    int32 result = 3;
+    int64 total_score = 4;
+}
+
+message BattleABTestSetting {
+    int64 key = 1;
+    BattleABTestList value = 2;
+}
+
+message TeamMatchCampaign {
+    repeated BestTeammateRelation best_teammate_relation_list = 1;
+    repeated int64 start_sfx_team_id_list = 2;
+    bool has_team_match_mvp_sfx = 3;
+}
+
+message UserArmies {
+    repeated UserArmy user_armies_list = 1;
+    int64 hostscore = 2;
+    string anchor_id_str = 3;
+
+    message UserArmy {
+        int64 user_id = 1;
+        int64 score = 2;
+        string nickname = 3;
+        Image avatar_thumb = 4;
+        int64 diamond_score = 5;
+        string user_id_str = 6;
+    }
+}
+
+message BattleUserInfo {
+    BaseUserInfo user = 1;
+    repeated BattleRivalTag tags_list = 2;
+
+    message BaseUserInfo {
+        int64 userId = 1;
+        string nickName = 2;
+        Image avatarThumb = 3;
+        string displayId = 4;
+    }
+}
+
+message BattleABTestList {
+    repeated BattleABTest ab_test_list = 1;
+}
+
+message BattleABTest {
+    BattleABTestType abTestType = 1;
+    int64 group = 2;
+}
+
+enum BattleABTestType {
+    UNKNOWNABTESTTYPE = 0;
+    MEANWHILEINVITE = 1;
+    SPECIFIEDGIFT = 2;
+    RTCMESSAGECHANNEL = 3;
+    CONNECTIONTIMEOUT = 4;
+    REMATCHSKIPTEAMMATE = 5;
+    OPTINVITEE4048 = 6;
+    BATTLE_AB_TEST_TYPE_TIME_CALIBRATE = 7;
+}
+
+message BestTeammateRelation {
+    int64 user_id = 1;
+    int64 best_teammate_id = 2;
+}
+
+message BattleRivalTag {
+    Image bg_image = 1;
+    Image icon_image = 2;
+    string content = 3;
+}
