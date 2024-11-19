@@ -13,8 +13,8 @@ tiktok:
     Referer: https://www.tiktok.com/
   cookie: tt_csrf_token=R61bvyBp-7EBZ6VoAa0isjS2WHi55yuWGDlQ; tt_chain_token=/1IuMMEHfG5unsiCxf5jXw==; ak_bmsc=AB652209216A52A8A00847DE4BBA1638~000000000000000000000000000000~YAAQBfN0aHJicyWTAQAAkLAJJhmk1LaFOSdl5XFkQhsRUx+Eo0Y0nIhIAHgfgcZLgQo6vNP0NOo4MmPdWtrzoAN+jSIhCr9mVwoYfLaCmWL9APJng69C7nNEMP+zF3MedTkkxsyppLEUFx85OEMS/AQNWm1KoVEdYRfra1nQn0UFVmfALqMiXZ0AFUPI8MGnXh4DYVKqk2ymE6e/1f/7XiTAPb/eQp0pZ6GB1TuWt79e72ktoQHYpLjEGOb0lM4JHyaXxvgSrF293yEg1AWXezNPQLX2C5nVcvXUpNB9QyNKc9NhI3mToocckjXXUpkEdsLKwFOwzurJy3wELflEgw1SuZuMWMRm0fXJsG/zXn23Q/N1Bh0Mol9tLvDt4+Mt8XRd3XOuOehGbA==; tiktok_webapp_theme_source=system; tiktok_webapp_theme=light; delay_guest_mode_vid=8; ttwid=1%7C775YmjphMbnEpIJh5RUZdENOoj1EWtC5Wg05sCRIWIs%7C1731509991%7C05ba7f254f46e95f5e0ec53d58b7a7da2114160d5bb1d138a2e4a9c50fb6adfb; msToken=1lG0IYajhnIDtmn8BLNRuP9ePnKe_FuTcoIeHuxCeAryFTx_ZnMlRG4ZZl2M3LIghPuVqUSBf0oTkVohwebz_T_GZeFVGIfs2STCmv010QiWq8H_hltJBDpuYDWoog==; odin_tt=1f522d7d34d5e9635a51790061c3e7386bc6dd27ab22f7d6d07d914c8cbeb589a6bafec53620d7135c475cfddfb10c4d1c8398d3e0b2b3f4445193971dda91c68d265c091b84a560974c4681e1d0bd67; msToken=iI_arzGTaVf-tynHK_Gu8y8flpeBTlO_gZPRKT3FPWGmT81SGMCbM8hRxive_2QIaDCt5WucCOdMSsaZXKsMChPvPuOYtlkcrN9dlk9T8YP6S7YOK9cDMHAaQrDxYQ==
   proxies:
-    http://: http://127.0.0.1:3580
-    https://: http://127.0.0.1:3580
+    http://:
+    https://:
 
 weibo:
   headers:
