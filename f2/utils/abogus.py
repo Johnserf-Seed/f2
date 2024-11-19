@@ -6,7 +6,7 @@
 @Description:abogus.py
 @Date       :2024/06/16 11:21:14
 @Author     :JohnserfSeed
-@version    :0.0.1
+@version    :0.0.2
 @License    :Apache License 2.0
 @Github     :https://github.com/johnserf-seed
 @Mail       :johnserf-seed@foxmail.com
@@ -14,6 +14,7 @@
 Change Log  :
 2024/06/16 17:27:47 - Create ABogus algorithm & black style
 2024/06/16 17:27:47 - Limit custom ua late open source full version
+2024/07/08 21:50:12 - Open the full version of the custom UA
 -------------------------------------------------
 """
 
@@ -547,16 +548,20 @@ class ABogus:
         print(abogus_param[1])
     """
 
-    def __init__(self, fp: str = "", user_agent: str = ""):
+    def __init__(
+        self,
+        fp: str = "",
+        user_agent: str = "",
+        options: List[int] = [0, 1, 14],
+    ):
         self.aid = 6383
         self.pageId = 0
         self.salt = "cus"  # 加密盐
         self.array1 = []  # 加密请求体
         self.array2 = []  # 加密请求头 为空
-        # fmt: off
         self.array3 = []  # 加密UA
-        # fmt: on
-        self.options = [0, 1, 14]  # GET, POST, JSON
+        self.options = options  # GET [0, 1, 14] POST [0, 1, 8]
+        self.ua_key = b"\x00\x01\x0E"  # ua加密key
 
         self.character = (
             "Dkdpgh2ZmsQB80/MfvV36XI1R45-WUAlEixNLwoqYTOPuzKFjJnry79HbGcaStCe"
@@ -649,15 +654,15 @@ class ABogus:
         array2 = self.crypto_utility.params_to_array(
             self.crypto_utility.params_to_array(request)
         )
-        # fmt: off
-        # 24/06/16 晚点开源自定义ua
-        # 配置文件请使用该ua "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"
-        array3 = [
-            212, 61, 87, 195, 104, 163, 124, 28, 92, 126, 187,
-            53, 218, 38, 254, 253, 252, 73, 83, 197, 194, 142,
-            113, 37, 9, 67, 166, 36, 56, 72, 56, 64,
-        ]
-        # fmt: on
+        array3 = self.crypto_utility.params_to_array(
+            self.crypto_utility.base64_encode(
+                StringProcessor.to_ord_str(
+                    self.crypto_utility.rc4_encrypt(self.ua_key, self.user_agent)
+                ),
+                1,
+            ),
+            add_salt=False,
+        )
 
         # 结束加密时间
         end_encryption = int(time.time() * 1000)
@@ -753,7 +758,9 @@ class ABogus:
 
 if __name__ == "__main__":
     # 24/06/16 晚点开源自定义ua
-    # 配置文件请使用该ua "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"
+    # 24/07/08 支持自定义ua和浏览器指纹
+    # 24/11/15 完成1.0.1.19版本abogus算法，择日开源
+
     user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"
     url = "https://www.douyin.com/aweme/v1/web/aweme/detail/?"
     params = "device_platform=webapp&aid=6383&channel=channel_pc_web&aweme_id=7380308675841297704&update_version_code=170400&pc_client_type=1&version_code=190500&version_name=19.5.0&cookie_enabled=true&screen_width=1920&screen_height=1080&browser_language=zh-CN&browser_platform=Win32&browser_name=Edge&browser_version=125.0.0.0&browser_online=true&engine_name=Blink&engine_version=125.0.0.0&os_name=Windows&os_version=10&cpu_core_num=12&device_memory=8&platform=PC&downlink=10&effective_type=4g&round_trip_time=50&webid=7376294349792396827"
