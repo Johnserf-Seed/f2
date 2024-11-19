@@ -290,9 +290,7 @@ class TiktokHandler:
                 )
             )
             rich_console.print(
-                Rule(
-                    _("处理第 {0} 页 ({1})").format(cursor, timestamp_2_str(cursor))
-                )
+                Rule(_("处理第 {0} 页 ({1})").format(cursor, timestamp_2_str(cursor)))
             )
 
             async with TiktokCrawler(self.kwargs) as crawler:
@@ -404,9 +402,7 @@ class TiktokHandler:
                 )
             )
             rich_console.print(
-                Rule(
-                    _("处理第 {0} 页 ({1})").format(cursor, timestamp_2_str(cursor))
-                )
+                Rule(_("处理第 {0} 页 ({1})").format(cursor, timestamp_2_str(cursor)))
             )
 
             async with TiktokCrawler(self.kwargs) as crawler:
@@ -515,9 +511,7 @@ class TiktokHandler:
                 )
             )
             rich_console.print(
-                Rule(
-                    _("处理第 {0} 页 ({1})").format(cursor, timestamp_2_str(cursor))
-                )
+                Rule(_("处理第 {0} 页 ({1})").format(cursor, timestamp_2_str(cursor)))
             )
 
             async with TiktokCrawler(self.kwargs) as crawler:
@@ -717,9 +711,7 @@ class TiktokHandler:
                 )
             )
             rich_console.print(
-                Rule(
-                    _("处理第 {0} 页 ({1})").format(cursor, timestamp_2_str(cursor))
-                )
+                Rule(_("处理第 {0} 页 ({1})").format(cursor, timestamp_2_str(cursor)))
             )
 
             async with TiktokCrawler(self.kwargs) as crawler:
