@@ -925,6 +925,85 @@ class TiktokHandler:
         logger.info(_("直播间在线状态检查结束"))
         return check
 
+    async def fetch_live_im(self, room_id: str):
+        """
+        用于获取直播间信息。
+
+        Args:
+            room_id: str: 直播间ID
+            unique_id: str: 用户ID
+
+        Return:
+            live_im: LiveImFetchFilter: 直播间信息数据过滤器，包含直播间信息的_to_raw、_to_dict、_to_list方法
+        """
+
+        logger.info(_("开始查询直播间信息"))
+        logger.debug("===================================")
+
+        async with TiktokCrawler(self.kwargs) as crawler:
+            params = LiveImFetch(room_id=room_id)
+            live_im = await crawler.fetch_live_im_fetch(params)
+
+        if live_im:
+            logger.debug(
+                _("直播间Room_ID：{0} 弹幕cursor：{1}").format(room_id, live_im)
+            )
+            logger.debug("===================================")
+            logger.info(_("直播间信息查询结束"))
+        else:
+            logger.warning(_("请提供正确的Room_ID"))
+
+        return live_im
+
+    async def fetch_live_danmaku(
+        self, room_id: str, internal_ext: str, cursor: str, wrss: str
+    ):
+        """
+        通过WebSocket连接获取直播间弹幕，再通过回调函数处理弹幕数据。
+
+        Args:
+            room_id: str: 直播间ID
+            user_unique_id: str: 用户ID
+            internal_ext: str: 内部扩展参数
+            cursor: str: 弹幕cursor
+
+        Return:
+            self.websocket: TiktokWebSocketCrawler: WebSocket连接对象
+        """
+        wss_callbacks = {
+            "WebcastChatMessage": TiktokWebSocketCrawler.WebcastChatMessage,
+            "WebcastMemberMessage": TiktokWebSocketCrawler.WebcastMemberMessage,
+            "WebcastRoomUserSeqMessage": TiktokWebSocketCrawler.WebcastRoomUserSeqMessage,
+            "WebcastGiftMessage": TiktokWebSocketCrawler.WebcastGiftMessage,
+            "WebcastSocialMessage": TiktokWebSocketCrawler.WebcastSocialMessage,
+            "WebcastLikeMessage": TiktokWebSocketCrawler.WebcastLikeMessage,
+            "WebcastLinkMicFanTicketMethod": TiktokWebSocketCrawler.WebcastLinkMicFanTicketMethod,
+            "WebcastLinkMicMethod": TiktokWebSocketCrawler.WebcastLinkMicMethod,
+            "UserFanTicket": TiktokWebSocketCrawler.UserFanTicket,
+            "WebcastLinkMessage": TiktokWebSocketCrawler.WebcastLinkMessage,
+            "WebcastLinkMicBattle": TiktokWebSocketCrawler.WebcastLinkMicBattle,
+            "WebcastLinkLayerMessage": TiktokWebSocketCrawler.WebcastLinkLayerMessage,
+            "WebcastRoomMessage": TiktokWebSocketCrawler.WebcastRoomMessage,
+            "WebcastOecLiveShoppingMessage": TiktokWebSocketCrawler.WebcastOecLiveShoppingMessage,
+        }
+        async with TiktokWebSocketCrawler(self.kwargs, callbacks=wss_callbacks) as wss:
+
+            params = LiveWebcast(
+                room_id=room_id,
+                internal_ext=quote(internal_ext, safe=""),
+                cursor=cursor,
+                wrss=wrss,
+            )
+
+            result = await wss.fetch_live_danmaku(params)
+
+            if result == "closed":
+                logger.info(_("直播间：{0} 已结束直播").format(room_id))
+            elif result == "error":
+                logger.error(_("直播间：{0} 弹幕连接异常").format(room_id))
+
+            return
+
 
 async def main(kwargs):
     mode = kwargs.get("mode")
