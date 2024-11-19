@@ -48,6 +48,10 @@ class ClientConfManager:
         return cls.client_conf.get("version", "unknown")
 
     @classmethod
+    def wss(cls) -> dict:
+        return cls.client().get("wss", {})
+
+    @classmethod
     def base_request_model(cls) -> dict:
         return cls.client().get("BaseRequestModel", {})
 
