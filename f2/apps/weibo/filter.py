@@ -2,6 +2,7 @@
 
 from f2.utils.json_filter import JSONModel
 from f2.utils.utils import timestamp_2_str, replaceT
+from f2.apps.weibo.utils import extract_desc
 
 # Filter
 
