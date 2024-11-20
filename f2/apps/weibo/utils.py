@@ -13,7 +13,6 @@ from f2.log.logger import logger
 from f2.utils.conf_manager import ConfigManager
 from f2.utils.utils import extract_valid_urls, split_filename, split_set_cookie
 from f2.exceptions.api_exceptions import (
-    APIError,
     APIConnectionError,
     APIResponseError,
     APIUnavailableError,
@@ -360,10 +359,10 @@ def format_file_name(
     }
 
     fields = {
-        "create": weibo_data.get("create_time", ""),  # 长度固定19
+        "create": weibo_data.get("weibo_created_at", ""),  # 长度固定19
         "nickname": weibo_data.get("nickname", ""),  # 最长30
         "weibo_id": weibo_data.get("weibo_id", ""),  # 长度固定19
-        "desc": split_filename(weibo_data.get("descRaw", ""), os_limit),
+        "desc": split_filename(weibo_data.get("weibo_desc", ""), os_limit),
         "uid": weibo_data.get("uid", ""),  # 固定10
     }
 
