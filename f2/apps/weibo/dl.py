@@ -1,14 +1,10 @@
 # path: f2/apps/weibo/dl.py
 
-import sys
-from datetime import datetime
-from typing import Any, Union
+from typing import Any, Dict, List, Union
 
 from f2.log.logger import logger
 from f2.i18n.translator import _
 from f2.dl.base_downloader import BaseDownloader
-from f2.utils.utils import get_timestamp, timestamp_2_str
-from f2.apps.weibo.db import AsyncUserDB
 from f2.apps.weibo.utils import format_file_name
 from f2.apps.weibo.api import WeiboAPIEndpoints
 
@@ -26,8 +22,8 @@ class WeiboDownloader(BaseDownloader):
 
     async def create_download_tasks(
         self,
-        kwargs: dict = ...,
-        weibo_datas: Union[list, dict] = ...,
+        kwargs: Dict,
+        weibo_datas: Union[List, Dict],
         user_path: Any = ...,
     ) -> None:
         """
@@ -60,94 +56,98 @@ class WeiboDownloader(BaseDownloader):
         await self.execute_tasks()
 
     async def handler_download(
-        self, kwargs: dict, weibo_data_dict: dict, user_path: Any
+        self, kwargs: Dict, weibo_data_dict: Dict, user_path: Any
     ) -> None:
         """
         处理下载任务
 
         Args:
-            kwargs (dict): 命令行参数
-            weibo_data_dict (dict): 作品数据字典
+            kwargs (Dict): 命令行参数
+            weibo_data_dict (Dict): 作品数据字典
             user_path (Any): 用户目录路径
         """
 
         # 构建文件夹路径
-        base_path = (
+        self.base_path = (
             user_path
             / format_file_name(kwargs.get("naming", "{create}_{desc}"), weibo_data_dict)
             if kwargs.get("folderize")
             else user_path
         )
+        self.user_id = weibo_data_dict.get("user_id")
+        self.weibo_id = weibo_data_dict.get("weibo_id")
+        self.kwargs = kwargs
+        self.weibo_data_dict = weibo_data_dict
 
-        user_id = weibo_data_dict.get("user_id")
-        weibo_id = weibo_data_dict.get("weibo_id")
-
-        logger.debug(f"========{weibo_id}========")
-        logger.debug(weibo_data_dict)
-        logger.debug("===================================")
+        # mblogtype: 2    # 0 微博 1 热门微博 2 置顶微博
 
         # 检查微博是否可见
-        if weibo_data_dict.get("is_visible"):
-            logger.error(_("微博 {0} 无查看权限").format(weibo_id))
+        if self.weibo_data_dict.get("weibo_is_visible"):
+            logger.error(_("微博：{0} 无查看权限").format(self.weibo_id))
             return
 
-        # 检查微博是否有图片
-        if weibo_data_dict.get("pic_num") == 0:
-
-            # 说明是视频微博
-            # print(weibo_data_dict.get("playback_list"))
-            logger.info(
-                _("清晰度列表：{0}，码率列表：{1}").format(
-                    weibo_data_dict.get("quality_list"),
-                    weibo_data_dict.get("bitrate_list"),
-                )
-            )
-            logger.info(weibo_data_dict.get("playback_list")[0])
-
-            video_name = (
-                format_file_name(
-                    kwargs.get("naming", "{create}_{desc}"), weibo_data_dict
-                )
-                + "_video"
-            )
-            video_url = weibo_data_dict.get("playback_list")
-            if video_url[0]:
-                await self.initiate_download(
-                    _("视频"),
-                    video_url[0],
-                    base_path,
-                    video_name,
-                    ".mp4",
-                )
         else:
-            # 处理图片下载任务
-            # logger.info(
-            #     _("图片ID列表：{0}，图片数量：{1}").format(
-            #         weibo_data_dict.get("pic_infos"),
-            #         weibo_data_dict.get("pic_num"),
-            #     )
-            # )
-            for i, image_url in enumerate(weibo_data_dict.get("pic_infos")):
-                image_name = f"{format_file_name(kwargs.get('naming'), weibo_data_dict)}_image_{i + 1}"
-                image_url = WeiboAPIEndpoints.LARGEST + f"/{image_url}"
-                if image_url != None:
-                    await self.initiate_download(
-                        _("图片"), image_url, base_path, image_name, ".jpg"
-                    )
-                else:
-                    logger.warning(
-                        _("{0} 该微博没有图片链接，无法下载").format(weibo_id)
-                    )
+            logger.debug(_("开始下载微博：{0}").format(self.weibo_id))
+            await self.download_desc()
 
+        # 检查微博是否有图片
+        if (
+            self.weibo_data_dict.get("weibo_pic_num") == 0
+            and weibo_data_dict.get("is_video") == "11"
+        ):
+            await self.download_video()
+        else:
+            await self.download_images()
+
+        return
+
+    async def download_video(self):
+        logger.debug(
+            _("清晰度列表：{0}，码率列表：{1}").format(
+                self.weibo_data_dict.get("quality_list"),
+                self.weibo_data_dict.get("bitrate_list"),
+            )
+        )
+
+        video_name = (
+            format_file_name(
+                self.kwargs.get("naming", "{create}_{desc}"), self.weibo_data_dict
+            )
+            + "_video"
+        )
+        video_url = self.weibo_data_dict.get("playback_list")
+
+        if video_url:
+            await self.initiate_download(
+                _("视频"),
+                video_url,
+                self.base_path,
+                video_name,
+                ".mp4",
+            )
+
+    async def download_desc(self):
         # 处理文案下载任务
-        if kwargs.get("desc"):
-            desc_name = (
-                format_file_name(
-                    kwargs.get("naming", "{create}_{desc}"), weibo_data_dict
+        desc_name = (
+            format_file_name(
+                self.kwargs.get("naming", "{create}_{desc}"), self.weibo_data_dict
+            )
+            + "_desc"
+        )
+        desc_content = self.weibo_data_dict.get("weibo_desc_raw")
+        await self.initiate_static_download(
+            _("文案"), desc_content, self.base_path, desc_name, ".txt"
+        )
+
+    async def download_images(self):
+        for i, image_url in enumerate(self.weibo_data_dict.get("weibo_pic_ids", [])):
+            image_name = f"{format_file_name(self.kwargs.get('naming'), self.weibo_data_dict)}_image_{i + 1}"
+            image_url = WeiboAPIEndpoints.LARGEST + f"/{image_url}"
+            if image_url != None:
+                await self.initiate_download(
+                    _("图片"), image_url, self.base_path, image_name, ".jpg"
                 )
-                + "_desc"
-            )
-            desc_content = weibo_data_dict.get("desc")
-            await self.initiate_static_download(
-                _("文案"), desc_content, base_path, desc_name, ".txt"
-            )
+            else:
+                logger.warning(
+                    _("{0} 该微博没有图片链接，无法下载").format(self.weibo_id)
+                )
