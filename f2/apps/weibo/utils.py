@@ -488,3 +488,23 @@ def create_or_rename_user_folder(
         user_path = rename_user_folder(user_path, current_nickname)
 
     return user_path
+
+
+def extract_desc(text):
+    """
+    提取微博标题，排除最后的链接部分（如果存在）。
+
+    Args:
+        text (str): 原始微博内容
+
+    Returns:
+        str: 提取后的标题
+    """
+    # 根据空格分隔内容
+    parts = text.strip().split(" ")
+    # 检查是否有链接
+    if parts and parts[-1].startswith("http"):
+        # 移除最后一个部分（链接）
+        parts.pop()
+    # 如果没有链接，直接返回原文
+    return " ".join(parts)
