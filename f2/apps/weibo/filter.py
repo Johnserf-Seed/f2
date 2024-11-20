@@ -1,7 +1,7 @@
 # path: f2/apps/weibo/filter.py
 
 from f2.utils.json_filter import JSONModel
-from f2.utils.utils import timestamp_2_str, replaceT
+from f2.utils.utils import timestamp_2_str, replaceT, filter_to_list
 from f2.apps.weibo.utils import extract_desc
 
 # Filter
@@ -192,7 +192,7 @@ class WeiboDetailFilter(JSONModel):
         return self._get_attr_value("$.rid")
 
     @property
-    def create_time(self):
+    def weibo_created_at(self):
         return timestamp_2_str(self._get_attr_value("$.created_at"))
 
     @property
@@ -204,36 +204,38 @@ class WeiboDetailFilter(JSONModel):
         return self._get_attr_value("$.textLength")
 
     @property
-    def descRaw(self):
-        return replaceT(self._get_attr_value("$.text_raw"))
+    def weibo_desc(self):
+        # example: 超大颗花生汤圆[舔屏] http://t.cn/A6nqzsFe
+        # 去除最后的链接
+        return replaceT(extract_desc(self._get_attr_value("$.text_raw")))
 
     @property
-    def descRaw_raw(self):
-        return self._get_attr_value("$.text_raw")
+    def weibo_desc_raw(self):
+        return extract_desc(self._get_attr_value("$.text_raw"))
 
     @property
-    def digg_count(self):
+    def weibo_digg_count(self):
         return self._get_attr_value("$.attitudes_count")
 
     @property
-    def comments_count(self):
+    def weibo_comments_count(self):
         return self._get_attr_value("$.comments_count")
 
     @property
-    def share_count(self):
+    def weibo_share_count(self):
         return self._get_attr_value("$.reposts_count")
 
     # IMG
     @property
-    def pic_ids(self):
+    def weibo_pic_ids(self):
         return self._get_attr_value("$.pic_ids")
 
     @property
-    def pic_num(self):
+    def weibo_pic_num(self):
         return self._get_attr_value("$.pic_num")
 
     @property
-    def pic_infos(self):
+    def weibo_pic_infos(self):
         # 每个图片的信息都是pic_ids作为下标的
         return self._get_attr_value("$.pic_infos")
 
@@ -265,19 +267,19 @@ class WeiboDetailFilter(JSONModel):
         return self._get_attr_value("$.source")
 
     @property
-    def isLongText(self):
+    def weibo_isLongText(self):
         return self._get_attr_value("$.isLongText")
 
     @property
-    def is_paid(self):
+    def weibo_is_paid(self):
         return self._get_attr_value("$.is_paid")
 
     @property
-    def is_public(self):
+    def weibo_public(self):
         return self._get_attr_value("$.title.text")
 
     @property
-    def is_visible(self):
+    def weibo_visible(self):
         return self._get_attr_value("$.visible.type")
 
     # user
@@ -317,107 +319,134 @@ class UserWeiboFilter(JSONModel):
     # Weibo
     @property
     def weibo_visible(self):
-        return self._get_attr_value("$.data.list[*].visible.type")
+        return self._get_list_attr_value("$.data.list[*].visible.type")
 
     @property
     def weibo_created_at(self):
-        return self._get_attr_value("$.data.list[*].created_at")
+        created_at = self._get_list_attr_value("$.data.list[*].created_at")
+        return (
+            [timestamp_2_str(str(ct)) for ct in created_at]
+            if isinstance(created_at, list)
+            else timestamp_2_str(str(created_at))
+        )
 
     @property
     def weibo_id(self):
-        return self._get_attr_value("$.data.list[*].idstr")
+        return self._get_list_attr_value("$.data.list[*].idstr")
+
+    @property
+    def weibo_type(self):
+        return self._get_list_attr_value("$.data.list[*].mblogtype")
 
     @property
     def weibo_isLongText(self):
-        return self._get_attr_value("$.data.list[*].isLongText")
+        return self._get_list_attr_value("$.data.list[*].isLongText")
 
     @property
     def weibo_is_paid(self):
-        return self._get_attr_value("$.data.list[*].is_paid")
+        return self._get_list_attr_value("$.data.list[*].is_paid")
 
     @property
-    def weibo_mblogid(self):
-        return self._get_attr_value("$.data.list[*].mblogid")
+    def weibo_blog_id(self):
+        return self._get_list_attr_value("$.data.list[*].mblogid")
 
     @property
     def weibo_views(self):
-        return self._get_attr_value(
+        return self._get_list_attr_value(
             "$.data.list[*].number_display_strategy.display_text"
         )
 
     @property
     def weibo_digg_count(self):
-        return self._get_attr_value("$.data.list[*].attitudes_count")
-
-    @property
-    def weibo_read_count(self):
-        return self._get_attr_value("$.data.list[*].reads_count")
+        return self._get_list_attr_value("$.data.list[*].attitudes_count")
 
     @property
     def weibo_pic_ids(self):
-        return self._get_attr_value("$.data.list[*].pic_ids")
+        return self._get_list_attr_value("$.data.list[*].pic_ids")
 
     @property
     def weibo_pic_num(self):
-        return self._get_attr_value("$.data.list[*].pic_num")
+        return self._get_list_attr_value("$.data.list[*].pic_num")
 
     @property
     def weibo_location(self):
-        return self._get_attr_value("$.data.list[*].region_name")
+        return self._get_list_attr_value("$.data.list[*].region_name")
 
     @property
     def weibo_reposts_count(self):
-        return self._get_attr_value("$.data.list[*].reposts_count")
+        return self._get_list_attr_value("$.data.list[*].reposts_count")
 
     @property
     def weibo_showFeedComment(self):
-        return self._get_attr_value("$.data.list[*].showFeedComment")
+        return self._get_list_attr_value("$.data.list[*].showFeedComment")
 
     @property
     def weibo_showFeedRepost(self):
-        return self._get_attr_value("$.data.list[*].showFeedRepost")
+        return self._get_list_attr_value("$.data.list[*].showFeedRepost")
 
     @property
     def weibo_showPictureViewer(self):
-        return self._get_attr_value("$.data.list[*].showPictureViewer")
+        return self._get_list_attr_value("$.data.list[*].showPictureViewer")
 
     @property
     def weibo_desc(self):
-        return replaceT(self._get_attr_value("$.data.list[*].text_raw"))
+        # example: ["超大颗花生汤圆[舔屏] http://t.cn/A6nqzsFe", xxx]
+        # 去除最后的链接
+        desc = self._get_list_attr_value("$.data.list[*].text_raw")
+        return [replaceT(extract_desc(d)) for d in desc]
 
     @property
     def weibo_desc_raw(self):
-        return self._get_attr_value("$.data.list[*].text_raw")
+        desc = self._get_list_attr_value("$.data.list[*].text_raw")
+        return [extract_desc(d) for d in desc]
 
     @property
     def weibo_sorce(self):
-        return self._get_attr_value("$.data.list[*].source")
-
-    # 需要用#包裹并quote
-    @property
-    def weibo_topic_title(self):
-        return self._get_attr_value("$.data.list[*].topic_struct[*].topic_title")
+        return self._get_list_attr_value("$.data.list[*].source")
 
     # User
     @property
     def weibo_user_name(self):
-        return replaceT(self._get_attr_value("$.data.list[*].user.screen_name"))
+        return replaceT(self._get_list_attr_value("$.data.list[*].user.screen_name"))
 
     @property
     def weibo_user_name_raw(self):
-        return self._get_attr_value("$.data.list[*].user.screen_name")
+        return self._get_list_attr_value("$.data.list[*].user.screen_name")
 
     @property
     def weibo_user_uid(self):
-        return self._get_attr_value("$.data.list[*].user.idstr")
+        return self._get_list_attr_value("$.data.list[*].user.idstr")
 
     @property
     def weibo_user_domain(self):
-        return self._get_attr_value("$.data.list[*].user.domain")
+        return self._get_list_attr_value("$.data.list[*].user.domain")
 
     @property
     def weibo_user_avatar_hd(self):
-        return self._get_attr_value("$.data.list[*].user.avatar_hd")
+        return self._get_list_attr_value("$.data.list[*].user.avatar_hd")
+
+    # VIDEO
+    @property
+    def is_video(self):
+        return self._get_list_attr_value("$.data.list[*].page_info.type")
+
+    @property
+    def bitrate_list(self):
+        return self._get_list_attr_value(
+            "$.data.list[*].page_info.media_info.playback_list[*].play_info.bitrate"
+        )
+
+    @property
+    def playback_list(self):
+        return self._get_list_attr_value(
+            "$.data.list[*].page_info.media_info.playback_list[*].play_info.url"
+        )
+
+    @property
+    def quality_list(self):
+        return self._get_list_attr_value(
+            "$.data.list[*].page_info.media_info.playback_list[*].play_info.quality_class"
+        )
 
     def _to_raw(self) -> dict:
         return self._data
