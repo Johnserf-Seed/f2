@@ -1,6 +1,9 @@
 # path: f2/apps/tiktok/dl.py
 
-import sys
+import asyncio
+
+from rich.live import Live
+from rich.rule import Rule
 from datetime import datetime
 from typing import Any, Union
 
@@ -10,6 +13,7 @@ from f2.dl.base_downloader import BaseDownloader
 from f2.utils.utils import get_timestamp, timestamp_2_str
 from f2.apps.tiktok.db import AsyncUserDB
 from f2.apps.tiktok.utils import format_file_name
+from f2.cli.cli_console import RichConsoleManager
 
 
 class TiktokDownloader(BaseDownloader):
@@ -138,8 +142,21 @@ class TiktokDownloader(BaseDownloader):
         for aweme_data in aweme_datas_list:
             await self.handler_download(kwargs, aweme_data, user_path)
 
-        # 执行下载任务
-        await self.execute_tasks()
+        # 使用 Rich 的 Live 管理器
+        with Live(
+            console=RichConsoleManager().rich_console,
+            # auto_refresh=True,
+            refresh_per_second=2,
+            vertical_overflow="visible",
+        ) as live:
+            for aweme_data in aweme_datas_list:
+                await self.handler_download(kwargs, aweme_data, user_path)
+            # 延时更新，避免过快刷新导致界面错乱
+            await asyncio.sleep(0.1)
+            # 动态更新规则输出
+            live.update(Rule(_("当前任务处理完成")))
+
+            await self.execute_tasks()
 
     async def handler_download(
         self, kwargs: dict, aweme_data_dict: dict, user_path: Any
