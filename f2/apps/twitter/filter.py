@@ -62,7 +62,7 @@ class TweetDetailFilter(JSONModel):
 
     # 发布时间
     @property
-    def tweet_created_time(self):
+    def tweet_created_at(self):
         return timestamp_2_str(
             self._get_attr_value(
                 "$.data.threaded_conversation_with_injections_v2.instructions[0].entries[0].content.itemContent.tweet_results.result.legacy.created_at"
