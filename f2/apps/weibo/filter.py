@@ -457,3 +457,19 @@ class UserWeiboFilter(JSONModel):
             for prop_name in dir(self)
             if not prop_name.startswith("__") and not prop_name.startswith("_")
         }
+
+    def _to_list(self) -> list:
+        exclude_fields = [
+            "status",
+            "message",
+            "weibo_total",
+        ]
+        extra_fields = [
+            "status",
+            "message",
+            "weibo_total",
+        ]
+
+        list_dicts = filter_to_list(self, "$.data.list", exclude_fields, extra_fields)
+
+        return list_dicts
