@@ -90,3 +90,34 @@ https://github.com/Johnserf-Seed/TikTokDownload/issues/660
 https://johnserf-seed.github.io/f2/guide/apps/tiktok/#%E7%94%9F%E6%88%90deviceid-%F0%9F%9F%A2
 
 # endregion tiktok-403-forbidden
+
+
+# region typeerror-nonetype-has-no-len()
+
+当过滤器在处理数据时出现以下错误:
+```shell
+`TypeError: object of type 'NoneType' has no len()`
+```
+
+这通常是因为接口字段已更新，导致代码中的 `jsonpath` 对应的字段已经不存在或发生了更改。
+
+
+在终端，你会看到类似以下的错误日志：
+```shell
+由于接口更新，部分字段处理失败:
+字段 weibo_read_count 出错: object of type 'NoneType' has no len()
+字段 weibo_topic_title 出错: object of type 'NoneType' has no len()
+```
+
+请及时在 Issue 中反馈问题，并附上以下信息：
+
+1. 脱敏的 debug 日志(f2 -d DEBUG)：
+    -   包含完整的错误信息及上下文。
+2. 字段描述：
+    - 明确指出哪些字段出现了问题，哪些字段可能需要更新。
+3. 接口返回数据的简化结构（可选）：
+    - 提供相关字段在接口返回数据中的大致位置，方便定位问题。
+
+收到反馈后，我会尽快排查问题，并在后续版本中更新代码适配最新接口，同时也欢迎你提交 PR。
+
+# endregion typeerror-nonetype-has-no-len()
