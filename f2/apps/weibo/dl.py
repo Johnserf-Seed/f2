@@ -1,5 +1,9 @@
 # path: f2/apps/weibo/dl.py
 
+import asyncio
+
+from rich.live import Live
+from rich.rule import Rule
 from typing import Any, Dict, List, Union
 
 from f2.log.logger import logger
@@ -7,6 +11,7 @@ from f2.i18n.translator import _
 from f2.dl.base_downloader import BaseDownloader
 from f2.apps.weibo.utils import format_file_name
 from f2.apps.weibo.api import WeiboAPIEndpoints
+from f2.cli.cli_console import RichConsoleManager
 
 
 class WeiboDownloader(BaseDownloader):
@@ -48,12 +53,21 @@ class WeiboDownloader(BaseDownloader):
             [weibo_datas] if isinstance(weibo_datas, dict) else weibo_datas
         )
 
-        # 创建下载任务
-        for weibo_data in weibo_datas_list:
-            await self.handler_download(kwargs, weibo_data, user_path)
+        # 使用 Rich 的 Live 管理器
+        with Live(
+            console=RichConsoleManager().rich_console,
+            # auto_refresh=True,
+            refresh_per_second=2,
+            vertical_overflow="visible",
+        ) as live:
+            for weibo_data in weibo_datas_list:
+                await self.handler_download(kwargs, weibo_data, user_path)
+            # 延时更新，避免过快刷新导致界面错乱
+            await asyncio.sleep(0.1)
+            # 动态更新规则输出
+            live.update(Rule(_("当前任务处理完成")))
 
-        # 执行下载任务
-        await self.execute_tasks()
+            await self.execute_tasks()
 
     async def handler_download(
         self, kwargs: Dict, weibo_data_dict: Dict, user_path: Any
