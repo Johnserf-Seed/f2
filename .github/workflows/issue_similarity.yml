@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: analysis
-        uses: actions-cool/issues-similarity-analysis@v1
+        uses: actions-cool/issues-similarity-analysis@v1.3.2
         with:
           filter-threshold: 0.5
           comment-title: '### Similarity Issues'
