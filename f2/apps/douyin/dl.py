@@ -39,7 +39,10 @@ class DouyinDownloader(BaseDownloader):
             await db.update_user_info(sec_user_id=sec_user_id, last_aweme_id=aweme_id)
 
     async def create_download_tasks(
-        self, kwargs: Dict, aweme_datas: Union[List, Dict], user_path: Any
+        self,
+        kwargs: Dict,
+        aweme_datas: Union[List, Dict],
+        user_path: Any,
     ) -> None:
         """
         创建下载任务
@@ -65,14 +68,15 @@ class DouyinDownloader(BaseDownloader):
 
         # 筛选指定日期区间内的作品
         if kwargs.get("interval") is None:
-            logger.warning(_("未提供日期区间参数，将下载所有作品"))
+            logger.warning(_("未提供日期区间参数"))
         elif kwargs.get("interval") != "all":
             aweme_datas_list = await filter_by_date_interval(
-                aweme_datas_list, kwargs.get("interval")
+                aweme_datas_list, kwargs.get("interval"), "create_time"
             )
 
         # 检查是否有符合条件的作品
         if not aweme_datas_list:
+            logger.warning(_("没有找到符合条件的作品，请检查`interval`参数是否正确"))
             return
 
         # 使用 Rich 的 Live 管理器
