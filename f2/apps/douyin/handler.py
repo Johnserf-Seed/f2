@@ -357,7 +357,6 @@ class DouyinHandler:
             videos_collected += len(video.aweme_id)
             max_cursor = video.max_cursor
 
-            rich_console.print(Rule())
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
@@ -471,8 +470,6 @@ class DouyinHandler:
             videos_collected += len(like.aweme_id)
             max_cursor = like.max_cursor
 
-            rich_console.print(Rule())
-
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
@@ -572,8 +569,6 @@ class DouyinHandler:
             # 更新已经处理的音乐数量 (Update the number of music processed)
             music_collected += len(music.music_id)
             max_cursor = music.max_cursor
-
-            rich_console.print(Rule())
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -675,8 +670,6 @@ class DouyinHandler:
             # 更新已经处理的作品数量 (Update the number of videos processed)
             videos_collected += len(collection.aweme_id)
             max_cursor = collection.max_cursor
-
-            rich_console.print(Rule())
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -843,8 +836,6 @@ class DouyinHandler:
 
             max_cursor = collects.max_cursor
 
-            rich_console.print(Rule())
-
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
@@ -926,8 +917,6 @@ class DouyinHandler:
                         break
 
             max_cursor = video.max_cursor
-
-            rich_console.print(Rule())
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -1046,8 +1035,6 @@ class DouyinHandler:
             # 更新已经处理的作品数量 (Update the number of videos processed)
             videos_collected += len(mix.aweme_id)
             max_cursor = mix.max_cursor
-
-            rich_console.print(Rule())
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -1267,8 +1254,6 @@ class DouyinHandler:
             videos_collected += len(feed.aweme_id)
             max_cursor = feed.max_cursor
 
-            rich_console.print(Rule())
-
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
@@ -1371,8 +1356,6 @@ class DouyinHandler:
 
             # 更新已经处理的作品数量 (Update the number of videos processed)
             videos_collected += len(related.aweme_id)
-
-            rich_console.print(Rule())
 
             # 更新过滤的作品ID (Update the filtered video ID)
             filterGids = ",".join([str(aweme_id) for aweme_id in related.aweme_id])
@@ -1482,8 +1465,6 @@ class DouyinHandler:
             # 更新其他参数 (Update other parameters)
             level = friend.level
             pull_type = friend.level
-
-            rich_console.print(Rule())
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -1707,7 +1688,6 @@ class DouyinHandler:
                 )
             )
             logger.debug(_("结束查询直播间信息"))
-            rich_console.print(Rule())
         else:
             logger.warning(_("请提供正确的Room_ID"))
 
@@ -1800,7 +1780,6 @@ class DouyinHandler:
 
             if result == "closed":
                 logger.info(_("直播间：{0} 已结束直播或断开了本地连接").format(room_id))
-                rich_console.print(Rule())
             elif result == "error":
                 logger.error(_("直播间：{0} 弹幕连接异常").format(room_id))
 

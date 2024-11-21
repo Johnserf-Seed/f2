@@ -329,7 +329,6 @@ class TiktokHandler:
             videos_collected += len(video.aweme_id)
             cursor = video.cursor
 
-            rich_console.print(Rule())
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
@@ -438,7 +437,6 @@ class TiktokHandler:
             videos_collected += len(like.aweme_id)
             cursor = like.cursor
 
-            rich_console.print(Rule())
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
@@ -548,7 +546,6 @@ class TiktokHandler:
             videos_collected += len(collect.aweme_id)
             cursor = collect.cursor
 
-            rich_console.print(Rule())
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
@@ -747,7 +744,6 @@ class TiktokHandler:
             videos_collected += len(mix.aweme_id)
             cursor = mix.cursor
 
-            rich_console.print(Rule())
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
@@ -865,7 +861,6 @@ class TiktokHandler:
             offset = search.cursor
             search_id = search.search_id
 
-            rich_console.print(Rule())
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
