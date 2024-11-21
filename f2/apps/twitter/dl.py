@@ -9,8 +9,7 @@ from typing import Any, Union
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.dl.base_downloader import BaseDownloader
-from f2.utils.utils import get_timestamp, timestamp_2_str
-from f2.apps.twitter.db import AsyncUserDB
+from f2.utils.utils import filter_by_date_interval
 from f2.apps.twitter.utils import format_file_name
 from f2.cli.cli_console import RichConsoleManager
 
@@ -27,7 +26,10 @@ class TwitterDownloader(BaseDownloader):
         super().__init__(kwargs)
 
     async def create_download_tasks(
-        self, kwargs: dict, tweet_datas: Union[list, dict], user_path: Any
+        self,
+        kwargs: dict,
+        tweet_datas: Union[list, dict],
+        user_path: Any,
     ) -> None:
         """
         创建下载任务
@@ -51,20 +53,17 @@ class TwitterDownloader(BaseDownloader):
         )
 
         # 筛选指定日期区间内的推文
-        if kwargs.get("interval") != "all":
-            tweet_datas_list = await self.filter_tweet_datas_by_interval(
-                tweet_datas_list, kwargs.get("interval")
+        if kwargs.get("interval") is None:
+            logger.warning(_("未提供日期区间参数"))
+        elif kwargs.get("interval") != "all":
+            tweet_datas_list = await filter_by_date_interval(
+                tweet_datas_list, kwargs.get("interval"), "tweet_created_at"
             )
 
         # 检查是否有符合条件的推文
         if not tweet_datas_list:
-            logger.warning(_("没有找到符合条件的推文"))
-            await self.close()
-            sys.exit(0)
-
-        # 创建下载任务
-        for tweet_data in tweet_datas_list:
-            await self.handler_download(kwargs, tweet_data, user_path)
+            logger.warning(_("没有找到符合条件的推文，请检查`interval`参数是否正确"))
+            return
 
         # 使用 Rich 的 Live 管理器
         with Live(
@@ -114,11 +113,6 @@ class TwitterDownloader(BaseDownloader):
             if kwargs.get("folderize")
             else user_path
         )
-
-        # # 检查微博是否可见
-        # if tweet_data_dict.get("is_visible"):
-        #     logger.error(_("微博 {0} 无查看权限").format(tweet_id))
-        #     return
 
         # 检查推文是否有图片
         if tweet_media_type == "video":

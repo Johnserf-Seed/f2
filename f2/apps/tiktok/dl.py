@@ -10,7 +10,7 @@ from typing import Any, Union
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.dl.base_downloader import BaseDownloader
-from f2.utils.utils import get_timestamp, timestamp_2_str
+from f2.utils.utils import get_timestamp, timestamp_2_str, filter_by_date_interval
 from f2.apps.tiktok.db import AsyncUserDB
 from f2.apps.tiktok.utils import format_file_name
 from f2.cli.cli_console import RichConsoleManager
@@ -65,8 +65,6 @@ class TiktokDownloader(BaseDownloader):
         except ValueError:
             logger.error(_("日期区间参数格式错误，请查阅文档后重试"))
             return None
-
-        logger.info(aweme_datas)
 
         if isinstance(aweme_datas, dict):
             aweme_date_str = aweme_datas.get("createTime")
@@ -127,20 +125,17 @@ class TiktokDownloader(BaseDownloader):
         )
 
         # 筛选指定日期区间内的作品
-        if kwargs.get("interval") != "all":
-            aweme_datas_list = await self.filter_aweme_datas_by_interval(
-                aweme_datas_list, kwargs.get("interval")
+        if kwargs.get("interval") is None:
+            logger.warning(_("未提供日期区间参数"))
+        elif kwargs.get("interval") != "all":
+            aweme_datas_list = await filter_by_date_interval(
+                aweme_datas_list, kwargs.get("interval"), "createTime"
             )
 
         # 检查是否有符合条件的作品
         if not aweme_datas_list:
-            logger.warning(_("没有找到符合条件的作品"))
-            await self.close()
-            sys.exit(0)
-
-        # 创建下载任务
-        for aweme_data in aweme_datas_list:
-            await self.handler_download(kwargs, aweme_data, user_path)
+            logger.warning(_("没有找到符合条件的作品，请检查`interval`参数是否正确"))
+            return
 
         # 使用 Rich 的 Live 管理器
         with Live(
@@ -241,7 +236,7 @@ class TiktokDownloader(BaseDownloader):
                         _("封面"), animated_cover_url, base_path, cover_name, ".webp"
                     )
                 elif cover_url != None:
-                    logger.warning(_("{0} 该作品没有动态封面").format(aweme_id))
+                    logger.debug(_("{0} 该作品没有动态封面").format(aweme_id))
                     await self.initiate_download(
                         _("封面"), cover_url, base_path, cover_name, ".jpeg"
                     )

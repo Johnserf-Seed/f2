@@ -625,7 +625,9 @@ class BaseEndpointManager:
 
 
 async def filter_by_date_interval(
-    data: Union[List[Dict], Dict], interval: str
+    data: Union[List[Dict], Dict],
+    interval: str,
+    fied_name: str = "create_time",
 ) -> Union[List[Dict], Dict, None]:
     """
     筛选指定日期区间内的作品
@@ -639,7 +641,7 @@ async def filter_by_date_interval(
     """
 
     def is_within_interval(item: Dict) -> bool:
-        date_str = item.get("create_time")
+        date_str = item.get(fied_name)
         if not date_str:
             logger.warning(_("作品缺少创建时间：{0}").format(item))
             return False
