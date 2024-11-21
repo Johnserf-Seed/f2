@@ -288,7 +288,7 @@ def format_file_name(
         "linux": 60,
     }
     fields = {
-        "create": tweet_data.get("tweet_created_time", ""),  # 长度固定19
+        "create": tweet_data.get("tweet_created_at", ""),  # 长度固定19
         "nickname": tweet_data.get("nickname", ""),  # 不固定
         "tweet_id": tweet_data.get("tweet_id", ""),  # 长度固定19
         "desc": split_filename(tweet_data.get("tweet_desc", ""), os_limit),
