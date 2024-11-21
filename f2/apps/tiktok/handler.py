@@ -228,6 +228,7 @@ class TiktokHandler:
         """
 
         cursor = self.kwargs.get("cursor", 0)
+        min_cursor = 0
         page_counts = self.kwargs.get("page_counts", 35)
         max_counts = self.kwargs.get("max_counts")
         interval = self.kwargs.get("interval")
