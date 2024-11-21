@@ -32,3 +32,9 @@
 ## tiktok 403 Forbidden
 
 <<< @/snippets/QA.md#tiktok-403-forbidden
+
+
+## TypeError: object of type 'NoneType' has no len()
+
+<<< @/snippets/QA.md#typeerror-nonetype-has-no-len()
+
