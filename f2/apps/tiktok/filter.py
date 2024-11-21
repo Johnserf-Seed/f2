@@ -1,7 +1,7 @@
 # path: f2/apps/tiktok/filter.py
 
 from f2.utils.json_filter import JSONModel
-from f2.utils.utils import timestamp_2_str, replaceT, unescape_json
+from f2.utils.utils import timestamp_2_str, replaceT, unescape_json, filter_to_list
 
 
 class UserProfileFilter(JSONModel):
@@ -347,33 +347,26 @@ class UserPostFilter(JSONModel):
             if not prop_name.startswith("__") and not prop_name.startswith("_")
         }
 
-    def _to_list(self):
+    def _to_list(self) -> list:
         # 定义不需要的属性列表
-        exclude_list = ["hasMore", "cursor", "has_aweme", "api_status_code"]
-        # 生成属性名称列表，然后过滤掉不需要的属性
-        keys = [
-            prop_name
-            for prop_name in dir(self)
-            if not prop_name.startswith("__")
-            and not prop_name.startswith("_")
-            and prop_name not in exclude_list
+        exclude_fields = [
+            "hasMore",
+            "cursor",
+            "has_aweme",
+            "api_status_code",
+        ]
+        extra_fields = [
+            "hasMore",
+            "cursor",
         ]
 
-        aweme_entries = self._get_attr_value("$.itemList") or []
+        list_dicts = filter_to_list(
+            self,
+            "$.itemList",
+            exclude_fields,
+            extra_fields,
+        )
 
-        list_dicts = []
-        # 遍历每个条目并创建一个字典
-        # (Iterate through each entry and create a dict)
-        for entry in aweme_entries:
-            d = {"hasMore": self.hasMore, "cursor": self.cursor}
-            for key in keys:
-                attr_values = getattr(self, key)
-                # 当前aweme_entry在属性列表中的索引
-                index = aweme_entries.index(entry)
-                # 如果属性值的长度足够则赋值，否则赋None
-                # (Assign value if the length of the attribute value is sufficient, otherwise assign None)
-                d[key] = attr_values[index] if index < len(attr_values) else None
-            list_dicts.append(d)
         return list_dicts
 
 
@@ -666,25 +659,17 @@ class PostDetailFilter(JSONModel):
             if not prop_name.startswith("__") and not prop_name.startswith("_")
         }
 
-    def _to_list(self):
-        exclude_list = []
-        keys = [
-            prop_name
-            for prop_name in dir(self)
-            if not prop_name.startswith("__")
-            and not prop_name.startswith("_")
-            and prop_name not in exclude_list
-        ]
-        aweme_entries = self._get_attr_value("$.itemInfo.itemStruct") or []
-        list_dicts = []
+    def _to_list(self) -> list:
+        exclude_fields = []
+        extra_fields = []
 
-        for entry in aweme_entries:
-            d = {}
-            for key in keys:
-                attr_values = getattr(self, key, [])
-                index = aweme_entries.index(entry)
-                d[key] = attr_values[index] if index < len(attr_values) else None
-            list_dicts.append(d)
+        list_dicts = filter_to_list(
+            self,
+            "$.itemInfo.itemStruct",
+            exclude_fields,
+            extra_fields,
+        )
+
         return list_dicts
 
 
@@ -894,24 +879,25 @@ class PostSearchFilter(JSONModel):
             if not prop_name.startswith("__") and not prop_name.startswith("_")
         }
 
-    def _to_list(self):
-        exclude_list = ["has_more", "cursor", "has_aweme", "api_status_code"]
-        keys = [
-            prop_name
-            for prop_name in dir(self)
-            if not prop_name.startswith("__")
-            and not prop_name.startswith("_")
-            and prop_name not in exclude_list
+    def _to_list(self) -> list:
+        exclude_fields = [
+            "has_more",
+            "cursor",
+            "has_aweme",
+            "api_status_code",
         ]
-        aweme_entries = self._get_attr_value("$.item_list") or []
-        list_dicts = []
-        for entry in aweme_entries:
-            d = {"has_more": self.has_more, "cursor": self.cursor}
-            for key in keys:
-                attr_values = getattr(self, key)
-                index = aweme_entries.index(entry)
-                d[key] = attr_values[index] if index < len(attr_values) else None
-            list_dicts.append(d)
+        extra_fields = [
+            "has_more",
+            "cursor",
+        ]
+
+        list_dicts = filter_to_list(
+            self,
+            "$.item_list",
+            exclude_fields,
+            extra_fields,
+        )
+
         return list_dicts
 
 
@@ -1066,22 +1052,15 @@ class CheckLiveAliveFilter(JSONModel):
             if not prop_name.startswith("__") and not prop_name.startswith("_")
         }
 
-    def _to_list(self):
-        exclude_list = ["api_status_code"]
-        keys = [
-            prop_name
-            for prop_name in dir(self)
-            if not prop_name.startswith("__")
-            and not prop_name.startswith("_")
-            and prop_name not in exclude_list
-        ]
-        aweme_entries = self._get_attr_value("$.data") or []
-        list_dicts = []
-        for entry in aweme_entries:
-            d = {}
-            for key in keys:
-                attr_values = getattr(self, key)
-                index = aweme_entries.index(entry)
-                d[key] = attr_values[index] if index < len(attr_values) else None
-            list_dicts.append(d)
+    def _to_list(self) -> list:
+        exclude_fields = ["api_status_code"]
+        extra_fields = []
+
+        list_dicts = filter_to_list(
+            self,
+            "$.data",
+            exclude_fields,
+            extra_fields,
+        )
+
         return list_dicts

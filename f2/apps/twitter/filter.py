@@ -1,7 +1,7 @@
 # path: f2/apps/twitter/filter.py
 
 from f2.utils.json_filter import JSONModel
-from f2.utils.utils import timestamp_2_str, replaceT
+from f2.utils.utils import timestamp_2_str, replaceT, filter_to_list
 
 # Filter
 
@@ -688,53 +688,24 @@ class PostTweetFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_list = [
+        exclude_fields = [
             "max_cursor",
             "min_cursor",
         ]
 
-        keys = [
-            prop_name
-            for prop_name in dir(self)
-            if not prop_name.startswith("__")
-            and not prop_name.startswith("_")
-            and prop_name not in exclude_list
+        extra_fields = [
+            "max_cursor",
+            "min_cursor",
         ]
 
-        tweet_entries = (
-            self._get_attr_value(
-                "$.data.user.result.timeline_v2.timeline.instructions[-1].entries"
-            )
-            or []
+        list_dicts = filter_to_list(
+            self,
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries",
+            exclude_fields,
+            extra_fields,
         )
 
-        list_dicts = []
-        for entry in tweet_entries:
-            d = {
-                "max_cursor": self.max_cursor,
-                "min_cursor": self.min_cursor,
-            }
-            for key in keys:
-                attr_values = getattr(self, key)
-                index = tweet_entries.index(entry)
-                d[key] = attr_values[index] if index < len(attr_values) else None
-            list_dicts.append(d)
         return list_dicts
-
-        # list_dicts = []
-        # for index, (key, entry) in enumerate(tweet_entries.items()):
-        #     d = {
-        #         "max_cursor": self.max_cursor,
-        #         "min_cursor": self.min_cursor,
-        #     }
-        #     for key in keys:
-        #         attr_values = getattr(self, key)
-        #         if attr_values is not None:
-        #             d[key] = attr_values[index] if index < len(attr_values) else None
-        #         else:
-        #             d[key] = None
-        #     list_dicts.append(d)
-        # return list_dicts
 
 
 class PostRetweetFilter(JSONModel):
@@ -1116,35 +1087,21 @@ class PostRetweetFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_list = [
+        exclude_fields = [
             "max_cursor",
             "min_cursor",
         ]
 
-        keys = [
-            prop_name
-            for prop_name in dir(self)
-            if not prop_name.startswith("__")
-            and not prop_name.startswith("_")
-            and prop_name not in exclude_list
+        extra_fields = [
+            "max_cursor",
+            "min_cursor",
         ]
 
-        tweet_entries = (
-            self._get_attr_value(
-                "$.data.user.result.timeline_v2.timeline.instructions[-1].entries"
-            )
-            or []
+        list_dicts = filter_to_list(
+            self,
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries",
+            exclude_fields,
+            extra_fields,
         )
 
-        list_dicts = []
-        for entry in tweet_entries:
-            d = {
-                "max_cursor": self.max_cursor,
-                "min_cursor": self.min_cursor,
-            }
-            for key in keys:
-                attr_values = getattr(self, key)
-                index = tweet_entries.index(entry)
-                d[key] = attr_values[index] if index < len(attr_values) else None
-            list_dicts.append(d)
         return list_dicts

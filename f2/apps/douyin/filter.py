@@ -2,7 +2,7 @@
 
 from typing import List, Dict, Any
 from f2.utils.json_filter import JSONModel
-from f2.utils.utils import timestamp_2_str, replaceT
+from f2.utils.utils import timestamp_2_str, replaceT, filter_to_list
 
 # Filter
 
@@ -338,8 +338,8 @@ class UserPostFilter(JSONModel):
             if not prop_name.startswith("__") and not prop_name.startswith("_")
         }
 
-    def _to_list(self):
-        exclude_list = [
+    def _to_list(self) -> list:
+        exclude_fields = [
             "status_code",
             "has_more",
             "max_cursor",
@@ -348,29 +348,20 @@ class UserPostFilter(JSONModel):
             "locate_item_cursor",
         ]
 
-        keys = [
-            prop_name
-            for prop_name in dir(self)
-            if not prop_name.startswith("__")
-            and not prop_name.startswith("_")
-            and prop_name not in exclude_list
+        extra_fields = [
+            "status_code",
+            "has_more",
+            "max_cursor",
+            "min_cursor",
         ]
 
-        aweme_entries = self._get_attr_value("$.aweme_list") or []
+        list_dicts = filter_to_list(
+            self,
+            "$.aweme_list",
+            exclude_fields,
+            extra_fields,
+        )
 
-        list_dicts = []
-        for entry in aweme_entries:
-            d = {
-                "status_code": self.status_code,
-                "has_more": self.has_more,
-                "max_cursor": self.max_cursor,
-                "min_cursor": self.min_cursor,
-            }
-            for key in keys:
-                attr_values = getattr(self, key)
-                index = aweme_entries.index(entry)
-                d[key] = attr_values[index] if index < len(attr_values) else None
-            list_dicts.append(d)
         return list_dicts
 
 
@@ -632,32 +623,28 @@ class UserMusicCollectionFilter(JSONModel):
             if not prop_name.startswith("__") and not prop_name.startswith("_")
         }
 
-    def _to_list(self):
-        exclude_list = ["has_more", "max_cursor", "status_code", "msg"]
-
-        keys = [
-            prop_name
-            for prop_name in dir(self)
-            if not prop_name.startswith("__")
-            and not prop_name.startswith("_")
-            and prop_name not in exclude_list
+    def _to_list(self) -> list:
+        exclude_fields = [
+            "has_more",
+            "max_cursor",
+            "status_code",
+            "msg",
         ]
 
-        aweme_entries = self._get_attr_value("$.mc_list") or []
+        extra_fields = [
+            "has_more",
+            "max_cursor",
+            "status_code",
+            "msg",
+        ]
 
-        list_dicts = []
-        for entry in aweme_entries:
-            d = {
-                "has_more": self.has_more,
-                "max_cursor": self.max_cursor,
-                "status_code": self.status_code,
-                "msg": self.msg,
-            }
-            for key in keys:
-                attr_values = getattr(self, key)
-                index = aweme_entries.index(entry)
-                d[key] = attr_values[index] if index < len(attr_values) else None
-            list_dicts.append(d)
+        list_dicts = filter_to_list(
+            self,
+            "$.mc_list",
+            exclude_fields,
+            extra_fields,
+        )
+
         return list_dicts
 
 
@@ -862,8 +849,8 @@ class UserFollowingFilter(JSONModel):
             if not prop_name.startswith("__") and not prop_name.startswith("_")
         }
 
-    def _to_list(self):
-        exclude_list = [
+    def _to_list(self) -> list:
+        exclude_fields = [
             "status_code",
             "status_msg",
             "has_more",
@@ -875,32 +862,23 @@ class UserFollowingFilter(JSONModel):
             "min_time",
         ]
 
-        keys = [
-            prop_name
-            for prop_name in dir(self)
-            if not prop_name.startswith("__")
-            and not prop_name.startswith("_")
-            and prop_name not in exclude_list
+        extra_fields = [
+            "has_more",
+            "total",
+            "mix_count",
+            "offset",
+            "myself_user_id",
+            "max_time",
+            "min_time",
         ]
 
-        following_entries = self._get_attr_value("$.followings") or []
+        list_dicts = filter_to_list(
+            self,
+            "$.followings",
+            exclude_fields,
+            extra_fields,
+        )
 
-        list_dicts = []
-        for entry in following_entries:
-            d = {
-                "has_more": self.has_more,
-                "total": self.total,
-                "mix_count": self.mix_count,
-                "offset": self.offset,
-                "myself_user_id": self.myself_user_id,
-                "max_time": self.max_time,
-                "min_time": self.min_time,
-            }
-            for key in keys:
-                attr_values = getattr(self, key)
-                index = following_entries.index(entry)
-                d[key] = attr_values[index] if index < len(attr_values) else None
-            list_dicts.append(d)
         return list_dicts
 
 
@@ -1032,8 +1010,8 @@ class UserFollowerFilter(UserFollowingFilter):
     def unique_id(self):
         return self._get_list_attr_value("$.followers[*].unique_id")
 
-    def _to_list(self):
-        exclude_list = [
+    def _to_list(self) -> list:
+        exclude_fields = [
             "status_code",
             "status_msg",
             "has_more",
@@ -1045,32 +1023,23 @@ class UserFollowerFilter(UserFollowingFilter):
             "min_time",
         ]
 
-        keys = [
-            prop_name
-            for prop_name in dir(self)
-            if not prop_name.startswith("__")
-            and not prop_name.startswith("_")
-            and prop_name not in exclude_list
+        extra_fields = [
+            "has_more",
+            "total",
+            "mix_count",
+            "offset",
+            "myself_user_id",
+            "max_time",
+            "min_time",
         ]
 
-        following_entries = self._get_attr_value("$.followers") or []
+        list_dicts = filter_to_list(
+            self,
+            "$.followers",
+            exclude_fields,
+            extra_fields,
+        )
 
-        list_dicts = []
-        for entry in following_entries:
-            d = {
-                "has_more": self.has_more,
-                "total": self.total,
-                "mix_count": self.mix_count,
-                "offset": self.offset,
-                "myself_user_id": self.myself_user_id,
-                "max_time": self.max_time,
-                "min_time": self.min_time,
-            }
-            for key in keys:
-                attr_values = getattr(self, key)
-                index = following_entries.index(entry)
-                d[key] = attr_values[index] if index < len(attr_values) else None
-            list_dicts.append(d)
         return list_dicts
 
 
@@ -1949,8 +1918,8 @@ class FriendFeedFilter(JSONModel):
             if not prop_name.startswith("__") and not prop_name.startswith("_")
         }
 
-    def _to_list(self):
-        exclude_list = [
+    def _to_list(self) -> list:
+        exclude_fields = [
             "status_code",
             "status_msg",
             "has_more",
@@ -1959,31 +1928,21 @@ class FriendFeedFilter(JSONModel):
             "cursor",
             "level",
         ]
-
-        keys = [
-            prop_name
-            for prop_name in dir(self)
-            if not prop_name.startswith("__")
-            and not prop_name.startswith("_")
-            and prop_name not in exclude_list
+        extra_fields = [
+            "has_more",
+            "has_aweme",
+            "friend_update_count",
+            "cursor",
+            "level",
         ]
 
-        friend_feed_entries = self._get_attr_value("$.data") or []
+        list_dicts = filter_to_list(
+            self,
+            "$.data",
+            exclude_fields,
+            extra_fields,
+        )
 
-        list_dicts = []
-        for entry in friend_feed_entries:
-            d = {
-                "has_more": self.has_more,
-                "has_aweme": self.has_aweme,
-                "friend_update_count": self.friend_update_count,
-                "cursor": self.cursor,
-                "level": self.level,
-            }
-            for key in keys:
-                attr_values = getattr(self, key)
-                index = friend_feed_entries.index(entry)
-                d[key] = attr_values[index] if index < len(attr_values) else None
-            list_dicts.append(d)
         return list_dicts
 
 
@@ -2312,28 +2271,18 @@ class FollowingUserLiveFilter(JSONModel):
             if not prop_name.startswith("__") and not prop_name.startswith("_")
         }
 
-    def _to_list(self):
-        exclude_list = [
+    def _to_list(self) -> list:
+        exclude_fields = [
             "status_code",
             "status_msg",
         ]
+        extra_fields = []
 
-        keys = [
-            prop_name
-            for prop_name in dir(self)
-            if not prop_name.startswith("__")
-            and not prop_name.startswith("_")
-            and prop_name not in exclude_list
-        ]
+        list_dicts = filter_to_list(
+            self,
+            "$.data.data",
+            exclude_fields,
+            extra_fields,
+        )
 
-        friend_feed_entries = self._get_attr_value("$.data.data") or []
-
-        list_dicts = []
-        for entry in friend_feed_entries:
-            d = {}
-            for key in keys:
-                attr_values = getattr(self, key)
-                index = friend_feed_entries.index(entry)
-                d[key] = attr_values[index] if index < len(attr_values) else None
-            list_dicts.append(d)
         return list_dicts
