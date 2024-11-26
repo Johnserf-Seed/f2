@@ -491,7 +491,7 @@ def create_or_rename_user_folder(
 
 def extract_desc(text):
     """
-    提取微博标题，排除最后的链接部分（如果存在）。
+    提取微博标题，抛弃从 "http" 开始及其后的内容，包括其前一个空格。
 
     Args:
         text (str): 原始微博内容
@@ -499,11 +499,13 @@ def extract_desc(text):
     Returns:
         str: 提取后的标题
     """
-    # 根据空格分隔内容
-    parts = text.strip().split(" ")
-    # 检查是否有链接
-    if parts and parts[-1].startswith("http"):
-        # 移除最后一个部分（链接）
-        parts.pop()
-    # 如果没有链接，直接返回原文
-    return " ".join(parts)
+
+    text = text.strip()  # 去掉两端空格
+    http_index = text.find("http")  # 查找 "http" 的起始位置
+
+    if http_index != -1:  # 如果存在 "http"
+        # 找到 "http" 前第一个空格的位置
+        cutoff_index = text.rfind(" ", 0, http_index)
+        if cutoff_index != -1:
+            return text[:cutoff_index].strip()  # 返回截断后的部分
+    return text.strip()  # 如果没有 "http"，返回去掉两端空格后的内容
