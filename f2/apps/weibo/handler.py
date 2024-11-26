@@ -203,7 +203,14 @@ class WeiboHandler:
 
         await self.downloader.create_download_tasks(self.kwargs, weibo_data, user_path)
 
-    async def fetch_user_weibo(self, user_id: str) -> Dict[str, Any]:
+    async def fetch_user_weibo(
+        self,
+        user_id: str,
+        page: int = 1,
+        feature: int = 0,
+        since_id: str = "",
+        max_counts: int = None,
+    ) -> AsyncGenerator[UserWeiboFilter, Any]:
         """
         用于获取用户微博数据。
 
@@ -211,13 +218,43 @@ class WeiboHandler:
             user_id: str: 用户ID
 
         Return:
-            weibo_data: dict: 用户微博数据字典
+            weibo_data: AsyncGenerator[UserWeiboFilter, Any]: 用户微博数据过滤器
         """
 
-        async with WeiboCrawler(self.kwargs) as crawler:
-            params = UserWeibo(uid=user_id)
-            response = await crawler.fetch_user_weibo(params)
-            return response
+        max_counts = max_counts or float("inf")
+        weibos_collected = 0
+
+        logger.info(_("处理用户：{0} 发布的微博").format(user_id))
+
+        while weibos_collected < max_counts:
+            rich_console.print(Rule(_("处理第 {0} 页").format(page)))
+
+            async with WeiboCrawler(self.kwargs) as crawler:
+                params = UserWeibo(
+                    uid=user_id,
+                    page=page,
+                    feature=feature,
+                    since_id=since_id,
+                )
+                response = await crawler.fetch_user_weibo(params)
+                weibo_data = UserWeiboFilter(response)
+                yield weibo_data
+
+            if weibo_data.since_id == "" or weibos_collected == weibo_data.weibo_total:
+                logger.info(
+                    _("已爬取完所有微博，共处理 {0} 个微博").format(weibos_collected)
+                )
+                break
+            else:
+                since_id = str(weibo_data.since_id)
+
+            # 更新已经处理的微博数量
+            weibos_collected += len(weibo_data.weibo_id)
+            page += 1
+
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
 
 
 async def main(kwargs):
