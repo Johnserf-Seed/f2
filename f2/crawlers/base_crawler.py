@@ -110,10 +110,8 @@ class BaseCrawler:
                     mounts=self._create_mount(async_mode=True),
                     timeout=self.timeout,
                 )
-            except UnicodeDecodeError:
-                raise InvalidEncodingError(
-                    _("请确保所有配置项和值均为ASCII或UTF-8编码的字符串")
-                )
+            except UnicodeEncodeError:
+                raise InvalidEncodingError
         return self._aclient
 
     @property
@@ -125,10 +123,8 @@ class BaseCrawler:
                     mounts=self._create_mount(),
                     timeout=self.timeout,
                 )
-            except UnicodeDecodeError:
-                raise InvalidEncodingError(
-                    _("请确保所有配置项和值均为ASCII或UTF-8编码的字符串")
-                )
+            except UnicodeEncodeError:
+                raise InvalidEncodingError
         return self._client
 
     async def _fetch_response(self, endpoint: str) -> Response:
@@ -185,9 +181,7 @@ class BaseCrawler:
             except json.JSONDecodeError as e:
                 logger.error(_("解析 {0} 接口 JSON 失败：{1}").format(response.url, e))
             except UnicodeDecodeError as e:
-                raise InvalidEncodingError(
-                    _("解析 {0} 接口 JSON 失败：{1}").format(response.url, e)
-                )
+                logger.error(_("接口 {0} JSON 解码错误：{1}").format(response.url, e))
         else:
             if isinstance(response, Response):
                 logger.error(
