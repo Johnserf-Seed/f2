@@ -1,6 +1,9 @@
 # path: f2/apps/weibo/handler.py
 
+import asyncio
+
 from pathlib import Path
+from rich.rule import Rule
 from typing import AsyncGenerator, Union, Dict, Any, List
 
 from f2.log.logger import logger
@@ -10,7 +13,12 @@ from f2.apps.weibo.db import AsyncUserDB
 from f2.apps.weibo.crawler import WeiboCrawler
 from f2.apps.weibo.dl import WeiboDownloader
 from f2.apps.weibo.model import UserInfo, UserDetail, UserWeibo, WeiboDetail
-from f2.apps.weibo.filter import UserInfoFilter, UserDetailFilter, WeiboDetailFilter
+from f2.apps.weibo.filter import (
+    UserInfoFilter,
+    UserDetailFilter,
+    WeiboDetailFilter,
+    UserWeiboFilter,
+)
 from f2.apps.weibo.utils import (
     WeiboIdFetcher,
     WeiboUidFetcher,
@@ -32,7 +40,7 @@ class WeiboHandler:
         self.kwargs = kwargs
         self.downloader = WeiboDownloader(kwargs)
 
-    async def fetch_user_info(self, uid: str = "", custom: str = "") -> UserInfoFilter:
+    async def fetch_user_info(self, uid: str, custom: str = "") -> UserInfoFilter:
         """
         获取用户个人信息
         (Get user personal info)
@@ -48,6 +56,9 @@ class WeiboHandler:
             uid和custom只需传入一个 (Only need to pass in one of uid and custom)
         """
 
+        if not uid and not custom:
+            raise ValueError(_("`uid`和`custom`至少需要传入一个"))
+
         async with WeiboCrawler(self.kwargs) as crawler:
             params = UserInfo(uid=uid, custom=custom)
             response = await crawler.fetch_user_info(params)
@@ -56,6 +67,12 @@ class WeiboHandler:
                 raise APIResponseError(
                     _("`fetch_user_info`请求失败，请更换cookie或稍后再试")
                 )
+
+            logger.info(
+                _("用户昵称: [yellow]{0}[/yellow]  微博数: {1}").format(
+                    user.nickname, user.weibo_count
+                )
+            )
             return user
 
     async def fetch_user_detail(self, uid: str) -> UserDetailFilter:
@@ -69,6 +86,9 @@ class WeiboHandler:
         Returns:
             UserDetailFilter: 用户详细信息 (User detail info)
         """
+
+        if not uid:
+            raise ValueError(_("`uid`不能为空"))
 
         async with WeiboCrawler(self.kwargs) as crawler:
             params = UserDetail(uid=uid)
@@ -142,16 +162,11 @@ class WeiboHandler:
             return
         else:
             logger.info(
-                f"微博ID: {weibo.weibo_id}, 微博文案: {weibo.descRaw}, 作者昵称: {weibo.nickname}, 发布时间: {weibo.create_time}"
+                f"微博ID: {weibo.weibo_id}, 微博文案: {weibo.weibo_desc}, 发布时间: {weibo.weibo_created_at}"
             )
 
         async with AsyncUserDB("weibo_users.db") as db:
             user_path = await self.get_or_add_user_data(self.kwargs, weibo.user_id, db)
-
-        # async with AsyncUserDB("douyin_users.db") as db:
-        #     user_path = await self.get_or_add_user_data(
-        #         self.kwargs, weibo_data.get("sec_user_id"), db
-        #     )
 
         await self.downloader.create_download_tasks(
             self.kwargs, weibo._to_dict(), user_path
@@ -167,6 +182,9 @@ class WeiboHandler:
         Return:
             weibo_data: dict: 微博数据字典，包含微博ID、微博文案、作者昵称
         """
+
+        if not weibo_id:
+            raise ValueError(_("`weibo_id`不能为空"))
 
         logger.info(_("开始爬取微博: {0}").format(weibo_id))
 
@@ -192,16 +210,10 @@ class WeiboHandler:
             user_path = await self.get_or_add_user_data(self.kwargs, user_id, db)
 
         # 获取用户微博数据
-        weibo_data = await self.fetch_user_weibo(user_id)
-
-        # 获取用户昵称
-        user_nickname = weibo_data.get("nickname")
-
-        logger.info(
-            f"用户ID: {user_id}, 用户昵称: {user_nickname}, 微博数量: {weibo_data.get('total')}"
-        )
-
-        await self.downloader.create_download_tasks(self.kwargs, weibo_data, user_path)
+        async for weibo_data in self.fetch_user_weibo(user_id):
+            await self.downloader.create_download_tasks(
+                self.kwargs, weibo_data._to_list(), user_path
+            )
 
     async def fetch_user_weibo(
         self,
