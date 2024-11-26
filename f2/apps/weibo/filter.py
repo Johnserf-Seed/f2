@@ -313,6 +313,10 @@ class UserWeiboFilter(JSONModel):
         return self._get_attr_value("$.message")
 
     @property
+    def since_id(self):
+        return self._get_attr_value("$.data.since_id")
+
+    @property
     def weibo_total(self):
         return self._get_attr_value("$.data.total")
 
@@ -462,11 +466,13 @@ class UserWeiboFilter(JSONModel):
         exclude_fields = [
             "status",
             "message",
+            "since_id",
             "weibo_total",
         ]
         extra_fields = [
             "status",
             "message",
+            "since_id",
             "weibo_total",
         ]
 
