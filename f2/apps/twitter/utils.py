@@ -10,8 +10,8 @@ from pathlib import Path
 from f2.i18n.translator import _
 from f2.utils.conf_manager import ConfigManager
 from f2.utils.utils import extract_valid_urls, split_filename
+from f2.crawlers.base_crawler import BaseCrawler
 from f2.exceptions.api_exceptions import (
-    APIError,
     APIConnectionError,
     APIResponseError,
     APIUnavailableError,
@@ -155,7 +155,7 @@ class UserIdFetcher:
         return await asyncio.gather(*user_ids)
 
 
-class TweetIdFetcher:
+class TweetIdFetcher(BaseCrawler):
     # 预编译正则表达式
     _TWEET_URL_PATTERN = re.compile(
         r"(?:https?://)?(?:www\.)?(?:twitter|x)\.com/.*/status/(\d+)(?:/|\?|#.*$|$)"
@@ -186,16 +186,14 @@ class TweetIdFetcher:
             )
 
         if "t.co" in url:
+            instance = cls()
             try:
-                transport = httpx.AsyncHTTPTransport(retries=5)
-                async with httpx.AsyncClient(
-                    transport=transport, proxies=ClientConfManager.proxies(), timeout=10
-                ) as client:
-                    response = await client.get(
-                        url, headers=ClientConfManager.headers(), follow_redirects=True
-                    )
-                    url = response.text
-                    response.raise_for_status()
+
+                response = await instance.aclient.get(
+                    url, headers=ClientConfManager.headers(), follow_redirects=True
+                )
+                url = response.text
+                response.raise_for_status()
             except httpx.HTTPStatusError as e:
                 raise APINotFoundError(
                     _("未找到推文，请检查推文链接是否正确。类名：{0}").format(
