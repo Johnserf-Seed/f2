@@ -9,6 +9,7 @@ from .api_exceptions import (
     APIUnauthorizedError,
     APIRateLimitError,
     APIResponseError,
+    APIFilterError,
     APIRetryExhaustedError,
 )
 from .db_exceptions import (
@@ -26,6 +27,7 @@ from .file_exceptions import (
     FilePermissionError,
     FileWriteError,
 )
+from .conf_exceptions import ConfError, InvalidEncodingError
 
 
 __all__ = [
@@ -37,6 +39,7 @@ __all__ = [
     "APINotFoundError",
     "APIRateLimitError",
     "APIResponseError",
+    "APIFilterError",
     "APIRetryExhaustedError",
     "DatabaseConnectionError",
     "RecordNotFoundError",
@@ -49,4 +52,6 @@ __all__ = [
     "FileNotFound",
     "FilePermissionError",
     "FileWriteError",
+    "ConfError",
+    "InvalidEncodingError",
 ]
