@@ -12,6 +12,7 @@ from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.conf_manager import ConfigManager
 from f2.utils.utils import extract_valid_urls, split_filename, split_set_cookie
+from f2.crawlers.base_crawler import BaseCrawler
 from f2.exceptions.api_exceptions import (
     APIConnectionError,
     APIResponseError,
@@ -77,13 +78,21 @@ class ModelManager:
         return final_endpoint
 
 
-class VisitorManager:
+class VisitorManager(BaseCrawler):
     """
     用于管理访客信息 (Used to manage visitor information)
     """
 
     visitor_conf = ClientConfManager.visitor()
     proxies = ClientConfManager.proxies()
+
+    visitor_headers = {
+        "User-Agent": ClientConfManager.user_agent(),
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
+
+    def __init__(self):
+        super().__init__(proxies=self.proxies)
 
     @classmethod
     async def gen_visitor(cls) -> str:
@@ -97,58 +106,55 @@ class VisitorManager:
             str: 访客cookie (Visitor cookie)
         """
 
-        payload = {
-            "cb": cls.visitor_conf["cb"],
-            "tid": cls.visitor_conf["tid"],
-            "from": cls.visitor_conf["from"],
-        }
-        headers = {
-            "User-Agent": ClientConfManager.user_agent(),
-            "Content-Type": "application/x-www-form-urlencoded",
-        }
-        transport = httpx.AsyncHTTPTransport(retries=5)
-        async with httpx.AsyncClient(
-            transport=transport, proxies=cls.proxies, timeout=10
-        ) as aclient:
-            try:
-                response = await aclient.post(
-                    url=cls.visitor_conf["url"],
-                    data=payload,
-                    headers=headers,
+        instance = cls()
+
+        try:
+            payload = {
+                "cb": instance.visitor_conf["cb"],
+                "tid": instance.visitor_conf["tid"],
+                "from": instance.visitor_conf["from"],
+            }
+
+            response = await instance.aclient.post(
+                instance.visitor_conf["url"],
+                data=payload,
+                headers=instance.visitor_headers,
+            )
+            response.raise_for_status()
+
+            visitor_cookie = split_set_cookie(response.headers.get("set-cookie", ""))
+            return visitor_cookie
+
+        except httpx.RequestError as exc:
+            # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
+            raise APIConnectionError(
+                _(
+                    "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
+                ).format(
+                    instance.visitor_conf["url"],
+                    instance.proxies,
+                    instance.__name__,
+                    exc,
                 )
-                response.raise_for_status()
+            )
 
-                visitor_cookie = split_set_cookie(
-                    response.headers.get("set-cookie", "")
-                )
-
-                return visitor_cookie
-
-            except httpx.RequestError as exc:
-                # 捕获所有与 httpx 请求相关的异常情况 (Captures all httpx request-related exceptions)
-                raise APIConnectionError(
+        except httpx.HTTPStatusError as e:
+            # 捕获 httpx 的状态代码错误 (captures specific status code errors from httpx)
+            if e.response.status_code == 401:
+                raise APIUnauthorizedError(
                     _(
-                        "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
-                    ).format(cls.visitor_conf["url"], cls.proxies, cls.__name__, exc)
+                        "参数验证失败，请更新 F2 配置文件中的 {0}，以匹配 {1} 新规则"
+                    ).format("visitor", "weibo")
                 )
 
-            except httpx.HTTPStatusError as e:
-                # 捕获 httpx 的状态代码错误 (captures specific status code errors from httpx)
-                if e.response.status_code == 401:
-                    raise APIUnauthorizedError(
-                        _(
-                            "参数验证失败，请更新 F2 配置文件中的 {0}，以匹配 {1} 新规则"
-                        ).format("visitor", "weibo")
+            elif e.response.status_code == 404:
+                raise APINotFoundError(_("{0} 无法找到API端点").format("visitor"))
+            else:
+                raise APIResponseError(
+                    _("链接：{0}，状态码 {1}：{2} ").format(
+                        e.response.url, e.response.status_code, e.response.text
                     )
-
-                elif e.response.status_code == 404:
-                    raise APINotFoundError(_("{0} 无法找到API端点").format("visitor"))
-                else:
-                    raise APIResponseError(
-                        _("链接：{0}，状态码 {1}：{2} ").format(
-                            e.response.url, e.response.status_code, e.response.text
-                        )
-                    )
+                )
 
 
 class WeiboIdFetcher:
