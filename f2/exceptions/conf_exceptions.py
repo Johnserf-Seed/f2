@@ -25,7 +25,7 @@ class InvalidEncodingError(ConfError):
     def __init__(self, message=None):
         # 动态生成消息，包含出错的 key 和 value
         if message is None:
-            message = _("请确保所有配置项和值均为ASCII或UTF-8编码的字符串。")
+            message = _("请确保所有配置项和值均为ASCII或UTF-8编码的字符串")
 
         logger.error(message)
 
