@@ -56,12 +56,15 @@ class WeiboDownloader(BaseDownloader):
         # 使用 Rich 的 Live 管理器
         with Live(
             console=RichConsoleManager().rich_console,
-            # auto_refresh=True,
-            refresh_per_second=2,
+            auto_refresh=False,
+            # refresh_per_second=2,
             vertical_overflow="visible",
         ) as live:
             for weibo_data in weibo_datas_list:
                 await self.handler_download(kwargs, weibo_data, user_path)
+                # 手动刷新防止过快闪屏
+                live.refresh()
+
             # 延时更新，避免过快刷新导致界面错乱
             await asyncio.sleep(0.1)
             # 动态更新规则输出
