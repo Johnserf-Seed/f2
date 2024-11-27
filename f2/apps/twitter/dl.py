@@ -78,7 +78,7 @@ class TwitterDownloader(BaseDownloader):
                 live.refresh()
 
             # 延时更新，避免过快刷新导致界面错乱
-            await asyncio.sleep(0.1)
+            await asyncio.sleep(0.2)
             # 动态更新规则输出
             live.update(Rule(_("当前任务处理完成")))
 
