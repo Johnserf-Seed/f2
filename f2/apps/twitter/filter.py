@@ -2,6 +2,8 @@
 
 from f2.utils.json_filter import JSONModel
 from f2.utils.utils import timestamp_2_str, replaceT, filter_to_list
+from f2.apps.twitter.utils import extract_desc
+
 
 # Filter
 
@@ -384,17 +386,23 @@ class PostTweetFilter(JSONModel):
             "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[-1].content.value"
         )
 
+    @property
+    def entryId(self):
+        return self._get_list_attr_value(
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].entryId"
+        )
+
     # tweet
     @property
     def tweet_id(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.legacy.conversation_id_str"
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.conversation_id_str"
         )
 
     @property
     def tweet_created_at(self):
         create_times = self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.legacy.created_at"
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.created_at"
         )
         return (
             [timestamp_2_str(str(ct)) for ct in create_times]
@@ -405,187 +413,124 @@ class PostTweetFilter(JSONModel):
     @property
     def tweet_favorite_count(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.legacy.favorite_count"
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.favorite_count"
         )
 
     @property
     def tweet_reply_count(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.legacy.reply_count"
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.reply_count"
         )
 
     @property
     def tweet_retweet_count(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.legacy.retweet_count"
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.retweet_count"
         )
 
     @property
     def tweet_quote_count(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.legacy.quote_count"
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.quote_count"
         )
 
     @property
     def tweet_views_count(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.views.count"
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.views.count"
         )
 
     @property
     def tweet_desc(self):
+        text_list = self._get_list_attr_value(
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.full_text"
+        )
+
         return replaceT(
-            self._get_list_attr_value(
-                "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.legacy.full_text"
-            )
+            [
+                extract_desc(text) if text and isinstance(text, str) else ""
+                for text in text_list
+            ]
         )
 
     @property
     def tweet_desc_raw(self):
-        return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.legacy.full_text"
+        text_list = self._get_list_attr_value(
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.full_text"
         )
+
+        return [
+            extract_desc(text) for text in text_list if text and isinstance(text, str)
+        ]
 
     @property
     def tweet_media_status(self):
-        # root = self._get_list_attr_value(
-        #     "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.legacy.entities"
-        # )
-        # print(root, type(root))
-        # if root[0].get("media", None) is None:
-        #     return None
-
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.legacy.entities.media[*].ext_media_availability.status"
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.entities.media[*].ext_media_availability.status"
         )
 
     @property
     def tweet_media_type(self):
-        # root = self._get_list_attr_value(
-        #     "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.legacy.entities"
-        # )
-        # if root[0].get("media", None) is None:
-        #     return None
-
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.legacy.entities.media[0].type"
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.entities.media[0].type"
         )
 
     @property
     def tweet_media_url(self):
-
-        media_list = []
-        # root = self._get_list_attr_value(
-        #     "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.legacy.entities"
-        # )
-        # if root[0].get("media", None) is None:
-        #     media_list.append(None)
-
-        entries = self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.legacy.entities.media[*]"
+        media_lists = self._get_list_attr_value(
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.entities.media"
         )
 
-        if entries is not None:
-            for entry in entries:
-                media_list.append(entry.get("media_url_https", None))
-        return media_list
+        return [
+            (
+                [
+                    media["media_url_https"]
+                    for media in media_list
+                    if isinstance(media, dict) and "media_url_https" in media
+                ]
+                if media_list
+                else None
+            )
+            for media_list in media_lists
+        ]
 
     @property
     def tweet_video_url(self):
 
-        # [*].video_info.variants
-        # return [
-        #     (
-        #         [
-        #             video["url"]
-        #             for video in video_url
-        #             if "url" in video and video["url"]
-        #         ]
-        #         if video_url
-        #         else None
-        #     )
-        #     for video_url in video_url_list
-        # ]
-
-        video_list = []
-        # root = self._get_list_attr_value(
-        #     "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.legacy.entities"
-        # )
-        # if root[0].get("media", None) is None:
-        #     video_list.append(None)
-
-        video_url_list = self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.legacy.entities.media"
+        video_url_lists = self._get_list_attr_value(
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.entities.media"
         )
 
-        if video_url_list == []:
-            return []
-
-        if isinstance(video_url_list[0], dict):
-            video_url_list = [video_url_list]
-
-        for video_url in video_url_list:
-            urls = []
-            # 如果没有video_info字段，说明不是视频则为None
-            # 例如 [[1,2,3],None,[1,2,3]]，None要与index对应
-            # 如果有video_info字段，说明是视频，返回url列表
-            # 例如 [[1,2,3],[1,2,3],[1,2,3]]
-            for video in video_url:
-                video_info = video.get("video_info")
-                if video_info:
-                    variants = video_info.get("variants")
-                    for url in variants:
-                        urls.append(url.get("url", None))
-            video_list.append(urls if urls else None)
-        return video_list
-
-    @property
-    def tweet_video_bitrate(self):
-        biterate_list = []
-        # root = self._get_list_attr_value(
-        #     "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.legacy.entities"
-        # )
-        # if root[0].get("media", None) is None:
-        #     biterate_list.append(None)
-
-        biterate_url_list = self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.legacy.entities.media[*].video_info.variants[*]"
-        )
-
-        if biterate_url_list == []:
-            return []
-
-        if isinstance(biterate_url_list[0], dict):
-            biterate_url_list = [biterate_url_list]
-
-        for biterate_url in biterate_url_list:
-            urls = []
-            for biterate in biterate_url:
-                biterate_info = biterate.get("video_info")
-                if biterate_info:
-                    variants = biterate_info.get("variants")
-                    for url in variants:
-                        urls.append(url.get("biterate", None))
-            biterate_list.append(urls if urls else None)
-        return biterate_list
+        return [
+            (
+                [
+                    video_url["video_info"]["variants"][-1]["url"]
+                    for video_url in video_url_list
+                    if isinstance(video_url, dict) and "video_info" in video_url
+                ]
+                if video_url_list
+                else None
+            )
+            for video_url_list in video_url_lists
+        ]
 
     # user
     @property
     def user_id(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.core.user_results.result.id"
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.id"
         )
 
     @property
     def is_blue_verified(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.core.user_results.result.is_blue_verified"
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.is_blue_verified"
         )
 
     @property
     def user_created_at(self):
         create_times = self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.core.user_results.result.legacy.created_at"
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.created_at"
         )
         return (
             [timestamp_2_str(str(ct)) for ct in create_times]
@@ -597,84 +542,84 @@ class PostTweetFilter(JSONModel):
     def user_description(self):
         return replaceT(
             self._get_list_attr_value(
-                "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.core.user_results.result.legacy.description"
+                "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.description"
             )
         )
 
     @property
     def user_description_raw(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.core.user_results.result.legacy.description"
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.description"
         )
 
     @property
     def user_location(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.core.user_results.result.legacy.location"
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.location"
         )
 
     @property
     def user_friends_count(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.core.user_results.result.legacy.friends_count"
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.friends_count"
         )
 
     @property
     def user_followers_count(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.core.user_results.result.legacy.followers_count"
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.followers_count"
         )
 
     @property
     def user_favourites_count(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.core.user_results.result.legacy.favourites_count"
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.favourites_count"
         )
 
     @property
     def user_media_count(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.core.user_results.result.legacy.media_count"
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.media_count"
         )
 
     @property
     def user_statuses_count(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.core.user_results.result.legacy.statuses_count"
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.statuses_count"
         )
 
     @property
     def nickname(self):
         return replaceT(
             self._get_list_attr_value(
-                "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.core.user_results.result.legacy.name"
+                "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.name"
             )
         )
 
     @property
     def nickname_raw(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.core.user_results.result.legacy.name"
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.name"
         )
 
     @property
     def user_screen_name(self):
         return replaceT(
             self._get_list_attr_value(
-                "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.core.user_results.result.legacy.screen_name"
+                "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.screen_name"
             )
         )
 
     @property
     def user_screen_name_raw(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.core.user_results.result.legacy.screen_name"
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.screen_name"
         )
 
     @property
     def user_profile_banner_url(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.tweet.core.user_results.result.legacy.profile_banner_url"
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.profile_banner_url"
         )
 
     def _to_raw(self) -> dict:
@@ -691,6 +636,7 @@ class PostTweetFilter(JSONModel):
         exclude_fields = [
             "max_cursor",
             "min_cursor",
+            "cursorType",
         ]
 
         extra_fields = [
