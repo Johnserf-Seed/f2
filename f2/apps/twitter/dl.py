@@ -96,95 +96,87 @@ class TwitterDownloader(BaseDownloader):
             user_path (Any): 用户目录路径
         """
 
-        user_id = tweet_data_dict.get("user_id")
-
-        if user_id is None:
-            return
-
-        tweet_id = tweet_data_dict.get("tweet_id")
-        tweet_media_type = tweet_data_dict.get("tweet_media_type")
-        tweet_media_url = tweet_data_dict.get("tweet_media_url")
-
-        # logger.info(f"========{tweet_id}========")
-        # logger.info(tweet_data_dict)
-        # logger.info("===================================")
-
         # 构建文件夹路径
-        base_path = (
+        self.base_path = (
             user_path
             / format_file_name(kwargs.get("naming", "{create}_{desc}"), tweet_data_dict)
             if kwargs.get("folderize")
             else user_path
         )
 
-        # 检查推文是否有图片
-        if tweet_media_type == "video":
+        self.user_id = tweet_data_dict.get("user_id")
+        if self.user_id is None:
+            logger.debug(_("跳过下载用户推荐或广告推文"))
+            return
 
-            # 说明是视频推文
-            # logger.info(
-            #     _("推文视频时长：{0}s，码率列表：{1}").format(
-            #         tweet_data_dict.get("tweet_video_duration") // 1000,
-            #         tweet_data_dict.get("tweet_video_bitrate"),
-            #     )
-            # )
-            # logger.info(tweet_data_dict.get("playback_list")[0])
+        self.kwargs = kwargs
+        self.tweet_data_dict = tweet_data_dict
+        self.tweet_id = tweet_data_dict.get("tweet_id")
+        self.tweet_media_type = tweet_data_dict.get("tweet_media_type")
+        self.tweet_media_url = tweet_data_dict.get("tweet_media_url")
 
-            video_name = (
-                format_file_name(
-                    kwargs.get("naming", "{create}_{desc}"), tweet_data_dict
+        # logger.info(f"========{tweet_id}========")
+        # logger.info(tweet_data_dict)
+        # logger.info("===================================")
+
+        if self.tweet_media_type == "video":
+            await self.download_video()
+        elif self.tweet_media_type == "image":
+            await self.download_images()
+
+        await self.download_desc()
+
+    async def download_video(self):
+        video_name = (
+            format_file_name(
+                self.kwargs.get("naming", "{create}_{desc}"), self.tweet_data_dict
+            )
+            + "_video"
+        )
+
+        video_url = self.tweet_data_dict.get("tweet_video_url")
+
+        if isinstance(video_url, list):
+            video_url = video_url[0]
+
+        await self.initiate_download(
+            _("视频"), video_url, self.base_path, video_name, ".mp4"
+        )
+
+    async def download_images(self):
+        if not self.tweet_data_dict.get("tweet_media_url"):
+            logger.warning(
+                _("{0} : {1}该推文没有图片链接").format(
+                    self.tweet_id, self.tweet_data_dict.get("tweet_desc")
                 )
-                + "_video"
             )
-
-            video_url = tweet_data_dict.get("tweet_video_url")
-            if isinstance(video_url, list):
-                video_url = video_url[-1]
-
-            await self.initiate_download(
-                _("视频"),
-                video_url,
-                base_path,
-                video_name,
-                ".mp4",
-            )
-        elif tweet_media_type == "photo":
-            # 处理图片下载任务
-            logger.info(
-                _("推文图片列表：{0}").format(tweet_data_dict.get("tweet_media_url"))
-            )
-            if not tweet_data_dict.get("tweet_media_url"):
-                logger.warning(
-                    _("{0} : {1}该推文没有图片链接").format(
-                        tweet_id, tweet_data_dict.get("tweet_desc")
-                    )
-                )
-            else:
-                if isinstance(tweet_media_url, str):
-                    tweet_media_url = [tweet_data_dict.get("tweet_media_url")]
+        else:
+            if isinstance(tweet_media_url, str):
+                tweet_media_url = [self.tweet_data_dict.get("tweet_media_url")]
                 for i, image_url in enumerate(tweet_media_url):
-                    image_name = f"{format_file_name(kwargs.get('naming'), tweet_data_dict)}_image_{i + 1}"
+                    image_name = f"{format_file_name(self.kwargs.get('naming'), self.tweet_data_dict)}_image_{i + 1}"
                     if image_url != None:
                         await self.initiate_download(
                             _("图片"),
                             f"{image_url}?format=jpg&name=large",
-                            base_path,
+                            self.base_path,
                             image_name,
                             ".jpg",
                         )
-                    else:
-                        logger.warning(
-                            _("{0} 该推文没有图片链接，无法下载").format(tweet_id)
-                        )
 
-        # 处理文案下载任务
-        if kwargs.get("desc"):
-            desc_name = (
-                format_file_name(
-                    kwargs.get("naming", "{create}_{desc}"), tweet_data_dict
-                )
-                + "_desc"
+    async def download_desc(self):
+        desc_name = (
+            format_file_name(
+                self.kwargs.get("naming", "{create}_{desc}"), self.tweet_data_dict
             )
-            desc_content = tweet_data_dict.get("tweet_desc")
-            await self.initiate_static_download(
-                _("文案"), desc_content, base_path, desc_name, ".txt"
-            )
+            + "_desc"
+        )
+        desc_content = (
+            ""
+            if self.tweet_data_dict.get("tweet_desc_raw") is None
+            else self.tweet_data_dict.get("tweet_desc_raw")
+        )
+
+        await self.initiate_static_download(
+            _("文案"), desc_content, self.base_path, desc_name, ".txt"
+        )
