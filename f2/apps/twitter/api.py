@@ -7,9 +7,9 @@ class TwitterAPIEndpoints:
     """
 
     # Twitter Domain
-    TWITTER_DOMAIN = "https://twitter.com"
+    TWITTER_DOMAIN = "https://x.com"
 
-    API_DOMAIN = "https://twitter.com/i/api/graphql"
+    API_DOMAIN = "https://x.com/i/api/graphql"
 
     # Login
     LOGIN_ENDPOINT = f"{TWITTER_DOMAIN}/login/"
@@ -21,10 +21,10 @@ class TwitterAPIEndpoints:
     USER_TIMELINE = f"{TWITTER_DOMAIN}/api/timeline/user_timeline.json"
 
     # User Detail
-    USER_PROFILE = f"{API_DOMAIN}/qW5u-DAuXpMEG0zA1F7UGQ/UserByScreenName"
+    USER_PROFILE = f"{API_DOMAIN}/laYnJPCAcVo0o6pzcnlVxQ/UserByScreenName"
 
     # User Post
-    USER_POST = f"{API_DOMAIN}/9zyyd1hebl7oNWIPdA8HRw/UserTweets"
+    USER_POST = f"{API_DOMAIN}/Tg82Ez_kxVaJf7OPbUdbCg/UserTweets"
 
     # User Like
     USER_LIKE = f"{TWITTER_DOMAIN}/api/favorite/item_list.json"
@@ -48,7 +48,7 @@ class TwitterAPIEndpoints:
     USER_FANS = f"{TWITTER_DOMAIN}/api/relation/follower/list.json"
 
     # Post Detail
-    POST_DETAIL = f"{API_DOMAIN}/F45teiuFI9MDxaS9UYKv-g/TweetDetail"
+    POST_DETAIL = f"{API_DOMAIN}/nBS-WpgA6ZG0CyNHD517JQ/TweetDetail"
 
     # Post Comment
     POST_COMMENT = f"{TWITTER_DOMAIN}/api/comment/list.json"
