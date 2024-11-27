@@ -224,7 +224,9 @@ class TwitterHandler:
                     max_counts, current_request_size
                 )
             )
-            logger.info(_("开始爬取第 {0} 页").format(max_cursor))
+            logger.info(
+                _("开始爬取第 {0} 页").format("1" if max_cursor == "" else max_cursor)
+            )
 
             async with TwitterCrawler(self.kwargs) as crawler:
                 params = PostTweetEncode(
@@ -233,40 +235,28 @@ class TwitterHandler:
                 response = await crawler.fetch_post_tweet(params)
                 tweet = PostTweetFilter(response)
 
-            logger.debug(_("当前请求的max_cursor：{0}").format(max_cursor))
-            logger.info(
+            logger.debug(
                 _("推文ID：{0} 推文文案：{1} 作者：{2}").format(
                     tweet.tweet_id, tweet.tweet_desc, tweet.nickname
                 )
             )
-            logger.info(tweet._to_dict())
-            if len(tweet.tweet_id) == 0:
-                # 只有tweet.tweet_id 和 tweet.tweet_desc都为None时，才认为已经爬取完毕
-                # 且只有min_cursor与max_cursor 2个值时没有其他值时才认为到达底部
-                if tweet.tweet_id is None and tweet.tweet_desc is None:
-                    logger.info(
-                        _("用户：{0} 所有发布的推文采集完毕").format(tweet.nickname)
-                    )
-                    break
 
-                logger.info(_("max_cursor：{0} 未找到发布的推文").format(max_cursor))
-                max_cursor = tweet.max_cursor
-                await asyncio.sleep(self.kwargs.get("timeout", 5))
-                continue
+            # 当cursorType值为Bottom且entryId长度为2时，表示已经爬取完所有的推文
+            if tweet.cursorType == "Bottom" and len(tweet.entryId) == 2:
+                logger.info(_("已处理完所有的推文"))
+                break
 
             yield tweet
 
-            # 更新已经处理的作品数量 (Update the number of videos processed)
-            tweets_collected += len(tweet.tweet_id)
-
+            # 更新已经处理的推文数量 (Update the number of videos processed)
+            tweets_collected += len(list(filter(None, tweet.tweet_id)))
             max_cursor = tweet.max_cursor
-            logger.info(f"下一页{tweet.max_cursor}")
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
-        logger.info(_("爬取结束，共爬取 {0} 个作品").format(tweets_collected))
+        logger.info(_("爬取结束，共爬取 {0} 个推文").format(tweets_collected))
 
     @mode_handler("retweet")
     async def handle_retweet(self):
