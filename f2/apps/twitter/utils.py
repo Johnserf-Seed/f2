@@ -414,3 +414,25 @@ def create_or_rename_user_folder(
         user_path = rename_user_folder(user_path, current_nickname)
 
     return user_path
+
+
+def extract_desc(text):
+    """
+    提取推特标题，抛弃从 "https" 开始及其后的内容，包括其前一个空格。
+
+    Args:
+        text (str): 原始微博内容
+
+    Returns:
+        str: 提取后的标题
+    """
+
+    text = text.strip()  # 去掉两端空格
+    https_index = text.find("https")  # 查找 "https" 的起始位置
+
+    if https_index != -1:  # 如果存在 "https"
+        # 找到 "https" 前第一个空格的位置
+        cutoff_index = text.rfind(" ", 0, https_index)
+        if cutoff_index != -1:
+            return text[:cutoff_index].strip()  # 返回截断后的部分
+    return text.strip()  # 如果没有 "https"，返回去掉两端空格后的内容
