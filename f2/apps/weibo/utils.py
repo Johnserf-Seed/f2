@@ -369,7 +369,7 @@ def format_file_name(
         "nickname": weibo_data.get("nickname", ""),  # 最长30
         "weibo_id": weibo_data.get("weibo_id", ""),  # 长度固定19
         "desc": split_filename(weibo_data.get("weibo_desc", ""), os_limit),
-        "uid": weibo_data.get("uid", ""),  # 固定10
+        "uid": weibo_data.get("user_id", ""),  # 固定10
     }
 
     if custom_fields:
