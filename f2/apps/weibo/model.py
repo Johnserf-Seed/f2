@@ -7,7 +7,9 @@ from pydantic import BaseModel
 # Model
 class UserInfo(BaseModel):
     uid: str
-    custom: str
+
+class UserInfoByScreenName(BaseModel):
+    screen_name: str
 
 
 class UserDetail(BaseModel):
