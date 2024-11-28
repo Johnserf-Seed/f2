@@ -344,7 +344,7 @@ class TwitterHandler:
             yield like
 
             # 更新已经处理的推文数量 (Update the number of videos processed)
-            tweets_collected += len(like.tweet_id)
+            tweets_collected += len(list(filter(None, like.tweet_id)))
             max_cursor = like.max_cursor
 
             # 避免请求过于频繁
@@ -439,7 +439,7 @@ class TwitterHandler:
             yield bookmark
 
             # 更新已经处理的推文数量 (Update the number of videos processed)
-            tweets_collected += len(bookmark.tweet_id)
+            tweets_collected += len(list(filter(None, bookmark.tweet_id)))
             max_cursor = bookmark.max_cursor
 
             # 避免请求过于频繁
