@@ -13,7 +13,7 @@ async def test_fetch_user_info(kwargs_fixture):
     handler = WeiboHandler(kwargs_fixture)
     user_info = await handler.fetch_user_info(uid="2265830070")
     assert user_info is not None
-    assert user_info.uid == "2265830070"
+    assert user_info.user_id == "2265830070"
 
 
 @pytest.mark.asyncio
