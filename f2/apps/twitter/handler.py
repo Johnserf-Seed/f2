@@ -16,12 +16,14 @@ from f2.apps.twitter.model import (
     UserProfileEncode,
     PostTweetEncode,
     LikeTweetEncode,
+    BookmarkTweetEncode,
 )
 from f2.apps.twitter.filter import (
     TweetDetailFilter,
     UserProfileFilter,
     PostTweetFilter,
     LikeTweetFilter,
+    BookmarkTweetFilter,
 )
 from f2.apps.twitter.utils import (
     UserIdFetcher,
@@ -347,6 +349,101 @@ class TwitterHandler:
             # 更新已经处理的推文数量 (Update the number of videos processed)
             tweets_collected += len(like.tweet_id)
             max_cursor = like.max_cursor
+
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(_("爬取结束，共爬取 {0} 个推文").format(tweets_collected))
+
+    @mode_handler("bookmark")
+    async def handle_bookmark_tweet(self):
+        """
+        用于处理收藏推文。
+        (Used to process bookmark tweets.)
+
+        Args:
+            kwargs: dict: 参数字典 (Parameter dictionary)
+        """
+
+        max_cursor = self.kwargs.get("max_cursor", "")
+        page_counts = self.kwargs.get("page_counts", 20)
+        max_counts = self.kwargs.get("max_counts")
+
+        uniqueID = await UserIdFetcher.get_user_id(self.kwargs.get("url"))
+
+        async with AsyncUserDB("twitter_users.db") as udb:
+            user_path = await self.get_or_add_user_data(self.kwargs, uniqueID, udb)
+
+        async for tweet_list in self.fetch_bookmark_tweet(
+            page_counts, max_cursor, max_counts
+        ):
+            # 创建下载任务
+            await self.downloader.create_download_tasks(
+                self.kwargs, tweet_list._to_list(), user_path
+            )
+
+    async def fetch_bookmark_tweet(
+        self,
+        page_counts: int = 20,
+        max_cursor: str = "",
+        max_counts: int = None,
+    ) -> AsyncGenerator[LikeTweetFilter, Any]:
+        """
+        用于获取用户收藏的推文。
+
+        Args:
+            page_counts: int: 每次请求的推文数量
+            max_cursor: str: 游标
+            max_counts: int: 最大请求次数
+
+        Return:
+            like: LikeTweetFilter: 用户收藏的推文数据过滤器
+
+        Note:
+            不需要传入用户ID，提供Cookie即可
+        """
+
+        max_counts = max_counts or float("inf")
+        tweets_collected = 0
+
+        logger.info(_("开始爬取收藏的推文"))
+
+        while tweets_collected < max_counts:
+            current_request_size = min(page_counts, max_counts - tweets_collected)
+
+            logger.debug(
+                _("最大数量：{0} 每次请求数量：{1}").format(
+                    max_counts, current_request_size
+                )
+            )
+            logger.info(
+                _("开始爬取第 {0} 页").format("1" if max_cursor == "" else max_cursor)
+            )
+
+            async with TwitterCrawler(self.kwargs) as crawler:
+                params = BookmarkTweetEncode(
+                    count=current_request_size, cursor=max_cursor
+                )
+                response = await crawler.fetch_bookmark_tweet(params)
+                bookmark = BookmarkTweetFilter(response)
+
+            logger.debug(
+                _("推文ID：{0} 推文文案：{1} 作者：{2}").format(
+                    bookmark.tweet_id, bookmark.tweet_desc, bookmark.nickname
+                )
+            )
+
+            # 当cursorType值为Bottom且entryId长度为2时，表示已经爬取完所有的推文
+            if bookmark.cursorType == "Bottom" and len(bookmark.entryId) == 2:
+                logger.info(_("已处理完所有收藏的推文"))
+                break
+
+            yield bookmark
+
+            # 更新已经处理的推文数量 (Update the number of videos processed)
+            tweets_collected += len(bookmark.tweet_id)
+            max_cursor = bookmark.max_cursor
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
