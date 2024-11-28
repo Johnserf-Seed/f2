@@ -21,7 +21,7 @@ class TwitterAPIEndpoints:
     USER_LIKE = f"{API_DOMAIN}/px6_YxfWkXo0odY84iqqmw/Likes"
 
     # User Bookmark
-    USER_BOOKMARK = f"{TWITTER_DOMAIN}/L7vvM2UluPgWOW4GDvWyvw/Bookmarks"
+    USER_BOOKMARK = f"{API_DOMAIN}/L7vvM2UluPgWOW4GDvWyvw/Bookmarks"
 
     # Post Detail
     POST_DETAIL = f"{API_DOMAIN}/nBS-WpgA6ZG0CyNHD517JQ/TweetDetail"

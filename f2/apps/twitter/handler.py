@@ -130,8 +130,6 @@ class TwitterHandler:
         #         tweet_data._to_dict(), db, self.ignore_fields
         #     )
 
-        # logger.info(_("单个推文数据：{0}").format(tweet_data._to_dict()))
-
         # 创建下载任务
         await self.downloader.create_download_tasks(
             self.kwargs, tweet_data._to_dict(), user_path
@@ -221,7 +219,6 @@ class TwitterHandler:
         while tweets_collected < max_counts:
             current_request_size = min(page_counts, max_counts - tweets_collected)
 
-            logger.debug("===================================")
             logger.debug(
                 _("最大数量：{0} 每次请求数量：{1}").format(
                     max_counts, current_request_size
@@ -246,7 +243,7 @@ class TwitterHandler:
 
             # 当cursorType值为Bottom且entryId长度为2时，表示已经爬取完所有的推文
             if tweet.cursorType == "Bottom" and len(tweet.entryId) == 2:
-                logger.info(_("已处理完所有的推文"))
+                logger.info(_("已处理完所有发布的推文"))
                 break
 
             yield tweet
