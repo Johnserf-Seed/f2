@@ -7,6 +7,7 @@ import asyncio
 
 from typing import Union
 from pathlib import Path
+from urllib.parse import unquote
 
 from f2.i18n.translator import _
 from f2.log.logger import logger
@@ -326,6 +327,61 @@ class WeiboUidFetcher:
 
         weibo_uids = [cls.get_weibo_uid(url) for url in urls]
         return await asyncio.gather(*weibo_uids)
+
+
+class WeiboScreenNameFetcher:
+    # 预编译正则表达式
+    # (Pre-compile regular expression)
+
+    # https://weibo.com/n/%E8%87%AA%E6%88%91%E5%85%85%E7%94%B5%E5%8A%9F%E8%83%BD%E4%B8%A7%E5%A4%B1
+    # https://weibo.com/n/%E8%87%AA%E6%88%91%E5%85%85%E7%94%B5%E5%8A%9F%E8%83%BD%E4%B8%A7%E5%A4%B1/
+    # https://weibo.com/n/%E8%87%AA%E6%88%91%E5%85%85%E7%94%B5%E5%8A%9F%E8%83%BD%E4%B8%A7%E5%A4%B1?test=123
+    # https://weibo.com/n/%E8%87%AA%E6%88%91%E5%85%85%E7%94%B5%E5%8A%9F%E8%83%BD%E4%B8%A7%E5%A4%B1/?test=123
+    # https://weibo.com/n/自我充电功能丧失
+    # https://weibo.com/n/自我充电功能丧失/
+    # https://weibo.com/n/自我充电功能丧失?test=123
+    # https://weibo.com/n/自我充电功能丧失/?test=123
+
+    _WEIBO_COM_NAME_PATTERN = re.compile(
+        r"(?:https?://)?(?:www\.)?(?:weibo\.com|weibo\.cn|m\.weibo\.cn)/n/([^/?#]+)"
+    )
+
+    @classmethod
+    async def get_weibo_screen_name(cls, url: str) -> str:
+        """
+        从微博链接中提取URL编码的昵称并解码
+        (Extract encoded name from weibo link and decode it)
+
+        Args:
+            url (str): 微博链接 (Weibo link)
+
+        Returns:
+            str: 解码后的微博名称 (Decoded Weibo name)
+        """
+        if not url:
+            raise ValueError("微博链接不能为空")
+
+        if not isinstance(url, str):
+            raise TypeError("参数必须是字符串类型")
+
+        # 提取有效URL
+        url = extract_valid_urls(url)
+
+        if url is None:
+            raise (
+                APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
+            )
+
+        match = cls._WEIBO_COM_NAME_PATTERN.search(url)
+        if match:
+            # URL解码
+            return unquote(match.group(1))
+        else:
+            raise APINotFoundError(
+                _(
+                    "未在响应的地址中找到screen_name，检查链接是否为微博昵称链接。类名：{0}"
+                ).format(cls.__name__)
+            )
 
 
 def format_file_name(
