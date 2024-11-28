@@ -12,7 +12,13 @@ from f2.utils.decorators import mode_handler, mode_function_map
 from f2.apps.weibo.db import AsyncUserDB
 from f2.apps.weibo.crawler import WeiboCrawler
 from f2.apps.weibo.dl import WeiboDownloader
-from f2.apps.weibo.model import UserInfo, UserDetail, UserWeibo, WeiboDetail
+from f2.apps.weibo.model import (
+    UserInfo,
+    UserInfoByScreenName,
+    UserDetail,
+    UserWeibo,
+    WeiboDetail,
+)
 from f2.apps.weibo.filter import (
     UserInfoFilter,
     UserDetailFilter,
@@ -22,9 +28,10 @@ from f2.apps.weibo.filter import (
 from f2.apps.weibo.utils import (
     WeiboIdFetcher,
     WeiboUidFetcher,
+    WeiboScreenNameFetcher,
     create_or_rename_user_folder,
 )
-from f2.exceptions.api_exceptions import APIResponseError
+from f2.exceptions.api_exceptions import APIResponseError, APINotFoundError
 from f2.cli.cli_console import RichConsoleManager
 
 rich_console = RichConsoleManager().rich_console
@@ -40,27 +47,33 @@ class WeiboHandler:
         self.kwargs = kwargs
         self.downloader = WeiboDownloader(kwargs)
 
-    async def fetch_user_info(self, uid: str, custom: str = "") -> UserInfoFilter:
+    # 只允许?uid=xxxx&screen_name=
+    # 只允许?uid=xxxx
+    # 只允许?screen_name=
+    # 不允许?uid=xxxx&screen_name=xxxx
+    # 不允许?uid=&screen_name=xxxx
+    # 屎
+
+    async def fetch_user_info(self, uid: str) -> UserInfoFilter:
         """
         获取用户个人信息
         (Get user personal info)
 
         Args:
             uid (str): 用户ID (User ID)
-            custom (str): 用户自定义id (Custom ID)
 
         Returns:
             UserInfoFilter: 用户信息过滤器 (User info filter)
 
         Note:
-            uid和custom只需传入一个 (Only need to pass in one of uid and custom)
+            screen_name (Only need to pass in one of uid and screen_name)
         """
 
-        if not uid and not custom:
-            raise ValueError(_("`uid`和`custom`至少需要传入一个"))
+        if not uid:
+            raise ValueError(_("`uid`不能为空"))
 
         async with WeiboCrawler(self.kwargs) as crawler:
-            params = UserInfo(uid=uid, custom=custom)
+            params = UserInfo(uid=uid)
             response = await crawler.fetch_user_info(params)
             user = UserInfoFilter(response)
             if user.nickname is None:
@@ -73,6 +86,36 @@ class WeiboHandler:
                     user.nickname, user.weibo_count
                 )
             )
+            return user
+
+    async def fetch_user_info_by_screen_name(
+        self, screen_name: str = ""
+    ) -> UserInfoFilter:
+        """
+        获取用户个人信息
+        (Get user personal info)
+
+        Args:
+            custom (str): 用户自定义昵称 (Custom ID)
+
+        Returns:
+            UserInfoFilter: 用户信息过滤器 (User info filter)
+
+        Note:
+            screen_name (Only need to pass in one of uid and screen_name)
+        """
+
+        if not screen_name:
+            raise ValueError(_("`screen_name`不能为空"))
+
+        async with WeiboCrawler(self.kwargs) as crawler:
+            params = UserInfoByScreenName(screen_name=screen_name)
+            response = await crawler.fetch_user_info(params)
+            user = UserInfoFilter(response)
+            if user.nickname is None:
+                raise APIResponseError(
+                    _("`fetch_user_info`请求失败，请更换cookie或稍后再试")
+                )
             return user
 
     async def fetch_user_detail(self, uid: str) -> UserDetailFilter:
@@ -99,6 +142,31 @@ class WeiboHandler:
                     _("`fetch_user_detail`请求失败，请更换cookie或稍后再试")
                 )
             return user
+
+    async def extract_weibo_identifier(self, url: str) -> str:
+        """
+        从微博链接中提取并返回 UID。
+        (Extract and return UID from Weibo link.)
+
+        Args:
+            url (str): 微博链接 (Weibo link)
+
+        Returns:
+            str: 用户 UID (User UID)
+        """
+        try:
+            # 尝试通过 UID 提取
+            return await WeiboUidFetcher.get_weibo_uid(url)
+        except APINotFoundError:
+            # 如果 UID 提取失败，尝试通过昵称提取
+            try:
+                screen_name = await WeiboScreenNameFetcher.get_weibo_screen_name(url)
+                user_info = await self.fetch_user_info_by_screen_name(
+                    screen_name=screen_name
+                )
+                return user_info.user_id
+            except APINotFoundError:
+                raise ValueError(_("链接错误，请检查链接是否正确"))
 
     async def get_or_add_user_data(
         self,
@@ -204,7 +272,7 @@ class WeiboHandler:
             kwargs: dict: 参数字典 (Parameter dictionary)
         """
 
-        user_id = await WeiboUidFetcher.get_weibo_uid(self.kwargs.get("url"))
+        user_id = await self.extract_weibo_identifier(self.kwargs.get("url"))
 
         async with AsyncUserDB("weibo_users.db") as db:
             user_path = await self.get_or_add_user_data(self.kwargs, user_id, db)
