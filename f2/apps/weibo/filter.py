@@ -58,7 +58,7 @@ class UserInfoFilter(JSONModel):
         return self._get_attr_value("$.data.user.gender")
 
     @property
-    def uid(self):
+    def user_id(self):
         return self._get_attr_value("$.data.user.idstr")
 
     @property
