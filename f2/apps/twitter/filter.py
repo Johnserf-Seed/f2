@@ -75,15 +75,19 @@ class TweetDetailFilter(JSONModel):
     @property
     def tweet_desc(self):
         return replaceT(
-            self._get_attr_value(
-                "$.data.threaded_conversation_with_injections_v2.instructions[0].entries[0].content.itemContent.tweet_results.result.legacy.full_text"
-            ).split()[0]
+            extract_desc(
+                self._get_attr_value(
+                    "$.data.threaded_conversation_with_injections_v2.instructions[0].entries[0].content.itemContent.tweet_results.result.legacy.full_text"
+                )
+            )
         )
 
     @property
     def tweet_desc_raw(self):
-        return self._get_attr_value(
-            "$.data.threaded_conversation_with_injections_v2.instructions[0].entries[0].content.itemContent.tweet_results.result.legacy.full_text"
+        return extract_desc(
+            self._get_attr_value(
+                "$.data.threaded_conversation_with_injections_v2.instructions[0].entries[0].content.itemContent.tweet_results.result.legacy.full_text"
+            )
         )
 
     # 媒体状态
