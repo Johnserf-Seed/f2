@@ -27,7 +27,7 @@ class TwitterAPIEndpoints:
     USER_POST = f"{API_DOMAIN}/Tg82Ez_kxVaJf7OPbUdbCg/UserTweets"
 
     # User Like
-    USER_LIKE = f"{TWITTER_DOMAIN}/api/favorite/item_list.json"
+    USER_LIKE = f"{API_DOMAIN}/px6_YxfWkXo0odY84iqqmw/Likes"
 
     # User Collect
     USER_COLLECT = f"{TWITTER_DOMAIN}/api/user/collect/item_list.json"
