@@ -11,6 +11,8 @@ from f2.apps.twitter.model import (
     UserProfileEncode,
     PostTweet,
     PostTweetEncode,
+    LikeTweet,
+    LikeTweetEncode,
     encode_model,
 )
 from f2.apps.twitter.utils import ModelManager, ClientConfManager
@@ -60,5 +62,13 @@ class TwitterCrawler(BaseCrawler):
             xendpoints.USER_POST,
             PostTweet(variables=encode_model(params)).model_dump(),
         )
-        logger.debug(_("推文接口地址: {0}").format(endpoint))
+        logger.debug(_("发布推文接口地址: {0}").format(endpoint))
+        return await self._fetch_get_json(endpoint)
+
+    async def fetch_like_tweet(self, params: LikeTweetEncode):
+        endpoint = ModelManager.model_2_endpoint(
+            xendpoints.USER_LIKE,
+            LikeTweet(variables=encode_model(params)).model_dump(),
+        )
+        logger.debug(_("喜欢推文接口地址: {0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
