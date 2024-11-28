@@ -8,7 +8,7 @@
 | `-u`   | `--url` | `TEXT` | 根据模式提供相应的链接 |
 | `-p`   | `--path` | `TEXT` | 作品保存位置，支持绝对与相对路径 |
 | `-f`   | `--folderize` | `BOOLEAN` | 是否将作品保存到单独的文件夹 |
-| `-M`   | `--mode` | `[one\|post\|retweet\|like\|bookmark]` | 下载模式：单个推文(one)，主页推文(post)，转推(retweet)，点赞(like)，书签(bookmark) |
+| `-M`   | `--mode` | `[one\|post\|like\|bookmark]` | 下载模式：单个推文(one)，主页推文(post)，喜欢(like)，书签(bookmark) |
 | `-n`   | `--naming` | `TEXT` | 全局推文文件命名方式，前往文档查看更多帮助 |
 | `-k`   | `--cookie` | `TEXT` | 登录后的cookie |
 | `-e`   | `--timeout` | `INTEGER` | 网络请求超时时间 |
@@ -40,9 +40,8 @@
 下载模式：
 - `one`：单个推文
 - `post`：主页推文
-- `retweet`：转推
-- `like`：点赞
-- `bookmark`：书签
+- `like`：喜欢推文
+- `bookmark`：书签(收藏)推文
 
 #### `--languages`
 
