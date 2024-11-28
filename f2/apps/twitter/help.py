@@ -16,7 +16,7 @@ def help() -> None:
     table.add_column("Description", no_wrap=True)
 
     options = [
-        ("-c --config", "[dark_cyan]Path", _("配置文件的路径，最低优先")),
+        ("-c --config", "[dark_cyan]Path", _("配置文件的路径，[red]最低优先[/red]")),
         ("-u --url", "[dark_cyan]str", _("除了单个推文外，其他URL都需要用户主页URL")),
         ("-p --path", "[dark_cyan]str", _("推文保存位置，默认为 'Download'")),
         (
@@ -28,7 +28,7 @@ def help() -> None:
             "-M --mode",
             "[dark_cyan]Choice",
             _(
-                "下载模式：单个推文[one]、用户推文[post]、用户转推[retweet]、喜欢推文[like]、用户收藏[bookmark]"
+                "下载模式：单个推文(one)、用户推文(post)、喜欢推文(like)、用户收藏(bookmark)"
             ),
         ),
         ("-n --naming", "[dark_cyan]str", _("全局推文文件命名方式")),

@@ -57,7 +57,6 @@ WEIBO_MODE_LIST = [
 TWITTER_MODE_LIST = [
     "one",
     "post",
-    "retweet",
     "like",
     "bookmark",
 ]
