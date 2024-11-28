@@ -14,6 +14,8 @@ from f2.apps.twitter.model import (
     LikeTweet,
     LikeTweetEncode,
     encode_model,
+    BookmarkTweet,
+    BookmarkTweetEncode,
 )
 from f2.apps.twitter.utils import ModelManager, ClientConfManager
 
@@ -71,4 +73,12 @@ class TwitterCrawler(BaseCrawler):
             LikeTweet(variables=encode_model(params)).model_dump(),
         )
         logger.debug(_("喜欢推文接口地址: {0}").format(endpoint))
+        return await self._fetch_get_json(endpoint)
+
+    async def fetch_bookmark_tweet(self, params: BookmarkTweetEncode):
+        endpoint = ModelManager.model_2_endpoint(
+            xendpoints.USER_BOOKMARK,
+            BookmarkTweet(variables=encode_model(params)).model_dump(),
+        )
+        logger.debug(_("书签(收藏)推文接口地址: {0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
