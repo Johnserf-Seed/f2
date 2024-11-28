@@ -203,7 +203,9 @@ def validate_proxies(
     "--mode",
     "-M",
     type=click.Choice(f2.TWITTER_MODE_LIST),
-    help=_("下载模式：单个推文(one)，主页推文(post)"),
+    help=_(
+        "下载模式：单个推文[one]、用户推文[post]、喜欢推文[like]、用户收藏[bookmark]"
+    ),
 )
 @click.option(
     "--naming",

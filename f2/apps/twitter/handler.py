@@ -15,12 +15,13 @@ from f2.apps.twitter.model import (
     TweetDetailEncode,
     UserProfileEncode,
     PostTweetEncode,
+    LikeTweetEncode,
 )
 from f2.apps.twitter.filter import (
     TweetDetailFilter,
     UserProfileFilter,
     PostTweetFilter,
-    PostRetweetFilter,
+    LikeTweetFilter,
 )
 from f2.apps.twitter.utils import (
     UserIdFetcher,
@@ -258,11 +259,11 @@ class TwitterHandler:
 
         logger.info(_("爬取结束，共爬取 {0} 个推文").format(tweets_collected))
 
-    @mode_handler("retweet")
-    async def handle_retweet(self):
+    @mode_handler("like")
+    async def handle_like_tweet(self):
         """
-        用于处理转发推文。
-        (Used to process retweet tweets.)
+        用于处理喜欢推文。
+        (Used to process like tweets.)
 
         Args:
             kwargs: dict: 参数字典 (Parameter dictionary)
@@ -278,7 +279,7 @@ class TwitterHandler:
         async with AsyncUserDB("twitter_users.db") as udb:
             user_path = await self.get_or_add_user_data(self.kwargs, uniqueID, udb)
 
-        async for tweet_list in self.fetch_retweet(
+        async for tweet_list in self.fetch_like_tweet(
             user.user_rest_id, page_counts, max_cursor, max_counts
         ):
             # 创建下载任务
@@ -286,15 +287,15 @@ class TwitterHandler:
                 self.kwargs, tweet_list._to_list(), user_path
             )
 
-    async def fetch_retweet(
+    async def fetch_like_tweet(
         self,
         userId: str,
         page_counts: int = 20,
         max_cursor: str = "",
         max_counts: int = None,
-    ) -> AsyncGenerator[PostTweetFilter, Any]:
+    ) -> AsyncGenerator[LikeTweetFilter, Any]:
         """
-        用于获取用户转发的推文。
+        用于获取用户喜欢的推文。
 
         Args:
             userId: str: 用户ID
@@ -303,71 +304,55 @@ class TwitterHandler:
             max_counts: int: 最大请求次数
 
         Return:
-            tweet: PostTweetFilter: 用户转发的推文数据过滤器
+            like: LikeTweetFilter: 用户喜欢的推文数据过滤器
         """
 
         max_counts = max_counts or float("inf")
         tweets_collected = 0
 
-        logger.info(_("开始爬取用户：{0} 转发的推文").format(userId))
+        logger.info(_("开始爬取用户：{0} 喜欢的推文").format(userId))
 
         while tweets_collected < max_counts:
             current_request_size = min(page_counts, max_counts - tweets_collected)
 
-            logger.debug("===================================")
             logger.debug(
                 _("最大数量：{0} 每次请求数量：{1}").format(
                     max_counts, current_request_size
                 )
             )
-            logger.info(_("开始爬取第 {0} 页").format(max_cursor))
+            logger.info(
+                _("开始爬取第 {0} 页").format("1" if max_cursor == "" else max_cursor)
+            )
 
             async with TwitterCrawler(self.kwargs) as crawler:
-                params = PostTweetEncode(
+                params = LikeTweetEncode(
                     userId=userId, count=current_request_size, cursor=max_cursor
                 )
-                response = await crawler.fetch_post_tweet(params)
-                retweet = PostRetweetFilter(response)
+                response = await crawler.fetch_like_tweet(params)
+                like = LikeTweetFilter(response)
 
-            logger.debug(_("当前请求的max_cursor：{0}").format(max_cursor))
-            # logger.info(
-            #     _("推文ID：{0} 推文文案：{1} 作者：{2}").format(
-            #         retweet.tweet_id, retweet.tweet_desc, retweet.nickname
-            #     )
-            # )
-            logger.info(
-                _("推文文案：{0} 推文图片：{1} 推文视频：{2}").format(
-                    retweet.tweet_desc, retweet.tweet_media_url, retweet.tweet_video_url
+            logger.debug(
+                _("推文ID：{0} 推文文案：{1} 作者：{2}").format(
+                    like.tweet_id, like.tweet_desc, like.nickname
                 )
             )
-            # logger.info(retweet._to_dict())
-            if len(retweet.tweet_id) == 0:
-                # 只有tweet.tweet_id 和 tweet.tweet_desc都为None时，才认为已经爬取完毕
-                # 且只有min_cursor与max_cursor 2个值时没有其他值时才认为到达底部
-                if retweet.tweet_id is None and retweet.tweet_desc is None:
-                    logger.info(
-                        _("用户：{0} 所有转发的推文采集完毕").format(retweet.nickname)
-                    )
-                    break
 
-                logger.info(_("max_cursor：{0} 未找到转发的推文").format(max_cursor))
-                max_cursor = retweet.max_cursor
-                await asyncio.sleep(self.kwargs.get("timeout", 5))
-                continue
+            # 当cursorType值为Bottom且entryId长度为2时，表示已经爬取完所有的推文
+            if like.cursorType == "Bottom" and len(like.entryId) == 2:
+                logger.info(_("已处理完所有喜欢的推文"))
+                break
 
-            yield retweet
+            yield like
 
-            # 更新已经处理的作品数量 (Update the number of videos processed)
-            tweets_collected += len(retweet.tweet_id)
-
-            max_cursor = retweet.max_cursor
-            logger.info(f"下一页{retweet.max_cursor}")
+            # 更新已经处理的推文数量 (Update the number of videos processed)
+            tweets_collected += len(like.tweet_id)
+            max_cursor = like.max_cursor
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
-        logger.info(_("爬取结束，共爬取 {0} 个作品").format(tweets_collected))
+        logger.info(_("爬取结束，共爬取 {0} 个推文").format(tweets_collected))
 
 
 async def main(kwargs):
