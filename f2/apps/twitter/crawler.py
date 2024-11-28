@@ -4,6 +4,7 @@ from f2.log.logger import logger
 from f2.i18n.translator import _
 from f2.crawlers.base_crawler import BaseCrawler
 from f2.apps.twitter.api import TwitterAPIEndpoints as xendpoints
+from f2.apps.twitter.model import encode_model
 from f2.apps.twitter.model import (
     TweetDetail,
     TweetDetailEncode,
@@ -13,7 +14,6 @@ from f2.apps.twitter.model import (
     PostTweetEncode,
     LikeTweet,
     LikeTweetEncode,
-    encode_model,
     BookmarkTweet,
     BookmarkTweetEncode,
 )
