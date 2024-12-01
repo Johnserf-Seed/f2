@@ -8,13 +8,14 @@ import httpx
 import qrcode
 import random
 import asyncio
+import warnings
 import traceback
 
 from typing import Union
 from pathlib import Path
 from urllib.parse import urlparse
 
-from f2.apps.douyin.algorithm import webcast_signature
+from f2.apps.douyin.algorithm.webcast_signature import DouyinWebcastSignature
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.xbogus import XBogus as XB
@@ -556,13 +557,20 @@ class WebcastSignatureManager:
         base_endpoint: str,
         params: dict,
     ) -> str:
+        warnings.warn(
+            "WebcastSignatureManager.model_2_endpoint 方法已弃用，将在未来版本中移除。"
+            "暂时不会有替代。",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
         if not isinstance(params, dict):
             raise TypeError(_("参数必须是字典类型"))
 
         param_str = ",".join([f"{k}={v}" for k, v in params.items()])
 
         try:
-            signature = webcast_signature(user_agent).get_signature(param_str)
+            signature = DouyinWebcastSignature(user_agent).get_signature(param_str)
         except Exception as e:
             logger.error(traceback.format_exc())
             raise RuntimeError(_("生成signature失败: {0})").format(e))
