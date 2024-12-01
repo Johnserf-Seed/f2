@@ -35,6 +35,7 @@ from f2.apps.douyin.model import (
     LiveWebcast,
     LiveImFetch,
     QueryUser,
+    PostStats,
     FollowingUserLive,
 )
 from f2.apps.douyin.filter import (
@@ -55,6 +56,7 @@ from f2.apps.douyin.filter import (
     FriendFeedFilter,
     LiveImFetchFilter,
     QueryUserFilter,
+    PostStatsFilter,
     FollowingUserLiveFilter,
 )
 from f2.apps.douyin.algorithm.webcast_signature import DouyinWebcastSignature
@@ -105,6 +107,7 @@ class DouyinHandler:
         Return:
             user: UserProfileFilter: 用户信息过滤器 (User info filter)
         """
+
         if not sec_user_id:
             raise ValueError(_("`sec_user_id`不能为空"))
 
@@ -1661,6 +1664,34 @@ class DouyinHandler:
             logger.warning(_("请提供正确的ttwid")),
 
         return user
+
+    async def fetch_post_stats(
+        self,
+        aweme_id: str,
+        aweme_type: int,
+    ) -> PostStatsFilter:
+        """
+        用于查询作品的统计信息。
+
+        Args:
+            aweme_id: str: 作品ID
+
+        Return:
+            stats: PostStatsFilter: 作品统计数据过滤器，包含作品统计数据的_to_raw、_to_dict方法
+        """
+
+        logger.debug(_("查询作品统计信息"))
+        async with DouyinCrawler(self.kwargs) as crawler:
+            params = PostStats(item_id=aweme_id, aweme_type=aweme_type)
+            response = await crawler.fetch_post_stats(params)
+            stats = PostStatsFilter(response)
+
+        if stats.status_code == 0:
+            logger.info(_("播放量已增加"))
+        else:
+            logger.warning(stats.status_msg)
+
+        return stats
 
     async def fetch_live_im(self, room_id: str, unique_id: str) -> LiveImFetchFilter:
         """
