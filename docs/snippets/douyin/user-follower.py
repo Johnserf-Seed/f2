@@ -28,7 +28,7 @@ async def main():
         # min_time=0,
     ):
         if follower.status_code != 0:
-            logger.erro("错误代码：{0} 错误消息：{1}").format(
+            logger.error("错误代码：{0} 错误消息：{1}").format(
                 follower.status_code, follower.status_msg
             )
         else:
