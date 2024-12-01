@@ -16,11 +16,11 @@ kwargs = {
 
 async def main():
     success_count, faild_count = 0, 0
+    aweme_id = "7436713470965468474"
 
     for i in range(10000):
-        logger.info(f"第 {i+1} 次请求")
         stats = await DouyinHandler(kwargs).fetch_post_stats(
-            aweme_id="7436713470965468474", aweme_type=68
+            aweme_id=aweme_id, aweme_type=68
         )
         if stats.status_code == 0:
             success_count += 1
@@ -29,7 +29,9 @@ async def main():
             faild_count += 1
             logger.warning(stats.status_msg)
 
-        logger.info(f"播放量增加成功 {success_count} 次，失败 {faild_count} 次")
+        logger.info(
+            f"第 {i+1} 次请求，播放量增加成功 {success_count} 次，失败 {faild_count} 次"
+        )
         # await asyncio.sleep(1)
 
 

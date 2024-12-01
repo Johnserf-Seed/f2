@@ -13,7 +13,7 @@ kwargs = {
 
 
 async def main():
-    follow_live = await DouyinHandler(kwargs).fetch_following_live()
+    follow_live = await DouyinHandler(kwargs).fetch_user_following_lives()
     print("=================_to_raw================")
     print(follow_live._to_raw())
     # print("=================_to_dict===============")
