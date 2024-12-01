@@ -177,7 +177,7 @@ async def get_segments_from_m3u8(url: str) -> Union[list, str, None]:
     # (If there are no segments, the m3u8 may be nested and
     # you need to try to get the nested m3u8 file)
     if not segments:
-        logger.warning(_("未找到m3u8文件的segments, 尝试获取嵌套的m3u8文件"))
+        logger.debug(_("未找到m3u8文件的segments, 尝试获取嵌套的m3u8文件"))
         # 尝试获取嵌套的m3u8文件 (Try to get the nested m3u8 file)
         nested_m3u8_url = m3u8_obj.playlists[0].absolute_uri
         segments = await get_segments_from_m3u8(nested_m3u8_url)

@@ -318,7 +318,7 @@ class BaseDownloader(BaseCrawler):
                                 )
                                 if ts_content_length == 0:
                                     ts_content_length = default_chunks
-                                    logger.warning(
+                                    logger.debug(
                                         _(
                                             "无法读取该TS文件字节长度，将使用默认400kb块大小处理数据"
                                         )
