@@ -14,10 +14,24 @@ kwargs = {
 
 
 async def main():
-    weibo = await WeiboHandler(kwargs).fetch_one_weibo(weibo_id="O8DM0BLLm")
-    logger.info(
-        f"微博ID: {weibo.weibo_id}, 微博文案: {weibo.desc}, 作者昵称: {weibo.nickname}, 发布时间: {weibo.create_time}"
-    )
+
+    async for weibo_list in WeiboHandler(kwargs).fetch_user_weibo(
+        user_id="2265830070",
+        page=1,
+        feature=1,
+        since_id="",
+        max_counts=20,
+    ):
+        logger.info(
+            f"微博ID: {weibo_list.weibo_id}, 微博文案: {weibo_list.weibo_desc_raw}, 作者昵称: {weibo_list.weibo_user_name_raw}, 发布时间: {weibo_list.weibo_created_at}"
+        )
+
+        # print("=================_to_raw================")
+        # print(weibo_list._to_raw())
+        # print("=================_to_dict===============")
+        # print(weibo_list._to_dict())
+        # print("=================_to_list===============")
+        # print(weibo_list._to_list())
 
 
 if __name__ == "__main__":
