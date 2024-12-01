@@ -13,13 +13,16 @@ kwargs = {
 
 
 async def main():
-    friend_video_list = await DouyinHandler(kwargs).fetch_friend_feed_videos()
-    print("=================_to_raw================")
-    print(friend_video_list._to_raw())
-    # print("=================_to_dict===============")
-    # print(friend_video_list._to_dict())
-    # print("=================_to_list===============")
-    # print(friend_video_list._to_list())
+
+    async for friend_list in DouyinHandler(kwargs).fetch_friend_feed_videos(
+        cursor=0, level=1, pull_type=0, max_counts=20
+    ):
+        print("=================_to_raw================")
+        print(friend_list._to_raw())
+        # print("=================_to_dict===============")
+        # print(friend_list._to_dict())
+        # print("=================_to_list===============")
+        # print(friend_list._to_list())
 
 
 if __name__ == "__main__":

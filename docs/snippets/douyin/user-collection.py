@@ -15,13 +15,13 @@ kwargs = {
 
 
 async def main():
-    async for music_data_list in DouyinHandler(kwargs).fetch_user_music_collection():
+    async for music_list in DouyinHandler(kwargs).fetch_user_music_collection():
         print("=================_to_raw================")
-        print(music_data_list._to_raw())
+        print(music_list._to_raw())
         # print("=================_to_dict===============")
-        # print(music_data_list._to_dict())
+        # print(music_list._to_dict())
         # print("=================_to_list===============")
-        # print(music_data_list._to_list())
+        # print(music_list._to_list())
 
 
 if __name__ == "__main__":
@@ -46,13 +46,13 @@ kwargs = {
 
 
 async def main():
-    async for aweme_data_list in DouyinHandler(kwargs).fetch_user_collection_videos():
+    async for collection_list in DouyinHandler(kwargs).fetch_user_collection_videos():
         print("=================_to_raw================")
-        print(aweme_data_list._to_raw())
+        print(collection_list._to_raw())
         # print("=================_to_dict===============")
-        # print(aweme_data_list._to_dict())
+        # print(collection_list._to_dict())
         # print("=================_to_list===============")
-        # print(aweme_data_list._to_list())
+        # print(collection_list._to_list())
 
 
 if __name__ == "__main__":
