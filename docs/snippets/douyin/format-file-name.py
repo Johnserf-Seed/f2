@@ -35,13 +35,6 @@ async def main():
         format_file_name(kwargs.get("naming"), aweme_data._to_dict(), custom_fields)
         + "_video"
     )
-    # 格式化后的自定义文件名，长度限制在100
-    print(
-        format_file_name(
-            kwargs.get("naming"), aweme_data._to_dict(), custom_fields, 100
-        )
-        + "_video"
-    )
 
 
 if __name__ == "__main__":

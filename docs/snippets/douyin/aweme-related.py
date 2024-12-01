@@ -13,15 +13,19 @@ kwargs = {
 
 
 async def main():
-    video = await DouyinHandler(kwargs).fetch_related_videos(
-        aweme_id="7294994585925848359"
-    )
-    print("=================_to_raw================")
-    print(video._to_raw())
-    # print("=================_to_dict================")
-    # print(video._to_dict())
-    # print("=================_to_list================")
-    # print(video._to_list())
+
+    async for related_list in DouyinHandler(kwargs).fetch_related_videos(
+        aweme_id="7294994585925848359",
+        filterGids="",
+        page_counts=20,
+        max_counts=20,
+    ):
+        print("=================_to_raw================")
+        print(related_list._to_raw())
+        # print("=================_to_dict================")
+        # print(related_list._to_dict())
+        # print("=================_to_list================")
+        # print(related_list._to_list())
 
 
 if __name__ == "__main__":

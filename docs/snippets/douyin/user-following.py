@@ -28,8 +28,10 @@ async def main():
         # min_time=0,
     ):
         if following.status_code != 0:
-            logger.error("错误代码：{0} 错误消息：{1}").format(
-                following.status_code, following.status_msg
+            logger.error(
+                "错误代码：{0} 错误消息：{1}".format(
+                    following.status_code, following.status_msg
+                )
             )
         else:
             logger.info(
