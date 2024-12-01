@@ -46,15 +46,15 @@ kwargs = {
 
 async def main():
     collects_id = ""  # 收藏夹ID
-    async for aweme_data_list in DouyinHandler(kwargs).fetch_user_collects_videos(
+    async for collects_list in DouyinHandler(kwargs).fetch_user_collects_videos(
         collects_id, 0, 10, 20
     ):
         print("=================_to_raw================")
-        print(aweme_data_list._to_raw())
+        print(collects_list._to_raw())
         # print("=================_to_dict===============")
-        # print(aweme_data_list._to_dict())
+        # print(collects_list._to_dict())
         # print("=================_to_list===============")
-        # print(aweme_data_list._to_list())
+        # print(collects_list._to_list())
 
 
 if __name__ == "__main__":

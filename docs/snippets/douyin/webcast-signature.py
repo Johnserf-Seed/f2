@@ -10,27 +10,3 @@ if __name__ == "__main__":
     print(signature)
 
 # endregion webcast-signature-snippet
-
-
-# region webcast-signature-manager-snippet
-# fetch_live_danmaku
-
-import asyncio
-from f2.apps.douyin.api import DouyinAPIEndpoints as dyendpoint
-from f2.apps.douyin.model import LiveWebcast
-from f2.apps.douyin.utils import WebcastSignatureManager, ClientConfManager
-
-
-async def main(params: LiveWebcast):
-    final_endpoint = WebcastSignatureManager.model_2_endpoint(
-        user_agent=ClientConfManager.user_agent(),
-        base_endpoint=dyendpoint.LIVE_IM_WSS,
-        params=params.model_dump(),
-    )
-    return final_endpoint
-
-
-if __name__ == "__main__":
-    print(asyncio.run(main()))
-
-# endregion webcast-signature-manager-snippet

@@ -669,23 +669,6 @@ outline: deep
 
 <<< @/snippets/douyin/webcast-signature.py#webcast-signature-snippet{4-8}
 
-### 使用接口模型生成直播wss签名参数 🟢
-
-类方法，用于使用不同接口数据模型生成直播wss签名参数。
-
-| 参数 | 类型 | 说明 |
-| :--- | :--- | :--- |
-| user_agent | str | 用户代理 |
-| base_endpoint | str | 端点 |
-| params | dict | 请求参数 |
-
-| 返回 | 类型 | 说明 |
-| :--- | :--- | :--- |
-| final_endpoint | str | 带wss签名参数的完整地址 |
-
-<<< @/snippets/douyin/webcast-signature.py#webcast-signature-manager-snippet{10-14}
-
-
 ### 使用接口地址生成Xb参数 🟢
 
 类方法，用于直接使用接口地址生成Xbogus参数，部分接口不校验。
