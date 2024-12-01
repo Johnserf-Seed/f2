@@ -74,7 +74,7 @@ async def main():
         params = UserProfile(sec_user_id=sec_user_id)
         response = await crawler.fetch_user_profile(params)
         user = UserProfileFilter(response)
-        # return user # user为UserProfileFilter对象，需要调用_to_dict()方法转为字典格式
+        # user为UserProfileFilter对象，需要调用_to_dict()方法转为字典格式
         return user._to_dict()
 
 

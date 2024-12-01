@@ -16,7 +16,7 @@ async def main():
     sec_user_id = "MS4wLjABAAAANXSltcLCzDGmdNFI2Q_QixVTr67NiYzjKOIP5s03CAE"
 
     async for aweme_data_list in DouyinHandler(kwargs).fetch_user_post_videos(
-        sec_user_id, 0, 10, 20
+        sec_user_id, 0, 0, 10, 20
     ):
         print("=================_to_raw================")
         print(aweme_data_list._to_raw())

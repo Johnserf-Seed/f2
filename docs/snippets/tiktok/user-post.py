@@ -18,7 +18,7 @@ async def main():
     secUid = await SecUserIdFetcher.get_secuid("https://www.tiktok.com/@vantoan___")
 
     async for aweme_data_list in TiktokHandler(kwargs).fetch_user_post_videos(
-        secUid, 0, 30, None
+        secUid, 0, 0, 10, None
     ):
         print("=================_to_raw================")
         print(aweme_data_list._to_raw())
