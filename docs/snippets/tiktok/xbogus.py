@@ -1,16 +1,16 @@
 # region str-2-endpoint-snippet
 # 使用接口地址直接生成请求链接
-import asyncio
 from f2.apps.tiktok.utils import XBogusManager
 
 
 async def main():
+    user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0"
     test_endpoint = "aid=1988&app_language=zh-Hans&app_name=tiktok_web&browser_platform=Win32&browser_version=5.0%20%28Windows%20NT%2010.0%3B%20Win64%3B%20x64%29%20AppleWebKit%2F537.36%20%28KHTML%2C%20like%20Gecko%29%20Chrome%2F120.0.0.0%20Safari%2F537.36&channel=tiktok_web&cookie_enabled=true&count=16&coverFormat=2&device_id=7306060721837852167&device_platform=web_pc&itemID=7294298719665622305"
-    return XBogusManager.str_2_endpoint(test_endpoint)
+    return XBogusManager.str_2_endpoint(user_agent, test_endpoint)
 
 
 if __name__ == "__main__":
-    print(asyncio.run(main()))
+    print(main())
 
 # endregion str-2-endpoint-snippet
 
