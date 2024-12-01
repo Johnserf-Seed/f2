@@ -7,7 +7,6 @@ from typing import AsyncGenerator, Union, Dict, Any, List
 from f2.log.logger import logger
 from f2.i18n.translator import _
 from f2.utils.decorators import mode_handler, mode_function_map
-from f2.utils.utils import split_set_cookie
 from f2.apps.twitter.db import AsyncUserDB
 from f2.apps.twitter.crawler import TwitterCrawler
 from f2.apps.twitter.dl import TwitterDownloader
@@ -156,8 +155,11 @@ class TwitterHandler:
             tweet = TweetDetailFilter(response)
 
         logger.info(
-            _("推文ID：{0} 推文文案：{1} 作者：{2}").format(
-                tweet.tweet_id, tweet.tweet_desc, tweet.nickname
+            _("推文ID：{0} 推文文案：{1} 作者：{2} 推文阅读量：{3}").format(
+                tweet.tweet_id,
+                tweet.tweet_desc,
+                tweet.nickname,
+                tweet.tweet_views_count,
             )
         )
 
@@ -335,6 +337,9 @@ class TwitterHandler:
                     like.tweet_id, like.tweet_desc, like.nickname
                 )
             )
+            if like.max_cursor is None:
+                logger.error(_("该用户没有公开喜欢的推文"))
+                break
 
             # 当cursorType值为Bottom且entryId长度为2时，表示已经爬取完所有的推文
             if like.cursorType == "Bottom" and len(like.entryId) == 2:
@@ -430,6 +435,10 @@ class TwitterHandler:
                     bookmark.tweet_id, bookmark.tweet_desc, bookmark.nickname
                 )
             )
+
+            if bookmark.max_cursor is None:
+                logger.error(_("该用户没有收藏的推文"))
+                break
 
             # 当cursorType值为Bottom且entryId长度为2时，表示已经爬取完所有的推文
             if bookmark.cursorType == "Bottom" and len(bookmark.entryId) == 2:
