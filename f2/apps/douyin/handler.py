@@ -116,7 +116,7 @@ class DouyinHandler:
                 raise APIResponseError(
                     _("`fetch_user_profile`请求失败，请更换cookie或稍后再试")
                 )
-            return UserProfileFilter(response)
+            return user
 
     async def get_or_add_user_data(
         self,
@@ -627,6 +627,8 @@ class DouyinHandler:
         Note:
             该接口需要用POST且只靠cookie来获取数据。
             (This interface needs to use POST and only rely on cookies to obtain data.)
+            收藏接口的页码时间戳长度为16位
+            (The page timestamp length of the collection interface is 16 bits)
         """
 
         max_counts = max_counts or float("inf")
@@ -645,7 +647,7 @@ class DouyinHandler:
             rich_console.print(
                 Rule(
                     _("处理第 {0} 页 ({1})").format(
-                        max_cursor, timestamp_2_str(max_cursor)
+                        max_cursor, timestamp_2_str(str(max_cursor)[:13])
                     )
                 )
             )
