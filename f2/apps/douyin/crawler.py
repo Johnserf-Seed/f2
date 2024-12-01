@@ -40,6 +40,7 @@ from f2.apps.douyin.model import (
     LiveWebcast,
     LiveImFetch,
     QueryUser,
+    PostStats,
 )
 from f2.apps.douyin.utils import (
     XBogusManager,
@@ -329,6 +330,15 @@ class DouyinCrawler(BaseCrawler):
         )
         logger.debug(_("查询用户接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
+
+    async def fetch_post_stats(self, params: PostStats):
+        endpoint = self.bogus_manager.model_2_endpoint(
+            self.headers.get("User-Agent"),
+            dyendpoint.POST_STATS,
+            params.model_dump(),
+        )
+        logger.debug(_("作品统计接口地址：{0}").format(endpoint))
+        return await self._fetch_post_json(endpoint, params.model_dump())
 
     async def __aenter__(self):
         return self
