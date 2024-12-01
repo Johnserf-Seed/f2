@@ -330,3 +330,10 @@ class QueryUser(BaseRequestModel):
     update_version_code: str = "170400"
     version_code: str = "170400"
     version_name: str = "17.4.0"
+
+
+class PostStats(BaseRequestModel):
+    aweme_type: int
+    item_id: str
+    play_delta: int = 1
+    source: int = 0
