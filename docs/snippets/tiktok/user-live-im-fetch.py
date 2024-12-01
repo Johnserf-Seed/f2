@@ -1,4 +1,5 @@
 import asyncio
+from f2.log.logger import logger
 from f2.apps.tiktok.handler import TiktokHandler
 
 
@@ -27,8 +28,15 @@ kwargs2 = {
 
 
 async def main():
+    room_id = "7404848324131638062"
+
+    room = await TiktokHandler(kwargs).fetch_check_live_alive(room_id)
+    if not room.is_alive[0]:
+        logger.info("直播间：{0} 未开播".format(room_id))
+        return
+
     # 通过该接口获取wss所需的cursor和internal_ext
-    live_im = await TiktokHandler(kwargs).fetch_live_im(room_id="7404848324131638062")
+    live_im = await TiktokHandler(kwargs).fetch_live_im(room_id=room_id)
     # logger.info(
     #     "直播间IM页码：",
     #     live_im.cursor,
@@ -38,13 +46,14 @@ async def main():
     #     live_im.routeParams.wrss,
     # )
 
-    # # 获取直播弹幕
-    await TiktokHandler(kwargs2).fetch_live_danmaku(
-        room_id="7404848324131638062",
-        internal_ext=live_im.internalExt,
-        cursor=live_im.cursor,
-        wrss=live_im.routeParams.wrss,
-    )
+    if live_im:
+        # 获取直播间信息
+        await TiktokHandler(kwargs2).fetch_live_danmaku(
+            room_id=room_id,
+            internal_ext=live_im.internalExt,
+            cursor=live_im.cursor,
+            wrss=live_im.routeParams.wrss,
+        )
 
 
 if __name__ == "__main__":

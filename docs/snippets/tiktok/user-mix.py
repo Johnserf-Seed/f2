@@ -17,16 +17,25 @@ kwargs = {
 
 async def main():
     secUid = await SecUserIdFetcher.get_secuid("https://www.tiktok.com/@vantoan___")
-    playlist = await TiktokHandler(kwargs).fetch_play_list(secUid)
+    playlist = await TiktokHandler(kwargs).fetch_play_list(
+        secUid,
+        cursor=0,
+        page_counts=20,
+    )
 
-    for mixId in playlist.get("mixId", []):
-        async for aweme_data_list in TiktokHandler(kwargs).fetch_user_mix_videos(mixId):
+    for mixId in playlist._to_dict().get("mixId", []):
+        async for user_mix_list in TiktokHandler(kwargs).fetch_user_mix_videos(
+            mixId,
+            cursor=0,
+            page_counts=20,
+            max_counts=20,
+        ):
             print("=================_to_raw================")
-            print(aweme_data_list._to_raw())
+            print(user_mix_list._to_raw())
             # print("=================_to_dict===============")
-            # print(aweme_data_list._to_dict())
+            # print(user_mix_list._to_dict())
             # print("=================_to_list===============")
-            # print(aweme_data_list._to_list())
+            # print(user_mix_list._to_list())
 
 
 if __name__ == "__main__":
