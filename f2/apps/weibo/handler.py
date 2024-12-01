@@ -88,9 +88,7 @@ class WeiboHandler:
             )
             return user
 
-    async def fetch_user_info_by_screen_name(
-        self, screen_name: str = ""
-    ) -> UserInfoFilter:
+    async def fetch_user_info_by_screen_name(self, screen_name: str) -> UserInfoFilter:
         """
         获取用户个人信息
         (Get user personal info)
@@ -114,7 +112,9 @@ class WeiboHandler:
             user = UserInfoFilter(response)
             if user.nickname is None:
                 raise APIResponseError(
-                    _("`fetch_user_info`请求失败，请更换cookie或稍后再试")
+                    _(
+                        "`fetch_user_info_by_screen_name`请求失败，请更换cookie或稍后再试"
+                    )
                 )
             return user
 
@@ -320,21 +320,20 @@ class WeiboHandler:
                 weibo_data = UserWeiboFilter(response)
                 yield weibo_data
 
-            if weibo_data.since_id == "" or weibos_collected == weibo_data.weibo_total:
-                logger.info(
-                    _("已爬取完所有微博，共处理 {0} 个微博").format(weibos_collected)
-                )
-                break
-            else:
-                since_id = str(weibo_data.since_id)
-
             # 更新已经处理的微博数量
             weibos_collected += len(weibo_data.weibo_id)
             page += 1
 
+            if weibo_data.since_id == "" or weibos_collected == weibo_data.weibo_total:
+                break
+            else:
+                since_id = str(weibo_data.since_id)
+
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(_("已爬取完所有微博，共处理 {0} 个微博").format(weibos_collected))
 
 
 async def main(kwargs):
