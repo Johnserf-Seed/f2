@@ -2286,3 +2286,15 @@ class FollowingUserLiveFilter(JSONModel):
         )
 
         return list_dicts
+
+
+class PostStatsFilter(JSONModel):
+
+    # 0 正常 5 参数不合法 2863 您的操作过于频繁，请稍后再试
+    @property
+    def status_code(self):
+        return self._get_attr_value("$.status_code")
+
+    @property
+    def status_msg(self):
+        return self._get_attr_value("$.status_msg")
