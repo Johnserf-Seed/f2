@@ -18,15 +18,15 @@ async def main():
         "YOUR_HOME_PAGE"
     )  # 替换开放收藏列表的用户主页
 
-    async for aweme_data_list in TiktokHandler(kwargs).fetch_user_collect_videos(
+    async for collect_list in TiktokHandler(kwargs).fetch_user_collect_videos(
         secUid, 0, 10, 20
     ):
         print("=================_to_raw================")
-        print(aweme_data_list._to_raw())
+        print(collect_list._to_raw())
         # print("=================_to_dict===============")
-        # print(aweme_data_list._to_dict())
+        # print(collect_list._to_dict())
         # print("=================_to_list===============")
-        # print(aweme_data_list._to_list())
+        # print(collect_list._to_list())
 
 
 if __name__ == "__main__":
