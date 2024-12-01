@@ -31,9 +31,7 @@ class BaseRequestModel(BaseModel):
     )
     channel: str = "tiktok_web"
     cookie_enabled: str = "true"
-    device_id: str = ClientConfManager.brm_device().get(
-        "id", "7379572768071239176"
-    )  # 风控参数
+    device_id: str = ClientConfManager.brm_device().get("id", "")  # 风控参数
     device_platform: str = ClientConfManager.brm_device().get("platform", "web_pc")
     focus_state: str = "true"
     from_page: str = "user"
