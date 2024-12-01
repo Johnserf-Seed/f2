@@ -140,3 +140,6 @@ class DouyinAPIEndpoints:
 
     # 查询用户 (Query User)
     QUERY_USER = f"{DOUYIN_DOMAIN}/aweme/v1/web/query/user/"
+
+    # 作品状态 (Post Status)
+    POST_STATS = f"{DOUYIN_DOMAIN}/aweme/v2/web/aweme/stats/"
