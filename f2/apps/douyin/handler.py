@@ -4,6 +4,7 @@ import asyncio
 
 from rich.rule import Rule
 from pathlib import Path
+from urllib.parse import quote
 from typing import AsyncGenerator, Union, Dict, Any, List
 
 from f2.log.logger import logger
@@ -1317,7 +1318,6 @@ class DouyinHandler:
             related: AsyncGenerator[PostRelatedFilter, Any]: 相关推荐作品数据过滤器
                         ，包含相关作品数据的_to_raw、_to_dict、_to_list方法
         """
-        from urllib.parse import quote
 
         max_counts = max_counts or float("inf")
         videos_collected = 0
