@@ -57,6 +57,7 @@ bark:
 
   token:
   mode: get
+  url: ""
   retry: 3
   ringtones: 1
   icon: https://johnserf-seed.github.io/f2/f2-logo-with-shadow.png
