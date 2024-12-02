@@ -12,6 +12,7 @@ def cookie_fixture():
 async def test_fetch_user_post_videos(cookie_fixture):
     async for aweme_data_list in DouyinHandler(cookie_fixture).fetch_user_post_videos(
         sec_user_id="MS4wLjABAAAANXSltcLCzDGmdNFI2Q_QixVTr67NiYzjKOIP5s03CAE",
+        min_cursor=0,
         max_cursor=0,
         page_counts=1,
         max_counts=1,
