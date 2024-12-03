@@ -219,11 +219,16 @@ class BaseDownloader(BaseCrawler):
             else:
                 # 如果遍历完所有链接仍然无法成功下载，则记录警告
                 logger.warning("所有链接都无法下载")
+                logger.error(
+                    _("[red][  丢失  ]：[/red]")
+                    + _("无法下载文件：{0}").format(Path(full_path).name)
+                )
                 await self.progress.update(
                     task_id,
                     description=_("[red][  丢失  ]：[/red]"),
                     filename=trim_filename(full_path.name, 45),
                     state="error",
+                    visible=False,
                 )
 
     async def save_file(
