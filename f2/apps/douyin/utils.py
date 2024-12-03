@@ -1255,7 +1255,7 @@ class WebCastIdFetcher(BaseCrawler):
                 match = live_pattern3.search(url)
                 logger.warning(
                     _(
-                        "该链接返回的是room_id，请使用`fetch_user_live_videos_by_room_id`接口"
+                        "该链接返回的是room_id，请使用`fetch_user_live_videos_by_room_id`接口处理APP端分享链接。"
                     )
                 )
             else:
