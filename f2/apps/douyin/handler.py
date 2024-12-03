@@ -1066,6 +1066,10 @@ class DouyinHandler:
         # 然后下载直播推流
         webcast_data = await self.fetch_user_live_videos(webcast_id)
 
+        # 应对APP分享的短链接的情况，需要使用web链接或``fetch_user_live_videos_by_room_id``接口
+        if not webcast_data:
+            return
+
         live_status = webcast_data.live_status
         sec_user_id = webcast_data.sec_user_id
 
@@ -1099,6 +1103,16 @@ class DouyinHandler:
         """
 
         logger.debug(_("处理直播: {0} 的数据").format(webcast_id))
+
+        if len(webcast_id) > 12 and len(webcast_id) == 19:
+            logger.warning(
+                _(
+                    "直播ID：{0} 长度大于12位，如果使用的是APP分享链接，请使用`fetch_user_live_videos_by_room_id`接口".format(
+                        webcast_id
+                    )
+                )
+            )
+            return
 
         async with DouyinCrawler(self.kwargs) as crawler:
             params = UserLive(web_rid=webcast_id, room_id_str="")
