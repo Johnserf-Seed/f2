@@ -1,3 +1,4 @@
+# region user-live-im-fetch-snippet
 import asyncio
 
 from f2.apps.douyin.crawler import DouyinWebSocketCrawler
@@ -99,7 +100,9 @@ async def main():
     live_im = await DouyinHandler(kwargs).fetch_live_im(
         room_id=room.room_id, unique_id=user.user_unique_id
     )
-    # logger.info("直播间IM页码：", live_im.cursor, "直播间IM扩展：", live_im.internal_ext)
+    # logger.info(
+    #     "直播间IM页码：", live_im.cursor, "直播间IM扩展：", live_im.internal_ext
+    # )
 
     # 获取直播弹幕
     await DouyinHandler(kwargs2).fetch_live_danmaku(
@@ -113,3 +116,52 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+# endregion user-live-im-fetch-snippet
+
+# region user-live-im-snippet
+import asyncio
+
+from f2.apps.douyin.crawler import DouyinWebSocketCrawler
+from f2.apps.douyin.handler import DouyinHandler
+from f2.log.logger import logger
+
+
+kwargs = {
+    "headers": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0",
+        "Referer": "https://www.douyin.com/",
+        "Content-Type": "application/protobuffer;",
+    },
+    "proxies": {"http://": None, "https://": None},
+    "timeout": 10,
+    # 游客cookie即可，需要注意ttwid作为用户标识只可在一个直播间使用，不可多个直播间同时使用
+    # 使用TokenManager.gen_ttwid()即可生成新的游客ttwid
+    "cookie": "GUEST_COOKIE_HERE",
+}
+
+
+async def main():
+    # 获取游客ttwid的user_unique_id，你可以通过TokenManager.gen_ttwid()生成新的游客ttwid
+    user = await DouyinHandler(kwargs).fetch_query_user()
+    # logger.info("游客user_unique_id：", user.user_unique_id)
+
+    # 通过此接口获取room_id，参数为live_id
+    room = await DouyinHandler(kwargs).fetch_user_live_videos("277303127629")
+    # logger.info("直播间ID：", room.room_id)
+
+    if room.live_status != 2:
+        logger.info("直播已结束")
+        return
+
+    # 通过该接口获取wss所需的cursor和internal_ext
+    live_im = await DouyinHandler(kwargs).fetch_live_im(
+        room_id=room.room_id, unique_id=user.user_unique_id
+    )
+    logger.info(
+        "直播间IM页码：", live_im.cursor, "直播间IM扩展：", live_im.internal_ext
+    )
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+# endregion user-live-im-snippet

@@ -232,7 +232,7 @@ class DouyinCrawler(BaseCrawler):
             dyendpoint.LIVE_INFO,
             params.model_dump(),
         )
-        logger.debug(_("直播接口地址：{0}").format(endpoint))
+        logger.debug(_("直播信息接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_live_room_id(self, params: UserLive2):

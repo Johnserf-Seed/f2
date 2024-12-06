@@ -15,7 +15,11 @@ kwargs = {
 
 
 async def main():
-    async for collects in DouyinHandler(kwargs).fetch_user_collects(0, 10, 20):
+    async for collects in DouyinHandler(kwargs).fetch_user_collects(
+        max_cursor=0,
+        page_counts=10,
+        max_counts=20,
+    ):
         print("=================_to_raw================")
         print(collects._to_raw())
         # print("=================_to_dict===============")
@@ -45,9 +49,11 @@ kwargs = {
 
 
 async def main():
-    collects_id = ""  # 收藏夹ID
+    collects_id = ""  # 收藏夹ID，通过fetch_user_collects方法获取
     async for collects_list in DouyinHandler(kwargs).fetch_user_collects_videos(
-        collects_id, 0, 10, 20
+        collects_id,
+        max_cursor=0,
+        page_counts=10,
     ):
         print("=================_to_raw================")
         print(collects_list._to_raw())
