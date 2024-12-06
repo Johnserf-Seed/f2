@@ -558,8 +558,9 @@ class WebcastSignatureManager:
         params: dict,
     ) -> str:
         warnings.warn(
-            "WebcastSignatureManager.model_2_endpoint 方法已弃用，将在未来版本中移除。"
-            "暂时不会有替代。",
+            _(
+                "WebcastSignatureManager.model_2_endpoint 方法已弃用，将在未来版本中移除。"
+            ),
             DeprecationWarning,
             stacklevel=2,
         )
@@ -1483,7 +1484,17 @@ def show_qrcode(qrcode_url: str, show_image: bool = False) -> None:
         qrcode_url (str): 登录二维码链接 (Login QR code link)
         show_image (bool): 是否显示图像，True 表示显示，False 表示在控制台显示
         (Whether to display the image, True means display, False means display in the console)
+
+    Deprecated:
+        show_qrcode() 方法已弃用，将在未来版本中移除。
+        (show_qrcode() method is deprecated and will be removed in future versions.)
     """
+    warnings.warn(
+        _("show_qrcode() 方法已弃用，将在未来版本中移除。"),
+        DeprecationWarning,
+        stacklevel=2,
+    )
+
     if show_image:
         # 创建并显示QR码图像
         qr_code_img = qrcode.make(qrcode_url)
