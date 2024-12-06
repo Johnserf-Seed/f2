@@ -1,7 +1,7 @@
 # path:f2/apps/bark/model.py
 
 from typing import Optional, Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 # Base Model
@@ -23,5 +23,4 @@ class BarkModel(BaseModel):
     badge: Optional[int]
     autoCopy: Optional[int]
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
