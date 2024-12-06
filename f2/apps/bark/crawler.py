@@ -7,6 +7,7 @@ from f2.i18n.translator import _
 from f2.crawlers.base_crawler import BaseCrawler
 from f2.utils.utils import BaseEndpointManager
 from f2.apps.bark.model import BarkModel
+from f2.apps.bark.api import BarkAPIEndpoints as bkendpoint
 from f2.apps.bark.utils import ClientConfManager
 
 
@@ -17,9 +18,8 @@ class BarkCrawler(BaseCrawler):
     ):
         # 需要与cli同步
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})
-        self.server_endpoint = ClientConfManager.client().get("url") + kwargs.get(
-            "token"
-        )
+        token = kwargs.get("token", "")
+        self.server_endpoint = f"{bkendpoint.BARK_DOMAIN}/{token}"
         if ClientConfManager.encryption().get("enable"):
             self.encryption = ClientConfManager.encryption()
         super().__init__(
