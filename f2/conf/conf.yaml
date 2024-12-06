@@ -15,6 +15,10 @@ f2:
       key: ""
       iv: ""
 
+    proxies:
+      http://:
+      https://:
+
   douyin:
     encryption: ab
 
