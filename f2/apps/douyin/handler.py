@@ -1790,7 +1790,6 @@ class DouyinHandler:
                 "WebcastFansclubMessage": DouyinWebSocketCrawler.WebcastFansclubMessage,
                 "WebcastHotRoomMessage": DouyinWebSocketCrawler.WebcastHotRoomMessage,
                 "WebcastLinkMicMethod": DouyinWebSocketCrawler.WebcastLinkMicMethod,
-                "LinkMicMethod": DouyinWebSocketCrawler.WebcastLinkMicMethod,
                 "WebcastLinkerContributeMessage": DouyinWebSocketCrawler.WebcastLinkerContributeMessage,
                 "WebcastEmojiChatMessage": DouyinWebSocketCrawler.WebcastEmojiChatMessage,
                 "WebcastScreenChatMessage": DouyinWebSocketCrawler.WebcastScreenChatMessage,
