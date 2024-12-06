@@ -12,7 +12,7 @@ from f2.apps.bark.filter import BarkNotificationFilter
 
 class BarkHandler:
 
-    def __init__(self, kwargs: Dict = ...) -> None:
+    def __init__(self, kwargs: Dict = {}) -> None:
         self.kwargs = kwargs
 
     async def _send_bark_notification(self, send_method: str) -> BarkNotificationFilter:
@@ -66,6 +66,28 @@ class BarkHandler:
     async def post_bark_notification(self) -> BarkNotificationFilter:
         """用于发送Bark通知 (post 方式)"""
         return await self._send_bark_notification("post")
+
+    async def send_quick_notification(
+        self,
+        title: str,
+        body: str,
+        send_method: str = "fetch",
+        **kwargs,
+    ) -> BarkNotificationFilter:
+        """
+        用于发送Bark通知的快捷方法
+
+        Args:
+            title (str): 通知标题
+            body (str): 通知内容
+            send_method (str): 调用的发送方法（"fetch" 或 "post"）
+            kwargs (Dict): 其他通知参数
+
+        Returns:
+            BarkNotificationFilter: Bark通知过滤器，包含结果数据的_to_raw()、_to_dict()方法
+        """
+        self.kwargs.update({"title": title, "body": body, **kwargs})
+        return await self._send_bark_notification(send_method)
 
 
 async def main(kwargs):
