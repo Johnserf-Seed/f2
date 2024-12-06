@@ -18,6 +18,10 @@ class ClientConfManager:
         return cls.bark_conf
 
     @classmethod
+    def key(cls) -> str:
+        return cls.client().get("key", "")
+
+    @classmethod
     def token(cls) -> str:
         return cls.client().get("token", "")
 
@@ -28,3 +32,15 @@ class ClientConfManager:
     @classmethod
     def encryption(cls) -> dict:
         return cls.client().get("encryption", {})
+
+    @classmethod
+    def headers(cls) -> dict:
+        return cls.client().get("headers", {})
+
+    @classmethod
+    def user_agent(cls) -> str:
+        return cls.headers().get("User-Agent", "")
+
+    @classmethod
+    def referer(cls) -> str:
+        return cls.headers().get("Referer", "")

@@ -296,6 +296,12 @@ def bark(
 
     # 更新主配置文件中的代理参数
     main_conf["proxies"] = ClientConfManager.proxies()
+    main_conf["encryption"] = ClientConfManager.encryption()
+
+    # 更新主配置文件中的headers参数
+    kwargs.setdefault("headers", {})
+    kwargs["headers"]["User-Agent"] = ClientConfManager.user_agent()
+    kwargs["headers"]["Referer"] = ClientConfManager.referer()
 
     # 如果初始化配置文件，则与更新配置文件互斥
     if init_config and not update_config:
