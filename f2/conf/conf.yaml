@@ -3,7 +3,6 @@ f2:
   show_update: true
 
   bark:
-    url: https://api.day.app/
     key: ""
     token: ""
 
