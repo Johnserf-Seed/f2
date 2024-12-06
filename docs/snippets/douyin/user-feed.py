@@ -15,15 +15,18 @@ kwargs = {
 
 async def main():
     sec_user_id = ""  # 用户ID
-    async for feeds in DouyinHandler(kwargs).fetch_user_feed_videos(
-        sec_user_id, 0, 10, 20
+    async for feed_list in DouyinHandler(kwargs).fetch_user_feed_videos(
+        sec_user_id,
+        max_cursor=0,
+        page_counts=10,
+        max_counts=20,
     ):
         print("=================_to_raw================")
-        print(feeds._to_raw())
+        print(feed_list._to_raw())
         # print("=================_to_dict===============")
-        # print(feeds._to_dict())
+        # print(feed_list._to_dict())
         # print("=================_to_list===============")
-        # print(feeds._to_list())
+        # print(feed_list._to_list())
 
 
 if __name__ == "__main__":

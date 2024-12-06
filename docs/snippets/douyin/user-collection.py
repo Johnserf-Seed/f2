@@ -15,7 +15,10 @@ kwargs = {
 
 
 async def main():
-    async for music_list in DouyinHandler(kwargs).fetch_user_music_collection():
+    async for music_list in DouyinHandler(kwargs).fetch_user_music_collection(
+        max_cursor=0,
+        page_counts=20,
+    ):
         print("=================_to_raw================")
         print(music_list._to_raw())
         # print("=================_to_dict===============")
@@ -46,7 +49,10 @@ kwargs = {
 
 
 async def main():
-    async for collection_list in DouyinHandler(kwargs).fetch_user_collection_videos():
+    async for collection_list in DouyinHandler(kwargs).fetch_user_collection_videos(
+        max_cursor=0,
+        page_counts=20,
+    ):
         print("=================_to_raw================")
         print(collection_list._to_raw())
         # print("=================_to_dict===============")
