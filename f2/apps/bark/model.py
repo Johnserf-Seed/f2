@@ -8,19 +8,21 @@ from pydantic import BaseModel, Field, ConfigDict
 class BarkModel(BaseModel):
     title: Optional[str]
     body: str
-    sound: Optional[str]
-    call: Optional[int]
-    isArchive: Optional[int]
-    icon: Optional[str]
-    group: Optional[str]
+    sound: Optional[str] = "birdsong"
+    call: Optional[int] = 0
+    isArchive: Optional[int] = 1
+    icon: Optional[str] = "https://johnserf-seed.github.io/f2/f2-logo-with-shadow.png"
+    group: Optional[str] = "F2下载统计"
     # ciphertext: Optional[str] = ""
-    level: Optional[Literal["active", "timeSensitive", "passive", "critical"]]
-    volume: Optional[int]
-    url: Optional[str]
+    level: Optional[Literal["active", "timeSensitive", "passive", "critical"]] = (
+        "active"
+    )
+    volume: Optional[int] = 5
+    url: Optional[str] = "https://johnserf-seed.github.io/f2/"
     copy_text: Optional[str] = Field(
         "", alias="copy"
     )  # 'copy' 使用别名 'copy_text'，原因是关键词冲突
-    badge: Optional[int]
-    autoCopy: Optional[int]
+    badge: Optional[int] = 1
+    autoCopy: Optional[int] = 1
 
     model_config = ConfigDict(populate_by_name=True)
