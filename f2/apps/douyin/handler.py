@@ -1448,6 +1448,7 @@ class DouyinHandler:
                     cursor=cursor,
                     level=level,
                     pull_type=pull_type,
+                    refresh_type=pull_type,
                 )
                 response = await crawler.fetch_friend_feed(params)
                 friend = FriendFeedFilter(response)

@@ -161,6 +161,7 @@ class FriendFeed(BaseRequestModel):
     aweme_ids: str = ""
     room_ids: str = ""
     pull_type: int = 0
+    refresh_type: int = 0
     address_book_access: int = 2
     gps_access: int = 2
     recent_gids: str = ""
