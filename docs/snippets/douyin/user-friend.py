@@ -13,9 +13,11 @@ kwargs = {
 
 
 async def main():
-
     async for friend_list in DouyinHandler(kwargs).fetch_friend_feed_videos(
-        cursor=0, level=1, pull_type=0, max_counts=20
+        cursor=0,
+        level=1,
+        pull_type=0,
+        max_counts=20,
     ):
         print("=================_to_raw================")
         print(friend_list._to_raw())

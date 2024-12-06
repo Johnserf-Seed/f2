@@ -13,7 +13,6 @@ kwargs = {
 
 
 async def main():
-
     async for related_list in DouyinHandler(kwargs).fetch_related_videos(
         aweme_id="7294994585925848359",
         filterGids="",

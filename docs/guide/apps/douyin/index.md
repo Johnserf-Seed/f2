@@ -17,11 +17,13 @@ outline: deep
 | 下载用户喜欢作品       | `handle_user_like`      |
 | 下载用户收藏原声       | `handle_user_music_collection` |
 | 下载用户收藏作品       | `handle_user_collection` |
+| 下载用户收藏夹作品       | `handle_user_collects` |
 | 下载用户合集作品       | `handle_user_mix`       |
 | 下载用户直播流         | `handle_user_live`      |
 | 下载用户首页推荐作品    | `handle_user_feed`      |
 | 下载相似作品          | `handle_related`        |
 | 下载好友作品          | `handle_friend_feed`      |
+| ~~SSO登录~~             | ~~`handle_sso_login`~~   |
 
 |     数据方法接口     |         方法           | 开发者接口  |
 | :------------------ | :-------------------   | :--------: |
@@ -44,6 +46,7 @@ outline: deep
 | 关注用户数据          | `fetch_user_following` |     🟢      |
 | 粉丝用户数据          | `fetch_user_follower` |     🟢      |
 | 查询用户数据          | `fetch_query_user`   |     🟢      |
+| 查询作品的统计信息     | `fetch_post_stats`   |     🟢      |
 | 直播间wss负载数据      | `fetch_live_im`      |     🟢      |
 | 直播间wss弹幕         | `fetch_live_danmaku` |     🟢      |
 | 关注用户的直播间信息    | `fetch_user_following_lives` |     🟢      |
@@ -51,35 +54,35 @@ outline: deep
 
 ::: details utils接口列表
 
-| 工具类接口          | 类名            | 方法               | 状态 |
-| :---------------- | :-------------- | :------------------  | :--: |
-| 管理客户端配置     | `ClientConfManager`   |                  |  🟢  |
-| 生成真实msToken    | `TokenManager`     | `gen_real_msToken`       |  🟢  |
-| 生成虚假msToken     | `TokenManager`     | `gen_false_msToken`      |  🟢  |
-| 生成ttwid          | `TokenManager`     | `gen_ttwid`              |  🟢  |
-| 生成webid          | `TokenManager`     | `gen_webid`              |  🟢  |
-| 生成verify_fp      | `VerifyFpManager`  | `gen_verify_fp`          |  🟢  |
-| 生成s_v_web_id     | `VerifyFpManager`  | `gen_s_v_web_id`         |  🟢  |
-| 生成直播signature | `DouyinWebcastSignature` | `get_signature` |  🟢  |
-| 使用接口模型生成直播wss签名参数 | `WebcastSignatureManager` | `model_2_endpoint` |  🟢  |
-| 使用接口地址生成Xb参数      | `XBogusManager`    | `str_2_endpoint`   |  🟢  |
-| 使用接口模型生成Xb参数      | `XBogusManager`    | `model_2_endpoint`   |  🟢  |
-| 使用接口地址生成Ab参数      | `ABogusManager`    | `str_2_endpoint`   |  🟢  |
-| 使用接口模型生成Ab参数      | `ABogusManager`    | `model_2_endpoint`   |  🟢  |
-| 提取单个用户id       | `SecUserIdFetcher` | `get_sec_user_id`         |  🟢  |
-| 提取列表用户id       | `SecUserIdFetcher` | `get_all_sec_user_id`     |  🟢  |
-| 提取单个作品id       | `AwemeIdFetcher`   | `get_aweme_id`            |  🟢  |
-| 提取列表作品id       | `AwemeIdFetcher`   | `get_all_aweme_id`        |  🟢  |
-| 提取单个合集id       | `MixIdFetcher`     | `get_mix_id`              |  🟢  |
-| 提取列表合集id       | `MixIdFetcher`     | `get_all_mix_id`          |  🟢  |
-| 提取单个直播间号      | `WebCastIdFetcher` | `get_webcast_id`          |  🟢  |
-| 提取列表直播间号       | `WebCastIdFetcher` | `get_all_webcast_id`      |  🟢  |
-| 全局格式化文件名      | -                 | `format_file_name`        |  🟢  |
-| 创建用户目录         | -                 | `create_user_folder`      |  🟢  |
-| 重命名用户目录       | -                 | `rename_user_folder`      |  🟢  |
-| 创建或重命名用户目录   | -                 | `create_or_rename_user_folder` | 🟢 |
-| 显示二维码           | -                | `show_qrcode`             |  🟢  |
-| json歌词转lrc歌词 | -                | `json_2_lrc`            |  🟢  |
+| 工具类接口            | 类名                   | 方法                         | 状态 |
+| :------------------ | :--------------------- | :-------------------------- | :--: |
+| 管理客户端配置        | `ClientConfManager`    |                              |  🟢  |
+| 生成真实msToken      | `TokenManager`         | `gen_real_msToken`           |  🟢  |
+| 生成虚假msToken      | `TokenManager`         | `gen_false_msToken`          |  🟢  |
+| 生成ttwid           | `TokenManager`         | `gen_ttwid`                  |  🟢  |
+| 生成webid           | `TokenManager`         | `gen_webid`                  |  🟢  |
+| 生成verify_fp       | `VerifyFpManager`      | `gen_verify_fp`              |  🟢  |
+| 生成s_v_web_id      | `VerifyFpManager`      | `gen_s_v_web_id`             |  🟢  |
+| 生成直播signature    | `DouyinWebcastSignature` | `get_signature`            |  🟢  |
+| ~~使用接口模型生成wss签名参数~~ | ~~`WebcastSignatureManager`~~ | ~~`model_2_endpoint`~~      |  🔴  |
+| 使用接口地址生成Xb参数 | `XBogusManager`        | `str_2_endpoint`             |  🟢  |
+| 使用接口模型生成Xb参数 | `XBogusManager`        | `model_2_endpoint`           |  🟢  |
+| 使用接口地址生成Ab参数 | `ABogusManager`        | `str_2_endpoint`             |  🟢  |
+| 使用接口模型生成Ab参数 | `ABogusManager`        | `model_2_endpoint`           |  🟢  |
+| 提取单个用户id       | `SecUserIdFetcher`     | `get_sec_user_id`            |  🟢  |
+| 提取列表用户id       | `SecUserIdFetcher`     | `get_all_sec_user_id`        |  🟢  |
+| 提取单个作品id       | `AwemeIdFetcher`       | `get_aweme_id`               |  🟢  |
+| 提取列表作品id       | `AwemeIdFetcher`       | `get_all_aweme_id`           |  🟢  |
+| 提取单个合集id       | `MixIdFetcher`         | `get_mix_id`                 |  🟢  |
+| 提取列表合集id       | `MixIdFetcher`         | `get_all_mix_id`             |  🟢  |
+| 提取单个直播间号      | `WebCastIdFetcher`     | `get_webcast_id`             |  🟢  |
+| 提取列表直播间号      | `WebCastIdFetcher`     | `get_all_webcast_id`         |  🟢  |
+| 全局格式化文件名      | -                      | `format_file_name`           |  🟢  |
+| 创建用户目录         | -                      | `create_user_folder`         |  🟢  |
+| 重命名用户目录        | -                      | `rename_user_folder`         |  🟢  |
+| 创建或重命名用户目录   | -                      | `create_or_rename_user_folder` | 🟢  |
+| ~~显示二维码~~         | -                      | ~~`show_qrcode`~~              |  🔴  |
+| json歌词转lrc歌词    | -                      | `json_2_lrc`                 |  🟢  |
 :::
 
 ::: details cralwer接口列表
@@ -104,9 +107,9 @@ outline: deep
 | 直播接口地址（room_id） | `DouyinCrawler` | `fetch_live_room_id` |  🟢  |
 | 关注用户直播接口地址 | `DouyinCrawler` | `fetch_following_live` |  🟢  |
 | 定位上一次作品接口地址 | `DouyinCrawler` | `fetch_locate_post` |  🟢  |
-| SSO获取二维码接口地址 | `DouyinCrawler` | `fetch_login_qrcode` |  🔴  |
-| SSO检查扫码状态接口地址 | `DouyinCrawler` | `fetch_check_qrcode` |  🔴  |
-| SSO检查登录状态接口地址 | `DouyinCrawler` | `fetch_check_login` |  🔴  |
+| ~~SSO获取二维码接口地址~~ | ~~`DouyinCrawler`~~ | ~~`fetch_login_qrcode`~~ |  🔴  |
+| ~~SSO检查扫码状态接口地址~~ | ~~`DouyinCrawler`~~ | ~~`fetch_check_qrcode`~~ |  🔴  |
+| ~~SSO检查登录状态接口地址~~ | ~~`DouyinCrawler`~~ | ~~`fetch_check_login`~~ |  🔴  |
 | 用户关注列表接口地址 | `DouyinCrawler` | `fetch_user_following` |  🟢  |
 | 用户粉丝列表接口地址 | `DouyinCrawler` | `fetch_user_follower` |  🟢  |
 | 直播弹幕初始化接口地址 | `DouyinCrawler` | `fetch_live_im_fetch` |  🟢  |
@@ -118,16 +121,35 @@ outline: deep
 | 直播间房间消息 | `DouyinWebSocketCrawler` | `WebcastRoomMessage` |  🟢  |
 | 直播间点赞消息 | `DouyinWebSocketCrawler` | `WebcastLikeMessage` |  🟢  |
 | 直播间观众加入消息 | `DouyinWebSocketCrawler` | `WebcastMemberMessage` |  🟢  |
-| 直播间聊天消息 | `DouyinWebSocketCrawler` | `WebcastLeaveMessage` |  🟢  |
+| 直播间聊天消息 | `DouyinWebSocketCrawler` | `WebcastChatMessage` |  🟢  |
 | 直播间礼物消息 | `DouyinWebSocketCrawler` | `WebcastGiftMessage` |  🟢  |
 | 直播间用户关注消息 | `DouyinWebSocketCrawler` | `WebcastSocialMessage` |  🟢  |
-| 直播间用户关注消息 | `DouyinWebSocketCrawler` | `WebcastFollowMessage` |  🟢  |
-| 直播间在线观众排行榜 | `DouyinWebSocketCrawler` | `WebcastRoomUserSeqMessage` |  🟢  |
-| 直播间粉丝团更新消息 | `DouyinWebSocketCrawler` | `WebcastUpdateFanTicketMessage` |  🟢  |
+| 直播间用户序列消息| `DouyinWebSocketCrawler` | `WebcastRoomUserSeqMessage` |  🟢  |
+| 直播间粉丝票更新消息| `DouyinWebSocketCrawler` | `WebcastUpdateFanTicketMessage` |  🟢  |
 | 直播间文本消息 | `DouyinWebSocketCrawler` | `WebcastCommonTextMessage` |  🟢  |
 | 直播间对战积分消息 | `DouyinWebSocketCrawler` | `WebcastMatchAgainstScoreMessage` |  🟢  |
+| 直播间电商粉丝团消息 | `DouyinWebSocketCrawler` | `WebcastEcomFansClubMessage` |  🟢  |
+| 直播间小时榜入口消息 | `DouyinWebSocketCrawler` | `WebcastRanklistHourEntranceMessage` |  🟢  |
+| 直播间统计消息 | `DouyinWebSocketCrawler` | `WebcastRoomStatsMessage` |  🟢  |
+| 直播间购物消息 | `DouyinWebSocketCrawler` | `WebcastLiveShoppingMessage` |  🟢  |
+| 直播间电商通用消息 | `DouyinWebSocketCrawler` | `WebcastLiveEcomGeneralMessage` |  🟢  |
+| 直播间商品变更消息 | `DouyinWebSocketCrawler` | `WebcastProductChangeMessage` |  🟢  |
+| 直播间流适配消息 | `DouyinWebSocketCrawler` | `WebcastRoomStreamAdaptationMessage` |  🟢  |
+| 直播间通知效果消息 | `DouyinWebSocketCrawler` | `WebcastNotifyEffectMessage` |  🟢  |
+| 直播间轻礼物消息 | `DouyinWebSocketCrawler` | `WebcastLightGiftMessage` |  🟢  |
+| 直播间互动分数消息 | `DouyinWebSocketCrawler` | `WebcastProfitInteractionScoreMessage` |  🟢  |
+| 直播间排行榜消息 | `DouyinWebSocketCrawler` | `WebcastRoomRankMessage` |  🟢  |
 | 直播间粉丝团消息 | `DouyinWebSocketCrawler` | `WebcastFansclubMessage` |  🟢  |
-
+| 直播间热门房间消息 | `DouyinWebSocketCrawler` | `WebcastHotRoomMessage` |  🟢  |
+| 直播间连麦消息 | `DouyinWebSocketCrawler` | `WebcastLinkMicMethod` |  🟢  |
+| 直播间连麦贡献消息 | `DouyinWebSocketCrawler` | `WebcastLinkerContributeMessage` |  🟢  |
+| 直播间表情聊天消息 | `DouyinWebSocketCrawler` | `WebcastEmojiChatMessage` |  🟢  |
+| 直播间全局聊天消息 | `DouyinWebSocketCrawler` | `WebcastScreenChatMessage` |  🟢  |
+| 直播间数据同步消息 | `DouyinWebSocketCrawler` | `WebcastRoomDataSyncMessage` |  🟢  |
+| 直播间内横幅消息 | `DouyinWebSocketCrawler` | `WebcastInRoomBannerMessage` |  🟢  |
+| 直播间连麦消息 | `DouyinWebSocketCrawler` | `WebcastLinkMessage` |  🟢  |
+| 直播间战队任务消息 | `DouyinWebSocketCrawler` | `WebcastBattleTeamTaskMessage` |  🟢  |
+| 直播间热聊消息 | `DouyinWebSocketCrawler` | `WebcastHotChatMessage` |  🟢  |
 :::
 
 ::: details dl接口列表
@@ -135,13 +157,20 @@ outline: deep
 | 下载器接口     | 类名        | 方法          | 状态 |
 | :----------- | :--------- | :----------  | :--: |
 | 保存最后一次请求的aweme_id | `DouyinDownloader` | `save_last_aweme_id` |  🟢  |
-| 筛选指定日期区间内的作品 | `DouyinDownloader` | `filter_aweme_datas_by_interval` |  🟢  |
 | 创建下载任务   | `DouyinDownloader` | `create_download_task` |  🟢  |
 | 处理下载任务   | `DouyinDownloader` | `handler_download` |  🟢  |
 | 创建原声下载任务 | `DouyinDownloader` | `create_music_download_tasks` |  🟢  |
 | 处理原声下载任务 | `DouyinDownloader` | `handler_music_download` |  🟢  |
-| 创建流下载任务  | `DouyinDownloader` | `create_stream_tasks` |  🟢  |
-| 处理流下载任务  | `DouyinDownloader` | `handle_stream` |  🟢  |
+| 创建直播流下载任务  | `DouyinDownloader` | `create_stream_tasks` |  🟢  |
+| 处理直播流下载任务  | `DouyinDownloader` | `handler_stream` |  🟢  |
+:::
+
+::: tip 一些提示
+- 翻页参数都包含在上一次请求的数据中，通过内置的 `filter` 过滤器可以很方便的获取。
+- 所有包含翻页参数的接口均使用异步生成器方法，需要通过 `async for` 进行迭代，便于自动处理翻页。
+- 当 `max_counts` 设置为 `None` 或不传入时，将会获取所有的作品数据。
+- 在一些后端框架 `FastAPI`、`Flask`、`Django` 中可以方便的集成等。
+- 使用登录的 `cookie` 可以无视该账号的私密设置，例如该账号设置私密的`作品`、`主页`、`喜欢`、`收藏`等。
 :::
 
 ## handler接口列表
@@ -217,15 +246,16 @@ outline: deep
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | sec_user_id| str | 用户ID |
-| max_cursor| int | 页码，初始为0 |
+| min_cursor| int | 最小页码，初始为0 |
+| max_cursor| int | 最大页码，初始为0 |
 | page_counts| int | 页数，初始为20 |
-| max_counts| int | 最大页数，初始为None |
+| max_counts| int | 最大列表数，初始为None |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | UserPostFilter | AsyncGenerator | 发布作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法 |
 
-<<< @/snippets/douyin/user-post.py{16-20}
+<<< @/snippets/douyin/user-post.py{16,18-20}
 
 ### 用户喜欢作品数据 🟢
 
@@ -236,7 +266,7 @@ outline: deep
 | sec_user_id| str | 用户ID |
 | max_cursor| int | 页码，初始为0 |
 | page_counts| int | 页数，初始为20 |
-| max_counts| int | 最大页数，初始为None |
+| max_counts| int | 最大列表数，初始为None |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -252,13 +282,13 @@ outline: deep
 | :--- | :--- | :--- |
 | max_cursor| int | 页码，初始为0 |
 | page_counts| int | 页数，初始为20 |
-| max_counts| int | 最大页数，初始为None |
+| max_counts| int | 最大列表数，初始为None |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | UserMusicCollectionFilter | AsyncGenerator | 收藏音乐数据过滤器，包含音乐数据的_to_raw、_to_dict、_to_list方法 |
 
-<<< @/snippets/douyin/user-collection.py#user-collection-music-snippet{17}
+<<< @/snippets/douyin/user-collection.py#user-collection-music-snippet{17-20}
 
 ### 用户收藏作品数据 🟢
 
@@ -268,13 +298,13 @@ outline: deep
 | :--- | :--- | :--- |
 | max_cursor| int | 页码，初始为0 |
 | page_counts| int | 页数，初始为20 |
-| max_counts| int | 最大页数，初始为None |
+| max_counts| int | 最大列表数，初始为None |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | UserCollectionFilter | AsyncGenerator | 收藏作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法 |
 
-<<< @/snippets/douyin/user-collection.py#user-collection-music-snippet{16}
+<<< @/snippets/douyin/user-collection.py#user-collection-music-snippet{17-20}
 
 ### 用户收藏夹数据 🟢
 
@@ -284,13 +314,13 @@ outline: deep
 | :--- | :--- | :--- |
 | max_cursor| int | 页码，初始为0 |
 | page_counts| int | 页数，初始为20 |
-| max_counts| int | 最大页数，初始为None |
+| max_counts| int | 最大列表数，初始为None |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | UserCollectsFilter | AsyncGenerator | 收藏夹数据过滤器，包含收藏夹数据的_to_raw、_to_dict、_to_list方法 |
 
-<<< @/snippets/douyin/user-collects.py#user-collects-snippet{17}
+<<< @/snippets/douyin/user-collects.py#user-collects-snippet{17-21}
 
 ### 用户收藏夹作品数据 🟢
 
@@ -301,30 +331,34 @@ outline: deep
 | collect_id| str | 收藏夹ID |
 | max_cursor| int | 页码，初始为0 |
 | page_counts| int | 页数，初始为20 |
-| max_counts| int | 最大页数，初始为None |
+| max_counts| int | 最大列表数，初始为None |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | UserCollectsVideosFilter | AsyncGenerator | 收藏夹作品数据过滤器，包含收藏夹作品数据的_to_raw、_to_dict、_to_list方法 |
 
-<<< @/snippets/douyin/user-collects.py#user-collects-videos-snippet{17-20}
+<<< @/snippets/douyin/user-collects.py#user-collects-videos-snippet{17-22}
 
 ### 用户合集作品数据 🟢
 
-异步方法，用于获取指定用户合集的视频列表，合集视频的mix_id是一致的，从单个作品数据接口中获取即可。
+异步方法，用于获取指定用户合集的视频列表。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | mix_id| str | 合集ID |
 | max_cursor| int | 页码，初始为0 |
 | page_counts| int | 页数，初始为20 |
-| max_counts| int | 最大页数，初始为None |
+| max_counts| int | 最大列表数，初始为None |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | UserMixFilter | AsyncGenerator | 合集作品数据过滤器，包含合集作品数据的_to_raw、_to_dict、_to_list方法 |
 
-<<< @/snippets/douyin/user-mix.py{16,19-21}
+<<< @/snippets/douyin/user-mix.py{16,18-23}
+
+::: tip 提示
+- 合集作品的 `mix_id` 是一致的，使用 `fetch_one_video` 接口获取 `mix_id`。
+:::
 
 ### 用户直播流数据 🟢
 
@@ -332,7 +366,7 @@ outline: deep
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
-| webcast_id| str | 直播间RID |
+| webcast_id| str | 直播间ID |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -340,9 +374,15 @@ outline: deep
 
 <<< @/snippets/douyin/user-live.py{15}
 
+::: tip 提示
+- `webcast_id` 与 `room_id` 为2个独立参数，由不同接口解析。
+- 例如：`https://live.douyin.com/775841227732` 中 `775841227732` 为直播ID(`webcast_id`/`live_id`)。
+- 当你使用 `APP` 端分享的直播链接时，解析完的是`room_id`，需要使用`fetch_user_live_videos_by_room_id`接口。
+:::
+
 ### 用户直播流数据2 🟢
 
-异步方法，用于获取指定用户的直播，webcast_id与room_id为2个独立参数，由不同接口解析。
+异步方法，用于获取指定用户的直播。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -354,6 +394,11 @@ outline: deep
 
 <<< @/snippets/douyin/user-live-room-id.py{15-17}
 
+::: tip 提示
+- `webcast_id` 与 `room_id` 为2个独立参数，由不同接口解析。
+- 例如：`https://webcast.amemv.com/douyin/webcast/reflow/7444223303348144935?xxx=xxx...` 中 `7444223303348144935` 为直播间ID(`room_id`)。
+:::
+
 ### 用户首页推荐作品数据 🟢
 
 异步方法，用于获取指定用户的首页推荐作品。
@@ -363,32 +408,36 @@ outline: deep
 | sec_user_id| str | 用户ID |
 | max_cursor| int | 页码，初始为0 |
 | page_counts| int | 页数，初始为20 |
-| max_counts| int | 最大页数，初始为None |
+| max_counts| int | 最大列表数，初始为None |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | UserPostFilter | AsyncGenerator | 首页推荐作品数据过滤器，包含推荐作品数据的_to_raw、_to_dict、_to_list方法 |
 
-<<< @/snippets/douyin/user-feed.py{17-20}
+<<< @/snippets/douyin/user-feed.py{17-23}
 
 ### 相似作品数据 🟢
 
-异步方法，用于获取指定作品的相似作品。
+异步方法，用于获取指定作品的相似作品，多用于收集扩展相似作品。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | aweme_id| str | 作品ID |
-| filterGids| str | 过滤的Gids |
+| filterGids| str | 过滤的Gids，初始为空 |
 | page_counts| int | 页数，初始为20 |
-| max_counts| int | 最大页数，初始为None |
-
+| max_counts| int | 最大列表数，初始为None |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | PostRelatedFilter | dict | 相关推荐作品数据过滤器，包含相关作品数据的_to_raw、_to_dict、_to_list方法 |
 
-<<< @/snippets/douyin/aweme-related.py{16-18}
+<<< @/snippets/douyin/aweme-related.py{16-21}
 
+::: tip 提示
+- `filterGids` 参数用于排除指定作品，置空会有重复推荐数据。
+- 例如：`filterGids` 参数为 `7419386765854641442`，多个作品用逗号分隔，如 `7419386765854641442,741938xxxx,74193xxxx`。
+- 需要自行过滤每次请求的 `aweme_id` ，并将其添加到 `filterGids` 参数中。
+:::
 
 ### 好友作品数据 🟢
 
@@ -399,13 +448,17 @@ outline: deep
 | cursor| str | 页码，初始为0 |
 | level| int | 作品级别，初始为1 |
 | pull_type| int | 拉取类型，初始为0 |
-| max_counts| int | 最大页数，初始为None |
+| max_counts| int | 最大列表数，初始为None |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | FriendFeedFilter | AsyncGenerator | 好友作品数据过滤器，包含好友作品数据的_to_raw、_to_dict、_to_list方法 |
 
-<<< @/snippets/douyin/user-friend.py{16}
+<<< @/snippets/douyin/user-friend.py{16-21}
+
+::: tip 提示
+- `pull_type` 的参数有 `0` `2` `18`，未研究具体含义。
+:::
 
 ### 关注用户数据 🟢
 
@@ -420,7 +473,7 @@ outline: deep
 | source_type| int | 源类型，初始为4 |
 | min_time | int | 最早关注时间戳，初始为0 |
 | max_time | int | 最晚关注时间戳，初始为0 |
-| max_counts| float | 最大页数，初始为None |
+| max_counts| float | 最大列表数，初始为None |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -441,7 +494,7 @@ outline: deep
 | source_type| int | 源类型，初始为1 |
 | min_time | int | 最早关注时间戳，初始为0 |
 | max_time | int | 最晚关注时间戳，初始为0 |
-| max_counts| float | 最大页数，初始为None |
+| max_counts| float | 最大列表数，初始为None |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -476,11 +529,11 @@ outline: deep
 | :--- | :--- | :--- |
 | LiveImFetchFilter | model | 直播间wss负载数据过滤器，包含直播间wss负载数据的_to_raw、_to_dict方法 |
 
-<<< @/snippets/douyin/user-live-im-fetch.py{5-14,30-42}
+<<< @/snippets/douyin/user-live-im-fetch.py#user-live-im-snippet{16-18,23-41}
 
 ### 直播间wss弹幕 🟢
 
-异步方法，用于获取直播间wss弹幕数据，使用内置多个回调处理不同类型的消息。
+异步方法，用于获取直播间wss弹幕数据，使用内置回调处理不同类型的消息。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -488,7 +541,7 @@ outline: deep
 | user_unique_id| str | 用户ID |
 | internal_ext| str | 内部扩展参数 |
 | cursor| str | 弹幕页码 |
-| callback| dict | 自定义弹幕回调函数（待加入） |
+| callback| dict | 自定义弹幕回调函数，键为消息类型，值为处理函数 |
 
 | 回调 | 说明 |
 | :--- | :--- |
@@ -499,26 +552,41 @@ outline: deep
 | WebcastGiftMessage | 直播间礼物消息 |
 | WebcastSocialMessage | 直播间用户关注消息 |
 | WebcastRoomUserSeqMessage | 直播间在线观众排行榜 |
-| WebcastUpdateFanTicketMessage | 直播间粉丝团更新消息 |
+| WebcastUpdateFanTicketMessage | 直播间粉丝票更新消息 |
 | WebcastCommonTextMessage | 直播间文本消息 |
 | WebcastMatchAgainstScoreMessage | 直播间对战积分消息 |
 | WebcastFansclubMessage | 直播间粉丝团消息 |
-| TODO: WebcastRanklistHourEntranceMessage | 直播间小时榜消息 |
-| TODO: WebcastRoomStatsMessage | 直播间统计消息 |
-| TODO: WebcastLiveShoppingMessage | 直播间购物车消息 |
-| TODO: WebcastLiveEcomGeneralMessage | 直播间电商消息 |
-| TODO: WebcastProductChangeMessage | 直播间商品变更消息 |
-| TODO: WebcastRoomStreamAdaptationMessage | 直播间流适配消息 |
+| WebcastRanklistHourEntranceMessage | 直播间小时榜入口消息 |
+| WebcastRoomStatsMessage | 直播间统计消息 |
+| WebcastLiveShoppingMessage | 直播间购物消息 |
+| WebcastLiveEcomGeneralMessage | 直播间电商通用消息 |
+| WebcastProductChangeMessage | 直播间商品变更消息 |
+| WebcastRoomStreamAdaptationMessage | 直播间流适配消息 |
+| WebcastNotifyEffectMessage | 直播间通知效果消息 |
+| WebcastLightGiftMessage | 直播间轻礼物消息 |
+| WebcastProfitInteractionScoreMessage | 直播间互动分数消息 |
+| WebcastRoomRankMessage | 直播间排行榜消息 |
+| WebcastEcomFansClubMessage | 直播间电商粉丝团消息 |
+| WebcastHotRoomMessage | 直播间热门房间消息 |
+| WebcastLinkMicMethod | 直播间连麦消息 |
+| WebcastLinkerContributeMessage | 直播间连麦贡献消息 |
+| WebcastEmojiChatMessage | 直播间表情聊天消息 |
+| WebcastScreenChatMessage | 直播间全局聊天消息 |
+| WebcastRoomDataSyncMessage | 直播间数据同步消息 |
+| WebcastInRoomBannerMessage | 直播间内横幅消息 |
+| WebcastLinkMessage | 直播间连麦消息 |
+| WebcastBattleTeamTaskMessage | 直播间战队任务消息 |
+| WebcastHotChatMessage | 直播间热聊消息 |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | self.websocket | WebSocket | 弹幕WebSocket对象 |
 
-<<< @/snippets/douyin/user-live-im-fetch.py{17-26,44-50}
+<<< @/snippets/douyin/user-live-im-fetch.py#user-live-im-fetch-snippet{30-33,36-69,106-113}
 
 ### 关注用户的直播间信息 🟢
 
-异步方法，用于获取关注用户的直播间信息列表，需要登录账号。
+异步方法，用于获取关注用户的直播间信息列表，需要登录账号后的 `cookie`。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -543,10 +611,10 @@ outline: deep
 | is_login | bool | 是否登录成功 |
 | login_cookie | str | 登录cookie |
 
-<<< @/snippets/douyin/sso-login.py{5}
+<<< @/snippets/douyin/sso-login.py{6}
 
 ::: danger 警告
-由于扫码登录受风控影响较大,多数cookie都无法使用。为了保障体验，建议使用--auto-cookie命令自动从浏览器获取cookie，更多使用帮助参考cli命令。
+该接口已在 `0.0.1.6` 版本之后弃用，由于扫码登录受风控影响最大。为了保障体验，建议使用  `--auto-cookie` 命令自动从浏览器获取 `cookie`，使用帮助参考 `cli命令`。
 :::
 
 
@@ -667,7 +735,7 @@ outline: deep
 | :--- | :--- | :--- |
 | signature | str | 直播signature |
 
-<<< @/snippets/douyin/webcast-signature.py#webcast-signature-snippet{4-8}
+<<< @/snippets/douyin/webcast-signature.py#webcast-signature-snippet{5-10}
 
 ### 使用接口地址生成Xb参数 🟢
 
@@ -682,7 +750,7 @@ outline: deep
 | :--- | :--- | :--- |
 | final_endpoint | str | 带Xbogus参数的完整地址 |
 
-<<< @/snippets/douyin/xbogus.py#str-2-endpoint-snippet{6,7}
+<<< @/snippets/douyin/xbogus.py#str-2-endpoint-snippet{7-11}
 
 ### 使用接口模型生成Xb参数 🟢
 
@@ -767,7 +835,7 @@ outline: deep
 | :--- | :--- | :--- |
 | sec_user_id | str | 用户ID |
 
-<<< @/snippets/douyin/sec-user-id.py#single-user-id-snippet{7}
+<<< @/snippets/douyin/sec-user-id.py#single-user-id-snippet{8}
 
 ### 提取列表用户id 🟢
 
@@ -781,7 +849,7 @@ outline: deep
 | :--- | :--- | :--- |
 | sec_user_ids | list | 用户ID列表 |
 
-<<< @/snippets/douyin/sec-user-id.py#multi-user-id-snippet{14,17}
+<<< @/snippets/douyin/sec-user-id.py#multi-user-id-snippet{15,18}
 
 ### 提取单个作品id 🟢
 
@@ -795,7 +863,7 @@ outline: deep
 | :--- | :--- | :--- |
 | aweme_id | str | 作品ID |
 
-<<< @/snippets/douyin/aweme-id.py#single-aweme-id-snippet{5,6}
+<<< @/snippets/douyin/aweme-id.py#single-aweme-id-snippet{9}
 
 ### 提取列表作品id 🟢
 
@@ -809,7 +877,7 @@ outline: deep
 | :--- | :--- | :--- |
 | aweme_ids | list | 作品ID列表 |
 
-<<< @/snippets/douyin/aweme-id.py#multi-aweme-id-snippet{15,18}
+<<< @/snippets/douyin/aweme-id.py#multi-aweme-id-snippet{16,19}
 
 ### 提取合集id 🟢
 
@@ -823,7 +891,7 @@ outline: deep
 | :--- | :--- | :--- |
 | mix_id | str | 合集ID |
 
-<<< @/snippets/douyin/mix-id.py#single-mix-id-snippet{6,7}
+<<< @/snippets/douyin/mix-id.py#single-mix-id-snippet{7}
 
 ### 提取列表合集id 🟢
 
@@ -837,7 +905,7 @@ outline: deep
 | :--- | :--- | :--- |
 | mix_ids | list | 合集ID列表 |
 
-<<< @/snippets/douyin/mix-id.py#multi-mix-id-snippet{7-10,13,16}
+<<< @/snippets/douyin/mix-id.py#multi-mix-id-snippet{13,16}
 
 ### 提取单个直播间号 🟢
 
@@ -852,7 +920,7 @@ outline: deep
 | webcast_id | str | 直播间RID |
 
 
-<<< @/snippets/douyin/webcast-id.py#single-webcast-id-snippet{6,7}
+<<< @/snippets/douyin/webcast-id.py#single-webcast-id-snippet{7}
 
 ### 提取列表直播间号 🟢
 
@@ -866,7 +934,7 @@ outline: deep
 | :--- | :--- | :--- |
 | webcast_ids | list | 直播间RID列表 |
 
-<<< @/snippets/douyin/webcast-id.py#multi-webcast-id-snippet{7-13,16,19}
+<<< @/snippets/douyin/webcast-id.py#multi-webcast-id-snippet{16,19}
 
 ::: tip 如何分辨r_id与room_id
 r_id是直播间的短链标识，room_id是直播间的唯一标识。
@@ -875,7 +943,7 @@ r_id是直播间的短链标识，room_id是直播间的唯一标识。
 :::
 
 ::: warning 注意
-短链无法使用该接口返回Rid，如raw_urls中的第3和第4条链接只会返回room_id。需要搭配使用`fetch_user_live_videos_by_room_id`接口获取数据。
+短链无法使用该接口返回 `rid`，如 `raw_urls` 中的第 `3` 和第 `4` 条链接只会返回 `room_id`。需要使用 `fetch_user_live_videos_by_room_id` 接口获取数据。
 :::
 
 ### 全局格式化文件名 🟢
@@ -897,7 +965,7 @@ r_id是直播间的短链标识，room_id是直播间的唯一标识。
 | :--- | :--- | :--- |
 | file_name | str | 格式化后的文件名 |
 
-<<< @/snippets/douyin/format-file-name.py{13,19,28,32,34,36-39}
+<<< @/snippets/douyin/format-file-name.py{13,19,28,32,34,35-37}
 
 ### 创建用户目录 🟢
 
@@ -965,18 +1033,18 @@ r_id是直播间的短链标识，room_id是直播间的唯一标识。
 | user_path | Path | 用户目录路径对象 |
 
 ::: tip 提示
-该接口很好的解决了用户改名之后重复重新下载的问题。集合在handler接口的`get_or_add_user_data`中，开发者无需关心直接调用handler的数据接口即可。
+该接口很好的解决了用户改名之后重复重新下载的问题。集成在 `handler` 接口中。开发者无需关心，直接调用 `handler` 的数据接口即可。
 :::
 
 
-### 显示二维码 🟢
+### 显示二维码 🔴
 
 用于将url地址显示为二维码。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | qrcode_url | str | 二维码地址 |
-| show_image | bool | 是否显示二维码图片 |
+| show_image | bool | 是否以图片文件显示，默认为False |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -985,7 +1053,11 @@ r_id是直播间的短链标识，room_id是直播间的唯一标识。
 <<< @/snippets/douyin/show-qrcode.py{4,5}
 
 ::: tip 提示
-show_image (bool): 是否显示图像，True 表示显示，False 表示在控制台显示
+选择是否显示图片，需要额外安装 `Pillow` 库。
+:::
+
+::: danger 警告
+该接口已在 `0.0.1.6` 版本之后弃用。
 :::
 
 ### json歌词转lrc歌词 🟢
@@ -1004,7 +1076,7 @@ show_image (bool): 是否显示图像，True 表示显示，False 表示在控�
 
 ## crawler接口
 
-### 用户信息接口地址 🟢
+### 用户信息接口 🟢
 
 异步方法，用于获取用户信息数据。
 
@@ -1014,9 +1086,9 @@ show_image (bool): 是否显示图像，True 表示显示，False 表示在控�
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
-| parse_json() | dict | 用户信息数据 |
+| _fetch_get_json() | dict | 用户信息数据 |
 
-### 主页作品接口地址 🟢
+### 主页作品接口 🟢
 
 异步方法，用于获取主页作品数据。
 
@@ -1026,11 +1098,11 @@ show_image (bool): 是否显示图像，True 表示显示，False 表示在控�
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
-| parse_json() | dict | 主页作品数据 |
+| _fetch_get_json() | dict | 主页作品数据 |
 
-### 喜欢作品接口地址 🟢
+### 主页喜欢作品接口 🟢
 
-异步方法，用于获取喜欢作品数据。
+异步方法，用于获取主页喜欢作品数据。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -1038,11 +1110,11 @@ show_image (bool): 是否显示图像，True 表示显示，False 表示在控�
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
-| parse_json() | dict | 喜欢作品数据 |
+| _fetch_get_json() | dict | 喜欢作品数据 |
 
-### 收藏作品接口地址 🟢
+### 主页收藏作品接口 🟢
 
-异步方法，用于获取收藏作品数据。
+异步方法，用于获取主页收藏作品数据。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -1050,9 +1122,9 @@ show_image (bool): 是否显示图像，True 表示显示，False 表示在控�
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
-| parse_json() | dict | 收藏作品数据 |
+| _fetch_post_json() | dict | 收藏作品数据 |
 
-### 收藏夹接口地址 🟢
+### 收藏夹接口 🟢
 
 异步方法，用于获取收藏夹数据。
 
@@ -1062,9 +1134,9 @@ show_image (bool): 是否显示图像，True 表示显示，False 表示在控�
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
-| parse_json() | dict | 收藏夹数据 |
+| _fetch_get_json() | dict | 收藏夹数据 |
 
-### 收藏夹作品接口地址 🟢
+### 收藏夹作品接口 🟢
 
 异步方法，用于获取收藏夹作品数据。
 
@@ -1074,9 +1146,9 @@ show_image (bool): 是否显示图像，True 表示显示，False 表示在控�
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
-| parse_json() | dict | 收藏夹作品数据 |
+| _fetch_get_json() | dict | 收藏夹作品数据 |
 
-### 音乐收藏接口地址 🟢
+### 音乐收藏接口 🟢
 
 异步方法，用于获取音乐收藏数据。
 
@@ -1086,7 +1158,241 @@ show_image (bool): 是否显示图像，True 表示显示，False 表示在控�
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
-| parse_json() | dict | 音乐收藏数据 |
+| _fetch_get_json() | dict | 音乐收藏数据 |
+
+### 合集作品接口 🟢
+
+异步方法，用于获取合集作品数据。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| params | UserMix | 请求参数 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| _fetch_get_json() | dict | 合集作品数据 |
+
+### 作品详情接口 🟢
+
+异步方法，用于获取作品详情数据。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| params | PostDetail | 请求参数 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| _fetch_get_json() | dict | 作品详情数据 |
+
+### 作品评论接口 🟡
+
+异步方法，用于获取作品评论数据。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| params | PostDetail | 请求参数 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| _fetch_get_json() | dict | 作品评论数据 |
+
+
+### 首页推荐作品接口 🟡
+
+异步方法，用于获取首页推荐作品数据。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| params | PostDetail | 请求参数 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| _fetch_get_json() | dict | 首页推荐作品数据 |
+
+### 关注作品接口 🟡
+
+异步方法，用于获取关注作品数据。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| params | PostDetail | 请求参数 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| _fetch_get_json() | dict | 关注作品数据 |
+
+### 朋友作品接口 🟢
+
+异步方法，用于获取朋友作品数据。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| params | PostDetail | 请求参数 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| _fetch_post_json() | dict | 朋友作品数据 |
+
+### 相关推荐作品接口 🟢
+
+异步方法，用于获取相关推荐作品数据。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| params | PostDetail | 请求参数 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| _fetch_get_json() | dict | 相关推荐作品数据 |
+
+### 直播信息接口 🟢
+
+异步方法，用于获取直播信息数据。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| params | UserLive | 请求参数 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| _fetch_get_json() | dict | 直播信息数据 |
+
+### 直播接口地址(room_id) 🟢
+
+异步方法，用于获取直播接口地址数据。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| params | UserLive2 | 请求参数 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| _fetch_get_json() | dict | 直播接口地址数据 |
+
+### 关注用户直播接口 🟢
+
+异步方法，用于获取关注用户直播数据。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| params | FollowingUserLive | 请求参数 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| _fetch_get_json() | dict | 关注用户直播数据 |
+
+### 定位上一次作品接口 🟡
+
+异步方法，用于定位上一次作品数据。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| params | UserPost | 请求参数 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| _fetch_get_json() | dict | 定位上一次作品数据 |
+
+### SSO获取二维码接口 🔴
+
+异步方法，用于获取SSO登录二维码数据。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| params | LoginGetQr | 请求参数 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| _fetch_get_json() | dict | SSO获取二维码数据 |
+
+### SSO检查扫码状态接口 🔴
+
+异步方法，用于检查SSO登录扫码状态数据。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| params | LoginCheckQr | 请求参数 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| _fetch_response() | dict | SSO检查扫码状态数据 |
+
+### SSO检查登录状态接口 🔴
+
+异步方法，用于检查SSO登录状态数据。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| params | LoginCheckQr | 请求参数 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| _fetch_get_json() | dict | SSO检查登录状态数据 |
+
+### 用户关注列表接口 🟢
+
+异步方法，用于获取用户关注列表数据。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| params | UserFollowing | 请求参数 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| _fetch_get_json() | dict | 用户关注列表数据 |
+
+### 用户粉丝列表接口 🟢
+
+异步方法，用于获取用户粉丝列表数据。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| params | UserFollower | 请求参数 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| _fetch_get_json() | dict | 用户粉丝列表数据 |
+
+### 直播弹幕初始化接口 🟢
+
+异步方法，用于获取直播弹幕初始化数据。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| params | LiveImFetch | 请求参数 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| _fetch_get_json() | dict | 直播弹幕初始化数据 |
+
+### 查询用户接口 🟢
+
+异步方法，用于查询用户数据。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| params | QueryUser | 请求参数 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| _fetch_get_json() | dict | 查询用户数据 |
+
+### 作品统计接口 🟢
+
+异步方法，用于获取作品统计数据。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| params | PostStats | 请求参数 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| _fetch_post_json() | dict | 作品统计数据 |
+
+
+::: tip 提示
+- 当不需要使用过滤器时，可以直接调用`crawler`接口，将直接返回数据字典。
+:::
 
 ## dl接口
 
