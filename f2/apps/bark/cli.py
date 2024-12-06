@@ -72,7 +72,7 @@ def validate_key_length(
         value: 参数或选项的值 (The value of the parameter or option)
     """
 
-    if value and len(value) != 22:
+    if not value and len(value) != 22:
         raise click.BadParameter(_("密钥长度应该为22位"))
     return value
 
