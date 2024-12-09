@@ -4,7 +4,7 @@ from f2.log.logger import logger
 
 
 kwargs = {
-    "token": "YOUR_BARK_TOKEN_HERE",
+    "key": "YOUR_BARK_KEY_HERE",
     "send_method": "fetch",
     "proxies": {"http://": None, "https://": None},
     "timeout": 10,
