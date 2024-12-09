@@ -1,5 +1,5 @@
 # region response-is-null-snippet
-只要是出现第 n 次响应内容为空均是`cookie`设置的问题。
+只要是出现第 n 次请求响应内容为空均是`cookie`设置的问题。
 
 你需要排查的是：
 1. 检查对应app配置文件中的`cookie`值是否正确配置，未出现换行，空格，缺失，错误等。
@@ -55,10 +55,15 @@ https://github.com/Johnserf-Seed/TikTokDownload/issues/660
 出现`EOF occurred in violation of protocol (_ssl.c:992)`说明SSL握手失败。
 
 解决办法：
-1. 请检查你的网络环境是否支持SSL协议。
+1. 请检查你的代理设置是否正确，是否有防火墙或代理服务器阻止了 `SSL/TLS` 握手过程。
 2. 确保代理网络连接稳定。
+3. 使用更加专业的代理工具。
+4. 更换网络环境。
+5. 尝试更换 `DNS` 服务器。
+6. 新版 `httpx` 库修改了代理与证书方面，如果在你的本地出现此问题，可以尝试降级 `httpx` 库版本。
+7. 可能会出现使用工具（如 `Postman` 或 `curl`）测试相同的 `API` 请求，均可以访问但是使用本项目会超时，见第 `6`。
 
-这个问题可能涉及到多个方面，需要自己逐步排查和解决。
+非项目代码问题，可能涉及到多个方面，需要自己逐步排查和解决。
 # endregion ssl-faild-01
 
 
@@ -71,7 +76,7 @@ https://github.com/Johnserf-Seed/TikTokDownload/issues/660
 3. 检查防火墙和代理设置: 确保防火墙和代理服务器的设置正确，并且不会影响 SSL/TLS 握手过程。
 4. 调整超时设置
 
-这个问题可能涉及到多个方面，需要自己逐步排查和解决。
+非项目代码问题，可能涉及到多个方面，需要自己逐步排查和解决。
 # endregion ssl-faild-02
 
 
@@ -92,7 +97,7 @@ https://johnserf-seed.github.io/f2/guide/apps/tiktok/#%E7%94%9F%E6%88%90deviceid
 # endregion tiktok-403-forbidden
 
 
-# region typeerror-nonetype-has-no-len()
+# region type-error-nonetype-has-no-len
 
 当过滤器在处理数据时出现以下错误:
 ```shell
@@ -111,8 +116,8 @@ https://johnserf-seed.github.io/f2/guide/apps/tiktok/#%E7%94%9F%E6%88%90deviceid
 
 请及时在 Issue 中反馈问题，并附上以下信息：
 
-1. 脱敏的 debug 日志(f2 -d DEBUG)：
-    -   包含完整的错误信息及上下文。
+1. 脱敏的 debug 日志(f2 -d DEBUG [app_name])：
+    - 包含完整的错误信息及上下文。
 2. 字段描述：
     - 明确指出哪些字段出现了问题，哪些字段可能需要更新。
 3. 接口返回数据的简化结构（可选）：
@@ -120,4 +125,4 @@ https://johnserf-seed.github.io/f2/guide/apps/tiktok/#%E7%94%9F%E6%88%90deviceid
 
 收到反馈后，我会尽快排查问题，并在后续版本中更新代码适配最新接口，同时也欢迎你提交 PR。
 
-# endregion typeerror-nonetype-has-no-len()
+# endregion type-error-nonetype-has-no-len
