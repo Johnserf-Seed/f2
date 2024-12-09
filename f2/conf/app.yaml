@@ -54,7 +54,7 @@ weibo:
   page_counts: 20
 
 bark:
-
+  key:
   token:
   mode: get
   url: "https://johnserf-seed.github.io/f2/"
