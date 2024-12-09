@@ -17,7 +17,8 @@ def help() -> None:
 
     options = [
         ("-c --config", "[dark_cyan]Path", _("配置文件的路径，[red]最低优先[/red]")),
-        ("-k --token", "[dark_cyan]str", _("Bark 的 token")),
+        ("-k --key", "[dark_cyan]str", _("Bark 的 API Key")),
+        ("-d --token", "[dark_cyan]str", _("Bark 的 Device Token")),
         (
             "-M --mode",
             "[dark_cyan]Choice",
