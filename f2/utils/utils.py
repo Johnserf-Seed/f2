@@ -988,7 +988,7 @@ class AESEncryptionUtils:
         encryptor = cipher.encryptor()
 
         ciphertext = encryptor.update(padded_data) + encryptor.finalize()
-        return self.iv + ciphertext  # 返回 IV 和密文
+        return ciphertext  # 返回密文
 
     def _aes_decrypt_cbc(self, ciphertext: bytes) -> bytes:
         """CBC模式解密"""
