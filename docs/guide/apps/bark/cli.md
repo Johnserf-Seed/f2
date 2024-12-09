@@ -30,7 +30,7 @@
 
 ### `--config`
 
-指定配置文件的路径，优先级最低。默认配置路径为 `f2/conf/app.yaml`，支持绝对路径与相对路径。
+指定配置文件的路径，优先级最低。默认配置路径为 `f2/conf/app.yaml`，支持**绝对路径**与**相对路径**。
 
 ### `--key`
 
@@ -60,8 +60,15 @@ curl -X "POST" "https://api.day.app/push" \
 ::: warning :lock: 隐私保护
 - `Bark` 的 `Key` 由 `Bark` 服务器生成，**请勿泄露**，包括开发者和社区。
 - `Bark` 的 `Device Token` 由 `Apple` 服务器生成，**请勿泄露**。
+:::
+
+::: danger :bangbang: 隐私保护 :bangbang:
+- 绝对不要在 `Discussions`、`Issues`、`Discord`等公共场所分享你的 `Key` 和 `Token`，注意删除敏感信息。
+- 任何人获取到你的 `Cookie` 都可以向你的设备发送推送通知。
+- 当发生泄露时，请立即在 `Bark` 应用中重新生成 `Key` 和 `Token`。
 - 更多隐私保护信息，请参阅 `Bark` 的[隐私安全](https://bark.day.app/#/privacy)。
 :::
+
 
 ### `--mode`
 
@@ -185,7 +192,7 @@ f2 bark -t "Test Title" -b "Test Body" -M cipher
 
 ::: details :link: 示例：使用 `URL Scheme` 跳转到 `F2` 文档官网。
 ```shell [bash]
-bark -t "Jump Test" -b "Open F2 Docs" --url "https://johnserf-seed.github.io/f2/"
+f2 bark -t "Jump Test" -b "Open F2 Docs" --url "https://johnserf-seed.github.io/f2/"
 ```
 :::
 
