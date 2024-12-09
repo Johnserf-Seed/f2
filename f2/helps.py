@@ -81,12 +81,12 @@ def main() -> None:
         ),
         _("✔"),
     )
-    table.add_row(_("instagram 或 ig"), _("- 获取ig的作品"), _("⏳"))
+    table.add_row(_("instagram 或 ig"), _("- 获取ig的作品"))
     table.add_row(_("twitch 或 tv"), _("- 获取Twitch直播"))
-    table.add_row(_("twitter 或 x"), _("- 获取Twitter作品"), _("⏳"))
+    table.add_row(_("twitter 或 x"), _("- 获取Twitter作品"), _("✔"))
     table.add_row(_("youtube 或 ytb"), _("- 获取YouTube的作品"))
-    table.add_row(_("bilibili 或 bili"), _("- 获取BiliBili的作品"))
-    table.add_row(_("neteasy_music 或 nem"), _("- 获取网易云音乐作品"))
+    table.add_row(_("bilibili 或 bili"), _("- 获取BiliBili的作品"), _("⏳"))
+    table.add_row(_("neteasy_music 或 nem"), _("- 获取网易云音乐作品"), _("⏳"))
     table.add_row(_("little_red_book 或 lrb"), _("- 获取小红书的作品"))
     table.add_row(_("bark 或 bk"), _("- 发送Bark通知"), _("✔"))
     table.add_row("\n")
