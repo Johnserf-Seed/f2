@@ -34,7 +34,7 @@ if __name__ == "__main__":
 
 
 # region cli-debug-snippet
-# f2 -d WARNING -M post -u https://www.douyin.com/user/MS4wLjABAAAA35iXl5qqCbLKY99pUvxkXzvpSXi8jgUbJ0zR4EuTpcHcS8PHaEb6G9yB6iKR0dNl
+# f2 -d WARNING dy -M post -u https://www.douyin.com/user/MS4wLjABAAAA35iXl5qqCbLKY99pUvxkXzvpSXi8jgUbJ0zR4EuTpcHcS8PHaEb6G9yB6iKR0dNl
 # endregion cli-debug-snippet
 
 
