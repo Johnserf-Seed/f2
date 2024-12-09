@@ -13,7 +13,6 @@ class BarkModel(BaseModel):
     isArchive: Optional[int] = 1
     icon: Optional[str] = "https://johnserf-seed.github.io/f2/f2-logo-with-shadow.png"
     group: Optional[str] = "F2下载统计"
-    # ciphertext: Optional[str] = ""
     level: Optional[Literal["active", "timeSensitive", "passive", "critical"]] = (
         "active"
     )
@@ -26,3 +25,8 @@ class BarkModel(BaseModel):
     autoCopy: Optional[int] = 1
 
     model_config = ConfigDict(populate_by_name=True)
+
+
+class BarkCipherModel(BaseModel):
+    ciphertext: Optional[str]
+    iv: Optional[str]
