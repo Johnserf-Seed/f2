@@ -927,7 +927,7 @@ class AESEncryptionUtils:
         elif self.mode == "ECB":
             return self._aes_encrypt_ecb(plaintext)
 
-    def aes_decrypt(self, ciphertext: bytes) -> bytes:
+    def aes_decrypt(self, ciphertext: bytes, iv: Optional[bytes] = None) -> bytes:
         """
         AES 解密
 
@@ -940,7 +940,7 @@ class AESEncryptionUtils:
         if self.mode == "GCM":
             return self._aes_decrypt_gcm(ciphertext)
         elif self.mode == "CBC":
-            return self._aes_decrypt_cbc(ciphertext)
+            return self._aes_decrypt_cbc(ciphertext, iv)
         elif self.mode == "ECB":
             return self._aes_decrypt_ecb(ciphertext)
 
@@ -990,17 +990,14 @@ class AESEncryptionUtils:
         ciphertext = encryptor.update(padded_data) + encryptor.finalize()
         return ciphertext  # 返回密文
 
-    def _aes_decrypt_cbc(self, ciphertext: bytes) -> bytes:
+    def _aes_decrypt_cbc(self, ciphertext: bytes, iv: bytes) -> bytes:
         """CBC模式解密"""
-        iv = ciphertext[:16]  # 获取 IV（16 字节）
-        ciphertext_data = ciphertext[16:]  # 获取密文
-
         cipher = Cipher(
             algorithms.AES(self.key), modes.CBC(iv), backend=default_backend()
         )
         decryptor = cipher.decryptor()
 
-        padded_plaintext = decryptor.update(ciphertext_data) + decryptor.finalize()
+        padded_plaintext = decryptor.update(ciphertext) + decryptor.finalize()
 
         # 去除填充
         unpadder = aes_padding.PKCS7(128).unpadder()
