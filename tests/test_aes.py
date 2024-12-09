@@ -79,7 +79,7 @@ def test_aes128_gcm_encrypt_decrypt(aes128_gcm_encryption):
 # 测试 AES128 CBC 加密和解密
 def test_aes128_cbc_encrypt_decrypt(aes128_cbc_encryption):
     encrypted = aes128_cbc_encryption.aes_encrypt(TEST_TEXT)
-    decrypted = aes128_cbc_encryption.aes_decrypt(encrypted)
+    decrypted = aes128_cbc_encryption.aes_decrypt(encrypted, iv=TEST_IV_CBC)
 
     assert decrypted == TEST_TEXT, "AES128 CBC 解密失败，明文不匹配"
 
@@ -103,7 +103,7 @@ def test_aes192_gcm_encrypt_decrypt(aes192_gcm_encryption):
 # 测试 AES192 CBC 加密和解密
 def test_aes192_cbc_encrypt_decrypt(aes192_cbc_encryption):
     encrypted = aes192_cbc_encryption.aes_encrypt(TEST_TEXT)
-    decrypted = aes192_cbc_encryption.aes_decrypt(encrypted)
+    decrypted = aes192_cbc_encryption.aes_decrypt(encrypted, iv=TEST_IV_CBC)
 
     assert decrypted == TEST_TEXT, "AES192 CBC 解密失败，明文不匹配"
 
@@ -127,7 +127,7 @@ def test_aes256_gcm_encrypt_decrypt(aes256_gcm_encryption):
 # 测试 AES256 CBC 加密和解密
 def test_aes256_cbc_encrypt_decrypt(aes256_cbc_encryption):
     encrypted = aes256_cbc_encryption.aes_encrypt(TEST_TEXT)
-    decrypted = aes256_cbc_encryption.aes_decrypt(encrypted)
+    decrypted = aes256_cbc_encryption.aes_decrypt(encrypted, iv=TEST_IV_CBC)
 
     assert decrypted == TEST_TEXT, "AES256 CBC 解密失败，明文不匹配"
 
