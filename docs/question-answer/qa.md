@@ -1,6 +1,6 @@
 # 常见的问题与解决办法
 
-## 第 n 次响应内容为空
+## 第 n 次请求响应内容为空
 
 <<< @/snippets/QA.md#response-is-null-snippet
 
@@ -36,5 +36,4 @@
 
 ## TypeError: object of type 'NoneType' has no len()
 
-<<< @/snippets/QA.md#typeerror-nonetype-has-no-len()
-
+<<< @/snippets/QA.md#type-error-nonetype-has-no-len
