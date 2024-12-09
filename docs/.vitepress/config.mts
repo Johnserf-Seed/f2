@@ -77,6 +77,7 @@ export default defineConfig({
             {
               text: '开发者接口',
               items: [
+                {text: 'Bark', link: '/guide/apps/bark/index'},
                 {text: 'DouYin', link: '/guide/apps/douyin/index'},
                 {text: 'TikTok', link: '/guide/apps/tiktok/index'},
                 {text: 'Twitter', link: '/guide/apps/twitter/index'},
@@ -86,6 +87,7 @@ export default defineConfig({
             {
               text: '命令行指引',
               items: [
+                {text: 'Bark', link: '/guide/apps/bark/cli'},
                 {text: 'DouyYin', link: '/guide/apps/douyin/cli'},
                 {text: 'TikTok', link: '/guide/apps/tiktok/cli'},
                 {text: 'Twitter', link: '/guide/apps/twitter/cli'},
