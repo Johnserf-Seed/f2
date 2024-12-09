@@ -23,16 +23,11 @@ def help() -> None:
             "-M --mode",
             "[dark_cyan]Choice",
             _(
-                "选择发送模式，get：使用 GET 请求发送通知，post：使用 POST 请求发送通知，默认为 get"
+                "选择发送模式，get：使用 GET 请求发送通知，post：使用 POST 请求发送通知，cipher：加密发送通知，默认为 get"
             ),
         ),
         ("-t --title", "[dark_cyan]str", _("推送的标题")),
         ("-b --body", "[dark_cyan]str", _("推送的内容")),
-        (
-            "-ct --ciphertext",
-            "[dark_cyan]str",
-            _("推送密文，需在 APP 设置中开启加密推送"),
-        ),
         ("-cl --call", "[dark_cyan]Bool", _("是否持续响铃，默认不响铃")),
         (
             "-l --level",
