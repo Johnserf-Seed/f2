@@ -28,7 +28,7 @@ def help() -> None:
         ),
         ("-t --title", "[dark_cyan]str", _("推送的标题")),
         ("-b --body", "[dark_cyan]str", _("推送的内容")),
-        ("-cl --call", "[dark_cyan]Bool", _("是否持续响铃，默认不响铃")),
+        ("-cl --call", "[dark_cyan]Bool", _("是否持续响铃，默认关闭")),
         (
             "-l --level",
             "[dark_cyan]Choice",
