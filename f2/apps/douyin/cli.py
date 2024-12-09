@@ -166,7 +166,7 @@ def validate_proxies(
         if not all([value[0].startswith("http://"), value[1].startswith("http://")]):
             raise click.BadParameter(
                 _(
-                    "代理参数应该以'http://'和'http://'开头，在大多数情况下，https:// 应使用 http:// 方案"
+                    "配置代理服务器，支持最多两个参数，分别对应 http:// 和 https:// 协议。如果代理不支持出口 HTTPS，请使用：http://x.x.x.x http://x.x.x.x"
                 )
             )
         # 校验代理服务器是否可用
@@ -354,7 +354,7 @@ def validate_proxies(
     type=str,
     nargs=2,
     help=_(
-        "代理服务器，空格区分 2 个参数 http://x.x.x.x:xxxx http://x.x.x.x:xxxx (某些情况下，https:// 应使用 http:// 方案)"
+        "配置代理服务器，支持最多两个参数，分别对应 http:// 和 https:// 协议。如果代理不支持出口 HTTPS，请使用：http://x.x.x.x http://x.x.x.x"
     ),
     callback=validate_proxies,
 )
