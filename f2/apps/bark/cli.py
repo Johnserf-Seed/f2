@@ -64,7 +64,7 @@ def validate_key_length(
     param: typing.Union[click.Option, click.Parameter],
     value: typing.Any,
 ) -> typing.Any:
-    """验证密钥长度 (Validate the length of the key)
+    """验证API 密钥长度 (Validate the length of the api key)
 
     Args:
         ctx: click的上下文对象 (Click's context object)
@@ -72,8 +72,26 @@ def validate_key_length(
         value: 参数或选项的值 (The value of the parameter or option)
     """
 
-    if not value and len(value) != 22:
-        raise click.BadParameter(_("密钥长度应该为22位"))
+    if value and len(value) != 22:
+        raise click.BadParameter(_("API 密钥长度应该为22位"))
+    return value
+
+
+def validate_device_token_length(
+    ctx: click.Context,
+    param: typing.Union[click.Option, click.Parameter],
+    value: typing.Any,
+) -> typing.Any:
+    """验证设备密钥长度 (Validate the length of the device key)
+
+    Args:
+        ctx: click的上下文对象 (Click's context object)
+        param: 提供的参数或选项 (The provided parameter or option)
+        value: 参数或选项的值 (The value of the parameter or option)
+    """
+
+    if value and len(value) != 64:
+        raise click.BadParameter(_("设备密钥长度应该为64位"))
     return value
 
 
@@ -117,11 +135,18 @@ def validate_proxies(
     help=_("配置文件路径，最低优先"),
 )
 @click.option(
-    "--token",
+    "--key",
     "-k",
     type=str,
-    help=_("Bark 的 Token"),
+    help=_("Bark 的 API Key"),
     callback=validate_key_length,
+)
+@click.option(
+    "--token",
+    "-d",
+    type=str,
+    help=_("Bark 的 Device Token"),
+    callback=validate_device_token_length,
 )
 @click.option(
     "--mode",
@@ -339,26 +364,30 @@ def bark(
     # 从低频配置开始到高频配置再到cli参数，逐级覆盖，如果键值不存在使用父级的键值
     kwargs = merge_config(main_conf, custom_conf, **kwargs)
 
-    # 从配置文件中获取 token，如果命令行没有传入 token
+    # 从配置文件中获取 key、token，如果命令行没有传入 key、token
+    key = kwargs.get("key") or main_conf.get("key")
     token = kwargs.get("token") or main_conf.get("token")
 
-    # 验证 token 的长度（无论从命令行还是配置文件获取）
+    # 验证 key 和 token 的长度（无论从命令行还是配置文件获取）
     try:
-        validate_key_length(ctx, None, token)
+        validate_key_length(ctx, None, key)
+        validate_device_token_length(ctx, None, token)
     except click.BadParameter as e:
         logger.error(str(e))
         ctx.exit(1)
 
+    kwargs["key"] = key
     kwargs["token"] = token
 
-    logger.info(_("密钥：{0}").format(kwargs.get("token")))
+    logger.debug(_("API密钥：{0}").format(kwargs.get("key")))
+    logger.debug(_("设备密钥：{0}").format(kwargs.get("token")))
     logger.info(_("主配置路径：{0}").format(main_conf_path))
     logger.info(_("自定义配置路径：{0}").format(Path.cwd() / config))
     logger.debug(_("主配置参数：{0}").format(main_conf))
     logger.debug(_("自定义配置参数：{0}").format(custom_conf))
     logger.debug(_("CLI参数：{0}").format(kwargs))
 
-    # 尝试从命令行参数或kwargs中获取token和body，mode
+    # 尝试从命令行参数或kwargs中获取body，mode
     missing_params = [param for param in ["body", "mode"] if not kwargs.get(param)]
 
     if missing_params:
