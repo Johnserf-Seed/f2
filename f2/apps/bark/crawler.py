@@ -1,6 +1,7 @@
 # path: f2/apps/bark/crawler.py
 
 from typing import Dict
+from urllib.parse import quote
 
 from f2.log.logger import logger
 from f2.i18n.translator import _
@@ -27,20 +28,23 @@ class BarkCrawler(BaseCrawler):
         )
 
     async def fetch_bark_notification(self, params: BarkModel) -> Dict:
+        # 转义参数
+        escaped_params = {
+            k: quote(str(v), safe="")
+            for k, v in params.model_dump(by_alias=True).items()
+        }
         endpoint = BaseEndpointManager.model_2_endpoint(
             self.server_endpoint,
-            params.model_dump(by_alias=True),
+            escaped_params,
         )
         logger.debug(_("Bark 通知接口地址(GET)：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def post_bark_notification(self, params: BarkModel) -> Dict:
-        endpoint = BaseEndpointManager.model_2_endpoint(
-            self.server_endpoint,
-            params.model_dump(by_alias=True),
+        logger.debug(_("Bark 通知接口地址(POST)：{0}").format(self.server_endpoint))
+        return await self._fetch_post_json(
+            self.server_endpoint, params.model_dump(by_alias=True)
         )
-        logger.debug(_("Bark 通知接口地址(POST)：{0}").format(endpoint))
-        return await self._fetch_post_json(endpoint, params.model_dump())
 
     async def __aenter__(self):
         return self
