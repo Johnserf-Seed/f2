@@ -1,6 +1,7 @@
 # path: f2/apps/bark/utils.py
 
 import f2
+import secrets
 
 from f2.utils.conf_manager import ConfigManager
 
@@ -44,3 +45,9 @@ class ClientConfManager:
     @classmethod
     def referer(cls) -> str:
         return cls.headers().get("Referer", "")
+
+
+def generate_numeric_bytes(length: int) -> bytes:
+    """生成由纯数字组成的字节"""
+    numeric_str = "".join(secrets.choice("0123456789") for _ in range(length))
+    return numeric_str.encode("utf-8")
