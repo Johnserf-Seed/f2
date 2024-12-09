@@ -8,12 +8,10 @@ f2:
       Referer: https://api.day.app/
 
     encryption:
-      enable: false
-      algorithms: AES128
+      algorithm: AES128
       mode: CBC
       padding: PKCS7
       key: ""
-      iv: ""
 
     proxies:
       http://:
