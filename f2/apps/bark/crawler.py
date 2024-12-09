@@ -7,7 +7,7 @@ from f2.log.logger import logger
 from f2.i18n.translator import _
 from f2.crawlers.base_crawler import BaseCrawler
 from f2.utils.utils import BaseEndpointManager
-from f2.apps.bark.model import BarkModel
+from f2.apps.bark.model import BarkModel, BarkCipherModel
 from f2.apps.bark.api import BarkAPIEndpoints as bkendpoint
 from f2.apps.bark.utils import ClientConfManager
 
@@ -45,6 +45,10 @@ class BarkCrawler(BaseCrawler):
         return await self._fetch_post_json(
             self.server_endpoint, params.model_dump(by_alias=True)
         )
+
+    async def cipher_bark_notification(self, params: BarkCipherModel) -> Dict:
+        logger.debug(_("Bark 通知接口地址(Cipher)：{0}").format(self.server_endpoint))
+        return await self._fetch_post_json(self.server_endpoint, params.model_dump())
 
     async def __aenter__(self):
         return self
