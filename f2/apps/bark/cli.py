@@ -151,11 +151,11 @@ def validate_proxies(
 @click.option(
     "--mode",
     "-M",
-    type=click.Choice(["get", "post"]),
+    type=click.Choice(["get", "post", "cipher"]),
     # default="get",
     # required=True,
     help=_(
-        "选择发送模式，get：使用 GET 请求发送通知，post：使用 POST 请求发送通知，默认为 get"
+        "选择发送模式，get：使用 GET 请求发送通知，post：使用 POST 请求发送通知，cipher：加密发送通知，默认为 get"
     ),
 )
 @click.option(
@@ -169,12 +169,6 @@ def validate_proxies(
     "-b",
     type=str,
     help=_("推送的内容"),
-)
-@click.option(
-    "--ciphertext",
-    "-ct",
-    type=str,
-    help=_("推送密文，需在 APP 设置中开启加密推送"),
 )
 @click.option(
     "--call",
