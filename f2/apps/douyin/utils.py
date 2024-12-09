@@ -12,7 +12,7 @@ import traceback
 
 from typing import Union
 from pathlib import Path
-
+from urllib.parse import urlparse
 from f2.apps.douyin.algorithm import webcast_signature
 from f2.i18n.translator import _
 from f2.log.logger import logger
@@ -729,7 +729,7 @@ class SecUserIdFetcher(BaseCrawler):
 
         pattern = (
             cls._REDIRECT_URL_PATTERN
-            if "v.douyin.com" in url
+            if urlparse(url).hostname == "v.douyin.com"
             else cls._DOUYIN_URL_PATTERN
         )
 
