@@ -78,7 +78,7 @@ def help() -> None:
             "-P --proxies",
             "[dark_cyan]str",
             _(
-                "代理服务器，空格区分 2 个参数 http://x.x.x.x:xxxx http://x.x.x.x:xxxx (某些情况下，https:// 应使用 http:// 方案)"
+                "配置代理服务器，支持最多两个参数，分别对应 http:// 和 https:// 协议。如果代理不支持出口 HTTPS，请使用：http://x.x.x.x http://x.x.x.x"
             ),
         ),
         ("-L --lyric", "[dark_cyan]Bool", _("是否保存视频歌词")),
