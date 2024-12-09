@@ -127,7 +127,7 @@ def validate_proxies(
     return value
 
 
-@click.command(name="bark", help=_("Bark 是一个通知推送工具"))
+@click.command(name="bark", help=_("Bark 是一个iOS端的通知推送工具"))
 @click.option(
     "--config",
     "-c",
@@ -175,7 +175,7 @@ def validate_proxies(
     "-cl",
     type=bool,
     # default=False,
-    help=_("是否持续响铃，默认不响铃"),
+    help=_("是否持续响铃，默认关闭"),
 )
 @click.option(
     "--level",
@@ -216,22 +216,7 @@ def validate_proxies(
 @click.option(
     "--sound",
     "-s",
-    type=click.Choice(
-        [
-            "birdsong",
-            "alarm",
-            "chord",
-            "dog",
-            "guitar",
-            "piano",
-            "ring",
-            "robot",
-            "siren",
-            "trumpet",
-            "vibrate",
-            "none",
-        ]
-    ),
+    type=str,
     # default="birdsong",
     help=_("推送铃声，可选项请查看 APP 设置"),
 )
