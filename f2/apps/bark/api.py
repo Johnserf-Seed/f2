@@ -7,3 +7,5 @@ class BarkAPIEndpoints:
     """
 
     BARK_DOMAIN = "https://api.day.app"
+
+    BARK_PUSH = f"{BARK_DOMAIN}/push"
