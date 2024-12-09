@@ -53,7 +53,7 @@ class BarkHandler:
                 return bark
 
         except Exception as e:
-            logger.error(_("Bark 通知发送失败，请检查token和网络连接：{0}").format(e))
+            logger.error(_("Bark 通知发送失败，请检查 key 和网络连接：{0}").format(e))
 
         return None
 

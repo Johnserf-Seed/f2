@@ -19,8 +19,8 @@ class BarkCrawler(BaseCrawler):
     ):
         # 需要与cli同步
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})
-        token = kwargs.get("token", "")
-        self.server_endpoint = f"{bkendpoint.BARK_DOMAIN}/{token}"
+        api_key = kwargs.get("key", "")
+        self.server_endpoint = f"{bkendpoint.BARK_DOMAIN}/{api_key}"
         if ClientConfManager.encryption().get("enable"):
             self.encryption = ClientConfManager.encryption()
         super().__init__(
