@@ -20,6 +20,7 @@ async def main():
     # sec_user_id = "MS4wLjABAAAAGPm-wPeGQuziCu5z6KerQA7WmSTnS99c8lU8WLToB0BsN02mqbPxPuxwDjKf7udZ"  # 隐私设置的账号
 
     # 至少提供 user_id 或 sec_user_id 中的一个参数
+    # soure_type: 1 可以获取到粉丝列表，2 的意义不明故无需设置该参数
     # 根据max_time 和 min_time 区间获取用户粉丝列表
     async for follower in DouyinHandler(kwargs).fetch_user_follower(
         user_id=user_id,

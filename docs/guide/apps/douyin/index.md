@@ -1,5 +1,5 @@
 ---
-outline: deep
+outline: 3
 ---
 
 # 接口列表
@@ -479,21 +479,21 @@ outline: deep
 | :--- | :--- | :--- |
 | UserFollowingFilter | AsyncGenerator | 关注用户数据过滤器，包含关注用户数据的_to_raw、_to_dict、_to_list方法 |
 
-#### 偏移量 (**offset**)：
+#### 偏移量 (**offset**)
 
 - 当 `source_type` 为 `1` 和 `3` 时，`offset` 参数无效。
 - 当 `source_type` 为 `4` 时，`offset` 参数有效。
 
-#### 时间范围 (**min_time**/**max_time**)：
+#### 时间范围 (**min_time**/**max_time**)
 
 - 如果未传递 `max_time` 和 `min_time` 参数，`F2` 将自动处理时间范围，确保数据完整性。
 - 若需要自定义时间范围，可通过手动设置 `max_time` 和 `min_time` 参数实现。
 
-#### 关注用户数 (**count**)：
+#### 关注用户数 (**count**)
 
 - `count` 参数控制每页关注用户数，不建议设置过大，建议使用默认值。
 
-#### 排序类型 (**source_type**)：
+#### 排序类型 (**source_type**)
 
 - `1` 表示按最近关注排序。
 - `3` 表示按最早关注排序。
@@ -515,15 +515,38 @@ outline: deep
 | user_id| str | 用户ID |
 | sec_user_id| str | 用户ID |
 | offset| int | 页码，初始为0 |
-| count| int | 页数，初始为20 |
-| source_type| int | 排序类型，初始为1 |
 | min_time | int | 最早关注时间戳，初始为0 |
 | max_time | int | 最晚关注时间戳，初始为0 |
-| max_counts| float | 最大列表数，初始为None |
+| count| int | 页数，初始为20 |
+| source_type| int | 排序类型，初始为1 |
+| max_counts| float | 最大粉丝数，默认为无穷大 |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | UserFollowerFilter | AsyncGenerator | 粉丝用户数据过滤器，包含粉丝用户数据的_to_raw、_to_dict、_to_list方法 |
+
+#### 偏移量 (**offset**)
+
+- 当 `source_type` 为 `1` 和 `2` 时，`offset` 参数无效。故粉丝用户接口不需要 `offset` 参数。
+
+#### 时间范围 (**min_time**/**max_time**)
+
+- 如果未传递 `max_time` 和 `min_time` 参数，`F2` 将自动处理时间范围，确保数据完整性。
+- 若需要自定义时间范围，可通过手动设置 `max_time` 和 `min_time` 参数实现。
+
+#### 粉丝用户数 (**count**)
+
+- `count` 参数控制每页粉丝用户数，不建议设置过大，建议使用默认值。
+
+#### 排序类型 (**source_type**)
+
+- `1` 表示按综合排序。
+- `2` 意义不明确。
+
+::: tip :bulb: 但需注意
+- 只能获取到用户**公开状态**的粉丝用户数据。
+- 时间间隔过长可能导致数据不完整，不建议采用自定义时间范围，仅适用于获取特定时间段前或后的数据场景。
+:::
 
 <<< @/snippets/douyin/user-follower.py{18-20,22-29}
 
