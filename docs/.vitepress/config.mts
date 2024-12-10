@@ -35,8 +35,8 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     logo: { src: '/f2-logo-with-shadow-svg@1.0x.svg', width: 24, height: 24 },
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/Johnserf-Seed/f2' },
-      { icon: 'discord', link: 'https://discord.gg/3PhtPmgHf8' },
+      { icon: 'github', link: 'https://github.com/Johnserf-Seed/f2', ariaLabel: 'GitHub' },
+      { icon: 'discord', link: 'https://discord.gg/3PhtPmgHf8', ariaLabel: 'Discord' },
     ],
     algolia: {
       appId: 'KKYI8Z7LEP',
@@ -50,7 +50,7 @@ export default defineConfig({
     editLink: {
       pattern: 'https://github.com/Johnserf-Seed/f2/edit/main/docs/:path',
       text: 'Edit this page on GitHub'
-    }
+    },
   },
 
   locales: {
