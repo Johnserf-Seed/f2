@@ -1498,10 +1498,10 @@ class DouyinHandler:
         user_id: str = "",
         sec_user_id: str = "",
         offset: int = 0,
-        count: int = 20,
-        source_type: int = 4,
         min_time: int = 0,
         max_time: int = 0,
+        count: int = 20,
+        source_type: int = 4,
         max_counts: float = float("inf"),
     ) -> AsyncGenerator[UserFollowingFilter, Any]:
         """
@@ -1509,12 +1509,12 @@ class DouyinHandler:
 
         Args:
             user_id: str: 用户ID
-            sec_user_id: str: 用户ID
+            sec_user_id: str: 用户sec_user_id
             offset: int: 起始页
+            min_time: int: 最小时间戳，秒级，初始为0
+            max_time: int: 最大时间戳，秒级，初始为0
             count: int: 每页关注用户数
-            source_type: int: 排序类型
-            min_time: int: 最小时间戳
-            max_time: int: 最大时间戳
+            source_type: int: 排序类型，1: 按最近关注排序，3: 按最早关注排序，4: 按综合排序
         Return:
             following: AsyncGenerator[UserFollowingFilter, Any]: 关注用户数据过滤器，包含关注用户数据的_to_raw、_to_dict、_to_list方法
         """
@@ -1522,10 +1522,16 @@ class DouyinHandler:
         if not user_id and not sec_user_id:
             raise ValueError(_("至少提供 user_id 或 sec_user_id 中的一个参数"))
 
+        source_type_map = {
+            1: _("按最近关注排序"),
+            3: _("按最早关注排序"),
+            4: _("按综合排序"),
+        }
         max_counts = max_counts or float("inf")
         users_collected = 0
 
         logger.info(_("处理用户：{0} 的关注用户").format(sec_user_id))
+        logger.info(_("当前排序类型：{0}").format(source_type_map.get(source_type)))
 
         while users_collected < max_counts:
             current_request_size = min(count, max_counts - users_collected)
@@ -1533,16 +1539,18 @@ class DouyinHandler:
             logger.debug(
                 _("最大数量：{0} 每次请求数量：{1}").format(count, current_request_size)
             )
+            logger.debug(_("当前请求的 max_time：{0}".format(max_time)))
+            logger.debug(_("当前请求的 min_time：{0}".format(min_time)))
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserFollowing(
-                    offset=offset,
-                    count=current_request_size,
                     user_id=user_id,
                     sec_user_id=sec_user_id,
-                    source_type=source_type,
+                    offset=offset,
                     min_time=min_time,
                     max_time=max_time,
+                    count=current_request_size,
+                    source_type=source_type,
                 )
                 response = await crawler.fetch_user_following(params)
                 following = UserFollowingFilter(response)
@@ -1552,8 +1560,8 @@ class DouyinHandler:
                 logger.info(_("用户：{0} 所有关注用户采集完毕").format(sec_user_id))
                 break
 
-            logger.info(_("当前请求的offset：{0}").format(offset))
-            logger.info(_("处理了 {0} 个关注用户").format(offset + 1))
+            logger.info(_("当前请求的 offset：{0}").format(offset))
+            logger.info(_("处理了 {0} 个关注用户").format(len(following.sec_uid)))
             logger.debug(
                 _("用户ID：{0} 用户昵称：{1} 用户作品数：{2} 额外内容：{3}").format(
                     following.sec_uid,
@@ -1565,7 +1573,14 @@ class DouyinHandler:
 
             # 更新已经处理的用户数量 (Update the number of users processed)
             users_collected += len(following.sec_uid)
-            offset = following.offset
+
+            # 使用逻辑映射表更新offset、max_time、min_time
+            logicmap = {
+                1: (0, following.min_time, 0),  # 按最近关注排序
+                3: (0, 0, following.max_time),  # 按最早关注排序
+                4: (following.offset, 0, 0),  # 按综合排序
+            }
+            offset, max_time, min_time = logicmap.get(source_type)
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
