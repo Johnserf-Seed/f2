@@ -111,22 +111,3 @@ def test_merge_config():
     assert result["key2"] == "value2"
     assert "key3" not in result  # 空值不应新增键
     assert "key4" not in result  # 空值不应新增键
-
-
-if __name__ == "__main__":
-    from f2.apps.douyin.utils import TokenManager
-
-    print("douyin real msToken:", TokenManager.gen_real_msToken())
-    print("douyin fake msToken:", TokenManager.gen_false_msToken())
-    print("douyin ttwid:", TokenManager.gen_ttwid())
-
-    from f2.apps.douyin.utils import VerifyFpManager
-
-    print("douyin verify_fp:", VerifyFpManager.gen_verify_fp())
-
-    from f2.apps.tiktok.utils import TokenManager
-
-    print("tiktok real msToken:", TokenManager.gen_real_msToken())
-    print("tiktok fake msToken:", TokenManager.gen_false_msToken())
-    print("tiktok ttwid:", TokenManager.gen_ttwid())
-    print("tiktok odin_tt:", TokenManager.gen_odin_tt())
