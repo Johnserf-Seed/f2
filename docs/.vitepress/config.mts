@@ -18,7 +18,21 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/f2/f2-logo-with-shadow-svg@0.25x.svg' }],
     ['link', { rel: 'icon', type: 'image/png', href: '/f2/f2-logo-with-shadow-mini.png' }],
-    ['link', { rel: 'icon', type: 'image/x-icon',href: '/f2/f2-logo.ico' }],
+    ['link', { rel: 'icon', type: 'image/x-icon', href: '/f2/f2-logo.ico' }],
+    // google analytics
+    [
+      'script',{ async: "", src: "https://www.googletagmanager.com/gtag/js?id=G-H7N87QED9C",
+      },
+    ],
+    [
+      'script',
+      {},
+      `window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-H7N87QED9C');`,
+    ],
   ],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
