@@ -91,23 +91,28 @@ def main() -> None:
     table.add_row(_("bark 或 bk"), _("- 发送Bark通知"), _("✔"))
     table.add_row("\n")
     table.add_row(
-        "f2 -d DEBUG",
+        _("f2 -d DEBUG"),
         _(
-            "- 记录app的调试日志到/logs下，如遇BUG提交Issue时请附带该文件并[red]删除个人敏感信息[/red]"
+            "⚠  记录app的调试日志到[blue]/logs[/]下查看，如遇BUG提交Issue时请附带该文件并[red]删除个人敏感信息[/red] ⚠"
         ),
-        _("⚠"),
     )
     table.add_row(
-        "Issues❓", "[link=https://github.com/Johnserf-Seed/f2/issues]Click Here[/]"
+        _("Issues❓"),
+        _(
+            "[green]这里说不定有你需要的答案 [link=https://github.com/Johnserf-Seed/f2/issues]Click Here[/]"
+        ),
     ),
     table.add_row(
-        "Document📕", "[link=https://johnserf-seed.github.io/f2/]Click Here[/]"
+        _("Document📕"),
+        _(
+            "[yellow]务必先去看文档哦 [link=https://johnserf-seed.github.io/f2/]Click Here[/]"
+        ),
     )
     console.print(
         Panel(
             table,
             border_style="bold",
-            title="应用 | apps",
+            title="应用 | Apps",
             title_align="left",
             subtitle=_("欢迎提交PR适配更多应用"),
         )
