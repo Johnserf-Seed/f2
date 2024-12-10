@@ -1,13 +1,20 @@
 name: Workflow for Codecov f2
 on: [push, pull_request]
+
 jobs:
   run:
     runs-on: ubuntu-latest
+    env:
+      SKIP_IN_CI: ${{ vars.SKIP_IN_CI }}
+      CODECOV_STATIC_TOKEN: ${{ secrets.CODECOV_STATIC_TOKEN }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
@@ -21,25 +28,15 @@ jobs:
 
       - name: Print environment variable
         run: echo $SKIP_IN_CI
-        env:
-          SKIP_IN_CI: ${{ vars.SKIP_IN_CI }}
 
       - name: Run tests and collect coverage
-        env:
-          SKIP_IN_CI: ${{ vars.SKIP_IN_CI }}
         run: pytest --cov=./ --cov-report=xml
 
       - name: Run ATS
         uses: codecov/codecov-ats@v0
-        env:
-          SKIP_IN_CI: ${{ vars.SKIP_IN_CI }}
-          CODECOV_STATIC_TOKEN: ${{ secrets.CODECOV_STATIC_TOKEN }}
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.5.0
         with:
           slug: Johnserf-Seed/f2
           verbose: true
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
