@@ -1593,10 +1593,10 @@ class DouyinHandler:
         user_id: str = "",
         sec_user_id: str = "",
         offset: int = 0,
-        count: int = 20,
-        source_type: int = 1,
         min_time: int = 0,
         max_time: int = 0,
+        count: int = 20,
+        source_type: int = 1,
         max_counts: float = float("inf"),
     ) -> AsyncGenerator[UserFollowerFilter, Any]:
         """
@@ -1604,12 +1604,14 @@ class DouyinHandler:
 
         Args:
             user_id: str: 用户ID
-            sec_user_id: str: 用户ID
+            sec_user_id: str: 用户sec_user_id
             offset: int: 起始页
-            count: int: 每页粉丝数
-            source_type: int: 排序类型
-            min_time: int: 最小时间戳
-            max_time: int: 最大时间戳
+            min_time: int: 最小时间戳，秒级，初始为0
+            max_time: int: 最大时间戳，秒级，初始为0
+            count: int: 每页粉丝数，默认为20
+            source_type: int: 排序类型，没有指明，默认为1即可
+            max_counts: float: 最大粉丝数，默认为无穷大
+
         Return:
             follower: AsyncGenerator[UserFollowerFilter, Any]: 粉丝数据过滤器，包含用户ID列表、用户昵称、用户头像、起始页
         """
@@ -1631,13 +1633,13 @@ class DouyinHandler:
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserFollower(
-                    offset=offset,
-                    count=current_request_size,
                     user_id=user_id,
                     sec_user_id=sec_user_id,
-                    source_type=source_type,
+                    offset=offset,
                     min_time=min_time,
                     max_time=max_time,
+                    count=current_request_size,
+                    source_type=source_type,
                 )
                 response = await crawler.fetch_user_follower(params)
                 follower = UserFollowerFilter(response)
