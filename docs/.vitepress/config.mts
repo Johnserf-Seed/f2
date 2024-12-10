@@ -152,6 +152,11 @@ export default defineConfig({
 function cn_nav(): DefaultTheme.NavItem[] {
   return [
     {
+      text: '团队',
+      link: '/team',
+      activeMatch: '/team'
+    },
+    {
       text: '指南',
       link: '/guide/what-is-f2',
       activeMatch: '/guide/'
@@ -180,7 +185,10 @@ function cn_nav(): DefaultTheme.NavItem[] {
 function en_nav(): DefaultTheme.NavItem[] {
   return [
     {
-      text: 'guide',
+      text: 'Team',
+      link: '/en/team',
+      activeMatch: '/team'
+    },
       link: '/en/guide/what-is-f2',
       activeMatch: '/guide/'
     },
