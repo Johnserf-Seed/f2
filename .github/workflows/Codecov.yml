@@ -5,7 +5,7 @@ jobs:
   run:
     runs-on: ubuntu-latest
     env:
-      SKIP_IN_CI: ${{ vars.SKIP_IN_CI }}
+      SKIP_IN_CI: true
       CODECOV_STATIC_TOKEN: ${{ secrets.CODECOV_STATIC_TOKEN }}
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
