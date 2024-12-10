@@ -50,7 +50,3 @@ def test_decompression():
     assert decompressed_size == len(
         json.dumps(data).encode()
     ), "解压后文件大小应等于原始大小"
-
-
-if __name__ == "__main__":
-    pytest.main()
