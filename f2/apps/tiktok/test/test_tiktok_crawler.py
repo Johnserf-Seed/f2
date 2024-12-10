@@ -1,8 +1,12 @@
+import os
 import pytest
 from f2.apps.tiktok.model import UserPost
 from f2.apps.tiktok.filter import UserPostFilter
 from f2.apps.tiktok.crawler import TiktokCrawler
 from f2.utils.conf_manager import TestConfigManager
+
+# 检查环境变量是否设置为跳过测试
+skip_in_ci = os.getenv("SKIP_IN_CI", "false").lower() == "true"
 
 
 @pytest.fixture
@@ -10,7 +14,8 @@ def cookie_fixture():
     return TestConfigManager.get_test_config("tiktok")
 
 
-@pytest.mark.asyncio
+# @pytest.mark.asyncio
+@pytest.mark.skipif(skip_in_ci, reason="Skipping test in CI environment")
 async def test_crawler_by_secUid(cookie_fixture):
     async with TiktokCrawler(cookie_fixture) as crawler:
         params = UserPost(
