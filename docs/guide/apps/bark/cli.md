@@ -61,7 +61,7 @@ curl -X "POST" "https://api.day.app/push" \
 
 ![Bark Token](/bark/bark-token.jpg)
 
-::: warning :lock: 隐私保护
+::: warning :lock: 密钥来源
 - `Bark` 的 `Key` 由 `Bark` 服务器生成，**请勿泄露**，包括开发者和社区。
 - `Bark` 的 `Device Token` 由 `Apple` 服务器生成，**请勿泄露**。
 :::
@@ -111,16 +111,16 @@ f2 bark -t "Test Title" -b "Test Body" -M cipher
 > - 启用推送加密后，默认的 `get` 请求模式将不再适用，需切换到 `cipher` 模式。
 > - 在 `Bark` 首页的 `推送加密` 设置中，必须按照要求配置自定义密钥，密钥的长度由所选加密算法决定。
 > - 为了增强安全性并降低碰撞概率，`F2` 会自动使用随机 `iv`。在 `Bark` 中 `iv` 可以任意填写。
-> - 尽管推送加密功能仍在实验阶段，建议先使用 `AES-256-CBC` 加密模式。因为目前 `Bark v1.4.3(5)` 版本的 `GCM` 模式尚未完全支持，需在更高版本中才能启用。[允许使用GCM Mode#262](https://github.com/Finb/Bark/commit/8a2a7fc2b44073498e4abea54f62497a0e06926e)。
+> - 尽管推送加密功能仍在实验阶段，建议先使用 `AES-256-CBC` 加密模式。因为目前 `Bark v1.4.3(5)` 版本的 `GCM` 模式尚未完全支持，需在往后版本中才能启用。[允许使用GCM Mode#262](https://github.com/Finb/Bark/commit/8a2a7fc2b44073498e4abea54f62497a0e06926e)。
 > - 了解更多信息，请参阅 `Bark` 的[推送加密](https://bark.day.app/#/encryption)。
 
 ### `--title`
 
-推送的标题。建议不要超过 **10个字符**。
+推送的标题。建议不要超过 **8个字符**。
 
 ### `--body`
 
-推送的内容。建议不要超过 **50个字符**。
+推送的内容。建议不要超过 **30个字符**。
 
 ### `--call`
 
@@ -134,8 +134,8 @@ f2 bark -t "Test Title" -b "Test Body" -M cipher
 - `passive`：被动通知
 - `critical`：紧急通知
 
-::: warning :warning: 重要警告
-- 设置为 `critical` 级别的通知，在 `iOS 15` 及以上版本中会强制震动，即使处于静音模式。
+::: warning :warning: 重要提示 :warning:
+- 设置为 `critical` 级别的通知，在 `iOS 15` 及以上版本中会强制震动，即使设备处于静音模式。
 :::
 
 ### `--volume`
@@ -180,9 +180,11 @@ f2 bark -t "Test Title" -b "Test Body" -M cipher
 
 推送图标 URL，相同的图标 URL 仅下载一次。默认为 `F2` 的图标。
 
+![F2 Icon](/f2-logo.ico)
+
 ### `--group`
 
-推送分组，通知中心将按分组显示推送。适用不同的推送场景。
+推送分组，通知中心将按分组显示推送。适用不同的推送场景，如不同的应用与服务器状况。建议不超过 **8个字符**。
 
 ### `--isArchive`
 
@@ -192,7 +194,7 @@ f2 bark -t "Test Title" -b "Test Body" -M cipher
 
 点击推送时跳转的 URL，支持 `URL Scheme` 和 `Universal Link`。适用一些需要回调或跳转的场景。
 
-<video src="https://github.com/user-attachments/assets/ab289f3c-dcb4-4c08-af75-91a3109493f8"  width="70%" height="auto" autoplay loop></video>
+<video src="https://github.com/user-attachments/assets/ab289f3c-dcb4-4c08-af75-91a3109493f8" width="70%" height="auto" autoplay loop style="border-radius: 8px; overflow: hidden;"></video>
 
 ::: details :link: 示例：使用 `URL Scheme` 跳转到 `F2` 文档官网。
 ```shell [bash]
