@@ -281,6 +281,11 @@ class BaseDownloader(BaseCrawler):
             task_id (TaskID): 任务ID (Task ID)
             url (str): m3u8文件的URL (m3u8 file URL)
             full_path (Union[str, Path]): 保存路径 (Save path)
+
+        Note:
+            可能会出现 httpx.RemoteProtocolError 错误，这是由于服务器返回的块大小未严格遵守 HTTP 规范。
+            非代码问题，而是服务器问题，跳过该片段处理。
+            Issues: https://github.com/encode/httpx/issues/1927
         """
         async with self.semaphore:
             full_path = self._ensure_path(full_path)
@@ -357,10 +362,19 @@ class BaseDownloader(BaseCrawler):
                                     downloaded_segments.add(segment.absolute_uri)
 
                                 except httpx.ReadTimeout as e:
-                                    logger.warning(_("TS文件下载超时: {0}").format(e))
-                                except Exception as e:
-                                    logger.error(_("TS文件下载失败: {0}").format(e))
-                                    logger.error(traceback.format_exc())
+                                    logger.warning(
+                                        _("TS文件下载超时: {0}，跳过该片段").format(e)
+                                    )
+                                    continue
+
+                                except httpx.RemoteProtocolError as e:
+                                    logger.error(
+                                        _(
+                                            "服务器返回的块大小未严格遵守 HTTP 规范，下载失败：{0}，跳过该片段"
+                                        ).format(e)
+                                    )
+                                    continue
+
                                 finally:
                                     await ts_response.aclose()
                             else:
