@@ -2,11 +2,8 @@ import { createRequire } from 'module'
 import { defineConfig, type DefaultTheme } from 'vitepress'
 
 const require = createRequire(import.meta.url)
-// const pypitoml = require('../../pyproject.toml')
 
-const pkg = require('vitepress/package.json')
-
-const version = "v0.0.1.6-pw.2"
+const pkg = require('../package.json')
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -165,8 +162,7 @@ function cn_nav(): DefaultTheme.NavItem[] {
       activeMatch: '/question-answer/'
     },
     {
-      //text: pkg.version,
-      text: version,
+      text: pkg.f2_version,
       items: [
         {
           text: '更新日志',
@@ -189,8 +185,7 @@ function en_nav(): DefaultTheme.NavItem[] {
       activeMatch: '/guide/'
     },
     {
-      //text: pkg.version,
-      text: version,
+      text: pkg.f2_version,
       items: [
         {
           text: 'Changelog',
