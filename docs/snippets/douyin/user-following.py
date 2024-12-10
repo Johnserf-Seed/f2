@@ -20,12 +20,14 @@ async def main():
     # sec_user_id = "MS4wLjABAAAAGPm-wPeGQuziCu5z6KerQA7WmSTnS99c8lU8WLToB0BsN02mqbPxPuxwDjKf7udZ"  # 隐私设置的账号
 
     # 至少提供 user_id 或 sec_user_id 中的一个参数
+    # source_type 选择排序方式，1：按照最近关注排序，3：按照最早关注排序，4：按照综合排序
     # 根据 max_time 和 min_time 区间获取关注用户列表
     async for following in DouyinHandler(kwargs).fetch_user_following(
         user_id=user_id,
         sec_user_id=sec_user_id,
         # max_time=1668606509,
         # min_time=0,
+        source_type=4,
     ):
         if following.status_code != 0:
             logger.error(
