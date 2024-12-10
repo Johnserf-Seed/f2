@@ -7,5 +7,6 @@
     "docs:dev": "vitepress dev",
     "docs:build": "vitepress build",
     "docs:preview": "vitepress preview"
-  }
+  },
+  "f2_version": "v0.0.1.6-pw.2"
 }
