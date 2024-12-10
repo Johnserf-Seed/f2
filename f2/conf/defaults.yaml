@@ -9,7 +9,7 @@ douyin:
   mode:
   naming:
   cookie:
-  interval:
+  interval: all
   timeout:
   max_retries:
   max_connections:
@@ -29,7 +29,7 @@ tiktok:
   naming:
   cookie:
   keyword:
-  interval:
+  interval: all
   timeout:
   max_connections:
   max_counts:
@@ -46,7 +46,7 @@ weibo:
   naming:
   cookie:
   keyword:
-  interval:
+  interval: all
   timeout:
   max_retries:
   max_connections:
@@ -62,7 +62,7 @@ twitter:
   mode:
   naming:
   cookie:
-  interval:
+  interval: all
   timeout:
   max_retries:
   max_connections:
