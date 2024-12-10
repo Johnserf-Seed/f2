@@ -202,6 +202,13 @@ f2 bark -t "Jump Test" -b "Open F2 Docs" --url "https://johnserf-seed.github.io/
 ```
 :::
 
+::: tip :bulb: 更新路线：`监听 URL Scheme`
+例如：
+  - `F2` 向用户推送开播通知，点击推送即可远程下载直播。
+  - `F2` 向用户推送更新通知，点击推送即可下载更新。
+  - 向 `F2` 发送 `URL Scheme` 命令实现远程 `CLI` 控制。
+:::
+
 ### `--proxies`
 
 配置代理服务器，支持最多两个参数，分别对应 `http://` 和 `https://` 协议。
