@@ -55,6 +55,7 @@ keywords = [
 ]
 
 dependencies = [
+    "black==24.10.0",
     "click==8.1.7",
     "rich==13.9.3",
     "httpx==0.27.2",
