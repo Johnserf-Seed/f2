@@ -1871,7 +1871,9 @@ class FriendFeedFilter(JSONModel):
 
     @property
     def video_play_addr(self):
-        return self._get_list_attr_value("$.data[*].aweme.video.bit_rate[0].play_addr.url_list")
+        return self._get_list_attr_value(
+            "$.data[*].aweme.video.bit_rate[0].play_addr.url_list"
+        )
 
     # music
     @property
