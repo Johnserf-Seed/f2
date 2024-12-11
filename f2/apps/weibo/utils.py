@@ -36,7 +36,7 @@ class ClientConfManager:
         return cls.weibo_conf
 
     @classmethod
-    def version(cls) -> str:
+    def conf_version(cls) -> str:
         return cls.client_conf.get("version", "unknown")
 
     @classmethod
