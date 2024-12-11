@@ -15,9 +15,13 @@ kwargs = {
 
 async def main():
     weibo = await WeiboHandler(kwargs).fetch_one_weibo(weibo_id="O8DM0BLLm")
-    logger.info(
-        f"微博ID: {weibo.weibo_id}, 微博文案: {weibo.desc}, 作者昵称: {weibo.nickname}, 发布时间: {weibo.weibo_created_at}"
-    )
+    # logger.info(
+    #     f"微博ID: {weibo.weibo_id}, 微博文案: {weibo.desc}, 作者昵称: {weibo.nickname}, 发布时间: {weibo.weibo_created_at}"
+    # )
+    logger.info("=================_to_raw================")
+    logger.info(weibo._to_raw())
+    # logger.info("=================_to_dict===============")
+    # logger.info(weibo._to_dict())
 
 
 if __name__ == "__main__":

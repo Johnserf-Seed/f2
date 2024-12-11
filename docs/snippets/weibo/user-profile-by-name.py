@@ -17,9 +17,13 @@ async def main():
     user = await WeiboHandler(kwargs).fetch_user_info_by_screen_name(
         screen_name="阿里多多酱"
     )
-    logger.info(
-        f"微博用户ID: {user.user_id}, 昵称: {user.nickname}, 性别: {user.gender}, 地区: {user.location}, 关注数: {user.friends_count}, 粉丝数: {user.followers_count}, 微博数: {user.weibo_count}, 个人主页: {user.profile_url}"
-    )
+    # logger.info(
+    #     f"微博用户ID: {user.uid}, 昵称: {user.nickname}, 性别: {user.gender}, 地区: {user.location}, 关注数: {user.friends_count}, 粉丝数: {user.followers_count}, 微博数: {user.weibo_count}, 个人主页: {user.profile_url}"
+    # )
+    logger.info("=================_to_raw================")
+    logger.info(user._to_raw())
+    # logger.info("=================_to_dict===============")
+    # logger.info(user._to_dict())
 
 
 if __name__ == "__main__":
