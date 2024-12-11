@@ -49,10 +49,10 @@ class WeiboHandler:
 
     # 只允许?uid=xxxx&screen_name=
     # 只允许?uid=xxxx
-    # 只允许?screen_name=
+    # 只允许?screen_name=xxxx
     # 不允许?uid=xxxx&screen_name=xxxx
     # 不允许?uid=&screen_name=xxxx
-    # 屎
+    # 💩
 
     async def fetch_user_info(self, uid: str) -> UserInfoFilter:
         """
