@@ -159,6 +159,7 @@ class DouyinHandler:
         # 如果用户不在数据库中，将其添加到数据库
         if not local_user_data:
             await db.add_user_info(**current_user_data._to_dict())
+            logger.debug(_("用户：{0} 已添加到数据库").format(current_nickname))
 
         return user_path
 

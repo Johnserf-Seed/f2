@@ -363,14 +363,14 @@ class BaseDownloader(BaseCrawler):
 
                                 except httpx.ReadTimeout as e:
                                     logger.warning(
-                                        _("TS文件下载超时: {0}，跳过该片段").format(e)
+                                        _("TS 文件下载超时: {0}，跳过该片段").format(e)
                                     )
                                     continue
 
                                 except httpx.RemoteProtocolError as e:
                                     logger.error(
                                         _(
-                                            "服务器返回的块大小未严格遵守 HTTP 规范，下载失败：{0}，跳过该片段"
+                                            "服务器返回的块大小未严格遵守 HTTP 规范，跳过该片段。错误信息：{0}"
                                         ).format(e)
                                     )
                                     continue
@@ -379,7 +379,7 @@ class BaseDownloader(BaseCrawler):
                                     await ts_response.aclose()
                             else:
                                 logger.debug(
-                                    _("为你跳过已下载的片段，URI: {0}").format(
+                                    _("跳过已下载的片段，URI: {0}").format(
                                         segment.absolute_uri
                                     )
                                 )
