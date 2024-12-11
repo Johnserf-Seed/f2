@@ -81,7 +81,7 @@ class ModelManager:
 
 class VisitorManager(BaseCrawler):
     """
-    用于管理访客信息 (Used to manage visitor information)
+    用于管理访客Cookie生成 (Used to manage visitor information)
     """
 
     visitor_conf = ClientConfManager.visitor()
@@ -98,7 +98,7 @@ class VisitorManager(BaseCrawler):
     @classmethod
     async def gen_visitor(cls) -> str:
         """
-        生成访客信息 (Generate visitor information)
+        生成访客Cookie (Generate visitor information)
 
         Args:
             kwargs (dict): 配置参数 (Conf parameters)
