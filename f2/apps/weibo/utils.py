@@ -383,6 +383,38 @@ class WeiboScreenNameFetcher:
                 ).format(cls.__name__)
             )
 
+    @classmethod
+    async def get_all_weibo_screen_name(cls, urls: list) -> list:
+        """
+        从微博链接列表中提取URL编码的昵称并解码
+        (Extract encoded name from weibo link list and decode it)
+
+        Args:
+            urls (list): 微博链接 (Weibo link list)
+
+        Returns:
+            list: 解码后的微博名称列表 (Decoded Weibo name list)
+        """
+        if not urls:
+            raise ValueError(_("微博链接列表不能为空"))
+
+        if not isinstance(urls, list):
+            raise TypeError(_("参数必须是列表类型"))
+
+        # 提取有效URL
+        urls = extract_valid_urls(urls)
+
+        # 从链接中提取微博ID
+        if urls == []:
+            raise (
+                APINotFoundError(
+                    _("输入的URL List不合法。类名：{0}").format(cls.__name__)
+                )
+            )
+
+        weibo_screen_names = [cls.get_weibo_screen_name(url) for url in urls]
+        return await asyncio.gather(*weibo_screen_names)
+
 
 def format_file_name(
     naming_template: str,
