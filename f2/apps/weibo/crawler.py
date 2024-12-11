@@ -10,7 +10,7 @@ from f2.apps.weibo.model import (
     UserWeibo,
     WeiboDetail,
 )
-from f2.apps.weibo.utils import ModelManager, ClientConfManager
+from f2.apps.weibo.utils import ModelManager
 
 
 class WeiboCrawler(BaseCrawler):
