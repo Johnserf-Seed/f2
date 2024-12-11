@@ -1,8 +1,6 @@
 import asyncio
 from f2.apps.weibo.handler import WeiboHandler
-from f2.apps.weibo.db import AsyncUserDB
 from f2.log.logger import logger
-
 
 kwargs = {
     "headers": {
@@ -10,20 +8,14 @@ kwargs = {
         "Referer": "https://www.weibo.com/",
     },
     "proxies": {"http://": None, "https://": None},
-    "cookie": "YOUR_COOKIE_HERE",
-    "path": "Download",
-    # "mode": "post",
 }
 
 
 async def main():
-    async with AsyncUserDB("weibo_users.db") as audb:
-        uid = "6524978930"
-        logger.info(
-            await WeiboHandler(kwargs).get_or_add_user_data(
-                kwargs=kwargs, uid=uid, db=audb
-            )
-        )
+    uid = await WeiboHandler(kwargs).extract_weibo_uid(
+        url="https://weibo.com/u/2265830070"
+    )
+    logger.info(f"微博用户ID: {uid}")
 
 
 if __name__ == "__main__":

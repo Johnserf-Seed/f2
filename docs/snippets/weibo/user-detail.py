@@ -14,11 +14,14 @@ kwargs = {
 
 
 async def main():
-    uid = "2265830070"
-    user = await WeiboHandler(kwargs).fetch_user_detail(uid=uid)
-    logger.info(
-        f"用户ID: {uid}, 生日: {user.birthday}, 性别: {user.gender}, 地区: {user.location}, 个性签名: {user.description_raw}, 注册时间: {user.create_at}, 视频播放次数: {user.video_play_count}"
-    )
+    user = await WeiboHandler(kwargs).fetch_user_detail(uid="2265830070")
+    # logger.info(
+    #     f"用户ID: {uid}, 生日: {user.birthday}, 性别: {user.gender}, 地区: {user.location}, 个性签名: {user.description_raw}, 注册时间: {user.create_at}, 视频播放次数: {user.video_play_count}"
+    # )
+    logger.info("=================_to_raw================")
+    logger.info(user._to_raw())
+    # logger.info("=================_to_dict===============")
+    # logger.info(user._to_dict())
 
 
 if __name__ == "__main__":
