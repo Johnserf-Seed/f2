@@ -91,7 +91,7 @@ class WeiboDownloader(BaseDownloader):
             if kwargs.get("folderize")
             else user_path
         )
-        self.user_id = weibo_data_dict.get("user_id")
+        self.user_id = weibo_data_dict.get("uid")
         self.weibo_id = weibo_data_dict.get("weibo_id")
         self.kwargs = kwargs
         self.weibo_data_dict = weibo_data_dict

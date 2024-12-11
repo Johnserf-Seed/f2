@@ -143,7 +143,7 @@ class WeiboHandler:
                 )
             return user
 
-    async def extract_weibo_identifier(self, url: str) -> str:
+    async def extract_weibo_uid(self, url: str) -> str:
         """
         从微博链接中提取并返回 UID。
         (Extract and return UID from Weibo link.)
@@ -164,14 +164,14 @@ class WeiboHandler:
                 user_info = await self.fetch_user_info_by_screen_name(
                     screen_name=screen_name
                 )
-                return user_info.user_id
+                return user_info.uid
             except APINotFoundError:
                 raise ValueError(_("链接错误，请检查链接是否正确"))
 
     async def get_or_add_user_data(
         self,
         kwargs: dict,
-        user_id: str,
+        uid: str,
         db: AsyncUserDB,
     ) -> Path:
         """
@@ -180,7 +180,7 @@ class WeiboHandler:
 
         Args:
             kwargs (dict): 配置参数 (Conf parameters)
-            user_id (str): 用户ID (User ID)
+            uid (str): 用户ID (User ID)
             db (AsyncUserDB): 用户数据库 (User database)
 
         Returns:
@@ -188,10 +188,10 @@ class WeiboHandler:
         """
 
         # 尝试从数据库中获取用户数据
-        local_user_data = await db.get_user_info(user_id)
+        local_user_data = await db.get_user_info(uid)
 
         # 从服务器获取当前用户最新数据
-        current_user_data = await self.fetch_user_info(user_id)
+        current_user_data = await self.fetch_user_info(uid)
 
         # 获取当前用户最新昵称
         current_nickname = current_user_data.nickname
@@ -206,6 +206,7 @@ class WeiboHandler:
             await db.add_user_info(
                 self.user_ignore_fields, **current_user_data._to_dict()
             )
+            logger.debug(_("用户：{0} 已添加到数据库").format(current_nickname))
 
         return user_path
 
@@ -234,7 +235,7 @@ class WeiboHandler:
             )
 
         async with AsyncUserDB("weibo_users.db") as db:
-            user_path = await self.get_or_add_user_data(self.kwargs, weibo.user_id, db)
+            user_path = await self.get_or_add_user_data(self.kwargs, weibo.uid, db)
 
         await self.downloader.create_download_tasks(
             self.kwargs, weibo._to_dict(), user_path
@@ -272,20 +273,20 @@ class WeiboHandler:
             kwargs: dict: 参数字典 (Parameter dictionary)
         """
 
-        user_id = await self.extract_weibo_identifier(self.kwargs.get("url"))
+        uid = await self.extract_weibo_uid(self.kwargs.get("url"))
 
         async with AsyncUserDB("weibo_users.db") as db:
-            user_path = await self.get_or_add_user_data(self.kwargs, user_id, db)
+            user_path = await self.get_or_add_user_data(self.kwargs, uid, db)
 
         # 获取用户微博数据
-        async for weibo_data in self.fetch_user_weibo(user_id):
+        async for weibo_data in self.fetch_user_weibo(uid):
             await self.downloader.create_download_tasks(
                 self.kwargs, weibo_data._to_list(), user_path
             )
 
     async def fetch_user_weibo(
         self,
-        user_id: str,
+        uid: str,
         page: int = 1,
         feature: int = 0,
         since_id: str = "",
@@ -295,7 +296,7 @@ class WeiboHandler:
         用于获取用户微博数据。
 
         Args:
-            user_id: str: 用户ID
+            uid: str: 用户ID
 
         Return:
             weibo_data: AsyncGenerator[UserWeiboFilter, Any]: 用户微博数据过滤器
@@ -304,14 +305,14 @@ class WeiboHandler:
         max_counts = max_counts or float("inf")
         weibos_collected = 0
 
-        logger.info(_("处理用户：{0} 发布的微博").format(user_id))
+        logger.info(_("处理用户：{0} 发布的微博").format(uid))
 
         while weibos_collected < max_counts:
             rich_console.print(Rule(_("处理第 {0} 页").format(page)))
 
             async with WeiboCrawler(self.kwargs) as crawler:
                 params = UserWeibo(
-                    uid=user_id,
+                    uid=uid,
                     page=page,
                     feature=feature,
                     since_id=since_id,
