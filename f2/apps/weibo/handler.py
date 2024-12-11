@@ -66,7 +66,7 @@ class WeiboHandler:
             UserInfoFilter: 用户信息过滤器 (User info filter)
 
         Note:
-            screen_name (Only need to pass in one of uid and screen_name)
+            screen_name 需要用 fetch_user_info_by_screen_name 方法
         """
 
         if not uid:
@@ -249,7 +249,7 @@ class WeiboHandler:
             weibo_id: str: 微博ID
 
         Return:
-            weibo_data: dict: 微博数据字典，包含微博ID、微博文案、作者昵称
+            WeiboDetailFilter: 微博详细信息过滤器，包含微博详细信息的_to_raw、_to_dict方法
         """
 
         if not weibo_id:
@@ -297,9 +297,13 @@ class WeiboHandler:
 
         Args:
             uid: str: 用户ID
+            page: int: 页数
+            feature: int: 微博类型
+            since_id: str: 起始页码
+            max_counts: int: 最大数量
 
         Return:
-            weibo_data: AsyncGenerator[UserWeiboFilter, Any]: 用户微博数据过滤器
+            UserWeiboFilter: AsyncGenerator[UserWeiboFilter, Any]: 用户微博数据过滤器
         """
 
         max_counts = max_counts or float("inf")
