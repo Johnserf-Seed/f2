@@ -364,7 +364,7 @@ class TokenManager(BaseCrawler):
                 instance.odin_tt_conf["url"],
                 headers=instance.odin_tt_headers,
             )
-            response.raise_for_status()
+            # response.raise_for_status()
 
             odin_tt = httpx.Cookies(response.cookies).get("odin_tt")
 
