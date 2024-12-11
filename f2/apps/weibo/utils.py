@@ -557,32 +557,6 @@ def rename_user_folder(old_path: Path, new_nickname: str) -> Path:
     return new_path
 
 
-def create_or_rename_user_folder(
-    kwargs: dict, local_user_data: dict, current_nickname: str
-) -> Path:
-    """
-    创建或重命名用户目录 (Create or rename user directory)
-
-    Args:
-        kwargs (dict): 配置参数 (Conf parameters)
-        local_user_data (dict): 本地用户数据 (Local user data)
-        current_nickname (str): 当前用户昵称 (Current user nickname)
-
-    Returns:
-        user_path (Path): 用户目录路径 (User directory path)
-    """
-    user_path = create_user_folder(kwargs, current_nickname)
-
-    if not local_user_data:
-        return user_path
-
-    if local_user_data.get("nickname") != current_nickname:
-        # 昵称不一致，触发目录更新操作
-        user_path = rename_user_folder(user_path, current_nickname)
-
-    return user_path
-
-
 def extract_desc(text):
     """
     提取微博标题，抛弃从 "http" 开始及其后的内容，包括其前一个空格。
