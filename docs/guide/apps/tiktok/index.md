@@ -84,7 +84,7 @@ outline: deep
 
 | 下载器接口    | 类名           | 方法          | 状态 |
 | :-----------  | :---------    | :----------  | :--: |
-| 保存最后一次请求的aweme_id | `TiktokDownloader` | `save_last_aweme_id` |  🟢  |
+| 保存最后请求的作品ID | `TiktokDownloader` | `save_last_aweme_id` |  🟢  |
 | 筛选指定时间区间的作品 | `TiktokDownloader` | `filter_aweme_datas_by_interval` |  🟢  |
 | 创建下载任务   | `TiktokDownloader` | `create_download_task` |  🟢  |
 | 处理下载任务   | `TiktokDownloader` | `handle_download` |  🟢  |
@@ -501,10 +501,11 @@ TikTok的用户接口支持`secUid`和`uniqueId`两种用户ID。
 ### 全局格式化文件名 🟢
 
 根据配置文件的全局格式化文件名。
-::: details 格式化文件名规则
-- windows 文件名长度限制为 255 个字符, 开启了长文件名支持后为 32,767 个字符。
-- Unix 文件名长度限制为 255 个字符。
-- 取去除后的20个字符, 加上后缀, 一般不会超过255个字符。
+::: details :page_facing_up: 格式化文件名规则
+- `Windows` 文件名长度限制为 `255` 个字符, 开启了长文件名支持后为 `32,767` 个字符。
+- `Unix` 文件名长度限制为 `255` 个字符。
+- 取去除后的 `20` 个字符, 加上后缀, 一般不会超过 `255` 个字符。
+- 开发者可以根据自己的需求自定义 `custom_fields` 字段，实现自定义文件名。
 :::
 
 | 参数 | 类型 | 说明 |
@@ -523,7 +524,7 @@ TikTok的用户接口支持`secUid`和`uniqueId`两种用户ID。
 
 用于创建用户目录，如果目录已存在则不创建。
 
-::: details 用户目录结构
+::: details :open_file_folder: 用户目录结构
 如果未在配置文件中指定路径，则默认为 `Download`。支持绝对与相对路径。
 ```bash
 ├── Download
