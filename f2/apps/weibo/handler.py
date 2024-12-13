@@ -234,8 +234,8 @@ class WeiboHandler:
                 f"微博ID: {weibo.weibo_id}, 微博文案: {weibo.weibo_desc}, 发布时间: {weibo.weibo_created_at}"
             )
 
-        async with AsyncUserDB("weibo_users.db") as db:
-            user_path = await self.get_or_add_user_data(self.kwargs, weibo.uid, db)
+        async with AsyncUserDB("weibo_users.db") as audb:
+            user_path = await self.get_or_add_user_data(self.kwargs, weibo.uid, audb)
 
         await self.downloader.create_download_tasks(
             self.kwargs, weibo._to_dict(), user_path
@@ -275,8 +275,8 @@ class WeiboHandler:
 
         uid = await self.extract_weibo_uid(self.kwargs.get("url"))
 
-        async with AsyncUserDB("weibo_users.db") as db:
-            user_path = await self.get_or_add_user_data(self.kwargs, uid, db)
+        async with AsyncUserDB("weibo_users.db") as audb:
+            user_path = await self.get_or_add_user_data(self.kwargs, uid, audb)
 
         # 获取用户微博数据
         async for weibo_data in self.fetch_user_weibo(uid):
