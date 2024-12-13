@@ -4,7 +4,7 @@ douyin:
   lyric:
   cover:
   desc:
-  path:
+  path: Download
   folderize:
   mode:
   naming:
@@ -23,7 +23,7 @@ tiktok:
   music:
   cover:
   desc:
-  path:
+  path: Download
   folderize:
   mode:
   naming:
@@ -40,7 +40,7 @@ tiktok:
 
 weibo:
   url:
-  path:
+  path: Download
   folderize:
   mode:
   naming:
@@ -57,7 +57,7 @@ weibo:
 
 twitter:
   url:
-  path:
+  path: Download
   folderize:
   mode:
   naming:
