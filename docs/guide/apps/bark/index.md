@@ -33,9 +33,9 @@ outline: deep
 
 | 爬虫url接口    | 类名       | 方法          | 状态 |
 | :----------- | :--------- | :----------  | :--: |
-| Bark 通知接口地址(GET) | `BarkCrawler` | `fetch_bark_notification` | 🟢 |
-| Bark 通知接口地址(POST) | `BarkCrawler` | `post_bark_notification` | 🟢 |
-| Bark 通知接口地址(CIPHER) | `BarkCrawler` | `cipher_bark_notification` | 🟢 |
+| Bark 通知接口(GET) | `BarkCrawler` | `fetch_bark_notification` | 🟢 |
+| Bark 通知接口(POST) | `BarkCrawler` | `post_bark_notification` | 🟢 |
+| Bark 通知接口(CIPHER) | `BarkCrawler` | `cipher_bark_notification` | 🟢 |
 :::
 
 ::: tip :information_source: 提示
