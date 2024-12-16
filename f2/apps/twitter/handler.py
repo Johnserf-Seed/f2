@@ -25,7 +25,7 @@ from f2.apps.twitter.filter import (
     BookmarkTweetFilter,
 )
 from f2.apps.twitter.utils import (
-    UserIdFetcher,
+    UniqueIdFetcher,
     TweetIdFetcher,
     create_or_rename_user_folder,
 )
@@ -180,7 +180,7 @@ class TwitterHandler:
         page_counts = self.kwargs.get("page_counts", 20)
         max_counts = self.kwargs.get("max_counts")
 
-        uniqueID = await UserIdFetcher.get_user_id(self.kwargs.get("url"))
+        uniqueID = await UniqueIdFetcher.get_unique_id(self.kwargs.get("url"))
         user = await self.fetch_user_profile(uniqueID)
 
         async with AsyncUserDB("twitter_users.db") as udb:
@@ -275,7 +275,7 @@ class TwitterHandler:
         page_counts = self.kwargs.get("page_counts", 20)
         max_counts = self.kwargs.get("max_counts")
 
-        uniqueID = await UserIdFetcher.get_user_id(self.kwargs.get("url"))
+        uniqueID = await UniqueIdFetcher.get_unique_id(self.kwargs.get("url"))
         user = await self.fetch_user_profile(uniqueID)
 
         async with AsyncUserDB("twitter_users.db") as udb:
@@ -373,7 +373,7 @@ class TwitterHandler:
         page_counts = self.kwargs.get("page_counts", 20)
         max_counts = self.kwargs.get("max_counts")
 
-        uniqueID = await UserIdFetcher.get_user_id(self.kwargs.get("url"))
+        uniqueID = await UniqueIdFetcher.get_unique_id(self.kwargs.get("url"))
 
         async with AsyncUserDB("twitter_users.db") as udb:
             user_path = await self.get_or_add_user_data(self.kwargs, uniqueID, udb)
