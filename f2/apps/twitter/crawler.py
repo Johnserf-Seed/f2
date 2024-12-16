@@ -27,16 +27,14 @@ class TwitterCrawler(BaseCrawler):
     ):
         # 需要与cli同步
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})
-
-        self.user_agent = ClientConfManager.user_agent()
-        self.referrer = ClientConfManager.referer()
-        self.authorization = ClientConfManager.authorization()
-        self.x_csrf_token = ClientConfManager.x_csrf_token()
-
-        self.headers = {
-            "User-Agent": self.user_agent,
-            "Referer": self.referrer,
-            "Cookie": kwargs["cookie"],
+        self.authorization = (
+            kwargs.get("Authorization") or ClientConfManager.authorization()
+        )
+        self.x_csrf_token = (
+            kwargs.get("X-Csrf-Token") or ClientConfManager.x_csrf_token()
+        )
+        self.headers = kwargs.get("headers", {}) | {
+            "Cookie": kwargs.get("cookie"),
             "Authorization": self.authorization,
             "X-Csrf-Token": self.x_csrf_token,
         }
