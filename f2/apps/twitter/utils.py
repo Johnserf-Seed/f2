@@ -82,7 +82,7 @@ class ModelManager:
         return final_endpoint
 
 
-class UserIdFetcher:
+class UniqueIdFetcher(BaseCrawler):
     # https://x.com/CaroylnG61544
     # https://x.com/CaroylnG61544/
     # https://x.com/CaroylnG61544/followers
@@ -90,12 +90,12 @@ class UserIdFetcher:
     # https://twitter.com/CaroylnG61544/status/1440000000000000000/photo/1
 
     # 预编译正则表达式
-    _USER_ID_PATTERN = re.compile(
+    _UNIQUE_ID_PATTERN = re.compile(
         r"(?:https?://)?(?:www\.)?(twitter\.com|x\.com)/(?:@)?([a-zA-Z0-9_]+)"
     )
 
     @classmethod
-    async def get_user_id(cls, url: str) -> str:
+    async def get_unique_id(cls, url: str) -> str:
         """
         从用户URL中提取用户ID
         (Extract user ID from user URL)
@@ -104,7 +104,7 @@ class UserIdFetcher:
             url (str): 用户URL (User URL)
 
         Returns:
-            str: 用户ID (User ID)
+            str: 用户唯一ID (User Unique Id)
         """
 
         if not isinstance(url, str):
@@ -113,28 +113,33 @@ class UserIdFetcher:
         # 提取有效URL
         url = extract_valid_urls(url)
 
-        match = cls._USER_ID_PATTERN.search(url)
+        if url is None:
+            raise (
+                APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
+            )
+
+        match = cls._UNIQUE_ID_PATTERN.search(url)
 
         if match:
             return match.group(2)
         else:
             raise APINotFoundError(
                 _(
-                    "未在响应的地址中找到user_id，检查链接是否为用户链接。类名：{0}"
+                    "未在响应的地址中找到unique_id，检查链接是否为用户链接。类名：{0}"
                 ).format(cls.__name__)
             )
 
     @classmethod
-    async def get_all_user_ids(cls, urls: list) -> list:
+    async def get_all_unique_ids(cls, urls: list) -> list:
         """
-        从用户URL列表中提取所有用户ID
-        (Extract all user IDs from the list of user URLs)
+        从用户URL列表中提取所有用户唯一ID
+        (Extract all unique ids from the list of user URLs)
 
         Args:
             urls (list): 用户URL列表 (List of user URLs)
 
         Returns:
-            list: 用户ID列表 (List of user IDs)
+            list: 用户唯一ID列表 (List of unique ids)
         """
 
         if not isinstance(urls, list):
@@ -151,8 +156,8 @@ class UserIdFetcher:
                 )
             )
 
-        user_ids = [cls.get_user_id(url) for url in urls]
-        return await asyncio.gather(*user_ids)
+        unique_ids = [cls.get_unique_id(url) for url in urls]
+        return await asyncio.gather(*unique_ids)
 
 
 class TweetIdFetcher(BaseCrawler):
