@@ -62,7 +62,7 @@ class TwitterCrawler(BaseCrawler):
             xendpoints.USER_POST,
             PostTweet(variables=encode_model(params)).model_dump(),
         )
-        logger.debug(_("发布推文接口地址: {0}").format(endpoint))
+        logger.debug(_("主页推文接口地址: {0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_like_tweet(self, params: LikeTweetEncode):

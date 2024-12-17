@@ -19,6 +19,10 @@ class ClientConfManager:
         return cls.bark_conf
 
     @classmethod
+    def conf_version(cls) -> str:
+        return cls.client_conf.get("version", "unknown")
+
+    @classmethod
     def key(cls) -> str:
         return cls.client().get("key", "")
 
