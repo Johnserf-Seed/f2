@@ -10,8 +10,8 @@ outline: [2,3]
 
 ::: details handler接口列表
 
-|     CLI接口             |         方法        |
-| :------------------ | :-------------------  |
+|     CLI接口          |         方法             |
+| :------------------ | :-------------------    |
 | 下载单个作品          | `handle_one_video`      |
 | 下载用户发布作品       | `handle_user_post`      |
 | 下载用户喜欢作品       | `handle_user_like`      |
@@ -85,7 +85,7 @@ outline: [2,3]
 | json歌词转lrc歌词    | -                      | `json_2_lrc`                 |  🟢  |
 :::
 
-::: details cralwer接口列表
+::: details crawler接口列表
 
 | 爬虫url接口    | 类名       | 方法          | 状态 |
 | :----------- | :--------- | :----------  | :--: |
@@ -175,7 +175,7 @@ outline: [2,3]
 - 所有包含翻页参数的接口均使用异步生成器方法，需要通过 `async for` 进行迭代，便于自动处理翻页。
 - 当 `max_counts` 设置为 `None` 或不传入时，将会获取所有的作品数据。
 - 在一些后端框架 `FastAPI`、`Flask`、`Django` 中可以方便的集成等。
-- 使用登录的 `cookie` 可以无视该账号的私密设置，例如该账号设置私密的`作品`、`主页`、`喜欢`、`收藏`等。
+- 使用登录的 `cookie` 可以无视该账号的私密设置，例如该账号设置私密的 `作品`、`主页`、`喜欢`、`收藏` 等。
 :::
 
 ## handler接口列表
@@ -362,7 +362,7 @@ outline: [2,3]
 
 <<< @/snippets/douyin/user-mix.py{16,18-23}
 
-::: tip 提示
+::: tip :bulb: 提示
 - 合集作品的 `mix_id` 是一致的，使用 `fetch_one_video` 接口获取 `mix_id`。
 :::
 
@@ -380,7 +380,7 @@ outline: [2,3]
 
 <<< @/snippets/douyin/user-live.py{15}
 
-::: tip 提示
+::: tip :bulb: 提示
 - `webcast_id` 与 `room_id` 为2个独立参数，由不同接口解析。
 - 例如：`https://live.douyin.com/775841227732` 中 `775841227732` 为直播ID(`webcast_id`/`live_id`)。
 - 当你使用 `APP` 端分享的直播链接时，解析完的是`room_id`，需要使用`fetch_user_live_videos_by_room_id`接口。
@@ -400,7 +400,7 @@ outline: [2,3]
 
 <<< @/snippets/douyin/user-live-room-id.py{15-17}
 
-::: tip 提示
+::: tip :bulb: 提示
 - `webcast_id` 与 `room_id` 为2个独立参数，由不同接口解析。
 - 例如：`https://webcast.amemv.com/douyin/webcast/reflow/7444223303348144935?xxx=xxx...` 中 `7444223303348144935` 为直播间ID(`room_id`)。
 :::
@@ -439,7 +439,7 @@ outline: [2,3]
 
 <<< @/snippets/douyin/aweme-related.py{16-21}
 
-::: tip 提示
+::: tip :bulb: 提示
 - `filterGids` 参数用于排除指定作品，置空会有重复推荐数据。
 - 例如：`filterGids` 参数为 `7419386765854641442`，多个作品用逗号分隔，如 `7419386765854641442,741938xxxx,74193xxxx`。
 - 需要自行过滤每次请求的 `aweme_id` ，并将其添加到 `filterGids` 参数中。
@@ -462,7 +462,7 @@ outline: [2,3]
 
 <<< @/snippets/douyin/user-friend.py{16-21}
 
-::: tip 提示
+::: tip :bulb: 提示
 - `pull_type` 的参数有 `0` `2` `18`，未研究具体含义。
 :::
 
@@ -725,8 +725,8 @@ outline: [2,3]
 
 <<< @/snippets/douyin/mstoken-false.py{4}
 
-::: tip 提示
-默认为126位，也可调用`from f2.utils.utils import gen_random_str`，生成不同长度的虚假msToken。
+::: tip :bulb: 提示
+默认为126位，也可调用 `from f2.utils.utils import gen_random_str`，生成不同长度的虚假msToken。
 :::
 
 ### 生成ttwid 🟢
@@ -882,7 +882,7 @@ outline: [2,3]
 
 更加抽象的高级方法可以直接调用handler接口的`fetch_user_profile`。
 
-::: tip 提示
+::: tip :bulb: 提示
 本项目的残血版Ab算法的UA参数为固定值，`Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0`。
 :::
 
@@ -1029,7 +1029,7 @@ r_id是直播间的短链标识，room_id是直播间的唯一标识。
 | :--- | :--- | :--- |
 | file_name | str | 格式化后的文件名 |
 
-<<< @/snippets/douyin/format-file-name.py{13,19,28,32,34,35-37}
+<<< @/snippets/douyin/format-file-name.py{13,18,26,30,32-35}
 
 ### 创建用户目录 🟢
 
@@ -1045,7 +1045,7 @@ r_id是直播间的短链标识，room_id是直播间的唯一标识。
 │   │   │   │   ├── 2023-12-31_23-59-59_desc
 │   │   │   │   │   ├── 2023-12-31_23-59-59_desc-video.mp4
 │   │   │   │   │   ├── 2023-12-31_23-59-59_desc-desc.txt
-│   │   │   │   │   └── 2023-12-31_23-59-59_desc-coder.jpg
+│   │   │   │   │   └── 2023-12-31_23-59-59_desc-cover.jpg
 │   │   │   │   │   └── ......
 │   │   ├── like
 │   │   ├── ...
@@ -1078,7 +1078,7 @@ r_id是直播间的短链标识，room_id是直播间的唯一标识。
 
 <<< @/snippets/douyin/user-folder.py#rename-user-folder{23-27,29-32}
 
-::: tip 提示
+::: tip :bulb: 提示
 如果目录不存在会先创建该用户目录再重命名。
 :::
 
@@ -1096,7 +1096,7 @@ r_id是直播间的短链标识，room_id是直播间的唯一标识。
 | :--- | :--- | :--- |
 | user_path | Path | 用户目录路径对象 |
 
-::: tip 提示
+::: tip :bulb: 提示
 该接口很好的解决了用户改名之后重复重新下载的问题。集成在 `handler` 接口中。开发者无需关心，直接调用 `handler` 的数据接口即可。
 :::
 
@@ -1116,7 +1116,7 @@ r_id是直播间的短链标识，room_id是直播间的唯一标识。
 
 <<< @/snippets/douyin/show-qrcode.py{4,5}
 
-::: tip 提示
+::: tip :bulb: 提示
 选择是否显示图片，需要额外安装 `Pillow` 库。
 :::
 
@@ -1453,8 +1453,7 @@ r_id是直播间的短链标识，room_id是直播间的唯一标识。
 | :--- | :--- | :--- |
 | _fetch_post_json() | dict | 作品统计数据 |
 
-
-::: tip 提示
+::: tip :bulb: 提示
 - 当不需要使用过滤器时，可以直接调用`crawler`接口，将直接返回数据字典。
 :::
 
