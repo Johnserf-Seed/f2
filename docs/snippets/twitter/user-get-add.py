@@ -1,6 +1,6 @@
 import asyncio
 from f2.apps.twitter.handler import TwitterHandler
-
+from f2.apps.twitter.db import AsyncUserDB
 
 kwargs = {
     "headers": {
@@ -10,16 +10,19 @@ kwargs = {
     "proxies": {"http://": None, "https://": None},
     "cookie": "YOUR_COOKIE_HERE",
     # "X-Csrf-Token": "",
+    "path": "Download",
+    # "mode": "post",
 }
 
 
 async def main():
-    tweet = await TwitterHandler(kwargs).fetch_one_tweet(tweet_id="1863009545858998512")
-
-    print("=================_to_raw================")
-    print(tweet._to_raw())
-    # print("=================_to_dict================")
-    # print(tweet._to_dict())
+    async with AsyncUserDB("twitter_users.db") as audb:
+        uniqueId = "realDonaldTrump"
+        print(
+            await TwitterHandler(kwargs).get_or_add_user_data(
+                kwargs=kwargs, uniqueId=uniqueId, db=audb
+            )
+        )
 
 
 if __name__ == "__main__":
