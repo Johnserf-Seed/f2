@@ -37,26 +37,98 @@ outline: deep
 
 根据模式提供相应的链接。
 
+### `--path`
+
+微博保存位置。默认为当前目录下的 `Download`。支持**绝对路径**与**相对路径**。
+
+### `--folderize`
+
+是否将微博保存到单独的文件夹。默认为 `true`。
+
 ### `--mode`
 
 下载模式：
 - `one`：单个微博
 - `post`：主页微博
-- `like`：点赞微博
 
-### `--interval`
+### `--naming`
 
-下载日期区间发布的微博，格式：`2022-01-01|2023-01-01`，`all` 为下载所有作品。
+全局微博文件命名方式。默认为 `{create}_{desc}`，支持的变量有：`{nickname}`，`{create}`，`{weibo_id}`，`{desc}`，`{uid}`。支持的分割符有：`_`，`-`。
+
+- `{nickname}`：用户昵称
+- `{create}`：微博创建时间
+- `{weibo_id}`：微博ID
+- `{desc}`：微博文案
+- `{uid}`：用户ID
+
+::: tip :bulb: 提示
+- `custom_fields` 为自定义字段，开发者可以自定义字段映射，详见：[全局格式化文件名 🟢](/guide/apps/weibo/#全局格式化文件名-🟢)。
+:::
+
+### `--cookie`
+
+登录后的 `Cookie`。大部分接口需要登录后才能获取数据，所以需要提供登录后的 `Cookie`。
+
+::: details :link: `Cookie` 获取方法请参阅下图。
+![Console Cookie](https://github.com/user-attachments/assets/4523e8c7-f74e-4d5f-9da6-6bb3658f8b24)
+:::
+
+::: tip :bulb: 提示
+- 无法采集或风控时请及时更新 `Cookie`。
+- 不可以出现除 `ascii` 以外的字符，更新配置前请仔细检查。
+- 对于不验证的接口可以使用游客 `Cookie` 生成方法。详见：[生成访客Cookie 🟢](/guide/apps/weibo/#生成访客-cookie-🟢)。
+:::
+
+::: danger :bangbang: 警告 :bangbang:
+- 绝对不要在 `Discussions`、`Issues`、`Discord`等公共场所分享你的 `Cookie`，注意删除敏感信息。
+- 任何人获取到你的 `Cookie` 都可以直接登录你的账号。
+- 当发生泄露时，请立即登出账号并重新登录。
+:::
+
+### `--timeout`
+
+网络请求超时时间。默认为 `10` 秒。
+
+### `--max_retries`
+
+网络请求超时重试数。默认为 `5` 次。
+
+### `--max-connections`
+
+网络请求并发连接数。默认为 `10`。
+
+### `--max-tasks`
+
+异步的任务数。默认为 `5`。
+
+### `--max-counts`
+
+最大作品下载数。设置为 `None` 或 `0` 表示无限制。默认为 `0`。
+
+### `--page-counts`
+
+从接口每页可获取作品数，不建议超过 `20`。默认为 `20`。
 
 ### `--languages`
 
-指定显示语言。默认值为 zh_CN，支持选项：zh_CN 和 en_US，不支持通过配置文件修改。
+指定显示语言。默认值为 `zh_CN`，支持选项：`zh_CN` 和 `en_US`，不支持通过配置文件修改。
 
 ### `--proxies`
 
 配置代理服务器，支持最多两个参数，分别对应 `http://` 和 `https://` 协议。
-例如：`http://x.x.x.x https://x.x.x.x`。
-如果代理不支持出口 HTTPS，请使用：`http://x.x.x.x http://x.x.x.x`。
+
+例如：`--proxies http://x.x.x.x https://x.x.x.x`。
+
+> [!IMPORTANT] 重要 ❗❗❗
+> **如果代理不支持出口 HTTPS，请使用：`--proxies http://x.x.x.x http://x.x.x.x`。**
+
+### `--update-config`
+
+通过 `CLI` 参数更新配置文件。详见：[配置Cookie](/site-config.html#配置Cookie)。
+
+### `--init-config`
+
+初始化高频配置文件。详见：[初始化配置文件](/site-config#初始化配置文件)。
 
 ### `--auto-cookie`
 
