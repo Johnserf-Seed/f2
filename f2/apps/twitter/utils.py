@@ -33,7 +33,7 @@ class ClientConfManager:
         return cls.twitter_conf
 
     @classmethod
-    def version(cls) -> str:
+    def conf_version(cls) -> str:
         return cls.client_conf.get("version", "unknown")
 
     @classmethod
@@ -265,8 +265,8 @@ def format_file_name(
     (Format file name according to the global conf file)
 
     Args:
-        tweet_data (dict): 微博数据的字典 (dict of twitter data)
         naming_template (str): 文件的命名模板, 如 "{create}_{desc}" (Naming template for files, such as "{create}_{desc}")
+        tweet_data (dict): 推文数据的字典 (dict of twitter data)
         custom_fields (dict): 用户自定义字段, 用于替代默认的字段值 (Custom fields for replacing default field values)
 
     Note:
@@ -400,7 +400,7 @@ def extract_desc(text):
     提取推特标题，抛弃从 "https" 开始及其后的内容，包括其前一个空格。
 
     Args:
-        text (str): 原始微博内容
+        text (str): 原始推文内容
 
     Returns:
         str: 提取后的标题
