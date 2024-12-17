@@ -40,6 +40,14 @@ const partners = [
       { icon: 'github', link: 'https://github.com/apps/github-advanced-security', ariaLabel: 'Github Advanced Security' },
     ]
   },
+  {
+    avatar: 'https://avatars.githubusercontent.com/u/28860556',
+    name: 'LRTFK',
+    title: '贡献者',
+    links: [
+      { icon: 'github', link: 'https://github.com/LRTFK', ariaLabel: 'GitHub LRTFK' },
+    ]
+  },
 ]
 
 const sponsors = [
