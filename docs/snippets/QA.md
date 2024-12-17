@@ -126,3 +126,16 @@ https://johnserf-seed.github.io/f2/guide/apps/tiktok/#%E7%94%9F%E6%88%90deviceid
 收到反馈后，我会尽快排查问题，并在后续版本中更新代码适配最新接口，同时也欢迎你提交 PR。
 
 # endregion type-error-nonetype-has-no-len
+
+
+# region twitter-403-forbidden
+当下载 `twitter` 推文时出现 `403 Forbidden` 错误时，是由于 `cookie` 或 `X-Csrf-Token` 失效导致的。
+
+解决办法很简单：
+1. 重新获取 `cookie` 和 `X-Csrf-Token`。
+2. 将新的 `cookie` 和 `X-Csrf-Token` 替换到配置文件中。
+3. 重新运行下载命令。
+
+需要注意的是，`X-Csrf-Token` 配置在 `F2配置文件(conf.yaml)` 中，`cookie` 配置在 `应用低频/主配置文件(app.yaml)` 或 `应用高频/自定义配置文件` 中。
+
+# endregion twitter-403-forbidden
