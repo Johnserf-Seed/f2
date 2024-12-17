@@ -8,12 +8,12 @@ kwargs = {
     },
     "proxies": {"http://": None, "https://": None},
     "cookie": "YOUR_COOKIE_HERE",
+    # "X-Csrf-Token": "",
 }
 
 
 async def main():
     userId = "25073877"  # realDonaldTrump
-
     async for tweet_list in TwitterHandler(kwargs).fetch_like_tweet(
         userId=userId,
         page_counts=20,

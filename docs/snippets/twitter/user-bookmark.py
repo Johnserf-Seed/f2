@@ -9,11 +9,11 @@ kwargs = {
     "proxies": {"http://": None, "https://": None},
     # 书签接口需要登录后的cookie
     "cookie": "YOUR_COOKIE_HERE",
+    # "X-Csrf-Token": "",
 }
 
 
 async def main():
-
     async for tweet_list in TwitterHandler(kwargs).fetch_bookmark_tweet(
         page_counts=20,
         max_cursor="",
