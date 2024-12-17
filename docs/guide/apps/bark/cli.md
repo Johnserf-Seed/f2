@@ -9,23 +9,23 @@ outline: deep
 | `-c`   | `--config` | `FILE` | 配置文件路径，最低优先 |
 | `-k`   | `--key` | `TEXT` | Bark 的 `API Key` |
 | `-d`   | `--token` | `TEXT` | Bark 的 `Device Token` |
-| `-M`   | `--mode` | `ENUM` | 选择发送模式，`get`：使用 GET 请求发送通知，`post`：使用 POST 请求发送通知，默认为 `get` |
+| `-M`   | `--mode` | `ENUM` | 推送模式 |
 | `-t`   | `--title` | `TEXT` | 推送的标题 |
 | `-b`   | `--body` | `TEXT` | 推送的内容 |
 | `-cl`  | `--call` | `BOOLEAN` | 是否持续响铃，默认关闭 |
-| `-l`   | `--level` | `ENUM` | 推送级别，`active`：默认，`timeSensitive`：时效性通知，`passive`：被动通知，`critical`：紧急通知 |
+| `-l`   | `--level` | `ENUM` | 推送级别 |
 | `-v`   | `--volume` | `INTEGER` | 推送音量，范围 `0-10` |
 | `-bd`  | `--badge` | `INTEGER` | 推送的角标数量 |
-| `-ac`  | `--autoCopy` | `BOOLEAN` | 是否自动复制推送内容（iOS `14.5` 及以上需手动长按复制） |
+| `-ac`  | `--autoCopy` | `BOOLEAN` | 是否自动复制推送内容 |
 | `-cp`  | `--copy` | `TEXT` | 指定要复制的内容，若未指定则复制整个推送内容 |
-| `-s`   | `--sound` | `ENUM` | 推送铃声，可选值：`birdsong`、`alarm`、`chord`、`dog`、`guitar`、`piano`、`ring`、`robot`、`siren`、`trumpet`、`vibrate`、`none` |
+| `-s`   | `--sound` | `ENUM` | 推送铃声 |
 | `-i`   | `--icon` | `TEXT` | 推送图标 URL，相同的图标 URL 仅下载一次 |
 | `-g`   | `--group` | `TEXT` | 推送分组，通知中心将按分组显示推送 |
 | `-a`   | `--isArchive` | `BOOLEAN` | 是否保存推送，默认保存 |
-| `-u`   | `--url` | `TEXT` | 点击推送时跳转的 URL，支持 `URL Scheme` 和 `Universal Link` |
-| `-P`   | `--proxies` | `TEXT...` | 代理服务器，最多 2 个参数，`http://` 与 `https://`，空格区分 2 个参数，例如 `http://x.x.x.x http://x.x.x.x` |
-|        | `--update-config` | `FLAG` | 使用命令行选项更新配置文件，需要先使用 `-c` 选项提供一个配置文件路径 |
-|        | `--init-config` | `TEXT` | 初始化配置文件，不能同时初始化和更新配置文件 |
+| `-u`   | `--url` | `TEXT` | 点击推送时跳转的 URL |
+| `-P`   | `--proxies` | `TEXT...` | 代理服务器 |
+|        | `--update-config` | `FLAG` | 更新配置文件 |
+|        | `--init-config` | `TEXT` | 初始化配置文件 |
 | `-h`   |               | `FLAG` | 显示富文本帮助 |
 |        | `--help`      | `FLAG` | 显示帮助信息并退出 |
 
@@ -34,7 +34,7 @@ outline: deep
 
 ### `--config`
 
-指定配置文件的路径，优先级最低。默认配置路径为 `f2/conf/app.yaml`，支持**绝对路径**与**相对路径**。
+指定配置文件的路径，优先级最低。默认**主配置文件**路径为 `f2/conf/app.yaml`，支持**绝对路径**与**相对路径**。
 
 ### `--key`
 
@@ -211,5 +211,16 @@ f2 bark -t "Jump Test" -b "Open F2 Docs" --url "https://johnserf-seed.github.io/
 ### `--proxies`
 
 配置代理服务器，支持最多两个参数，分别对应 `http://` 和 `https://` 协议。
-例如：`http://x.x.x.x https://x.x.x.x`。
-如果代理不支持出口 HTTPS，请使用：`http://x.x.x.x http://x.x.x.x`。
+
+例如：`--proxies http://x.x.x.x https://x.x.x.x`。
+
+> [!IMPORTANT] 重要 ❗❗❗
+> **如果代理不支持出口 HTTPS，请使用：`--proxies http://x.x.x.x http://x.x.x.x`。**
+
+### `--update-config`
+
+通过 `CLI` 参数更新配置文件。详见：[配置Cookie](/site-config.html#配置Cookie)。
+
+### `--init-config`
+
+初始化高频配置文件。详见：[初始化配置文件](/site-config#初始化配置文件)。
