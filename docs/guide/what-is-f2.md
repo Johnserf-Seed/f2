@@ -29,7 +29,7 @@ f2 dy -c conf/app.yaml
 
 ![log-2-console](/douyin/log-2-console.png)
 
-::: tip 提示
+::: tip :bulb: 提示
 如果你想要输出到控制台的日志更加详细，可以使用 `DEBUG` 级别。并且后续必须使用该logger对象来输出日志，否则日志将不会输出到控制台。
 :::
 
