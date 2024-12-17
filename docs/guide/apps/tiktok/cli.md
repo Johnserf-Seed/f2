@@ -37,7 +37,7 @@ outline: deep
 
 ### `--config`
 
-配置文件的路径，最低优先。默认配置文件路径为 `f2/conf/app.yaml`。支持**绝对路径**与**相对路径**。
+指定配置文件的路径，优先级最低。默认**主配置文件**路径为 `f2/conf/app.yaml`，支持**绝对路径**与**相对路径**。
 
 ### `--url`
 
@@ -57,7 +57,7 @@ outline: deep
 
 ### `--path`
 
-作品保存位置。默认为当前目录。支持**绝对路径**与**相对路径**。
+作品保存位置。默认为当前目录下的 `Download`。支持**绝对路径**与**相对路径**。
 
 ### `--folderize`
 
@@ -142,8 +142,11 @@ outline: deep
 ### `--proxies`
 
 配置代理服务器，支持最多两个参数，分别对应 `http://` 和 `https://` 协议。
-例如：`http://x.x.x.x https://x.x.x.x`。
-如果代理不支持出口 HTTPS，请使用：`http://x.x.x.x http://x.x.x.x`。
+
+例如：`--proxies http://x.x.x.x https://x.x.x.x`。
+
+> [!IMPORTANT] 重要 ❗❗❗
+> **如果代理不支持出口 HTTPS，请使用：`--proxies http://x.x.x.x http://x.x.x.x`。**
 
 ### `--auto-cookie`
 
