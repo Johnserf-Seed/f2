@@ -14,19 +14,15 @@ async def main():
         "cookie": "YOUR_COOKIE_HERE",
     }
     # 单作品的数据
-    weibo_data = await WeiboHandler(kwargs).fetch_one_weibo("LvFY288c0")
+    weibo_data = await WeiboHandler(kwargs).fetch_one_weibo(weibo_id="LvFY288c0")
     # 格式化后的文件名
     print(format_file_name(kwargs.get("naming"), weibo_data._to_dict()) + "_weibo")
 
     # 文件名模板
     kwargs = {
-        "headers": {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0",
-            "Referer": "https://www.weibo.com/",
-        },
-        "proxies": {"http://": None, "https://": None},
+        # ...
         "naming": "{create}_{desc}_{weibo_id}_{location}",
-        "cookie": "",
+        # ...
     }
     # 用户自定义字段
     custom_fields = {"location": "Guang dong"}
