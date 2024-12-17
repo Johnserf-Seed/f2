@@ -37,3 +37,8 @@
 ## TypeError: object of type 'NoneType' has no len()
 
 <<< @/snippets/QA.md#type-error-nonetype-has-no-len
+
+
+## twitter 403 forbidden
+
+<<< @/snippets/QA.md#twitter-403-forbidden
