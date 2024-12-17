@@ -151,7 +151,7 @@ def validate_proxies(
 @click.option(
     "--mode",
     "-M",
-    type=click.Choice(["get", "post", "cipher"]),
+    type=click.Choice(f2.BARK_LIST),
     # default="get",
     # required=True,
     help=_(
