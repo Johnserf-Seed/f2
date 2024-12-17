@@ -14,19 +14,17 @@ async def main():
         "cookie": "YOUR_COOKIE_HERE",
     }
     # 单作品的数据
-    aweme_data = await DouyinHandler(kwargs).fetch_one_video("7218193198328433954")
+    aweme_data = await DouyinHandler(kwargs).fetch_one_video(
+        aweme_id="7218193198328433954"
+    )
     # 格式化后的文件名
     print(format_file_name(kwargs.get("naming"), aweme_data._to_dict()) + "_video")
 
     # 文件名模板
     kwargs = {
-        "headers": {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0",
-            "Referer": "https://www.douyin.com/",
-        },
-        "proxies": {"http://": None, "https://": None},
+        # ...
         "naming": "{create}_{desc}_{aweme_id}_{location}",
-        "cookie": "",
+        # ...
     }
     # 用户自定义字段
     custom_fields = {"location": "New York"}
