@@ -12,6 +12,12 @@ F2_CONFIG_FILE_PATH = "conf/conf.yaml"
 F2_DEFAULTS_FILE_PATH = "conf/defaults.yaml"
 TEST_CONFIG_FILE_PATH = "conf/test.yaml"
 
+BARK_LIST = [
+    "get",
+    "post",
+    "cipher",
+]
+
 BROWSER_LIST = [
     "chrome",
     "firefox",
@@ -51,7 +57,6 @@ TIKTOK_MODE_LIST = [
 WEIBO_MODE_LIST = [
     "one",
     "post",
-    "like",
 ]
 
 TWITTER_MODE_LIST = [

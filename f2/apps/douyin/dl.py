@@ -179,7 +179,9 @@ class DouyinDownloader(BaseDownloader):
             )
         elif cover_url:
             logger.debug(_("[{0}] 该作品没有动态封面").format(self.aweme_id))
-            await self.initiate_download(_("封面"), cover_url, self.base_path, cover_name, ".jpeg")
+            await self.initiate_download(
+                _("封面"), cover_url, self.base_path, cover_name, ".jpeg"
+            )
         else:
             logger.warning(_("[{0}] 该作品没有封面").format(self.aweme_id))
 
