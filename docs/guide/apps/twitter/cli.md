@@ -8,7 +8,6 @@ outline: deep
 | ------ | ------ | ---- | ---- |
 | `-c`   | `--config` | `FILE` | 配置文件的路径，最低优先 |
 | `-u`   | `--url` | `TEXT` | 根据模式提供相应的链接 |
-| `-d`   | `--desc` | `BOOLEAN` | 是否保存视频文案 |
 | `-p`   | `--path` | `TEXT` | 作品保存位置 |
 | `-f`   | `--folderize` | `BOOLEAN` | 是否将作品保存到单独的文件夹 |
 | `-M`   | `--mode` | `ENUM` | 下载模式 |
@@ -32,19 +31,15 @@ outline: deep
 
 ### `--config`
 
-配置文件的路径，最低优先。默认配置文件路径为 `f2/conf/app.yaml`。支持**绝对路径**与**相对路径**。
+指定配置文件的路径，优先级最低。默认**主配置文件**路径为 `f2/conf/app.yaml`，支持**绝对路径**与**相对路径**。
 
 ### `--url`
 
 根据模式提供相应的链接。
 
-### `--desc`
-
-是否保存推文文案。默认为 `true`。保留原始文案信息。
-
 ### `--path`
 
-推文保存位置。默认为当前目录。支持**绝对路径**与**相对路径**。
+推文保存位置。默认为当前目录下的 `Download`。支持**绝对路径**与**相对路径**。
 
 ### `--folderize`
 
@@ -60,7 +55,7 @@ outline: deep
 
 ### `--naming`
 
-全局推文文件命名方式。默认为 `{create}_{desc}`，支持的变量有：`{create}`，`{nickname}`，`{tweet_id}`，`{desc}`，`{uid}`。
+全局推文文件命名方式。默认为 `{create}_{desc}`，支持的变量有：`{create}`，`{nickname}`，`{tweet_id}`，`{desc}`，`{uid}`。支持的分割符有：`_`，`-`。
 
 - `{create}`：推文创建时间
 - `{nickname}`：用户昵称
@@ -68,6 +63,9 @@ outline: deep
 - `{desc}`：推文文案
 - `{uid}`：用户 ID
 
+::: tip :bulb: 提示
+- `custom_fields` 为自定义字段，开发者可以自定义字段映射，详见：[全局格式化文件名 🟢](/guide/apps/weibo/#全局格式化文件名-🟢)。
+:::
 
 ### `--cookie`
 
@@ -78,7 +76,7 @@ outline: deep
 :::
 
 ::: tip :bulb: 提示
-- `Twitter` 还需要额外获取 `X-Csrf-Token`，请确保在**低频配置文件**中配置。
+- `Twitter` 还需要额外获取 `X-Csrf-Token`，请确保在[**F2配置文件**](/site-config.html#主配置文件)中配置。
 - 无法采集或风控时请及时更新 `Cookie` 与 `X-Csrf-Token`。
 - 不可以出现除 `ascii` 以外的字符，更新配置前请仔细检查。
 :::
@@ -89,15 +87,50 @@ outline: deep
 - 当发生泄露时，请立即登出账号并重新登录。
 :::
 
+### `--timeout`
+
+网络请求超时时间。默认为 `10` 秒。
+
+### `--max_retries`
+
+网络请求超时重试数。默认为 `5` 次。
+
+### `--max-connections`
+
+网络请求并发连接数。默认为 `10`。
+
+### `--max-tasks`
+
+异步的任务数。默认为 `5`。
+
+### `--max-counts`
+
+最大作品下载数。设置为 `None` 或 `0` 表示无限制。默认为 `0`。
+
+### `--page-counts`
+
+从接口每页可获取作品数，不建议超过 `20`。默认为 `20`。
+
 ### `--languages`
 
-指定显示语言。默认值为 zh_CN，支持选项：zh_CN 和 en_US，不支持通过配置文件修改。
+指定显示语言。默认值为 `zh_CN`，支持选项：`zh_CN` 和 `en_US`，不支持通过配置文件修改。
 
 ### `--proxies`
 
 配置代理服务器，支持最多两个参数，分别对应 `http://` 和 `https://` 协议。
-例如：`http://x.x.x.x https://x.x.x.x`。
-如果代理不支持出口 HTTPS，请使用：`http://x.x.x.x http://x.x.x.x`。
+
+例如：`--proxies http://x.x.x.x https://x.x.x.x`。
+
+> [!IMPORTANT] 重要 ❗❗❗
+> **如果代理不支持出口 HTTPS，请使用：`--proxies http://x.x.x.x http://x.x.x.x`。**
+
+### `--update-config`
+
+通过 `CLI` 参数更新配置文件。详见：[配置Cookie](/site-config.html#配置Cookie)。
+
+### `--init-config`
+
+初始化高频配置文件。详见：[初始化配置文件](/site-config#初始化配置文件)。
 
 ### `--auto-cookie`
 
