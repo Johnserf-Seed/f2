@@ -1,5 +1,6 @@
 import asyncio
 from f2.apps.twitter.handler import TwitterHandler
+from f2.log.logger import logger
 
 kwargs = {
     "headers": {
@@ -8,24 +9,24 @@ kwargs = {
     },
     "proxies": {"http://": None, "https://": None},
     "cookie": "YOUR_COOKIE_HERE",
+    # "X-Csrf-Token": "",
 }
 
 
 async def main():
     userId = "25073877"  # realDonaldTrump
-
     async for tweet_list in TwitterHandler(kwargs).fetch_post_tweet(
         userId=userId,
         page_counts=20,
         max_cursor="",
         max_counts=20,
     ):
-        print("=================_to_raw================")
-        print(tweet_list._to_raw())
-        # print("=================_to_dict===============")
-        # print(tweet_list._to_dict())
-        # print("=================_to_list===============")
-        # print(tweet_list._to_list())
+        logger.info("=================_to_raw================")
+        logger.info(tweet_list._to_raw())
+        # logger.info("=================_to_dict===============")
+        # logger.info(tweet_list._to_dict())
+        # logger.info("=================_to_list===============")
+        # logger.info(tweet_list._to_list())
 
 
 if __name__ == "__main__":

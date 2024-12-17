@@ -10,6 +10,7 @@ kwargs = {
     },
     "proxies": {"http://": None, "https://": None},
     "cookie": "YOUR_COOKIE_HERE",
+    # "X-Csrf-Token": "",
 }
 
 
