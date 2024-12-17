@@ -20,7 +20,7 @@ async def main():
 
     for i in range(10000):
         stats = await DouyinHandler(kwargs).fetch_post_stats(
-            aweme_id=aweme_id, aweme_type=68
+            aweme_id=aweme_id, aweme_type=0
         )
         if stats.status_code == 0:
             success_count += 1
