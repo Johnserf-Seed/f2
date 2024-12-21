@@ -7,8 +7,8 @@ assignees: ''
 
 ---
 
-- [ ] 我查看了 [文档](https://johnserf-seed.github.io/f2/quick-start.html) 以及 [已关闭的问题](https://github.com/Johnserf-Seed/f2/issues?q=is%3Aissue+is%3Aclosed) 以寻找可能的解决方案。
-- [ ] 我在 [常见的问题与解决办法](https://johnserf-seed.github.io/f2/question-answer/qa.html) 中找不到我的问题。
+- [ ] 我查看了 [文档](https://johnserf-seed.github.io/f2/quick-start) 以及 [已关闭的问题](https://github.com/Johnserf-Seed/f2/issues?q=is%3Aissue+is%3Aclosed) 以寻找可能的解决方案。
+- [ ] 我在 [常见的问题与解决办法](https://johnserf-seed.github.io/f2/question-answer/qa) 中找不到我的问题。
 - [ ] ~~*你的问题是公开的，请注意删除个人敏感内容再上传*~~
 - [ ] 不按照模板填写的问题将不会得到优先的处理。
 
