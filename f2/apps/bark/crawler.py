@@ -21,8 +21,6 @@ class BarkCrawler(BaseCrawler):
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})
         api_key = kwargs.get("key", "")
         self.server_endpoint = f"{bkendpoint.BARK_DOMAIN}/{api_key}"
-        if ClientConfManager.encryption().get("enable"):
-            self.encryption = ClientConfManager.encryption()
         super().__init__(
             kwargs, proxies=proxies, crawler_headers=kwargs.get("headers", {})
         )

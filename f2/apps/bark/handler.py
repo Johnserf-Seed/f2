@@ -132,8 +132,6 @@ class BarkHandler:
                     iv="".join(chr(b) for b in aes.iv) if aes.iv else "",
                 )
 
-                logger.debug(cipher_params.model_dump())
-
                 response = await crawler.cipher_bark_notification(cipher_params)
                 bark = BarkNotificationFilter(response)
 
