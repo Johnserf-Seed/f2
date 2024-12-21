@@ -124,7 +124,7 @@ outline: deep
 
 ### `--update-config`
 
-通过 `CLI` 参数更新配置文件。详见：[配置Cookie](/site-config.html#配置Cookie)。
+通过 `CLI` 参数更新配置文件。详见：[配置Cookie](/site-config#配置Cookie)。
 
 ### `--init-config`
 
