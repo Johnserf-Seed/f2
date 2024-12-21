@@ -219,7 +219,7 @@ f2 bark -t "Jump Test" -b "Open F2 Docs" --url "https://johnserf-seed.github.io/
 
 ### `--update-config`
 
-通过 `CLI` 参数更新配置文件。详见：[配置Cookie](/site-config.html#配置Cookie)。
+通过 `CLI` 参数更新配置文件。详见：[配置Cookie](/site-config#配置Cookie)。
 
 ### `--init-config`
 
