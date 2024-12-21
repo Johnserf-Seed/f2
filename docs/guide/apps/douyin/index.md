@@ -709,7 +709,7 @@ outline: [2,3]
 | :--- | :--- | :--- |
 | msToken | str | 真实的msToken |
 
-<<< @/snippets/douyin/mstoken-real.py{4}
+<<< @/snippets/douyin/token-manager.py#mstoken-real-sinppest{4}
 
 ### 生成虚假msToken 🟢
 
@@ -723,7 +723,7 @@ outline: [2,3]
 | :--- | :--- | :--- |
 | msToken | str | 虚假的msToken |
 
-<<< @/snippets/douyin/mstoken-false.py{4}
+<<< @/snippets/douyin/token-manager.py#mstoken-false-sinppest{4}
 
 ::: tip :bulb: 提示
 默认为126位，也可调用 `from f2.utils.utils import gen_random_str`，生成不同长度的虚假msToken。
@@ -741,7 +741,7 @@ outline: [2,3]
 | :--- | :--- | :--- |
 | ttwid | str | ttwid参数 |
 
-<<< @/snippets/douyin/ttwid.py{4}
+<<< @/snippets/douyin/token-manager.py#ttwid-sinppest{4}
 
 ### 生成webid 🟢
 
@@ -755,7 +755,7 @@ outline: [2,3]
 | :--- | :--- | :--- |
 | webid | str | webid参数 |
 
-<<< @/snippets/douyin/webid.py{4}
+<<< @/snippets/douyin/token-manager.py#webid-sinppest{4}
 
 ### 生成verify_fp 🟢
 
@@ -769,7 +769,7 @@ outline: [2,3]
 | :--- | :--- | :--- |
 | verify_fp | str | verify_Fp与fp参数 |
 
-<<< @/snippets/douyin/verify_fp.py{4}
+<<< @/snippets/douyin/token-manager.py#verify_fp-sinppest{4}
 
 ### 生成s_v_web_id 🟢
 
@@ -783,7 +783,7 @@ outline: [2,3]
 | :--- | :--- | :--- |
 | s_v_web_id | str | s_v_web_id参数 |
 
-<<< @/snippets/douyin/s_v_web_id.py{4}
+<<< @/snippets/douyin/token-manager.py#s-v-web-id-sinppest{4}
 
 ### 生成直播signature 🟢
 
