@@ -10,7 +10,7 @@ class DatabaseError(Exception):
     def __init__(self, message=None, db=None):
         logger.error(
             _(
-                "请前往QA文档 https://johnserf-seed.github.io/f2/question-answer/qa.html 查看相关帮助"
+                "请前往QA文档 https://johnserf-seed.github.io/f2/question-answer/qa 查看相关帮助"
             )
         )
         self.db = db

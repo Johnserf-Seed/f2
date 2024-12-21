@@ -76,7 +76,7 @@ outline: deep
 :::
 
 ::: tip :bulb: 提示
-- `Twitter` 还需要额外获取 `X-Csrf-Token`，请确保在[**F2配置文件**](/site-config.html#主配置文件)中配置。
+- `Twitter` 还需要额外获取 `X-Csrf-Token`，请确保在[**F2配置文件**](/site-config#主配置文件)中配置。
 - 无法采集或风控时请及时更新 `Cookie` 与 `X-Csrf-Token`。
 - 不可以出现除 `ascii` 以外的字符，更新配置前请仔细检查。
 :::
@@ -126,7 +126,7 @@ outline: deep
 
 ### `--update-config`
 
-通过 `CLI` 参数更新配置文件。详见：[配置Cookie](/site-config.html#配置Cookie)。
+通过 `CLI` 参数更新配置文件。详见：[配置Cookie](/site-config#配置Cookie)。
 
 ### `--init-config`
 

@@ -11,6 +11,7 @@ export default defineConfig({
   description: "Fast 2 Every",
   base: "/f2/",
   lastUpdated: true,
+  cleanUrls: true,
 
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/f2/f2-logo-with-shadow-svg@0.25x.svg' }],
