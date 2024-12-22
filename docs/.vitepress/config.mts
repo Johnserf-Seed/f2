@@ -64,69 +64,60 @@ export default defineConfig({
       themeConfig: {
         nav: cn_nav(),
         sidebar: {
-          '/':[
+          '/': [
             {
               text: '快速入门',
               items: [
-                {text: '安装', link: '/install'},
-                {text: '快速使用', link: '/quick-start'},
-                {text: '配置文件', link: '/site-config'},
-                {text: '命令行', link: '/cli'},
-                {text: '进阶用法', link: '/advance-guide'},
-              ]
+                { text: '安装', link: '/install' },
+                { text: '快速使用', link: '/quick-start' },
+                { text: '配置文件', link: '/site-config' },
+                { text: '命令行', link: '/cli' },
+                { text: '进阶用法', link: '/advance-guide' },
+              ],
             },
             {
               text: '团队',
-              items: [
-                {text: '团队介绍', link: '/team'}
-              ]
-            }
+              items: [{ text: '团队介绍', link: '/team' }],
+            },
           ],
           '/guide/': [
             {
               text: '什么是F2',
-              items: [
-                {text: '开发者必看', link: '/guide/what-is-f2'}
-              ]
+              items: [{ text: '开发者必看', link: '/guide/what-is-f2' }],
             },
             {
               text: 'API示例',
-              items: [
-                {text: '使用示例', link: '/guide/api-examples'}
-              ]
+              items: [{ text: '使用示例', link: '/guide/api-examples' }],
             },
             {
               text: '开发者接口',
               items: [
-                {text: 'Bark', link: '/guide/apps/bark/index'},
-                {text: 'DouYin', link: '/guide/apps/douyin/index'},
-                {text: 'TikTok', link: '/guide/apps/tiktok/index'},
-                {text: 'Twitter', link: '/guide/apps/twitter/index'},
-                {text: 'WeiBo', link: '/guide/apps/weibo/index'},
-              ]
+                { text: 'Bark', link: '/guide/apps/bark/index' },
+                { text: 'DouYin', link: '/guide/apps/douyin/index' },
+                { text: 'TikTok', link: '/guide/apps/tiktok/index' },
+                { text: 'Twitter', link: '/guide/apps/twitter/index' },
+                { text: 'WeiBo', link: '/guide/apps/weibo/index' },
+              ],
             },
             {
               text: '命令行指引',
               items: [
-                {text: 'Bark', link: '/guide/apps/bark/cli'},
-                {text: 'DouyYin', link: '/guide/apps/douyin/cli'},
-                {text: 'TikTok', link: '/guide/apps/tiktok/cli'},
-                {text: 'Twitter', link: '/guide/apps/twitter/cli'},
-                {text: 'WeiBo', link: '/guide/apps/weibo/cli'},
-              ]
-            }
-
+                { text: 'Bark', link: '/guide/apps/bark/cli' },
+                { text: 'DouyYin', link: '/guide/apps/douyin/cli' },
+                { text: 'TikTok', link: '/guide/apps/tiktok/cli' },
+                { text: 'Twitter', link: '/guide/apps/twitter/cli' },
+                { text: 'WeiBo', link: '/guide/apps/weibo/cli' },
+              ],
+            },
           ],
           '/question-answer/': [
             {
               text: 'QA',
-              items: [
-                {text: 'Issue里经常反馈的问题', link: '/question-answer/qa'}
-              ]
+              items: [{ text: 'Issue里经常反馈的问题', link: '/question-answer/qa' }],
             },
-          ]
-        }
-      }
+          ],
+        },
+      },
     },
 
     en: {
@@ -135,69 +126,61 @@ export default defineConfig({
       themeConfig: {
         nav: en_nav(),
         sidebar: {
-          '/':[
+          '/': [
             {
               text: 'Quick Start',
               items: [
-                {text: 'Install', link: '/en/install'},
-                {text: 'Quick Start', link: '/en/quick-start' },
-                {text: 'Site Config', link: '/en/site-config' },
-                {text: 'CLI', link: '/en/cli' },
-                {text: 'Advance Guide', link: '/en/advance-guide'},
-              ]
+                { text: 'Install', link: '/en/install' },
+                { text: 'Quick Start', link: '/en/quick-start' },
+                { text: 'Site Config', link: '/en/site-config' },
+                { text: 'CLI', link: '/en/cli' },
+                { text: 'Advance Guide', link: '/en/advance-guide' },
+              ],
             },
             {
               text: 'Team',
-              items: [
-                {text: 'Team Introduction', link: '/en/team'}
-              ]
-            }
+              items: [{ text: 'Team Introduction', link: '/en/team' }],
+            },
           ],
           '/guide/': [
             {
               text: 'What is F2',
-              items: [
-                {text: 'For Developers', link: '/en/guide/what-is-f2'}
-              ]
+              items: [{ text: 'For Developers', link: '/en/guide/what-is-f2' }],
             },
             {
               text: 'API Examples',
-              items: [
-                {text: 'API Examples', link: '/en/guide/api-examples'}
-              ]
+              items: [{ text: 'API Examples', link: '/en/guide/api-examples' }],
             },
             {
               text: 'Developer API',
               items: [
-                {text: 'Bark', link: '/en/guide/apps/bark/index'},
-                {text: 'DouYin', link: '/en/guide/apps/douyin/index'},
-                {text: 'TikTok', link: '/en/guide/apps/tiktok/index'},
-                {text: 'Twitter', link: '/en/guide/apps/twitter/index'},
-                {text: 'WeiBo', link: '/en/guide/apps/weibo/index'},
-              ]
+                { text: 'Bark', link: '/en/guide/apps/bark/index' },
+                { text: 'DouYin', link: '/en/guide/apps/douyin/index' },
+                { text: 'TikTok', link: '/en/guide/apps/tiktok/index' },
+                { text: 'Twitter', link: '/en/guide/apps/twitter/index' },
+                { text: 'WeiBo', link: '/en/guide/apps/weibo/index' },
+              ],
             },
             {
               text: 'CLI Guide',
               items: [
-                {text: 'Bark', link: '/en/guide/apps/bark/cli'},
-                {text: 'DouyYin', link: '/en/guide/apps/douyin/cli'},
-                {text: 'TikTok', link: '/en/guide/apps/tiktok/cli'},
-                {text: 'Twitter', link: '/en/guide/apps/twitter/cli'},
-                {text: 'WeiBo', link: '/en/guide/apps/weibo/cli'},
-              ]
-            }
+                { text: 'Bark', link: '/en/guide/apps/bark/cli' },
+                { text: 'DouyYin', link: '/en/guide/apps/douyin/cli' },
+                { text: 'TikTok', link: '/en/guide/apps/tiktok/cli' },
+                { text: 'Twitter', link: '/en/guide/apps/twitter/cli' },
+                { text: 'WeiBo', link: '/en/guide/apps/weibo/cli' },
+              ],
+            },
           ],
-          '/question-answer/': [
+          '/en/question-answer/': [
             {
               text: 'QA',
-              items: [
-                {text: 'Frequently Asked Questions', link: '/en/question-answer/qa'}
-              ]
+              items: [{ text: 'Frequently Asked Questions', link: '/en/question-answer/qa' }],
             },
-          ]
-        }
+          ],
+        },
       },
-    }
+    },
   },
 })
 
