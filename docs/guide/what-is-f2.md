@@ -4,7 +4,7 @@
 
 ## 指定配置文件
 
-开发者可以直接定义自己的配置文件，然后在测试时通过`-c`参数指定配置文件的路径，例如：
+开发者可以直接定义自己的配置文件，然后在测试时通过 `-c` 参数指定配置文件的路径，例如：
 
 ```bash
 f2 dy -c conf/app.yaml
@@ -17,7 +17,7 @@ f2 dy -c conf/app.yaml
 
 <<< @/snippets/set-debug.py#set-debug-snippet{6}
 
-支持代码`接口`模式的同时也支持在`CLI`模式中加上`-d`来指定记录日志级别。可选的参数`DEBUG`，`INFO`，`WARNING`，`ERROR`。
+支持代码 `接口` 模式的同时也支持在 `CLI` 模式中加上 `-d` 来指定记录日志级别。可选的参数 `DEBUG`，`INFO`，`WARNING`，`ERROR`。
 
 <<< @/snippets/set-debug.py#cli-debug-snippet
 
@@ -60,7 +60,7 @@ tiktok:
 ```
 :::
 
-::: details :link: 示例：启动WSS服务并连接。
+::: details :link: 示例：启动 `WSS` 服务并连接。
 ![wss](/douyin/wss-connect.png)
 :::
 
