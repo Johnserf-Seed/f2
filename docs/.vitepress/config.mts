@@ -9,14 +9,14 @@ const pkg = require('../package.json')
 export default defineConfig({
   title: "F2",
   description: "Fast 2 Every",
-  base: "/f2/",
+  base: "/",
   lastUpdated: true,
   cleanUrls: true,
 
   head: [
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/f2/f2-logo-with-shadow-svg@0.25x.svg' }],
-    ['link', { rel: 'icon', type: 'image/png', href: '/f2/f2-logo-with-shadow-mini.png' }],
-    ['link', { rel: 'icon', type: 'image/x-icon', href: '/f2/f2-logo.ico' }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/f2-logo-with-shadow-svg@0.25x.svg' }],
+    ['link', { rel: 'icon', type: 'image/png', href: '/f2-logo-with-shadow-mini.png' }],
+    ['link', { rel: 'icon', type: 'image/x-icon', href: '/f2-logo.ico' }],
     // google analytics
     [
       'script',{ async: "", src: "https://www.googletagmanager.com/gtag/js?id=G-H7N87QED9C",
@@ -32,6 +32,9 @@ export default defineConfig({
       gtag('config', 'G-H7N87QED9C');`,
     ],
   ],
+  markdown: {
+    // lineNumbers: true
+  },
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     logo: { src: '/f2-logo-with-shadow-svg@1.0x.svg', width: 24, height: 24 },
@@ -72,6 +75,12 @@ export default defineConfig({
                 {text: '进阶用法', link: '/advance-guide'},
               ]
             },
+            {
+              text: '团队',
+              items: [
+                {text: '团队介绍', link: '/team'}
+              ]
+            }
           ],
           '/guide/': [
             {
@@ -81,7 +90,7 @@ export default defineConfig({
               ]
             },
             {
-              text: '开发者指南',
+              text: 'API示例',
               items: [
                 {text: '使用示例', link: '/guide/api-examples'}
               ]
@@ -131,19 +140,61 @@ export default defineConfig({
               text: 'Quick Start',
               items: [
                 {text: 'Install', link: '/en/install'},
-                {text: 'Quick Start', link: '/en/quick-start'},
+                {text: 'Quick Start', link: '/en/quick-start' },
+                {text: 'Site Config', link: '/en/site-config' },
+                {text: 'CLI', link: '/en/cli' },
                 {text: 'Advance Guide', link: '/en/advance-guide'},
               ]
             },
-          ],
-          '/guide/': [
             {
-              text: 'Guide',
+              text: 'Team',
               items: [
-                {text: 'API Examples', link: '/api-examples'}
+                {text: 'Team Introduction', link: '/en/team'}
               ]
             }
           ],
+          '/guide/': [
+            {
+              text: 'What is F2',
+              items: [
+                {text: 'For Developers', link: '/en/guide/what-is-f2'}
+              ]
+            },
+            {
+              text: 'API Examples',
+              items: [
+                {text: 'API Examples', link: '/en/guide/api-examples'}
+              ]
+            },
+            {
+              text: 'Developer API',
+              items: [
+                {text: 'Bark', link: '/en/guide/apps/bark/index'},
+                {text: 'DouYin', link: '/en/guide/apps/douyin/index'},
+                {text: 'TikTok', link: '/en/guide/apps/tiktok/index'},
+                {text: 'Twitter', link: '/en/guide/apps/twitter/index'},
+                {text: 'WeiBo', link: '/en/guide/apps/weibo/index'},
+              ]
+            },
+            {
+              text: 'CLI Guide',
+              items: [
+                {text: 'Bark', link: '/en/guide/apps/bark/cli'},
+                {text: 'DouyYin', link: '/en/guide/apps/douyin/cli'},
+                {text: 'TikTok', link: '/en/guide/apps/tiktok/cli'},
+                {text: 'Twitter', link: '/en/guide/apps/twitter/cli'},
+                {text: 'WeiBo', link: '/en/guide/apps/weibo/cli'},
+              ]
+            }
+          ],
+          '/question-answer/': [
+            {
+              text: 'QA',
+              items: [
+                {text: 'Frequently Asked Questions', link: '/en/question-answer/qa'}
+              ]
+            },
+          ]
         }
       },
     }
@@ -156,11 +207,6 @@ function cn_nav(): DefaultTheme.NavItem[] {
       text: '团队',
       link: '/team',
       activeMatch: '/team'
-    },
-    {
-      text: '指南',
-      link: '/guide/what-is-f2',
-      activeMatch: '/guide/'
     },
     {
       text: 'QA',
@@ -190,8 +236,10 @@ function en_nav(): DefaultTheme.NavItem[] {
       link: '/en/team',
       activeMatch: '/team'
     },
-      link: '/en/guide/what-is-f2',
-      activeMatch: '/guide/'
+    {
+      text: 'QA',
+      link: '/en/question-answer/qa',
+      activeMatch: '/question-answer/'
     },
     {
       text: pkg.f2_version,
