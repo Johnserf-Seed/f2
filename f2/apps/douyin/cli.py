@@ -79,7 +79,9 @@ def handler_auto_cookie(
         )
         manager.update_config_with_args("douyin", cookie=cookie_value)
     except PermissionError:
-        logger.error(_("请关闭所有已打开的浏览器重试，并且你有适当的权限访问浏览器！"))
+        logger.error(
+            _("请结束所有浏览器相关的进程，并确保你有管理员的权限访问浏览器后重试！")
+        )
         ctx.abort()
     except Exception as e:
         logger.error(_("自动获取Cookie失败：{0}").format(str(e)))
