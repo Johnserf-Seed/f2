@@ -126,7 +126,7 @@ export default defineConfig({
       themeConfig: {
         nav: en_nav(),
         sidebar: {
-          '/': [
+          '/en/': [
             {
               text: 'Quick Start',
               items: [
@@ -142,7 +142,7 @@ export default defineConfig({
               items: [{ text: 'Team Introduction', link: '/en/team' }],
             },
           ],
-          '/guide/': [
+          '/en/guide/': [
             {
               text: 'What is F2',
               items: [{ text: 'For Developers', link: '/en/guide/what-is-f2' }],
