@@ -178,7 +178,7 @@ def interval_2_timestamp(
     tz: datetime.timezone = datetime.timezone(datetime.timedelta(hours=8)),
 ) -> int:
     """
-    将日期区间字符串转换为 UNIX 时间戳
+    将日期区间字符串转换为 UNIX 时间戳区间
 
     Args:
         interval (str): 日期区间字符串，格式为 '2022-01-01|2023-01-01' (The date range string, formatted as '2022-01-01|2023-01-01')
