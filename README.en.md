@@ -23,35 +23,35 @@
 
 ### ⚙️ Installation
 
-- [Prerequisites](https://johnserf-seed.github.io/f2/install.html#%E5%BF%85%E5%A4%87%E6%9D%A1%E4%BB%B6)
-- [Package Manager Installation](https://johnserf-seed.github.io/f2/install.html#%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E5%AE%89%E8%A3%85)
-- [Compiled Installation](https://johnserf-seed.github.io/f2/install.html#%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85)
+- [Prerequisites](https://f2.wiki/install#%E5%BF%85%E5%A4%87%E6%9D%A1%E4%BB%B6)
+- [Package Manager Installation](https://f2.wiki/install#%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E5%AE%89%E8%A3%85)
+- [Compiled Installation](https://f2.wiki/install#%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85)
 
 ### ⚡ Quick Use
 
-- [Startup and Execution](https://johnserf-seed.github.io/f2/quick-start.html#%E5%90%AF%E5%8A%A8%E5%92%8C%E8%BF%90%E8%A1%8C)
+- [Startup and Execution](https://f2.wiki/quick-start#%E5%90%AF%E5%8A%A8%E5%92%8C%E8%BF%90%E8%A1%8C)
 
 ### 📋 Configuration File
 
-- [Main Configuration File (Frequent)](https://johnserf-seed.github.io/f2/site-config.html#%E4%B8%BB%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
-- [Initialize Configuration File](https://johnserf-seed.github.io/f2/site-config.html#%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
-- [Custom Configuration File](https://johnserf-seed.github.io/f2/site-config.html#%E8%87%AA%E5%AE%9A%E4%B9%89%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
-- [Cookie Configuration](https://johnserf-seed.github.io/f2/site-config.html#%E9%85%8D%E7%BD%AEcookie)
-- [Configuration File Location](https://johnserf-seed.github.io/f2/site-config.html#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%9A%84%E4%BD%8D%E7%BD%AE)
+- [Main Configuration File (Frequent)](https://f2.wiki/site-config#%E4%B8%BB%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
+- [Initialize Configuration File](https://f2.wiki/site-config#%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
+- [Custom Configuration File](https://f2.wiki/site-config#%E8%87%AA%E5%AE%9A%E4%B9%89%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
+- [Cookie Configuration](https://f2.wiki/site-config#%E9%85%8D%E7%BD%AEcookie)
+- [Configuration File Location](https://f2.wiki/site-config#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%9A%84%E4%BD%8D%E7%BD%AE)
 
 ### 💻 Command Line
 
-- [CLI Temporary Configuration](https://johnserf-seed.github.io/f2/cli.html#cli%E4%B8%B4%E6%97%B6%E9%85%8D%E7%BD%AE)
+- [CLI Temporary Configuration](https://f2.wiki/cli#cli%E4%B8%B4%E6%97%B6%E9%85%8D%E7%BD%AE)
 
 ### 📘 Developer Guide
 
-- [A Must-Read for Developers](https://johnserf-seed.github.io/f2/guide/what-is-f2.html)
+- [A Must-Read for Developers](https://f2.wiki/guide/what-is-f2)
 
 ### 🧩 Calling Examples
 
-- [DouYin](https://johnserf-seed.github.io/f2/guide/apps/douyin/)
+- [DouYin](https://f2.wiki/guide/apps/douyin/)
 
-- [TikTok](https://johnserf-seed.github.io/f2/guide/apps/tiktok/)
+- [TikTok](https://f2.wiki/guide/apps/tiktok/)
 
 
 ## ✨ New Changes
@@ -64,7 +64,7 @@ When downloading or upgrading to a different version of `F2`, please note the fo
   - The configuration file format has been updated. If you are using an old configuration file, please migrate accordingly.
   - The default timezone for all timestamps is now (`UTC/GMT+08:00`).
   - The `douyin` live stream filenames have been adjusted to `flv`, and albums have been reverted to `webp`.
-  - The 403 error for `tiktok` video URLs has been fixed. [Solution for TikTok video URL 403](https://johnserf-seed.github.io/f2/question-answer/qa.html#tiktok-403-forbidden)
+  - The 403 error for `tiktok` video URLs has been fixed. [Solution for TikTok video URL 403](https://f2.wiki/question-answer/qa#tiktok-403-forbidden)
   - `douyin` now defaults to using the `ab` algorithm for requests. (The full-powered ab algorithm will be open-sourced later).
   - For more changes, see [ChangeLog](https://github.com/Johnserf-Seed/f2/blob/main/CHANGELOG.md#0015---2024-04-04).
 </details>
@@ -85,12 +85,12 @@ When downloading or upgrading to a different version of `F2`, please note the fo
 ## 📑 Documentation
 
 The goal of `F2` is to provide a simple and easy-to-use interface for users to quickly obtain content data.
-Many features are not fully developed in the `preview` version. If you find any issues, please submit an `issue` in the `F2` project. The [project documentation](https://johnserf-seed.github.io/f2/) is still being improved, and there may be delays, so please stay tuned.
+Many features are not fully developed in the `preview` version. If you find any issues, please submit an `issue` in the `F2` project. The [project documentation](https://f2.wiki/) is still being improved, and there may be delays, so please stay tuned.
 
 
 ## 🛠️ Q&A
 
-[Common Questions and Solutions](https://johnserf-seed.github.io/f2/question-answer/qa.html)
+[Common Questions and Solutions](https://f2.wiki/question-answer/qa)
 
 
 ## 🗓️ Todo
