@@ -104,9 +104,7 @@ def main() -> None:
     ),
     table.add_row(
         _("Document📕"),
-        _(
-            "[yellow]务必先去看文档哦 [link=https://johnserf-seed.github.io/f2/]Click Here[/]"
-        ),
+        _("[yellow]务必先去看文档哦 [link=https://f2.wiki/]Click Here[/]"),
     )
     console.print(
         Panel(
