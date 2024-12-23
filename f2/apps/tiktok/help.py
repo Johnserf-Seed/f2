@@ -108,7 +108,7 @@ def help() -> None:
             "",
             "",
             _(
-                "更加详细的参数说明请点击[link=https://johnserf-seed.github.io/f2/site-config][dark_violet]前往文档[/dark_violet][/]查看"
+                "更加详细的参数说明请点击[link=https://f2.wiki/site-config][dark_violet]前往文档[/dark_violet][/]查看"
             ),
         ),
     ]

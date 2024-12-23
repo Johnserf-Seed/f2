@@ -92,7 +92,7 @@ https://github.com/Johnserf-Seed/TikTokDownload/issues/660
 4. 重新运行下载命令。
 
 代码片段：
-https://johnserf-seed.github.io/f2/guide/apps/tiktok/#%E7%94%9F%E6%88%90deviceid-%F0%9F%9F%A2
+https://f2.wiki/guide/apps/tiktok/#%E7%94%9F%E6%88%90deviceid-%F0%9F%9F%A2
 
 # endregion tiktok-403-forbidden
 
