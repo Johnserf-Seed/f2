@@ -180,9 +180,11 @@ outline: deep
 不支持切换浏览器用户配置。
 
 > [!IMPORTANT] 重要 ❗❗❗
-> - 近期受新版 `Chromium` 内核升级影响，更新了 `Cookie` 加密方式，导致 `F2` 无法自动获取晚于 `2024/08/15` 之后版本的浏览器 `Cookie`。
-> - 在修复版本的依赖更新前请手动更新 `Cookie`。
-> - 了解更多请参阅 [borisbabic/browser_cookie3#215](https://github.com/borisbabic/browser_cookie3/pull/215)。
+> - 由于 `Chromium` 安全策略的更新，将 `Cookie` 加密版本升级到了 `V20`。导致 `--auto-cookie` 命令暂时无法获取 `2024 年 8 月 15 日` 之后发布的浏览器 `Cookie`。
+> - 请更新 `F2` 到最新版本，以获取最新的修复补丁。
+> - 如果您不希望升级，可以参考以下 `PR`，手动安装修复版本的依赖。
+> - [borisbabic/browser_cookie3#215](https://github.com/borisbabic/browser_cookie3/pull/215)
+> - 截至 `2024/dec/23` 修复版本仍无法支持最新 `Chromium` 内核版本的浏览器，请使用其他浏览器或降级浏览器版本到 `v128` 之前。
 
 ::: details :link: 示例：手动更新 `Cookie`。
 ```shell [bash]

@@ -51,7 +51,14 @@ const partners = [
 ]
 
 const sponsors = [
-  {},
+  {
+    avatar: 'https://avatars.githubusercontent.com/u/119824398',
+    name: 'TikHub',
+    title: '赞助者',
+    links: [
+      { icon: 'github', link: 'https://github.com/TikHub', ariaLabel: 'GitHub TikHub' },
+    ]
+  },
 ]
 
 </script>
