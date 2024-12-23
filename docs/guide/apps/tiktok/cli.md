@@ -148,6 +148,14 @@ outline: deep
 > [!IMPORTANT] 重要 ❗❗❗
 > **如果代理不支持出口 HTTPS，请使用：`--proxies http://x.x.x.x http://x.x.x.x`。**
 
+### `--update-config`
+
+通过 `CLI` 参数更新配置文件。详见：[配置Cookie](/site-config#配置Cookie)。
+
+### `--init-config`
+
+初始化高频配置文件。详见：[初始化配置文件](/site-config#初始化配置文件)。
+
 ### `--auto-cookie`
 
 自动从浏览器获取cookie，使用该命令前请确保关闭所选的浏览器。支持的浏览器有：
