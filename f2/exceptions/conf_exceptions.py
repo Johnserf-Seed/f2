@@ -8,11 +8,7 @@ class ConfError(Exception):
     """基本配置异常类，其他配置异常都会继承这个类"""
 
     def __init__(self, message=None):
-        logger.error(
-            _(
-                "请前往QA文档 https://johnserf-seed.github.io/f2/question-answer/qa 查看相关帮助"
-            )
-        )
+        logger.error(_("请前往QA文档 https://f2.wiki/question-answer/qa 查看相关帮助"))
         super().__init__(message)
 
     def __str__(self) -> str:

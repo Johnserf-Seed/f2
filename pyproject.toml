@@ -83,7 +83,7 @@ f2 = "f2.cli.cli_commands:main"
 
 [project.urls]
 Homepage = "https://github.com/Johnserf-Seed/f2"
-Documentation = "https://johnserf-seed.github.io/f2/"
+Documentation = "https://f2.wiki/"
 Chat = "https://discord.gg//3PhtPmgHf8"
 "Source Code" = "https://github.com/Johnserf-Seed/f2"
 "Issue Tracker" = "https://github.com/Johnserf-Seed/f2/issues"
