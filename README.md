@@ -24,35 +24,35 @@
 
 ### ⚙️ 安装
 
-- [必备条件](https://johnserf-seed.github.io/f2/install.html#%E5%BF%85%E5%A4%87%E6%9D%A1%E4%BB%B6)
-- [包管理器安装](https://johnserf-seed.github.io/f2/install.html#%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E5%AE%89%E8%A3%85)
-- [编译安装](https://johnserf-seed.github.io/f2/install.html#%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85)
+- [必备条件](https://f2.wiki/install#%E5%BF%85%E5%A4%87%E6%9D%A1%E4%BB%B6)
+- [包管理器安装](https://f2.wiki/install#%E5%8C%85%E7%AE%A1%E7%90%86%E5%99%A8%E5%AE%89%E8%A3%85)
+- [编译安装](https://f2.wiki/install#%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85)
 
 ### ⚡ 快速使用
 
-- [启动和运行](https://johnserf-seed.github.io/f2/quick-start.html#%E5%90%AF%E5%8A%A8%E5%92%8C%E8%BF%90%E8%A1%8C)
+- [启动和运行](https://f2.wiki/quick-start#%E5%90%AF%E5%8A%A8%E5%92%8C%E8%BF%90%E8%A1%8C)
 
 ### 📋 配置文件
 
-- [主配置文件（高频）](https://johnserf-seed.github.io/f2/site-config.html#%E4%B8%BB%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
-- [初始化配置文件](https://johnserf-seed.github.io/f2/site-config.html#%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
-- [自定义配置文件](https://johnserf-seed.github.io/f2/site-config.html#%E8%87%AA%E5%AE%9A%E4%B9%89%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
-- [配置cookie](https://johnserf-seed.github.io/f2/site-config.html#%E9%85%8D%E7%BD%AEcookie)
-- [配置文件的位置](https://johnserf-seed.github.io/f2/site-config.html#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%9A%84%E4%BD%8D%E7%BD%AE)
+- [主配置文件（高频）](https://f2.wiki/site-config#%E4%B8%BB%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
+- [初始化配置文件](https://f2.wiki/site-config#%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
+- [自定义配置文件](https://f2.wiki/site-config#%E8%87%AA%E5%AE%9A%E4%B9%89%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
+- [配置Cookie](https://f2.wiki/site-config#%E9%85%8D%E7%BD%AECookie)
+- [配置文件的位置](https://f2.wiki/site-config#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%9A%84%E4%BD%8D%E7%BD%AE)
 
 ### 💻 命令行
 
-- [CLI临时配置](https://johnserf-seed.github.io/f2/cli.html#cli%E4%B8%B4%E6%97%B6%E9%85%8D%E7%BD%AE)
+- [CLI临时配置](https://f2.wiki/cli#cli%E4%B8%B4%E6%97%B6%E9%85%8D%E7%BD%AE)
 
 ### 📘 开发指南
 
-- [开发者必看](https://johnserf-seed.github.io/f2/guide/what-is-f2.html)
+- [开发者必看](https://f2.wiki/guide/what-is-f2)
 
 ### 🧩 调用示例
 
-- [DouYin](https://johnserf-seed.github.io/f2/guide/apps/douyin/)
+- [DouYin](https://f2.wiki/guide/apps/douyin/)
 
-- [TikTok](https://johnserf-seed.github.io/f2/guide/apps/tiktok/)
+- [TikTok](https://f2.wiki/guide/apps/tiktok/)
 
 
 ## ✨ 新变化
@@ -65,7 +65,7 @@
   - 配置文件格式已经更新，如果你使用了旧的配置文件，请注意迁移。
   - 所有时间戳的默认时区为（`UTC/GMT+08:00`）。
   - `douyin`直播流文件名调整为`flv`，图集调整回`webp`。
-  - `tiktok`视频地址`403`的错误已经修复。[TikTok视频地址403解决办法](https://johnserf-seed.github.io/f2/question-answer/qa.html#tiktok-403-forbidden)
+  - `tiktok`视频地址`403`的错误已经修复。[TikTok视频地址403解决办法](https://f2.wiki/question-answer/qa#tiktok-403-forbidden)
   - 现在`douyin`默认会使用`ab`算法来请求。（满血版ab算法待时开源）。
   - 更多变化查看[ChangeLog](https://github.com/Johnserf-Seed/f2/blob/main/CHANGELOG.md#0016---2024-05-04)。
 </details>
@@ -86,12 +86,12 @@
 ## 📑 文档
 
 `F2`的目标是提供一个简单易用的接口，让用户可以快速获取作品数据。
-在`preview`版本中很多功能没有完善，如果你发现了问题，请在`F2`项目中提交`issue`。[项目文档](https://johnserf-seed.github.io/f2/)还在完善中，存在滞后的情况，请保持关注。
+在`preview`版本中很多功能没有完善，如果你发现了问题，请在`F2`项目中提交`issue`。[项目文档](https://f2.wiki/)还在完善中，存在滞后的情况，请保持关注。
 
 
 ## 🛠️ Q&A
 
-[常见的问题与解决办法](https://johnserf-seed.github.io/f2/question-answer/qa.html)
+[常见的问题与解决办法](https://f2.wiki/question-answer/qa)
 
 
 ## 🗓️ Todo
