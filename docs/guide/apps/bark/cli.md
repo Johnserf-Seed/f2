@@ -40,6 +40,8 @@ outline: deep
 
 `Bark` 的 `key` 是一个 `22` 位的字符串。可在 `Bark` 应用的首页查看。
 
+![Bark Key](/bark/bark-key.jpg)
+
 ::: details :link: 示例：使用 `/push` 接口时需将 `key` 放入请求体
 ::: code-group
 ```shell [bash]
@@ -52,8 +54,6 @@ curl -X "POST" "https://api.day.app/push" \
 }'
 ```
 :::
-
-![Bark Key](/bark/bark-key.jpg)
 
 ### `--token`
 
@@ -72,7 +72,6 @@ curl -X "POST" "https://api.day.app/push" \
 - 当发生泄露时，请立即在 `Bark` 应用中重新生成 `Key` 和 `Token`。
 - 更多隐私保护信息，请参阅 `Bark` 的[隐私安全](https://bark.day.app/#/privacy)。
 :::
-
 
 ### `--mode`
 
@@ -151,6 +150,7 @@ f2 bark -t "Test Title" -b "Test Body" -M cipher
 是否自动复制推送内容。
 
 在 `iOS 14.5` 之后的版本因权限收紧，不能在收到推送时自动复制推送内容到剪切板。
+
 可下拉推送或在锁屏界面左滑推送点查看即可自动复制，或点击弹出的推送复制按钮。
 
 ### `--copy`
@@ -178,7 +178,7 @@ f2 bark -t "Test Title" -b "Test Body" -M cipher
 
 ### `--icon`
 
-推送图标 URL，相同的图标 URL 仅下载一次。默认为 `F2` 的图标。
+推送图标 `URL`，相同的图标 `URL` 仅下载一次。默认为 `F2` 的图标。
 
 ![F2 Icon](/f2-logo.ico)
 
@@ -198,7 +198,7 @@ f2 bark -t "Test Title" -b "Test Body" -M cipher
 
 ::: details :link: 示例：使用 `URL Scheme` 跳转到 `F2` 文档官网。
 ```shell [bash]
-f2 bark -t "Jump Test" -b "Open F2 Docs" --url "https://johnserf-seed.github.io/f2/"
+f2 bark -t "Jump Test" -b "Open F2 Docs" --url "https://f2.wiki/"
 ```
 :::
 
