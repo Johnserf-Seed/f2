@@ -12,11 +12,20 @@ class ClientConfManager:
     """
 
     client_conf = ConfigManager(f2.F2_CONFIG_FILE_PATH).get_config("f2")
+    app_conf = ConfigManager(f2.APP_CONFIG_FILE_PATH).get_config("bark")
     bark_conf = client_conf.get("bark", {})
+
+    @classmethod
+    def enable_bark(cls) -> bool:
+        return cls.client_conf.get("enable_bark", False)
 
     @classmethod
     def client(cls) -> dict:
         return cls.bark_conf
+
+    @classmethod
+    def app(cls) -> dict:
+        return cls.app_conf
 
     @classmethod
     def conf_version(cls) -> str:
@@ -24,11 +33,11 @@ class ClientConfManager:
 
     @classmethod
     def key(cls) -> str:
-        return cls.client().get("key", "")
+        return cls.app().get("key", "")
 
     @classmethod
     def token(cls) -> str:
-        return cls.client().get("token", "")
+        return cls.app().get("token", "")
 
     @classmethod
     def proxies(cls) -> dict:
