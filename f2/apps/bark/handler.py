@@ -13,6 +13,7 @@ from f2.apps.bark.crawler import BarkCrawler
 from f2.apps.bark.model import BarkModel, BarkCipherModel
 from f2.apps.bark.filter import BarkNotificationFilter
 from f2.apps.bark.utils import generate_numeric_bytes
+from f2.apps.bark.utils import ClientConfManager
 
 
 class BarkHandler:
@@ -164,6 +165,13 @@ class BarkHandler:
             BarkNotificationFilter: Bark通知过滤器，包含结果数据的_to_raw()、_to_dict()方法
         """
         self.kwargs.update({"title": title, "body": body, **kwargs})
+
+        # 检查是否需要加密通知
+        if ClientConfManager.enable_encryption():
+            # 如果需要加密，调用加密通知方法
+            return await self.cipher_bark_notification()
+
+        # 如果不需要加密，继续普通通知
         return await self._send_bark_notification(send_method)
 
 
