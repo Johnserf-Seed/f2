@@ -11,8 +11,8 @@ from typing import AsyncGenerator, Union, Dict, Any, List
 from f2.log.logger import logger
 from f2.i18n.translator import _
 from f2.utils.decorators import mode_handler, mode_function_map
-
-# from f2.utils.utils import split_set_cookie
+from f2.apps.bark.handler import BarkHandler
+from f2.apps.bark.utils import ClientConfManager as BarkClientConfManager
 from f2.apps.douyin.db import AsyncUserDB, AsyncVideoDB
 from f2.apps.douyin.crawler import DouyinCrawler, DouyinWebSocketCrawler
 from f2.apps.douyin.dl import DouyinDownloader
@@ -74,10 +74,20 @@ from f2.apps.douyin.utils import (
 )
 from f2.cli.cli_console import RichConsoleManager
 from f2.exceptions.api_exceptions import APIResponseError
-from f2.utils.utils import interval_2_timestamp, timestamp_2_str
+
+# from f2.utils.utils import split_set_cookie
+from f2.utils.utils import interval_2_timestamp, timestamp_2_str, get_timestamp
 
 rich_console = RichConsoleManager().rich_console
 rich_prompt = RichConsoleManager().rich_prompt
+
+
+DY_LIVE_STATUS_MAPPING = {
+    # 1: _("准备中"),
+    2: _("直播中"),
+    # 3: _("直播中"),
+    4: _("已关播"),
+}
 
 
 class DouyinHandler:
@@ -93,7 +103,38 @@ class DouyinHandler:
 
     def __init__(self, kwargs: Dict = ...) -> None:
         self.kwargs = kwargs
-        self.downloader = DouyinDownloader(kwargs)
+        self.downloader = DouyinDownloader(self.kwargs)
+        # 初始化 Bark 通知服务
+        self.bark_kwargs = BarkClientConfManager.merge()
+        self.enable_bark = BarkClientConfManager.enable_bark()
+        self.bark_notification = BarkHandler(self.bark_kwargs)
+
+    async def _send_bark_notification(
+        self,
+        title: str,
+        body: str,
+        send_method: str = "post",
+        **kwargs,
+    ) -> None:
+        """
+        发送Bark通知的辅助方法。负责自定义通知内容。
+
+        Args:
+            title (str): 通知标题
+            body (str): 通知内容
+            send_method (str): 调用的发送方法（"fetch" 或 "post"）
+            kwargs (Dict): 其他通知参数
+        Returns:
+            None
+        """
+
+        if self.enable_bark:
+            await self.bark_notification.send_quick_notification(
+                title,
+                body,
+                send_method=send_method,
+                **kwargs,
+            )
 
     async def fetch_user_profile(
         self,
@@ -246,6 +287,17 @@ class DouyinHandler:
             )
         )
 
+        await self._send_bark_notification(
+            _("抖音单个作品"),
+            _(
+                "作品ID：{0}，作品下载完成。{1}".format(
+                    video.aweme_id,
+                    timestamp_2_str(get_timestamp("sec")),
+                )
+            ),
+            group="Douyin",
+        )
+
         return video
 
     @mode_handler("post")
@@ -352,6 +404,9 @@ class DouyinHandler:
                 max_cursor = video.max_cursor
                 continue
 
+            # 防止最后一页不包含任何作品导致无法获取nickname_raw
+            nickname_raw = video.nickname_raw[0]
+
             logger.debug(_("当前请求的max_cursor：{0}").format(max_cursor))
             logger.debug(
                 _("作品ID：{0} 作品文案：{1} 作者：{2}").format(
@@ -369,6 +424,16 @@ class DouyinHandler:
 
         logger.info(
             _("结束处理用户发布的作品，共处理 {0} 个作品").format(videos_collected)
+        )
+
+        await self._send_bark_notification(
+            _("抖音用户作品"),
+            _("用户：{0}，共下载 {1} 个作品。{2}").format(
+                nickname_raw,
+                videos_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Douyin",
         )
 
     @mode_handler("like")
@@ -484,6 +549,18 @@ class DouyinHandler:
             _("结束处理用户点赞的作品，共处理 {0} 个作品").format(videos_collected)
         )
 
+        # 点赞接口中没有当前用户的相关信息，因此无法获取nickname_raw
+        user = await self.fetch_user_profile(sec_user_id)
+        await self._send_bark_notification(
+            _("抖音用户点赞作品"),
+            _("用户：{0}，共下载 {1} 个作品。{2}").format(
+                user.nickname_raw,
+                videos_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Douyin",
+        )
+
     @mode_handler("music")
     async def handle_user_music_collection(self):
         """
@@ -582,6 +659,15 @@ class DouyinHandler:
 
         logger.info(
             _("结束处理用户收藏音乐作品，共处理 {0} 个作品").format(music_collected)
+        )
+
+        await self._send_bark_notification(
+            _("抖音用户音乐收藏"),
+            _("共下载 {0} 个音乐。{1}").format(
+                music_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Douyin",
         )
 
     @mode_handler("collection")
@@ -685,6 +771,15 @@ class DouyinHandler:
 
         logger.info(
             _("结束处理用户收藏作品，共处理 {0} 个作品").format(videos_collected)
+        )
+
+        await self._send_bark_notification(
+            _("抖音用户收藏作品"),
+            _("共下载 {0} 个作品。{1}").format(
+                videos_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Douyin",
         )
 
     @mode_handler("collects")
@@ -936,6 +1031,16 @@ class DouyinHandler:
             )
         )
 
+        await self._send_bark_notification(
+            _("抖音用户收藏夹作品"),
+            _("收藏夹：{0}，共下载 {1} 个作品。{2}").format(
+                collects_id,
+                videos_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Douyin",
+        )
+
     @mode_handler("mix")
     async def handle_user_mix(self):
         """
@@ -1051,6 +1156,15 @@ class DouyinHandler:
         logger.info(
             _("结束处理用户合集作品，共处理 {0} 个作品").format(videos_collected)
         )
+        await self._send_bark_notification(
+            _("抖音用户合集作品"),
+            _("合集: {0}，共下载 {1} 个作品。{2}").format(
+                mix_id,
+                videos_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Douyin",
+        )
 
     @mode_handler("live")
     async def handle_user_live(self):
@@ -1121,11 +1235,11 @@ class DouyinHandler:
             live = UserLiveFilter(response)
 
         logger.info(
-            _("房间ID: {0} 直播标题: {1} 直播状态: {2} 观看人数: {3}").format(
+            _("房间ID：{0}，直播间：{1}，状态：{2}，观看人数：{3}").format(
                 live.room_id,
-                live.live_title,
-                live.live_status,
-                live.user_count,
+                live.live_title_raw,
+                DY_LIVE_STATUS_MAPPING.get(live.live_status, _("未知状态")),
+                live.user_count or 0,
             )
         )
         logger.debug(
@@ -1135,6 +1249,19 @@ class DouyinHandler:
         )
 
         logger.debug(_("结束直播信息处理"))
+
+        await self._send_bark_notification(
+            _("抖音用户直播"),
+            _("房间ID：{0}，直播间：{1}，状态：{2}，观看人数：{3}。{4}").format(
+                live.room_id,
+                live.live_title_raw,
+                DY_LIVE_STATUS_MAPPING.get(live.live_status, _("未知状态")),
+                live.user_count or 0,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Douyin",
+        )
+
         return live
 
     async def fetch_user_live_videos_by_room_id(
@@ -1162,8 +1289,8 @@ class DouyinHandler:
             live = UserLive2Filter(response)
 
         logger.info(
-            _("直播ID: {0} 直播标题: {1} 直播状态: {2} 观看人数: {3}").format(
-                live.web_rid, live.live_title, live.live_status, live.user_count
+            _("直播ID：{0}，直播间：{1}，状态：{2}，观看人数：{3}").format(
+                live.web_rid, live.live_title_raw, live.live_status, live.user_count
             )
         )
         logger.debug(
@@ -1176,6 +1303,18 @@ class DouyinHandler:
             )
         )
         logger.info(_("结束直播数据处理"))
+
+        await self._send_bark_notification(
+            _("抖音用户直播-2"),
+            _("直播ID：{0}，直播间：{1}，状态：{2}，观看人数：{3}。{4}").format(
+                live.web_rid,
+                live.live_title_raw,
+                DY_LIVE_STATUS_MAPPING.get(live.live_status, _("未知状态")),
+                live.user_count or 0,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Douyin",
+        )
 
         return live
 
@@ -1283,6 +1422,14 @@ class DouyinHandler:
         logger.info(
             _("结束处理用户首页推荐作品，共处理 {0} 个作品").format(videos_collected)
         )
+        await self._send_bark_notification(
+            _("抖音feed推荐作品"),
+            _("共下载 {0} 个作品。{1}").format(
+                videos_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Douyin",
+        )
 
     @mode_handler("related")
     async def handle_related(self):
@@ -1387,6 +1534,14 @@ class DouyinHandler:
 
         logger.info(
             _("结束处理作品相似推荐，共处理 {0} 个作品").format(videos_collected)
+        )
+        await self._send_bark_notification(
+            _("抖音作品相似推荐"),
+            _("共下载 {0} 个作品。{1}").format(
+                videos_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Douyin",
         )
 
     @mode_handler("friend")
@@ -1493,6 +1648,14 @@ class DouyinHandler:
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
         logger.info(_("结束处理好友作品，共处理 {0} 个作品").format(videos_collected))
+        await self._send_bark_notification(
+            _("抖音好友作品"),
+            _("共下载 {0} 个作品。{1}").format(
+                videos_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Douyin",
+        )
 
     async def fetch_user_following(
         self,
@@ -1588,6 +1751,14 @@ class DouyinHandler:
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
         logger.info(_("结束处理关注用户，共处理 {0} 个用户").format(users_collected))
+        await self._send_bark_notification(
+            _("抖音用户关注用户"),
+            _("共处理 {0} 个用户。{1}").format(
+                users_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Douyin",
+        )
 
     async def fetch_user_follower(
         self,
@@ -1672,6 +1843,14 @@ class DouyinHandler:
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
         logger.info(_("结束处理粉丝用户，共处理 {0} 个用户").format(users_collected))
+        await self._send_bark_notification(
+            _("抖音用户粉丝用户"),
+            _("共处理 {0} 个用户。{1}").format(
+                users_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Douyin",
+        )
 
     async def fetch_query_user(self) -> QueryUserFilter:
         """
@@ -1875,6 +2054,16 @@ class DouyinHandler:
                 )
             )
             logger.info(_("结束查询关注用户直播间信息"))
+            await self._send_bark_notification(
+                _("抖音关注用户直播"),
+                _("房间ID：{0}，直播间：{1}，观看人数：{2}。{3}").format(
+                    follow_live.room_id,
+                    follow_live.live_title_raw,
+                    follow_live.user_count or 0,
+                    timestamp_2_str(get_timestamp("sec")),
+                ),
+                group="Douyin",
+            )
         else:
             logger.warning(
                 _("获取关注用户直播间信息失败：{0}").format(follow_live.status_msg)
