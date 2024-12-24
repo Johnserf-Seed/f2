@@ -333,14 +333,15 @@ class BaseDownloader(BaseCrawler):
                                             "无法读取该TS文件字节长度，将使用默认400kb块大小处理数据"
                                         )
                                     )
-                                ts_request = self.aclient.build_request(
-                                    "GET", ts_url, headers=self.headers
-                                )
-                                ts_response = await self.aclient.send(
-                                    ts_request, stream=True
-                                )
 
                                 try:
+                                    ts_request = self.aclient.build_request(
+                                        "GET", ts_url, headers=self.headers
+                                    )
+                                    ts_response = await self.aclient.send(
+                                        ts_request, stream=True
+                                    )
+
                                     async for chunk in ts_response.aiter_bytes(
                                         get_chunk_size(ts_content_length)
                                     ):
@@ -361,10 +362,8 @@ class BaseDownloader(BaseCrawler):
                                     # (Record the segment number that has been downloaded)
                                     downloaded_segments.add(segment.absolute_uri)
 
-                                except httpx.ReadTimeout as e:
-                                    logger.warning(
-                                        _("TS 文件下载超时: {0}，跳过该片段").format(e)
-                                    )
+                                except httpx.ReadTimeout:
+                                    logger.warning(_("TS 文件下载超时：跳过该片段"))
                                     continue
 
                                 except httpx.RemoteProtocolError as e:
@@ -403,7 +402,8 @@ class BaseDownloader(BaseCrawler):
                         )
                         return
                     else:
-                        logger.error(_("HTTP错误: {0}").format(e))
+                        logger.debug(_("HTTP错误: {0}").format(e))
+                        logger.error(_("[red]m3u8文件下载失败，但文件已保存[/red]"))
                         await self.progress.update(
                             task_id,
                             description=_("[red][  失败  ]：[/red]"),
