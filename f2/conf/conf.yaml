@@ -10,6 +10,7 @@ f2:
 
     encryption:
       algorithm: AES128
+      enable: true
       mode: CBC
       padding: PKCS7
       key: ""
