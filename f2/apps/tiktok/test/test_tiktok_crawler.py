@@ -14,8 +14,8 @@ def cookie_fixture():
     return TestConfigManager.get_test_config("tiktok")
 
 
-# @pytest.mark.asyncio
 @pytest.mark.skipif(skip_in_ci, reason="Skipping test in CI environment")
+@pytest.mark.asyncio
 async def test_crawler_by_secUid(cookie_fixture):
     async with TiktokCrawler(cookie_fixture) as crawler:
         params = UserPost(
