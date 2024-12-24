@@ -10,6 +10,8 @@ from typing import AsyncGenerator, Union, List, Any
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.decorators import mode_handler, mode_function_map
+from f2.apps.bark.handler import BarkHandler
+from f2.apps.bark.utils import ClientConfManager as BarkClientConfManager
 from f2.apps.tiktok.db import AsyncUserDB, AsyncVideoDB
 from f2.apps.tiktok.crawler import TiktokCrawler, TiktokWebSocketCrawler
 from f2.apps.tiktok.dl import TiktokDownloader
@@ -44,7 +46,7 @@ from f2.apps.tiktok.utils import (
 )
 from f2.cli.cli_console import RichConsoleManager
 from f2.exceptions.api_exceptions import APIResponseError
-from f2.utils.utils import interval_2_timestamp, timestamp_2_str
+from f2.utils.utils import interval_2_timestamp, timestamp_2_str, get_timestamp
 
 rich_console = RichConsoleManager().rich_console
 rich_prompt = RichConsoleManager().rich_prompt
@@ -53,11 +55,47 @@ rich_prompt = RichConsoleManager().rich_prompt
 class TiktokHandler:
 
     # 需要忽略的字段（需过滤掉有时效性的字段）
-    ignore_fields = ["video_play_addr", "images", "video_bit_rate", "cover"]
+    ignore_fields = [
+        "video_play_addr",
+        "images",
+        "video_bit_rate",
+        "cover",
+    ]
 
     def __init__(self, kwargs: dict = ...) -> None:
         self.kwargs = kwargs
         self.downloader = TiktokDownloader(kwargs)
+        # 初始化 Bark 通知服务
+        self.bark_kwargs = BarkClientConfManager.merge()
+        self.enable_bark = BarkClientConfManager.enable_bark()
+        self.bark_notification = BarkHandler(self.bark_kwargs)
+
+    async def _send_bark_notification(
+        self,
+        title: str,
+        body: str,
+        send_method: str = "post",
+        **kwargs,
+    ) -> None:
+        """
+        发送Bark通知的辅助方法。负责自定义通知内容。
+
+        Args:
+            title (str): 通知标题
+            body (str): 通知内容
+            send_method (str): 调用的发送方法（"fetch" 或 "post"）
+            kwargs (Dict): 其他通知参数
+        Returns:
+            None
+        """
+
+        if self.enable_bark:
+            await self.bark_notification.send_quick_notification(
+                title,
+                body,
+                send_method=send_method,
+                **kwargs,
+            )
 
     async def fetch_user_profile(
         self,
@@ -216,6 +254,15 @@ class TiktokHandler:
             )
         )
 
+        await self._send_bark_notification(
+            _("TK单个作品"),
+            _("作品ID：{0}，作品下载完成。{1}").format(
+                video.aweme_id,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Tiktok",
+        )
+
         return video
 
     @mode_handler("post")
@@ -306,13 +353,15 @@ class TiktokHandler:
 
             if not video.has_aweme:
                 logger.info(_("第 {0} 页没有找到作品").format(cursor))
-                logger.info(video._to_raw())
                 if not video.hasMore and str(video.api_status_code) == "0":
                     logger.info(_("用户：{0} 所有作品采集完毕").format(secUid))
                     break
                 else:
                     cursor = video.cursor
                     continue
+
+            # 防止最后一页不包含任何作品导致无法获取nickname_raw
+            nickname_raw = video.nickname_raw[0]
 
             logger.debug(_("当前请求的cursor：{0}").format(cursor))
             logger.debug(
@@ -337,6 +386,16 @@ class TiktokHandler:
 
         logger.info(
             _("结束处理用户发布的作品，共处理 {0} 个作品").format(videos_collected)
+        )
+
+        await self._send_bark_notification(
+            _("TK用户作品"),
+            _("用户：{0}，共下载 {1} 个作品。{2}").format(
+                nickname_raw,
+                videos_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Tiktok",
         )
 
     @mode_handler("like")
@@ -447,6 +506,18 @@ class TiktokHandler:
             _("结束处理用户点赞的作品，共处理 {0} 个作品").format(videos_collected)
         )
 
+        # 点赞接口中没有当前用户的相关信息，因此无法获取nickname_raw
+        user = await self.fetch_user_profile(secUid=secUid)
+        await self._send_bark_notification(
+            _("TK用户点赞作品"),
+            _("用户：{0}，共下载 {1} 个作品。{2}").format(
+                user.nickname_raw,
+                videos_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Tiktok",
+        )
+
     @mode_handler("collect")
     async def handle_user_collect(self):
         """
@@ -554,6 +625,15 @@ class TiktokHandler:
 
         logger.info(
             _("结束处理用户收藏作品，共处理 {0} 个作品").format(videos_collected)
+        )
+
+        await self._send_bark_notification(
+            _("TK用户收藏作品"),
+            _("共下载 {0} 个作品。{1}").format(
+                videos_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Tiktok",
         )
 
     @mode_handler("mix")
@@ -754,6 +834,16 @@ class TiktokHandler:
             _("结束处理用户合集作品，共处理 {0} 个作品").format(videos_collected)
         )
 
+        await self._send_bark_notification(
+            _("TK用户播放列表作品"),
+            _("合集: {0}，共下载 {1} 个作品。{2}").format(
+                mixId,
+                videos_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Tiktok",
+        )
+
     @mode_handler("search")
     async def handle_search(self):
         """
@@ -869,6 +959,16 @@ class TiktokHandler:
 
         logger.info(_("结束搜索，共搜索到 {0} 个作品").format(videos_collected))
 
+        await self._send_bark_notification(
+            _("TK搜索作品"),
+            _("关键词：{0}，共下载 {1} 个作品。{2}").format(
+                keyword,
+                videos_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Tiktok",
+        )
+
     @mode_handler("live")
     async def handle_user_live(self):
         """
@@ -921,7 +1021,7 @@ class TiktokHandler:
             live: [UserLiveFilter: 直播作品信息过滤器 (Live video info filter)
         """
 
-        logger.info(_("处理用户：{0} 的直播").format(uniqueId))
+        logger.debug(_("处理用户：{0} 的直播").format(uniqueId))
 
         async with TiktokCrawler(self.kwargs) as crawler:
             params = UserLive(uniqueId=uniqueId)
@@ -929,14 +1029,26 @@ class TiktokHandler:
             live = UserLiveFilter(response)
 
         logger.debug(
-            _("直播间ID：{0} 直播间标题：{1} 直播状态: {2} 观看人数: {3}").format(
+            _("房间ID：{0}，直播间：{1}，状态：{2}，观看人数：{3}").format(
                 live.live_room_id,
                 live.live_title_raw,
                 live.live_status,
-                live.live_user_count,
+                live.live_user_count or 0,
             )
         )
-        logger.info(_("结束直播信息处理"))
+        logger.debug(_("结束直播信息处理"))
+
+        await self._send_bark_notification(
+            _("TK用户直播"),
+            _("房间ID：{0}，直播间：{1}，状态：{2}，观看人数：{3}。{4}").format(
+                live.live_room_id,
+                live.live_title_raw,
+                live.live_status,
+                live.live_user_count or 0,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Tiktok",
+        )
 
         return live
 
