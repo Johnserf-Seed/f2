@@ -4,6 +4,7 @@ import f2
 import secrets
 
 from f2.utils.conf_manager import ConfigManager
+from f2.utils.utils import merge_config
 
 
 class ClientConfManager:
@@ -26,6 +27,10 @@ class ClientConfManager:
     @classmethod
     def app(cls) -> dict:
         return cls.app_conf
+
+    @classmethod
+    def merge(cls) -> dict:
+        return merge_config(cls.client(), cls.app())
 
     @classmethod
     def conf_version(cls) -> str:
