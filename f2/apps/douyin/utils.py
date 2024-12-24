@@ -31,7 +31,6 @@ from f2.crawlers.base_crawler import BaseCrawler
 from f2.exceptions.api_exceptions import (
     APIConnectionError,
     APIResponseError,
-    APIUnavailableError,
     APIUnauthorizedError,
     APINotFoundError,
     APITimeoutError,
@@ -752,6 +751,7 @@ class SecUserIdFetcher(BaseCrawler):
         else:
             pattern = cls._DOUYIN_URL_PATTERN
 
+        # 创建一个实例以访问 aclient
         instance = cls()
 
         try:
@@ -874,7 +874,6 @@ class AwemeIdFetcher(BaseCrawler):
 
     _DOUYIN_VIDEO_URL_PATTERN = re.compile(r"video/([^/?]*)")
     _DOUYIN_NOTE_URL_PATTERN = re.compile(r"note/([^/?]*)")
-    # _DOUYIN_LIVE_URL_PARTTERN = re.compile(r"slides/([^/?]*)")
     proxies = ClientConfManager.proxies()
 
     def __init__(self):
@@ -912,28 +911,18 @@ class AwemeIdFetcher(BaseCrawler):
         # 创建一个实例以访问 aclient
         instance = cls()
 
-        # mobile_headers = {
-        #     "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Mobile Safari/537.36 Edg/130.0.0.0"
-        # }
-
         try:
             response = await instance.aclient.get(url, follow_redirects=True)
-            # response = await instance.aclient.get(
-            #     url, headers=mobile_headers, follow_redirects=True
-            # )
             response.raise_for_status()
 
             video_pattern = cls._DOUYIN_VIDEO_URL_PATTERN
             note_pattern = cls._DOUYIN_NOTE_URL_PATTERN
-            # live_pattern = cls._DOUYIN_LIVE_URL_PARTTERN
 
             match = video_pattern.search(str(response.url))
             if match:
                 aweme_id = match.group(1)
             elif match := note_pattern.search(str(response.url)):
                 aweme_id = match.group(1)
-            # elif match := live_pattern.search(str(response.url)):
-            #     aweme_id = match.group(1)
             else:
                 raise APIResponseError(
                     _(
