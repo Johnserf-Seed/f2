@@ -166,8 +166,12 @@ class BarkHandler:
         """
         self.kwargs.update({"title": title, "body": body, **kwargs})
 
-        # 检查是否需要加密通知
-        if ClientConfManager.enable_encryption():
+        # 检查是否需要加密通知，并且设置了加密密钥
+        if ClientConfManager.enable_encryption() and kwargs.get("encryption").get(
+            "key"
+        ):
+            logger.debug(_("未设置加密密钥，改用普通通知"))
+
             # 如果需要加密，调用加密通知方法
             return await self.cipher_bark_notification()
 
