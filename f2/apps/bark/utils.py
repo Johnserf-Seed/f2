@@ -53,6 +53,10 @@ class ClientConfManager:
         return cls.client().get("encryption", {})
 
     @classmethod
+    def enable_encryption(cls) -> bool:
+        return cls.encryption().get("enable", False)
+
+    @classmethod
     def headers(cls) -> dict:
         return cls.client().get("headers", {})
 
