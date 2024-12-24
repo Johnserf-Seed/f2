@@ -1,6 +1,7 @@
 f2:
   version: "0.0.1.6"
   show_update: true
+  enable_bark: true
 
   bark:
     headers:
