@@ -583,9 +583,19 @@ class SecUserIdFetcher(BaseCrawler):
 
                 data = json.loads(match.group(1))
                 default_scope = data.get("__DEFAULT_SCOPE__", {})
-                user_detail = default_scope.get("webapp.user-detail", {})
-                user_info = user_detail.get("userInfo", {}).get("user", {})
-                sec_uid = user_info.get("secUid")
+
+                if "/video/" in url:
+                    video_detail = default_scope.get("webapp.video-detail", {})
+                    user_info = (
+                        video_detail.get("itemInfo", {})
+                        .get("itemStruct", {})
+                        .get("author", {})
+                    )
+                    sec_uid = user_info.get("secUid", None)
+                else:
+                    user_detail = default_scope.get("webapp.user-detail", {})
+                    user_info = user_detail.get("userInfo", {}).get("user", {})
+                    sec_uid = user_info.get("secUid", None)
 
                 if sec_uid is None:
                     raise RuntimeError(_("获取 {0} 失败").format("sec_uid"))
