@@ -564,7 +564,13 @@ class SecUserIdFetcher(BaseCrawler):
         instance = cls()
 
         try:
-            response = await instance.aclient.get(url, follow_redirects=True)
+            headers = {
+                "User-Agent": ClientConfManager.user_agent(),
+                "Referer": url,
+            }
+            response = await instance.aclient.get(
+                url, headers=headers, follow_redirects=True
+            )
             if response.status_code in {200, 444}:
                 if cls._TIKTOK_NOTFOUND_PARREN.search(str(response.url)):
                     raise APINotFoundError(
@@ -702,7 +708,14 @@ class SecUserIdFetcher(BaseCrawler):
         instance = cls()
 
         try:
-            response = await instance.aclient.get(url, follow_redirects=True)
+            headers = {
+                "User-Agent": ClientConfManager.user_agent(),
+                "Referer": url,
+            }
+            response = await instance.aclient.get(
+                url, headers=headers, follow_redirects=True
+            )
+
             if response.status_code in {200, 444}:
                 if cls._TIKTOK_NOTFOUND_PARREN.search(str(response.url)):
                     raise APINotFoundError(
