@@ -1156,6 +1156,7 @@ class DouyinHandler:
         logger.info(
             _("结束处理用户合集作品，共处理 {0} 个作品").format(videos_collected)
         )
+
         await self._send_bark_notification(
             _("抖音用户合集作品"),
             _("合集: {0}，共下载 {1} 个作品。{2}").format(
@@ -1247,7 +1248,6 @@ class DouyinHandler:
                 live.sub_partition_title, live.nickname
             )
         )
-
         logger.debug(_("结束直播信息处理"))
 
         await self._send_bark_notification(
@@ -1422,6 +1422,7 @@ class DouyinHandler:
         logger.info(
             _("结束处理用户首页推荐作品，共处理 {0} 个作品").format(videos_collected)
         )
+
         await self._send_bark_notification(
             _("抖音feed推荐作品"),
             _("共下载 {0} 个作品。{1}").format(
@@ -1535,6 +1536,7 @@ class DouyinHandler:
         logger.info(
             _("结束处理作品相似推荐，共处理 {0} 个作品").format(videos_collected)
         )
+
         await self._send_bark_notification(
             _("抖音作品相似推荐"),
             _("共下载 {0} 个作品。{1}").format(
@@ -1648,6 +1650,7 @@ class DouyinHandler:
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
         logger.info(_("结束处理好友作品，共处理 {0} 个作品").format(videos_collected))
+
         await self._send_bark_notification(
             _("抖音好友作品"),
             _("共下载 {0} 个作品。{1}").format(
@@ -1751,6 +1754,7 @@ class DouyinHandler:
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
         logger.info(_("结束处理关注用户，共处理 {0} 个用户").format(users_collected))
+
         await self._send_bark_notification(
             _("抖音用户关注用户"),
             _("共处理 {0} 个用户。{1}").format(
@@ -1843,6 +1847,7 @@ class DouyinHandler:
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
         logger.info(_("结束处理粉丝用户，共处理 {0} 个用户").format(users_collected))
+
         await self._send_bark_notification(
             _("抖音用户粉丝用户"),
             _("共处理 {0} 个用户。{1}").format(
