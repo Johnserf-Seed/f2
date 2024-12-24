@@ -4,19 +4,23 @@ import f2
 import re
 import httpx
 import asyncio
+import traceback
+
 from typing import Union
 from pathlib import Path
+from urllib.parse import urlparse
 
 from f2.i18n.translator import _
+from f2.log.logger import logger
 from f2.utils.conf_manager import ConfigManager
 from f2.utils.utils import extract_valid_urls, split_filename
 from f2.crawlers.base_crawler import BaseCrawler
 from f2.exceptions.api_exceptions import (
     APIConnectionError,
     APIResponseError,
-    APIUnavailableError,
     APIUnauthorizedError,
     APINotFoundError,
+    APITimeoutError,
 )
 
 
@@ -118,15 +122,82 @@ class UniqueIdFetcher(BaseCrawler):
                 APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
             )
 
-        match = cls._UNIQUE_ID_PATTERN.search(url)
+        # 创建一个实例以访问 aclient
+        instance = cls()
 
-        if match:
-            return match.group(2)
-        else:
-            raise APINotFoundError(
+        try:
+            headers = {
+                "User-Agent": ClientConfManager.user_agent(),
+                "Referer": url,
+            }
+            response = await instance.aclient.get(
+                url, headers=headers, follow_redirects=True
+            )
+
+            match = cls._UNIQUE_ID_PATTERN.search(str(response.url))
+            if match:
+                return match.group(2)
+            else:
+                raise APIResponseError(
+                    _(
+                        "未在响应的地址中找到unique_id，检查链接是否为用户链接。类名：{0}"
+                    ).format(cls.__name__)
+                )
+
+        except httpx.TimeoutException as exc:
+            logger.error(traceback.format_exc())
+            raise APITimeoutError(
                 _(
-                    "未在响应的地址中找到unique_id，检查链接是否为用户链接。类名：{0}"
-                ).format(cls.__name__)
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    "请求端点超时",
+                    url,
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
+                )
+            )
+
+        except httpx.NetworkError as exc:
+            logger.error(traceback.format_exc())
+            raise APIConnectionError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    "网络连接失败，请检查当前网络环境",
+                    url,
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
+                )
+            )
+
+        except httpx.ProtocolError as exc:
+            logger.error(traceback.format_exc())
+            raise APIUnauthorizedError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    "请求协议错误",
+                    url,
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
+                )
+            )
+
+        except httpx.ProxyError as exc:
+            logger.error(traceback.format_exc())
+            raise APIConnectionError(
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    "请求代理错误",
+                    url,
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
+                )
             )
 
     @classmethod
@@ -190,38 +261,45 @@ class TweetIdFetcher(BaseCrawler):
                 APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
             )
 
-        if "t.co" in url:
-            instance = cls()
-            try:
+        # 创建一个实例以访问 aclient
+        instance = cls()
 
+        # 解析URL并检查主机
+        parsed_url = urlparse(url)
+        host = parsed_url.hostname
+
+        if host is None:
+            raise APINotFoundError(
+                "无法解析URL的主机部分。类名：{0}".format(cls.__name__)
+            )
+        try:
+            if "t.co" in host:
                 response = await instance.aclient.get(
                     url, headers=ClientConfManager.headers(), follow_redirects=True
                 )
                 url = response.text
-                response.raise_for_status()
-            except httpx.HTTPStatusError as e:
-                raise APINotFoundError(
-                    _("未找到推文，请检查推文链接是否正确。类名：{0}").format(
-                        cls.__name__
-                    ),
-                    e.response.status_code,
-                )
-            except httpx.RequestError as exc:
-                raise APIConnectionError(
+
+            match = cls._TWEET_URL_PATTERN.search(url)
+            if match:
+                return match.group(1)
+            else:
+                raise APIResponseError(
                     _(
-                        "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
-                    ).format(url, ClientConfManager.proxies(), cls.__name__, exc)
+                        "未在响应的地址中找到tweet_id，检查链接是否为推文链接。类名：{0}"
+                    ).format(cls.__name__),
+                    response.status_code,
                 )
 
-        match = cls._TWEET_URL_PATTERN.search(url)
-
-        if match:
-            return match.group(1)
-        else:
+        except httpx.HTTPStatusError:
             raise APINotFoundError(
+                _("未找到推文，请检查推文链接是否正确。类名：{0}").format(cls.__name__)
+            )
+
+        except httpx.RequestError as exc:
+            raise APIConnectionError(
                 _(
-                    "未在响应的地址中找到tweet_id，检查链接是否为推文链接。类名：{0}"
-                ).format(cls.__name__)
+                    "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
+                ).format(url, ClientConfManager.proxies(), cls.__name__, exc)
             )
 
     @classmethod
