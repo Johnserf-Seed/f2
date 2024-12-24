@@ -153,7 +153,7 @@ class VisitorManager(BaseCrawler):
             else:
                 raise APIResponseError(
                     _("链接：{0}，状态码 {1}：{2} ").format(
-                        e.response.url, e.response.status_code, e.response.text
+                        str(e.response.url), e.response.status_code, e.response.text
                     )
                 )
 

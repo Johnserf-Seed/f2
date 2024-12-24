@@ -444,7 +444,7 @@ class XBogusManager:
         try:
             final_endpoint = XB(user_agent).getXBogus(endpoint)
         except Exception as e:
-            raise RuntimeError(_("生成X-Bogus失败: {0})").format(e))
+            raise ValueError(_("生成X-Bogus失败: {0})").format(e))
 
         return final_endpoint[0]
 
@@ -464,7 +464,7 @@ class XBogusManager:
         try:
             xb_value = XB(user_agent).getXBogus(param_str)
         except Exception as e:
-            raise RuntimeError(_("生成X-Bogus失败: {0})").format(e))
+            raise ValueError(_("生成X-Bogus失败: {0})").format(e))
 
         # 检查base_endpoint是否已有查询参数 (Check if base_endpoint already has query parameters)
         separator = "&" if "?" in base_endpoint else "?"
@@ -604,47 +604,57 @@ class SecUserIdFetcher(BaseCrawler):
                     sec_uid = user_info.get("secUid", None)
 
                 if sec_uid is None:
-                    raise RuntimeError(_("获取 {0} 失败").format("sec_uid"))
+                    raise ValueError(_("获取 {0} 失败").format("sec_uid"))
 
                 return sec_uid
             else:
-                raise ConnectionError(_("接口状态码异常，请检查重试"))
+                raise APIResponseError(_("接口状态码异常，请检查重试"))
 
         except httpx.TimeoutException as exc:
             logger.error(traceback.format_exc())
             raise APITimeoutError(
-                "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-            ).format("请求端点超时", url, cls.proxies, cls.__name__, exc)
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format("请求端点超时", url, cls.proxies, cls.__name__, exc)
+            )
 
         except httpx.NetworkError as exc:
             logger.error(traceback.format_exc())
             raise APIConnectionError(
-                "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-            ).format(
-                "网络连接失败，请检查当前网络环境",
-                url,
-                cls.proxies,
-                cls.__name__,
-                exc,
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format(
+                    "网络连接失败，请检查当前网络环境",
+                    url,
+                    cls.proxies,
+                    cls.__name__,
+                    exc,
+                )
             )
 
         except httpx.ProtocolError as exc:
             logger.error(traceback.format_exc())
             raise APIUnauthorizedError(
-                "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-            ).format("请求协议错误", url, cls.proxies, cls.__name__, exc)
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format("请求协议错误", url, cls.proxies, cls.__name__, exc)
+            )
 
         except httpx.ProxyError as exc:
             logger.error(traceback.format_exc())
             raise APIConnectionError(
-                "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-            ).format("请求代理错误", url, cls.proxies, cls.__name__, exc)
+                _(
+                    "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
+                ).format("请求代理错误", url, cls.proxies, cls.__name__, exc)
+            )
 
         except httpx.HTTPStatusError as exc:
             logger.error(traceback.format_exc())
             raise APIResponseError(
-                "{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}"
-            ).format("状态码错误", url, cls.proxies, cls.__name__, exc)
+                _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
+                    "状态码错误", url, cls.proxies, cls.__name__, exc
+                )
+            )
 
     @classmethod
     async def get_all_secuid(cls, urls: list) -> list:
@@ -697,7 +707,7 @@ class SecUserIdFetcher(BaseCrawler):
         """
 
         if not isinstance(url, str):
-            raise TypeError("输入参数必须是字符串")
+            raise TypeError(_("输入参数必须是字符串"))
 
         url = extract_valid_urls(url)
 
@@ -719,8 +729,10 @@ class SecUserIdFetcher(BaseCrawler):
             if response.status_code in {200, 444}:
                 if cls._TIKTOK_NOTFOUND_PARREN.search(str(response.url)):
                     raise APINotFoundError(
-                        "页面不可用，可能是由于区域限制（代理）造成的。类名：{0}"
-                    ).format(cls.__name__)
+                        _(
+                            "页面不可用，可能是由于区域限制（代理）造成的。类名：{0}"
+                        ).format(cls.__name__)
+                    )
 
                 match = cls._TIKTOK_UNIQUEID_PARREN.search(str(response.url))
                 if not match:
@@ -733,14 +745,14 @@ class SecUserIdFetcher(BaseCrawler):
                 unique_id = match.group(1)
 
                 if unique_id is None:
-                    raise RuntimeError(
-                        _("获取 {0} 失败，{1}").format("unique_id", response.url)
+                    raise ValueError(
+                        _("获取 {0} 失败，{1}").format("unique_id", str(response.url))
                     )
 
                 return unique_id
 
             else:
-                raise ConnectionError("接口状态码异常，请检查重试")
+                raise APIResponseError(_("接口状态码异常，请检查重试"))
 
         except httpx.TimeoutException as exc:
             logger.error(traceback.format_exc())
@@ -919,8 +931,10 @@ class AwemeIdFetcher(BaseCrawler):
             if response.status_code in {200, 444}:
                 if cls._TIKTOK_NOTFOUND_PARREN.search(str(response.url)):
                     raise APINotFoundError(
-                        "页面不可用，可能是由于区域限制（代理）造成的。类名：{0}"
-                    ).format(cls.__name__)
+                        _(
+                            "页面不可用，可能是由于区域限制（代理）造成的。类名：{0}"
+                        ).format(cls.__name__)
+                    )
 
                 match = cls._TIKTOK_AWEMEID_PARREN.search(str(response.url))
                 if not match:
@@ -933,15 +947,13 @@ class AwemeIdFetcher(BaseCrawler):
                 aweme_id = match.group(1)
 
                 if aweme_id is None:
-                    raise RuntimeError(
-                        _("获取 {0} 失败，{1}").format("aweme_id", response.url)
+                    raise ValueError(
+                        _("获取 {0} 失败，{1}").format("aweme_id", str(response.url))
                     )
 
                 return aweme_id
             else:
-                raise ConnectionError(
-                    _("接口状态码异常 {0}，请检查重试").format(response.status_code)
-                )
+                raise APIResponseError(_("接口状态码异常，请检查重试"))
 
         except httpx.TimeoutException as exc:
             logger.error(traceback.format_exc())
@@ -1098,7 +1110,7 @@ class DeviceIdManager(BaseCrawler):
     try:
         _MSTOKEN = TokenManager.gen_real_msToken()
     except Exception as e:
-        _MSTOKEN = TokenManager.gen_false_msToken()
+        _MSTOKEN = TokenManager.gen_real_msToken()
 
     _DEVICE_ID_HEADERS = {
         "User-Agent": ClientConfManager.user_agent(),

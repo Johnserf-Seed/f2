@@ -179,9 +179,13 @@ class BaseCrawler:
             try:
                 return response.json()
             except json.JSONDecodeError as e:
-                logger.error(_("解析 {0} 接口 JSON 失败：{1}").format(response.url, e))
+                logger.error(
+                    _("解析 {0} 接口 JSON 失败：{1}").format(str(response.url), e)
+                )
             except UnicodeDecodeError as e:
-                logger.error(_("接口 {0} JSON 解码错误：{1}").format(response.url, e))
+                logger.error(
+                    _("接口 {0} JSON 解码错误：{1}").format(str(response.url), e)
+                )
         else:
             if isinstance(response, Response):
                 logger.error(
@@ -208,7 +212,7 @@ class BaseCrawler:
                 if not response.text.strip() or not response.content:
                     error_message = _(
                         "第 {0} 次请求响应内容为空, 状态码: {1}, URL:{2}"
-                    ).format(attempt + 1, response.status_code, response.url)
+                    ).format(attempt + 1, response.status_code, str(response.url))
 
                     logger.warning(error_message)
 
@@ -311,7 +315,7 @@ class BaseCrawler:
                 if not response.text.strip() or not response.content:
                     error_message = _(
                         "第 {0} 次请求响应内容为空, 状态码: {1}, URL:{2}"
-                    ).format(attempt + 1, response.status_code, response.url)
+                    ).format(attempt + 1, response.status_code, str(response.url))
 
                     logger.warning(error_message)
 
