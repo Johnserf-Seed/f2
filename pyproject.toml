@@ -23,6 +23,7 @@ classifiers = [
     "Intended Audience :: Customer Service",
     "License :: OSI Approved :: Apache Software License",
     "Framework :: AsyncIO",
+    "Topic :: Utilities",
     "Topic :: Software Development :: Libraries",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Internet :: WWW/HTTP",
@@ -48,8 +49,14 @@ keywords = [
     "https",
     "ws",
     "wss",
+    "bark",
     "tiktok",
     "douyin",
+    "twitter",
+    "x",
+    "weibo",
+    "bilibili",
+    "netease",
     "http proxy",
     "watermark",
 ]
@@ -95,3 +102,11 @@ path = "f2/__init__.py"
 include = [
     "/f2",
 ]
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.pytest.ini_options]
+asyncio_mode = auto
+asyncio_default_fixture_loop_scope = function
