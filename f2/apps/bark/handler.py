@@ -32,10 +32,10 @@ class BarkHandler:
         Returns:
             BarkNotificationFilter: 处理后的Bark通知过滤结果
         """
-        logger.info(_("正在发送 Bark 通知"))
+        logger.debug(_("正在发送 Bark 通知"))
 
         # 获取并确保 body 存在
-        self.kwargs["body"] = self.kwargs.get("body", "无内容")
+        self.kwargs["body"] = self.kwargs.get("body", _("无内容"))
 
         try:
             async with BarkCrawler(self.kwargs) as crawler:
@@ -51,11 +51,8 @@ class BarkHandler:
                 bark = BarkNotificationFilter(response)
                 # 原本status_code应该放接口code中，但由于bark接口将响应的状态码直接设置为了响应的code
                 # 所以这里不判断code
-                logger.info(
-                    _("Bark通知发送成功，内容：{0}，时间：{1}").format(
-                        self.kwargs["body"], bark.timestamp
-                    )
-                )
+                logger.info(_("Bark通知发送成功，时间：{0}").format(bark.timestamp))
+                logger.debug(_("Bark通知内容：{0}").format(self.kwargs["body"]))
                 return bark
 
         except Exception as e:
@@ -77,7 +74,7 @@ class BarkHandler:
     async def cipher_bark_notification(self) -> BarkNotificationFilter:
         """用于发送加密 Bark 通知"""
 
-        logger.info(_("正在发送 Bark 加密通知"))
+        logger.debug(_("正在发送 Bark 加密通知"))
 
         # 获取 Bark 加密设置参数
         encryption = self.kwargs.get("encryption")
@@ -137,10 +134,9 @@ class BarkHandler:
                 bark = BarkNotificationFilter(response)
 
                 logger.info(
-                    _("Bark 加密通知发送成功，内容：{0}，时间：{1}").format(
-                        self.kwargs["body"], bark.timestamp
-                    )
+                    _("Bark 加密通知发送成功，时间：{0}").format(bark.timestamp)
                 )
+                logger.debug(_("Bark 加密通知内容：{0}").format(self.kwargs["body"]))
                 return bark
         except Exception as e:
             logger.error(_("Bark 通知发送失败，请检查 key 和网络连接：{0}").format(e))
