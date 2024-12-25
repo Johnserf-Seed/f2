@@ -270,7 +270,7 @@ class TweetIdFetcher(BaseCrawler):
 
         if host is None:
             raise APINotFoundError(
-                "无法解析URL的主机部分。类名：{0}".format(cls.__name__)
+                _("无法解析URL的主机部分。类名：{0}".format(cls.__name__))
             )
         try:
             if "t.co" in host:
