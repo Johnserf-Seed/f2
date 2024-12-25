@@ -137,7 +137,9 @@ class BaseDownloader(BaseCrawler):
                 # 如果文件内容大小为0, 则尝试下一个链接 (If file content size is 0, try the next link)
                 if content_length == 0:
                     logger.warning(
-                        _("链接 {0} 内容长度为0，尝试下一个链接是否可用").format(link)
+                        _("链接 {0} 响应大小为 0 字节，尝试下一个链接是否可用").format(
+                            link
+                        )
                     )
                     continue
 

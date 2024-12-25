@@ -9,7 +9,6 @@ from f2.crawlers.base_crawler import BaseCrawler
 from f2.utils.utils import BaseEndpointManager
 from f2.apps.bark.model import BarkModel, BarkCipherModel
 from f2.apps.bark.api import BarkAPIEndpoints as bkendpoint
-from f2.apps.bark.utils import ClientConfManager
 
 
 class BarkCrawler(BaseCrawler):
