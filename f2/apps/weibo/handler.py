@@ -9,6 +9,8 @@ from typing import AsyncGenerator, Union, Dict, Any, List
 from f2.log.logger import logger
 from f2.i18n.translator import _
 from f2.utils.decorators import mode_handler, mode_function_map
+from f2.apps.bark.handler import BarkHandler
+from f2.apps.bark.utils import ClientConfManager as BarkClientConfManager
 from f2.apps.weibo.db import AsyncUserDB
 from f2.apps.weibo.crawler import WeiboCrawler
 from f2.apps.weibo.dl import WeiboDownloader
@@ -33,6 +35,8 @@ from f2.apps.weibo.utils import (
 )
 from f2.exceptions.api_exceptions import APIResponseError, APINotFoundError
 from f2.cli.cli_console import RichConsoleManager
+from f2.utils.utils import timestamp_2_str, get_timestamp
+
 
 rich_console = RichConsoleManager().rich_console
 rich_prompt = RichConsoleManager().rich_prompt
@@ -46,6 +50,10 @@ class WeiboHandler:
     def __init__(self, kwargs) -> None:
         self.kwargs = kwargs
         self.downloader = WeiboDownloader(kwargs)
+        # 初始化 Bark 通知服务
+        self.bark_kwargs = BarkClientConfManager.merge()
+        self.enable_bark = BarkClientConfManager.enable_bark()
+        self.bark_notification = BarkHandler(self.bark_kwargs)
 
     # 只允许?uid=xxxx&screen_name=
     # 只允许?uid=xxxx
@@ -53,6 +61,33 @@ class WeiboHandler:
     # 不允许?uid=xxxx&screen_name=xxxx
     # 不允许?uid=&screen_name=xxxx
     # 💩
+
+    async def _send_bark_notification(
+        self,
+        title: str,
+        body: str,
+        send_method: str = "post",
+        **kwargs,
+    ) -> None:
+        """
+        发送Bark通知的辅助方法。负责自定义通知内容。
+
+        Args:
+            title (str): 通知标题
+            body (str): 通知内容
+            send_method (str): 调用的发送方法（"fetch" 或 "post"）
+            kwargs (Dict): 其他通知参数
+        Returns:
+            None
+        """
+
+        if self.enable_bark:
+            await self.bark_notification.send_quick_notification(
+                title,
+                body,
+                send_method=send_method,
+                **kwargs,
+            )
 
     async def fetch_user_info(self, uid: str) -> UserInfoFilter:
         """
@@ -229,10 +264,6 @@ class WeiboHandler:
             logger.error(_("微博 {0} 无查看权限，请配置Cookie").format(weibo_id))
             await self.downloader.close()
             return
-        else:
-            logger.info(
-                f"微博ID: {weibo.weibo_id}, 微博文案: {weibo.weibo_desc}, 发布时间: {weibo.weibo_created_at}"
-            )
 
         async with AsyncUserDB("weibo_users.db") as audb:
             user_path = await self.get_or_add_user_data(self.kwargs, weibo.uid, audb)
@@ -261,7 +292,23 @@ class WeiboHandler:
             params = WeiboDetail(id=weibo_id)
             response = await crawler.fetch_weibo_detail(params)
             weibo = WeiboDetailFilter(response)
-            return weibo
+
+        logger.debug(
+            f"微博ID: {weibo.weibo_id}, 文案: {weibo.weibo_desc}, 发布时间: {weibo.weibo_created_at}"
+        )
+
+        await self._send_bark_notification(
+            _("[Weibo] 单一微博下载"),
+            _("微博ID: {0}\n" "作者: {1}\n" "文案: {2}\n" "时间: {3}\n").format(
+                weibo.weibo_id,
+                weibo.nickname_raw,
+                weibo.weibo_desc,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Weibo",
+        )
+
+        return weibo
 
     @mode_handler("post")
     async def handle_user_weibo(self):
@@ -334,11 +381,24 @@ class WeiboHandler:
             else:
                 since_id = str(weibo_data.since_id)
 
+            # 防止最后一页不包含任何微博导致无法获取nickname_raw
+            nickname_raw = weibo_data.weibo_user_name_raw[0]
+
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
         logger.info(_("已爬取完所有微博，共处理 {0} 个微博").format(weibos_collected))
+
+        await self._send_bark_notification(
+            _("[Weibo] 用户微博下载"),
+            _("用户：{0}\n" "微博数：{1}\n" "时间：{2}\n").format(
+                nickname_raw,
+                weibos_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Weibo",
+        )
 
 
 async def main(kwargs):
