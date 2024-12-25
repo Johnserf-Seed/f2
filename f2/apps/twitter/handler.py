@@ -1,12 +1,15 @@
 # path: f2/apps/twitter/handler.py
 
 import asyncio
+
 from pathlib import Path
 from typing import AsyncGenerator, Union, Dict, Any, List
 
 from f2.log.logger import logger
 from f2.i18n.translator import _
 from f2.utils.decorators import mode_handler, mode_function_map
+from f2.apps.bark.handler import BarkHandler
+from f2.apps.bark.utils import ClientConfManager as BarkClientConfManager
 from f2.apps.twitter.db import AsyncUserDB
 from f2.apps.twitter.crawler import TwitterCrawler
 from f2.apps.twitter.dl import TwitterDownloader
@@ -31,6 +34,7 @@ from f2.apps.twitter.utils import (
 )
 from f2.cli.cli_console import RichConsoleManager
 from f2.exceptions.api_exceptions import APIResponseError
+from f2.utils.utils import timestamp_2_str, get_timestamp
 
 rich_console = RichConsoleManager().rich_console
 rich_prompt = RichConsoleManager().rich_prompt
@@ -41,6 +45,37 @@ class TwitterHandler:
     def __init__(self, kwargs: dict = ...) -> None:
         self.kwargs = kwargs
         self.downloader = TwitterDownloader(kwargs)
+        # 初始化 Bark 通知服务
+        self.bark_kwargs = BarkClientConfManager.merge()
+        self.enable_bark = BarkClientConfManager.enable_bark()
+        self.bark_notification = BarkHandler(self.bark_kwargs)
+
+    async def _send_bark_notification(
+        self,
+        title: str,
+        body: str,
+        send_method: str = "post",
+        **kwargs,
+    ) -> None:
+        """
+        发送Bark通知的辅助方法。负责自定义通知内容。
+
+        Args:
+            title (str): 通知标题
+            body (str): 通知内容
+            send_method (str): 调用的发送方法（"fetch" 或 "post"）
+            kwargs (Dict): 其他通知参数
+        Returns:
+            None
+        """
+
+        if self.enable_bark:
+            await self.bark_notification.send_quick_notification(
+                title,
+                body,
+                send_method=send_method,
+                **kwargs,
+            )
 
     async def fetch_user_profile(
         self,
@@ -156,12 +191,26 @@ class TwitterHandler:
             tweet = TweetDetailFilter(response)
 
         logger.info(
-            _("推文ID：{0} 推文文案：{1} 作者：{2} 推文阅读量：{3}").format(
+            _("推文ID：{0} 文案：{1} 作者：{2} 阅读量：{3}").format(
                 tweet.tweet_id,
                 tweet.tweet_desc,
                 tweet.nickname,
                 tweet.tweet_views_count,
             )
+        )
+
+        await self._send_bark_notification(
+            title=_("[Twitter] 单个推文下载"),
+            body=_(
+                "推文ID：{0}\n" "文案：{1}\n" "作者：{2}\n" "阅读量：{3}\n" "时间：{4}"
+            ).format(
+                tweet.tweet_id,
+                tweet.tweet_desc,
+                tweet.nickname,
+                tweet.tweet_views_count,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Twitter",
         )
 
         return tweet
@@ -239,7 +288,7 @@ class TwitterHandler:
                 tweet = PostTweetFilter(response)
 
             logger.debug(
-                _("推文ID：{0} 推文文案：{1} 作者：{2}").format(
+                _("推文ID：{0} 文案：{1} 作者：{2}").format(
                     tweet.tweet_id, tweet.tweet_desc, tweet.nickname
                 )
             )
@@ -251,6 +300,9 @@ class TwitterHandler:
 
             yield tweet
 
+            # 防止最后一页不包含任何作品导致无法获取nickname_raw
+            nickname_raw = tweet.nickname_raw[0]
+
             # 更新已经处理的推文数量 (Update the number of videos processed)
             tweets_collected += len(list(filter(None, tweet.tweet_id)))
             max_cursor = tweet.max_cursor
@@ -260,6 +312,16 @@ class TwitterHandler:
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
         logger.info(_("爬取结束，共爬取 {0} 个推文").format(tweets_collected))
+
+        await self._send_bark_notification(
+            _("[Twitter] 主页推文下载"),
+            _("用户：{0}\n" "推文数：{1}\n" "时间：{2}").format(
+                nickname_raw,
+                tweets_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Twitter",
+        )
 
     @mode_handler("like")
     async def handle_like_tweet(self):
@@ -359,6 +421,16 @@ class TwitterHandler:
 
         logger.info(_("爬取结束，共爬取 {0} 个推文").format(tweets_collected))
 
+        await self._send_bark_notification(
+            _("[Twitter] 喜欢推文下载"),
+            _("用户ID：{0}\n" "推文数：{1}\n" "时间：{2}").format(
+                userId,
+                tweets_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Twitter",
+        )
+
     @mode_handler("bookmark")
     async def handle_bookmark_tweet(self):
         """
@@ -457,6 +529,15 @@ class TwitterHandler:
             await asyncio.sleep(self.kwargs.get("timeout", 5))
 
         logger.info(_("爬取结束，共爬取 {0} 个推文").format(tweets_collected))
+
+        await self._send_bark_notification(
+            _("[Twitter] 收藏推文下载"),
+            _("推文数：{0}\n" "时间：{1}").format(
+                tweets_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="Twitter",
+        )
 
 
 async def main(kwargs):
