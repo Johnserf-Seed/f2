@@ -291,6 +291,10 @@ class WeiboDetailFilter(JSONModel):
     def nickname(self):
         return replaceT(self._get_attr_value("$.user.screen_name"))
 
+    @property
+    def nickname_raw(self):
+        return self._get_attr_value("$.user.screen_name")
+
     def _to_raw(self) -> dict:
         return self._data
 
