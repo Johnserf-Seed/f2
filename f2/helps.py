@@ -22,6 +22,7 @@ import importlib
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
+
 from f2.i18n.translator import _
 
 # 真彩色终端
@@ -45,7 +46,9 @@ def main() -> None:
     console.print(f"\n:rocket: [bold]f2 {f2.__version__} :rocket:", justify="center")
     console.print(f"\n[i]{f2.__description_cn__}", justify="center")
     console.print(f"[i]{f2.__description_en__}", justify="center")
-    console.print(f"[i]GitHub {f2.__repourl__}\n", justify="center")
+    console.print(
+        f"[i]GitHub {f2.__repourl__} Docs {f2.__docurl__}\n", justify="center"
+    )
 
     # 使用方法
     table = Table.grid(padding=1, pad_edge=True)
