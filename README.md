@@ -636,5 +636,5 @@ Copyright (c) 2023 JohnserfSeed
 
 只回答关于`F2`的问题，可以通过以下方式联系我，请耐心等待，会尽快回复你。
 
-- Mail：[johnserf-seed@foxmail.com](mailto:johnserf-seed@foxmail.com)
+- Mail：[support@f2.wiki](mailto:support@f2.wiki)
 - Discord：[F2](https://discord.gg/3PhtPmgHf8)

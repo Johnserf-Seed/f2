@@ -1,6 +1,6 @@
 /*!
  * File: webcast_signature.js
- * Author: Johnserf-Seed <johnserf-seed@foxmail.com>
+ * Author: Johnserf-Seed <support@f2.wiki>
  * Created: 2024-06-23
  * Update: 2024-06-23
  * Version: 1.0.1
