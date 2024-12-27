@@ -7,7 +7,7 @@
 @version    :0.0.1.6
 @License    :Apache License 2.0
 @Github     :https://github.com/johnserf-seed
-@Mail       :johnserf-seed@foxmail.com
+@Mail       :support@f2.wiki
 -------------------------------------------------
 Change Log  :
 2023/02/06 17:36:41 - create output help
