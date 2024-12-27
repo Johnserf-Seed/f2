@@ -9,7 +9,7 @@
 @version    :0.0.3
 @License    :Apache License 2.0
 @Github     :https://github.com/johnserf-seed
-@Mail       :johnserf-seed@foxmail.com
+@Mail       :support@f2.wiki
 -------------------------------------------------
 Change Log  :
 2023/02/09 00:29:30 - Create XBogus class
