@@ -200,12 +200,20 @@ class TwitterHandler:
         )
 
         await self._send_bark_notification(
-            title=_("[Twitter] 单个推文下载"),
-            body=_(
-                "推文ID：{0}\n" "文案：{1}\n" "作者：{2}\n" "阅读量：{3}\n" "时间：{4}"
+            _("[Twitter] 单个推文下载"),
+            _(
+                "推文ID：{0}\n"
+                "文案：{1}\n"
+                "作者：{2}\n"
+                "阅读量：{3}\n"
+                "下载时间：{4}"
             ).format(
                 tweet.tweet_id,
-                tweet.tweet_desc,
+                (
+                    tweet.tweet_desc_raw[:20] + "..."
+                    if len(tweet.tweet_desc) > 20
+                    else tweet.tweet_desc_raw
+                ),
                 tweet.nickname,
                 tweet.tweet_views_count,
                 timestamp_2_str(get_timestamp("sec")),
@@ -315,7 +323,7 @@ class TwitterHandler:
 
         await self._send_bark_notification(
             _("[Twitter] 主页推文下载"),
-            _("用户：{0}\n" "推文数：{1}\n" "时间：{2}").format(
+            _("用户：{0}\n" "推文数：{1}\n" "下载时间：{2}").format(
                 nickname_raw,
                 tweets_collected,
                 timestamp_2_str(get_timestamp("sec")),
@@ -423,7 +431,7 @@ class TwitterHandler:
 
         await self._send_bark_notification(
             _("[Twitter] 喜欢推文下载"),
-            _("用户ID：{0}\n" "推文数：{1}\n" "时间：{2}").format(
+            _("用户ID：{0}\n" "推文数：{1}\n" "下载时间：{2}").format(
                 userId,
                 tweets_collected,
                 timestamp_2_str(get_timestamp("sec")),
@@ -532,7 +540,7 @@ class TwitterHandler:
 
         await self._send_bark_notification(
             _("[Twitter] 收藏推文下载"),
-            _("推文数：{0}\n" "时间：{1}").format(
+            _("推文数：{0}\n" "下载时间：{1}").format(
                 tweets_collected,
                 timestamp_2_str(get_timestamp("sec")),
             ),
