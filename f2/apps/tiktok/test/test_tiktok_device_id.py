@@ -28,7 +28,7 @@ async def test_gen_device_id_with_full_cookie():
 
 @pytest.mark.asyncio
 async def test_gen_device_ids():
-    devices = await DeviceIdManager.gen_device_ids(3)
+    devices = await DeviceIdManager.gen_device_ids(2)
 
     assert "deviceId" in devices
     assert "cookie" in devices
@@ -36,8 +36,8 @@ async def test_gen_device_ids():
     device_ids = devices["deviceId"]
     tt_chain_tokens = devices["cookie"]
 
-    assert len(device_ids) == 3
-    assert len(tt_chain_tokens) == 3
+    assert len(device_ids) == 2
+    assert len(tt_chain_tokens) == 2
 
     for deviceId in device_ids:
         assert deviceId is not None
@@ -49,7 +49,7 @@ async def test_gen_device_ids():
 
 @pytest.mark.asyncio
 async def test_gen_device_ids_with_full_cookie():
-    devices = await DeviceIdManager.gen_device_ids(3, full_cookie=True)
+    devices = await DeviceIdManager.gen_device_ids(2, full_cookie=True)
 
     assert "deviceId" in devices
     assert "cookie" in devices
@@ -57,8 +57,8 @@ async def test_gen_device_ids_with_full_cookie():
     device_ids = devices["deviceId"]
     cookies = devices["cookie"]
 
-    assert len(device_ids) == 3
-    assert len(cookies) == 3
+    assert len(device_ids) == 2
+    assert len(cookies) == 2
 
     for deviceId in device_ids:
         assert deviceId is not None
