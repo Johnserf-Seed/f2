@@ -645,7 +645,7 @@ outline: [2,3]
 | :--- | :--- | :--- |
 | self.websocket | WebSocket | 弹幕WebSocket对象 |
 
-<<< @/snippets/douyin/user-live-im-fetch.py#user-live-im-fetch-snippet{30-33,36-69,106-113}
+<<< @/snippets/douyin/user-live-im-fetch.py#user-live-im-fetch-snippet{32-35,38-71,108-115}
 
 ### 关注用户的直播间信息 🟢
 
