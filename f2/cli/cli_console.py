@@ -73,7 +73,7 @@ class ProgressManager:
             "{task.description}[bold blue]{task.fields[filename]}"
         ),
         "bar": BarColumn(bar_width=None),
-        "percentage": TextColumn("[progress.percentage]{task.percentage:>4.1f}%"),
+        "percentage": TextColumn("[progress.percentage]{task.percentage:>4.2f}%"),
         "•": "•",
         "filesize": DownloadColumn(),
         "speed": TransferSpeedColumn(),
