@@ -1247,8 +1247,9 @@ class DouyinHandler:
             live = UserLiveFilter(response)
 
         logger.info(
-            _("房间ID：{0}，直播间：{1}，状态：{2}，观看人数：{3}").format(
+            _("房间ID：{0}，用户：{1}，直播间：{2}，状态：{3}，观看人数：{4}").format(
                 live.room_id,
+                live.nickname_raw or "",
                 (
                     live.live_title_raw[:20] + "..."
                     if len(live.live_title_raw) > 20
@@ -1258,23 +1259,20 @@ class DouyinHandler:
                 live.user_count or 0,
             )
         )
-        logger.debug(
-            _("子分区：{0} 主播昵称：{1}").format(
-                live.sub_partition_title, live.nickname
-            )
-        )
         logger.debug(_("结束直播信息处理"))
 
         await self._send_bark_notification(
             _("[DouYin] 直播下载"),
             _(
                 "房间ID：{0}\n"
-                "直播间：{1}\n"
-                "状态：{2}\n"
-                "观看人数：{3}\n"
-                "下载时间：{4}"
+                "用户：{1}\n"
+                "直播间：{2}\n"
+                "状态：{3}\n"
+                "观看人数：{4}\n"
+                "下载时间：{5}"
             ).format(
                 live.room_id,
+                live.nickname_raw or "",
                 (
                     live.live_title_raw[:20] + "..."
                     if len(live.live_title_raw) > 20
@@ -1314,13 +1312,20 @@ class DouyinHandler:
             live = UserLive2Filter(response)
 
         logger.info(
-            _("直播ID：{0}，直播间：{1}，状态：{2}，观看人数：{3}").format(
-                live.web_rid, live.live_title_raw, live.live_status, live.user_count
+            _("直播ID：{0}，用户：{1}，直播间：{2}，状态：{3}，观看人数：{4}").format(
+                live.web_rid,
+                live.nickname_raw or "",
+                (
+                    live.live_title_raw[:20] + "..."
+                    if len(live.live_title_raw) > 20
+                    else live.live_title_raw
+                ),
+                DY_LIVE_STATUS_MAPPING.get(live.live_status, _("未知状态")),
+                live.user_count or 0,
             )
         )
         logger.debug(
-            _("主播昵称：{0} 开播时间：{1} 直播流清晰度：{2}").format(
-                live.nickname,
+            _("开播时间：{1} 直播流清晰度：{2}").format(
                 live.create_time,
                 "、".join(
                     [f"{key}：{value}" for key, value in live.resolution_name.items()]
@@ -1333,12 +1338,14 @@ class DouyinHandler:
             _("[DouYin] 直播下载-2"),
             _(
                 "直播ID：{0}\n"
-                "直播间：{1}\n"
-                "状态：{2}\n"
-                "观看人数：{3}\n"
-                "下载时间：{4}"
+                "用户：{1}\n"
+                "直播间：{2}\n"
+                "状态：{3}\n"
+                "观看人数：{4}\n"
+                "下载时间：{5}"
             ).format(
                 live.web_rid,
+                live.nickname_raw or "",
                 (
                     live.live_title_raw[:20] + "..."
                     if len(live.live_title_raw) > 20
