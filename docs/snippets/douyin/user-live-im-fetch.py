@@ -3,6 +3,7 @@ import asyncio
 
 from f2.apps.douyin.crawler import DouyinWebSocketCrawler
 from f2.apps.douyin.handler import DouyinHandler
+from f2.apps.douyin.utils import TokenManager  # [!code ++]
 from f2.log.logger import logger
 
 
@@ -14,9 +15,10 @@ kwargs = {
     },
     "proxies": {"http://": None, "https://": None},
     "timeout": 10,
-    # 游客cookie即可，需要注意ttwid作为用户标识只可在一个直播间使用，不可多个直播间同时使用
+    # 游客cookie即可，需要注意每次生成的ttwid作为用户标识只可在一个直播间使用，不可多个直播间同时使用
     # 使用TokenManager.gen_ttwid()即可生成新的游客ttwid
-    "cookie": "GUEST_COOKIE_HERE",
+    # "cookie": "GUEST_COOKIE_HERE",  # [!code --]
+    "cookie": f"ttwid={TokenManager.gen_ttwid()}; __live_version__=%221.1.2.6631%22; live_use_vvc=%22false%22;",  # [!code ++]
 }
 
 
