@@ -41,6 +41,7 @@ export default defineConfig({
     socialLinks: [
       { icon: 'github', link: 'https://github.com/Johnserf-Seed/f2', ariaLabel: 'GitHub' },
       { icon: 'discord', link: 'https://discord.gg/3PhtPmgHf8', ariaLabel: 'Discord' },
+      { icon: 'gmail', link: 'mailto:support@f2.wiki', ariaLabel: 'Email' },
     ],
     algolia: {
       appId: 'KKYI8Z7LEP',
