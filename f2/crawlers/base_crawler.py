@@ -29,7 +29,51 @@ from f2.utils.utils import timestamp_2_str
 
 class BaseCrawler:
     """
-    基础爬虫客户端 (Base crawler client)
+    基础爬虫客户端 (Base Crawler Client)
+
+    该类提供了一个通用的爬虫客户端，可以使用同步或异步方式发起 HTTP 请求。它支持 GET、POST 和 HEAD 请求，并具备代理支持、超时控制、重试机制、最大连接数等功能。
+
+    类属性:
+    - proxies (dict): 代理设置，用于支持 HTTP 和 HTTPS 请求的代理。
+    - http_proxy (str): HTTP 代理地址。
+    - https_proxy (str): HTTPS 代理地址。
+    - crawler_headers (dict): 自定义请求头。
+    - _max_tasks (int): 最大异步任务数。
+    - semaphore (asyncio.Semaphore): 用于限制并发任务数的信号量。
+    - _max_connections (int): 最大连接数。
+    - limits (httpx.Limits): 用于限制最大连接数的配置。
+    - _max_retries (int): 请求重试次数。
+    - _timeout (int): 请求超时时间。
+    - timeout (httpx.Timeout): 超时设置。
+    - _aclient (httpx.AsyncClient): 异步 HTTP 客户端。
+    - _client (httpx.Client): 同步 HTTP 客户端。
+
+    类方法:
+    - aclient (property): 获取异步客户端（如果未初始化则创建）。
+    - client (property): 获取同步客户端（如果未初始化则创建）。
+    - _create_mount: 根据是否异步模式创建 HTTP 传输配置。
+    - _fetch_response: 获取接口的响应数据（原始响应）。
+    - _fetch_get_json: 获取接口的响应并解析为 JSON 数据（GET 请求）。
+    - _fetch_post_json: 获取接口的响应并解析为 JSON 数据（POST 请求）。
+    - parse_json: 解析 JSON 响应对象。
+    - get_fetch_data: 发送 GET 请求并获取响应数据。
+    - post_fetch_data: 发送 POST 请求并获取响应数据。
+    - head_fetch_data: 发送 HEAD 请求并获取响应数据。
+    - handle_http_status_error: 处理 HTTP 状态码错误并抛出相应的自定义异常。
+    - close: 关闭客户端，释放资源。
+    - __aenter__: 异步上下文管理器的进入方法。
+    - __aexit__: 异步上下文管理器的退出方法。
+
+    异常处理:
+    - 该类会根据不同的 HTTP 错误状态码或请求异常，抛出相应的自定义异常，如 APITimeoutError、APIConnectionError 等。
+
+    使用示例:
+    ```python
+        # 创建 BaseCrawler 实例并使用异步方式获取数据
+        async with BaseCrawler(proxies={'http://': 'http://proxy.com'}, crawler_headers={'User-Agent': 'MyCrawler'}) as crawler:
+            response = await crawler._fetch_get_json("https://api.example.com/data")
+            print(response)
+    ```
     """
 
     def __init__(
@@ -434,7 +478,38 @@ class BaseCrawler:
 
 class WebSocketCrawler:
     """
-    WebSocket爬虫客户端 (WebSocket crawler client)
+    WebSocket 爬虫客户端 (WebSocket Crawler Client)
+
+    该类提供了一个 WebSocket 客户端，可以通过 WebSocket 协议连接到服务器，接收和发送消息。它支持代理、超时控制、连接和消息的处理等功能。
+
+    类属性:
+    - websocket (websockets.WebSocketClientProtocol): WebSocket 客户端实例。
+    - wss_headers (dict): 自定义 WebSocket 请求头信息。
+    - proxy (websockets_proxy.Proxy): 代理设置，用于 WebSocket 连接。
+    - callbacks (dict): 存储 WebSocket 回调函数的字典。
+    - timeout (int): WebSocket 接收消息的超时时间。
+
+    类方法:
+    - connect_websocket: 连接到指定的 WebSocket 服务器。
+    - receive_messages: 接收 WebSocket 消息并进行处理。
+    - close_websocket: 关闭 WebSocket 连接。
+    - on_message: 处理接收到的消息。
+    - on_error: 处理 WebSocket 错误消息。
+    - on_close: 处理 WebSocket 关闭事件。
+    - on_open: 处理 WebSocket 打开事件。
+    - __aenter__: 异步上下文管理器的进入方法，连接 WebSocket。
+    - __aexit__: 异步上下文管理器的退出方法，关闭 WebSocket 连接。
+
+    异常处理:
+    - 该类会根据 WebSocket 连接的错误、消息接收超时等情况抛出相应的异常，并通过日志记录错误信息。
+
+    使用示例:
+    ```python
+        # 创建 WebSocketCrawler 实例并使用异步方式连接 WebSocket 服务器
+        async with WebSocketCrawler(wss_headers={"Cookie": ""}, timeout=10) as crawler:
+            await crawler.connect_websocket("wss://example.com/socket")
+            await crawler.receive_messages()
+    ```
     """
 
     def __init__(

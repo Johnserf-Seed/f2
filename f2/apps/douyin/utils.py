@@ -126,10 +126,7 @@ class TokenManager(BaseCrawler):
     """
     TokenManager 类用于生成和管理与抖音相关的 token，包括 msToken 和 ttwid。
 
-    该类继承自 BaseCrawler，利用其中的 HTTP 客户端来发送请求。主要包含以下方法：
-    - gen_real_msToken: 生成真实的 msToken。
-    - gen_false_msToken: 生成虚假的 msToken。
-    - gen_ttwid: 生成请求必带的 ttwid。
+    该类继承自 BaseCrawler，利用其中的 HTTP 客户端来发送请求。
 
     类属性:
     - token_conf: 配置 msToken 的相关信息。
@@ -139,7 +136,7 @@ class TokenManager(BaseCrawler):
     - mstoken_headers: 生成 msToken 的请求头。
     - ttwid_headers: 生成 ttwid 的请求头。
 
-    方法:
+    类方法:
     - __init__: 初始化 TokenManager 实例，并调用父类的初始化方法。
     - gen_real_msToken: 类方法，生成真实的 msToken，当出现错误时返回虚假的值。
     - gen_false_msToken: 类方法，生成随机 msToken。
@@ -149,6 +146,7 @@ class TokenManager(BaseCrawler):
     - 在 HTTP 请求过程中，处理可能出现的 TimeoutException、NetworkError、ProtocolError、ProxyError 和 HTTPStatusError 异常，并记录相应的错误信息。
 
     使用示例:
+    ```python
         # 生成真实的 msToken
         msToken = TokenManager.gen_real_msToken()
 
@@ -160,6 +158,7 @@ class TokenManager(BaseCrawler):
 
         # 生成 webid
         webid = TokenManager.gen_webid()
+    ```
     """
 
     token_conf = ClientConfManager.msToken()
