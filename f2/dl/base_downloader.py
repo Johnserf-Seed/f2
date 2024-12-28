@@ -451,9 +451,7 @@ class BaseDownloader(BaseCrawler):
                         )
                         return
                     elif e.response.status_code == 504:
-                        logger.warning(
-                            _("账号在别处进入直播间或网关超时，导致直播流无法下载")
-                        )
+                        logger.warning(_("网关超时，无法下载直播流"))
                         await self.progress.update(
                             task_id,
                             description=_("[red][  完成  ]：[/red]"),
