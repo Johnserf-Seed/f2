@@ -52,6 +52,14 @@ rich_console = RichConsoleManager().rich_console
 rich_prompt = RichConsoleManager().rich_prompt
 
 
+TK_LIVE_STATUS_MAPPING = {
+    # 1: _("准备中"),
+    2: _("直播中"),
+    # 3: _("直播中"),
+    4: _("已关播"),
+}
+
+
 class TiktokHandler:
 
     # 需要忽略的字段（需过滤掉有时效性的字段）
@@ -255,12 +263,18 @@ class TiktokHandler:
         )
 
         await self._send_bark_notification(
-            _("TK单个作品"),
-            _("作品ID：{0}，作品下载完成。{1}").format(
+            _("[TikTok] 单个作品下载"),
+            _("作品ID：{0}\n" "文案：{1}\n" "作者：{2}\n" "下载时间：{3}").format(
                 video.aweme_id,
+                (
+                    video.desc_raw[:20] + "..."
+                    if len(video.desc_raw) > 20
+                    else video.desc_raw
+                ),
+                video.nickname_raw,
                 timestamp_2_str(get_timestamp("sec")),
             ),
-            group="Tiktok",
+            group="TikTok",
         )
 
         return video
@@ -389,13 +403,13 @@ class TiktokHandler:
         )
 
         await self._send_bark_notification(
-            _("TK用户作品"),
-            _("用户：{0}，共下载 {1} 个作品。{2}").format(
+            _("[TikTok] 主页作品下载"),
+            _("用户：{0}\n" "作品数量：{1}\n" "下载时间：{2}").format(
                 nickname_raw,
                 videos_collected,
                 timestamp_2_str(get_timestamp("sec")),
             ),
-            group="Tiktok",
+            group="TikTok",
         )
 
     @mode_handler("like")
@@ -509,13 +523,13 @@ class TiktokHandler:
         # 点赞接口中没有当前用户的相关信息，因此无法获取nickname_raw
         user = await self.fetch_user_profile(secUid=secUid)
         await self._send_bark_notification(
-            _("TK用户点赞作品"),
-            _("用户：{0}，共下载 {1} 个作品。{2}").format(
+            _("[TikTok] 点赞作品下载"),
+            _("用户：{0}\n" "作品数：{1}\n" "下载时间：{2}").format(
                 user.nickname_raw,
                 videos_collected,
                 timestamp_2_str(get_timestamp("sec")),
             ),
-            group="Tiktok",
+            group="TikTok",
         )
 
     @mode_handler("collect")
@@ -628,12 +642,12 @@ class TiktokHandler:
         )
 
         await self._send_bark_notification(
-            _("TK用户收藏作品"),
-            _("共下载 {0} 个作品。{1}").format(
+            _("[TikTok] 收藏作品下载"),
+            _("作品数：{0}\n" "下载时间：{1}").format(
                 videos_collected,
                 timestamp_2_str(get_timestamp("sec")),
             ),
-            group="Tiktok",
+            group="TikTok",
         )
 
     @mode_handler("mix")
@@ -835,13 +849,13 @@ class TiktokHandler:
         )
 
         await self._send_bark_notification(
-            _("TK用户播放列表作品"),
-            _("合集: {0}，共下载 {1} 个作品。{2}").format(
+            _("[TikTok] 播放列表作品下载"),
+            _("合集：{0}\n" "作品数：{1}\n" "下载时间：{2}").format(
                 mixId,
                 videos_collected,
                 timestamp_2_str(get_timestamp("sec")),
             ),
-            group="Tiktok",
+            group="TikTok",
         )
 
     @mode_handler("search")
@@ -960,13 +974,13 @@ class TiktokHandler:
         logger.info(_("结束搜索，共搜索到 {0} 个作品").format(videos_collected))
 
         await self._send_bark_notification(
-            _("TK搜索作品"),
-            _("关键词：{0}，共下载 {1} 个作品。{2}").format(
+            _("[TikTok] 搜索作品下载"),
+            _("关键词：{0}\n" "作品数：{1}\n" "下载时间：{2}").format(
                 keyword,
                 videos_collected,
                 timestamp_2_str(get_timestamp("sec")),
             ),
-            group="Tiktok",
+            group="TikTok",
         )
 
     @mode_handler("live")
@@ -1039,15 +1053,25 @@ class TiktokHandler:
         logger.debug(_("结束直播信息处理"))
 
         await self._send_bark_notification(
-            _("TK用户直播"),
-            _("房间ID：{0}，直播间：{1}，状态：{2}，观看人数：{3}。{4}").format(
+            _("[TikTok] 直播下载"),
+            _(
+                "房间ID：{0}\n"
+                "直播间：{1}\n"
+                "状态：{2}\n"
+                "观看人数：{3}\n"
+                "下载时间：{4}"
+            ).format(
                 live.live_room_id,
-                live.live_title_raw,
-                live.live_status,
+                (
+                    live.live_title_raw[:20] + "..."
+                    if len(live.live_title_raw) > 20
+                    else live.live_title_raw
+                ),
+                TK_LIVE_STATUS_MAPPING.get(live.live_status, _("未知状态")),
                 live.live_user_count or 0,
                 timestamp_2_str(get_timestamp("sec")),
             ),
-            group="Tiktok",
+            group="TikTok",
         )
 
         return live

@@ -288,14 +288,25 @@ class DouyinHandler:
         )
 
         await self._send_bark_notification(
-            _("抖音单个作品"),
+            _("[DouYin] 单个作品下载"),
             _(
-                "作品ID：{0}，作品下载完成。{1}".format(
-                    video.aweme_id,
-                    timestamp_2_str(get_timestamp("sec")),
-                )
+                "作品ID：{0}\n"
+                "类型：{1}\n"
+                "文案：{2}\n"
+                "作者：{3}\n"
+                "下载时间：{4}"
+            ).format(
+                video.aweme_id,
+                video.aweme_type,
+                (
+                    video.desc_raw[:20] + "..."
+                    if len(video.desc_raw) > 20
+                    else video.desc_raw
+                ),
+                video.nickname_raw,
+                timestamp_2_str(get_timestamp("sec")),
             ),
-            group="Douyin",
+            group="DouYin",
         )
 
         return video
@@ -427,13 +438,13 @@ class DouyinHandler:
         )
 
         await self._send_bark_notification(
-            _("抖音用户作品"),
-            _("用户：{0}，共下载 {1} 个作品。{2}").format(
+            _("[DouYin] 主页作品下载"),
+            _("用户：{0}\n" "作品数：{1}\n" "下载时间：{2}").format(
                 nickname_raw,
                 videos_collected,
                 timestamp_2_str(get_timestamp("sec")),
             ),
-            group="Douyin",
+            group="DouYin",
         )
 
     @mode_handler("like")
@@ -552,13 +563,13 @@ class DouyinHandler:
         # 点赞接口中没有当前用户的相关信息，因此无法获取nickname_raw
         user = await self.fetch_user_profile(sec_user_id)
         await self._send_bark_notification(
-            _("抖音用户点赞作品"),
-            _("用户：{0}，共下载 {1} 个作品。{2}").format(
+            _("[DouYin] 点赞作品下载"),
+            _("用户：{0}\n" "作品数：{1}\n" "下载时间：{2}").format(
                 user.nickname_raw,
                 videos_collected,
                 timestamp_2_str(get_timestamp("sec")),
             ),
-            group="Douyin",
+            group="DouYin",
         )
 
     @mode_handler("music")
@@ -662,12 +673,12 @@ class DouyinHandler:
         )
 
         await self._send_bark_notification(
-            _("抖音用户音乐收藏"),
-            _("共下载 {0} 个音乐。{1}").format(
+            _("[DouYin] 音乐收藏下载"),
+            _("音乐数：{0}\n" "下载时间：{1}").format(
                 music_collected,
                 timestamp_2_str(get_timestamp("sec")),
             ),
-            group="Douyin",
+            group="DouYin",
         )
 
     @mode_handler("collection")
@@ -774,12 +785,12 @@ class DouyinHandler:
         )
 
         await self._send_bark_notification(
-            _("抖音用户收藏作品"),
-            _("共下载 {0} 个作品。{1}").format(
+            _("[DouYin] 收藏作品下载"),
+            _("作品数：{0}\n" "下载时间：{1}").format(
                 videos_collected,
                 timestamp_2_str(get_timestamp("sec")),
             ),
-            group="Douyin",
+            group="DouYin",
         )
 
     @mode_handler("collects")
@@ -1032,13 +1043,13 @@ class DouyinHandler:
         )
 
         await self._send_bark_notification(
-            _("抖音用户收藏夹作品"),
-            _("收藏夹：{0}，共下载 {1} 个作品。{2}").format(
+            _("[DouYin] 收藏夹作品下载"),
+            _("收藏夹ID：{0}\n" "作品数：{1}\n" "下载时间：{2}").format(
                 collects_id,
                 videos_collected,
                 timestamp_2_str(get_timestamp("sec")),
             ),
-            group="Douyin",
+            group="DouYin",
         )
 
     @mode_handler("mix")
@@ -1158,13 +1169,13 @@ class DouyinHandler:
         )
 
         await self._send_bark_notification(
-            _("抖音用户合集作品"),
-            _("合集: {0}，共下载 {1} 个作品。{2}").format(
+            _("[DouYin] 合集作品下载"),
+            _("合集ID：{0}\n" "作品数：{1}\n" "下载时间：{2}").format(
                 mix_id,
                 videos_collected,
                 timestamp_2_str(get_timestamp("sec")),
             ),
-            group="Douyin",
+            group="DouYin",
         )
 
     @mode_handler("live")
@@ -1238,28 +1249,42 @@ class DouyinHandler:
         logger.info(
             _("房间ID：{0}，直播间：{1}，状态：{2}，观看人数：{3}").format(
                 live.room_id,
-                live.live_title_raw,
+                (
+                    live.live_title_raw[:20] + "..."
+                    if len(live.live_title_raw) > 20
+                    else live.live_title_raw
+                ),
                 DY_LIVE_STATUS_MAPPING.get(live.live_status, _("未知状态")),
                 live.user_count or 0,
             )
         )
         logger.debug(
-            _("子分区: {0} 主播昵称: {1}").format(
+            _("子分区：{0} 主播昵称：{1}").format(
                 live.sub_partition_title, live.nickname
             )
         )
         logger.debug(_("结束直播信息处理"))
 
         await self._send_bark_notification(
-            _("抖音用户直播"),
-            _("房间ID：{0}，直播间：{1}，状态：{2}，观看人数：{3}。{4}").format(
+            _("[DouYin] 直播下载"),
+            _(
+                "房间ID：{0}\n"
+                "直播间：{1}\n"
+                "状态：{2}\n"
+                "观看人数：{3}\n"
+                "下载时间：{4}"
+            ).format(
                 live.room_id,
-                live.live_title_raw,
+                (
+                    live.live_title_raw[:20] + "..."
+                    if len(live.live_title_raw) > 20
+                    else live.live_title_raw
+                ),
                 DY_LIVE_STATUS_MAPPING.get(live.live_status, _("未知状态")),
                 live.user_count or 0,
                 timestamp_2_str(get_timestamp("sec")),
             ),
-            group="Douyin",
+            group="DouYin",
         )
 
         return live
@@ -1294,26 +1319,36 @@ class DouyinHandler:
             )
         )
         logger.debug(
-            _("主播昵称: {0} 开播时间: {1} 直播流清晰度: {2}").format(
+            _("主播昵称：{0} 开播时间：{1} 直播流清晰度：{2}").format(
                 live.nickname,
                 live.create_time,
                 "、".join(
-                    [f"{key}: {value}" for key, value in live.resolution_name.items()]
+                    [f"{key}：{value}" for key, value in live.resolution_name.items()]
                 ),
             )
         )
         logger.info(_("结束直播数据处理"))
 
         await self._send_bark_notification(
-            _("抖音用户直播-2"),
-            _("直播ID：{0}，直播间：{1}，状态：{2}，观看人数：{3}。{4}").format(
+            _("[DouYin] 直播下载-2"),
+            _(
+                "直播ID：{0}\n"
+                "直播间：{1}\n"
+                "状态：{2}\n"
+                "观看人数：{3}\n"
+                "下载时间：{4}"
+            ).format(
                 live.web_rid,
-                live.live_title_raw,
+                (
+                    live.live_title_raw[:20] + "..."
+                    if len(live.live_title_raw) > 20
+                    else live.live_title_raw
+                ),
                 DY_LIVE_STATUS_MAPPING.get(live.live_status, _("未知状态")),
                 live.user_count or 0,
                 timestamp_2_str(get_timestamp("sec")),
             ),
-            group="Douyin",
+            group="DouYin",
         )
 
         return live
@@ -1406,7 +1441,7 @@ class DouyinHandler:
 
             logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
             logger.debug(
-                _("作品ID: {0} 作品文案: {1} 作者: {2}").format(
+                _("作品ID：{0} 作品文案：{1} 作者：{2}").format(
                     feed.aweme_id, feed.desc, feed.nickname
                 )
             )
@@ -1424,12 +1459,12 @@ class DouyinHandler:
         )
 
         await self._send_bark_notification(
-            _("抖音feed推荐作品"),
-            _("共下载 {0} 个作品。{1}").format(
+            _("[DouYin] 推荐作品下载"),
+            _("作品数：{0}\n" "下载时间：{1}").format(
                 videos_collected,
                 timestamp_2_str(get_timestamp("sec")),
             ),
-            group="Douyin",
+            group="DouYin",
         )
 
     @mode_handler("related")
@@ -1538,12 +1573,12 @@ class DouyinHandler:
         )
 
         await self._send_bark_notification(
-            _("抖音作品相似推荐"),
-            _("共下载 {0} 个作品。{1}").format(
+            _("[DouYin] 相似推荐作品下载"),
+            _("作品数：{0}\n" "下载时间：{1}").format(
                 videos_collected,
                 timestamp_2_str(get_timestamp("sec")),
             ),
-            group="Douyin",
+            group="DouYin",
         )
 
     @mode_handler("friend")
@@ -1652,12 +1687,12 @@ class DouyinHandler:
         logger.info(_("结束处理好友作品，共处理 {0} 个作品").format(videos_collected))
 
         await self._send_bark_notification(
-            _("抖音好友作品"),
-            _("共下载 {0} 个作品。{1}").format(
+            _("[DouYin] 好友作品下载"),
+            _("作品数：{0}\n" "下载时间：{1}").format(
                 videos_collected,
                 timestamp_2_str(get_timestamp("sec")),
             ),
-            group="Douyin",
+            group="DouYin",
         )
 
     async def fetch_user_following(
@@ -1756,12 +1791,12 @@ class DouyinHandler:
         logger.info(_("结束处理关注用户，共处理 {0} 个用户").format(users_collected))
 
         await self._send_bark_notification(
-            _("抖音用户关注用户"),
-            _("共处理 {0} 个用户。{1}").format(
+            _("[DouYin] 关注用户采集"),
+            _("关注数：{0}\n" "下载时间：{1}").format(
                 users_collected,
                 timestamp_2_str(get_timestamp("sec")),
             ),
-            group="Douyin",
+            group="DouYin",
         )
 
     async def fetch_user_follower(
@@ -1849,12 +1884,12 @@ class DouyinHandler:
         logger.info(_("结束处理粉丝用户，共处理 {0} 个用户").format(users_collected))
 
         await self._send_bark_notification(
-            _("抖音用户粉丝用户"),
-            _("共处理 {0} 个用户。{1}").format(
+            _("[DouYin] 粉丝用户采集"),
+            _("粉丝数：{0}\n" "下载时间：{1}").format(
                 users_collected,
                 timestamp_2_str(get_timestamp("sec")),
             ),
-            group="Douyin",
+            group="DouYin",
         )
 
     async def fetch_query_user(self) -> QueryUserFilter:
@@ -2059,15 +2094,22 @@ class DouyinHandler:
                 )
             )
             logger.info(_("结束查询关注用户直播间信息"))
+
             await self._send_bark_notification(
-                _("抖音关注用户直播"),
-                _("房间ID：{0}，直播间：{1}，观看人数：{2}。{3}").format(
+                _("[DouYin] 关注用户直播采集"),
+                _(
+                    "房间ID：{0}\n" "直播间：{1}\n" "观看人数：{2}\n" "下载时间：{3}"
+                ).format(
                     follow_live.room_id,
-                    follow_live.live_title_raw,
+                    (
+                        follow_live.live_title_raw[:20] + "..."
+                        if len(follow_live.live_title_raw) > 20
+                        else follow_live.live_title_raw
+                    ),
                     follow_live.user_count or 0,
                     timestamp_2_str(get_timestamp("sec")),
                 ),
-                group="Douyin",
+                group="DouYin",
             )
         else:
             logger.warning(
