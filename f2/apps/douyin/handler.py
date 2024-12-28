@@ -1325,7 +1325,7 @@ class DouyinHandler:
             )
         )
         logger.debug(
-            _("开播时间：{1} 直播流清晰度：{2}").format(
+            _("开播时间：{0} 直播流清晰度：{1}").format(
                 live.create_time,
                 "、".join(
                     [f"{key}：{value}" for key, value in live.resolution_name.items()]
