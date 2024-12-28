@@ -91,6 +91,36 @@ REVERSE_APP_MAPPINGS = {v: k for k, v in APP_MAPPINGS.items()}
 
 
 class DynamicGroup(click.Group):
+    """
+    DynamicGroup 类继承自 click.Group，提供动态加载和执行命令的功能。
+
+    该类主要用于根据传入的命令名称动态导入和执行与之对应的应用 CLI 模块。
+
+    类属性:
+    - 无
+
+    类方法:
+    - get_command: 重写 click.Group 的 `get_command` 方法，根据传入的命令名称 `cmd_name` 查找并导入对应应用的 CLI 模块。
+        执行异步检查任务并返回相关命令。如果发生错误，返回 None。
+
+    异常处理:
+    - 如果找不到命令对应的应用或在导入过程中发生错误，则会记录错误信息并返回 None。
+
+    使用示例:
+    ```python
+        # 假设应用的命令是 "douyin"
+        group = DynamicGroup()
+        command = group.get_command(ctx, "douyin")
+        if command:
+            command()  # 执行对应的命令
+
+        # 假设符合应用映射的命令是 "dy"
+        command = group.get_command(ctx, "dy")
+        if command:
+            command()  # 执行对应的命令
+    ```
+    """
+
     def get_command(self, ctx: click.Context, cmd_name: str):
         app_name = (
             cmd_name

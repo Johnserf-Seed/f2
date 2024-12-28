@@ -7,6 +7,42 @@ from jsonpath_ng import parse
 
 
 class JSONModel:
+    """
+    JSON 数据模型 (JSON Data Model)
+
+    该类用于处理和解析 JSON 数据。通过提供 JSONPath 表达式。
+
+    支持从 JSON 数据中提取单一属性值或列表属性值，并支持缓存 JSONPath 表达式的解析器以提高性能。
+
+    类属性:
+    - _data (Any): 存储的 JSON 数据，可以是字典、列表或其他类型。
+    - _cache (dict): 存储已解析的 JSONPath 表达式解析器，用于避免重复解析。
+
+    类方法:
+    - __init__: 初始化 JSONModel 实例并加载数据。
+    - _parse_expression: 缓存并返回 JSONPath 表达式解析器。
+    - _get_attr_value: 根据 JSONPath 表达式获取单一属性值。
+    - _get_list_attr_value: 获取列表属性值，支持字段缺失时补全 None。
+
+    异常处理:
+    - 该类会在没有匹配到值时返回 `None` 或空列表。
+
+    使用示例:
+
+    ```python
+        # 创建 JSONModel 实例并加载 JSON 数据
+        json_data = {"users": [{"name": "Alice"}, {"name": "Bob"}]}
+        model = JSONModel(json_data)
+
+        # 获取单一属性值
+        name = model._get_attr_value('$.users[0].name')
+        print(name)  # 输出: Alice
+
+        # 获取列表属性值
+        names = model._get_list_attr_value('$.users[*].name')
+        print(names)  # 输出: ['Alice', 'Bob']
+    ```
+    """
 
     def __init__(self, data: Any):
         self._data = data
