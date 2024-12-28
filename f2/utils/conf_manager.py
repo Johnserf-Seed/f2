@@ -18,6 +18,44 @@ from f2.log.logger import logger
 
 
 class ConfigManager:
+    """
+    配置管理器 (Configuration Manager)
+
+    该类用于加载、管理和更新应用的配置文件。通过提供的路径读取配置，支持配置文件的备份、更新和保存功能。
+    它还可以生成默认配置文件，处理与配置相关的错误，并使用字典格式来组织配置数据。
+
+    类属性:
+    - filepath (Path): 配置文件的路径。
+    - config (dict): 存储的配置数据，以字典形式表示。
+
+    类方法:
+    - __init__: 初始化配置管理器，加载配置文件。
+    - _replace_none: 递归地将字典或列表中的 None 值替换为默认值。
+    - load_config: 加载配置文件，处理文件读取和解析错误。
+    - get_config: 获取指定应用名称的配置数据。
+    - save_config: 将配置数据保存到文件。
+    - backup_config: 在更新配置前备份当前配置文件。
+    - generate_config: 根据应用名称生成并保存特定配置文件。
+    - update_config_with_args: 使用命令行参数更新配置文件。
+
+    异常处理:
+    - FileNotFound: 如果配置文件不存在，抛出文件未找到异常。
+    - FilePermissionError: 如果配置文件路径没有读写权限，抛出权限异常。
+    - yaml.YAMLError: 如果配置文件解析出错，抛出解析错误异常。
+
+    使用示例:
+
+    ```python
+        # 创建 ConfigManager 实例并加载配置
+        config_manager = ConfigManager(filepath='conf/conf.yaml')
+        config = config_manager.get_config('f2')
+        print(config)
+
+        # 更新配置并保存
+        config_manager.update_config_with_args('f2', new_key='new_value')
+    ```
+    """
+
     # 如果不传入应用配置路径，则返回项目配置 (If the application conf path is not passed in, the project conf is returned)
     def __init__(self, filepath: str = f2.F2_CONFIG_FILE_PATH):
         if Path(filepath).exists():

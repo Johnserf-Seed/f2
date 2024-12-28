@@ -30,7 +30,49 @@ MAX_SEGMENT_COUNT = 1000
 
 
 class BaseDownloader(BaseCrawler):
-    """基础下载器 (Base Downloader Class)"""
+    """
+    基础下载器 (Base Downloader)
+
+    该类继承自 BaseCrawler 类，提供了一个基础下载器，负责处理文件的下载任务，支持下载单个文件、静态文件以及流式视频下载。
+
+    它支持断点续传、进度跟踪和错误处理，适用于多种文件下载场景。
+
+    类属性:
+    - headers (dict): 自定义 HTTP 请求头，包括 Cookie 信息。
+    - progress (RichConsoleManager.progress): 下载进度管理器，用于显示下载进度。
+    - download_tasks (list): 存储所有下载任务的列表。
+
+    类方法:
+    - _ensure_path: 确保目标路径存在，如果不存在则创建。
+    - _download_chunks: 处理文件的分块下载，支持边下载边更新进度。
+    - download_file: 下载文件，如果文件已经部分下载，则支持断点续传。
+    - save_file: 保存静态文件到指定路径。
+    - download_m3u8_stream: 下载 m3u8 流视频，支持多个片段的下载与合并。
+    - initiate_download: 初始化文件下载任务，根据文件是否存在跳过或开始下载。
+    - initiate_static_download: 初始化静态文件下载任务。
+    - initiate_m3u8_download: 初始化 m3u8 流视频下载任务。
+    - execute_tasks: 执行所有下载任务。
+    - close: 关闭下载器，释放资源。
+    - __aenter__: 异步上下文管理器的进入方法，初始化下载器。
+    - __aexit__: 异步上下文管理器的退出方法，关闭下载器。
+
+    异常处理:
+    - 该类在下载过程中会处理多种异常，包括文件下载错误、网络超时、文件覆盖等问题，保证下载任务的稳定性。
+
+    使用示例:
+    ```python
+        # 创建 BaseDownloader 实例并使用异步方式开始文件下载任务
+        async with BaseDownloader(headers={'Cookie': 'value'}, proxies={'all': 'proxy_url'}) as downloader:
+            await downloader.initiate_download(
+                file_type='视频',
+                file_url='https://example.com/file.mp4',
+                base_path='/path/to/save',
+                file_name='file',
+                file_suffix='.mp4'
+            )
+            await downloader.execute_tasks()
+    ```
+    """
 
     def __init__(self, kwargs: dict = ...):
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})
