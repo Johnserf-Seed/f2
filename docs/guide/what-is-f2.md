@@ -37,8 +37,6 @@ f2 dy -c conf/app.yaml
 
 如果你想使用 `douyin` 或 `tiktok` 的直播弹幕转发功能，那么你需要配置 `WSS` 服务的地址和端口。配置如下：
 
-
-
 ::: code-group
 ```yaml [douyin]
 douyin:
