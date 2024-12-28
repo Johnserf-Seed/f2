@@ -285,6 +285,10 @@ class BaseDownloader(BaseCrawler):
             full_path (Union[str, Path]): 保存路径 (Save path)
 
         Note:
+            由于直播流的特殊性，可能会出现直播结束、账号在别处进入直播间等情况，导致直播流无法下载。
+
+            直播流的大小不确定，因此无法准确计算下载进度，只能根据下载的块大小来更新进度条。
+
             可能会出现 httpx.RemoteProtocolError 错误，这是由于服务器返回的块大小未严格遵守 HTTP 规范。
             非代码问题，而是服务器问题，跳过该片段处理。
             Issues: https://github.com/encode/httpx/issues/1927
@@ -380,7 +384,7 @@ class BaseDownloader(BaseCrawler):
                                     await ts_response.aclose()
                             else:
                                 logger.debug(
-                                    _("跳过已下载的片段，URI: {0}").format(
+                                    _("跳过已下载的片段，URL: {0}").format(
                                         segment.absolute_uri
                                     )
                                 )
@@ -390,7 +394,8 @@ class BaseDownloader(BaseCrawler):
                             if len(downloaded_segments) > MAX_SEGMENT_COUNT:
                                 downloaded_segments = set()
 
-                    # 等待一段时间后再次请求更新 (Request update again after waiting for a while)
+                    # 等待片段时长，避免过快下载
+                    # (Wait for the segment duration to avoid downloading too fast)
                     await asyncio.sleep(segment.duration)
 
                 except httpx.HTTPStatusError as e:
@@ -399,6 +404,17 @@ class BaseDownloader(BaseCrawler):
                         await self.progress.update(
                             task_id,
                             description=_("[red][  丢失  ]：[/red]"),
+                            filename=trim_filename(full_path.name, 45),
+                            state="completed",
+                        )
+                        return
+                    elif e.response.status_code == 504:
+                        logger.warning(
+                            _("账号在别处进入直播间或网关超时，导致直播流无法下载")
+                        )
+                        await self.progress.update(
+                            task_id,
+                            description=_("[red][  完成  ]：[/red]"),
                             filename=trim_filename(full_path.name, 45),
                             state="completed",
                         )
