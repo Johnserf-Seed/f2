@@ -11,6 +11,50 @@ from logging.handlers import TimedRotatingFileHandler
 
 
 class LogManager(metaclass=Singleton):
+    """
+    日志管理器 (Log Manager)
+
+    该类提供了一个全局日志管理器，使用单例模式，支持将日志输出到控制台和文件。
+
+    文件日志会根据时间进行切割，每天生成一个新的日志文件，并保留一定数量的日志文件。
+
+    还支持日志目录的管理和日志文件的清理功能。
+
+    类属性:
+    - logger (logging.Logger): 日志记录器实例，用于记录日志信息。
+    - log_dir (Path | None): 日志文件存储路径。如果未设置，默认为 None。
+    - _initialized (bool): 用于防止重复初始化。
+
+    类方法:
+    - __init__: 初始化日志管理器，并创建日志记录器实例。采用单例模式，确保只初始化一次。
+    - setup_logging: 设置日志记录器的配置，包括日志级别、是否输出到控制台、日志文件路径等。
+    - ensure_log_dir_exists: 确保日志目录存在。如果不存在，会自动创建。
+    - clean_logs: 清理旧的日志文件，保留最新的n个日志文件。
+    - shutdown: 关闭日志记录器并清理相关资源。
+
+    异常处理:
+    - 在清理日志文件时，如果日志文件正在被其他进程使用，将会捕获 `PermissionError` 异常，并记录警告信息。
+
+    使用示例:
+    ```python
+        # 设置日志配置，并开始记录日志
+        log_manager = LogManager()
+        log_manager.setup_logging(log_to_console=True, log_path="./logs")
+
+        # 清理过期日志，保留最新的10个日志文件
+        log_manager.clean_logs(keep_last_n=10)
+
+        # 使用日志记录器
+        logger = logging.getLogger("f2")
+        logger.info("This is an info message.")
+    ```
+
+    备注:
+    - `setup_logging` 方法允许将日志输出到控制台和文件，并支持定期切割日志文件。
+    - `clean_logs` 方法用于删除过期的日志文件，确保不会占用过多的磁盘空间。
+    - 使用 `Singleton` 元类确保整个应用程序只有一个 `LogManager` 实例。
+    """
+
     def __init__(self):
         if getattr(self, "_initialized", False):  # 防止重复初始化
             return
