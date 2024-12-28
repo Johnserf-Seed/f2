@@ -299,10 +299,14 @@ class WeiboHandler:
 
         await self._send_bark_notification(
             _("[Weibo] 单一微博下载"),
-            _("微博ID: {0}\n" "作者: {1}\n" "文案: {2}\n" "时间: {3}\n").format(
+            _("微博ID：{0}\n" "作者：{1}\n" "文案：{2}\n" "下载时间：{3}\n").format(
                 weibo.weibo_id,
                 weibo.nickname_raw,
-                weibo.weibo_desc,
+                (
+                    weibo.weibo_desc[:20] + "..."
+                    if len(weibo.weibo_desc) > 20
+                    else weibo.weibo_desc
+                ),
                 timestamp_2_str(get_timestamp("sec")),
             ),
             group="Weibo",
@@ -392,7 +396,7 @@ class WeiboHandler:
 
         await self._send_bark_notification(
             _("[Weibo] 用户微博下载"),
-            _("用户：{0}\n" "微博数：{1}\n" "时间：{2}\n").format(
+            _("用户：{0}\n" "微博数：{1}\n" "下载时间：{2}\n").format(
                 nickname_raw,
                 weibos_collected,
                 timestamp_2_str(get_timestamp("sec")),
