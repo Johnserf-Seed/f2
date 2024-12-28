@@ -62,6 +62,7 @@ keywords = [
 ]
 
 dependencies = [
+    "babel==2.13.0",
     "black==24.10.0",
     "click==8.1.7",
     "rich==13.9.3",
