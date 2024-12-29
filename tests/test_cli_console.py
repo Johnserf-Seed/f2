@@ -1,9 +1,11 @@
 # path: tests/test_cli_console.py
 
-import pytest
 import time
-from f2.cli.cli_console import CustomSpinnerColumn, ProgressManager
+import pytest
+
 from rich.spinner import Spinner
+
+from f2.cli.cli_console import CustomSpinnerColumn, ProgressManager
 
 
 def test_custom_spinner_column():

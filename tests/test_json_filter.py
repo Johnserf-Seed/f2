@@ -1,4 +1,5 @@
-import pytest
+# path: tests/test_json_filter.py
+
 from f2.utils.json_filter import JSONModel
 
 # 测试数据
