@@ -1,6 +1,7 @@
 # path: tests/test_excetions.py
 
 import pytest
+
 from f2.exceptions import (
     APIError,
     APIConnectionError,
