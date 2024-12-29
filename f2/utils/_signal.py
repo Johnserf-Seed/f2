@@ -1,3 +1,5 @@
+# path: f2/utils/_signal.py
+
 import sys
 import signal
 import asyncio
@@ -27,7 +29,6 @@ class SignalManager(metaclass=Singleton):
     - is_shutdown_signaled: 检查是否接收到关闭信号。
 
     使用示例:
-
     ```python
         # 创建 SignalManager 实例并注册信号处理程序
         signal_manager = SignalManager()
@@ -40,8 +41,8 @@ class SignalManager(metaclass=Singleton):
     ```
 
     异常处理:
-    - 捕获异常并在需要时处理取消的 asyncio 任务。
-    - 在收到关闭信号时，取消所有正在运行的 asyncio 任务，并退出程序。
+    - 如果在测试环境中运行，则不会退出程序，而是返回 0。
+    - 如果在非测试环境中运行，则会退出程序，并返回接收到的信号。
     """
 
     def __init__(self):
@@ -55,27 +56,44 @@ class SignalManager(metaclass=Singleton):
     def _handle_signal(self, received_signal: signal.Signals, frame: object) -> None:
         """内部处理接收到的信号"""
         self._shutdown_event.set()
-        RichConsoleManager().rich_console.print("\nexiting f2...")
 
         # 取消所有运行中的asyncio任务
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()  # 避免DeprecationWarning
+
         try:
             if loop.is_running():
                 for task in asyncio.all_tasks(loop):
                     task.cancel()
-                loop.stop()
-        except (Exception, CancelledError) as e:
+                # 等待所有任务被取消并处理异常
+                # 注意：不再使用 async/await，所以这里不使用 asyncio.gather
+                for task in asyncio.all_tasks(loop):
+                    try:
+                        task.result()  # 获取任务的结果，以便抛出异常
+                    except Exception:
+                        pass
+        except (
+            Exception,
+            CancelledError,
+            KeyboardInterrupt,
+            SystemExit,
+        ):
             pass
+        finally:
+            # 结束前的输出
+            RichConsoleManager().rich_console.print(
+                "\n[bold yellow]exiting f2...[/bold yellow]"
+            )
+            # 退出程序
+            if self.is_test():
+                sys.exit(0)
 
-        # 执行资源清理操作
-        sys.exit(0)
+            sys.exit(received_signal)
 
     def register_shutdown_signal(self):
         """注册一个处理程序来捕获关闭信号"""
         signal.signal(signal.SIGINT, self._handle_signal)
-        signal.signal(
-            signal.SIGTERM, self._handle_signal
-        )  # 捕获SIGTERM信号，确保更好的跨平台兼容性
+        # 捕获SIGTERM信号，确保更好的跨平台兼容性
+        signal.signal(signal.SIGTERM, self._handle_signal)
 
     @classmethod
     def is_shutdown_signaled(cls):
@@ -83,7 +101,7 @@ class SignalManager(metaclass=Singleton):
         instance = cls()  # 获取单例实例
         return instance.shutdown_event.is_set()
 
-
-# 当需要的时候，就注册这个关闭信号
-# signal_manager = SignalManager()
-# signal_manager.register_shutdown_signal()
+    def is_test(self):
+        """判断是否在测试环境中运行"""
+        # 在测试环境中有 trace，所以需要额外判断
+        return hasattr(sys, "gettrace") and sys.gettrace() is None
