@@ -537,12 +537,12 @@ def unescape_json(json_text: str) -> dict:
     return json_obj
 
 
-def check_python_version(min_version: tuple = (3, 9)) -> None:
+def check_python_version(min_version: tuple = (3, 10)) -> None:
     """
     检查当前 Python 版本是否满足最低要求
 
     Args:
-        min_version (tuple, optional): 最低 Python 版本要求，默认为 (3, 9)
+        min_version (tuple, optional): 最低 Python 版本要求，默认为 (3, 10)
 
     Raises:
         SystemExit: 当 Python 版本不满足最低要求时，退出程序
