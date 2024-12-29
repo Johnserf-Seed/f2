@@ -688,6 +688,7 @@ class SecUserIdFetcher(BaseCrawler):
     - 在 HTTP 请求过程中，处理可能出现的 TimeoutException、NetworkError、ProtocolError、ProxyError 和 HTTPStatusError 异常，并记录相应的错误信息。
 
     使用示例:
+    ```python
         # 获取单个用户的 sec_user_id
         url = "https://www.douyin.com/user/MS4wLjABAAAAEc8EKgWVEpEQoDRRp8_M53psgc-BoKqre-jICyt6aBA"
         sec_user_id = await SecUserIdFetcher.get_sec_user_id(url)
@@ -698,6 +699,7 @@ class SecUserIdFetcher(BaseCrawler):
             "https://v.douyin.com/i2wyU53P/",
         ]
         sec_user_ids = await SecUserIdFetcher.get_all_sec_user_id(urls)
+    ```
     """
 
     _DOUYIN_URL_PATTERN = re.compile(r"user/([^/?]*)")
@@ -858,6 +860,7 @@ class AwemeIdFetcher(BaseCrawler):
     - 在 HTTP 请求过程中，处理可能出现的 TimeoutException、NetworkError、ProtocolError、ProxyError 和 HTTPStatusError 异常，并记录相应的错误信息。
 
     使用示例:
+    ```python
         # 获取单个作品的 aweme_id
         url = "https://www.douyin.com/video/6969696969696969696"
         aweme_id = await AwemeIdFetcher.get_aweme_id(url)
@@ -869,6 +872,7 @@ class AwemeIdFetcher(BaseCrawler):
             "https://v.douyin.com/tttttttt/",
         ]
         aweme_ids = await AwemeIdFetcher.get_all_aweme_id(urls)
+    ```
     """
 
     _DOUYIN_VIDEO_URL_PATTERN = re.compile(r"video/([^/?]*)")
@@ -1021,6 +1025,7 @@ class MixIdFetcher(BaseCrawler):
     - 在 HTTP 请求过程中，处理可能出现的 TimeoutException、NetworkError、ProtocolError、ProxyError 和 HTTPStatusError 异常，并记录相应的错误信息。
 
     使用示例:
+    ```python
         # 获取单个合集的 mix_id
         url = "https://www.douyin.com/collection/7360898383181809676"
         mix_id = await MixIdFetcher.get_mix_id(url)
@@ -1031,6 +1036,7 @@ class MixIdFetcher(BaseCrawler):
             "https://www.douyin.com/collection/6812345678901234568",
         ]
         mix_ids = await MixIdFetcher.get_all_mix_id(urls)
+    ```
     """
 
     _DOUYIN_MIX_URL_PATTERN = re.compile(r"collection/([^/?]*)")
@@ -1178,6 +1184,7 @@ class WebCastIdFetcher(BaseCrawler):
     - 在 HTTP 请求过程中，处理可能出现的 TimeoutException、NetworkError、ProtocolError、ProxyError 和 HTTPStatusError 异常，并记录相应的错误信息。
 
     使用示例:
+    ```python
         # 获取单个直播的 webcast_id
         url = "https://live.douyin.com/36299127202"
         webcast_id = await WebCastIdFetcher.get_webcast_id(url)
@@ -1199,6 +1206,7 @@ class WebCastIdFetcher(BaseCrawler):
             "https://v.douyin.com/i8tBR7hX/",
         ]
         room_ids = await WebCastIdFetcher.get_all_room_id(urls)
+    ```
     """
 
     _DOUYIN_LIVE_URL_PATTERN = re.compile(r"live/([^/?]*)")

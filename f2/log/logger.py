@@ -6,8 +6,9 @@ import datetime
 
 from pathlib import Path
 from rich.logging import RichHandler
-from f2.utils._singleton import Singleton
 from logging.handlers import TimedRotatingFileHandler
+
+from f2.utils._singleton import Singleton
 
 
 class LogManager(metaclass=Singleton):

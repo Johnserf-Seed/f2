@@ -111,6 +111,7 @@ class ProgressManager:
     - __exit__: 停止进度条，确保任务完成。
 
     使用示例:
+    ```python
         # 创建并启动进度管理器
         progress_manager = ProgressManager()
         progress_manager.start()
@@ -121,6 +122,7 @@ class ProgressManager:
 
         # 停止任务
         await progress_manager.stop_task(task_id)
+    ```
     """
 
     DEFAULT_COLUMNS = {
@@ -263,6 +265,7 @@ class RichConsoleManager(metaclass=Singleton):
     - rich_prompt: 返回用于提示用户输入的 Prompt 实例。
 
     使用示例:
+    ```python
         # 创建 RichConsoleManager 实例
         console_manager = RichConsoleManager()
 
@@ -273,6 +276,7 @@ class RichConsoleManager(metaclass=Singleton):
 
         # 输出异常信息
         console_manager.exception_console.print("[bold red]发生错误！[/bold red]")
+    ```
     """
 
     def __init__(self):
