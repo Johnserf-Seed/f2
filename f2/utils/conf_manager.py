@@ -44,7 +44,6 @@ class ConfigManager:
     - yaml.YAMLError: 如果配置文件解析出错，抛出解析错误异常。
 
     使用示例:
-
     ```python
         # 创建 ConfigManager 实例并加载配置
         config_manager = ConfigManager(filepath='conf/conf.yaml')

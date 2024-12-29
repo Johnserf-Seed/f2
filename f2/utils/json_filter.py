@@ -28,7 +28,6 @@ class JSONModel:
     - 该类会在没有匹配到值时返回 `None` 或空列表。
 
     使用示例:
-
     ```python
         # 创建 JSONModel 实例并加载 JSON 数据
         json_data = {"users": [{"name": "Alice"}, {"name": "Bob"}]}

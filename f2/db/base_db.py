@@ -1,6 +1,7 @@
 # path: f2/db/base_db.py
 
 import aiosqlite
+
 from typing import Optional
 
 
@@ -50,6 +51,7 @@ class BaseDB:
 
         # 关闭连接
         await db.close()
+    ```
     """
 
     def __init__(self, db_name: str) -> Optional[None]:

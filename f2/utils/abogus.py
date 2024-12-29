@@ -51,6 +51,7 @@ class StringProcessor:
             生成一组伪随机字节字符串，用于混淆数据。
 
     使用示例:
+    ```python
         # 将字符串转换为 ASCII 码字符串
         ord_str = StringProcessor.to_ord_str("Hello, World!")
         print(ord_str)
@@ -74,6 +75,7 @@ class StringProcessor:
         # 生成一组伪随机字节字符串
         random_bytes = StringProcessor.generate_random_bytes(3)
         print(random_bytes)
+    ```
     """
 
     @staticmethod
@@ -173,6 +175,68 @@ class StringProcessor:
 class CryptoUtility:
     """
     CryptoUtility 类用于提供加密和编码的工具方法，包括 SM3 哈希、添加盐值、Base64 编码和 RC4 加密等。
+
+    类属性:
+        salt (str): 加密盐值 (Encryption salt).
+        base64_alphabet (List[str]): 自定义 Base64 字符表 (Custom Base64 alphabet).
+
+    类方法:
+        sm3_to_array(input_data: Union[str, List[int]]) -> List[int]:
+            计算请求体的 SM3 哈希值，并将结果转换为整数数组。
+
+        add_salt(param: str) -> str:
+            为字符串参数添加盐值。
+
+        process_param(param: Union[str, List[int]], add_salt: bool) -> Union[str, List[int]]:
+            处理输入参数，根据需要添加盐值。
+
+        params_to_array(param: Union[str, List[int]], add_salt: bool = True) -> List[int]:
+            获取输入参数的哈希数组。
+
+        transform_bytes(bytes_list: List[int]) -> str:
+            对输入的字节列表进行加密/解密操作，返回处理后的字符串。
+
+        base64_encode(input_string: str, selected_alphabet: int = 0) -> str:
+            使用自定义字符表对输入字符串进行 Base64 编码。
+
+        abogus_encode(abogus_bytes_str: str, selected_alphabet: int) -> str:
+            对输入的字节字符串进行自定义 Base64 编码，并添加位移和填充。
+
+        rc4_encrypt(key: bytes, plaintext: str) -> bytes:
+            使用 RC4 算法加密数据。
+
+    使用示例:
+    ```python
+        # 计算请求体的 SM3 哈希值
+        sm3_hash = CryptoUtility.sm3_to_array("Hello, World!")
+        print(sm3_hash)
+
+        # 为字符串参数添加盐值
+        salted_param = CryptoUtility.add_salt("Hello, World!")
+        print(salted_param)
+
+        # 获取输入参数的哈希数组
+        hash_array = CryptoUtility.params_to_array("Hello, World!")
+        print(hash_array)
+
+        # 对输入的字节列表进行加密/解密操作
+        encrypted_str = CryptoUtility.transform_bytes([72, 101, 108, 108, 111, 44, 32, 87, 111, 114, 108, 100, 33])
+        print(encrypted_str)
+
+        # 使用自定义字符表对输入字符串进行 Base64 编码
+        base64_str = CryptoUtility.base64_encode("Hello, World!")
+        print(base64_str)
+
+        # 对输入的字节字符串进行自定义 Base64 编码，并添加位移和填充
+        abogus_str = CryptoUtility.abogus_encode("Hello, World!", 0)
+        print(abogus_str)
+
+        # 使用 RC4 算法加密数据
+        key = b"key"
+        plaintext = "Hello, World!"
+        ciphertext = CryptoUtility.rc4_encrypt(key, plaintext)
+        print(ciphertext)
+    ```
     """
 
     def __init__(self, salt: str, custom_base64_alphabet: List[str]):
@@ -445,8 +509,10 @@ class BrowserFingerprintGenerator:
             根据给定的参数生成浏览器指纹字符串。
 
     使用示例:
+    ```python
         chrome_fp = BrowserFingerprintGenerator.generate_fingerprint("Chrome")
         print(chrome_fp)
+    ```
     """
 
     @classmethod
@@ -542,10 +608,12 @@ class ABogus:
             生成 ABogus 参数 (Generate the ABogus parameter).
 
     使用示例:
+    ```python
         # 生成 ABogus 参数，置空使用默认 UA 和浏览器指纹
         abogus = ABogus(user_agent="xxx", fp="xxx")
         abogus_param = abogus.generate_abogus("device_platform=webapp&aid=6383&channel=channel_pc_web&aweme_id=7380308675841297704……省略……")
         print(abogus_param[1])
+    ```
     """
 
     def __init__(
