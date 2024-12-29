@@ -501,6 +501,7 @@ class SecUserIdFetcher(BaseCrawler):
     - 在 HTTP 请求过程中，处理可能出现的 TimeoutException、NetworkError、ProtocolError、ProxyError 和 HTTPStatusError 异常，并记录相应的错误信息。
 
     使用示例:
+    ```python
         # 获取单个用户的 sec_uid
         url = "https://www.tiktok.com/@someuser"
         sec_uid = await SecUserIdFetcher.get_secuid(url)
@@ -518,6 +519,7 @@ class SecUserIdFetcher(BaseCrawler):
 
         # 获取多个用户的 unique_id 列表
         unique_ids = await SecUserIdFetcher.get_all_uniqueid(urls)
+    ```
     """
 
     _TIKTOK_SECUID_PARREN = re.compile(
@@ -874,6 +876,7 @@ class AwemeIdFetcher(BaseCrawler):
     - 在 HTTP 请求过程中，处理可能出现的 TimeoutException、NetworkError、ProtocolError、ProxyError 和 HTTPStatusError 异常，并记录相应的错误信息。
 
     使用示例:
+    ```python
         # 获取单个视频的 aweme_id
         url = "https://www.tiktok.com/@scarlettjonesuk/video/7255716763118226715"
         aweme_id = await AwemeIdFetcher.get_aweme_id(url)
@@ -884,6 +887,7 @@ class AwemeIdFetcher(BaseCrawler):
             "https://www.tiktok.com/@scarlettjonesuk/video/7255716763118226715?is_from_webapp=1&sender_device=pc&web_id=7306060721837852167"
         ]
         aweme_ids = await AwemeIdFetcher.get_all_aweme_id(urls)
+    ```
     """
 
     _TIKTOK_AWEMEID_PARREN = re.compile(r"video/(\d*)")
@@ -1077,6 +1081,7 @@ class DeviceIdManager(BaseCrawler):
     - 在 HTTP 请求过程中，处理可能出现的 TimeoutException、NetworkError、ProtocolError、ProxyError 和 HTTPStatusError 异常，并记录相应的错误信息。
 
     使用示例:
+    ```python
         # 生成单个设备 ID
         device = await DeviceIdManager.gen_device_id()
         deviceId = device["deviceId"]
@@ -1096,6 +1101,7 @@ class DeviceIdManager(BaseCrawler):
         devices = await DeviceIdManager.gen_device_ids(3, full_cookie=True)
         deviceIds = devices["deviceId"]
         cookies = devices["cookie"]
+    ```
     """
 
     # 预编译正则表达式
