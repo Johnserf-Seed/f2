@@ -110,6 +110,7 @@ class WeiboDownloader(BaseDownloader):
         # 检查微博是否有图片
         if (
             self.weibo_data_dict.get("weibo_pic_num") == 0
+            and weibo_data_dict.get("weibo_pic_ids") == None
             and weibo_data_dict.get("is_video") == "11"
         ):
             await self.download_video()
@@ -119,6 +120,10 @@ class WeiboDownloader(BaseDownloader):
         return
 
     async def download_video(self):
+        if not self.weibo_data_dict.get("playback_list"):
+            logger.warning(_("{0} 该微博无法下载，视频走丢了").format(self.weibo_id))
+            return
+
         logger.debug(
             _("清晰度列表：{0}，码率列表：{1}").format(
                 self.weibo_data_dict.get("quality_list"),
@@ -157,6 +162,12 @@ class WeiboDownloader(BaseDownloader):
         )
 
     async def download_images(self):
+        if not self.weibo_data_dict.get("weibo_pic_ids"):
+            logger.warning(
+                _("{0} 该微博无法下载，需要在微博客户端查看").format(self.weibo_id)
+            )
+            return
+
         for i, image_url in enumerate(self.weibo_data_dict.get("weibo_pic_ids", [])):
             image_name = f"{format_file_name(self.kwargs.get('naming'), self.weibo_data_dict)}_image_{i + 1}"
             image_url = WeiboAPIEndpoints.LARGEST + f"/{image_url}"
