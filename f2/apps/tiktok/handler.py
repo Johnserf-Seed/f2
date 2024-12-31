@@ -756,11 +756,17 @@ class TiktokHandler:
             )
 
         # rich_prompt 会有字符刷新问题，暂时使用rich_print
-        rich_console.print(_("[bold yellow]请输入希望下载的合集序号：[/bold yellow]"))
+        playlist = [str(i) for i in range(len(playlists.mixId) + 1)]
+        rich_console.print(
+            _(
+                "[bold yellow]请输入希望下载的合集序号：[/bold yellow] [bold purple]{0}[/bold purple]"
+            ).format("/".join(playlist))
+        )
         selected_index = int(
             rich_prompt.ask(
                 # _("[bold yellow]请输入希望下载的合集序号:[/bold yellow]"),
-                choices=[str(i) for i in range(len(playlists.mixId) + 1)],
+                console=rich_console,
+                choices=playlist,
             )
         )
 
@@ -808,7 +814,7 @@ class TiktokHandler:
             )
 
             async with TiktokCrawler(self.kwargs) as crawler:
-                params = UserMix(mixId=mixId, cursor=cursor, count=page_counts)
+                params = UserMix(mixId=str(mixId), cursor=cursor, count=page_counts)
                 response = await crawler.fetch_user_mix(params)
                 mix = UserMixFilter(response)
 
