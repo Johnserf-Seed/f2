@@ -292,16 +292,26 @@ class UserPostFilter(JSONModel):
         bit_rate_data = self._get_list_attr_value("$.itemList[*].video.bitrateInfo")
         return [
             (
-                [
-                    aweme.get("Bitrate", "")
-                ]  # 使用 get 方法以处理字典中没有 "Bitrate" 键的情况
-                if isinstance(aweme, dict)
-                else (
-                    [aweme[0].get("Bitrate", "")]
-                    if len(aweme) == 1
-                    else [item.get("Bitrate", "") for item in aweme]
+                (
+                    [aweme.get("Bitrate", "")]  # 如果 aweme 是字典，获取 "Bitrate"
+                    if isinstance(aweme, dict)
+                    else (
+                        [
+                            aweme[0].get("Bitrate", "")
+                        ]  # 如果 aweme 是单元素列表，获取第一个元素的 "Bitrate"
+                        if isinstance(aweme, list) and len(aweme) == 1
+                        else (
+                            [
+                                item.get("Bitrate", "") for item in aweme
+                            ]  # 如果 aweme 是多元素列表，遍历获取每个元素的 "Bitrate"
+                            if isinstance(aweme, list)
+                            else []
+                        )
+                    )
                 )
-            )
+                if aweme is not None
+                else []
+            )  # 如果 aweme 是 None，返回空列表
             for aweme in bit_rate_data
         ]
 
