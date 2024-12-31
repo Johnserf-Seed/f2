@@ -77,6 +77,12 @@ export default defineConfig({
               ],
             },
             {
+              text: 'FAQ',
+              items: [
+                { text: '高频问题', link: '/faq' },
+              ],
+            },
+            {
               text: '团队',
               items: [{ text: '团队介绍', link: '/team' }],
             },
@@ -111,12 +117,6 @@ export default defineConfig({
               ],
             },
           ],
-          '/question-answer/': [
-            {
-              text: 'QA',
-              items: [{ text: 'Issue里经常反馈的问题', link: '/question-answer/qa' }],
-            },
-          ],
         },
       },
     },
@@ -136,6 +136,12 @@ export default defineConfig({
                 { text: 'Site Config', link: '/en/site-config' },
                 { text: 'CLI', link: '/en/cli' },
                 { text: 'Advance Guide', link: '/en/advance-guide' },
+              ],
+            },
+            {
+              text: 'FAQ',
+              items: [
+                { text: 'Frequently Asked Questions', link: '/en/faq' },
               ],
             },
             {
@@ -173,12 +179,6 @@ export default defineConfig({
               ],
             },
           ],
-          '/en/question-answer/': [
-            {
-              text: 'QA',
-              items: [{ text: 'Frequently Asked Questions', link: '/en/question-answer/qa' }],
-            },
-          ],
         },
       },
     },
@@ -194,7 +194,7 @@ function cn_nav(): DefaultTheme.NavItem[] {
     },
     {
       text: 'QA',
-      link: '/question-answer/qa',
+      link: '/faq',
       activeMatch: '/question-answer/'
     },
     {
@@ -222,7 +222,7 @@ function en_nav(): DefaultTheme.NavItem[] {
     },
     {
       text: 'QA',
-      link: '/en/question-answer/qa',
+      link: '/en/faq',
       activeMatch: '/question-answer/'
     },
     {
