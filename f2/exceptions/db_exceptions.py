@@ -8,7 +8,7 @@ class DatabaseError(Exception):
     """基本数据库异常类，其他数据库异常都会继承这个类"""
 
     def __init__(self, message=None, db=None):
-        logger.error(_("请前往QA文档 https://f2.wiki/question-answer/qa 查看相关帮助"))
+        logger.error(_("请前往QA文档 https://f2.wiki/faq 查看相关帮助"))
         self.db = db
         super().__init__(message)
 
