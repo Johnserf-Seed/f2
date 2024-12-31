@@ -40,7 +40,7 @@ outline: [2,3]
 |  创建用户目录       | -                   | `create_user_folder`        |  🟢  |
 |  重命名用户目录      | -                 | `rename_user_folder`          |  🟢  |
 |  创建或重命名用户目录 | -                 | `create_or_rename_user_folder` |  🟢  |
-|  提取微博文案       | -                    | `extract_desc`              |  🟢  |
+|  提取推文文案       | -                    | `extract_desc`              |  🟢  |
 :::
 
 ::: details crawler接口列表
@@ -336,17 +336,17 @@ outline: [2,3]
 该接口很好的解决了用户改名之后重复创建目录的问题。集成在 `handler` 接口中。开发者无需关心，直接调用 `handler` 的数据接口即可。
 :::
 
-### 提取微博文案 🟢
+### 提取推文文案 🟢
 
-用于提取微博文案，排除最后的链接。
+用于提取推文文案，排除最后的链接。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
-| text | str | 微博文案 |
+| text | str | 推文文案 |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
-| text | str | 提取后的微博文案 |
+| text | str | 提取后的推文文案 |
 
 <<< @/snippets/twitter/extract-desc.py{13}
 
