@@ -123,7 +123,7 @@ class TwitterDownloader(BaseDownloader):
         # 动图属于视频类型
         if self.tweet_media_type in ["video", "animated_gif"]:
             await self.download_video()
-        elif self.tweet_media_type in ["photo"]:
+        elif self.tweet_media_type and "photo" in self.tweet_media_type:
             await self.download_images()
 
         await self.download_desc()
