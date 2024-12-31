@@ -891,11 +891,19 @@ class DouyinHandler:
             )
 
         # rich_prompt 会有字符刷新问题，暂时使用rich_print
-        rich_console.print(_("[bold yellow]请输入希望下载的收藏夹序号：[/bold yellow]"))
+        collects_list = [str(i) for i in range(len(collects.collects_id) + 1)]
+        rich_console.print(
+            _(
+                "[bold yellow]请输入希望下载的收藏夹序号：[/bold yellow] [bold purple]{0}[/bold purple]"
+            ).format("/".join(collects_list))
+        )
         selected_index = int(
             rich_prompt.ask(
-                # _("[bold yellow]请输入希望下载的收藏夹序号:[/bold yellow]"),
-                choices=[str(i) for i in range(len(collects.collects_id) + 1)],
+                # _(
+                #    "[bold yellow]请输入希望下载的收藏夹序号:[/bold yellow] [bold purple]{0}[/bold purple]"
+                # ).format(collects_list),
+                console=rich_console,
+                choices=collects_list,
             )
         )
 
