@@ -6,8 +6,218 @@
 
 ## [Unreleased]
 
-- `0.0.1.7`版本中将会添加接口本地转发的支持，添加更多`douyin`，`tiktok`，`weibo`和`x`的接口。
+- 将在 `0.0.1.8` 版本中添加 `BiliBili` & `NetEaseMusic` 支持。
+- 将在 `0.0.1.8` 版本中维护更多的 `API` 与 `CLI` 功能。
+- 添加 `Socket` 代理支持。
+- 添加 `Cookie` 池，`Proxy` 池，`User-Agent` 池等支持。
 
+## [0.0.1.7] - 2024-12-31
+
+### Added
+
+- 添加 `douyin` 动图作品接口维护输出 #218
+- 添加无法查看网页端 `weibo` 的异常处理 #223
+- 添加 `douyin` 批量采集直播的代码片段
+- 添加 `Babel` 依赖
+- 添加支援电子邮件地址 -> `support@f2.wiki`
+- 添加文档域名 -> `f2.wiki`
+- 添加所有应用 `Bark` 推送服务
+- 添加启用应用 `Bark` 加密推送配置
+- 添加生成 `pot` 文件批处理
+- 添加 `Bark` 加密推送模式
+- 添加生成随机字节数字方法
+- 添加 `bark` 通过设备 `token` 推送接口端点
+- 添加 `RSA` 加密工具类
+- 添加 `AES` 加密工具类
+- 添加使用 `bark` 端点文件生成接口
+- 添加替换配置文件中空值为空字符串
+- 添加 `douyin` 作品状态统计方法
+- 添加 `douyin` 作品状态统计接口
+- 添加 `cli_commands` 覆盖率测试
+- 添加 `x` 书签（收藏）推文模式
+- 添加 `x` 喜欢推文模式
+- 添加提取 `x` 标题方法
+- 添加 `weibo` 工具类测试用例
+- 为 `QA` 添加 `'NoneType' has no len()` 解决方案
+- 添加 `interval` 参数通用的方法处理
+- 统一使用 `Live` 管理进度条任务
+- 新增 `weibo` 文案提取方法
+- 添加通用过滤器转列表的方法
+- 允许中断来跳过版本检查
+- 添加 `tiktok proto` 元数据
+- 主配置添加 `Bark token` 配置
+- 添加 `Bark volume` 配置
+- 添加 `tiktok wss` 客户端配置管理方法
+- 添加 `tiktok` 作品区间 `interval` 参数支持
+- 添加 `Bark` 警告通知级别 https://github.com/Finb/Bark/issues/152
+- 添加 `tiktok` 直播间信息与弹幕信息回调方法
+- 添加 `tiktok` 直播弹幕接口模型
+- 添加 `tiktok` 直播间接口模型
+- 添加 `tiktok` 基础直播间接口模型
+- 为 `douyin` 弹幕爬虫添加代理参数
+- 添加弹幕输出开关
+- 添加了通知推送 `Bark` 应用
+- 添加了代理验证功能
+- 添加 `douyin` 直播间消息显示参数
+- 添加 `bark` 通知配置
+- 添加 `douyin`本地 `wss` 客户端配置
+- 添加 `tiktok` 弹幕接口
+- 添加 `douyin` 作品翻页时间码显示
+- 新增实况图集下载 #75
+- 新增 `douyin` 本地弹幕 `wss` 转发服务
+- 新增大量 `douyin` 直播间弹幕回调接口
+- 添加抖音 `live` 作品解析
+- 添加支持 `proxy` 的 `websockets` 依赖
+- 添加 `py` 版本检查
+- 添加筛选作品 `filter_by_date_interval` 方法
+- 添加 `interval_2_timestamp` 方法
+- 添加 `str_2_timestamp` 方法
+- 在异步线程池中检测 `F2` 版本
+
+### Changed
+
+- 优化 `tiktok` 播放列表相关方法
+- 优化 `douyin` 动态作品错误的处理
+- 优化注册信号类
+- 调整进度条的完成百分比为 `2` 位小数
+- 优化直播流 `504` 状态码的处理
+- 优化应用任务通知结构
+- 为 `weibo` 详情过滤器添加 `nickname_raw` 字段
+- 优化选择 `Bark` 加密通知判断逻辑
+- 分离 `douyin` 房间号提取方法
+- 改进 `x` 短链的解析与错误捕获
+- 改进错误捕获与代码规范
+- 增加 `tiktok SecUserIdFetcher` 类的稳定性
+- `tiktok` 提取 `secUid` 方法支持视频链接
+- 优化下载 `douyin` 直播流超时处理捕获层级
+- 更新 `bark` 模式列表与其他调整
+- 更新 `x` 工具类方法注释与方法名
+- 添加贡献者 #213
+- 更新 `x` 获取用户唯一 `ID` 类名
+- 修改 `x` 爬虫初始化可接受 `x_csrf_token` 参数
+- 将 `weibo` 用户 `id` 变量名改回 `uid`
+- 更新 `tiktok odin_tt` 生成方法
+- 改进直播流下载时受服务器返回的 `HTTP` 不规范的错误
+- 更新 `docs` 工作流为 `pnpm` 包管理器
+- 更新 `bark` 加密推送，改用随机 `iv`
+- 取消 `AES` 算法 `CBC` 模式一起返回 `Iv` 的情况
+- 为 `Bark` 接口爬虫 `GET` 方法添加 `URL` 转义
+- 为 `bark` 基础模型添加默认值
+- 修复 `bark token` 校验函数
+- 更新 `douyin` 好友作品接口模型缺失值
+- 调整 `douyin` 通过 `app` 分享的直播短链问题情况
+- 调整堆积的丢失信息影响下载任务显示
+- 调整 `douyin` 视频默认清晰度地址，最高可下 `4K` 作品  #209
+- 更新 `douyin` 代码片段 #197
+- 优化 `x` 一些边界情况处理
+- 分离获取 `weibo` 用户数据的 `2` 种方法
+- 计算 `x` 推文数量时过滤空值
+- 调整 `x` 应用细节
+- 更新 `x` 喜欢模式
+- 更新爬取 `x` 主页推文方法
+- 更新 `x` 用户推文数据过滤器
+- 优化 `x` 下载器
+- 更新 `x` 接口模型
+- 手动刷新 `live` 管理器防止闪屏
+- 完善 `douyin` 测试用例
+- 调整 `base_crawler` 异常捕获
+- 改进 `weibo` 方法为异步生成器并添加翻页
+- 调整 `weibo` 提取文案的方法
+- 更改默认异步事件循环作用域，确保兼容性
+- 更新 `x` 发布时间字段
+- 更新项目 `python` 最低要求版本 >= `3.10.0`
+- 优化了过滤器性能并提取为通用方法
+- 更新 `weibo` 下载器
+- 更新 `timestamp_2_str` 方法，新增列表转换与递归
+- 更新关闭信号注册入口
+- 更新 `ua` 版本 `126` -> `130`
+- 支持自定义 `ua` 生成 `abogus`
+- 更新代码片段
+- 使用异步任务处理 `douyin` 直播弹幕信息
+- 更新 `douyin proto` 元数据
+- 优化 `base_crawler`，添加更多边界处理
+- 为文本正则解析方法添加空值处理
+- 极大提升 `jsonpath` 解析性能
+- 捕获 `yaml` 格式错误导致无法解析
+- 修改终端输出格式
+- 捕获 `tk设备id` 注册时因网络问题导致的出错
+- 更新 `douyin` 直播消息 `callback` 方法
+- 优化 `douyin` 本地 `WebSocket` 服务性能
+- 更新 `douyin` 直播 `BattleTeamTaskMessage` 消息 `proto` 结构体
+- 调整 `douyin` 图集文件回 `webp` 格式
+- 添加毫秒级时间戳字符串转换
+- 优化时间戳转字符串函数
+- 重写 `json_filter` 逻辑
+- 完善 `douyin` 直播 `protobuf`
+- 优化抖音 `interval` 参数的作品解析
+- 完善静态类型检查
+- 调整进度条显示 #105
+- 更新 `douyin` 处理下载任务
+- 更新 `douyin` 筛选日期区间作品方法
+- 更新日志文件名
+- 调整 `i18n` 方法防止重复导入错误
+- 更新 `douyin` `abogus` 代码片段
+- 更新 `vitepress` 工作流
+- 更新 `tiktok` 的 `webmssdk` 版本号
+- 更新 `douyin` 直播 `signature` 参数
+- 更新 `douyin` 弹幕 `sdk` 版本 `1.0.12` -> `1.0.14-beta.0`
+
+### Deprecated
+
+- 弃用 `douyin` 扫码登录方法警告
+- 弃用 `WebcastSignatureManager.model_2_endpoint` 方法
+- 弃用 `_get_first_item_from_list` 方法
+- 弃用 `num_to_base36` 方法
+
+### Removed
+
+- 删除 `bark` 无用的代码
+- 删除 `x` 重复 `utils` 方法
+- 删除 `weibo` 工具类重复代码
+- 删除 `npm` 锁定文件
+- 删除 `douyin wss` 重复回调方法
+- 删除 `tiktok` 基础接口模型默认 `设备id`
+- 删除 `x` 错误的接口
+- 删除 `x` 转推模式
+- 删除测试无效的 `JSONPath` 测试
+
+### Fixed
+
+- 修复 `x` 无法下载图文的错误
+- 修复 `tiktok` 作品没有视频链接的错误
+- 修复 `douyin` 收藏夹类型错误
+- 修复 `Bark` 没有设置密钥时加密推送失败的情况
+- 修复 `vitepress sidebar` 配置
+- 修复下载器并发限制不起作用的问题
+- 修复 `weibo` 遗漏 `uid` 变量名修改
+- 修复 `douyin` 封面下载错误 #213
+- 修复 `douyin` 关注用户排序类型翻页的问题 #210
+- 修复防止变量未完成初始化
+- 修复 `weibo` 过滤器字段 #149
+- 修复文档线上不显示 `icon` 的问题
+- 修复 `douyin` 错误的弹幕消息类型日志
+- 修复 `tiktok` 错误的本地化代码
+- 修复事件循环风险 #159
+- 修复 `tiktok` 接口过滤器处理空值的错误
+- 修复 `tiktok` 直播流文件名解析错误
+- 修复 `x` 默认配置名 #145
+- 修复 Incomplete URL substring sanitization #139
+- 修复 `douyin` 的 `webmssdk` 库创建缓冲区的安全性问题
+- 修复 `tiktok` 读取 `BaseRequestModel` 配置的错误 #79
+- 修复 `F2` 版本检测逻辑
+- 修复文档编译 `dead link` 的情况
+
+### Security
+
+- 更新 `pytest-asyncio` 版本到 `0.25.0`
+- 更新 `browser_cookie3` 版本到 `0.20.1`
+- 更新 `vitepress` 版本到 `1.5.0`
+- 更新 `pydantic` 的新方法 `ConfigDict` 代替 `Config` 类
+- 更新 `protobuf` 版本到 `5.28.3`
+- 更新 `aiofiles` 版本到 `24.1.0`
+- 更新 `importlib-resources` 版本到 `6.4.5`
+- 更新 `pytest` 版本到 `8.3.4`
+- 更新 `jsonpath-ng` 版本到 `1.6.1`
 
 ## [0.0.1.6] - 2024-05-04
 
