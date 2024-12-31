@@ -79,7 +79,7 @@ $ pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple f2
 $ pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple f2
 ```
 
-3. 如遇到其他问题，请参阅 [常见问题](/question-answer/qa)。
+3. 如遇到其他问题，请参阅 [常见问题](/faq)。
 :::
 
 ## 编译安装
