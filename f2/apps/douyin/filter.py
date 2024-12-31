@@ -221,7 +221,7 @@ class UserPostFilter(JSONModel):
                 [
                     live["video"]["play_addr"]["url_list"][0]
                     for live in images_video
-                    if isinstance(live, dict) and live.get("video") != None
+                    if isinstance(live, dict) and live.get("video") is not None
                 ]
                 if images_video
                 else []
