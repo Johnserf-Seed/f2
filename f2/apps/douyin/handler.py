@@ -242,7 +242,11 @@ class DouyinHandler:
 
         aweme_id = await AwemeIdFetcher.get_aweme_id(self.kwargs.get("url"))
 
-        aweme_data = await self.fetch_one_video(aweme_id)
+        try:
+            aweme_data = await self.fetch_one_video(aweme_id)
+        except APIResponseError as e:
+            logger.error(e)
+            return
 
         async with AsyncUserDB("douyin_users.db") as db:
             user_path = await self.get_or_add_user_data(
@@ -280,6 +284,14 @@ class DouyinHandler:
             params = PostDetail(aweme_id=aweme_id)
             response = await crawler.fetch_post_detail(params)
             video = PostDetailFilter(response)
+
+            if video.nickname is None:
+                # 说明接口内容异常
+                raise APIResponseError(
+                    _(
+                        "`fetch_one_video`请求失败。如果是动图作品，则接口正在维护中，请稍后再试。"
+                    )
+                )
 
         logger.debug(
             _("作品ID：{0} 作品文案：{1} 作者：{2}").format(
