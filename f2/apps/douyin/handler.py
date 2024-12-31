@@ -1014,7 +1014,7 @@ class DouyinHandler:
                 params = UserCollectsVideo(
                     cursor=max_cursor,
                     count=current_request_size,
-                    collects_id=collects_id,
+                    collects_id=str(collects_id),
                 )
                 response = await crawler.fetch_user_collects_video(params)
                 video = UserCollectionFilter(response)
