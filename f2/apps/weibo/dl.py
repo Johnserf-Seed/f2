@@ -110,7 +110,7 @@ class WeiboDownloader(BaseDownloader):
         # 检查微博是否有图片
         if (
             self.weibo_data_dict.get("weibo_pic_num") == 0
-            and weibo_data_dict.get("weibo_pic_ids") == None
+            and weibo_data_dict.get("weibo_pic_ids") is None
             and weibo_data_dict.get("is_video") == "11"
         ):
             await self.download_video()
