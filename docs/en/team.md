@@ -40,10 +40,25 @@ const contributors = [
       { icon: 'github', link: 'https://github.com/apps/github-advanced-security', ariaLabel: 'Github Advanced Security' },
     ]
   },
+  {
+    avatar: 'https://avatars.githubusercontent.com/u/28860556',
+    name: 'LRTFK',
+    title: 'Contributor',
+    links: [
+      { icon: 'github', link: 'https://github.com/LRTFK', ariaLabel: 'GitHub LRTFK' },
+    ]
+  },
 ]
 
 const sponsors = [
-  {},
+  {
+    avatar: 'https://avatars.githubusercontent.com/u/119824398',
+    name: 'TikHub',
+    title: 'Sponsor',
+    links: [
+      { icon: 'github', link: 'https://github.com/TikHub', ariaLabel: 'GitHub TikHub' },
+    ]
+  },
 ]
 
 </script>
