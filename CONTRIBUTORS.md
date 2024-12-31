@@ -1,5 +1,7 @@
-# Contributors
+# 贡献者
 
-The following people have contributed to the development of F2:
+以下人员为 F​​2 的开发做出了贡献：
 
-<!-- Add your name below, sort alphabetically by surname. Link to GitHub profile / your home page. -->
+<!-- 在下面添加您的名字，按姓氏字母顺序排序。链接到 GitHub 个人资料/您的主页。 -->
+
+- [LRTFK](https://github.com/LRTFK)
