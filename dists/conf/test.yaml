@@ -1,0 +1,39 @@
+douyin:
+  headers:
+    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0
+    Referer: https://www.douyin.com/
+  cookie: __ac_nonce=06773e19100a5d9b3cb05; __ac_signature=_02B4Z6wo00f012sEATQAAIDDXCDFaugxiSdrJAWAAL2-80; ttwid=1%7Ce0ovcESuIyTPuZvLWitvq4dilSoBUbxj8a0a7Ss9g08%7C1735647633%7C33bfa6449d27b9c3322bc207ffd0d8a8e6ffcd561a764d802c2ef3b763507190; UIFID_TEMP=26198ff38959f773c63a6fc9b3542e2fdcfd2f10d2782124ed1adc24709862dfbc0871077e60524e052b4660b614b5a43cc62207ed498565dd1a93c044c1bfb3561f28031ff6016ab6b43af2d8e04367; s_v_web_id=verify_m5cfsgxr_Xp8ee8Kj_bW6h_4nyb_BS6N_RPy3KSO1vCRK; douyin.com; device_web_cpu_core=12; device_web_memory_size=8; architecture=amd64; hevc_supported=true; IsDouyinActive=true; home_can_add_dy_2_desktop=%220%22; dy_swidth=1920; dy_sheight=1080; stream_recommend_feed_params=%22%7B%5C%22cookie_enabled%5C%22%3Atrue%2C%5C%22screen_width%5C%22%3A1920%2C%5C%22screen_height%5C%22%3A1080%2C%5C%22browser_online%5C%22%3Atrue%2C%5C%22cpu_core_num%5C%22%3A12%2C%5C%22device_memory%5C%22%3A8%2C%5C%22downlink%5C%22%3A10%2C%5C%22effective_type%5C%22%3A%5C%224g%5C%22%2C%5C%22round_trip_time%5C%22%3A50%7D%22; csrf_session_id=77bbe9a5096f2d5cda6c75153c36ff10; strategyABtestKey=%221735647640.59%22; volume_info=%7B%22isUserMute%22%3Afalse%2C%22isMute%22%3Afalse%2C%22volume%22%3A0.5%7D; stream_player_status_params=%22%7B%5C%22is_auto_play%5C%22%3A0%2C%5C%22is_full_screen%5C%22%3A0%2C%5C%22is_full_webscreen%5C%22%3A0%2C%5C%22is_mute%5C%22%3A0%2C%5C%22is_speed%5C%22%3A1%2C%5C%22is_visible%5C%22%3A1%7D%22; xgplayer_user_id=722639182799; passport_csrf_token=542050def077c23245d0bd361b446a1c; passport_csrf_token_default=542050def077c23245d0bd361b446a1c; fpk1=U2FsdGVkX19tIUKbNHjwqQEEaWTWi3IGRdQQtMzvV+g5JLjPvYr1qZWktjTX6BWB5ccuLp0Dk4D7yf5bh+3T4g==; fpk2=ffc3218438300d069a0fd5dfa5c6e851; FORCE_LOGIN=%7B%22videoConsumedRemainSeconds%22%3A180%7D; biz_trace_id=19cf7416; bd_ticket_guard_client_data=eyJiZC10aWNrZXQtZ3VhcmQtdmVyc2lvbiI6MiwiYmQtdGlja2V0LWd1YXJkLWl0ZXJhdGlvbi12ZXJzaW9uIjoxLCJiZC10aWNrZXQtZ3VhcmQtcmVlLXB1YmxpYy1rZXkiOiJCRUt4a3BlTTQxcnB4S09FTklaSDY2enlLNjZUTFM3YjFrL0VYZW0xclVEVWRMZ2hlTmJLY1F1TWl5Z0tLRkJST0E3ZDFVNW0veXUyWGlhRTZmQTJDQXM9IiwiYmQtdGlja2V0LWd1YXJkLXdlYi12ZXJzaW9uIjoyfQ%3D%3D; bd_ticket_guard_client_web_domain=2; sdk_source_info=7e276470716a68645a606960273f276364697660272927676c715a6d6069756077273f276364697660272927666d776a68605a607d71606b766c6a6b5a7666776c7571273f275e58272927666a6b766a69605a696c6061273f27636469766027292762696a6764695a7364776c6467696076273f275e5827292771273f273d3133303133323133303632342778; bit_env=hCHCgjSoubXXKoi1FfovyeBie6CBYL3uNYX3PagwMqTIUNzuSDJ3NQ3dJnlHzll3_C4f8AOAgn_dkis_Fo_zjcQa_NvIR12S8OeU6YYEDldRA3uAxuqMHFg9cTjyw5HYBjsy5EMxYlD9kht8rRjDsgkffLY1m_0YuWwI2TpL9Ks6ncouWxcIasq2UYJuPQnLXOWfOC-mdMhfNmdoyCE02f4CSaNIPoBQZfyR8xFaWL05EfygU4zitrYnFfP4Il-3nfhKnjxJfCBcrV2s2aET4C9K6d98YdEhv1F65nmjkFvZlNmTNUHBHoMxywtr-T5OvdtSjvfSSxjY5r3XsMB_PSfaNNDEZ4N5N6qEPbB2_uNTLh4zKFkpnYw0j_uPQulXiPTvv7joRPbZ_qcqBl6uVc0iaMknCJMouWQ7NCTgA1O8CveHhNwRkX2cYan9AtNutzhC5BG6jLWBUgaWDBmwwMt3477dXA6mUnsKNELlCviGEF4aBJ5NRrPHAHasAUrqzslAbJH_aVgEfZIjkCqkeJLknLT72nhW-zA60P-0XYE%3D; gulu_source_res=eyJwX2luIjoiZjgxMDM2NjljMjZmMzZkODQ0MmQwMTUzZTdlODMyODRlYzdmN2M3M2UwMDRlMTE3N2JkMjVkNjIyOGYyNTNhYiJ9; passport_auth_mix_state=vw5jim92kcz8vjstbra507tnrvnyqvyt
+  proxies:
+    http://:
+    https://:
+
+tiktok:
+  headers:
+    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0
+    Referer: https://www.tiktok.com/
+  cookie: ak_bmsc=A608DEDF6111C57BB539471EB7F2734C~000000000000000000000000000000~YAAQzlA7FwARAxyUAQAAdQSrHBqVZTpftPwg0puf6xdMR+QDr7FTTk7yPagRgdvhGHbv3JMq3f1jjUmQkB7q3n/dDzjF2EH8oam2HleGCbjxedhUVfGfnOx2YUkxbbbaol0RLN9S5S2KIsz1OWiJ9kOaSFvbjBFPMTf0wHFgzUY38fuZC//J1NNt/TbtfM3TAp7BnQ9wJJDvnSqEUDrIdY1M8XEcWw+NrdjZGwnllIuNvFnxHIVyht6gO+tVOL+M7Hvz7BpvdafvWc8YNeOAqX9Abu1mAgk0LnvgpCQN4m7FBbHKz8w3oYxrKrPkehx4rRb7AJg9Lp9+zRfFlrXlo2LQPvRT04QtxRxHXR0aZ6wtpoX0BoYgAZNm9Kc63Q43QTPv59aQcLc=; tt_csrf_token=xDQ7Ukh1-lPt8TVcmqc2K__2BX3IxNon4TtM; ttwid=1%7C0awQ46Rmq_hEQNbnUOK-Fvv63crXvC1H-vXRN2zZzHo%7C1735647759%7C678239c558c8609eeb003bb9d9e1f22a4efefe86046fc0be10e01652ad963d25; tt_chain_token=D7jcOVKOhCpWtFEIBhCl8Q==; delay_guest_mode_vid=5; tiktok_webapp_theme_source=system; tiktok_webapp_theme=light; passport_csrf_token=ba8d9f65175df516e26227076060f69e; passport_csrf_token_default=ba8d9f65175df516e26227076060f69e; living_user_id=142123184387; s_v_web_id=verify_m5cfv7is_oFL3GK8i_QZAX_4w4e_82kj_xefEJOxJjWJY; msToken=e-Q7OYzz3DLQvSU1BT5v0Sn6HaQnzcV4O56r2dWGSRJDYyEiK-WZJL7Yra30uUrzrmPZeNuSCwnNE7yRKBgaScEYugvXZyv_lf6RcrOJ2Trad2S8vtPT6VlWTa-RZCsZsrn0Sp0vK98lW2etXqip; msToken=KnlASY6DNJStnnzLlAM6Y6Io4d6YMRiqANFaT_-Y9zYo9kW955nZY2v1nXM5ksU6IateEx-hmbu-wtq5X87WKocZymydCQlMKUKgLH3giZLk4_kKbEAcF4arNXkoB8S6-c8PpO9NgF0gRYjREIBj
+  proxies:
+    http://:
+    https://:
+
+weibo:
+  headers:
+    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0
+    Referer: https://www.weibo.com/
+  cookie: XSRF-TOKEN=Ymyz31y7FZRStFQd7LhesRcv; SUB=_2AkMQL25Af8NxqwFRmf4Rym7rb41zywvEieKmc5-bJRMxHRl-yT9yql4utRB6O69Ar77p2KEduCh88JON2wIPxU37Yrqz; SUBP=0033WrSXqPxfM72-Ws9jqgMF55529P9D9WhISzYaFT4HiU.FvlD1pNni; WBPSESS=UpRpmiZuabnjxMaPsrZiV0xBaLRPvJkEBqIIUTr-1YDYfptLj0Ya6W1EfFUBwrQTEtrukxSA2Cw3hUNBeeKJva1oWjJp28PHHUADLmgoyUoQfC-dKfbGCzViRI6r3yk_CH96eqqOm5a--ryuQjDSmzc3pzneyOcwKtI9qoHioOM=
+  proxies:
+    http://:
+    https://:
+
+twitter:
+  headers:
+    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0
+    Referer: https://twitter.com/
+  cookie: guest_id=v1%3A173564767572419725; night_mode=2; guest_id_marketing=v1%3A173564767572419725; guest_id_ads=v1%3A173564767572419725; gt=1874068397870506054; personalization_id="v1_SL4HTR5fas6f8jzKheH9/A=="
+  proxies:
+    http://:
+    https://:
+
+bark:
+  key: ""
+  token: ""
