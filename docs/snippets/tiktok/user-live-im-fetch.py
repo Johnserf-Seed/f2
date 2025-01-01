@@ -1,6 +1,7 @@
 import asyncio
 from f2.log.logger import logger
 from f2.apps.tiktok.handler import TiktokHandler
+from f2.apps.tiktok.crawler import TiktokWebSocketCrawler
 
 
 kwargs = {
@@ -23,12 +24,36 @@ kwargs2 = {
     },
     "proxies": {"http://": None, "https://": None},
     "timeout": 10,
+    # 是否在终端显示弹幕消息
+    "show_message": True,
     "cookie": "GUEST_COOKIE_HERE",
 }
 
 
+wss_callbacks = {
+    "WebcastChatMessage": TiktokWebSocketCrawler.WebcastChatMessage,
+    "WebcastMemberMessage": TiktokWebSocketCrawler.WebcastMemberMessage,
+    "WebcastRoomUserSeqMessage": TiktokWebSocketCrawler.WebcastRoomUserSeqMessage,
+    "WebcastGiftMessage": TiktokWebSocketCrawler.WebcastGiftMessage,
+    "WebcastSocialMessage": TiktokWebSocketCrawler.WebcastSocialMessage,
+    "WebcastLikeMessage": TiktokWebSocketCrawler.WebcastLikeMessage,
+    "WebcastLinkMicFanTicketMethod": TiktokWebSocketCrawler.WebcastLinkMicFanTicketMethod,
+    "WebcastLinkMicMethod": TiktokWebSocketCrawler.WebcastLinkMicMethod,
+    "UserFanTicket": TiktokWebSocketCrawler.UserFanTicket,
+    "WebcastLinkMessage": TiktokWebSocketCrawler.WebcastLinkMessage,
+    "WebcastLinkMicBattle": TiktokWebSocketCrawler.WebcastLinkMicBattle,
+    "WebcastLinkLayerMessage": TiktokWebSocketCrawler.WebcastLinkLayerMessage,
+    "WebcastRoomMessage": TiktokWebSocketCrawler.WebcastRoomMessage,
+    "WebcastOecLiveShoppingMessage": TiktokWebSocketCrawler.WebcastOecLiveShoppingMessage,  # TODO: 以下消息类型暂未实现
+    # TODO: 以下消息类型暂未实现
+    # WebcastOecLiveManagerMessage
+    # WebcastInRoomBannerMessage
+    # WebcastAnchorToolModificationMessage
+}
+
+
 async def main():
-    room_id = "7404848324131638062"
+    room_id = "7454940010882976533"
 
     room = await TiktokHandler(kwargs).fetch_check_live_alive(room_id)
     if not room.is_alive[0]:
