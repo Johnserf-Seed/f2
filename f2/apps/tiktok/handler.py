@@ -5,7 +5,7 @@ import asyncio
 from rich.rule import Rule
 from pathlib import Path
 from urllib.parse import quote
-from typing import AsyncGenerator, Union, List, Any
+from typing import AsyncGenerator, Union, List, Any, Dict
 
 from f2.i18n.translator import _
 from f2.log.logger import logger
@@ -1138,7 +1138,12 @@ class TiktokHandler:
         return live_im
 
     async def fetch_live_danmaku(
-        self, room_id: str, internal_ext: str, cursor: str, wrss: str
+        self,
+        room_id: str,
+        internal_ext: str,
+        cursor: str,
+        wrss: str,
+        wss_callbacks: Dict = {},
     ):
         """
         通过WebSocket连接获取直播间弹幕，再通过回调函数处理弹幕数据。
@@ -1153,22 +1158,29 @@ class TiktokHandler:
             self.websocket: TiktokWebSocketCrawler: WebSocket连接对象
         """
 
-        wss_callbacks = {
-            "WebcastChatMessage": TiktokWebSocketCrawler.WebcastChatMessage,
-            "WebcastMemberMessage": TiktokWebSocketCrawler.WebcastMemberMessage,
-            "WebcastRoomUserSeqMessage": TiktokWebSocketCrawler.WebcastRoomUserSeqMessage,
-            "WebcastGiftMessage": TiktokWebSocketCrawler.WebcastGiftMessage,
-            "WebcastSocialMessage": TiktokWebSocketCrawler.WebcastSocialMessage,
-            "WebcastLikeMessage": TiktokWebSocketCrawler.WebcastLikeMessage,
-            "WebcastLinkMicFanTicketMethod": TiktokWebSocketCrawler.WebcastLinkMicFanTicketMethod,
-            "WebcastLinkMicMethod": TiktokWebSocketCrawler.WebcastLinkMicMethod,
-            "UserFanTicket": TiktokWebSocketCrawler.UserFanTicket,
-            "WebcastLinkMessage": TiktokWebSocketCrawler.WebcastLinkMessage,
-            "WebcastLinkMicBattle": TiktokWebSocketCrawler.WebcastLinkMicBattle,
-            "WebcastLinkLayerMessage": TiktokWebSocketCrawler.WebcastLinkLayerMessage,
-            "WebcastRoomMessage": TiktokWebSocketCrawler.WebcastRoomMessage,
-            "WebcastOecLiveShoppingMessage": TiktokWebSocketCrawler.WebcastOecLiveShoppingMessage,
-        }
+        if not wss_callbacks:
+            logger.warning(_("没有设置回调函数，默认使用所有回调函数"))
+            wss_callbacks = {
+                "WebcastChatMessage": TiktokWebSocketCrawler.WebcastChatMessage,
+                "WebcastMemberMessage": TiktokWebSocketCrawler.WebcastMemberMessage,
+                "WebcastRoomUserSeqMessage": TiktokWebSocketCrawler.WebcastRoomUserSeqMessage,
+                "WebcastGiftMessage": TiktokWebSocketCrawler.WebcastGiftMessage,
+                "WebcastSocialMessage": TiktokWebSocketCrawler.WebcastSocialMessage,
+                "WebcastLikeMessage": TiktokWebSocketCrawler.WebcastLikeMessage,
+                "WebcastLinkMicFanTicketMethod": TiktokWebSocketCrawler.WebcastLinkMicFanTicketMethod,
+                "WebcastLinkMicMethod": TiktokWebSocketCrawler.WebcastLinkMicMethod,
+                "UserFanTicket": TiktokWebSocketCrawler.UserFanTicket,
+                "WebcastLinkMessage": TiktokWebSocketCrawler.WebcastLinkMessage,
+                "WebcastLinkMicBattle": TiktokWebSocketCrawler.WebcastLinkMicBattle,
+                "WebcastLinkLayerMessage": TiktokWebSocketCrawler.WebcastLinkLayerMessage,
+                "WebcastRoomMessage": TiktokWebSocketCrawler.WebcastRoomMessage,
+                "WebcastOecLiveShoppingMessage": TiktokWebSocketCrawler.WebcastOecLiveShoppingMessage,
+                # TODO: 以下消息类型暂未实现
+                # WebcastOecLiveManagerMessage
+                # WebcastInRoomBannerMessage
+                # WebcastAnchorToolModificationMessage
+            }
+
         async with TiktokWebSocketCrawler(self.kwargs, callbacks=wss_callbacks) as wss:
 
             params = LiveWebcast(
