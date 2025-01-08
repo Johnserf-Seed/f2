@@ -1301,9 +1301,9 @@ def format_file_name(
     # 为不同系统设置不同的文件名长度限制
     os_limit = {
         "win32": 200,
-        "cygwin": 60,
-        "darwin": 60,
-        "linux": 60,
+        "cygwin": 200,
+        "darwin": 200,
+        "linux": 200,
     }
 
     fields = {
