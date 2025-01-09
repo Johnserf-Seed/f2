@@ -174,7 +174,7 @@ class TweetDetailFilter(JSONModel):
         )
 
     @property
-    def nicename_raw(self):
+    def nickname_raw(self):
         return self._get_attr_value(
             "$.data.threaded_conversation_with_injections_v2.instructions[0].entries[0].content.itemContent.tweet_results.result.core.user_results.result.legacy.name"
         )
