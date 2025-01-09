@@ -65,39 +65,38 @@ class AsyncUserDB(BaseDB):
             f"INSERT OR REPLACE INTO {self.TABLE_NAME} ({keys}) VALUES ({placeholders})",
             values,
         )
-        # VALUES (?, {placeholders})', (kwargs.get('user_id'), *values))
         await self.commit()
 
-    async def update_user_info(self, user_id: str, **kwargs) -> None:
+    async def update_user_info(self, uniqueId: str, **kwargs) -> None:
         """
         更新用户信息
 
         Args:
-            user_id (str): 用户唯一标识
+            uniqueId (str): 用户唯一标识
             **kwargs: 用户的其他字段键值对
         """
 
-        user_data = await self.get_user_info(user_id)
+        user_data = await self.get_user_info(uniqueId)
         if user_data:
             set_sql = ", ".join([f"{key} = ?" for key in kwargs.keys()])
             await self.execute(
-                f"UPDATE {self.TABLE_NAME} SET {set_sql} WHERE user_id=?",
-                (*kwargs.values(), user_id),
+                f"UPDATE {self.TABLE_NAME} SET {set_sql} WHERE user_unique_id=?",
+                (*kwargs.values(), uniqueId),
             )
             await self.commit()
 
-    async def get_user_info(self, user_id: str) -> dict:
+    async def get_user_info(self, uniqueId: str) -> dict:
         """
         获取用户信息
 
         Args:
-            user_id (str): 用户唯一标识
+            uniqueId (str): 用户唯一标识
 
         Returns:
             dict: 对应的用户信息，如果不存在则返回 None
         """
         cursor = await self.execute(
-            f"SELECT * FROM {self.TABLE_NAME} WHERE user_id=?", (user_id,)
+            f"SELECT * FROM {self.TABLE_NAME} WHERE user_unique_id=?", (uniqueId,)
         )
         result = await cursor.fetchone()
         if not result:
@@ -105,14 +104,16 @@ class AsyncUserDB(BaseDB):
         columns = [description[0] for description in cursor.description]
         return dict(zip(columns, result))
 
-    async def delete_user_info(self, user_id: str) -> None:
+    async def delete_user_info(self, uniqueId: str) -> None:
         """
         删除用户信息
 
         Args:
-            user_id (str): 用户唯一标识
+            uniqueId (str): 用户唯一标识
         """
-        await self.execute(f"DELETE FROM {self.TABLE_NAME} WHERE user_id=?", (user_id,))
+        await self.execute(
+            f"DELETE FROM {self.TABLE_NAME} WHERE user_unique_id=?", (uniqueId,)
+        )
         await self.commit()
 
     async def __aenter__(self):
