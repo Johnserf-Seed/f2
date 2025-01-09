@@ -141,7 +141,7 @@ class TwitterDownloader(BaseDownloader):
         )
 
         if isinstance(self.tweet_video_url, list):
-            self.tweet_video_url = self.tweet_video_url[0]  # 如果是列表，取第一个元素
+            self.tweet_video_url = self.tweet_video_url[-1]  # 如果是列表，取第一个元素
 
         await self.initiate_download(
             _("视频"), self.tweet_video_url, self.base_path, video_name, ".mp4"
