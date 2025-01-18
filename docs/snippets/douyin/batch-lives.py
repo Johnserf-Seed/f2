@@ -82,7 +82,11 @@ async def main():
 
     async def limited_download(webcast_id):
         async with semaphore:
-            await download_live_stream(webcast_id)
+            # await download_live_stream(webcast_id) # [!code --]
+            # 每分钟检查一次直播状态 # [!code ++]
+            while True:  # [!code ++]
+                await download_live_stream(webcast_id)  # [!code ++]
+                await asyncio.sleep(1 * 60)  # [!code ++]
 
     # 使用RichConsoleManager管理进度条
     with RichConsoleManager().progress:
