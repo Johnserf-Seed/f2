@@ -7,7 +7,6 @@ import aiofiles
 import traceback
 
 from pathlib import Path
-from urllib.error import HTTPError as urllib_HTTPError
 from rich.progress import TaskID
 from typing import Union, Optional, Any, List, Set
 
@@ -463,60 +462,24 @@ class BaseDownloader(BaseCrawler):
 
                 except httpx.HTTPStatusError as e:
                     if e.response.status_code == 404:
-                        logger.warning(_("m3u8文件或ts文件未找到，可能直播结束"))
-                        await self.progress.update(
-                            task_id,
-                            description=_("[red][  丢失  ]：[/red]"),
-                            filename=trim_filename(full_path.name, 45),
-                            state="completed",
-                        )
-                        return
+                        logger.debug(_("m3u8文件或ts文件未找到，当前直播已结束"))
                     elif e.response.status_code == 504:
-                        logger.warning(_("网关超时，无法下载直播流"))
-                        await self.progress.update(
-                            task_id,
-                            description=_("[red][  完成  ]：[/red]"),
-                            filename=trim_filename(full_path.name, 45),
-                            state="completed",
-                        )
-                        return
+                        logger.warning(_("[red]网关超时，无法下载直播流[/red]"))
                     else:
-                        logger.debug(_("HTTP错误: {0}").format(e))
+                        logger.debug(_("HTTP错误：{0}").format(e))
                         logger.error(_("[red]m3u8文件下载失败，但文件已保存[/red]"))
-                        await self.progress.update(
-                            task_id,
-                            description=_("[red][  失败  ]：[/red]"),
-                            filename=trim_filename(full_path.name, 45),
-                            state="completed",
-                        )
-                        return
 
-                except urllib_HTTPError as e:
-                    if e.code == 404:
-                        logger.warning(_("m3u8文件或ts文件未找到，直播已结束"))
-                        logger.info(
-                            _("[green][  完成  ]：{0}[/green]").format(
-                                Path(full_path).name
-                            )
-                        )
-                        await self.progress.update(
-                            task_id,
-                            description=_("[green][  完成  ]：[/green]"),
-                            filename=trim_filename(full_path.name, 45),
-                            state="completed",
-                            visible=False,
-                        )
-                        logger.debug(_("文件已保存到： {0}").format(full_path))
-                        return
-
-                    logger.error(traceback.format_exc())
-                    logger.error(_("[red]m3u8文件下载失败，但文件已保存[/red]"))
+                    logger.info(
+                        _("[green][  完成  ]：{0}[/green]").format(Path(full_path).name)
+                    )
                     await self.progress.update(
                         task_id,
-                        description=_("[red][  失败  ]：[/red]"),
+                        description=_("[red][  完成  ]：[/red]"),
                         filename=trim_filename(full_path.name, 45),
                         state="completed",
+                        visible=False,
                     )
+                    logger.debug(_("直播流文件已保存到：{0}").format(full_path))
                     return
 
                 except Exception as e:
