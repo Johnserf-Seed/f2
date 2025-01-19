@@ -1,5 +1,6 @@
 # path: f2/db/base_db.py
 
+import asyncio
 import aiosqlite
 
 from typing import Optional
@@ -9,11 +10,14 @@ class BaseDB:
     """
     基础数据库类 (Base Database)
 
-    该类提供了一个异步数据库连接管理器，封装了与 SQLite 数据库的连接、查询、数据操作及版本控制等功能。支持数据库的基本操作，如执行查询、获取结果、提交更改以及关闭连接。该类为数据库迁移提供了一个基础接口，允许子类实现特定的迁移策略。
+    该类提供了一个异步数据库连接管理器，封装了与 SQLite 数据库的连接、查询、数据操作及版本控制等功能。
+    支持高并发任务限制、自动重试机制和数据库版本迁移。
 
     类属性:
     - db_name (str): 数据库名称。
     - conn (aiosqlite.Connection | None): 数据库连接实例，初始化时为 None。
+    - semaphore (asyncio.Semaphore): 用于限制并发任务数的信号量。
+    - max_retries (int): 最大重试次数，用于处理数据库锁定问题。
 
     类方法:
     - __init__: 初始化数据库连接管理器，并设置数据库名称。
@@ -54,15 +58,27 @@ class BaseDB:
     ```
     """
 
-    def __init__(self, db_name: str) -> Optional[None]:
+    def __init__(self, db_name: str, **kwargs) -> Optional[None]:
         self.db_name = db_name
         self.conn = None
+        self.semaphore = asyncio.Semaphore(kwargs.get("max_tasks", 10))
+        self.max_retries = kwargs.get("max_retries", 5)
 
     async def connect(self) -> Optional[None]:
         """
         连接到数据库
+
+        - 启用 WAL 模式，提高并发读写性能。
+        - 设置 `synchronous` 为 `NORMAL`，降低同步写操作的延迟。
+        - 增加缓存大小，提高查询速度。
+        - 将临时表存储在内存中，加快查询速度。
         """
         self.conn = await aiosqlite.connect(self.db_name)
+        await self.conn.execute("PRAGMA journal_mode=WAL;")  # 启用 WAL 模式
+        await self.conn.execute("PRAGMA synchronous = NORMAL;")  # 优化性，,减少同步开销
+        await self.conn.execute("PRAGMA cache_size = 10000;")  # 增加缓存大小
+        await self.conn.execute("PRAGMA temp_store = MEMORY;")  # 临时表存储在内存中
+        # await self.conn.execute("PRAGMA locking_mode = EXCLUSIVE;")  # 限制数据库独占锁模式
         await self._create_table()
 
     async def _create_table(self) -> Optional[None]:
@@ -90,21 +106,32 @@ class BaseDB:
 
     async def execute(self, query: str, parameters: tuple = ()) -> aiosqlite.Cursor:
         """
-        执行SQL查询
+        执行SQL查询，并增加重试机制以处理潜在的锁定问题。
+
+        - 支持异步任务的信号量控制，限制最大并发查询数。
+        - 在发生 `OperationalError` 时自动重试，最多重试 `max_retries` 次。
 
         Args:
             query (str): SQL查询
             parameters (tuple): SQL参数
 
         Returns:
-            aiosqlite.Cursor: 返回查询的光标
+            aiosqlite.Cursor: 查询的光标
         """
-        cursor = await self.conn.cursor()
-        if parameters:
-            await cursor.execute(query, parameters)
-        else:
-            await cursor.execute(query)
-        return cursor
+        for attempt in range(self.max_retries):
+            try:
+                cursor = await self.conn.cursor()
+                async with self.semaphore:
+                    if parameters:
+                        await cursor.execute(query, parameters)
+                    else:
+                        await cursor.execute(query)
+                return cursor
+            except aiosqlite.OperationalError as e:
+                if "database is locked" in str(e) and attempt < self.max_retries - 1:
+                    await asyncio.sleep(0.1 * (attempt + 1))  # 指数级退避
+                else:
+                    raise
 
     async def fetch_one(self, query: str, parameters: tuple = ()) -> tuple:
         """
