@@ -44,8 +44,8 @@ export default defineConfig({
       { icon: 'gmail', link: 'mailto:support@f2.wiki', ariaLabel: 'Email' },
     ],
     algolia: {
-      appId: 'KKYI8Z7LEP',
-      apiKey: '8f27043df972a4e8eb009a3195f2042b',
+      appId: '30ELZ9F504',
+      apiKey: 'f252ef8a7175f8801c302df716c7e06d',
       indexName: 'f2'
     },
     footer: {

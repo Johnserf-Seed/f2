@@ -744,14 +744,14 @@ class SecUserIdFetcher(BaseCrawler):
 
         if host is None:
             raise APINotFoundError(
-                "无法解析URL的主机部分。类名：{0}".format(cls.__name__)
+                _("无法解析URL的主机部分。类名：{0}".format(cls.__name__))
             )
 
-        if "v.douyin.com" in host:
-            pattern = cls._REDIRECT_URL_PATTERN
-        else:
-            pattern = cls._DOUYIN_URL_PATTERN
-
+        pattern = (
+            cls._REDIRECT_URL_PATTERN
+            if host == "v.douyin.com" or host.endswith(".v.douyin.com")
+            else cls._DOUYIN_URL_PATTERN
+        )
         # 创建一个实例以访问 aclient
         instance = cls()
 
@@ -1490,9 +1490,9 @@ def format_file_name(
     # 为不同系统设置不同的文件名长度限制
     os_limit = {
         "win32": 200,
-        "cygwin": 60,
-        "darwin": 60,
-        "linux": 60,
+        "cygwin": 200,
+        "darwin": 200,
+        "linux": 200,
     }
 
     fields = {

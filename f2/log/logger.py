@@ -56,16 +56,21 @@ class LogManager(metaclass=Singleton):
     - 使用 `Singleton` 元类确保整个应用程序只有一个 `LogManager` 实例。
     """
 
-    def __init__(self):
+    def __init__(self, log_name="f2"):
         if getattr(self, "_initialized", False):  # 防止重复初始化
             return
 
-        self.logger = logging.getLogger("f2")
+        self.logger = logging.getLogger(log_name)
         self.logger.setLevel(logging.INFO)
         self.log_dir = None
         self._initialized = True
 
-    def setup_logging(self, level=logging.INFO, log_to_console=False, log_path=None):
+    def setup_logging(
+        self,
+        level=logging.INFO,
+        log_to_console=False,
+        log_path=None,
+    ):
         self.logger.handlers.clear()
         self.logger.setLevel(level)
 
@@ -81,13 +86,24 @@ class LogManager(metaclass=Singleton):
             ch.setFormatter(logging.Formatter("{message}", style="{", datefmt="[%X]"))
             self.logger.addHandler(ch)
 
+        # 文件日志输出
         if log_path:
             self.log_dir = Path(log_path)
             self.ensure_log_dir_exists(self.log_dir)
-            log_file_name = datetime.datetime.now().strftime("f2-%Y-%m-%d-%H-%M-%S.log")
+
+            # 根据 log_name 动态设置文件名
+            log_file_name = (
+                f"{self.logger.name}-{datetime.datetime.now():%Y-%m-%d-%H-%M-%S}.log"
+            )
             log_file = self.log_dir.joinpath(log_file_name)
+
+            # 根据日期切割日志文件
             fh = TimedRotatingFileHandler(
-                log_file, when="midnight", interval=1, backupCount=99, encoding="utf-8"
+                log_file,
+                when="midnight",
+                interval=1,
+                backupCount=99,
+                encoding="utf-8",
             )
             fh.setFormatter(
                 logging.Formatter(
@@ -100,7 +116,7 @@ class LogManager(metaclass=Singleton):
     def ensure_log_dir_exists(log_path: Path):
         log_path.mkdir(parents=True, exist_ok=True)
 
-    def clean_logs(self, keep_last_n=10):
+    def clean_logs(self, keep_last_n=99):
         """保留最近的n个日志文件并删除其他文件"""
         if not self.log_dir:
             return
@@ -126,26 +142,46 @@ class LogManager(metaclass=Singleton):
         time.sleep(1)  # 确保文件被释放
 
 
-def log_setup(log_to_console=True):
-    logger = logging.getLogger("f2")
+def log_setup(
+    log_to_console=True,
+    log_name="f2",
+) -> logging.Logger:
+    """
+    配置日志记录器。
+
+    Args:
+        log_to_console (bool): 是否将日志输出到控制台，默认为 True。
+        log_name (str): 日志记录器的名称，默认为 "f2"。
+
+    Returns:
+        logging.Logger: 配置好的日志记录器实例。
+    """
+    logger = logging.getLogger(log_name)
     if logger.hasHandlers():
         # logger已经被设置，不做任何操作
         return logger
 
-    # 创建临时的日志目录
-    temp_log_dir = Path("./logs")
-    temp_log_dir.mkdir(exist_ok=True)
+    # 创建日志目录
+    log_dir = Path("./logs")
+    log_dir.mkdir(exist_ok=True)
 
     # 初始化日志管理器
-    log_manager = LogManager()
+    log_manager = LogManager(log_name)
     log_manager.setup_logging(
-        level=logging.INFO, log_to_console=log_to_console, log_path=temp_log_dir
+        level=logging.INFO,
+        log_to_console=log_to_console,
+        log_path=log_dir,
     )
 
     # 只保留99个日志文件
-    log_manager.clean_logs(99)
+    if log_name != "f2":
+        log_manager.clean_logs(99)  # 专门清理错误日志文件
 
     return logger
 
 
-logger = log_setup()
+# 主日志记录器（包含所有日志级别）
+logger = log_setup(log_to_console=True, log_name="f2")
+
+# 错误堆栈日志记录器（不输出到控制台，单独记录错误日志）
+trace_logger = log_setup(log_to_console=False, log_name="f2-trace")

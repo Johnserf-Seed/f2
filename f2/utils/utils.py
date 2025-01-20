@@ -347,13 +347,14 @@ def replaceT(obj: Union[str, Any]) -> Union[str, Any]:
     return obj
 
 
-def split_filename(text: str, os_limit: Dict) -> str:
+def split_filename(text: str, os_limit: Dict[str, int]) -> str:
     """
     根据操作系统的字符限制分割文件名，并用 '......' 代替。
+    前半部分是后半部分的两倍。
 
     Args:
         text (str): 要计算的文本
-        os_limit (dict): 操作系统的字符限制字典
+        os_limit (Dict[str, int]): 操作系统的字符限制
 
     Returns:
         str: 分割后的文本
@@ -362,23 +363,26 @@ def split_filename(text: str, os_limit: Dict) -> str:
     os_name = sys.platform
     filename_length_limit = os_limit.get(os_name, 200)
 
-    # 计算中文字符长度（中文字符长度*3）
-    chinese_length = sum(1 for char in text if "\u4e00" <= char <= "\u9fff") * 3
-    # 计算英文字符长度
-    english_length = sum(1 for char in text if char.isalpha())
-    # 计算下划线数量
-    num_underscores = text.count("_")
+    # 清理转义字符
+    text = re.sub(r"\s+", " ", text).strip()
 
-    # 计算总长度
-    total_length = chinese_length + english_length + num_underscores
+    # 计算文本的字节长度
+    text_bytes = text.encode("utf-8")
+    text_length = len(text_bytes)
 
-    # 如果总长度超过操作系统限制或手动设置的限制，则根据限制进行分割
-    if total_length > filename_length_limit:
-        split_index = min(total_length, filename_length_limit) // 2 - 6
-        split_text = text[:split_index] + "......" + text[-split_index:]
-        return split_text
-    else:
+    # 如果长度未超过限制，直接返回
+    if text_length <= filename_length_limit:
         return text
+
+    # 计算截断比例（2:1）
+    split_index_first = (filename_length_limit - 6) * 2 // 3
+    split_index_second = (filename_length_limit - 6) // 3
+
+    # 截取前后部分
+    first_part = text_bytes[:split_index_first].decode("utf-8", errors="ignore")
+    second_part = text_bytes[-split_index_second:].decode("utf-8", errors="ignore")
+
+    return f"{first_part}......{second_part}"
 
 
 def ensure_path(path: Union[str, Path]) -> Path:

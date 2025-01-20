@@ -1,10 +1,9 @@
 # region str-2-endpoint-snippet
 # 使用接口地址直接生成请求链接
-import asyncio
 from f2.apps.douyin.utils import XBogusManager, ClientConfManager
 
 
-async def main():
+def main():
     test_endpoint = "aweme_id=7196239141472980280&aid=1128&version_name=23.5.0&device_platform=android&os_version=2333"
     return XBogusManager.str_2_endpoint(
         ClientConfManager.user_agent(),
@@ -13,7 +12,7 @@ async def main():
 
 
 if __name__ == "__main__":
-    print(asyncio.run(main()))
+    print(main())
 
 # endregion str-2-endpoint-snippet
 

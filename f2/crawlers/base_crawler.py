@@ -442,25 +442,36 @@ class BaseCrawler:
                 _("处理HTTP错误时遇到意外情况：{0}").format(http_error)
             )
 
+        # 状态码与异常类的映射
+        status_code_exception_map = {
+            400: APIResponseError,
+            404: APINotFoundError,
+            503: APIUnavailableError,
+            408: APITimeoutError,
+            401: APIUnauthorizedError,
+            429: APIRateLimitError,
+            444: APIUnavailableError,
+        }
+
+        # 根据状态码抛出对应的异常
+        if status_code in status_code_exception_map:
+            exception_class = status_code_exception_map[status_code]
+            raise exception_class(_("HTTP状态码错误：{0}").format(status_code))
+
+        # 特殊处理状态码 302
         if status_code == 302:
-            pass
-        elif status_code == 404:
-            raise APINotFoundError(_("HTTP状态码错误："), status_code)
-        elif status_code == 503:
-            raise APIUnavailableError(_("HTTP状态码错误："), status_code)
-        elif status_code == 408:
-            raise APITimeoutError(_("HTTP状态码错误："), status_code)
-        elif status_code == 401:
-            raise APIUnauthorizedError(_("HTTP状态码错误："), status_code)
-        elif status_code == 429:
-            raise APIRateLimitError(_("HTTP状态码错误："), status_code)
-        else:
-            logger.error(
-                _("HTTP状态错误：{0}, URL：{1}, 尝试次数：{2}").format(
-                    http_error, url, attempt
-                )
+            logger.info(
+                _("HTTP状态码302：重定向，URL：{0}，尝试次数：{1}").format(url, attempt)
             )
-            raise APIResponseError(_("HTTP状态码错误："), status_code)
+            return
+
+        # 未知状态码的处理
+        logger.error(
+            _("未知HTTP状态码：{0}, URL：{1}, 尝试次数：{2}").format(
+                status_code, url, attempt
+            )
+        )
+        raise APIResponseError(_("未知HTTP状态码错误：{0}").format(status_code))
 
     async def close(self):
         # 如果没有初始化客户端，则不关闭 (If the client is not initialized, do not close)

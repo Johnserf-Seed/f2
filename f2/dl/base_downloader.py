@@ -7,7 +7,6 @@ import aiofiles
 import traceback
 
 from pathlib import Path
-from urllib.error import HTTPError as urllib_HTTPError
 from rich.progress import TaskID
 from typing import Union, Optional, Any, List, Set
 
@@ -23,6 +22,7 @@ from f2.utils._dl import (
     get_chunk_size,
     get_segments_from_m3u8,
 )
+from f2.exceptions.api_exceptions import APIRetryExhaustedError
 
 # 最大片段缓存数量，超过这个数量就会进行清理
 # (Maximum segment cache count, clear when it exceeds this count)
@@ -130,6 +130,9 @@ class BaseDownloader(BaseCrawler):
         except httpx.StreamError as e:
             logger.error(traceback.format_exc())
             logger.error(_("文件区块流错误：{0}").format(e))
+        except httpx.RemoteProtocolError as e:
+            logger.error(traceback.format_exc())
+            logger.error(_("文件区块不符合HTTP协议：{0}").format(e))
         except Exception as e:
             logger.error(traceback.format_exc())
             logger.error(_("文件区块下载失败：{0} Exception：{1}").format(request, e))
@@ -160,112 +163,129 @@ class BaseDownloader(BaseCrawler):
 
             # 确保目标路径存在 (Ensure target path exists)
             full_path = self._ensure_path(full_path)
+            full_path.parent.mkdir(parents=True, exist_ok=True)
+            tmp_path = full_path.with_suffix(".tmp")
 
             # 遍历所有链接 (Iterate over all links)
             for link in urls:
-                # 获取文件内容大小 (Get the size of the file content)
-                content_length = await get_content_length(
-                    link,
-                    self.headers,
-                    self.proxies,
-                )
-
-                logger.debug(
-                    _("{0} 在服务器上的总内容长度为：{1} 字节").format(
-                        link, content_length
+                try:
+                    # 获取文件内容大小 (Get the size of the file content)
+                    content_length = await get_content_length(
+                        link, self.headers, self.proxies
                     )
-                )
-
-                # 如果文件内容大小为0, 则尝试下一个链接 (If file content size is 0, try the next link)
-                if content_length == 0:
-                    logger.warning(
-                        _("链接 {0} 响应大小为 0 字节，尝试下一个链接是否可用").format(
-                            link
+                    logger.debug(
+                        _("{0} 在服务器上的总内容长度为：{1} 字节").format(
+                            link, content_length
                         )
                     )
-                    continue
 
-                # 确保目标路径存在 (Ensure target path exists)
-                full_path.parent.mkdir(parents=True, exist_ok=True)
-                # 寻找未下载完的临时文件 (Find unfinished temporary files)
-                tmp_path = full_path.with_suffix(".tmp")
-                # 获取临时文件的大小 (Get the size of the temporary file)
-                start_byte = 0 if not tmp_path.exists() else tmp_path.stat().st_size
+                    # 如果文件内容大小为0, 则尝试下一个链接 (If the file content size is 0, try the next link)
+                    if content_length == 0:
+                        logger.warning(
+                            _("链接 {0} 响应大小为 0 字节，尝试下一个链接").format(link)
+                        )
+                        continue
 
-                logger.debug(
-                    _("找到了未下载完的文件 {0}, 大小为 {1} 字节").format(
-                        tmp_path, start_byte
+                    start_byte = 0 if not tmp_path.exists() else tmp_path.stat().st_size
+                    logger.debug(
+                        _("找到了未下载完的文件 {0}, 大小为 {1} 字节").format(
+                            tmp_path, start_byte
+                        )
                     )
-                )
 
-                if start_byte in [0, content_length]:
-                    if start_byte:
+                    if start_byte == content_length:
                         tmp_path.rename(full_path)
-                        logger.debug(_("临时文件已完全下载"))
+                        logger.info(_("文件已完整下载，无需重复下载"))
                         return
 
-                # 构建range请求头 (Build range request header)
-                range_headers = (
-                    {"Range": "bytes={}-".format(start_byte)} if start_byte else {}
-                )
-                range_headers.update(self.headers)
-                range_request = self.aclient.build_request(
-                    "GET", link, headers=range_headers
-                )
-                async with aiofiles.open(
-                    tmp_path, "ab" if start_byte else "wb"
-                ) as file:
-                    await self._download_chunks(
-                        range_request, file, content_length, task_id
+                    # 构建range请求头 (Build range request header)
+                    range_headers = (
+                        {"Range": f"bytes={start_byte}-"} if start_byte else {}
+                    )
+                    range_headers.update(self.headers)
+
+                    range_request = self.aclient.build_request(
+                        "GET", link, headers=range_headers
                     )
 
-                # 下载完成后重命名文件 (Rename file after download is complete)
-                try:
-                    tmp_path.rename(full_path)
-                except FileExistsError:
-                    logger.warning(_("{0} 已存在，将覆盖").format(full_path))
-                    tmp_path.replace(full_path)
-                except PermissionError:
-                    logger.error(
-                        _(
-                            "另一个程序正在使用此文件或受异步调度影响，该任务需要重新下载"
+                    retry_attempts = 3  # 最大重试次数
+                    for attempt in range(retry_attempts):
+                        try:
+                            async with aiofiles.open(
+                                tmp_path, "ab" if start_byte else "wb"
+                            ) as file:
+                                await self._download_chunks(
+                                    range_request, file, content_length, task_id
+                                )
+                            break  # 成功下载，跳出重试循环
+
+                        except httpx.RemoteProtocolError as e:
+                            logger.warning(
+                                _("协议错误，重试 {0}/{1}：{2}").format(
+                                    attempt + 1, retry_attempts, e
+                                )
+                            )
+                            if attempt == retry_attempts - 1:
+                                raise APIRetryExhaustedError(
+                                    _("重试次数已用尽")
+                                )  # 重试次数用尽，抛出异常
+
+                    # 检查文件大小是否匹配 (Check if the file size matches)
+                    actual_size = tmp_path.stat().st_size
+                    if actual_size != content_length:
+                        logger.warning(
+                            _("文件大小不匹配 - 预期: {0} 字节, 实际: {1} 字节").format(
+                                content_length, actual_size
+                            )
                         )
-                    )
-                    # 尝试删除临时文件 (Try to delete the temporary file)
-                    try:
-                        tmp_path.unlink()
-                        tmp_path.rename(full_path)
-                    except Exception as e:
-                        logger.error(_("尝试删除临时文件失败：{0}").format(e))
+                        await self.progress.update(
+                            task_id,
+                            description=_("[yellow][  警告  ]：[/yellow]"),
+                            filename=trim_filename(full_path.name, 45),
+                            state="warning",
+                        )
+                        continue  # 保留.tmp后缀，尝试下一个链接
 
+                    # 尝试重命名文件
+                    try:
+                        tmp_path.rename(full_path)
+                    except (FileExistsError, PermissionError) as e:
+                        logger.error(_("文件重命名失败：{0}").format(e))
+                        tmp_path.replace(full_path)
+                    except Exception as e:
+                        logger.error(_("意外错误：{0}").format(e))
+                        tmp_path.unlink(missing_ok=True)
+                        await self.progress.update(
+                            task_id,
+                            description=_("[red][  失败  ]：[/red]"),
+                            filename=trim_filename(full_path.name, 45),
+                            state="error",
+                        )
+                        continue
+
+                    logger.info(
+                        _("[green][  完成  ]：{0}[/green]").format(Path(full_path).name)
+                    )
                     await self.progress.update(
                         task_id,
-                        description=_("[red][  失败  ]：[/red]"),
+                        description=_("[green][  完成  ]：[/green]"),
                         filename=trim_filename(full_path.name, 45),
-                        state="error",
+                        state="completed",
+                        visible=False,
                     )
+                    break  # 下载成功，跳出链接循环
 
-                logger.info(
-                    _("[green][  完成  ]：{0}[/green]").format(Path(full_path).name)
-                )
-                await self.progress.update(
-                    task_id,
-                    description=_("[green][  完成  ]：[/green]"),
-                    filename=trim_filename(full_path.name, 45),
-                    state="completed",
-                    visible=False,
-                )
-                logger.debug(_("文件已保存到： {0}").format(full_path))
-
-                # 如果下载成功，则跳出循环 (If download is successful, break the loop)
-                break
+                except Exception as e:
+                    logger.error(_("下载失败：{0}").format(e))
+                    continue
 
             else:
                 # 如果遍历完所有链接仍然无法成功下载，则记录警告
-                logger.warning("所有链接都无法下载")
+                logger.warning(_("所有链接都无法下载"))
                 logger.error(
-                    _("[red][  丢失  ]：[/red]")
-                    + _("无法下载文件：{0}").format(Path(full_path).name)
+                    _("[red][  丢失  ]：[/red]无法下载文件，路径：{0}").format(
+                        Path(full_path).name
+                    )
                 )
                 await self.progress.update(
                     task_id,
@@ -442,60 +462,24 @@ class BaseDownloader(BaseCrawler):
 
                 except httpx.HTTPStatusError as e:
                     if e.response.status_code == 404:
-                        logger.warning(_("m3u8文件或ts文件未找到，可能直播结束"))
-                        await self.progress.update(
-                            task_id,
-                            description=_("[red][  丢失  ]：[/red]"),
-                            filename=trim_filename(full_path.name, 45),
-                            state="completed",
-                        )
-                        return
+                        logger.debug(_("m3u8文件或ts文件未找到，当前直播已结束"))
                     elif e.response.status_code == 504:
-                        logger.warning(_("网关超时，无法下载直播流"))
-                        await self.progress.update(
-                            task_id,
-                            description=_("[red][  完成  ]：[/red]"),
-                            filename=trim_filename(full_path.name, 45),
-                            state="completed",
-                        )
-                        return
+                        logger.warning(_("[red]网关超时，无法下载直播流[/red]"))
                     else:
-                        logger.debug(_("HTTP错误: {0}").format(e))
+                        logger.debug(_("HTTP错误：{0}").format(e))
                         logger.error(_("[red]m3u8文件下载失败，但文件已保存[/red]"))
-                        await self.progress.update(
-                            task_id,
-                            description=_("[red][  失败  ]：[/red]"),
-                            filename=trim_filename(full_path.name, 45),
-                            state="completed",
-                        )
-                        return
 
-                except urllib_HTTPError as e:
-                    if e.code == 404:
-                        logger.warning(_("m3u8文件或ts文件未找到，直播已结束"))
-                        logger.info(
-                            _("[green][  完成  ]：{0}[/green]").format(
-                                Path(full_path).name
-                            )
-                        )
-                        await self.progress.update(
-                            task_id,
-                            description=_("[green][  完成  ]：[/green]"),
-                            filename=trim_filename(full_path.name, 45),
-                            state="completed",
-                            visible=False,
-                        )
-                        logger.debug(_("文件已保存到： {0}").format(full_path))
-                        return
-
-                    logger.error(traceback.format_exc())
-                    logger.error(_("[red]m3u8文件下载失败，但文件已保存[/red]"))
+                    logger.info(
+                        _("[green][  完成  ]：{0}[/green]").format(Path(full_path).name)
+                    )
                     await self.progress.update(
                         task_id,
-                        description=_("[red][  失败  ]：[/red]"),
+                        description=_("[red][  完成  ]：[/red]"),
                         filename=trim_filename(full_path.name, 45),
                         state="completed",
+                        visible=False,
                     )
+                    logger.debug(_("直播流文件已保存到：{0}").format(full_path))
                     return
 
                 except Exception as e:

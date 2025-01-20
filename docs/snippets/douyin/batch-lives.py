@@ -45,7 +45,7 @@ async def download_live_stream(
         live = await dyhandler.fetch_user_live_videos(webcast_id=webcast_id)
 
         if not live:
-            logger.info(f"[bold yellow]无法获取直播间信息:[/bold yellow] {webcast_id}")
+            logger.info(f"[bold yellow]无法获取直播间信息：[/bold yellow] {webcast_id}")
             return
 
         if live.live_status != 2:
@@ -69,7 +69,7 @@ async def download_live_stream(
         )
 
     except Exception as e:
-        logger.error(f"[bold red]直播间ID：{webcast_id} 下载失败: {e}[/bold red]")
+        logger.error(f"[bold red]直播间ID：{webcast_id} 下载失败：{e}[/bold red]")
 
 
 async def main():
@@ -82,11 +82,18 @@ async def main():
 
     async def limited_download(webcast_id):
         async with semaphore:
-            await download_live_stream(webcast_id)
+            # await download_live_stream(webcast_id) # [!code --]
+            # 每分钟检查一次直播状态 # [!code ++]
+            while True:  # [!code ++]
+                await download_live_stream(webcast_id)  # [!code ++]
+                await asyncio.sleep(1 * 60)  # [!code ++]
 
     # 使用RichConsoleManager管理进度条
     with RichConsoleManager().progress:
-        tasks = [limited_download(webcast_id) for webcast_id in webcast_ids]
+        tasks = [
+            asyncio.create_task(limited_download(webcast_id))
+            for webcast_id in webcast_ids
+        ]
         await asyncio.gather(*tasks)
 
 

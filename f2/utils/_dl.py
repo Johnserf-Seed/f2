@@ -6,6 +6,8 @@ import traceback
 
 from pathlib import Path
 from typing import Union
+from urllib.error import HTTPError
+
 from f2.utils.utils import ensure_path
 from f2.log.logger import logger
 from f2.i18n.translator import _
@@ -170,12 +172,21 @@ async def get_segments_from_m3u8(url: str) -> Union[list, str, None]:
     Returns:
         m3u8文件中的segments列表
     """
-    m3u8_obj = m3u8.load(url)
-    segments = m3u8_obj.segments
+    # 应该先测试m3u8文件是否存在，以避免出现错误
+    # (You should test if the m3u8 file exists first to avoid errors)
+    try:
+        m3u8_obj = m3u8.load(url)
+    except HTTPError as e:
+        logger.error(_("无法加载m3u8文件：{0}，错误详情：{1}".format(url, e)))
+        return
+    except Exception as e:
+        logger.error(_("加载m3u8文件时发生错误：{0}".format(e)))
+        return
 
     # 如果没有segments说明m3u8可能存在嵌套, 需要尝试获取嵌套的m3u8文件
     # (If there are no segments, the m3u8 may be nested and
     # you need to try to get the nested m3u8 file)
+    segments = m3u8_obj.segments
     if not segments:
         logger.debug(_("未找到m3u8文件的segments, 尝试获取嵌套的m3u8文件"))
         # 尝试获取嵌套的m3u8文件 (Try to get the nested m3u8 file)
@@ -184,9 +195,7 @@ async def get_segments_from_m3u8(url: str) -> Union[list, str, None]:
         # 再次检查segments是否存在 (Check again if segments exist)
         if not segments:
             logger.error(
-                _(
-                    "未找到嵌套m3u8文件的segments, 可能直播结束或该主播无法使用m3u8方法解析"
-                )
+                _("未找到嵌套m3u8文件的segments, 可能直播结束或该直播非m3u8格式")
             )
     return segments
 

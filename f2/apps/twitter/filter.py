@@ -117,9 +117,11 @@ class TweetDetailFilter(JSONModel):
     # 视频链接（清晰度依次提高）
     @property
     def tweet_video_url(self):
-        return self._get_attr_value(
+        all_urls = self._get_attr_value(
             "$.data.threaded_conversation_with_injections_v2.instructions[0].entries[0].content.itemContent.tweet_results.result.legacy.extended_entities.media[*].video_info.variants[*].url"
         )
+        # 剔除包含 `.m3u8` 的链接
+        return [url for url in all_urls if ".m3u8" not in url]
 
     # 视频时长
     @property
@@ -174,7 +176,7 @@ class TweetDetailFilter(JSONModel):
         )
 
     @property
-    def nicename_raw(self):
+    def nickname_raw(self):
         return self._get_attr_value(
             "$.data.threaded_conversation_with_injections_v2.instructions[0].entries[0].content.itemContent.tweet_results.result.core.user_results.result.legacy.name"
         )
