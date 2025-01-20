@@ -145,3 +145,6 @@ Download/
 *.7z
 
 .pypirc
+
+# secret
+f2-secrets
