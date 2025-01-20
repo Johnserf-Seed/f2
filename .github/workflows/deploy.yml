@@ -29,9 +29,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # 如果未启用 lastUpdated，则不需要
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+          run_install: false
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -39,15 +44,13 @@ jobs:
           node-version: 20
           cache: pnpm
 
-      - name: Install pnpm
-        run: npm install -g pnpm
-
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
       - name: Install dependencies
         run: |
-          pnpm add -D vitepress
+          pnpm install
+
         working-directory: ./docs
 
       - name: Build with VitePress
