@@ -50,6 +50,7 @@ jobs:
       - name: Install dependencies
         run: |
           pnpm install
+
         working-directory: ./docs
 
       - name: Build with VitePress
