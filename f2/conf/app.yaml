@@ -1,5 +1,4 @@
 douyin:
-
   cookie:
   naming: '{create}_{desc}'
   path: Download
@@ -12,7 +11,6 @@ douyin:
   page_counts: 20
 
 tiktok:
-
   cookie:
   max_connections: 5
   max_counts: 0
@@ -24,7 +22,6 @@ tiktok:
   timeout: 10
 
 twitter:
-
   path: Download
   folderize: yes
   mode: one
@@ -39,7 +36,6 @@ twitter:
   page_counts: 20
 
 weibo:
-
   path: Download
   folderize: yes
   mode: post
