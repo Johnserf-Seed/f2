@@ -138,13 +138,19 @@ Download/
 
 # DataBase
 .db
+*_users.db
+*_videos.db
 
 # Compress
 *.zip
 *.rar
 *.7z
 
-.pypirc
+# i18n
+*.po
+*.pot
+*.po~
 
 # secret
+.pypirc
 f2-secrets
