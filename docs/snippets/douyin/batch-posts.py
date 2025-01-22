@@ -54,6 +54,9 @@ async def download_post(sec_user_id: str):
         logger.debug(
             f"[bold green]开始下载用户ID：{sec_user_id} 的作品...[/bold green]"
         )
+        async with AsyncUserDB("douyin_users.db", **kwargs) as audb:
+            user_path = await dyhandler.get_or_add_user_data(kwargs, sec_user_id, audb)
+
         async for aweme_list in dyhandler.fetch_user_post_videos(
             sec_user_id=sec_user_id
         ):
@@ -63,12 +66,9 @@ async def download_post(sec_user_id: str):
                 )
                 return
 
-        async with AsyncUserDB("douyin_users.db", **kwargs) as audb:
-            user_path = await dyhandler.get_or_add_user_data(kwargs, sec_user_id, audb)
-
-        await dydownloader.create_download_tasks(
-            kwargs, aweme_list._to_list(), user_path
-        )
+            await dydownloader.create_download_tasks(
+                kwargs, aweme_list._to_list(), user_path
+            )
 
         logger.info(f"[bold green]用户ID：{sec_user_id} 作品下载完成。[/bold green]")
     except Exception as e:
