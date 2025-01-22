@@ -31,6 +31,7 @@ export default defineConfig({
 
       gtag('config', 'G-H7N87QED9C');`,
     ],
+    ['link', { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css' }],
   ],
   markdown: {
     // lineNumbers: true
