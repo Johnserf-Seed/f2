@@ -100,11 +100,11 @@ export default defineConfig({
             {
               text: '开发者接口',
               items: [
-                { text: 'Bark', link: '/guide/apps/bark/index' },
-                { text: 'DouYin', link: '/guide/apps/douyin/index' },
-                { text: 'TikTok', link: '/guide/apps/tiktok/index' },
-                { text: 'Twitter', link: '/guide/apps/twitter/index' },
-                { text: 'WeiBo', link: '/guide/apps/weibo/index' },
+                { text: 'Bark', link: '/guide/apps/bark/overview' },
+                { text: 'DouYin', link: '/guide/apps/douyin/overview' },
+                { text: 'TikTok', link: '/guide/apps/tiktok/overview' },
+                { text: 'Twitter', link: '/guide/apps/twitter/overview' },
+                { text: 'WeiBo', link: '/guide/apps/weibo/overview' },
               ],
             },
             {
@@ -163,10 +163,10 @@ export default defineConfig({
               text: 'Developer API',
               items: [
                 { text: 'Bark', link: '/en/guide/apps/bark/index' },
-                { text: 'DouYin', link: '/en/guide/apps/douyin/index' },
-                { text: 'TikTok', link: '/en/guide/apps/tiktok/index' },
-                { text: 'Twitter', link: '/en/guide/apps/twitter/index' },
-                { text: 'WeiBo', link: '/en/guide/apps/weibo/index' },
+                { text: 'DouYin', link: '/en/guide/apps/douyin/overview' },
+                { text: 'TikTok', link: '/en/guide/apps/tiktok/overview' },
+                { text: 'Twitter', link: '/en/guide/apps/twitter/overview' },
+                { text: 'WeiBo', link: '/en/guide/apps/weibo/overview' },
               ],
             },
             {
