@@ -27,7 +27,7 @@
 
 ## <urlopen error [Errno 11001] getaddrinfo failed>
 
-该问题为本地网络连接问题，请检查你的网络连接是否正常，DNS是否被污染。需要排查代理是否可以正常访问。
+该问题为本地网络连接问题，请检查你的网络连接是否正常，`DNS` 是否被污染。需要排查代理是否可以正常访问。
 
 ## f2: command not found
 

@@ -19,7 +19,9 @@ f2 dy -c conf/app.yaml
 
 支持代码 `接口` 模式的同时也支持在 `CLI` 模式中加上 `-d` 来指定记录日志级别。可选的参数 `DEBUG`，`INFO`，`WARNING`，`ERROR`。
 
-<<< @/snippets/set-debug.py#cli-debug-snippet
+```bash
+$ f2 -d WARNING dy -M post
+```
 
 ![set-debug](/douyin/set-debug.png)
 
@@ -30,12 +32,14 @@ f2 dy -c conf/app.yaml
 ![log-2-console](/douyin/log-2-console.png)
 
 ::: tip :bulb: 提示
-如果你想要输出到控制台的日志更加详细，可以使用 `DEBUG` 级别。并且后续必须使用该logger对象来输出日志，否则日志将不会输出到控制台。
+如果你想要输出到控制台的日志更加详细，可以使用 `DEBUG` 级别。并且后续必须使用该`logger` 对象来输出日志，否则日志将不会输出到控制台。
 :::
 
 ## WSS配置 <Badge type="warning" text="实验性" />
 
-如果你想使用 `douyin` 或 `tiktok` 的直播弹幕转发功能，那么你需要配置 `WSS` 服务的地址和端口。配置如下：
+如果你想使用 `douyin` 或 `tiktok` 的直播弹幕转发功能，那么你需要配置 `WSS` 服务的地址和端口。
+
+`WSS` 配置须在 `conf.yaml` 文件中进行配置，配置如下：
 
 ::: code-group
 ```yaml [douyin]

@@ -18,10 +18,7 @@ export default defineConfig({
     ['link', { rel: 'icon', type: 'image/png', href: '/f2-logo-with-shadow-mini.png' }],
     ['link', { rel: 'icon', type: 'image/x-icon', href: '/f2-logo.ico' }],
     // google analytics
-    [
-      'script',{ async: "", src: "https://www.googletagmanager.com/gtag/js?id=G-H7N87QED9C",
-      },
-    ],
+    ['script', { async: '', src: 'https://www.googletagmanager.com/gtag/js?id=G-H7N87QED9C' }],
     [
       'script',
       {},
@@ -194,9 +191,9 @@ function cn_nav(): DefaultTheme.NavItem[] {
       activeMatch: '/team'
     },
     {
-      text: 'QA',
+      text: 'FAQ',
       link: '/faq',
-      activeMatch: '/question-answer/'
+      activeMatch: '/faq'
     },
     {
       text: pkg.f2_version,
@@ -210,7 +207,7 @@ function cn_nav(): DefaultTheme.NavItem[] {
           link: 'https://github.com/Johnserf-Seed/f2/blob/main/CONTRIBUTING.md'
         }
       ]
-    }
+    },
   ]
 }
 
@@ -219,12 +216,12 @@ function en_nav(): DefaultTheme.NavItem[] {
     {
       text: 'Team',
       link: '/en/team',
-      activeMatch: '/team'
+      activeMatch: '/en/team'
     },
     {
-      text: 'QA',
+      text: 'FAQ',
       link: '/en/faq',
-      activeMatch: '/question-answer/'
+      activeMatch: '/en/faq'
     },
     {
       text: pkg.f2_version,
