@@ -76,7 +76,7 @@ dependencies = [
     "pytest==8.3.4",
     "pytest-asyncio==0.25.0",
     "browser_cookie3==0.20.1",
-    "pydantic==2.9.*",
+    "pydantic>=2.9,<2.11",
     "qrcode==8.0",
     "websockets<13.0",
     "websockets_proxy==0.1.2",
