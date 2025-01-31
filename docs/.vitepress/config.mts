@@ -18,10 +18,7 @@ export default defineConfig({
     ['link', { rel: 'icon', type: 'image/png', href: '/f2-logo-with-shadow-mini.png' }],
     ['link', { rel: 'icon', type: 'image/x-icon', href: '/f2-logo.ico' }],
     // google analytics
-    [
-      'script',{ async: "", src: "https://www.googletagmanager.com/gtag/js?id=G-H7N87QED9C",
-      },
-    ],
+    ['script', { async: '', src: 'https://www.googletagmanager.com/gtag/js?id=G-H7N87QED9C' }],
     [
       'script',
       {},
@@ -31,6 +28,7 @@ export default defineConfig({
 
       gtag('config', 'G-H7N87QED9C');`,
     ],
+    ['link', { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css' }],
   ],
   markdown: {
     // lineNumbers: true
@@ -99,11 +97,11 @@ export default defineConfig({
             {
               text: '开发者接口',
               items: [
-                { text: 'Bark', link: '/guide/apps/bark/index' },
-                { text: 'DouYin', link: '/guide/apps/douyin/index' },
-                { text: 'TikTok', link: '/guide/apps/tiktok/index' },
-                { text: 'Twitter', link: '/guide/apps/twitter/index' },
-                { text: 'WeiBo', link: '/guide/apps/weibo/index' },
+                { text: 'Bark', link: '/guide/apps/bark/overview' },
+                { text: 'DouYin', link: '/guide/apps/douyin/overview' },
+                { text: 'TikTok', link: '/guide/apps/tiktok/overview' },
+                { text: 'Twitter', link: '/guide/apps/twitter/overview' },
+                { text: 'WeiBo', link: '/guide/apps/weibo/overview' },
               ],
             },
             {
@@ -162,10 +160,10 @@ export default defineConfig({
               text: 'Developer API',
               items: [
                 { text: 'Bark', link: '/en/guide/apps/bark/index' },
-                { text: 'DouYin', link: '/en/guide/apps/douyin/index' },
-                { text: 'TikTok', link: '/en/guide/apps/tiktok/index' },
-                { text: 'Twitter', link: '/en/guide/apps/twitter/index' },
-                { text: 'WeiBo', link: '/en/guide/apps/weibo/index' },
+                { text: 'DouYin', link: '/en/guide/apps/douyin/overview' },
+                { text: 'TikTok', link: '/en/guide/apps/tiktok/overview' },
+                { text: 'Twitter', link: '/en/guide/apps/twitter/overview' },
+                { text: 'WeiBo', link: '/en/guide/apps/weibo/overview' },
               ],
             },
             {
@@ -188,14 +186,34 @@ export default defineConfig({
 function cn_nav(): DefaultTheme.NavItem[] {
   return [
     {
+      text: '开发者接口',
+      items: [
+        { text: 'Bark', link: '/guide/apps/bark/overview', activeMatch: '/bark/overview' },
+        { text: 'DouYin', link: '/guide/apps/douyin/overview', activeMatch: '/douyin/overview' },
+        { text: 'TikTok', link: '/guide/apps/tiktok/overview', activeMatch: '/tiktok/overview' },
+        { text: 'Twitter', link: '/guide/apps/twitter/overview', activeMatch: '/twitter/overview' },
+        { text: 'WeiBo', link: '/guide/apps/weibo/overview', activeMatch: '/weibo/overview' },
+      ],
+    },
+    {
+      text: '命令行指引',
+      items: [
+        { text: 'Bark', link: '/guide/apps/bark/cli', activeMatch: '/bark/cli' },
+        { text: 'DouYin', link: '/guide/apps/douyin/cli', activeMatch: '/douyin/cli' },
+        { text: 'TikTok', link: '/guide/apps/tiktok/cli', activeMatch: '/tiktok/cli' },
+        { text: 'Twitter', link: '/guide/apps/twitter/cli', activeMatch: '/twitter/cli' },
+        { text: 'WeiBo', link: '/guide/apps/weibo/cli', activeMatch: '/weibo/cli' },
+      ],
+    },
+    {
       text: '团队',
       link: '/team',
       activeMatch: '/team'
     },
     {
-      text: 'QA',
+      text: 'FAQ',
       link: '/faq',
-      activeMatch: '/question-answer/'
+      activeMatch: '/faq'
     },
     {
       text: pkg.f2_version,
@@ -209,21 +227,41 @@ function cn_nav(): DefaultTheme.NavItem[] {
           link: 'https://github.com/Johnserf-Seed/f2/blob/main/CONTRIBUTING.md'
         }
       ]
-    }
+    },
   ]
 }
 
 function en_nav(): DefaultTheme.NavItem[] {
   return [
     {
-      text: 'Team',
-      link: '/en/team',
-      activeMatch: '/team'
+      text: 'Developer API',
+      items: [
+        { text: 'Bark', link: '/en/guide/apps/bark/index', activeMatch: '/bark/index' },
+        { text: 'DouYin', link: '/en/guide/apps/douyin/overview', activeMatch: '/douyin/overview' },
+        { text: 'TikTok', link: '/en/guide/apps/tiktok/overview', activeMatch: '/tiktok/overview' },
+        { text: 'Twitter', link: '/en/guide/apps/twitter/overview', activeMatch: '/twitter/overview' },
+        { text: 'WeiBo', link: '/en/guide/apps/weibo/overview', activeMatch: '/weibo/overview' },
+      ],
     },
     {
-      text: 'QA',
+      text: 'CLI Guide',
+      items: [
+        { text: 'Bark', link: '/en/guide/apps/bark/cli', activeMatch: '/bark/cli' },
+        { text: 'DouYin', link: '/en/guide/apps/douyin/cli', activeMatch: '/douyin/cli' },
+        { text: 'TikTok', link: '/en/guide/apps/tiktok/cli', activeMatch: '/tiktok/cli' },
+        { text: 'Twitter', link: '/en/guide/apps/twitter/cli', activeMatch: '/twitter/cli' },
+        { text: 'WeiBo', link: '/en/guide/apps/weibo/cli', activeMatch: '/weibo/cli' },
+      ],
+    },
+    {
+      text: 'Team',
+      link: '/en/team',
+      activeMatch: '/en/team'
+    },
+    {
+      text: 'FAQ',
       link: '/en/faq',
-      activeMatch: '/question-answer/'
+      activeMatch: '/en/faq'
     },
     {
       text: pkg.f2_version,

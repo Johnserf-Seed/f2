@@ -192,7 +192,8 @@ class DouyinDownloader(BaseDownloader):
             )
             + "_desc"
         )
-        desc_content = self.aweme_data_dict.get("desc")
+        # 保存原始文案
+        desc_content = self.aweme_data_dict.get("desc_raw")
         await self.initiate_static_download(
             _("文案"), desc_content, self.base_path, desc_name, ".txt"
         )

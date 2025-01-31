@@ -76,7 +76,7 @@ class BaseDownloader(BaseCrawler):
 
     def __init__(self, kwargs: dict = ...):
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})
-        self.headers = kwargs.get("headers") | {"Cookie": kwargs["cookie"]}
+        self.headers = kwargs.get("headers", {}) | {"Cookie": kwargs["cookie"]}
         super().__init__(kwargs, proxies=proxies, crawler_headers=self.headers)
 
         self.progress = RichConsoleManager().progress
@@ -315,11 +315,18 @@ class BaseDownloader(BaseCrawler):
 
         # 确定打开文件的模式 (Determine the mode in which the file is opened)
         mode = "wb" if isinstance(content, bytes) else "w"
+
+        # 准备 aiofiles.open 的参数 (Prepare parameters for aiofiles.open)
+        open_params = {"file": full_path, "mode": mode}
+        if mode == "w":  # 文本模式时添加 encoding 参数
+            open_params["encoding"] = "utf-8"
+
+        # 更新进度条 (Update progress bar)
         await self.progress.update(
             task_id, advance=1024, total=int(sys.getsizeof(content))
         )
-        # 创建异步文件对象 (Create an asynchronous file object)
-        async with aiofiles.open(file=full_path, mode=mode, encoding="utf-8") as f:
+        # 创建异步文件对象并写入内容 (Create an async file object and write content)
+        async with aiofiles.open(**open_params) as f:
             await f.write(content)
 
         logger.info(_("[green][  完成  ]： {0}[/green]").format(Path(full_path).name))

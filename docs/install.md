@@ -26,7 +26,6 @@ outline: [2,3]
    - 了解 [异步编程](https://docs.python.org/3/library/asyncio.html) 文档，用于理解 `F2` 的异步特性。
    - 阅读 [开发指南](/guide/what-is-f2)，了解 `F2` 的开发者文档。
 
-
 > [!TIP] 还需要什么？ 🤔
 > - 一个[GitHub](https://github.com) 账号，用于克隆项目和参与讨论。
 > - 善用搜索引擎，查找你遇到的基础问题。
@@ -113,7 +112,7 @@ $ pip3 install -e . # 在当前目录下进行开发安装
 
 1. 请先 `fork` 本项目，然后克隆你的项目。
 2. 在 `Discussions` 中提出你的想法，或者在 `Issues` 中报告错误。
-3. 更新完代码后，按照 `CONTRIBUTING.md` 的指导提交 `PR`。
+3. 更新完代码后，按照 [CONTRIBUTING](https://github.com/Johnserf-Seed/f2/blob/main/CONTRIBUTING.md) 的指导提交 `PR`。
 
 ### 测试最新功能
 
@@ -144,7 +143,8 @@ $ pip3 install -e .     # 开发安装
 - **异步特性**：`F2` 是一个异步库，请仔细阅读 [异步编程](https://docs.python.org/3/library/asyncio.html) 和本文档。
 - **分支注意**：切换至开发分支后，请检查最新提交的代码是否通过测试。
 - **实时生效**：执行一次 [编译安装](#编译安装) 后，对代码库的修改会实时生效。
-- **更多资源**：
-  - [开发指南](/guide/what-is-f2)
-  - [开发者接口](/guide/apps/douyin/)
 :::
+
+## 更多内容
+  - [开发指南](/guide/what-is-f2)
+  - [开发者接口](/guide/api-examples)

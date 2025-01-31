@@ -78,8 +78,8 @@ class ClientConfManager:
         return cls.base_request_model().get("engine", {})
 
     @classmethod
-    def brm_os(cls) -> str:
-        return cls.base_request_model().get("os", "")
+    def brm_os(cls) -> dict:
+        return cls.base_request_model().get("os", {})
 
     @classmethod
     def blm_language(cls) -> str:
