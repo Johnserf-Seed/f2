@@ -80,10 +80,6 @@ export default defineConfig({
                 { text: '高频问题', link: '/faq' },
               ],
             },
-            {
-              text: '团队',
-              items: [{ text: '团队介绍', link: '/team' }],
-            },
           ],
           '/guide/': [
             {
@@ -141,10 +137,6 @@ export default defineConfig({
               items: [
                 { text: 'Frequently Asked Questions', link: '/en/faq' },
               ],
-            },
-            {
-              text: 'Team',
-              items: [{ text: 'Team Introduction', link: '/en/team' }],
             },
           ],
           '/en/guide/': [
