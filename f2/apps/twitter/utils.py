@@ -11,7 +11,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 from f2.i18n.translator import _
-from f2.log.logger import logger
+from f2.log.logger import logger, trace_logger
 from f2.utils.conf_manager import ConfigManager
 from f2.utils.utils import extract_valid_urls, split_filename
 from f2.crawlers.base_crawler import BaseCrawler
@@ -145,7 +145,7 @@ class UniqueIdFetcher(BaseCrawler):
                 )
 
         except httpx.TimeoutException as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APITimeoutError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -159,7 +159,7 @@ class UniqueIdFetcher(BaseCrawler):
             )
 
         except httpx.NetworkError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -173,7 +173,7 @@ class UniqueIdFetcher(BaseCrawler):
             )
 
         except httpx.ProtocolError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIUnauthorizedError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -187,7 +187,7 @@ class UniqueIdFetcher(BaseCrawler):
             )
 
         except httpx.ProxyError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"

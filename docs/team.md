@@ -1,5 +1,8 @@
 ---
 layout: page
+title: 认识我们的团队
+description: F2 的开发由一个自我团队指导。
+sidebar: false
 ---
 <script setup>
 import {
@@ -77,7 +80,7 @@ const sponsors = [
   <VPTeamPageSection>
     <template #title>贡献者</template>
     <template #lead>
-      以下是为 F2 的发展做出贡献的部分贡献者。
+      以下是为 F2 的发展做出贡献的贡献者。
     </template>
     <template #members>
       <VPTeamMembers size="small" :members="partners" />
@@ -87,7 +90,7 @@ const sponsors = [
   <VPTeamPageSection>
     <template #title>赞助者</template>
     <template #lead>
-      以下是为 F2 的发展做出贡献的部分赞助者。
+      以下是为 F2 的发展做出贡献的赞助者。
     </template>
     <template #members>
       <VPTeamMembers size="small" :members="sponsors" />

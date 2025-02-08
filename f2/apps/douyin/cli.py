@@ -3,6 +3,7 @@
 import f2
 import click
 import typing
+import traceback
 
 # import asyncio
 
@@ -10,7 +11,7 @@ from pathlib import Path
 
 from f2 import helps
 from f2.cli.cli_commands import set_cli_config
-from f2.log.logger import logger
+from f2.log.logger import logger, trace_logger
 from f2.utils.utils import (
     split_dict_cookie,
     get_resource_path,
@@ -84,6 +85,7 @@ def handler_auto_cookie(
         )
         ctx.abort()
     except Exception as e:
+        trace_logger.error(traceback.format_exc())
         logger.error(_("自动获取Cookie失败：{0}").format(str(e)))
         ctx.abort()
     finally:

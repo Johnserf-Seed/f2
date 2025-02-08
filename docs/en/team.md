@@ -1,5 +1,8 @@
 ---
 layout: page
+title: Meet the Team
+description: The development of F2 is guided by an self team
+sidebar: false
 ---
 <script setup>
 import {
@@ -77,7 +80,7 @@ const sponsors = [
   <VPTeamPageSection>
     <template #title>Contributors</template>
     <template #lead>
-      Below are some of the people who have contributed to the development of F2.
+      Below are the people who have contributed to the development of F2.
     </template>
     <template #members>
       <VPTeamMembers size="small" :members="contributors" />

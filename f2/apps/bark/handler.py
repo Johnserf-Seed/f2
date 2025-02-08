@@ -1,11 +1,12 @@
 # path: f2/apps/bark/handler.py
 
 import json
+import traceback
 
 from typing import Dict
 from base64 import b64encode
 
-from f2.log.logger import logger
+from f2.log.logger import logger, trace_logger
 from f2.i18n.translator import _
 from f2.utils.decorators import mode_handler, mode_function_map
 from f2.utils.utils import AESEncryptionUtils
@@ -56,6 +57,7 @@ class BarkHandler:
                 return bark
 
         except Exception as e:
+            trace_logger.error(traceback.format_exc())
             logger.error(_("Bark 通知发送失败，请检查 key 和网络连接：{0}").format(e))
 
         return None
@@ -139,6 +141,7 @@ class BarkHandler:
                 logger.debug(_("Bark 加密通知内容：{0}").format(self.kwargs["body"]))
                 return bark
         except Exception as e:
+            trace_logger.error(traceback.format_exc())
             logger.error(_("Bark 通知发送失败，请检查 key 和网络连接：{0}").format(e))
 
     async def send_quick_notification(

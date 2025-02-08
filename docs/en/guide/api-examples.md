@@ -10,7 +10,7 @@ Before using them, ensure that you have completed the `F2` configuration, [confi
 
 ### F2
 
-For complete API examples, refer to the [`F2 Developer API`](apps/f2/index).
+For complete API examples, refer to the [`F2 Developer API`](apps/f2/overview).
 
 ::: details :link: Example: Generate Related Parameters :wrench:
 > **Generate Random String**
@@ -84,7 +84,7 @@ For complete API examples, refer to the [`F2 Developer API`](apps/f2/index).
 
 ### Bark
 
-For complete API examples, refer to the [`Bark Developer API`](apps/bark/index).
+For complete API examples, refer to the [`Bark Developer API`](apps/bark/overview).
 
 ::: details :link: Example: Generate Related Parameters :wrench:
 > **Generate Digital Bits**
@@ -98,7 +98,7 @@ For complete API examples, refer to the [`Bark Developer API`](apps/bark/index).
 
 ### Douyin
 
-For complete API examples, refer to the [`Douyin Developer API`](apps/douyin/index).
+For complete API examples, refer to the [`Douyin Developer API`](apps/douyin/overview).
 
 ::: details :link: Example: Generate Related Parameters :wrench:
 > **Generate Abogus Parameters**
@@ -170,7 +170,7 @@ For complete API examples, refer to the [`Douyin Developer API`](apps/douyin/ind
 
 ### Tiktok
 
-For complete API examples, refer to the [`Tiktok Developer API`](apps/tiktok/index).
+For complete API examples, refer to the [`Tiktok Developer API`](apps/tiktok/overview).
 
 ::: details :link: Example: Generate Related Parameters :wrench:
 > **Generate Xbogus Parameters**
@@ -214,7 +214,7 @@ For complete API examples, refer to the [`Tiktok Developer API`](apps/tiktok/ind
 
 ### Twitter
 
-For complete API examples, refer to the [`Twitter Developer API`](apps/twitter/index).
+For complete API examples, refer to the [`Twitter Developer API`](apps/twitter/overview).
 
 ::: details :link: Example: Batch Extract User Unique IDs :blue_book:
 <<< @/snippets/twitter/user-unique-ids.py#multi-user-unique-id-snippet{18}
@@ -242,7 +242,7 @@ For complete API examples, refer to the [`Twitter Developer API`](apps/twitter/i
 
 ### Weibo
 
-For complete API examples, refer to the [`Weibo Developer API`](apps/weibo/index).
+For complete API examples, refer to the [`Weibo Developer API`](apps/weibo/overview).
 
 ::: details :link: Example: Generate Related Parameters :wrench:
 > **Generate Visitor Cookie**

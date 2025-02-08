@@ -15,7 +15,7 @@ from websockets import (
     serve,
 )
 
-from f2.log.logger import logger
+from f2.log.logger import logger, trace_logger
 from f2.i18n.translator import _
 from f2.crawlers.base_crawler import BaseCrawler, WebSocketCrawler
 from f2.utils.utils import BaseEndpointManager
@@ -464,6 +464,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
             )
 
         except Exception:
+            trace_logger.error(traceback.format_exc())
             logger.error(
                 _("[HandleWssMessage] [⚠️ 处理消息出错] | [错误：{0}]").format(
                     traceback.format_exc()
@@ -523,9 +524,9 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
             await self._timeout_check(server)
             await asyncio.Future()  # 这里保持服务器运行
         except asyncio.CancelledError:
-            logger.debug(_("[StartServer] [⚠️ 服务器任务被取消]"))
+            logger.warning(_("[StartServer] [⚠️ 服务器任务被取消]"))
         except Exception as exc:
-            logger.debug(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             logger.error(
                 _("[StartServer] [❌ 服务器启动失败] | [错误：{0}]").format(exc)
             )
@@ -594,6 +595,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
             try:
                 message = json.dumps(message, ensure_ascii=False)
             except (json.JSONDecodeError, TypeError) as exc:
+                trace_logger.error(traceback.format_exc())
                 logger.error(
                     _("[BroadcastMessage] [❌ 消息格式错误] | [错误：{0}]").format(exc)
                 )

@@ -1213,7 +1213,7 @@ class DouyinHandler:
         # 然后下载直播推流
         webcast_data = await self.fetch_user_live_videos(webcast_id)
 
-        # 应对APP分享的短链接的情况，需要使用web链接或``fetch_user_live_videos_by_room_id``接口
+        # 应对APP分享的短链接的情况，需要使用web链接或 `fetch_user_live_videos_by_room_id` 接口
         if not webcast_data:
             return
 

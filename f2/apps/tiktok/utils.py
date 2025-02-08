@@ -11,7 +11,7 @@ from typing import Union
 from pathlib import Path
 
 from f2.i18n.translator import _
-from f2.log.logger import logger
+from f2.log.logger import logger, trace_logger
 from f2.utils.xbogus import XBogus as XB
 from f2.utils.conf_manager import ConfigManager
 from f2.utils.utils import (
@@ -176,7 +176,7 @@ class TokenManager(BaseCrawler):
             return msToken
 
         except httpx.TimeoutException as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APITimeoutError(
                 _("{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("请求端点超时"),
@@ -188,7 +188,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.NetworkError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIConnectionError(
                 _("{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("网络连接失败，请检查当前网络环境"),
@@ -200,7 +200,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.ProtocolError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIUnauthorizedError(
                 _("{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("请求协议错误"),
@@ -212,7 +212,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.ProxyError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIConnectionError(
                 _("{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("请求代理错误"),
@@ -224,7 +224,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.HTTPStatusError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIResponseError(
                 _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("状态码错误"),
@@ -283,7 +283,7 @@ class TokenManager(BaseCrawler):
             return str(ttwid)
 
         except httpx.TimeoutException as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APITimeoutError(
                 _("{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("请求端点超时"),
@@ -295,7 +295,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.NetworkError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIConnectionError(
                 _("{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("网络连接失败，请检查当前网络环境"),
@@ -307,7 +307,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.ProtocolError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIUnauthorizedError(
                 _("{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("请求协议错误"),
@@ -319,7 +319,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.ProxyError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIConnectionError(
                 _("{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("请求代理错误"),
@@ -331,7 +331,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.HTTPStatusError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIResponseError(
                 _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("状态码错误"),
@@ -374,7 +374,7 @@ class TokenManager(BaseCrawler):
             return odin_tt
 
         except httpx.TimeoutException as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APITimeoutError(
                 _("{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("请求端点超时"),
@@ -386,7 +386,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.NetworkError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIConnectionError(
                 _("{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("网络连接失败，请检查当前网络环境"),
@@ -398,7 +398,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.ProtocolError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIUnauthorizedError(
                 _("{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("请求协议错误"),
@@ -410,7 +410,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.ProxyError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIConnectionError(
                 _("{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("请求代理错误"),
@@ -422,7 +422,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.HTTPStatusError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIResponseError(
                 _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("状态码错误"),
@@ -613,7 +613,7 @@ class SecUserIdFetcher(BaseCrawler):
                 raise APIResponseError(_("接口状态码异常，请检查重试"))
 
         except httpx.TimeoutException as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APITimeoutError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -621,7 +621,7 @@ class SecUserIdFetcher(BaseCrawler):
             )
 
         except httpx.NetworkError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -635,7 +635,7 @@ class SecUserIdFetcher(BaseCrawler):
             )
 
         except httpx.ProtocolError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIUnauthorizedError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -643,7 +643,7 @@ class SecUserIdFetcher(BaseCrawler):
             )
 
         except httpx.ProxyError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -651,7 +651,7 @@ class SecUserIdFetcher(BaseCrawler):
             )
 
         except httpx.HTTPStatusError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIResponseError(
                 _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     "状态码错误", url, cls.proxies, cls.__name__, exc
@@ -757,7 +757,7 @@ class SecUserIdFetcher(BaseCrawler):
                 raise APIResponseError(_("接口状态码异常，请检查重试"))
 
         except httpx.TimeoutException as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APITimeoutError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -771,7 +771,7 @@ class SecUserIdFetcher(BaseCrawler):
             )
 
         except httpx.NetworkError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -785,7 +785,7 @@ class SecUserIdFetcher(BaseCrawler):
             )
 
         except httpx.ProtocolError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIUnauthorizedError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -799,7 +799,7 @@ class SecUserIdFetcher(BaseCrawler):
             )
 
         except httpx.ProxyError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -813,7 +813,7 @@ class SecUserIdFetcher(BaseCrawler):
             )
 
         except httpx.HTTPStatusError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIResponseError(
                 _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     "状态码错误",
@@ -960,7 +960,7 @@ class AwemeIdFetcher(BaseCrawler):
                 raise APIResponseError(_("接口状态码异常，请检查重试"))
 
         except httpx.TimeoutException as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APITimeoutError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -974,7 +974,7 @@ class AwemeIdFetcher(BaseCrawler):
             )
 
         except httpx.NetworkError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -988,7 +988,7 @@ class AwemeIdFetcher(BaseCrawler):
             )
 
         except httpx.ProtocolError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIUnauthorizedError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -1002,7 +1002,7 @@ class AwemeIdFetcher(BaseCrawler):
             )
 
         except httpx.ProxyError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -1016,7 +1016,7 @@ class AwemeIdFetcher(BaseCrawler):
             )
 
         except httpx.HTTPStatusError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIResponseError(
                 _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("状态码错误"),
@@ -1185,7 +1185,7 @@ class DeviceIdManager(BaseCrawler):
             return {"deviceId": deviceId, "cookie": cookie}
 
         except httpx.TimeoutException as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APITimeoutError(
                 _("{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("请求端点超时"),
@@ -1197,7 +1197,7 @@ class DeviceIdManager(BaseCrawler):
             )
 
         except httpx.NetworkError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIConnectionError(
                 _("{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("网络连接失败，请检查当前网络环境"),
@@ -1209,7 +1209,7 @@ class DeviceIdManager(BaseCrawler):
             )
 
         except httpx.ProtocolError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIUnauthorizedError(
                 _("{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("请求协议错误"),
@@ -1221,7 +1221,7 @@ class DeviceIdManager(BaseCrawler):
             )
 
         except httpx.HTTPStatusError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIResponseError(
                 _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("状态码错误"),

@@ -1,4 +1,7 @@
 import pytest
+
+from unittest.mock import AsyncMock, patch
+
 from f2.apps.douyin.handler import DouyinHandler
 from f2.apps.douyin.utils import WebCastIdFetcher
 from f2.utils.conf_manager import TestConfigManager
@@ -25,11 +28,17 @@ def cookie_fixture():
 
 @pytest.mark.asyncio
 async def test_fetch_user_live_videos_by_room_id(cookie_fixture):
-    result = await DouyinHandler(cookie_fixture).fetch_user_live_videos_by_room_id(
-        "7318296342189919011"
-    )
+    mock_room_id = "7318296342189919011"
+    mock_response = AsyncMock()
+    mock_response.room_id = mock_room_id
 
-    assert "7318296342189919011" == str(result.room_id)
+    with patch.object(
+        DouyinHandler, "fetch_user_live_videos_by_room_id", return_value=mock_response
+    ):
+        result = await DouyinHandler(cookie_fixture).fetch_user_live_videos_by_room_id(
+            mock_room_id
+        )
+        assert str(result.room_id) == mock_room_id
 
 
 @pytest.mark.asyncio

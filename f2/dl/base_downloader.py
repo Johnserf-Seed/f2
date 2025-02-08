@@ -10,7 +10,7 @@ from pathlib import Path
 from rich.progress import TaskID
 from typing import Union, Optional, Any, List, Set
 
-from f2.log.logger import logger
+from f2.log.logger import logger, trace_logger
 from f2.i18n.translator import _
 from f2.cli.cli_console import RichConsoleManager
 from f2.crawlers.base_crawler import BaseCrawler
@@ -113,28 +113,28 @@ class BaseDownloader(BaseCrawler):
                     task_id, advance=len(chunk), total=int(content_length)
                 )
         except httpx.TimeoutException as e:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             logger.error(_("文件区块超时：{0}").format(e))
         except httpx.NetworkError as e:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             logger.error(_("文件区块网络错误：{0}").format(e))
         except httpx.HTTPStatusError as e:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             logger.error(_("文件区块HTTP错误：{0}").format(e))
         except httpx.ProxyError as e:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             logger.error(_("文件区块代理错误：{0}").format(e))
         except httpx.UnsupportedProtocol as e:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             logger.error(_("文件区块协议错误：{0}").format(e))
         except httpx.StreamError as e:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             logger.error(_("文件区块流错误：{0}").format(e))
         except httpx.RemoteProtocolError as e:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             logger.error(_("文件区块不符合HTTP协议：{0}").format(e))
         except Exception as e:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             logger.error(_("文件区块下载失败：{0} Exception：{1}").format(request, e))
 
     async def download_file(
@@ -226,9 +226,8 @@ class BaseDownloader(BaseCrawler):
                                 )
                             )
                             if attempt == retry_attempts - 1:
-                                raise APIRetryExhaustedError(
-                                    _("重试次数已用尽")
-                                )  # 重试次数用尽，抛出异常
+                                # 重试次数用尽，抛出异常 (Retry attempts exhausted, raise exception)
+                                raise APIRetryExhaustedError(_("重试次数已用尽"))
 
                     # 检查文件大小是否匹配 (Check if the file size matches)
                     actual_size = tmp_path.stat().st_size
@@ -253,6 +252,7 @@ class BaseDownloader(BaseCrawler):
                         logger.error(_("文件重命名失败：{0}").format(e))
                         tmp_path.replace(full_path)
                     except Exception as e:
+                        trace_logger.error(traceback.format_exc())
                         logger.error(_("意外错误：{0}").format(e))
                         tmp_path.unlink(missing_ok=True)
                         await self.progress.update(
@@ -329,7 +329,7 @@ class BaseDownloader(BaseCrawler):
         async with aiofiles.open(**open_params) as f:
             await f.write(content)
 
-        logger.info(_("[green][  完成  ]： {0}[/green]").format(Path(full_path).name))
+        logger.info(_("[green][  完成  ]：{0}[/green]").format(Path(full_path).name))
         await self.progress.update(
             task_id,
             description=_("[green][  完成  ]：[/green]"),
@@ -337,7 +337,7 @@ class BaseDownloader(BaseCrawler):
             state="completed",
             visible=False,
         )
-        logger.debug(_("文件已保存到： {0}").format(full_path))
+        logger.debug(_("文件已保存到：{0}").format(full_path))
 
     async def download_m3u8_stream(
         self,
@@ -377,6 +377,7 @@ class BaseDownloader(BaseCrawler):
                     segments = await get_segments_from_m3u8(url)
 
                     if not segments:
+                        logger.debug(_("m3u8片段为空，直播流已结束"))
                         await self.progress.update(
                             task_id,
                             description=_("[red][  丢失  ]：[/red]"),
@@ -438,7 +439,7 @@ class BaseDownloader(BaseCrawler):
                                     downloaded_segments.add(segment.absolute_uri)
 
                                 except httpx.ReadTimeout:
-                                    logger.warning(_("TS 文件下载超时：跳过该片段"))
+                                    logger.warning(_("下载超时：跳过该 TS 文件片段"))
                                     continue
 
                                 except httpx.RemoteProtocolError as e:
@@ -453,7 +454,7 @@ class BaseDownloader(BaseCrawler):
                                     await ts_response.aclose()
                             else:
                                 logger.debug(
-                                    _("跳过已下载的片段，URL: {0}").format(
+                                    _("跳过已下载的片段，URL：{0}").format(
                                         segment.absolute_uri
                                     )
                                 )
@@ -490,8 +491,8 @@ class BaseDownloader(BaseCrawler):
                     return
 
                 except Exception as e:
-                    logger.error(traceback.format_exc())
-                    logger.error(_("m3u8文件解析失败: {0}").format(e))
+                    trace_logger.error(traceback.format_exc())
+                    logger.error(_("m3u8文件解析失败：{0}").format(e))
                     await self.progress.update(
                         task_id,
                         description=_("[red][  失败  ]：[/red]"),

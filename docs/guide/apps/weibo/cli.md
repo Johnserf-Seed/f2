@@ -62,7 +62,7 @@ outline: deep
 - `{uid}`：用户ID
 
 ::: tip :bulb: 提示
-- `custom_fields` 为自定义字段，开发者可以自定义字段映射，详见：[全局格式化文件名 🟢](/guide/apps/weibo/#全局格式化文件名-🟢)。
+- `custom_fields` 为自定义字段，开发者可以自定义字段映射，详见：[全局格式化文件名 🟢](/guide/apps/weibo/overview#全局格式化文件名-🟢)。
 :::
 
 ### `--cookie`
@@ -76,7 +76,7 @@ outline: deep
 ::: tip :bulb: 提示
 - 无法采集或风控时请及时更新 `Cookie`。
 - 不可以出现除 `ascii` 以外的字符，更新配置前请仔细检查。
-- 对于不验证的接口可以使用游客 `Cookie` 生成方法。详见：[生成访客Cookie 🟢](/guide/apps/weibo/#生成访客-cookie-🟢)。
+- 对于不验证的接口可以使用游客 `Cookie` 生成方法。详见：[生成访客Cookie 🟢](/guide/apps/weibo/overview#生成访客-cookie-🟢)。
 :::
 
 ::: danger :bangbang: 警告 :bangbang:

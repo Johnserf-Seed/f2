@@ -17,7 +17,7 @@ from urllib.parse import urlparse
 
 from f2.apps.douyin.algorithm.webcast_signature import DouyinWebcastSignature
 from f2.i18n.translator import _
-from f2.log.logger import logger
+from f2.log.logger import logger, trace_logger
 from f2.utils.xbogus import XBogus as XB
 from f2.utils.abogus import ABogus as AB, BrowserFingerprintGenerator as BrowserFpGen
 from f2.utils.conf_manager import ConfigManager
@@ -207,6 +207,7 @@ class TokenManager(BaseCrawler):
                     "version": instance.token_conf["version"],
                     "dataType": instance.token_conf["dataType"],
                     "strData": instance.token_conf["strData"],
+                    "ulr": instance.token_conf["ulr"],
                     "tspFromClient": get_timestamp(),
                 }
             )
@@ -218,14 +219,14 @@ class TokenManager(BaseCrawler):
             response.raise_for_status()
 
             msToken = str(httpx.Cookies(response.cookies).get("msToken"))
-            if len(msToken) not in [120, 128]:
+            if len(msToken) not in [164, 184]:
                 raise APIResponseError(_("{0} 内容不符合要求").format("msToken"))
 
             logger.debug(_("生成真实的msToken"))
             return msToken
 
         except httpx.TimeoutException as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APITimeoutError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -239,7 +240,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.NetworkError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -253,7 +254,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.ProtocolError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIUnauthorizedError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -267,7 +268,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.ProxyError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -281,7 +282,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.HTTPStatusError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIResponseError(
                 _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("状态码错误"),
@@ -295,7 +296,7 @@ class TokenManager(BaseCrawler):
     @classmethod
     def gen_false_msToken(cls) -> str:
         """生成随机 msToken (Generate random msToken)"""
-        false_msToken = gen_random_str(126) + "=="
+        false_msToken = gen_random_str(182) + "=="
         logger.debug(_("生成虚假的 msToken：{0}").format(false_msToken))
         return false_msToken
 
@@ -334,7 +335,7 @@ class TokenManager(BaseCrawler):
             return ttwid
 
         except httpx.TimeoutException as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APITimeoutError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -348,7 +349,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.NetworkError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -362,7 +363,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.ProtocolError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIUnauthorizedError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -376,7 +377,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.ProxyError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -390,7 +391,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.HTTPStatusError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIResponseError(
                 _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("状态码错误"),
@@ -443,7 +444,7 @@ class TokenManager(BaseCrawler):
             return webid
 
         except httpx.TimeoutException as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APITimeoutError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -457,7 +458,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.NetworkError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -471,7 +472,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.ProtocolError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIUnauthorizedError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -485,7 +486,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.ProxyError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -499,7 +500,7 @@ class TokenManager(BaseCrawler):
             )
 
         except httpx.HTTPStatusError as exc:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise APIResponseError(
                 _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("状态码错误"),
@@ -571,7 +572,7 @@ class WebcastSignatureManager:
         try:
             signature = DouyinWebcastSignature(user_agent).get_signature(param_str)
         except Exception as e:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise RuntimeError(_("生成signature失败: {0})").format(e))
 
         separator = "&" if "?" in base_endpoint else "?"
@@ -589,7 +590,7 @@ class XBogusManager:
         try:
             final_endpoint = XB(user_agent).getXBogus(endpoint)
         except Exception as e:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise RuntimeError(_("生成X-Bogus失败: {0})").format(e))
 
         return final_endpoint[0]
@@ -609,7 +610,7 @@ class XBogusManager:
         try:
             xb_value = XB(user_agent).getXBogus(param_str)
         except Exception as e:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise RuntimeError(_("生成X-Bogus失败: {0})").format(e))
 
         # 检查base_endpoint是否已有查询参数 (Check if base_endpoint already has query parameters)
@@ -634,7 +635,7 @@ class ABogusManager:
                 params, request_type
             )
         except Exception as e:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise RuntimeError(_("生成A-Bogus失败: {0})").format(e))
 
         return final_endpoint[0]
@@ -658,7 +659,7 @@ class ABogusManager:
                 param_str, request_type
             )
         except Exception as e:
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             raise RuntimeError(_("生成A-Bogus失败: {0})").format(e))
 
         # 检查base_endpoint是否已有查询参数 (Check if base_endpoint already has query parameters)

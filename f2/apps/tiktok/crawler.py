@@ -15,7 +15,7 @@ from websockets import (
     serve,
 )
 
-from f2.log.logger import logger
+from f2.log.logger import logger, trace_logger
 from f2.i18n.translator import _
 from f2.crawlers.base_crawler import BaseCrawler, WebSocketCrawler
 from f2.utils.utils import BaseEndpointManager
@@ -257,12 +257,10 @@ class TiktokWebSocketCrawler(WebSocketCrawler):
                 try:
                     decompressed = gzip.decompress(wss_package.payload)
                 except gzip.BadGzipFile:
-                    logger.error(
-                        _("数据解压缩失败：{0}").format(traceback.format_exc())
-                    )
+                    trace_logger.error(traceback.format_exc())
                     return
             else:
-                logger.warning(_("数据不是 gzip 格式，无法解压缩"))
+                logger.warning(_("解压缩数据时出错，数据不是 gzip 格式，无法解压缩"))
                 decompressed = wss_package.payload
 
             payload_package = Response()
@@ -305,6 +303,7 @@ class TiktokWebSocketCrawler(WebSocketCrawler):
             )
 
         except Exception:
+            trace_logger.error(traceback.format_exc())
             logger.error(
                 _("[HandleWssMessage] [⚠️ 处理消息出错] | [错误：{0}]").format(
                     traceback.format_exc()
@@ -368,9 +367,9 @@ class TiktokWebSocketCrawler(WebSocketCrawler):
             await self._timeout_check(server)
             await asyncio.Future()  # 这里保持服务器运行
         except asyncio.CancelledError:
-            logger.debug(_("[StartServer] [⚠️ 服务器任务被取消]"))
+            logger.warning(_("[StartServer] [⚠️ 服务器任务被取消]"))
         except Exception as exc:
-            logger.debug(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             logger.error(
                 _("[StartServer] [❌ 服务器启动失败] | [错误：{0}]").format(exc)
             )
