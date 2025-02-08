@@ -241,6 +241,10 @@ class WeiboDetailFilter(JSONModel):
 
     # VIDEO
     @property
+    def is_video(self):
+        return self._get_list_attr_value("$.page_info.type")
+
+    @property
     def bitrate_list(self):
         return self._get_list_attr_value(
             "$.page_info.media_info.playback_list[*].play_info.bitrate"
@@ -436,6 +440,7 @@ class UserWeiboFilter(JSONModel):
     # VIDEO
     @property
     def is_video(self):
+        # 非常💩，同样的type为11既有int 11又有str "11"类型
         return self._get_list_attr_value("$.data.list[*].page_info.type")
 
     @property
