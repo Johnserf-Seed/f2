@@ -64,7 +64,7 @@ outline: deep
 - `{uid}`：用户 ID
 
 ::: tip :bulb: 提示
-- `custom_fields` 为自定义字段，开发者可以自定义字段映射，详见：[全局格式化文件名 🟢](/guide/apps/weibo/#全局格式化文件名-🟢)。
+- `custom_fields` 为自定义字段，开发者可以自定义字段映射，详见：[全局格式化文件名 🟢](/guide/apps/twitter/overview#全局格式化文件名-🟢)。
 :::
 
 ### `--cookie`

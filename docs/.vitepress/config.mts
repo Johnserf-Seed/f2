@@ -151,7 +151,7 @@ export default defineConfig({
             {
               text: 'Developer API',
               items: [
-                { text: 'Bark', link: '/en/guide/apps/bark/index' },
+                { text: 'Bark', link: '/en/guide/apps/bark/overview' },
                 { text: 'DouYin', link: '/en/guide/apps/douyin/overview' },
                 { text: 'TikTok', link: '/en/guide/apps/tiktok/overview' },
                 { text: 'Twitter', link: '/en/guide/apps/twitter/overview' },
@@ -228,7 +228,7 @@ function en_nav(): DefaultTheme.NavItem[] {
     {
       text: 'Developer API',
       items: [
-        { text: 'Bark', link: '/en/guide/apps/bark/index', activeMatch: '/bark/index' },
+        { text: 'Bark', link: '/en/guide/apps/bark/overview', activeMatch: '/bark/overview' },
         { text: 'DouYin', link: '/en/guide/apps/douyin/overview', activeMatch: '/douyin/overview' },
         { text: 'TikTok', link: '/en/guide/apps/tiktok/overview', activeMatch: '/tiktok/overview' },
         { text: 'Twitter', link: '/en/guide/apps/twitter/overview', activeMatch: '/twitter/overview' },

@@ -10,7 +10,7 @@ outline: deep
 
 ### F2
 
-完整的 `API` 示例请参考 [`F2开发者接口`](apps/f2/index)。
+完整的 `API` 示例请参考 [`F2开发者接口`](apps/f2/overview)。
 
 ::: details :link: 示例：生成相关参数 :wrench:
 > **生成随机字符串**
@@ -84,7 +84,7 @@ outline: deep
 
 ### Bark
 
-完整的 `API` 示例请参考 [`Bark开发者接口`](apps/bark/index)。
+完整的 `API` 示例请参考 [`Bark开发者接口`](apps/bark/overview)。
 
 ::: details :link: 示例：生成相关参数 :wrench:
 > **生成数字比特**
@@ -98,7 +98,7 @@ outline: deep
 
 ### Douyin
 
-完整的 `API` 示例请参考 [`Douyin开发者接口`](apps/douyin/index)。
+完整的 `API` 示例请参考 [`Douyin开发者接口`](apps/douyin/overview)。
 
 ::: details :link: 示例：生成相关参数 :wrench:
 > **生成Abogus参数**
@@ -170,7 +170,7 @@ outline: deep
 
 ### Tiktok
 
-完整的 `API` 示例请参考 [`Tiktok开发者接口`](apps/tiktok/index)。
+完整的 `API` 示例请参考 [`Tiktok开发者接口`](apps/tiktok/overview)。
 
 ::: details :link: 示例：生成相关参数 :wrench:
 > **生成Xbogus参数**
@@ -214,7 +214,7 @@ outline: deep
 
 ### Twitter
 
-完整的 `API` 示例请参考 [`Twitter开发者接口`](apps/twitter/index)。
+完整的 `API` 示例请参考 [`Twitter开发者接口`](apps/twitter/overview)。
 
 ::: details :link: 示例：批量提取用户唯一id :blue_book:
 <<< @/snippets/twitter/user-unique-ids.py#multi-user-unique-id-snippet{18}
@@ -242,7 +242,7 @@ outline: deep
 
 ### Weibo
 
-完整的 `API` 示例请参考 [`Weibo开发者接口`](apps/weibo/index)。
+完整的 `API` 示例请参考 [`Weibo开发者接口`](apps/weibo/overview)。
 
 ::: details :link: 示例：生成相关参数 :wrench:
 > **生成游客Cookie**
