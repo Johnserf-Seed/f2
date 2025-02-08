@@ -13,7 +13,7 @@ from f2.cli.cli_console import RichConsoleManager
 from f2.utils._signal import SignalManager
 from f2.utils.utils import check_f2_version, check_python_version
 from f2.i18n.translator import _
-from f2.log.logger import logger
+from f2.log.logger import logger, trace_logger
 
 
 # 处理帮助信息
@@ -139,7 +139,7 @@ class DynamicGroup(click.Group):
                 command = getattr(module, app_name)
                 return command
         except (ImportError, AttributeError):
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             return
 
 

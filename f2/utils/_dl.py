@@ -9,7 +9,7 @@ from typing import Union
 from urllib.error import HTTPError
 
 from f2.utils.utils import ensure_path
-from f2.log.logger import logger
+from f2.log.logger import logger, trace_logger
 from f2.i18n.translator import _
 
 
@@ -55,8 +55,8 @@ async def get_content_length(url: str, headers: dict = ..., proxies: dict = ...)
 
         except httpx.ConnectTimeout:
             # 连接超时错误处理 (Handling connection timeout errors)
-            logger.error(traceback.format_exc())
             logger.error(_("连接超时错误: {0}".format(url)))
+            trace_logger.error(traceback.format_exc())
             logger.debug("===================================")
             logger.debug(f"headers:{headers}, proxies:{proxies}")
             logger.debug("===================================")
@@ -74,7 +74,7 @@ async def get_content_length(url: str, headers: dict = ..., proxies: dict = ...)
                     response = await aclient.send(request, stream=True)
                     response.raise_for_status()
                 except Exception as e:
-                    logger.error(traceback.format_exc())
+                    trace_logger.error(traceback.format_exc())
                     logger.error(
                         _(
                             "HTTP状态错误, 尝试GET请求失败: {0}, 错误详情: {1}".format(
@@ -92,13 +92,14 @@ async def get_content_length(url: str, headers: dict = ..., proxies: dict = ...)
                     )
                 )
                 return 0
-        except httpx.RequestError as e:
-            logger.error(traceback.format_exc())
-            logger.error(_("httpx 请求错误：{0}，错误详情：{1}".format(url, e)))
+        except httpx.ReadTimeout:
+            # 读取超时错误处理 (Handling read timeout errors)
+            trace_logger.error(traceback.format_exc())
+            logger.error(_("返回超时错误：{0}".format(url)))
             return 0
         except Exception as e:
             # 处理未知错误 (Handling unknown errors)
-            logger.error(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             logger.error(
                 _(
                     "f2 请求 Content-Length 时发生未知错误: {0}, 错误详情: {1}".format(

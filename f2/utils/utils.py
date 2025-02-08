@@ -24,7 +24,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.asymmetric import padding as rsa_padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
-from f2.log.logger import logger
+from f2.log.logger import logger, trace_logger
 from f2.i18n.translator import _
 from f2.exceptions.api_exceptions import APIFilterError
 
@@ -207,8 +207,8 @@ def interval_2_timestamp(
 
         return str_2_timestamp(date_str, format, unit, tz)
     except ValueError:
+        trace_logger.error(traceback.format_exc())
         logger.error(_("日期区间参数格式错误，请查阅文档后重试"))
-        logger.error(traceback.format_exc())
     return 0
 
 
@@ -786,6 +786,7 @@ def check_proxy_avail(
     except httpx.RequestError as e:
         logger.error(_("代理请求错误：{0}").format(e))
     except Exception as e:
+        trace_logger.error(traceback.format_exc())
         logger.error(_("代理请求失败：{0}").format(e))
 
     return False

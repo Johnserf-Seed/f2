@@ -12,7 +12,7 @@ from httpx import Response
 from websockets.exceptions import ConnectionClosedError, ConnectionClosedOK
 
 from f2.i18n.translator import _
-from f2.log.logger import logger
+from f2.log.logger import logger, trace_logger
 from f2.exceptions.conf_exceptions import InvalidEncodingError
 from f2.exceptions.api_exceptions import (
     APIConnectionError,
@@ -575,7 +575,7 @@ class WebSocketCrawler:
                 )
             )
         except ConnectionRefusedError as exc:
-            logger.debug(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             logger.error(
                 _("[ConnectWebSocket] [🚫 WebSocket 连接被拒绝] | [错误：{0}]").format(
                     exc
@@ -588,7 +588,7 @@ class WebSocketCrawler:
             )
 
         except websockets.InvalidStatusCode as exc:
-            logger.debug(traceback.format_exc())
+            trace_logger.error(traceback.format_exc())
             logger.error(
                 _("[ConnectWebSocket] [⚠️ 无效状态码] | [状态码：{0}]").format(exc)
             )
@@ -644,7 +644,7 @@ class WebSocketCrawler:
                     )
                     return "closed"
             except ConnectionClosedError as exc:
-                logger.debug(traceback.format_exc())
+                trace_logger.error(traceback.format_exc())
                 logger.warning(
                     _("[ReceiveMessages] [🔌 连接关闭] | [原因：{0}]").format(exc)
                 )
@@ -657,7 +657,7 @@ class WebSocketCrawler:
                 return "closed"
 
             except Exception as exc:
-                logger.debug(traceback.format_exc())
+                trace_logger.error(traceback.format_exc())
                 logger.error(
                     _("[ReceiveMessages] [⚠️ 消息处理错误] | [错误：{0}]").format(exc)
                 )
