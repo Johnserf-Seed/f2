@@ -55,10 +55,10 @@ async def get_content_length(url: str, headers: dict = ..., proxies: dict = ...)
 
         except httpx.ConnectTimeout:
             # 连接超时错误处理 (Handling connection timeout errors)
-            logger.error(_("连接超时错误: {0}".format(url)))
             trace_logger.error(traceback.format_exc())
+            logger.error(_("连接超时错误：{0}".format(url)))
             logger.debug("===================================")
-            logger.debug(f"headers:{headers}, proxies:{proxies}")
+            logger.debug(f"headers：{headers}，proxies：{proxies}")
             logger.debug("===================================")
             return 0
         # 对HTTP状态错误进行处理 (Handling HTTP status errors)
@@ -76,17 +76,13 @@ async def get_content_length(url: str, headers: dict = ..., proxies: dict = ...)
                 except Exception as e:
                     trace_logger.error(traceback.format_exc())
                     logger.error(
-                        _(
-                            "HTTP状态错误, 尝试GET请求失败: {0}, 错误详情: {1}".format(
-                                url, e
-                            )
-                        )
+                        _("HTTP状态错误，尝试GET请求失败，错误详情：{0}".format(e))
                     )
                     return 0
             else:
                 logger.error(
                     _(
-                        "HTTP状态错误: {0}, 状态码: {1}".format(
+                        "HTTP状态错误：{0}，状态码：{1}".format(
                             url, exc.response.status_code
                         )
                     )
@@ -102,7 +98,7 @@ async def get_content_length(url: str, headers: dict = ..., proxies: dict = ...)
             trace_logger.error(traceback.format_exc())
             logger.error(
                 _(
-                    "f2 请求 Content-Length 时发生未知错误: {0}, 错误详情: {1}".format(
+                    "f2 请求 Content-Length 时发生未知错误：{0}，错误详情：{1}".format(
                         url, e
                     )
                 )
