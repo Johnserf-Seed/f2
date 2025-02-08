@@ -207,6 +207,7 @@ class TokenManager(BaseCrawler):
                     "version": instance.token_conf["version"],
                     "dataType": instance.token_conf["dataType"],
                     "strData": instance.token_conf["strData"],
+                    "ulr": instance.token_conf["ulr"],
                     "tspFromClient": get_timestamp(),
                 }
             )
@@ -218,7 +219,7 @@ class TokenManager(BaseCrawler):
             response.raise_for_status()
 
             msToken = str(httpx.Cookies(response.cookies).get("msToken"))
-            if len(msToken) not in [120, 128]:
+            if len(msToken) not in [164, 184]:
                 raise APIResponseError(_("{0} 内容不符合要求").format("msToken"))
 
             logger.debug(_("生成真实的msToken"))
@@ -295,7 +296,7 @@ class TokenManager(BaseCrawler):
     @classmethod
     def gen_false_msToken(cls) -> str:
         """生成随机 msToken (Generate random msToken)"""
-        false_msToken = gen_random_str(126) + "=="
+        false_msToken = gen_random_str(182) + "=="
         logger.debug(_("生成虚假的 msToken：{0}").format(false_msToken))
         return false_msToken
 
