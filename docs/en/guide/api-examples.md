@@ -10,7 +10,7 @@ Before using them, ensure that you have completed the `F2` configuration, [confi
 
 ### F2
 
-For complete API examples, refer to the [`F2 Developer API`](/en/guide/apps/f2/overview).
+For complete API examples, refer to the [`F2 Developer API`](apps/f2/overview).
 
 ::: details :link: Example: Generate Related Parameters :wrench:
 > **Generate Random String**
@@ -84,7 +84,7 @@ For complete API examples, refer to the [`F2 Developer API`](/en/guide/apps/f2/o
 
 ### Bark
 
-For complete API examples, refer to the [`Bark Developer API`](/en/guide/apps/bark/overview).
+For complete API examples, refer to the [`Bark Developer API`](apps/bark/overview).
 
 ::: details :link: Example: Generate Related Parameters :wrench:
 > **Generate Digital Bits**
@@ -98,7 +98,7 @@ For complete API examples, refer to the [`Bark Developer API`](/en/guide/apps/ba
 
 ### Douyin
 
-For complete API examples, refer to the [`Douyin Developer API`](/en/guide/apps/douyin/overview).
+For complete API examples, refer to the [`Douyin Developer API`](apps/douyin/overview).
 
 ::: details :link: Example: Generate Related Parameters :wrench:
 > **Generate Abogus Parameters**
@@ -170,7 +170,7 @@ For complete API examples, refer to the [`Douyin Developer API`](/en/guide/apps/
 
 ### Tiktok
 
-For complete API examples, refer to the [`Tiktok Developer API`](/en/guide/apps/tiktok/overview).
+For complete API examples, refer to the [`Tiktok Developer API`](apps/tiktok/overview).
 
 ::: details :link: Example: Generate Related Parameters :wrench:
 > **Generate Xbogus Parameters**
@@ -214,7 +214,7 @@ For complete API examples, refer to the [`Tiktok Developer API`](/en/guide/apps/
 
 ### Twitter
 
-For complete API examples, refer to the [`Twitter Developer API`](/en/guide/apps/twitter/overview).
+For complete API examples, refer to the [`Twitter Developer API`](apps/twitter/overview).
 
 ::: details :link: Example: Batch Extract User Unique IDs :blue_book:
 <<< @/snippets/twitter/user-unique-ids.py#multi-user-unique-id-snippet{18}
@@ -242,7 +242,7 @@ For complete API examples, refer to the [`Twitter Developer API`](/en/guide/apps
 
 ### Weibo
 
-For complete API examples, refer to the [`Weibo Developer API`](/en/guide/apps/weibo/overview).
+For complete API examples, refer to the [`Weibo Developer API`](apps/weibo/overview).
 
 ::: details :link: Example: Generate Related Parameters :wrench:
 > **Generate Visitor Cookie**
