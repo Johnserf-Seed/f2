@@ -152,6 +152,7 @@ outline: deep
 > - 近期受新版 `Chromium` 内核升级影响，更新了 `Cookie` 加密方式，导致 `F2` 无法自动获取晚于 `2024/08/15` 之后版本的浏览器 `Cookie`。
 > - 在修复版本的依赖更新前请手动更新 `Cookie`。
 > - 了解更多请参阅 [borisbabic/browser_cookie3#215](https://github.com/borisbabic/browser_cookie3/pull/215)。
+> - 截至 `2024/12/23`，该修复不支持最新的 `Chromium` 版本。请使用不同的浏览器或降级到 `v128` 之前的版本。
 
 ::: details :link: 示例：手动更新 `Cookie`。
 ```shell [bash]

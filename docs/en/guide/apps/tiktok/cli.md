@@ -33,7 +33,7 @@ outline: [2,3]
 |        | `--help`      | `FLAG` | Display the help message and exit |
 
 
-## 详细说明
+## Detailed Description
 
 ### `--config`
 
