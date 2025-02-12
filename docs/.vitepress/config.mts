@@ -29,6 +29,9 @@ export default defineConfig({
       gtag('config', 'G-H7N87QED9C');`,
     ],
     ['link', { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css' }],
+    ['script', {}, `window.difyChatbotConfig = { token: 'J1rqKIKbJqCx3jDu' };`],
+    ['script', { src: 'https://udify.app/embed.min.js', id: 'dify-chatbot-script', defer: 'true' }],
+    ['style', {}, `#dify-chatbot-bubble-button {background-color: #1C64F2 !important;}#dify-chatbot-bubble-window {width: 24rem !important;height: 40rem !important;}`],
   ],
   markdown: {
     // lineNumbers: true

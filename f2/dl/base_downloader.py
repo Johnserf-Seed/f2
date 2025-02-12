@@ -378,11 +378,17 @@ class BaseDownloader(BaseCrawler):
 
                     if not segments:
                         logger.debug(_("m3u8片段为空，直播流已结束"))
+                        logger.info(
+                            _("[green][  完成  ]：{0}[/green]").format(
+                                Path(full_path).name
+                            )
+                        )
                         await self.progress.update(
                             task_id,
-                            description=_("[red][  丢失  ]：[/red]"),
+                            description=_("[green][  完成  ]：[/green]"),
                             filename=trim_filename(full_path.name, 45),
                             state="completed",
+                            visible=False,
                         )
                         return
 

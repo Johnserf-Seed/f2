@@ -173,9 +173,8 @@ def log_setup(
         log_path=log_dir,
     )
 
-    # 只保留99个日志文件
-    if log_name != "f2":
-        log_manager.clean_logs(99)  # 专门清理错误日志文件
+    # 保留200个日志和堆栈文件
+    log_manager.clean_logs(200)
 
     return logger
 
