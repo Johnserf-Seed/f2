@@ -140,7 +140,7 @@ class DouyinDownloader(BaseDownloader):
                 if self.kwargs.get(task_name):
                     await task_func()
 
-            if aweme_type in [0, 55, 61, 109, 201]:
+            if aweme_type in [0, 4, 55, 61, 109, 201]:
                 await self.download_video()
             elif aweme_type == 68:
                 await self.download_images()
