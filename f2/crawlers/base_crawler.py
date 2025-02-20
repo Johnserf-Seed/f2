@@ -180,7 +180,11 @@ class BaseCrawler:
         Returns:
             Response: 原始响应对象 (Raw response object)
         """
-        return await self.get_fetch_data(endpoint)
+        try:
+            return await self.get_fetch_data(endpoint)
+        except Exception as exc:
+            trace_logger.error(traceback.format_exc())
+            return Response()
 
     async def _fetch_get_json(self, endpoint: str) -> dict:
         """获取 JSON 数据 (Get JSON data)
@@ -191,8 +195,12 @@ class BaseCrawler:
         Returns:
             dict: 解析后的JSON数据 (Parsed JSON data)
         """
-        response = await self.get_fetch_data(endpoint)
-        return self.parse_json(response)
+        try:
+            response = await self.get_fetch_data(endpoint)
+            return self.parse_json(response)
+        except Exception as exc:
+            trace_logger.error(traceback.format_exc())
+            return {}
 
     async def _fetch_post_json(self, endpoint: str, params: dict = {}) -> dict:
         """获取 JSON 数据 (Post JSON data)
