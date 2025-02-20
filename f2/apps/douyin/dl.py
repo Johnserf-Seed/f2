@@ -220,7 +220,13 @@ class DouyinDownloader(BaseDownloader):
         images_video_list = self.aweme_data_dict.get("images_video", [])
         if images_video_list:
             for i, images_video_url in enumerate(images_video_list):
-                image_video_name = f"{format_file_name(self.kwargs.get('naming'), self.aweme_data_dict)}_live_{i + 1}"
+                image_video_name = (
+                    format_file_name(
+                        self.kwargs.get("naming", "{create}_{desc}"),
+                        self.aweme_data_dict,
+                    )
+                    + f"_live_{i + 1}"
+                )
                 if images_video_url:
                     await self.initiate_download(
                         _("实况"),
@@ -238,7 +244,12 @@ class DouyinDownloader(BaseDownloader):
 
         # 处理图片下载
         for i, image_url in enumerate(self.aweme_data_dict.get("images", [])):
-            image_name = f"{format_file_name(self.kwargs.get('naming'), self.aweme_data_dict)}_image_{i + 1}"
+            image_name = (
+                format_file_name(
+                    self.kwargs.get("naming", "{create}_{desc}"), self.aweme_data_dict
+                )
+                + f"_image_{i + 1}"
+            )
             if image_url:
                 await self.initiate_download(
                     _("图集"), image_url, self.base_path, image_name, ".webp"
@@ -378,7 +389,12 @@ class DouyinDownloader(BaseDownloader):
             else user_path
         )
 
-        webcast_name = f"{format_file_name(kwargs.get('naming'), custom_fields=custom_fields)}_live"
+        webcast_name = (
+            format_file_name(
+                kwargs.get("naming", "{create}_{desc}"), custom_fields=custom_fields
+            )
+            + "_live"
+        )
         webcast_url = webcast_data_dict.get("m3u8_pull_url").get("FULL_HD1")
 
         await self.initiate_m3u8_download(

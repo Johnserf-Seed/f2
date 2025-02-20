@@ -169,7 +169,12 @@ class WeiboDownloader(BaseDownloader):
             return
 
         for i, image_url in enumerate(self.weibo_data_dict.get("weibo_pic_ids", [])):
-            image_name = f"{format_file_name(self.kwargs.get('naming'), self.weibo_data_dict)}_image_{i + 1}"
+            image_name = (
+                format_file_name(
+                    self.kwargs.get("naming", "{create}_{desc}"), self.weibo_data_dict
+                )
+                + f"_image_{i + 1}"
+            )
             image_url = WeiboAPIEndpoints.LARGEST + f"/{image_url}"
             if image_url is not None:
                 await self.initiate_download(
