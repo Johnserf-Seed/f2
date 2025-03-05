@@ -96,7 +96,7 @@
 4. 重新运行下载命令。
 :::
 **参考链接：**
-- https://f2.wiki/guide/apps/tiktok/#%E7%94%9F%E6%88%90deviceid-%F0%9F%9F%A2
+- https://f2.wiki/guide/apps/tiktok/overview#%E7%94%9F%E6%88%90deviceid-%F0%9F%9F%A2
 - https://github.com/Johnserf-Seed/f2/issues/79
 - https://github.com/Johnserf-Seed/f2/issues/154
 

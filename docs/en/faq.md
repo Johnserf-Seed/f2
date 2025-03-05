@@ -96,7 +96,7 @@ Device IDs are tied to `cookies`, and a banned device ID results in invalid cook
 4. Retry the download command.
 :::
 **Reference Links:**
-- https://f2.wiki/guide/apps/tiktok/#%E7%94%9F%E6%88%90deviceid-%F0%9F%9F%A2
+- https://f2.wiki/guide/apps/tiktok/overview#%E7%94%9F%E6%88%90deviceid-%F0%9F%9F%A2
 - https://github.com/Johnserf-Seed/f2/issues/79
 - https://github.com/Johnserf-Seed/f2/issues/154
 
