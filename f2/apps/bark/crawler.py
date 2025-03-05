@@ -40,12 +40,14 @@ class BarkCrawler(BaseCrawler):
     async def post_bark_notification(self, params: BarkModel) -> Dict:
         logger.debug(_("Bark 通知接口地址(POST)：{0}").format(self.server_endpoint))
         return await self._fetch_post_json(
-            self.server_endpoint, params.model_dump(by_alias=True)
+            self.server_endpoint, json=params.model_dump(by_alias=True)
         )
 
     async def cipher_bark_notification(self, params: BarkCipherModel) -> Dict:
         logger.debug(_("Bark 通知接口地址(Cipher)：{0}").format(self.server_endpoint))
-        return await self._fetch_post_json(self.server_endpoint, params.model_dump())
+        return await self._fetch_post_json(
+            self.server_endpoint, json=params.model_dump()
+        )
 
     async def __aenter__(self):
         return self

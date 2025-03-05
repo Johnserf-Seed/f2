@@ -135,7 +135,7 @@ class DouyinCrawler(BaseCrawler):
             params.model_dump(),
         )
         logger.debug(_("主页收藏作品接口地址：{0}").format(endpoint))
-        return await self._fetch_post_json(endpoint, params.model_dump())
+        return await self._fetch_post_json(endpoint, json=params.model_dump())
 
     async def fetch_user_collects(self, params: UserCollects):
         endpoint = self.bogus_manager.model_2_endpoint(
