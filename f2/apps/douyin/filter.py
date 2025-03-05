@@ -132,7 +132,6 @@ class UserProfileFilter(JSONModel):
 
 
 class UserPostFilter(JSONModel):
-
     @property
     def status_code(self):
         return self._get_attr_value("$.status_code")
@@ -377,7 +376,6 @@ class UserCollectionFilter(UserPostFilter):
 
 
 class UserCollectsFilter(JSONModel):
-
     @property
     def max_cursor(self):
         return self._get_attr_value("$.cursor")
@@ -501,7 +499,6 @@ class UserCollectsFilter(JSONModel):
 
 
 class UserMusicCollectionFilter(JSONModel):
-
     @property
     def max_cursor(self):
         return self._get_attr_value("$.cursor")
@@ -665,7 +662,6 @@ class UserLikeFilter(UserPostFilter):
 
 
 class UserFollowingFilter(JSONModel):
-
     @property
     def status_code(self):  # 1 正常，2096 用户隐私设置不允许查看
         return self._get_attr_value("$.status_code")
@@ -1046,7 +1042,6 @@ class UserFollowerFilter(UserFollowingFilter):
 
 
 class PostDetailFilter(JSONModel):
-
     @property
     def api_status_code(self):
         return self._get_attr_value("$.status_code")
@@ -2295,7 +2290,6 @@ class FollowingUserLiveFilter(JSONModel):
 
 
 class PostStatsFilter(JSONModel):
-
     # 0 正常 5 参数不合法 2863 您的操作过于频繁，请稍后再试
     @property
     def status_code(self):

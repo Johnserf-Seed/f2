@@ -275,7 +275,6 @@ class TweetDetailFilter(JSONModel):
 
 class UserProfileFilter(JSONModel):
     # User
-
     # 蓝V认证
     @property
     def is_blue_verified(self):
@@ -667,13 +666,11 @@ class PostTweetFilter(JSONModel):
 
 
 class LikeTweetFilter(PostTweetFilter):
-
     def __init__(self, data):
         super().__init__(data)
 
 
 class BookmarkTweetFilter(JSONModel):
-
     # 用户发布的推文__typename是TweetWithVisibilityResults
     @property
     def cursorType(self):
