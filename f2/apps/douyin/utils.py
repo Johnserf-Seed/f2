@@ -1505,6 +1505,7 @@ def format_file_name(
         "nickname": aweme_data.get("nickname", ""),  # 最长30
         "aweme_id": aweme_data.get("aweme_id", ""),  # 长度固定19
         "desc": split_filename(aweme_data.get("desc", ""), os_limit),
+        "caption": aweme_data.get("caption", ""),  # 最长30
         "uid": aweme_data.get("uid", ""),  # 固定11
     }
 

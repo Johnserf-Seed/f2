@@ -165,6 +165,14 @@ class UserPostFilter(JSONModel):
         )
 
     @property
+    def caption(self):
+        return replaceT(self._get_attr_value("$.aweme_list[*].caption"))
+
+    @property
+    def caption_raw(self):
+        return self._get_attr_value("$.aweme_list[*].caption")
+
+    @property
     def desc(self):
         return replaceT(self._get_list_attr_value("$.aweme_list[*].desc"))
 
@@ -1106,6 +1114,14 @@ class PostDetailFilter(JSONModel):
         return timestamp_2_str(str(self._get_attr_value("$.aweme_detail.create_time")))
 
     @property
+    def caption(self):
+        return replaceT(self._get_attr_value("$.aweme_detail.caption"))
+
+    @property
+    def caption_raw(self):
+        return self._get_attr_value("$.aweme_detail.caption")
+
+    @property
     def desc(self):
         return replaceT(self._get_attr_value("$.aweme_detail.desc"))
 
@@ -1734,6 +1750,14 @@ class FriendFeedFilter(JSONModel):
     @property
     def aweme_type(self):
         return self._get_list_attr_value("$.data[*].aweme.aweme_type")
+
+    @property
+    def caption(self):
+        return replaceT(self._get_list_attr_value("$.data[*].aweme.desc"))
+
+    @property
+    def caption_raw(self):
+        return self._get_list_attr_value("$.data[*].aweme.desc")
 
     @property
     def desc(self):
