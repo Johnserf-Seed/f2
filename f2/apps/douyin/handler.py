@@ -27,6 +27,7 @@ from f2.apps.douyin.model import (
     UserMix,
     PostDetail,
     PostComment,
+    PostCommentReply,
     UserLive,
     UserLive2,
     # LoginGetQr,
@@ -50,6 +51,7 @@ from f2.apps.douyin.filter import (
     UserMixFilter,
     PostDetailFilter,
     PostCommentFilter,
+    PostCommentReplyFilter,
     UserLiveFilter,
     UserLive2Filter,
     # GetQrcodeFilter,
@@ -2217,6 +2219,86 @@ class DouyinHandler:
             _("[DouYin] 作品评论下载"),
             _("评论数：{0}\n" "下载时间：{1}").format(
                 comments_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="DouYin",
+        )
+
+    async def fetch_post_comment_reply(
+        self,
+        aweme_id: str,
+        comment_id: str,
+        cursor: int = 0,
+        page_counts: int = 3,
+        max_counts: int = None,
+    ) -> AsyncGenerator[PostCommentReplyFilter, Any]:
+        """
+        用于获取评论的回复。
+
+        Args:
+            aweme_id: str: 作品ID
+            comment_id: str: 评论ID
+            cursor: int: 起始页
+            page_counts: int: 每页回复数
+            max_counts: int: 最大回复数
+
+        Return:
+            reply: AsyncGenerator[PostCommentReplyFilter, Any]: 回复数据过滤器，包含回复数据的_to_raw、_to_dict、_to_list方法
+        """
+
+        max_counts = max_counts or float("inf")
+        reply_collected = 0
+
+        logger.info(_("处理作品: {0} 评论: {1} 的回复").format(aweme_id, comment_id))
+
+        while reply_collected < max_counts:
+            current_request_size = min(page_counts, max_counts - reply_collected)
+
+            logger.debug(
+                _("最大数量: {0} 每次请求数量: {1}").format(
+                    max_counts, current_request_size
+                )
+            )
+            rich_console.print(
+                Rule(_("处理第 {0} 页 ({1})").format(cursor, timestamp_2_str(cursor)))
+            )
+
+            async with DouyinCrawler(self.kwargs) as crawler:
+                params = PostCommentReply(
+                    item_id=aweme_id,
+                    comment_id=comment_id,
+                    cursor=cursor,
+                    count=current_request_size,
+                )
+                response = await crawler.fetch_post_comment_reply(params)
+                reply = PostCommentReplyFilter(response)
+                yield reply
+
+            if not reply.has_more:
+                logger.info(_("评论: {0} 的所有回复采集完毕").format(comment_id))
+                break
+
+            logger.debug(_("当前请求的cursor: {0}").format(cursor))
+            logger.debug(
+                _("回复ID: {0} 回复内容: {1} 回复用户: {2}").format(
+                    reply.reply_id, reply.reply_text_raw, reply.nickname_raw
+                )
+            )
+
+            # 更新已经处理的回复数量 (Update the number of replies processed)
+            reply_collected += len(reply.reply_id)
+            cursor = reply.cursor
+
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(_("结束处理评论回复，共处理 {0} 条回复").format(reply_collected))
+
+        await self._send_bark_notification(
+            _("[DouYin] 评论回复下载"),
+            _("回复数：{0}\n" "下载时间：{1}").format(
+                reply_collected,
                 timestamp_2_str(get_timestamp("sec")),
             ),
             group="DouYin",

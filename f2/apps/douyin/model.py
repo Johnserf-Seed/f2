@@ -215,6 +215,15 @@ class PostComment(BaseRequestModel):
     rcFT: str = ""
 
 
+class PostCommentReply(BaseRequestModel):
+    item_id: str
+    comment_id: str
+    cursor: int = 0
+    count: int = 3
+    item_type: int = 0
+    cut_version: int = 1
+
+
 class PostLocate(BaseRequestModel):
     sec_user_id: str
     max_cursor: str  # last max_cursor

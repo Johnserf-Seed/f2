@@ -29,6 +29,8 @@ from f2.apps.douyin.model import (
     UserCollectsVideo,
     UserMusicCollection,
     PostDetail,
+    PostComment,
+    PostCommentReply,
     UserMix,
     UserLive,
     UserLive2,
@@ -181,13 +183,22 @@ class DouyinCrawler(BaseCrawler):
         logger.debug(_("作品详情接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
-    async def fetch_post_comment(self, params: PostDetail):
+    async def fetch_post_comment(self, params: PostComment):
         endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.POST_COMMENT,
             params.model_dump(),
         )
         logger.debug(_("作品评论接口地址：{0}").format(endpoint))
+        return await self._fetch_get_json(endpoint)
+
+    async def fetch_post_comment_reply(self, params: PostCommentReply):
+        endpoint = self.bogus_manager.model_2_endpoint(
+            self.headers.get("User-Agent"),
+            dyendpoint.POST_COMMENT_REPLY,
+            params.model_dump(),
+        )
+        logger.debug(_("作品评论回复接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_post_feed(self, params: PostDetail):

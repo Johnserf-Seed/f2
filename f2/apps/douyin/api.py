@@ -129,6 +129,9 @@ class DouyinAPIEndpoints:
     # 作品评论 (Post Comment)
     POST_COMMENT = f"{DOUYIN_DOMAIN}/aweme/v1/web/comment/list/"
 
+    # 评论回复 (Comment Reply)
+    POST_COMMENT_REPLY = f"{DOUYIN_DOMAIN}/aweme/v1/web/comment/list/reply/"
+
     # 回复评论 (Reply Comment)
     POST_COMMENT_PUBLISH = f"{DOUYIN_DOMAIN}/aweme/v1/web/comment/publish"
 

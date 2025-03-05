@@ -1568,6 +1568,11 @@ class PostCommentFilter(JSONModel):
         return list_dicts
 
 
+class PostCommentReplyFilter(PostCommentFilter):
+    def __init__(self, data):
+        super().__init__(data)
+
+
 class UserLiveFilter(JSONModel):
     # live
     @property
