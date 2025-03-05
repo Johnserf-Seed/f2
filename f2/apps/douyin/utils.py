@@ -627,12 +627,12 @@ class ABogusManager:
         cls,
         user_agent: str,
         params: str,
-        request_type: str = "",
+        body: str = "",
     ) -> str:
         try:
             browser_fp = BrowserFpGen.generate_fingerprint("Edge")
             final_endpoint = AB(fp=browser_fp, user_agent=user_agent).generate_abogus(
-                params, request_type
+                params, body
             )
         except Exception as e:
             trace_logger.error(traceback.format_exc())
@@ -646,7 +646,7 @@ class ABogusManager:
         user_agent: str,
         base_endpoint: str,
         params: dict,
-        request_type: str = "",
+        body: str = "",
     ) -> str:
         if not isinstance(params, dict):
             raise TypeError(_("参数必须是字典类型"))
@@ -656,7 +656,7 @@ class ABogusManager:
         try:
             browser_fp = BrowserFpGen.generate_fingerprint("Edge")
             ab_value = AB(fp=browser_fp, user_agent=user_agent).generate_abogus(
-                param_str, request_type
+                param_str, body
             )
         except Exception as e:
             trace_logger.error(traceback.format_exc())
