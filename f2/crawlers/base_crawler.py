@@ -202,17 +202,23 @@ class BaseCrawler:
             trace_logger.error(traceback.format_exc())
             return {}
 
-    async def _fetch_post_json(self, endpoint: str, params: dict = {}) -> dict:
-        """获取 JSON 数据 (Post JSON data)
+    async def _fetch_post_json(self, endpoint: str, **kwargs) -> dict:
+        """
+        获取 JSON 数据 (Post JSON data)
 
         Args:
             endpoint (str): 接口地址 (Endpoint URL)
+            **kwargs: 透传参数，支持 post_fetch_data 的所有参数
 
         Returns:
-            dict: 解析后的JSON数据 (Parsed JSON data)
+            dict: 解析后的 JSON 数据 (Parsed JSON data)
         """
-        response = await self.post_fetch_data(endpoint, params)
-        return self.parse_json(response)
+        try:
+            response = await self.post_fetch_data(endpoint, **kwargs)
+            return self.parse_json(response)
+        except Exception as e:
+            trace_logger.error(traceback.format_exc())
+            return {}
 
     def parse_json(self, response: Response) -> dict:
         """解析JSON响应对象 (Parse JSON response object)
@@ -348,13 +354,25 @@ class BaseCrawler:
                     ).format(url, self.proxies, self.__class__.__name__, req_err)
                 )
 
-    async def post_fetch_data(self, url: str, params: dict = {}):
+    async def post_fetch_data(
+        self,
+        url: str,
+        params: dict | None = None,
+        data: dict | None = None,
+        json: dict | None = None,
+        files: dict | None = None,
+        content: bytes | None = None,
+    ) -> Response:
         """
         获取POST端点数据 (Get POST endpoint data)
 
         Args:
             url (str): 端点URL (Endpoint URL)
-            params (dict): POST请求参数 (POST request parameters)
+            params (dict, optional): URL 查询参数 (?key=value)
+            data (dict, optional): 表单数据 (application/x-www-form-urlencoded)
+            json (dict, optional): JSON 数据 (application/json)
+            files (dict, optional): 文件上传 (multipart/form-data)
+            content (bytes, optional): 原始请求体 (Raw request body)
 
         Returns:
             response: 响应内容 (Response content)
@@ -362,7 +380,14 @@ class BaseCrawler:
         for attempt in range(self._max_retries):
             try:
                 response = await self.aclient.post(
-                    url, json=dict(params), follow_redirects=True
+                    url,
+                    params=params,
+                    data=data,
+                    json=json,
+                    files=files,
+                    content=content,
+                    headers=self.crawler_headers,
+                    follow_redirects=True,
                 )
                 if not response.text.strip() or not response.content:
                     error_message = _(
@@ -382,6 +407,17 @@ class BaseCrawler:
                 logger.debug(_("响应状态码: {0}").format(response.status_code))
                 response.raise_for_status()
                 return response
+
+            except httpx.TimeoutException:
+                logger.error(f"请求超时: {url}")
+                if attempt == self._max_retries - 1:
+                    raise APIConnectionError(
+                        f"请求超时，已重试 {self._max_retries} 次: {url}"
+                    )
+                await asyncio.sleep(self._timeout)
+
+            except httpx.HTTPStatusError as http_error:
+                self.handle_http_status_error(http_error, url, attempt + 1)
 
             except httpx.RequestError as req_err:
                 raise APIConnectionError(
