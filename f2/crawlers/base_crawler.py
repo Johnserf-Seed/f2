@@ -172,7 +172,8 @@ class BaseCrawler:
         return self._client
 
     async def _fetch_response(self, endpoint: str) -> Response:
-        """获取数据 (Get data)
+        """
+        获取数据 (Get data)
 
         Args:
             endpoint (str): 接口地址 (Endpoint URL)
@@ -187,7 +188,8 @@ class BaseCrawler:
             return Response()
 
     async def _fetch_get_json(self, endpoint: str) -> dict:
-        """获取 JSON 数据 (Get JSON data)
+        """
+        获取 JSON 数据 (Get JSON data)
 
         Args:
             endpoint (str): 接口地址 (Endpoint URL)
@@ -221,7 +223,8 @@ class BaseCrawler:
             return {}
 
     def parse_json(self, response: Response) -> dict:
-        """解析JSON响应对象 (Parse JSON response object)
+        """
+        解析JSON响应对象 (Parse JSON response object)
 
         Args:
             response (Response): 原始响应对象 (Raw response object)
@@ -254,7 +257,7 @@ class BaseCrawler:
 
         return {}
 
-    async def get_fetch_data(self, url: str):
+    async def get_fetch_data(self, url: str) -> Response:
         """
         获取GET端点数据 (Get GET endpoint data)
 
@@ -266,7 +269,9 @@ class BaseCrawler:
         """
         for attempt in range(self._max_retries):
             try:
-                response = await self.aclient.get(url, follow_redirects=True)
+                response = await self.aclient.get(
+                    url, headers=self.crawler_headers, follow_redirects=True
+                )
                 if not response.text.strip() or not response.content:
                     error_message = _(
                         "第 {0} 次请求响应内容为空, 状态码: {1}, URL:{2}"
@@ -426,10 +431,7 @@ class BaseCrawler:
                     ).format(url, self.proxies, self.__class__.__name__, req_err)
                 )
 
-            except httpx.HTTPStatusError as http_error:
-                self.handle_http_status_error(http_error, url, attempt + 1)
-
-    async def head_fetch_data(self, url: str):
+    async def head_fetch_data(self, url: str) -> Response:
         """
         获取HEAD端点数据 (Get HEAD endpoint data)
 
@@ -440,7 +442,7 @@ class BaseCrawler:
             response: 响应内容 (Response content)
         """
         try:
-            response = await self.aclient.head(url)
+            response = await self.aclient.head(url, headers=self.crawler_headers)
             logger.debug(_("响应状态码: {0}").format(response.status_code))
             response.raise_for_status()
             return response
@@ -455,7 +457,7 @@ class BaseCrawler:
         except httpx.HTTPStatusError as http_error:
             self.handle_http_status_error(http_error, url, 1)
 
-    def handle_http_status_error(self, http_error, url: str, attempt):
+    def handle_http_status_error(self, http_error, url: str, attempt: int):
         """
         处理HTTP状态错误 (Handle HTTP status error)
 
