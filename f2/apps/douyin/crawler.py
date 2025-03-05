@@ -5,7 +5,6 @@ import gzip
 import asyncio
 import traceback
 
-from typing import Dict
 from google.protobuf import json_format
 from google.protobuf.message import DecodeError as ProtoDecodeError
 from websockets import (
@@ -90,7 +89,7 @@ from f2.apps.douyin.proto.douyin_webcast_pb2 import (
 class DouyinCrawler(BaseCrawler):
     def __init__(
         self,
-        kwargs: Dict = ...,
+        kwargs: dict = None,
     ):
         # 需要与cli同步
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})
@@ -353,7 +352,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
     # 是否显示直播间消息
     show_message = False
 
-    def __init__(self, kwargs: Dict = ..., callbacks: Dict = None):
+    def __init__(self, kwargs: dict = None, callbacks: dict = None):
         self.__class__.show_message = bool(kwargs.get("show_message", True))
         # 需要与cli同步
         self.headers = kwargs.get("headers", {}) | {

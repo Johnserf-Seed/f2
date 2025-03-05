@@ -16,7 +16,7 @@ from f2.apps.weibo.utils import ModelManager
 class WeiboCrawler(BaseCrawler):
     def __init__(
         self,
-        kwargs: dict = ...,
+        kwargs: dict = None,
     ):
         # 需要与cli同步
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})

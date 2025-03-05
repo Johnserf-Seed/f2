@@ -101,7 +101,7 @@ class DouyinHandler:
         "images_video",
     ]
 
-    def __init__(self, kwargs: Dict = ...) -> None:
+    def __init__(self, kwargs: dict = None) -> None:
         self.kwargs = kwargs
         self.downloader = DouyinDownloader(self.kwargs)
         # 初始化 Bark 通知服务
@@ -123,7 +123,7 @@ class DouyinHandler:
             title (str): 通知标题
             body (str): 通知内容
             send_method (str): 调用的发送方法（"fetch" 或 "post"）
-            kwargs (Dict): 其他通知参数
+            kwargs (dict): 其他通知参数
         Returns:
             None
         """
@@ -175,7 +175,7 @@ class DouyinHandler:
         (Get or create user data and create user directory)
 
         Args:
-            kwargs (Dict): 配置参数 (Conf parameters)
+            kwargs (dict): 配置参数 (Conf parameters)
             sec_user_id (str): 用户ID (User ID)
             db (AsyncUserDB): 用户数据库 (User database)
 
@@ -2012,7 +2012,7 @@ class DouyinHandler:
         user_unique_id: str,
         internal_ext: str,
         cursor: str,
-        wss_callbacks: Dict = {},
+        wss_callbacks: dict = None,
     ):
         """
         通过WebSocket连接获取直播间弹幕，再通过回调函数处理弹幕数据。

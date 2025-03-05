@@ -16,7 +16,7 @@ from f2.cli.cli_console import RichConsoleManager
 
 
 class DouyinDownloader(BaseDownloader):
-    def __init__(self, kwargs: Dict = {}):
+    def __init__(self, kwargs: dict = None):
         if kwargs["cookie"] is None:
             raise ValueError(
                 _(
@@ -48,7 +48,7 @@ class DouyinDownloader(BaseDownloader):
         创建下载任务
 
         Args:
-            kwargs (Dict): 命令行参数
+            kwargs (dict): 命令行参数
             aweme_datas (List, Dict): 作品数据列表或字典
             user_path (str): 用户目录路径
         """
@@ -105,7 +105,7 @@ class DouyinDownloader(BaseDownloader):
         处理下载任务
 
         Args:
-            kwargs (Dict): 命令行参数
+            kwargs (dict): 命令行参数
             aweme_data_dict (Dict): 作品数据字典
             user_path (Any): 用户目录路径
         """
@@ -266,7 +266,7 @@ class DouyinDownloader(BaseDownloader):
         创建音乐下载任务
 
         Args:
-            kwargs (Dict): 命令行参数
+            kwargs (dict): 命令行参数
             music_datas (List, Dict): 音乐数据列表或字典
             user_path (Any): 用户目录路径
         """
@@ -295,7 +295,7 @@ class DouyinDownloader(BaseDownloader):
         处理音乐下载任务
 
         Args:
-            kwargs (Dict): 命令行参数
+            kwargs (dict): 命令行参数
             music_data_dict (Dict): 音乐数据字典
             user_path (Any): 用户目录路径
         """
@@ -339,7 +339,7 @@ class DouyinDownloader(BaseDownloader):
         创建视频流下载任务
 
         Args:
-            kwargs (Dict): 命令行参数
+            kwargs (dict): 命令行参数
             aweme_datas (List, Dict): 作品数据列表或字典
             user_path (Any): 用户目录路径
         """
@@ -368,7 +368,7 @@ class DouyinDownloader(BaseDownloader):
         处理视频流下载任务
 
         Args:
-            kwargs (Dict): 命令行参数
+            kwargs (dict): 命令行参数
             aweme_data_dict (Dict): 直播数据字典
             user_path (Any): 用户目录路径
         """

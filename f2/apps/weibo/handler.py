@@ -76,7 +76,7 @@ class WeiboHandler:
             title (str): 通知标题
             body (str): 通知内容
             send_method (str): 调用的发送方法（"fetch" 或 "post"）
-            kwargs (Dict): 其他通知参数
+            kwargs (dict): 其他通知参数
         Returns:
             None
         """

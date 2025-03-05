@@ -1,6 +1,5 @@
 # path: f2/apps/bark/crawler.py
 
-from typing import Dict
 from urllib.parse import quote
 
 from f2.log.logger import logger
@@ -14,7 +13,7 @@ from f2.apps.bark.api import BarkAPIEndpoints as bkendpoint
 class BarkCrawler(BaseCrawler):
     def __init__(
         self,
-        kwargs: Dict = ...,
+        kwargs: dict = None,
     ):
         # 需要与cli同步
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})
@@ -24,7 +23,7 @@ class BarkCrawler(BaseCrawler):
             kwargs, proxies=proxies, crawler_headers=kwargs.get("headers", {})
         )
 
-    async def fetch_bark_notification(self, params: BarkModel) -> Dict:
+    async def fetch_bark_notification(self, params: BarkModel) -> dict:
         # 转义参数
         escaped_params = {
             k: quote(str(v), safe="")
@@ -37,13 +36,13 @@ class BarkCrawler(BaseCrawler):
         logger.debug(_("Bark 通知接口地址(GET)：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
-    async def post_bark_notification(self, params: BarkModel) -> Dict:
+    async def post_bark_notification(self, params: BarkModel) -> dict:
         logger.debug(_("Bark 通知接口地址(POST)：{0}").format(self.server_endpoint))
         return await self._fetch_post_json(
             self.server_endpoint, json=params.model_dump(by_alias=True)
         )
 
-    async def cipher_bark_notification(self, params: BarkCipherModel) -> Dict:
+    async def cipher_bark_notification(self, params: BarkCipherModel) -> dict:
         logger.debug(_("Bark 通知接口地址(Cipher)：{0}").format(self.server_endpoint))
         return await self._fetch_post_json(
             self.server_endpoint, json=params.model_dump()

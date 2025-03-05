@@ -63,7 +63,7 @@ class ClientConfManager:
 class ModelManager:
 
     @classmethod
-    def model_2_endpoint(cls, base_endpoint: str, params: dict = ...) -> str:
+    def model_2_endpoint(cls, base_endpoint: str, params: dict = None) -> str:
         if not params:
             return base_endpoint
 

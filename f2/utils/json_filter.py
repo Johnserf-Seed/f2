@@ -2,7 +2,7 @@
 
 import json
 
-from typing import Any
+from typing import Any, Union, List, Optional
 from jsonpath_ng import parse
 
 
@@ -61,7 +61,7 @@ class JSONModel:
             self._cache[jsonpath_expr] = parse(jsonpath_expr)
         return self._cache[jsonpath_expr]
 
-    def _get_attr_value(self, jsonpath_expr: str):
+    def _get_attr_value(self, jsonpath_expr: str) -> Optional[Any]:
         """
         根据 JSONPath 表达式获取单一属性值。
 
@@ -82,7 +82,9 @@ class JSONModel:
             else [match.value for match in matches]
         )
 
-    def _get_list_attr_value(self, jsonpath_expr: str, as_json: bool = False):
+    def _get_list_attr_value(
+        self, jsonpath_expr: str, as_json: bool = False
+    ) -> Union[List[Any], str, None]:
         """
         获取列表属性值，支持字段缺失时补全 None。
 

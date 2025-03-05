@@ -1272,8 +1272,8 @@ class DeviceIdManager(BaseCrawler):
 
 def format_file_name(
     naming_template: str,
-    aweme_data: dict = ...,
-    custom_fields: dict = {},
+    aweme_data: dict = None,
+    custom_fields: dict = None,
 ) -> str:
     """
     根据配置文件的全局格式化文件名

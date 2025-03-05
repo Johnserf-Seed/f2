@@ -15,7 +15,7 @@ from f2.cli.cli_console import RichConsoleManager
 
 
 class WeiboDownloader(BaseDownloader):
-    def __init__(self, kwargs: dict = ...) -> None:
+    def __init__(self, kwargs: dict = None) -> None:
         if kwargs["cookie"] is None:
             raise ValueError(
                 _(
@@ -29,7 +29,7 @@ class WeiboDownloader(BaseDownloader):
         self,
         kwargs: Dict,
         weibo_datas: Union[List, Dict],
-        user_path: Any = ...,
+        user_path: Any = None,
     ) -> None:
         """
         创建下载任务
@@ -79,7 +79,7 @@ class WeiboDownloader(BaseDownloader):
         处理下载任务
 
         Args:
-            kwargs (Dict): 命令行参数
+            kwargs (dict): 命令行参数
             weibo_data_dict (Dict): 作品数据字典
             user_path (Any): 用户目录路径
         """

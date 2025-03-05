@@ -5,7 +5,7 @@ import asyncio
 from rich.rule import Rule
 from pathlib import Path
 from urllib.parse import quote
-from typing import AsyncGenerator, Union, List, Any, Dict
+from typing import AsyncGenerator, Union, List, Any
 
 from f2.i18n.translator import _
 from f2.log.logger import logger
@@ -70,7 +70,7 @@ class TiktokHandler:
         "cover",
     ]
 
-    def __init__(self, kwargs: dict = ...) -> None:
+    def __init__(self, kwargs: dict = None) -> None:
         self.kwargs = kwargs
         self.downloader = TiktokDownloader(kwargs)
         # 初始化 Bark 通知服务
@@ -92,7 +92,7 @@ class TiktokHandler:
             title (str): 通知标题
             body (str): 通知内容
             send_method (str): 调用的发送方法（"fetch" 或 "post"）
-            kwargs (Dict): 其他通知参数
+            kwargs (dict): 其他通知参数
         Returns:
             None
         """
@@ -1143,7 +1143,7 @@ class TiktokHandler:
         internal_ext: str,
         cursor: str,
         wrss: str,
-        wss_callbacks: Dict = {},
+        wss_callbacks: dict = None,
     ):
         """
         通过WebSocket连接获取直播间弹幕，再通过回调函数处理弹幕数据。
