@@ -14,6 +14,7 @@ from websockets import (
     WebSocketServer,
     serve,
 )
+from urllib.parse import urlencode
 
 from f2.log.logger import logger, trace_logger
 from f2.i18n.translator import _
@@ -336,9 +337,10 @@ class DouyinCrawler(BaseCrawler):
             self.headers.get("User-Agent"),
             dyendpoint.POST_STATS,
             params.model_dump(),
+            urlencode(params.model_dump()),
         )
         logger.debug(_("作品统计接口地址：{0}").format(endpoint))
-        return await self._fetch_post_json(endpoint, params.model_dump())
+        return await self._fetch_post_json(endpoint, data=params.model_dump())
 
     async def __aenter__(self):
         return self
