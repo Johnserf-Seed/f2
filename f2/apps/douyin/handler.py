@@ -26,6 +26,7 @@ from f2.apps.douyin.model import (
     UserMusicCollection,
     UserMix,
     PostDetail,
+    PostComment,
     UserLive,
     UserLive2,
     # LoginGetQr,
@@ -48,6 +49,7 @@ from f2.apps.douyin.filter import (
     UserMusicCollectionFilter,
     UserMixFilter,
     PostDetailFilter,
+    PostCommentFilter,
     UserLiveFilter,
     UserLive2Filter,
     # GetQrcodeFilter,
@@ -2144,6 +2146,81 @@ class DouyinHandler:
             )
 
         return follow_live
+
+    async def fetch_post_comment(
+        self,
+        aweme_id: str,
+        cursor: int = 0,
+        page_counts: int = 20,
+        max_counts: int = None,
+    ) -> AsyncGenerator[PostCommentFilter, Any]:
+        """
+        用于获取作品评论。
+
+        Args:
+            aweme_id: str: 作品ID
+            cursor: int: 起始页
+            page_counts: int: 每页评论数
+            max_counts: int: 最大评论数
+
+        Return:
+            comment: AsyncGenerator[PostCommentFilter, Any]: 评论数据过滤器，包含评论数据的_to_raw、_to_dict、_to_list方法
+        """
+
+        max_counts = max_counts or float("inf")
+        comments_collected = 0
+
+        logger.info(_("处理作品: {0} 的评论").format(aweme_id))
+
+        while comments_collected < max_counts:
+            current_request_size = min(page_counts, max_counts - comments_collected)
+
+            logger.debug(
+                _("最大数量: {0} 每次请求数量: {1}").format(
+                    max_counts, current_request_size
+                )
+            )
+            rich_console.print(
+                Rule(_("处理第 {0} 页 ({1})").format(cursor, timestamp_2_str(cursor)))
+            )
+
+            async with DouyinCrawler(self.kwargs) as crawler:
+                params = PostComment(
+                    aweme_id=aweme_id, cursor=cursor, count=current_request_size
+                )
+                response = await crawler.fetch_post_comment(params)
+                comment = PostCommentFilter(response)
+                yield comment
+
+            if not comment.has_more:
+                logger.info(_("作品: {0} 的所有评论采集完毕").format(aweme_id))
+                break
+
+            logger.debug(_("当前请求的cursor: {0}").format(cursor))
+            logger.debug(
+                _("评论ID: {0} 评论内容: {1} 评论用户: {2}").format(
+                    comment.comment_id, comment.comment_text_raw, comment.nickname_raw
+                )
+            )
+
+            # 更新已经处理的评论数量 (Update the number of comments processed)
+            comments_collected += len(comment.comment_id)
+            cursor = comment.cursor
+
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(_("结束处理作品评论，共处理 {0} 条评论").format(comments_collected))
+
+        await self._send_bark_notification(
+            _("[DouYin] 作品评论下载"),
+            _("评论数：{0}\n" "下载时间：{1}").format(
+                comments_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="DouYin",
+        )
 
 
 async def handle_sso_login():

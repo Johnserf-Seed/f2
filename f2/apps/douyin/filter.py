@@ -1432,6 +1432,142 @@ class PostDetailFilter(JSONModel):
         }
 
 
+class PostCommentFilter(JSONModel):
+    @property
+    def api_status_code(self):
+        return self._get_attr_value("$.status_code")
+
+    @property
+    def has_more(self):
+        return self._get_attr_value("$.has_more")
+
+    @property
+    def total(self):
+        return self._get_attr_value("$.total")
+
+    @property
+    def cursor(self):
+        return self._get_attr_value("$.cursor")
+
+    # comments
+    @property
+    def can_share(self):
+        return self._get_list_attr_value("$.comments[*].can_share")
+
+    @property
+    def create_time(self):
+        create_times = self._get_list_attr_value("$.comments[*].create_time")
+        return (
+            [timestamp_2_str(str(ct)) for ct in create_times]
+            if isinstance(create_times, list)
+            else timestamp_2_str(str(create_times))
+        )
+
+    @property
+    def comment_id(self):
+        return self._get_list_attr_value("$.comments[*].cid")
+
+    @property
+    def comment_text(self):
+        return replaceT(self._get_list_attr_value("$.comments[*].text"))
+
+    @property
+    def comment_text_raw(self):
+        return self._get_list_attr_value("$.comments[*].text")
+
+    @property
+    def item_comment_total(self):
+        return self._get_list_attr_value("$.comments[*].item_comment_total")
+
+    @property
+    def is_hot(self):
+        return self._get_list_attr_value("$.comments[*].is_hot")
+
+    @property
+    def digg_count(self):
+        return self._get_list_attr_value("$.comments[*].digg_count")
+
+    @property
+    def user_id(self):
+        return self._get_list_attr_value("$.comments[*].user.uid")
+
+    @property
+    def user_unique_id(self):
+        return self._get_list_attr_value("$.comments[*].user.unique_id")
+
+    @property
+    def sec_uid(self):
+        return self._get_list_attr_value("$.comments[*].user.sec_uid")
+
+    @property
+    def nickname(self):
+        return replaceT(self._get_list_attr_value("$.comments[*].user.nickname"))
+
+    @property
+    def nickname_raw(self):
+        return self._get_list_attr_value("$.comments[*].user.nickname")
+
+    # reply_comment
+    @property
+    def reply_comment_id(self):
+        return self._get_list_attr_value("$.comments[*].reply_comment[0].cid")
+
+    @property
+    def reply_comment_text(self):
+        return replaceT(
+            self._get_list_attr_value("$.comments[*].reply_comment[0].text")
+        )
+
+    @property
+    def reply_comment_text_raw(self):
+        return self._get_list_attr_value("$.comments[*].reply_comment[0].text")
+
+    @property
+    def reply_comment_total(self):
+        return self._get_list_attr_value("$.comments[*].reply_comment_total")
+
+    @property
+    def reply_id(self):
+        return self._get_list_attr_value("$.comments[*].reply_id")
+
+    @property
+    def reply_to_reply_id(self):
+        return self._get_list_attr_value("$.comments[*].reply_to_reply_id")
+
+    def _to_raw(self) -> Dict:
+        return self._data
+
+    def _to_dict(self) -> Dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
+    def _to_list(self) -> list:
+        exclude_fields = [
+            "api_status_code",
+            "has_more",
+            "total",
+            "cursor",
+        ]
+
+        extra_fields = [
+            "has_more",
+            "total",
+            "cursor",
+        ]
+
+        list_dicts = filter_to_list(
+            self,
+            "$.comments",
+            exclude_fields,
+            extra_fields,
+        )
+
+        return list_dicts
+
+
 class UserLiveFilter(JSONModel):
     # live
     @property

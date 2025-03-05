@@ -209,10 +209,10 @@ class PostComment(BaseRequestModel):
     cursor: int = 0
     count: int = 20
     item_type: int = 0
-    insert_ids: str
-    whale_cut_token: str
+    insert_ids: str = ""
+    whale_cut_token: str =""
     cut_version: int = 1
-    rcFT: str
+    rcFT: str = ""
 
 
 class PostLocate(BaseRequestModel):
