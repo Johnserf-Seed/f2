@@ -69,17 +69,6 @@ class BaseLiveModel2(BaseModel):
     msToken: str = ""
 
 
-class BaseLoginModel(BaseModel):
-    service: str = "https://www.douyin.com"
-    need_logo: str = "false"
-    need_short_url: str = "true"
-    device_platform: str = "web_app"
-    aid: str = "6383"
-    account_sdk_source: str = "sso"
-    sdk_version: str = "2.2.7-beta.6"
-    language: str = "zh"
-
-
 class BaseWebCastModel(BaseModel):
     app_name: str = "douyin_web"
     version_code: str = "180800"
@@ -271,17 +260,8 @@ class PostSearch(BaseRequestModel):
     need_filter_settings: int = 1
 
 
-class LoginGetQr(BaseLoginModel):
-    verifyFp: str = ""
-    fp: str = ""
-    # msToken: str = TokenManager.gen_real_msToken()
 
 
-class LoginCheckQr(BaseLoginModel):
-    token: str = ""
-    verifyFp: str = ""
-    fp: str = ""
-    # msToken: str = TokenManager.gen_real_msToken()
 
 
 class UserFollowing(BaseRequestModel):

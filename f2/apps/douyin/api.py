@@ -18,9 +18,6 @@ class DouyinAPIEndpoints:
     # 直播域名2 (Live Domain 2)
     LIVE_DOMAIN2 = "https://webcast.amemv.com"
 
-    # SSO域名 (SSO Domain)
-    SSO_DOMAIN = "https://sso.douyin.com"
-
     # WSS域名 (WSS Domain)
     WEBCAST_WSS_DOMAIN = "wss://webcast5-ws-web-hl.douyin.com"
 
@@ -113,21 +110,6 @@ class DouyinAPIEndpoints:
 
     # 推荐搜索词 (Suggest Words)
     SUGGEST_WORDS = f"{DOUYIN_DOMAIN}/aweme/v1/web/api/suggest_words/"
-
-    # SSO登录 (SSO Login)
-    SSO_LOGIN_GET_QR = f"{SSO_DOMAIN}/get_qrcode/"
-
-    # 登录检查 (Login Check)
-    SSO_LOGIN_CHECK_QR = f"{SSO_DOMAIN}/check_qrconnect/"
-
-    # 登录确认 (Login Confirm)
-    SSO_LOGIN_CHECK_LOGIN = f"{SSO_DOMAIN}/check_login/"
-
-    # 登录重定向 (Login Redirect)
-    SSO_LOGIN_REDIRECT = f"{DOUYIN_DOMAIN}/login/"
-
-    # 登录回调 (Login Callback)
-    SSO_LOGIN_CALLBACK = f"{DOUYIN_DOMAIN}/passport/sso/login/callback/"
 
     # 作品评论 (Post Comment)
     POST_COMMENT = f"{DOUYIN_DOMAIN}/aweme/v1/web/comment/list/"

@@ -253,7 +253,6 @@
   | 创建用户目录         | -                      | `create_user_folder`         |  🟢  |
   | 重命名用户目录        | -                      | `rename_user_folder`         |  🟢  |
   | 创建或重命名用户目录   | -                      | `create_or_rename_user_folder` | 🟢  |
-  | ~~显示二维码~~         | -                      | ~~`show_qrcode`~~              |  🔴  |
   | json歌词转lrc歌词    | -                      | `json_2_lrc`                 |  🟢  |
 </details>
 
@@ -591,8 +590,6 @@
   | | | | |___post-stats.py
   | | | | |___query-user.py
   | | | | |___sec-user-id.py
-  | | | | |___show-qrcode.py
-  | | | | |___sso-login.py
   | | | | |___support-link.md
   | | | | |___token-manager.py
   | | | | |___user-collection.py
@@ -742,8 +739,6 @@
   | | | |___post-stats.py
   | | | |___query-user.py
   | | | |___sec-user-id.py
-  | | | |___show-qrcode.py
-  | | | |___sso-login.py
   | | | |___support-link.md
   | | | |___token-manager.py
   | | | |___user-collection.py
@@ -1058,7 +1053,6 @@
 - [pytest-asyncio](https://github.com/pytest-dev/pytest-asyncio)
 - [browser_cookie3](https://github.com/borisbabic/browser_cookie3)
 - [pydantic](https://github.com/samuelcolvin/pydantic)
-- [qrcode](https://github.com/lincolnloop/python-qrcode)
 - [vitepress](https://github.com/vuejs/vitepress)
 - [websockets](https://github.com/python-websockets/websockets)
 - [websockets_proxy](https://github.com/racinette/websockets_proxy)

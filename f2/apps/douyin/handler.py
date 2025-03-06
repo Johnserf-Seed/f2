@@ -30,8 +30,6 @@ from f2.apps.douyin.model import (
     PostCommentReply,
     UserLive,
     UserLive2,
-    # LoginGetQr,
-    # LoginCheckQr,
     UserFollowing,
     UserFollower,
     PostRelated,
@@ -55,8 +53,6 @@ from f2.apps.douyin.filter import (
     PostCommentReplyFilter,
     UserLiveFilter,
     UserLive2Filter,
-    # GetQrcodeFilter,
-    # CheckQrcodeFilter,
     UserFollowingFilter,
     UserFollowerFilter,
     PostRelatedFilter,
@@ -76,7 +72,6 @@ from f2.apps.douyin.utils import (
     ClientConfManager,
     # VerifyFpManager,
     create_or_rename_user_folder,
-    # show_qrcode,
 )
 from f2.cli.cli_console import RichConsoleManager
 from f2.exceptions.api_exceptions import APIResponseError
@@ -2333,25 +2328,6 @@ class DouyinHandler:
             ),
             group="DouYin",
         )
-
-
-async def handle_sso_login():
-    """
-    用于处理用户登录 (Used to process user login)
-
-    Deprecated:
-        该方法已经废弃，建议使用--auto-cookie命令自动从浏览器获取cookie。
-    """
-
-    warnings.warn(
-        _(
-            "handle_sso_login 已经废弃，建议使用--auto-cookie命令自动从浏览器获取cookie。"
-        ),
-        DeprecationWarning,
-        stacklevel=2,
-    )
-
-    return
 
 
 async def main(kwargs):

@@ -23,7 +23,6 @@ from f2.utils.utils import (
 from f2.utils.conf_manager import ConfigManager
 from f2.i18n.translator import TranslationManager, _
 
-# from f2.apps.douyin.handler import handle_sso_login
 from f2.apps.douyin.utils import ClientConfManager
 
 
@@ -182,41 +181,6 @@ def validate_proxies(
             raise click.BadParameter(_("代理服务器不可用"))
 
     return value
-
-
-# def handler_sso_login(
-#     ctx: click.Context,
-#     param: typing.Union[click.Option, click.Parameter],
-#     value: typing.Any,
-# ) -> None:
-#     """处理SSO登录 (Handle SSO login)
-
-#     Args:
-#         ctx (click.Context): click的上下文对象 (Click's context object)
-#         param (typing.Union[click.Option, click.Parameter]): 提供的参数或选项 (The provided parameter or option)
-#         value (typing.Any): 参数或选项的值 (The value of the parameter or option)
-
-#     Raises:
-#         click.UsageError: 如果SSO登录失败 (If SSO login failed)
-
-#     Returns:
-#         更新配置文件 (Update the configuration file)
-#     """
-#     if not value or ctx.resilient_parsing:
-#         return
-
-#     if ctx.params.get("cookie"):
-#         return
-
-#     is_login, login_cookie = asyncio.run(handle_sso_login())
-
-#     if is_login:
-#         manager = ConfigManager(
-#             ctx.params.get("config", get_resource_path(f2.APP_CONFIG_FILE_PATH))
-#         )
-#         manager.update_config_with_args("douyin", cookie=login_cookie)
-#     else:
-#         raise click.UsageError(_("SSO登录失败，请重试！"))
 
 
 @click.command(name="douyin", help=_("抖音无水印解析"))
@@ -379,12 +343,6 @@ def validate_proxies(
     help=_("自动从浏览器获取cookie，使用该命令前请确保关闭所选的浏览器"),
     callback=handler_auto_cookie,
 )
-# @click.option(
-#     "--sso-login",
-#     is_flag=True,
-#     help=_("使用SSO扫码登录获取cookie，保存低频主配置文件（暂时弃用）"),
-#     callback=handler_sso_login,
-# )
 @click.option(
     "-h",
     is_flag=True,

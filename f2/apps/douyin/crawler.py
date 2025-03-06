@@ -35,8 +35,6 @@ from f2.apps.douyin.model import (
     UserLive,
     UserLive2,
     FollowingUserLive,
-    LoginGetQr,
-    LoginCheckQr,
     UserFollowing,
     UserFollower,
     LiveWebcast,
@@ -278,33 +276,6 @@ class DouyinCrawler(BaseCrawler):
             params.model_dump(),
         )
         logger.debug(_("定位上一次作品接口地址：{0}").format(endpoint))
-        return await self._fetch_get_json(endpoint)
-
-    async def fetch_login_qrcode(self, parms: LoginGetQr):
-        endpoint = self.bogus_manager.model_2_endpoint(
-            self.headers.get("User-Agent"),
-            dyendpoint.SSO_LOGIN_GET_QR,
-            parms.model_dump(),
-        )
-        logger.debug(_("SSO获取二维码接口地址：{0}").format(endpoint))
-        return await self._fetch_get_json(endpoint)
-
-    async def fetch_check_qrcode(self, parms: LoginCheckQr):
-        endpoint = self.bogus_manager.model_2_endpoint(
-            self.headers.get("User-Agent"),
-            dyendpoint.SSO_LOGIN_CHECK_QR,
-            parms.model_dump(),
-        )
-        logger.debug(_("SSO检查扫码状态接口地址：{0}").format(endpoint))
-        return await self._fetch_response(endpoint)
-
-    async def fetch_check_login(self, parms: LoginCheckQr):
-        endpoint = self.bogus_manager.model_2_endpoint(
-            self.headers.get("User-Agent"),
-            dyendpoint.SSO_LOGIN_CHECK_LOGIN,
-            parms.model_dump(),
-        )
-        logger.debug(_("SSO检查登录状态接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_user_following(self, params: UserFollowing):

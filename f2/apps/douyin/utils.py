@@ -5,7 +5,6 @@ import re
 import json
 import time
 import httpx
-import qrcode
 import random
 import asyncio
 import warnings
@@ -1604,38 +1603,6 @@ def create_or_rename_user_folder(
         user_path = rename_user_folder(user_path, current_nickname)
 
     return user_path
-
-
-def show_qrcode(qrcode_url: str, show_image: bool = False) -> None:
-    """
-    显示二维码 (Show QR code)
-
-    Args:
-        qrcode_url (str): 登录二维码链接 (Login QR code link)
-        show_image (bool): 是否显示图像，True 表示显示，False 表示在控制台显示
-        (Whether to display the image, True means display, False means display in the console)
-
-    Deprecated:
-        show_qrcode() 方法已弃用，将在未来版本中移除。
-        (show_qrcode() method is deprecated and will be removed in future versions.)
-    """
-    warnings.warn(
-        _("show_qrcode() 方法已弃用，将在未来版本中移除。"),
-        DeprecationWarning,
-        stacklevel=2,
-    )
-
-    if show_image:
-        # 创建并显示QR码图像
-        qr_code_img = qrcode.make(qrcode_url)
-        qr_code_img.show()
-    else:
-        # 在控制台以 ASCII 形式打印二维码
-        qr = qrcode.QRCode()
-        qr.add_data(qrcode_url)
-        qr.make(fit=True)
-        # 在控制台以 ASCII 形式打印二维码
-        qr.print_ascii(invert=True)
 
 
 def json_2_lrc(data: Union[str, list, dict]) -> str:
