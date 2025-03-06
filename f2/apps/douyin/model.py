@@ -56,6 +56,8 @@ class BaseLiveModel(BaseModel):
     browser_version: str = ClientConfManager.blm_browser().get("version", "130.0.0.0")
     enter_source: Any = ""
     is_need_double_stream: str = "false"
+    insert_task_id: str = ""
+    live_reason: str = ""
     # msToken: str = TokenManager.gen_real_msToken()
 
 
@@ -164,7 +166,7 @@ class PostFeed(BaseRequestModel):
     live_insert_type: str = ""
     refresh_index: int = 1
     video_type_select: int = 1
-    aweme_pc_rec_raw_data: dict = {}  # {"is_client":false}
+    aweme_pc_rec_raw_data: str = quote('{"is_client":"false"}', safe="")
     globalwid: str = ""
     pull_type: str = ""
     min_window: str = ""
@@ -184,7 +186,7 @@ class PostRelated(BaseRequestModel):
     aweme_id: str
     count: int = 20
     filterGids: str  # id,id,id
-    awemePcRecRawData: str = quote('{"is_client":false}', safe="")
+    awemePcRecRawData: str = quote('{"is_client":"false"}', safe="")
     sub_channel_id: int = 3
     # Seo-Flag: int = 0
 
@@ -199,7 +201,7 @@ class PostComment(BaseRequestModel):
     count: int = 20
     item_type: int = 0
     insert_ids: str = ""
-    whale_cut_token: str =""
+    whale_cut_token: str = ""
     cut_version: int = 1
     rcFT: str = ""
 
@@ -333,7 +335,6 @@ class UserLiveStatus(BaseRequestModel):
     aid: str = "6383"
     distribution_scenes: str = "254"  # 253:"RECOMMEND" 254: "FOLLOW" 394: "SEARCH"
     channel: str = "test"
-    msToken: str = TokenManager.gen_real_msToken()
 
 
 class QueryUser(BaseRequestModel):
