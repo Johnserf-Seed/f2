@@ -108,6 +108,9 @@ class DouyinAPIEndpoints:
     # 直播弹幕初始化 (Live Danmaku Init)
     LIVE_IM_FETCH = f"{LIVE_DOMAIN}/webcast/im/fetch/"
 
+    # 用户直播状态 (User Live Status)
+    USER_LIVE_STATUS = f"{LIVE_DOMAIN}/webcast/distribution/check_user_live_status/"
+
     # 推荐搜索词 (Suggest Words)
     SUGGEST_WORDS = f"{DOUYIN_DOMAIN}/aweme/v1/web/api/suggest_words/"
 

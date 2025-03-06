@@ -41,6 +41,7 @@ from f2.apps.douyin.model import (
     UserFollower,
     LiveWebcast,
     LiveImFetch,
+    UserLiveStatus,
     QueryUser,
     PostStats,
 )
@@ -331,6 +332,15 @@ class DouyinCrawler(BaseCrawler):
             params.model_dump(),
         )
         logger.debug(_("直播弹幕初始化接口地址：{0}").format(endpoint))
+        return await self._fetch_get_json(endpoint)
+
+    async def fetch_user_live_status(self, params: UserLiveStatus):
+        endpoint = self.bogus_manager.model_2_endpoint(
+            self.headers.get("User-Agent"),
+            dyendpoint.USER_LIVE_STATUS,
+            params.model_dump(),
+        )
+        logger.debug(_("用户直播状态接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_query_user(self, params: QueryUser):

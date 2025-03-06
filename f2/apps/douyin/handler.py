@@ -38,6 +38,7 @@ from f2.apps.douyin.model import (
     FriendFeed,
     LiveWebcast,
     LiveImFetch,
+    UserLiveStatus,
     QueryUser,
     PostStats,
     FollowingUserLive,
@@ -61,6 +62,7 @@ from f2.apps.douyin.filter import (
     PostRelatedFilter,
     FriendFeedFilter,
     LiveImFetchFilter,
+    UserLiveStatusFilter,
     QueryUserFilter,
     PostStatsFilter,
     FollowingUserLiveFilter,
@@ -2148,6 +2150,34 @@ class DouyinHandler:
             )
 
         return follow_live
+
+    async def fetch_user_live_status(self, user_id: str) -> UserLiveStatusFilter:
+        """
+        用于查询用户直播状态。
+
+        Args:
+            user_id: str: 用户ID
+
+        Return:
+            live_status: UserLiveStatusFilter: 用户直播状态数据过滤器，包含用户直播状态数据的_to_raw、_to_dict、_to_list方法
+        """
+
+        logger.info(_("查询用户直播状态"))
+
+        async with DouyinCrawler(self.kwargs) as crawler:
+            params = UserLiveStatus(user_ids=user_id)
+            response = await crawler.fetch_user_live_status(params)
+            live_status = UserLiveStatusFilter(response)
+
+        if live_status.api_status_code == 0:
+            logger.debug(
+                _("用户ID：{0} 直播状态：{1}").format(user_id, live_status.live_status)
+            )
+        else:
+            logger.warning(_("获取用户直播状态失败：{0}").format(live_status.error_msg))
+
+        logger.info(_("结束查询用户直播状态"))
+        return live_status
 
     async def fetch_post_comment(
         self,

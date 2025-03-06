@@ -1813,6 +1813,51 @@ class UserLive2Filter(JSONModel):
         }
 
 
+class UserLiveStatusFilter(JSONModel):
+    @property
+    def api_status_code(self):
+        return self._get_attr_value("$.status_code")
+
+    @property
+    def error_msg(self):
+        return self._get_attr_value("$.data.prompts")
+
+    # live
+    @property
+    def scene_id(self):
+        return self._get_attr_value("$.data[0].scene_id")
+
+    @property
+    def live_status(self):  # 1开播 0未开播
+        return self._get_attr_value("$.data[0].user_live[0].live_status")
+
+    @property
+    def room_id(self):
+        return self._get_attr_value("$.data[0].user_live[0].room_id")
+
+    @property
+    def room_id_str(self):
+        return self._get_attr_value("$.data[0].user_live[0].room_id_str")
+
+    @property
+    def user_id(self):
+        return self._get_attr_value("$.data[0].user_live[0].user_id")
+
+    @property
+    def user_id_str(self):
+        return self._get_attr_value("$.data[0].user_live[0].user_id_str")
+
+    def _to_raw(self) -> Dict:
+        return self._data
+
+    def _to_dict(self) -> Dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
+
 class PostRelatedFilter(UserPostFilter):
     def __init__(self, data):
         super().__init__(data)

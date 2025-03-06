@@ -336,6 +336,14 @@ class LiveImFetch(BaseWebCastModel):
     user_unique_id: str
 
 
+class UserLiveStatus(BaseRequestModel):
+    user_ids: str
+    aid: str = "6383"
+    distribution_scenes: str = "254"  # 253:"RECOMMEND" 254: "FOLLOW" 394: "SEARCH"
+    channel: str = "test"
+    msToken: str = TokenManager.gen_real_msToken()
+
+
 class QueryUser(BaseRequestModel):
     publish_video_strategy_type: int = 2
     update_version_code: str = "170400"
