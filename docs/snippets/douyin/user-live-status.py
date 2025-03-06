@@ -13,11 +13,12 @@ kwargs = {
 
 async def main():
     user_id = "92908021676"
+    # 只有开播的状态才会返回直播间id
     live_status = await DouyinHandler(kwargs).fetch_user_live_status(user_id=user_id)
-    # print("=================_to_raw================")
-    # print(live_status._to_raw())
-    print("=================_to_dict===============")
-    print(live_status._to_dict())
+    print("=================_to_raw================")
+    print(live_status._to_raw())
+    # print("=================_to_dict===============")
+    # print(live_status._to_dict())
 
 
 if __name__ == "__main__":
