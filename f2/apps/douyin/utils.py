@@ -7,7 +7,6 @@ import time
 import httpx
 import random
 import asyncio
-import warnings
 import traceback
 
 from typing import Union

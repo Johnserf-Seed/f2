@@ -1,7 +1,6 @@
 # path: f2/apps/douyin/handler.py
 
 import asyncio
-import warnings
 
 from rich.rule import Rule
 from pathlib import Path
