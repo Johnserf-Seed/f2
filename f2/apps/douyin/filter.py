@@ -2648,6 +2648,10 @@ class HomePostSearchFilter(JSONModel):
             exclude_fields,
             extra_fields,
         )
+
+        return list_dicts
+
+
 class SuggestWordFilter(JSONModel):
     @property
     def status_msg(self):
