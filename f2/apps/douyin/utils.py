@@ -548,38 +548,6 @@ class VerifyFpManager:
         return cls.gen_verify_fp()
 
 
-class WebcastSignatureManager:
-    @classmethod
-    def model_2_endpoint(
-        cls,
-        user_agent: str,
-        base_endpoint: str,
-        params: dict,
-    ) -> str:
-        warnings.warn(
-            _(
-                "WebcastSignatureManager.model_2_endpoint 方法已弃用，将在未来版本中移除。"
-            ),
-            DeprecationWarning,
-            stacklevel=2,
-        )
-
-        if not isinstance(params, dict):
-            raise TypeError(_("参数必须是字典类型"))
-
-        param_str = ",".join([f"{k}={v}" for k, v in params.items()])
-
-        try:
-            signature = DouyinWebcastSignature(user_agent).get_signature(param_str)
-        except Exception as e:
-            trace_logger.error(traceback.format_exc())
-            raise RuntimeError(_("生成signature失败: {0})").format(e))
-
-        separator = "&" if "?" in base_endpoint else "?"
-
-        return f"{base_endpoint}{separator}{param_str}&signature={signature}"
-
-
 class XBogusManager:
     @classmethod
     def str_2_endpoint(

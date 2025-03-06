@@ -236,7 +236,6 @@ For the complete list of features, please refer to the [API Documentation](https
   |Generate verify_fp|`VerifyFpManager`|`gen_verify_fp`|🟢|
   |Generate s_v_web_id|`VerifyFpManager`|`gen_s_v_web_id`|🟢|
   |Generate Live Webcast Signature|`DouyinWebcastSignature`|`get_signature`|🟢|
-  |~~Use Interface Model to Generate WSS Signature Parameters~~|~~`WebcastSignatureManager`~~|~~`model_2_endpoint`~~|🔴|
   |Use Interface Address to Generate Xb Parameters|`XBogusManager`|`str_2_endpoint`|🟢|
   |Use Interface Model to Generate Xb Parameters|`XBogusManager`|`model_2_endpoint`|🟢|
   |Use Interface Address to Generate Ab Parameters|`ABogusManager`|`str_2_endpoint`|🟢|

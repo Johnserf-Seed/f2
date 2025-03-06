@@ -63,7 +63,6 @@ outline: [2,3]
 | 生成verify_fp       | `VerifyFpManager`      | `gen_verify_fp`              |  🟢  |
 | 生成s_v_web_id      | `VerifyFpManager`      | `gen_s_v_web_id`             |  🟢  |
 | 生成直播signature    | `DouyinWebcastSignature` | `get_signature`            |  🟢  |
-| ~~使用接口模型生成wss签名参数~~ | ~~`WebcastSignatureManager`~~ | ~~`model_2_endpoint`~~      |  🔴  |
 | 使用接口地址生成Xb参数 | `XBogusManager`        | `str_2_endpoint`             |  🟢  |
 | 使用接口模型生成Xb参数 | `XBogusManager`        | `model_2_endpoint`           |  🟢  |
 | 使用接口地址生成Ab参数 | `ABogusManager`        | `str_2_endpoint`             |  🟢  |

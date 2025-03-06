@@ -63,7 +63,6 @@ outline: [2,3]
 | Generate verify_fp     | `VerifyFpManager`      | `gen_verify_fp`              |  🟢  |
 | Generate s_v_web_id    | `VerifyFpManager`      | `gen_s_v_web_id`             |  🟢  |
 | Generate live signature | `DouyinWebcastSignature` | `get_signature`            |  🟢  |
-| ~~Generate WSS signature params using API model~~ | ~~`WebcastSignatureManager`~~ | ~~`model_2_endpoint`~~ | 🔴  |
 | Generate Xb params using API URL | `XBogusManager`        | `str_2_endpoint`             |  🟢  |
 | Generate Xb params using API model | `XBogusManager`        | `model_2_endpoint`           |  🟢  |
 | Generate Ab params using API URL | `ABogusManager`        | `str_2_endpoint`             |  🟢  |
