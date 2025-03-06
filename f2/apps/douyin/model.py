@@ -239,12 +239,12 @@ class FollowingUserLive(BaseRequestModel):
 
 
 class SuggestWord(BaseRequestModel):
-    query: str = ""
+    query: str
     count: int = 8
-    business_id: str
-    from_group_id: str
+    business_id: str = "30068"
+    from_group_id: str = ""
     rsp_source: str = ""
-    penetrate_params: dict = {}
+    penetrate_params: str = quote("{}", safe="")
 
 
 class PostSearch(BaseRequestModel):

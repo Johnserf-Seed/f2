@@ -39,6 +39,7 @@ from f2.apps.douyin.model import (
     QueryUser,
     PostStats,
     FollowingUserLive,
+    SuggestWord,
     HomePostSearch,
 )
 from f2.apps.douyin.filter import (
@@ -62,6 +63,7 @@ from f2.apps.douyin.filter import (
     QueryUserFilter,
     PostStatsFilter,
     FollowingUserLiveFilter,
+    SuggestWordFilter,
     HomePostSearchFilter,
 )
 from f2.apps.douyin.algorithm.webcast_signature import DouyinWebcastSignature
@@ -2415,6 +2417,36 @@ class DouyinHandler:
             ),
             group="DouYin",
         )
+
+    async def fetch_suggest_word(
+        self,
+        keyword: str,
+        count: int = 10,
+    ) -> SuggestWordFilter:
+        """
+        用于获取搜索建议词。
+
+        Args:
+            keyword: str: 搜索关键词
+
+        Return:
+            suggest: SuggestWordFilter: 搜索建议词数据过滤器，包含搜索建议词数据的_to_raw、_to_dict、_to_list方法
+        """
+
+        logger.info(_("搜索建议词"))
+
+        async with DouyinCrawler(self.kwargs) as crawler:
+            params = SuggestWord(query=quote(keyword), count=count)
+            response = await crawler.fetch_suggest_word(params)
+            suggest = SuggestWordFilter(response)
+
+        if suggest.status_msg == "success":
+            logger.info(_("搜索建议词：{0}").format(suggest.suggest_word))
+        else:
+            logger.warning(_("获取搜索建议词失败：{0}").format(suggest.status_msg))
+
+        logger.info(_("结束搜索建议词"))
+        return suggest
 
 
 async def main(kwargs):

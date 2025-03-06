@@ -2648,3 +2648,40 @@ class HomePostSearchFilter(JSONModel):
             exclude_fields,
             extra_fields,
         )
+class SuggestWordFilter(JSONModel):
+    @property
+    def status_msg(self):
+        return self._get_attr_value("$.msg")
+
+    @property
+    def suggest_word_id(self):
+        return self._get_list_attr_value("$.data[0].words[*].id")
+
+    @property
+    def suggest_word(self):
+        return self._get_list_attr_value("$.data[0].words[*].word")
+
+    def _to_raw(self) -> Dict:
+        return self._data
+
+    def _to_dict(self) -> Dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
+    def _to_list(self) -> list:
+        exclude_fields = [
+            "status_msg",
+        ]
+        extra_fields = []
+
+        list_dicts = filter_to_list(
+            self,
+            "$.data[0].words",
+            exclude_fields,
+            extra_fields,
+        )
+
+        return list_dicts

@@ -35,6 +35,7 @@ from f2.apps.douyin.model import (
     UserLive,
     UserLive2,
     FollowingUserLive,
+    SuggestWord,
     HomePostSearch,
     UserFollowing,
     UserFollower,
@@ -277,6 +278,15 @@ class DouyinCrawler(BaseCrawler):
             params.model_dump(),
         )
         logger.debug(_("关注用户直播接口地址：{0}").format(endpoint))
+        return await self._fetch_get_json(endpoint)
+
+    async def fetch_suggest_word(self, params: SuggestWord):
+        endpoint = self.bogus_manager.model_2_endpoint(
+            self.headers.get("User-Agent"),
+            dyendpoint.SUGGEST_WORDS,
+            params.model_dump(),
+        )
+        logger.debug(_("推荐搜索词接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_locate_post(self, params: UserPost):
