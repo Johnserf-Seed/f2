@@ -39,6 +39,7 @@ from f2.apps.douyin.model import (
     QueryUser,
     PostStats,
     FollowingUserLive,
+    HomePostSearch,
 )
 from f2.apps.douyin.filter import (
     UserPostFilter,
@@ -61,6 +62,7 @@ from f2.apps.douyin.filter import (
     QueryUserFilter,
     PostStatsFilter,
     FollowingUserLiveFilter,
+    HomePostSearchFilter,
 )
 from f2.apps.douyin.algorithm.webcast_signature import DouyinWebcastSignature
 from f2.apps.douyin.utils import (
@@ -2324,6 +2326,92 @@ class DouyinHandler:
             _("回复数：{0}\n" "下载时间：{1}").format(
                 reply_collected,
                 timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="DouYin",
+        )
+
+    async def fetch_home_post_search(
+        self,
+        user_id: str,
+        keyword: str,
+        search_id: str = "",
+        offset: int = 0,
+        page_counts: int = 20,
+        max_counts: int = None,
+    ) -> AsyncGenerator[HomePostSearchFilter, Any]:
+        """
+        用于搜索指定关键词的作品。
+
+        Args:
+            user_id: str: 用户ID
+            keyword: str: 搜索关键词
+            search_id: str: 搜索ID
+            offset: int: 起始页
+            page_counts: int: 每页作品数
+            max_counts: int: 最大作品数
+
+        Return:
+            search: AsyncGenerator[HomePostSearchFilter, Any]: 搜索数据过滤器，包含搜索数据的_to_raw、_to_dict、_to_list方法
+        """
+
+        max_counts = max_counts or float("inf")
+        posts_collected = 0
+
+        logger.info(_("搜索用户: {0} 的关键词: {1} 的作品").format(user_id, keyword))
+
+        while posts_collected < max_counts:
+            current_request_size = min(page_counts, max_counts - posts_collected)
+
+            logger.debug(
+                _("最大数量: {0} 每次请求数量: {1}").format(
+                    max_counts, current_request_size
+                )
+            )
+            rich_console.print(Rule(_("处理第 {0} 页").format(offset)))
+
+            async with DouyinCrawler(self.kwargs) as crawler:
+                params = HomePostSearch(
+                    from_user=user_id,
+                    keyword=quote(keyword),
+                    search_id=str(search_id),
+                    offset=offset,
+                    count=current_request_size,
+                )
+                response = await crawler.fetch_home_post_search(params)
+                search = HomePostSearchFilter(response)
+                yield search
+
+            if not search.has_more:
+                logger.info(_("关键词: {0} 的所有作品采集完毕").format(keyword))
+                break
+
+            logger.debug(_("当前请求的offset: {0}").format(offset))
+            logger.debug(
+                _("作品ID: {0} 作品文案: {1} 作者: {2}").format(
+                    search.aweme_id, search.desc, search.nickname
+                )
+            )
+            logger.info(search.home_text)
+
+            # 更新已经处理的作品数量 (Update the number of videos processed)
+            posts_collected += len(search.aweme_id)
+            offset = search.cursor
+            search_id = search.search_id
+
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(
+            _("结束处理主页搜索作品，共处理 {0} 个作品").format(posts_collected)
+        )
+
+        await self._send_bark_notification(
+            _("[DouYin] 主页搜索作品下载"),
+            _("作品数：{0}\n" "下载时间：{1}\n {2}").format(
+                posts_collected,
+                timestamp_2_str(get_timestamp("sec")),
+                search.home_text,
             ),
             group="DouYin",
         )

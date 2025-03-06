@@ -260,8 +260,20 @@ class PostSearch(BaseRequestModel):
     need_filter_settings: int = 1
 
 
-
-
+class HomePostSearch(BaseRequestModel):
+    search_channel: str = "aweme_personal_home_video"
+    search_source: str = "normal_search"
+    search_scene: str = "douyin_search"
+    sort_type: int = 0
+    publish_time: int = 0
+    is_filter_search: int = 0
+    query_correct_type: int = 1
+    keyword: str
+    enable_history: int = 1
+    search_id: str = ""
+    offset: int = 0
+    count: int = 10
+    from_user: str
 
 
 class UserFollowing(BaseRequestModel):

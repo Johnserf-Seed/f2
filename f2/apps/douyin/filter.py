@@ -2400,3 +2400,251 @@ class PostStatsFilter(JSONModel):
     @property
     def status_msg(self):
         return self._get_attr_value("$.status_msg")
+
+
+class HomePostSearchFilter(JSONModel):
+    @property
+    def status_code(self):
+        return self._get_attr_value("$.status_code")
+
+    @property
+    def has_aweme(self) -> bool:
+        return bool(self._get_attr_value("$.aweme_list"))
+
+    @property
+    def status_msg(self):
+        return self._get_attr_value("$.status_msg")
+
+    @property
+    def has_more(self):
+        return self._get_attr_value("$.has_more")
+
+    @property
+    def cursor(self):
+        return self._get_attr_value("$.cursor")
+
+    @property
+    def home_text(self):
+        return self._get_attr_value("$.global_doodle_config.home_text")
+
+    @property
+    def search_keyword(self):
+        return self._get_attr_value("$.global_doodle_config.keyword")
+
+    @property
+    def search_id(self):
+        return str(self._get_attr_value("$.log_pb.impr_id"))
+
+    # user
+    @property
+    def user_id(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.author.uid")
+
+    @property
+    def unique_id(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.author.unique_id")
+
+    @property
+    def sec_uid(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.author.sec_uid")
+
+    @property
+    def signature(self):
+        return replaceT(
+            self._get_list_attr_value("$.aweme_list[*].item.author.signature")
+        )
+
+    @property
+    def signature_raw(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.author.signature")
+
+    @property
+    def nickname(self):
+        return replaceT(
+            self._get_list_attr_value("$.aweme_list[*].item.author.nickname")
+        )
+
+    @property
+    def nickname_raw(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.author.nickname")
+
+    @property
+    def avatar_larger(self):
+        return self._get_list_attr_value(
+            "$.aweme_list[*].item.author.avatar_larger.url_list[0]"
+        )
+
+    # aweme
+    @property
+    def aweme_type(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.aweme_type")
+
+    @property
+    def aweme_id(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.aweme_id")
+
+    @property
+    def caption(self):
+        return replaceT(self._get_list_attr_value("$.aweme_list[*].item.caption"))
+
+    @property
+    def caption_raw(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.caption")
+
+    @property
+    def city(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.city")
+
+    @property
+    def desc(self):
+        return replaceT(self._get_list_attr_value("$.aweme_list[*].item.desc"))
+
+    @property
+    def desc_raw(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.desc")
+
+    @property
+    def images(self):
+        images_list = self._get_list_attr_value("$.aweme_list[*].item.images")
+        return [
+            (
+                [
+                    img["url_list"][0]
+                    for img in images
+                    if isinstance(img, dict) and "url_list" in img and img["url_list"]
+                ]
+                if images
+                else None
+            )
+            for images in images_list
+        ]
+
+    @property
+    def images_video(self):
+        images_list = self._get_list_attr_value("$.aweme_list[*].item.images")
+        return [
+            (
+                [
+                    img["video"]["play_addr"]["url_list"][0]
+                    for img in images
+                    if isinstance(img, dict) and "video" in img
+                ]
+                if images
+                else None
+            )
+            for images in images_list
+        ]
+
+    @property
+    def music_id(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.music.id")
+
+    @property
+    def music_id_str(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.music.id_str")
+
+    @property
+    def music_mid(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.music.mid")
+
+    @property
+    def music_duration(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.music.duration")
+
+    @property
+    def music_play_url(self):
+        return self._get_list_attr_value(
+            "$.aweme_list[*].item.music.play_url.url_list[0]"
+        )
+
+    @property
+    def music_owner_nickname(self):
+        return replaceT(
+            self._get_list_attr_value("$.aweme_list[*].item.music.owner_nickname")
+        )
+
+    @property
+    def music_owner_nickname_raw(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.music.owner_nickname")
+
+    @property
+    def music_sec_uid(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.music.sec_uid")
+
+    @property
+    def music_title(self):
+        return replaceT(self._get_list_attr_value("$.aweme_list[*].item.music.title"))
+
+    @property
+    def music_title_raw(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.music.title")
+
+    # video
+    @property
+    def cover(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.video.cover.url_list[0]")
+
+    @property
+    def dynamic_cover(self):
+        return self._get_list_attr_value(
+            "$.aweme_list[*].item.video.dynamic_cover.url_list[0]"
+        )
+
+    @property
+    def animated_cover(self):
+        # 获取所有视频
+        videos = self._get_list_attr_value("$.aweme_list[*].item.video")
+
+        # 逐个视频判断是否存在animated_cover
+        animated_covers = [
+            (
+                video.get("animated_cover", {}).get("url_list", [None])[0]
+                if video.get("animated_cover")
+                else None
+            )
+            for video in videos
+        ]
+
+        return animated_covers
+
+    @property
+    def video_play_addr(self):
+        return self._get_list_attr_value(
+            "$.aweme_list[*].item.video.bit_rate[0].play_addr.url_list"
+        )
+
+    def _to_raw(self) -> Dict:
+        return self._data
+
+    def _to_dict(self) -> Dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
+    def _to_list(self) -> list:
+        exclude_fields = [
+            "status_code",
+            "status_msg",
+            "has_aweme",
+            "has_more",
+            "cursor",
+            "home_text",
+            "search_keyword",
+            "search_id",
+        ]
+        extra_fields = [
+            "has_more",
+            "cursor",
+            "home_text",
+            "search_keyword",
+            "search_id",
+        ]
+
+        list_dicts = filter_to_list(
+            self,
+            "$.aweme_list",
+            exclude_fields,
+            extra_fields,
+        )

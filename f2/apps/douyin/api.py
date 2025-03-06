@@ -48,6 +48,9 @@ class DouyinAPIEndpoints:
     # 搜索作品 (Post Search)
     POST_SEARCH = f"{DOUYIN_DOMAIN}/aweme/v1/web/general/search/single/"
 
+    # 主页作品搜索 (Home POST Search)
+    HOME_POST_SEARCH = f"{DOUYIN_DOMAIN}/aweme/v1/web/home/search/item/"
+
     # 作品信息 (Post Detail)
     POST_DETAIL = f"{DOUYIN_DOMAIN}/aweme/v1/web/aweme/detail/"
 

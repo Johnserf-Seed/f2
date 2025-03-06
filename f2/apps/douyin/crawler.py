@@ -35,6 +35,7 @@ from f2.apps.douyin.model import (
     UserLive,
     UserLive2,
     FollowingUserLive,
+    HomePostSearch,
     UserFollowing,
     UserFollower,
     LiveWebcast,
@@ -136,6 +137,15 @@ class DouyinCrawler(BaseCrawler):
         )
         logger.debug(_("主页收藏作品接口地址：{0}").format(endpoint))
         return await self._fetch_post_json(endpoint, json=params.model_dump())
+
+    async def fetch_home_post_search(self, params: HomePostSearch):
+        endpoint = self.bogus_manager.model_2_endpoint(
+            self.headers.get("User-Agent"),
+            dyendpoint.HOME_POST_SEARCH,
+            params.model_dump(),
+        )
+        logger.debug(_("主页作品搜索接口地址：{0}").format(endpoint))
+        return await self._fetch_get_json(endpoint)
 
     async def fetch_user_collects(self, params: UserCollects):
         endpoint = self.bogus_manager.model_2_endpoint(
