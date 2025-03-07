@@ -71,7 +71,7 @@ dependencies = [
     "aiosqlite==0.20.0",
     "pyyaml==6.0.2",
     "jsonpath-ng==1.6.1",
-    "importlib_resources==6.4.5",
+    "importlib_resources==6.5.2",
     "m3u8==3.6.0",
     "pytest==8.3.4",
     "pytest-asyncio==0.25.0",
