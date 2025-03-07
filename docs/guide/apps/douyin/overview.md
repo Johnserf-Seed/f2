@@ -304,7 +304,7 @@ outline: [2,3]
 | :--- | :--- | :--- |
 | UserCollectionFilter | AsyncGenerator | 收藏作品数据过滤器，包含作品数据的_to_raw、_to_dict、_to_list方法 |
 
-<<< @/snippets/douyin/user-collection.py#user-collection-music-snippet{17-20}
+<<< @/snippets/douyin/user-collection.py#user-collection-video-snippet{17-20}
 
 ### 用户收藏夹数据 🟢
 
