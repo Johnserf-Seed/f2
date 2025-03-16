@@ -99,13 +99,6 @@ def help() -> None:
                 "自动从浏览器获取[yellow]cookie[/yellow]，使用该命令前请确保关闭所选的浏览器"
             ),
         ),
-        (
-            "--sso-login",
-            "[dark_cyan]Flag",
-            _(
-                "使用SSO扫码登录获取[yellow]cookie[/yellow]，保存低频主配置文件[red]（暂时弃用）[/red]"
-            ),
-        ),
         ("--help", "[dark_cyan]Flag", _("显示经典帮助信息")),
         (
             "",

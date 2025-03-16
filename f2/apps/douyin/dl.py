@@ -16,7 +16,7 @@ from f2.cli.cli_console import RichConsoleManager
 
 
 class DouyinDownloader(BaseDownloader):
-    def __init__(self, kwargs: Dict = {}):
+    def __init__(self, kwargs: dict = None):
         if kwargs["cookie"] is None:
             raise ValueError(
                 _(
@@ -48,7 +48,7 @@ class DouyinDownloader(BaseDownloader):
         创建下载任务
 
         Args:
-            kwargs (Dict): 命令行参数
+            kwargs (dict): 命令行参数
             aweme_datas (List, Dict): 作品数据列表或字典
             user_path (str): 用户目录路径
         """
@@ -105,7 +105,7 @@ class DouyinDownloader(BaseDownloader):
         处理下载任务
 
         Args:
-            kwargs (Dict): 命令行参数
+            kwargs (dict): 命令行参数
             aweme_data_dict (Dict): 作品数据字典
             user_path (Any): 用户目录路径
         """
@@ -140,7 +140,7 @@ class DouyinDownloader(BaseDownloader):
                 if self.kwargs.get(task_name):
                     await task_func()
 
-            if aweme_type in [0, 55, 61, 109, 201]:
+            if aweme_type in [0, 4, 55, 61, 109, 201]:
                 await self.download_video()
             elif aweme_type == 68:
                 await self.download_images()
@@ -220,7 +220,13 @@ class DouyinDownloader(BaseDownloader):
         images_video_list = self.aweme_data_dict.get("images_video", [])
         if images_video_list:
             for i, images_video_url in enumerate(images_video_list):
-                image_video_name = f"{format_file_name(self.kwargs.get('naming'), self.aweme_data_dict)}_live_{i + 1}"
+                image_video_name = (
+                    format_file_name(
+                        self.kwargs.get("naming", "{create}_{desc}"),
+                        self.aweme_data_dict,
+                    )
+                    + f"_live_{i + 1}"
+                )
                 if images_video_url:
                     await self.initiate_download(
                         _("实况"),
@@ -238,7 +244,12 @@ class DouyinDownloader(BaseDownloader):
 
         # 处理图片下载
         for i, image_url in enumerate(self.aweme_data_dict.get("images", [])):
-            image_name = f"{format_file_name(self.kwargs.get('naming'), self.aweme_data_dict)}_image_{i + 1}"
+            image_name = (
+                format_file_name(
+                    self.kwargs.get("naming", "{create}_{desc}"), self.aweme_data_dict
+                )
+                + f"_image_{i + 1}"
+            )
             if image_url:
                 await self.initiate_download(
                     _("图集"), image_url, self.base_path, image_name, ".webp"
@@ -255,7 +266,7 @@ class DouyinDownloader(BaseDownloader):
         创建音乐下载任务
 
         Args:
-            kwargs (Dict): 命令行参数
+            kwargs (dict): 命令行参数
             music_datas (List, Dict): 音乐数据列表或字典
             user_path (Any): 用户目录路径
         """
@@ -284,7 +295,7 @@ class DouyinDownloader(BaseDownloader):
         处理音乐下载任务
 
         Args:
-            kwargs (Dict): 命令行参数
+            kwargs (dict): 命令行参数
             music_data_dict (Dict): 音乐数据字典
             user_path (Any): 用户目录路径
         """
@@ -328,7 +339,7 @@ class DouyinDownloader(BaseDownloader):
         创建视频流下载任务
 
         Args:
-            kwargs (Dict): 命令行参数
+            kwargs (dict): 命令行参数
             aweme_datas (List, Dict): 作品数据列表或字典
             user_path (Any): 用户目录路径
         """
@@ -357,7 +368,7 @@ class DouyinDownloader(BaseDownloader):
         处理视频流下载任务
 
         Args:
-            kwargs (Dict): 命令行参数
+            kwargs (dict): 命令行参数
             aweme_data_dict (Dict): 直播数据字典
             user_path (Any): 用户目录路径
         """
@@ -378,7 +389,12 @@ class DouyinDownloader(BaseDownloader):
             else user_path
         )
 
-        webcast_name = f"{format_file_name(kwargs.get('naming'), custom_fields=custom_fields)}_live"
+        webcast_name = (
+            format_file_name(
+                kwargs.get("naming", "{create}_{desc}"), custom_fields=custom_fields
+            )
+            + "_live"
+        )
         webcast_url = webcast_data_dict.get("m3u8_pull_url").get("FULL_HD1")
 
         await self.initiate_m3u8_download(

@@ -1,7 +1,6 @@
 # path: f2/apps/douyin/handler.py
 
 import asyncio
-import warnings
 
 from rich.rule import Rule
 from pathlib import Path
@@ -26,19 +25,22 @@ from f2.apps.douyin.model import (
     UserMusicCollection,
     UserMix,
     PostDetail,
+    PostComment,
+    PostCommentReply,
     UserLive,
     UserLive2,
-    # LoginGetQr,
-    # LoginCheckQr,
     UserFollowing,
     UserFollower,
     PostRelated,
     FriendFeed,
     LiveWebcast,
     LiveImFetch,
+    UserLiveStatus,
     QueryUser,
     PostStats,
     FollowingUserLive,
+    SuggestWord,
+    HomePostSearch,
 )
 from f2.apps.douyin.filter import (
     UserPostFilter,
@@ -48,18 +50,21 @@ from f2.apps.douyin.filter import (
     UserMusicCollectionFilter,
     UserMixFilter,
     PostDetailFilter,
+    PostCommentFilter,
+    PostCommentReplyFilter,
     UserLiveFilter,
     UserLive2Filter,
-    # GetQrcodeFilter,
-    # CheckQrcodeFilter,
     UserFollowingFilter,
     UserFollowerFilter,
     PostRelatedFilter,
     FriendFeedFilter,
     LiveImFetchFilter,
+    UserLiveStatusFilter,
     QueryUserFilter,
     PostStatsFilter,
     FollowingUserLiveFilter,
+    SuggestWordFilter,
+    HomePostSearchFilter,
 )
 from f2.apps.douyin.algorithm.webcast_signature import DouyinWebcastSignature
 from f2.apps.douyin.utils import (
@@ -70,7 +75,6 @@ from f2.apps.douyin.utils import (
     ClientConfManager,
     # VerifyFpManager,
     create_or_rename_user_folder,
-    # show_qrcode,
 )
 from f2.cli.cli_console import RichConsoleManager
 from f2.exceptions.api_exceptions import APIResponseError
@@ -101,7 +105,7 @@ class DouyinHandler:
         "images_video",
     ]
 
-    def __init__(self, kwargs: Dict = ...) -> None:
+    def __init__(self, kwargs: dict = None) -> None:
         self.kwargs = kwargs
         self.downloader = DouyinDownloader(self.kwargs)
         # 初始化 Bark 通知服务
@@ -123,7 +127,7 @@ class DouyinHandler:
             title (str): 通知标题
             body (str): 通知内容
             send_method (str): 调用的发送方法（"fetch" 或 "post"）
-            kwargs (Dict): 其他通知参数
+            kwargs (dict): 其他通知参数
         Returns:
             None
         """
@@ -175,7 +179,7 @@ class DouyinHandler:
         (Get or create user data and create user directory)
 
         Args:
-            kwargs (Dict): 配置参数 (Conf parameters)
+            kwargs (dict): 配置参数 (Conf parameters)
             sec_user_id (str): 用户ID (User ID)
             db (AsyncUserDB): 用户数据库 (User database)
 
@@ -2012,7 +2016,7 @@ class DouyinHandler:
         user_unique_id: str,
         internal_ext: str,
         cursor: str,
-        wss_callbacks: Dict = {},
+        wss_callbacks: dict = None,
     ):
         """
         通过WebSocket连接获取直播间弹幕，再通过回调函数处理弹幕数据。
@@ -2145,24 +2149,304 @@ class DouyinHandler:
 
         return follow_live
 
+    async def fetch_user_live_status(self, user_id: str) -> UserLiveStatusFilter:
+        """
+        用于查询用户直播状态。
 
-async def handle_sso_login():
-    """
-    用于处理用户登录 (Used to process user login)
+        Args:
+            user_id: str: 用户ID
 
-    Deprecated:
-        该方法已经废弃，建议使用--auto-cookie命令自动从浏览器获取cookie。
-    """
+        Return:
+            live_status: UserLiveStatusFilter: 用户直播状态数据过滤器，包含用户直播状态数据的_to_raw、_to_dict、_to_list方法
+        """
 
-    warnings.warn(
-        _(
-            "handle_sso_login 已经废弃，建议使用--auto-cookie命令自动从浏览器获取cookie。"
-        ),
-        DeprecationWarning,
-        stacklevel=2,
-    )
+        logger.info(_("查询用户直播状态"))
 
-    return
+        async with DouyinCrawler(self.kwargs) as crawler:
+            params = UserLiveStatus(user_ids=user_id)
+            response = await crawler.fetch_user_live_status(params)
+            live_status = UserLiveStatusFilter(response)
+
+        if live_status.api_status_code == 0:
+            logger.debug(
+                _("用户ID：{0} 直播状态：{1}").format(user_id, live_status.live_status)
+            )
+        else:
+            logger.warning(_("获取用户直播状态失败：{0}").format(live_status.error_msg))
+
+        logger.info(_("结束查询用户直播状态"))
+        return live_status
+
+    async def fetch_post_comment(
+        self,
+        aweme_id: str,
+        cursor: int = 0,
+        page_counts: int = 20,
+        max_counts: int = None,
+    ) -> AsyncGenerator[PostCommentFilter, Any]:
+        """
+        用于获取作品评论。
+
+        Args:
+            aweme_id: str: 作品ID
+            cursor: int: 起始页
+            page_counts: int: 每页评论数
+            max_counts: int: 最大评论数
+
+        Return:
+            comment: AsyncGenerator[PostCommentFilter, Any]: 评论数据过滤器，包含评论数据的_to_raw、_to_dict、_to_list方法
+        """
+
+        max_counts = max_counts or float("inf")
+        comments_collected = 0
+
+        logger.info(_("处理作品: {0} 的评论").format(aweme_id))
+
+        while comments_collected < max_counts:
+            current_request_size = min(page_counts, max_counts - comments_collected)
+
+            logger.debug(
+                _("最大数量: {0} 每次请求数量: {1}").format(
+                    max_counts, current_request_size
+                )
+            )
+            rich_console.print(
+                Rule(_("处理第 {0} 页 ({1})").format(cursor, timestamp_2_str(cursor)))
+            )
+
+            async with DouyinCrawler(self.kwargs) as crawler:
+                params = PostComment(
+                    aweme_id=aweme_id, cursor=cursor, count=current_request_size
+                )
+                response = await crawler.fetch_post_comment(params)
+                comment = PostCommentFilter(response)
+                yield comment
+
+            if not comment.has_more:
+                logger.info(_("作品: {0} 的所有评论采集完毕").format(aweme_id))
+                break
+
+            logger.debug(_("当前请求的cursor: {0}").format(cursor))
+            logger.debug(
+                _("评论ID: {0} 评论内容: {1} 评论用户: {2}").format(
+                    comment.comment_id, comment.comment_text_raw, comment.nickname_raw
+                )
+            )
+
+            # 更新已经处理的评论数量 (Update the number of comments processed)
+            comments_collected += len(comment.comment_id)
+            cursor = comment.cursor
+
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(_("结束处理作品评论，共处理 {0} 条评论").format(comments_collected))
+
+        await self._send_bark_notification(
+            _("[DouYin] 作品评论下载"),
+            _("评论数：{0}\n" "下载时间：{1}").format(
+                comments_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="DouYin",
+        )
+
+    async def fetch_post_comment_reply(
+        self,
+        aweme_id: str,
+        comment_id: str,
+        cursor: int = 0,
+        page_counts: int = 3,
+        max_counts: int = None,
+    ) -> AsyncGenerator[PostCommentReplyFilter, Any]:
+        """
+        用于获取评论的回复。
+
+        Args:
+            aweme_id: str: 作品ID
+            comment_id: str: 评论ID
+            cursor: int: 起始页
+            page_counts: int: 每页回复数
+            max_counts: int: 最大回复数
+
+        Return:
+            reply: AsyncGenerator[PostCommentReplyFilter, Any]: 回复数据过滤器，包含回复数据的_to_raw、_to_dict、_to_list方法
+        """
+
+        max_counts = max_counts or float("inf")
+        reply_collected = 0
+
+        logger.info(_("处理作品: {0} 评论: {1} 的回复").format(aweme_id, comment_id))
+
+        while reply_collected < max_counts:
+            current_request_size = min(page_counts, max_counts - reply_collected)
+
+            logger.debug(
+                _("最大数量: {0} 每次请求数量: {1}").format(
+                    max_counts, current_request_size
+                )
+            )
+            rich_console.print(
+                Rule(_("处理第 {0} 页 ({1})").format(cursor, timestamp_2_str(cursor)))
+            )
+
+            async with DouyinCrawler(self.kwargs) as crawler:
+                params = PostCommentReply(
+                    item_id=aweme_id,
+                    comment_id=comment_id,
+                    cursor=cursor,
+                    count=current_request_size,
+                )
+                response = await crawler.fetch_post_comment_reply(params)
+                reply = PostCommentReplyFilter(response)
+                yield reply
+
+            if not reply.has_more:
+                logger.info(_("评论: {0} 的所有回复采集完毕").format(comment_id))
+                break
+
+            logger.debug(_("当前请求的cursor: {0}").format(cursor))
+            logger.debug(
+                _("回复ID: {0} 回复内容: {1} 回复用户: {2}").format(
+                    reply.reply_id, reply.reply_text_raw, reply.nickname_raw
+                )
+            )
+
+            # 更新已经处理的回复数量 (Update the number of replies processed)
+            reply_collected += len(reply.reply_id)
+            cursor = reply.cursor
+
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(_("结束处理评论回复，共处理 {0} 条回复").format(reply_collected))
+
+        await self._send_bark_notification(
+            _("[DouYin] 评论回复下载"),
+            _("回复数：{0}\n" "下载时间：{1}").format(
+                reply_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="DouYin",
+        )
+
+    async def fetch_home_post_search(
+        self,
+        user_id: str,
+        keyword: str,
+        search_id: str = "",
+        offset: int = 0,
+        page_counts: int = 20,
+        max_counts: int = None,
+    ) -> AsyncGenerator[HomePostSearchFilter, Any]:
+        """
+        用于搜索指定关键词的作品。
+
+        Args:
+            user_id: str: 用户ID
+            keyword: str: 搜索关键词
+            search_id: str: 搜索ID
+            offset: int: 起始页
+            page_counts: int: 每页作品数
+            max_counts: int: 最大作品数
+
+        Return:
+            search: AsyncGenerator[HomePostSearchFilter, Any]: 搜索数据过滤器，包含搜索数据的_to_raw、_to_dict、_to_list方法
+        """
+
+        max_counts = max_counts or float("inf")
+        posts_collected = 0
+
+        logger.info(_("搜索用户: {0} 的关键词: {1} 的作品").format(user_id, keyword))
+
+        while posts_collected < max_counts:
+            current_request_size = min(page_counts, max_counts - posts_collected)
+
+            logger.debug(
+                _("最大数量: {0} 每次请求数量: {1}").format(
+                    max_counts, current_request_size
+                )
+            )
+            rich_console.print(Rule(_("处理第 {0} 页").format(offset)))
+
+            async with DouyinCrawler(self.kwargs) as crawler:
+                params = HomePostSearch(
+                    from_user=user_id,
+                    keyword=quote(keyword),
+                    search_id=str(search_id),
+                    offset=offset,
+                    count=current_request_size,
+                )
+                response = await crawler.fetch_home_post_search(params)
+                search = HomePostSearchFilter(response)
+                yield search
+
+            if not search.has_more:
+                logger.info(_("关键词: {0} 的所有作品采集完毕").format(keyword))
+                break
+
+            logger.debug(_("当前请求的offset: {0}").format(offset))
+            logger.debug(
+                _("作品ID: {0} 作品文案: {1} 作者: {2}").format(
+                    search.aweme_id, search.desc, search.nickname
+                )
+            )
+            logger.info(search.home_text)
+
+            # 更新已经处理的作品数量 (Update the number of videos processed)
+            posts_collected += len(search.aweme_id)
+            offset = search.cursor
+            search_id = search.search_id
+
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(
+            _("结束处理主页搜索作品，共处理 {0} 个作品").format(posts_collected)
+        )
+
+        await self._send_bark_notification(
+            _("[DouYin] 主页搜索作品下载"),
+            _("作品数：{0}\n" "下载时间：{1}\n {2}").format(
+                posts_collected,
+                timestamp_2_str(get_timestamp("sec")),
+                search.home_text,
+            ),
+            group="DouYin",
+        )
+
+    async def fetch_suggest_word(
+        self,
+        keyword: str,
+        count: int = 10,
+    ) -> SuggestWordFilter:
+        """
+        用于获取搜索建议词。
+
+        Args:
+            keyword: str: 搜索关键词
+
+        Return:
+            suggest: SuggestWordFilter: 搜索建议词数据过滤器，包含搜索建议词数据的_to_raw、_to_dict、_to_list方法
+        """
+
+        logger.info(_("搜索建议词"))
+
+        async with DouyinCrawler(self.kwargs) as crawler:
+            params = SuggestWord(query=quote(keyword), count=count)
+            response = await crawler.fetch_suggest_word(params)
+            suggest = SuggestWordFilter(response)
+
+        if suggest.status_msg == "success":
+            logger.info(_("搜索建议词：{0}").format(suggest.suggest_word))
+        else:
+            logger.warning(_("获取搜索建议词失败：{0}").format(suggest.status_msg))
+
+        logger.info(_("结束搜索建议词"))
+        return suggest
 
 
 async def main(kwargs):

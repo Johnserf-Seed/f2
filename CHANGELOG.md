@@ -38,7 +38,7 @@
 - 添加 `x` 喜欢推文模式
 - 添加提取 `x` 标题方法
 - 添加 `weibo` 工具类测试用例
-- 为 `QA` 添加 `'NoneType' has no len()` 解决方案
+- 为 `FAQ` 添加 `'NoneType' has no len()` 解决方案
 - 添加 `interval` 参数通用的方法处理
 - 统一使用 `Live` 管理进度条任务
 - 新增 `weibo` 文案提取方法

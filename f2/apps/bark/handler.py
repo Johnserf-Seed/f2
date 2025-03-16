@@ -3,7 +3,6 @@
 import json
 import traceback
 
-from typing import Dict
 from base64 import b64encode
 
 from f2.log.logger import logger, trace_logger
@@ -19,7 +18,7 @@ from f2.apps.bark.utils import ClientConfManager
 
 class BarkHandler:
 
-    def __init__(self, kwargs: Dict = {}) -> None:
+    def __init__(self, kwargs: dict = None) -> None:
         self.kwargs = kwargs
 
     async def _send_bark_notification(self, send_method: str) -> BarkNotificationFilter:
@@ -28,7 +27,7 @@ class BarkHandler:
 
         Args:
             send_method (str): 调用的发送方法（"fetch" 或 "post"）
-            kwargs (Dict): 通知参数
+            kwargs (dict): 通知参数
 
         Returns:
             BarkNotificationFilter: 处理后的Bark通知过滤结果
@@ -158,7 +157,7 @@ class BarkHandler:
             title (str): 通知标题
             body (str): 通知内容
             send_method (str): 调用的发送方法（"fetch" 或 "post"）
-            kwargs (Dict): 其他通知参数
+            kwargs (dict): 其他通知参数
 
         Returns:
             BarkNotificationFilter: Bark通知过滤器，包含结果数据的_to_raw()、_to_dict()方法

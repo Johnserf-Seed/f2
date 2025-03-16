@@ -3,7 +3,7 @@
 import asyncio
 
 from pathlib import Path
-from typing import AsyncGenerator, Union, Dict, Any, List
+from typing import AsyncGenerator, Any
 
 from f2.log.logger import logger
 from f2.i18n.translator import _
@@ -42,7 +42,7 @@ rich_prompt = RichConsoleManager().rich_prompt
 
 class TwitterHandler:
 
-    def __init__(self, kwargs: dict = ...) -> None:
+    def __init__(self, kwargs: dict = None) -> None:
         self.kwargs = kwargs
         self.downloader = TwitterDownloader(kwargs)
         # 初始化 Bark 通知服务
@@ -64,7 +64,7 @@ class TwitterHandler:
             title (str): 通知标题
             body (str): 通知内容
             send_method (str): 调用的发送方法（"fetch" 或 "post"）
-            kwargs (Dict): 其他通知参数
+            kwargs (dict): 其他通知参数
         Returns:
             None
         """

@@ -132,7 +132,6 @@ class UserProfileFilter(JSONModel):
 
 
 class UserPostFilter(JSONModel):
-
     @property
     def status_code(self):
         return self._get_attr_value("$.status_code")
@@ -164,6 +163,14 @@ class UserPostFilter(JSONModel):
             if isinstance(create_times, list)
             else timestamp_2_str(str(create_times))
         )
+
+    @property
+    def caption(self):
+        return replaceT(self._get_attr_value("$.aweme_list[*].caption"))
+
+    @property
+    def caption_raw(self):
+        return self._get_attr_value("$.aweme_list[*].caption")
 
     @property
     def desc(self):
@@ -377,7 +384,6 @@ class UserCollectionFilter(UserPostFilter):
 
 
 class UserCollectsFilter(JSONModel):
-
     @property
     def max_cursor(self):
         return self._get_attr_value("$.cursor")
@@ -501,7 +507,6 @@ class UserCollectsFilter(JSONModel):
 
 
 class UserMusicCollectionFilter(JSONModel):
-
     @property
     def max_cursor(self):
         return self._get_attr_value("$.cursor")
@@ -665,7 +670,6 @@ class UserLikeFilter(UserPostFilter):
 
 
 class UserFollowingFilter(JSONModel):
-
     @property
     def status_code(self):  # 1 正常，2096 用户隐私设置不允许查看
         return self._get_attr_value("$.status_code")
@@ -1046,7 +1050,6 @@ class UserFollowerFilter(UserFollowingFilter):
 
 
 class PostDetailFilter(JSONModel):
-
     @property
     def api_status_code(self):
         return self._get_attr_value("$.status_code")
@@ -1109,6 +1112,14 @@ class PostDetailFilter(JSONModel):
     @property
     def create_time(self):
         return timestamp_2_str(str(self._get_attr_value("$.aweme_detail.create_time")))
+
+    @property
+    def caption(self):
+        return replaceT(self._get_attr_value("$.aweme_detail.caption"))
+
+    @property
+    def caption_raw(self):
+        return self._get_attr_value("$.aweme_detail.caption")
 
     @property
     def desc(self):
@@ -1421,6 +1432,147 @@ class PostDetailFilter(JSONModel):
         }
 
 
+class PostCommentFilter(JSONModel):
+    @property
+    def api_status_code(self):
+        return self._get_attr_value("$.status_code")
+
+    @property
+    def has_more(self):
+        return self._get_attr_value("$.has_more")
+
+    @property
+    def total(self):
+        return self._get_attr_value("$.total")
+
+    @property
+    def cursor(self):
+        return self._get_attr_value("$.cursor")
+
+    # comments
+    @property
+    def can_share(self):
+        return self._get_list_attr_value("$.comments[*].can_share")
+
+    @property
+    def create_time(self):
+        create_times = self._get_list_attr_value("$.comments[*].create_time")
+        return (
+            [timestamp_2_str(str(ct)) for ct in create_times]
+            if isinstance(create_times, list)
+            else timestamp_2_str(str(create_times))
+        )
+
+    @property
+    def comment_id(self):
+        return self._get_list_attr_value("$.comments[*].cid")
+
+    @property
+    def comment_text(self):
+        return replaceT(self._get_list_attr_value("$.comments[*].text"))
+
+    @property
+    def comment_text_raw(self):
+        return self._get_list_attr_value("$.comments[*].text")
+
+    @property
+    def item_comment_total(self):
+        return self._get_list_attr_value("$.comments[*].item_comment_total")
+
+    @property
+    def is_hot(self):
+        return self._get_list_attr_value("$.comments[*].is_hot")
+
+    @property
+    def digg_count(self):
+        return self._get_list_attr_value("$.comments[*].digg_count")
+
+    @property
+    def user_id(self):
+        return self._get_list_attr_value("$.comments[*].user.uid")
+
+    @property
+    def user_unique_id(self):
+        return self._get_list_attr_value("$.comments[*].user.unique_id")
+
+    @property
+    def sec_uid(self):
+        return self._get_list_attr_value("$.comments[*].user.sec_uid")
+
+    @property
+    def nickname(self):
+        return replaceT(self._get_list_attr_value("$.comments[*].user.nickname"))
+
+    @property
+    def nickname_raw(self):
+        return self._get_list_attr_value("$.comments[*].user.nickname")
+
+    # reply_comment
+    @property
+    def reply_comment_id(self):
+        return self._get_list_attr_value("$.comments[*].reply_comment[0].cid")
+
+    @property
+    def reply_comment_text(self):
+        return replaceT(
+            self._get_list_attr_value("$.comments[*].reply_comment[0].text")
+        )
+
+    @property
+    def reply_comment_text_raw(self):
+        return self._get_list_attr_value("$.comments[*].reply_comment[0].text")
+
+    @property
+    def reply_comment_total(self):
+        return self._get_list_attr_value("$.comments[*].reply_comment_total")
+
+    @property
+    def reply_id(self):
+        return self._get_list_attr_value("$.comments[*].reply_id")
+
+    @property
+    def reply_to_reply_id(self):
+        return self._get_list_attr_value("$.comments[*].reply_to_reply_id")
+
+    def _to_raw(self) -> Dict:
+        return self._data
+
+    def _to_dict(self) -> Dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
+    def _to_list(self) -> list:
+        exclude_fields = [
+            "api_status_code",
+            "has_more",
+            "total",
+            "cursor",
+        ]
+
+        extra_fields = [
+            "has_more",
+            "total",
+            "cursor",
+        ]
+
+        list_dicts = filter_to_list(
+            self,
+            "$.comments",
+            exclude_fields,
+            extra_fields,
+        )
+
+        return list_dicts
+
+
+class PostCommentReplyFilter(PostCommentFilter):
+    def __init__(self, data):
+        super().__init__(data)
+
+
 class UserLiveFilter(JSONModel):
     # live
     @property
@@ -1661,6 +1813,51 @@ class UserLive2Filter(JSONModel):
         }
 
 
+class UserLiveStatusFilter(JSONModel):
+    @property
+    def api_status_code(self):
+        return self._get_attr_value("$.status_code")
+
+    @property
+    def error_msg(self):
+        return self._get_attr_value("$.data.prompts")
+
+    # live
+    @property
+    def scene_id(self):
+        return self._get_attr_value("$.data[0].scene_id")
+
+    @property
+    def live_status(self):  # 1开播 0未开播
+        return self._get_attr_value("$.data[0].user_live[0].live_status")
+
+    @property
+    def room_id(self):
+        return self._get_attr_value("$.data[0].user_live[0].room_id")
+
+    @property
+    def room_id_str(self):
+        return self._get_attr_value("$.data[0].user_live[0].room_id_str")
+
+    @property
+    def user_id(self):
+        return self._get_attr_value("$.data[0].user_live[0].user_id")
+
+    @property
+    def user_id_str(self):
+        return self._get_attr_value("$.data[0].user_live[0].user_id_str")
+
+    def _to_raw(self) -> Dict:
+        return self._data
+
+    def _to_dict(self) -> Dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
+
 class PostRelatedFilter(UserPostFilter):
     def __init__(self, data):
         super().__init__(data)
@@ -1739,6 +1936,14 @@ class FriendFeedFilter(JSONModel):
     @property
     def aweme_type(self):
         return self._get_list_attr_value("$.data[*].aweme.aweme_type")
+
+    @property
+    def caption(self):
+        return replaceT(self._get_list_attr_value("$.data[*].aweme.desc"))
+
+    @property
+    def caption_raw(self):
+        return self._get_list_attr_value("$.data[*].aweme.desc")
 
     @property
     def desc(self):
@@ -1950,114 +2155,6 @@ class FriendFeedFilter(JSONModel):
         )
 
         return list_dicts
-
-
-class GetQrcodeFilter(JSONModel):
-    @property
-    def app_name(self):
-        return self._get_attr_value("$.data.app_name")
-
-    @property
-    def access_key(self):
-        return self._get_attr_value("$.data.frontier_params.access_key")
-
-    @property
-    def frontier_device(self):
-        return self._get_attr_value("$.data.frontier_params.frontier_device")
-
-    @property
-    def method(self):
-        return self._get_attr_value("$.data.frontier_params.method")
-
-    @property
-    def product_id(self):
-        return self._get_attr_value("$.data.frontier_params.product_id")
-
-    @property
-    def service_id(self):
-        return self._get_attr_value("$.data.frontier_params.service_id")
-
-    @property
-    def is_frontier(self):
-        return self._get_attr_value("$.data.is_frontier")
-
-    @property
-    def qrcode(self):
-        return self._get_attr_value("$.data.qrcode")  # base64
-
-    @property
-    def qrcode_index_url(self):
-        return self._get_attr_value("$.data.qrcode_index_url")
-
-    @property
-    def token(self):
-        return self._get_attr_value("$.data.token")
-
-    @property
-    def web_name(self):
-        return self._get_attr_value("$.data.web_name")
-
-    @property
-    def description(self):
-        return self._get_attr_value("$.description")
-
-    @property
-    def error_code(self):
-        return self._get_attr_value("$.error_code")
-
-    @property
-    def message(self):
-        return self._get_attr_value("$.message")
-
-    def _to_raw(self) -> Dict:
-        return self._data
-
-    def _to_dict(self) -> Dict:
-        return {
-            prop_name: getattr(self, prop_name)
-            for prop_name in dir(self)
-            if not prop_name.startswith("__") and not prop_name.startswith("_")
-        }
-
-
-class CheckQrcodeFilter(JSONModel):
-    @property
-    def extra(self):
-        return self._get_attr_value("$.data.extra")
-
-    @property
-    def status(self):
-        return self._get_attr_value("$.data.status")
-
-    @property
-    def redirect_url(self):
-        return self._get_attr_value("$.data.redirect_url")
-
-    @property
-    def description(self):
-        return self._get_attr_value("$.description")
-
-    @property
-    def error_code(self):
-        return self._get_attr_value("$.error_code")
-
-    @property
-    def message(self):
-        return self._get_attr_value("$.message")
-
-    @property
-    def verify_ticket(self):
-        return self._get_attr_value("$.verify_ticket")
-
-    def _to_raw(self) -> Dict:
-        return self._data
-
-    def _to_dict(self) -> Dict:
-        return {
-            prop_name: getattr(self, prop_name)
-            for prop_name in dir(self)
-            if not prop_name.startswith("__") and not prop_name.startswith("_")
-        }
 
 
 class LiveImFetchFilter(JSONModel):
@@ -2295,7 +2392,6 @@ class FollowingUserLiveFilter(JSONModel):
 
 
 class PostStatsFilter(JSONModel):
-
     # 0 正常 5 参数不合法 2863 您的操作过于频繁，请稍后再试
     @property
     def status_code(self):
@@ -2304,3 +2400,292 @@ class PostStatsFilter(JSONModel):
     @property
     def status_msg(self):
         return self._get_attr_value("$.status_msg")
+
+
+class HomePostSearchFilter(JSONModel):
+    @property
+    def status_code(self):
+        return self._get_attr_value("$.status_code")
+
+    @property
+    def has_aweme(self) -> bool:
+        return bool(self._get_attr_value("$.aweme_list"))
+
+    @property
+    def status_msg(self):
+        return self._get_attr_value("$.status_msg")
+
+    @property
+    def has_more(self):
+        return self._get_attr_value("$.has_more")
+
+    @property
+    def cursor(self):
+        return self._get_attr_value("$.cursor")
+
+    @property
+    def home_text(self):
+        return self._get_attr_value("$.global_doodle_config.home_text")
+
+    @property
+    def search_keyword(self):
+        return self._get_attr_value("$.global_doodle_config.keyword")
+
+    @property
+    def search_id(self):
+        return str(self._get_attr_value("$.log_pb.impr_id"))
+
+    # user
+    @property
+    def user_id(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.author.uid")
+
+    @property
+    def unique_id(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.author.unique_id")
+
+    @property
+    def sec_uid(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.author.sec_uid")
+
+    @property
+    def signature(self):
+        return replaceT(
+            self._get_list_attr_value("$.aweme_list[*].item.author.signature")
+        )
+
+    @property
+    def signature_raw(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.author.signature")
+
+    @property
+    def nickname(self):
+        return replaceT(
+            self._get_list_attr_value("$.aweme_list[*].item.author.nickname")
+        )
+
+    @property
+    def nickname_raw(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.author.nickname")
+
+    @property
+    def avatar_larger(self):
+        return self._get_list_attr_value(
+            "$.aweme_list[*].item.author.avatar_larger.url_list[0]"
+        )
+
+    # aweme
+    @property
+    def aweme_type(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.aweme_type")
+
+    @property
+    def aweme_id(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.aweme_id")
+
+    @property
+    def caption(self):
+        return replaceT(self._get_list_attr_value("$.aweme_list[*].item.caption"))
+
+    @property
+    def caption_raw(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.caption")
+
+    @property
+    def city(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.city")
+
+    @property
+    def desc(self):
+        return replaceT(self._get_list_attr_value("$.aweme_list[*].item.desc"))
+
+    @property
+    def desc_raw(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.desc")
+
+    @property
+    def images(self):
+        images_list = self._get_list_attr_value("$.aweme_list[*].item.images")
+        return [
+            (
+                [
+                    img["url_list"][0]
+                    for img in images
+                    if isinstance(img, dict) and "url_list" in img and img["url_list"]
+                ]
+                if images
+                else None
+            )
+            for images in images_list
+        ]
+
+    @property
+    def images_video(self):
+        images_list = self._get_list_attr_value("$.aweme_list[*].item.images")
+        return [
+            (
+                [
+                    img["video"]["play_addr"]["url_list"][0]
+                    for img in images
+                    if isinstance(img, dict) and "video" in img
+                ]
+                if images
+                else None
+            )
+            for images in images_list
+        ]
+
+    @property
+    def music_id(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.music.id")
+
+    @property
+    def music_id_str(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.music.id_str")
+
+    @property
+    def music_mid(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.music.mid")
+
+    @property
+    def music_duration(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.music.duration")
+
+    @property
+    def music_play_url(self):
+        return self._get_list_attr_value(
+            "$.aweme_list[*].item.music.play_url.url_list[0]"
+        )
+
+    @property
+    def music_owner_nickname(self):
+        return replaceT(
+            self._get_list_attr_value("$.aweme_list[*].item.music.owner_nickname")
+        )
+
+    @property
+    def music_owner_nickname_raw(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.music.owner_nickname")
+
+    @property
+    def music_sec_uid(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.music.sec_uid")
+
+    @property
+    def music_title(self):
+        return replaceT(self._get_list_attr_value("$.aweme_list[*].item.music.title"))
+
+    @property
+    def music_title_raw(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.music.title")
+
+    # video
+    @property
+    def cover(self):
+        return self._get_list_attr_value("$.aweme_list[*].item.video.cover.url_list[0]")
+
+    @property
+    def dynamic_cover(self):
+        return self._get_list_attr_value(
+            "$.aweme_list[*].item.video.dynamic_cover.url_list[0]"
+        )
+
+    @property
+    def animated_cover(self):
+        # 获取所有视频
+        videos = self._get_list_attr_value("$.aweme_list[*].item.video")
+
+        # 逐个视频判断是否存在animated_cover
+        animated_covers = [
+            (
+                video.get("animated_cover", {}).get("url_list", [None])[0]
+                if video.get("animated_cover")
+                else None
+            )
+            for video in videos
+        ]
+
+        return animated_covers
+
+    @property
+    def video_play_addr(self):
+        return self._get_list_attr_value(
+            "$.aweme_list[*].item.video.bit_rate[0].play_addr.url_list"
+        )
+
+    def _to_raw(self) -> Dict:
+        return self._data
+
+    def _to_dict(self) -> Dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
+    def _to_list(self) -> list:
+        exclude_fields = [
+            "status_code",
+            "status_msg",
+            "has_aweme",
+            "has_more",
+            "cursor",
+            "home_text",
+            "search_keyword",
+            "search_id",
+        ]
+        extra_fields = [
+            "has_more",
+            "cursor",
+            "home_text",
+            "search_keyword",
+            "search_id",
+        ]
+
+        list_dicts = filter_to_list(
+            self,
+            "$.aweme_list",
+            exclude_fields,
+            extra_fields,
+        )
+
+        return list_dicts
+
+
+class SuggestWordFilter(JSONModel):
+    @property
+    def status_msg(self):
+        return self._get_attr_value("$.msg")
+
+    @property
+    def suggest_word_id(self):
+        return self._get_list_attr_value("$.data[0].words[*].id")
+
+    @property
+    def suggest_word(self):
+        return self._get_list_attr_value("$.data[0].words[*].word")
+
+    def _to_raw(self) -> Dict:
+        return self._data
+
+    def _to_dict(self) -> Dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
+    def _to_list(self) -> list:
+        exclude_fields = [
+            "status_msg",
+        ]
+        extra_fields = []
+
+        list_dicts = filter_to_list(
+            self,
+            "$.data[0].words",
+            exclude_fields,
+            extra_fields,
+        )
+
+        return list_dicts

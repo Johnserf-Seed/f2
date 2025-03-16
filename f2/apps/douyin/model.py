@@ -56,6 +56,8 @@ class BaseLiveModel(BaseModel):
     browser_version: str = ClientConfManager.blm_browser().get("version", "130.0.0.0")
     enter_source: Any = ""
     is_need_double_stream: str = "false"
+    insert_task_id: str = ""
+    live_reason: str = ""
     # msToken: str = TokenManager.gen_real_msToken()
 
 
@@ -67,17 +69,6 @@ class BaseLiveModel2(BaseModel):
     version_code: str = "99.99.99"
     app_id: str = "1128"
     msToken: str = ""
-
-
-class BaseLoginModel(BaseModel):
-    service: str = "https://www.douyin.com"
-    need_logo: str = "false"
-    need_short_url: str = "true"
-    device_platform: str = "web_app"
-    aid: str = "6383"
-    account_sdk_source: str = "sso"
-    sdk_version: str = "2.2.7-beta.6"
-    language: str = "zh"
 
 
 class BaseWebCastModel(BaseModel):
@@ -175,7 +166,7 @@ class PostFeed(BaseRequestModel):
     live_insert_type: str = ""
     refresh_index: int = 1
     video_type_select: int = 1
-    aweme_pc_rec_raw_data: dict = {}  # {"is_client":false}
+    aweme_pc_rec_raw_data: str = quote('{"is_client":"false"}', safe="")
     globalwid: str = ""
     pull_type: str = ""
     min_window: str = ""
@@ -195,7 +186,7 @@ class PostRelated(BaseRequestModel):
     aweme_id: str
     count: int = 20
     filterGids: str  # id,id,id
-    awemePcRecRawData: str = quote('{"is_client":false}', safe="")
+    awemePcRecRawData: str = quote('{"is_client":"false"}', safe="")
     sub_channel_id: int = 3
     # Seo-Flag: int = 0
 
@@ -209,10 +200,19 @@ class PostComment(BaseRequestModel):
     cursor: int = 0
     count: int = 20
     item_type: int = 0
-    insert_ids: str
-    whale_cut_token: str
+    insert_ids: str = ""
+    whale_cut_token: str = ""
     cut_version: int = 1
-    rcFT: str
+    rcFT: str = ""
+
+
+class PostCommentReply(BaseRequestModel):
+    item_id: str
+    comment_id: str
+    cursor: int = 0
+    count: int = 3
+    item_type: int = 0
+    cut_version: int = 1
 
 
 class PostLocate(BaseRequestModel):
@@ -239,12 +239,12 @@ class FollowingUserLive(BaseRequestModel):
 
 
 class SuggestWord(BaseRequestModel):
-    query: str = ""
+    query: str
     count: int = 8
-    business_id: str
-    from_group_id: str
+    business_id: str = "30068"
+    from_group_id: str = ""
     rsp_source: str = ""
-    penetrate_params: dict = {}
+    penetrate_params: str = quote("{}", safe="")
 
 
 class PostSearch(BaseRequestModel):
@@ -262,17 +262,20 @@ class PostSearch(BaseRequestModel):
     need_filter_settings: int = 1
 
 
-class LoginGetQr(BaseLoginModel):
-    verifyFp: str = ""
-    fp: str = ""
-    # msToken: str = TokenManager.gen_real_msToken()
-
-
-class LoginCheckQr(BaseLoginModel):
-    token: str = ""
-    verifyFp: str = ""
-    fp: str = ""
-    # msToken: str = TokenManager.gen_real_msToken()
+class HomePostSearch(BaseRequestModel):
+    search_channel: str = "aweme_personal_home_video"
+    search_source: str = "normal_search"
+    search_scene: str = "douyin_search"
+    sort_type: int = 0
+    publish_time: int = 0
+    is_filter_search: int = 0
+    query_correct_type: int = 1
+    keyword: str
+    enable_history: int = 1
+    search_id: str = ""
+    offset: int = 0
+    count: int = 10
+    from_user: str
 
 
 class UserFollowing(BaseRequestModel):
@@ -325,6 +328,13 @@ class LiveImFetch(BaseWebCastModel):
     internal_ext: str = ""
     room_id: str
     user_unique_id: str
+
+
+class UserLiveStatus(BaseRequestModel):
+    user_ids: str
+    aid: str = "6383"
+    distribution_scenes: str = "254"  # 253:"RECOMMEND" 254: "FOLLOW" 394: "SEARCH"
+    channel: str = "test"
 
 
 class QueryUser(BaseRequestModel):

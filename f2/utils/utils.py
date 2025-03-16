@@ -276,44 +276,6 @@ def extract_valid_urls(inputs: Union[str, List[str]]) -> Union[str, List[str], N
         return valid_urls
 
 
-def _get_first_item_from_list(_list: List) -> List:
-    """
-    从列表中提取第一个项目 (Extract the first item from a list)
-
-    .. deprecated:: 0.0.1.6
-        `_get_first_item_from_list` 在 0.0.1.7 版本及之后将被移除。
-        本方法不再有替代方案。 (This function will be removed in version 0.0.1.7 or later.
-        No replacement will be provided.)
-
-    Args:
-        _list (List): 输入的列表 (Input list)
-
-    Returns:
-        List: 提取出的第一个项目 (The extracted first item)
-    """
-    import warnings
-
-    warnings.warn(
-        _(
-            "_get_first_item_from_list is deprecated and will be removed in version 0.0.1.7. "
-        ),
-        _("No replacement will be provided."),
-        DeprecationWarning,
-        stacklevel=2,
-    )
-    # 检查是否是列表 (Check if it's a list)
-    if _list and isinstance(_list, list):
-        # 如果列表里第一个还是列表则提起每一个列表的第一个值
-        # (If the first one in the list is still a list then bring up the first value of each list)
-        if isinstance(_list[0], list):
-            return [inner[0] for inner in _list if inner]
-        # 如果只是普通列表，则返回这个列表包含的第一个项目作为新列表
-        # (If it's just a regular list, return the first item wrapped in a list)
-        else:
-            return [_list[0]]
-    return []
-
-
 def get_resource_path(filepath: str) -> Path:
     """
     获取资源文件的路径 (Get the path of the resource file)

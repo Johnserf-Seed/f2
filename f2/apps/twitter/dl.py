@@ -166,7 +166,12 @@ class TwitterDownloader(BaseDownloader):
             if not image_url:
                 continue
 
-            image_name = f"{format_file_name(self.kwargs.get('naming'), self.tweet_data_dict)}_image_{i + 1}"
+            image_name = (
+                format_file_name(
+                    self.kwargs.get("naming", "{create}_{desc}"), self.tweet_data_dict
+                )
+                + f"_image_{i + 1}"
+            )
             await self.initiate_download(
                 _("图片"),
                 f"{image_url}?format=jpg&name=large",

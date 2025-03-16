@@ -13,7 +13,9 @@ from f2.log.logger import logger, trace_logger
 from f2.i18n.translator import _
 
 
-async def get_content_length(url: str, headers: dict = ..., proxies: dict = ...) -> int:
+async def get_content_length(
+    url: str, headers: dict = None, proxies: dict = None
+) -> int:
     """
     获取给定URL的Content-Length (Retrieve the Content-Length for a given URL)
 

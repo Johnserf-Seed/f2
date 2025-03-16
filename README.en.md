@@ -236,7 +236,6 @@ For the complete list of features, please refer to the [API Documentation](https
   |Generate verify_fp|`VerifyFpManager`|`gen_verify_fp`|🟢|
   |Generate s_v_web_id|`VerifyFpManager`|`gen_s_v_web_id`|🟢|
   |Generate Live Webcast Signature|`DouyinWebcastSignature`|`get_signature`|🟢|
-  |~~Use Interface Model to Generate WSS Signature Parameters~~|~~`WebcastSignatureManager`~~|~~`model_2_endpoint`~~|🔴|
   |Use Interface Address to Generate Xb Parameters|`XBogusManager`|`str_2_endpoint`|🟢|
   |Use Interface Model to Generate Xb Parameters|`XBogusManager`|`model_2_endpoint`|🟢|
   |Use Interface Address to Generate Ab Parameters|`ABogusManager`|`str_2_endpoint`|🟢|
@@ -253,7 +252,6 @@ For the complete list of features, please refer to the [API Documentation](https
   |Create User Directory|-|`create_user_folder`|🟢|
   |Rename User Directory|-|`rename_user_folder`|🟢|
   |Create or Rename User Directory|-|`create_or_rename_user_folder`|🟢|
-  |~~Show QR Code~~|-|~~`show_qrcode`~~|🔴|
   |Convert JSON Lyrics to LRC Lyrics|-|`json_2_lrc`|🟢|
  </details>
 
@@ -591,8 +589,6 @@ For the complete list of features, please refer to the [API Documentation](https
   | | | | |___post-stats.py
   | | | | |___query-user.py
   | | | | |___sec-user-id.py
-  | | | | |___show-qrcode.py
-  | | | | |___sso-login.py
   | | | | |___support-link.md
   | | | | |___token-manager.py
   | | | | |___user-collection.py
@@ -742,8 +738,6 @@ For the complete list of features, please refer to the [API Documentation](https
   | | | |___post-stats.py
   | | | |___query-user.py
   | | | |___sec-user-id.py
-  | | | |___show-qrcode.py
-  | | | |___sso-login.py
   | | | |___support-link.md
   | | | |___token-manager.py
   | | | |___user-collection.py
@@ -1057,7 +1051,6 @@ If you're interested in contributing code to `F2`, please refer to the [contribu
 - [pytest-asyncio](https://github.com/pytest-dev/pytest-asyncio)
 - [browser_cookie3](https://github.com/borisbabic/browser_cookie3)
 - [pydantic](https://github.com/samuelcolvin/pydantic)
-- [qrcode](https://github.com/lincolnloop/python-qrcode)
 - [vitepress](https://github.com/vuejs/vitepress)
 - [websockets](https://github.com/python-websockets/websockets)
 - [websockets_proxy](https://github.com/racinette/websockets_proxy)

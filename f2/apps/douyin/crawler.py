@@ -5,7 +5,6 @@ import gzip
 import asyncio
 import traceback
 
-from typing import Dict
 from google.protobuf import json_format
 from google.protobuf.message import DecodeError as ProtoDecodeError
 from websockets import (
@@ -14,6 +13,7 @@ from websockets import (
     WebSocketServer,
     serve,
 )
+from urllib.parse import urlencode
 
 from f2.log.logger import logger, trace_logger
 from f2.i18n.translator import _
@@ -29,16 +29,19 @@ from f2.apps.douyin.model import (
     UserCollectsVideo,
     UserMusicCollection,
     PostDetail,
+    PostComment,
+    PostCommentReply,
     UserMix,
     UserLive,
     UserLive2,
     FollowingUserLive,
-    LoginGetQr,
-    LoginCheckQr,
+    SuggestWord,
+    HomePostSearch,
     UserFollowing,
     UserFollower,
     LiveWebcast,
     LiveImFetch,
+    UserLiveStatus,
     QueryUser,
     PostStats,
 )
@@ -89,7 +92,7 @@ from f2.apps.douyin.proto.douyin_webcast_pb2 import (
 class DouyinCrawler(BaseCrawler):
     def __init__(
         self,
-        kwargs: Dict = ...,
+        kwargs: dict = None,
     ):
         # 需要与cli同步
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})
@@ -134,7 +137,16 @@ class DouyinCrawler(BaseCrawler):
             params.model_dump(),
         )
         logger.debug(_("主页收藏作品接口地址：{0}").format(endpoint))
-        return await self._fetch_post_json(endpoint, params.model_dump())
+        return await self._fetch_post_json(endpoint, json=params.model_dump())
+
+    async def fetch_home_post_search(self, params: HomePostSearch):
+        endpoint = self.bogus_manager.model_2_endpoint(
+            self.headers.get("User-Agent"),
+            dyendpoint.HOME_POST_SEARCH,
+            params.model_dump(),
+        )
+        logger.debug(_("主页作品搜索接口地址：{0}").format(endpoint))
+        return await self._fetch_get_json(endpoint)
 
     async def fetch_user_collects(self, params: UserCollects):
         endpoint = self.bogus_manager.model_2_endpoint(
@@ -181,13 +193,22 @@ class DouyinCrawler(BaseCrawler):
         logger.debug(_("作品详情接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
-    async def fetch_post_comment(self, params: PostDetail):
+    async def fetch_post_comment(self, params: PostComment):
         endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
             dyendpoint.POST_COMMENT,
             params.model_dump(),
         )
         logger.debug(_("作品评论接口地址：{0}").format(endpoint))
+        return await self._fetch_get_json(endpoint)
+
+    async def fetch_post_comment_reply(self, params: PostCommentReply):
+        endpoint = self.bogus_manager.model_2_endpoint(
+            self.headers.get("User-Agent"),
+            dyendpoint.POST_COMMENT_REPLY,
+            params.model_dump(),
+        )
+        logger.debug(_("作品评论回复接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_post_feed(self, params: PostDetail):
@@ -259,6 +280,15 @@ class DouyinCrawler(BaseCrawler):
         logger.debug(_("关注用户直播接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
+    async def fetch_suggest_word(self, params: SuggestWord):
+        endpoint = self.bogus_manager.model_2_endpoint(
+            self.headers.get("User-Agent"),
+            dyendpoint.SUGGEST_WORDS,
+            params.model_dump(),
+        )
+        logger.debug(_("推荐搜索词接口地址：{0}").format(endpoint))
+        return await self._fetch_get_json(endpoint)
+
     async def fetch_locate_post(self, params: UserPost):
         endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
@@ -266,33 +296,6 @@ class DouyinCrawler(BaseCrawler):
             params.model_dump(),
         )
         logger.debug(_("定位上一次作品接口地址：{0}").format(endpoint))
-        return await self._fetch_get_json(endpoint)
-
-    async def fetch_login_qrcode(self, parms: LoginGetQr):
-        endpoint = self.bogus_manager.model_2_endpoint(
-            self.headers.get("User-Agent"),
-            dyendpoint.SSO_LOGIN_GET_QR,
-            parms.model_dump(),
-        )
-        logger.debug(_("SSO获取二维码接口地址：{0}").format(endpoint))
-        return await self._fetch_get_json(endpoint)
-
-    async def fetch_check_qrcode(self, parms: LoginCheckQr):
-        endpoint = self.bogus_manager.model_2_endpoint(
-            self.headers.get("User-Agent"),
-            dyendpoint.SSO_LOGIN_CHECK_QR,
-            parms.model_dump(),
-        )
-        logger.debug(_("SSO检查扫码状态接口地址：{0}").format(endpoint))
-        return await self._fetch_response(endpoint)
-
-    async def fetch_check_login(self, parms: LoginCheckQr):
-        endpoint = self.bogus_manager.model_2_endpoint(
-            self.headers.get("User-Agent"),
-            dyendpoint.SSO_LOGIN_CHECK_LOGIN,
-            parms.model_dump(),
-        )
-        logger.debug(_("SSO检查登录状态接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_user_following(self, params: UserFollowing):
@@ -322,6 +325,15 @@ class DouyinCrawler(BaseCrawler):
         logger.debug(_("直播弹幕初始化接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
+    async def fetch_user_live_status(self, params: UserLiveStatus):
+        endpoint = self.bogus_manager.model_2_endpoint(
+            self.headers.get("User-Agent"),
+            dyendpoint.USER_LIVE_STATUS,
+            params.model_dump(),
+        )
+        logger.debug(_("用户直播状态接口地址：{0}").format(endpoint))
+        return await self._fetch_get_json(endpoint)
+
     async def fetch_query_user(self, params: QueryUser):
         endpoint = self.bogus_manager.model_2_endpoint(
             self.headers.get("User-Agent"),
@@ -336,9 +348,10 @@ class DouyinCrawler(BaseCrawler):
             self.headers.get("User-Agent"),
             dyendpoint.POST_STATS,
             params.model_dump(),
+            urlencode(params.model_dump()),
         )
         logger.debug(_("作品统计接口地址：{0}").format(endpoint))
-        return await self._fetch_post_json(endpoint, params.model_dump())
+        return await self._fetch_post_json(endpoint, data=params.model_dump())
 
     async def __aenter__(self):
         return self
@@ -351,7 +364,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
     # 是否显示直播间消息
     show_message = False
 
-    def __init__(self, kwargs: Dict = ..., callbacks: Dict = None):
+    def __init__(self, kwargs: dict = None, callbacks: dict = None):
         self.__class__.show_message = bool(kwargs.get("show_message", True))
         # 需要与cli同步
         self.headers = kwargs.get("headers", {}) | {

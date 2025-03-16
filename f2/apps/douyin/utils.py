@@ -5,10 +5,8 @@ import re
 import json
 import time
 import httpx
-import qrcode
 import random
 import asyncio
-import warnings
 import traceback
 
 from typing import Union
@@ -35,6 +33,7 @@ from f2.exceptions.api_exceptions import (
     APINotFoundError,
     APITimeoutError,
 )
+from f2.exceptions.conf_exceptions import InvalidConfError
 
 
 class ClientConfManager:
@@ -548,38 +547,6 @@ class VerifyFpManager:
         return cls.gen_verify_fp()
 
 
-class WebcastSignatureManager:
-    @classmethod
-    def model_2_endpoint(
-        cls,
-        user_agent: str,
-        base_endpoint: str,
-        params: dict,
-    ) -> str:
-        warnings.warn(
-            _(
-                "WebcastSignatureManager.model_2_endpoint 方法已弃用，将在未来版本中移除。"
-            ),
-            DeprecationWarning,
-            stacklevel=2,
-        )
-
-        if not isinstance(params, dict):
-            raise TypeError(_("参数必须是字典类型"))
-
-        param_str = ",".join([f"{k}={v}" for k, v in params.items()])
-
-        try:
-            signature = DouyinWebcastSignature(user_agent).get_signature(param_str)
-        except Exception as e:
-            trace_logger.error(traceback.format_exc())
-            raise RuntimeError(_("生成signature失败: {0})").format(e))
-
-        separator = "&" if "?" in base_endpoint else "?"
-
-        return f"{base_endpoint}{separator}{param_str}&signature={signature}"
-
-
 class XBogusManager:
     @classmethod
     def str_2_endpoint(
@@ -627,12 +594,12 @@ class ABogusManager:
         cls,
         user_agent: str,
         params: str,
-        request_type: str = "",
+        body: str = "",
     ) -> str:
         try:
             browser_fp = BrowserFpGen.generate_fingerprint("Edge")
             final_endpoint = AB(fp=browser_fp, user_agent=user_agent).generate_abogus(
-                params, request_type
+                params, body
             )
         except Exception as e:
             trace_logger.error(traceback.format_exc())
@@ -646,7 +613,7 @@ class ABogusManager:
         user_agent: str,
         base_endpoint: str,
         params: dict,
-        request_type: str = "",
+        body: str = "",
     ) -> str:
         if not isinstance(params, dict):
             raise TypeError(_("参数必须是字典类型"))
@@ -656,7 +623,7 @@ class ABogusManager:
         try:
             browser_fp = BrowserFpGen.generate_fingerprint("Edge")
             ab_value = AB(fp=browser_fp, user_agent=user_agent).generate_abogus(
-                param_str, request_type
+                param_str, body
             )
         except Exception as e:
             trace_logger.error(traceback.format_exc())
@@ -1488,6 +1455,9 @@ def format_file_name(
         str: 格式化的文件名 (Formatted file name)
     """
 
+    if not naming_template:
+        raise InvalidConfError(key="naming", value=naming_template)
+
     # 为不同系统设置不同的文件名长度限制
     os_limit = {
         "win32": 200,
@@ -1501,6 +1471,7 @@ def format_file_name(
         "nickname": aweme_data.get("nickname", ""),  # 最长30
         "aweme_id": aweme_data.get("aweme_id", ""),  # 长度固定19
         "desc": split_filename(aweme_data.get("desc", ""), os_limit),
+        "caption": aweme_data.get("caption", ""),  # 最长30
         "uid": aweme_data.get("uid", ""),  # 固定11
     }
 
@@ -1599,38 +1570,6 @@ def create_or_rename_user_folder(
         user_path = rename_user_folder(user_path, current_nickname)
 
     return user_path
-
-
-def show_qrcode(qrcode_url: str, show_image: bool = False) -> None:
-    """
-    显示二维码 (Show QR code)
-
-    Args:
-        qrcode_url (str): 登录二维码链接 (Login QR code link)
-        show_image (bool): 是否显示图像，True 表示显示，False 表示在控制台显示
-        (Whether to display the image, True means display, False means display in the console)
-
-    Deprecated:
-        show_qrcode() 方法已弃用，将在未来版本中移除。
-        (show_qrcode() method is deprecated and will be removed in future versions.)
-    """
-    warnings.warn(
-        _("show_qrcode() 方法已弃用，将在未来版本中移除。"),
-        DeprecationWarning,
-        stacklevel=2,
-    )
-
-    if show_image:
-        # 创建并显示QR码图像
-        qr_code_img = qrcode.make(qrcode_url)
-        qr_code_img.show()
-    else:
-        # 在控制台以 ASCII 形式打印二维码
-        qr = qrcode.QRCode()
-        qr.add_data(qrcode_url)
-        qr.make(fit=True)
-        # 在控制台以 ASCII 形式打印二维码
-        qr.print_ascii(invert=True)
 
 
 def json_2_lrc(data: Union[str, list, dict]) -> str:

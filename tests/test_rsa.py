@@ -139,8 +139,12 @@ def test_rsa_decrypt_with_wrong_key(rsa_keypair):
         wrong_private_key, public_key, algorithm="RSA2048", padding_scheme="pkcs1"
     )
 
-    # 使用错误的私钥解密，应该返回错误的结果
-    decrypted = rsa_utils_wrong_key.rsa_decrypt(encrypted)
-
-    # 验证解密结果与原始明文不同
-    assert decrypted != plaintext, "解密结果不应与原始明文相同"
+    # 使用错误的私钥解密，应该返回错误的结果或抛出异常
+    try:
+        decrypted = rsa_utils_wrong_key.rsa_decrypt(encrypted)
+    except ValueError:
+        # 捕获到填充校验失败的异常，符合预期
+        pass
+    else:
+        # 验证解密结果与原始明文不同
+        assert decrypted != plaintext, "解密结果不应与原始明文相同"

@@ -29,6 +29,7 @@ from f2.exceptions.api_exceptions import (
     APINotFoundError,
     APITimeoutError,
 )
+from f2.exceptions.conf_exceptions import InvalidConfError
 
 
 class ClientConfManager:
@@ -1272,8 +1273,8 @@ class DeviceIdManager(BaseCrawler):
 
 def format_file_name(
     naming_template: str,
-    aweme_data: dict = ...,
-    custom_fields: dict = {},
+    aweme_data: dict = None,
+    custom_fields: dict = None,
 ) -> str:
     """
     根据配置文件的全局格式化文件名
@@ -1297,6 +1298,9 @@ def format_file_name(
     Returns:
         str: 格式化的文件名 (Formatted file name)
     """
+
+    if not naming_template:
+        raise InvalidConfError(key="naming", value=naming_template)
 
     # 为不同系统设置不同的文件名长度限制
     os_limit = {

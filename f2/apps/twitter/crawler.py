@@ -23,7 +23,7 @@ from f2.apps.twitter.utils import ModelManager, ClientConfManager
 class TwitterCrawler(BaseCrawler):
     def __init__(
         self,
-        kwargs: dict = ...,
+        kwargs: dict = None,
     ):
         # 需要与cli同步
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})

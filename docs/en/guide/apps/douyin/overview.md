@@ -23,7 +23,6 @@ outline: [2,3]
 | Download user’s homepage recommendations | `handle_user_feed`      |
 | Download related videos | `handle_related`        |
 | Download friend’s posts | `handle_friend_feed`      |
-| ~~SSO Login~~           | ~~`handle_sso_login`~~   |
 
 |     Data Method Interface   |         Method           | Developer API |
 | :------------------------ | :---------------------- | :----------: |
@@ -64,7 +63,6 @@ outline: [2,3]
 | Generate verify_fp     | `VerifyFpManager`      | `gen_verify_fp`              |  🟢  |
 | Generate s_v_web_id    | `VerifyFpManager`      | `gen_s_v_web_id`             |  🟢  |
 | Generate live signature | `DouyinWebcastSignature` | `get_signature`            |  🟢  |
-| ~~Generate WSS signature params using API model~~ | ~~`WebcastSignatureManager`~~ | ~~`model_2_endpoint`~~ | 🔴  |
 | Generate Xb params using API URL | `XBogusManager`        | `str_2_endpoint`             |  🟢  |
 | Generate Xb params using API model | `XBogusManager`        | `model_2_endpoint`           |  🟢  |
 | Generate Ab params using API URL | `ABogusManager`        | `str_2_endpoint`             |  🟢  |
@@ -81,7 +79,6 @@ outline: [2,3]
 | Create user folder     | -                      | `create_user_folder`         |  🟢  |
 | Rename user folder     | -                      | `rename_user_folder`         |  🟢  |
 | Create or rename user folder | -                      | `create_or_rename_user_folder` | 🟢  |
-| ~~Show QR code~~       | -                      | ~~`show_qrcode`~~            |  🔴  |
 | Convert JSON lyrics to LRC | -                      | `json_2_lrc`                 |  🟢  |
 :::
 
@@ -107,9 +104,6 @@ outline: [2,3]
 | Livestream API (room_id) | `DouyinCrawler` | `fetch_live_room_id` | 🟢 |
 | Following Users' Livestream API | `DouyinCrawler` | `fetch_following_live` | 🟢 |
 | Locate Last Video API | `DouyinCrawler` | `fetch_locate_post` | 🟢 |
-| ~~SSO Login QR Code API~~ | ~~`DouyinCrawler`~~ | ~~`fetch_login_qrcode`~~ | 🔴 |
-| ~~SSO Check QR Code Status API~~ | ~~`DouyinCrawler`~~ | ~~`fetch_check_qrcode`~~ | 🔴 |
-| ~~SSO Check Login Status API~~ | ~~`DouyinCrawler`~~ | ~~`fetch_check_login`~~ | 🔴 |
 | User Following List API | `DouyinCrawler` | `fetch_user_following` | 🟢 |
 | User Followers List API | `DouyinCrawler` | `fetch_user_follower` | 🟢 |
 | Livestream Danmaku Init API | `DouyinCrawler` | `fetch_live_im_fetch` | 🟢 |
@@ -661,25 +655,6 @@ Asynchronous method to retrieve a list of livestream information for followed us
 
 <<< @/snippets/douyin/user-follow-live.py{16}
 
-### SSO Login 🔴
-
-Asynchronous method to handle user SSO login and retrieve the user's cookie.
-
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| None | None | None |
-
-| Return | Type | Description |
-| :--- | :--- | :--- |
-| is_login | bool | Indicates whether the login was successful |
-| login_cookie | str | Login cookie |
-
-<<< @/snippets/douyin/sso-login.py{6}
-
-::: danger Warning
-This API has been deprecated since version `0.0.1.6` due to security concerns related to QR code login.For a better experience, use the `--auto-cookie` command to automatically retrieve the `cookie` from the browser.Refer to `CLI Commands` for usage details.
-:::
-
 ## Utils API List
 
 ### Manage Client Configuration 🟢
@@ -1097,29 +1072,6 @@ Used to create or rename a user directory. It is a combination of the two interf
 This interface effectively solves the issue of duplicate downloads when a user changes their nickname. It is integrated into the `handler` interface, so developers only need to call the `handler` data interface.
 :::
 
-### Display QR Code 🔴
-
-Used to display a URL as a QR code.
-
-| Parameter    | Type  | Description                                     |
-| :----------- | :---- | :---------------------------------------------- |
-| qrcode_url   | str   | QR code URL                                     |
-| show_image   | bool  | Whether to display as an image file (default: False) |
-
-| Return | Type | Description |
-| :----- | :--- | :---------- |
-| None   | None | None        |
-
-<<< @/snippets/douyin/show-qrcode.py{4,5}
-
-::: tip :bulb: Note
-Displaying images requires the `Pillow` library to be installed.
-:::
-
-::: danger Warning
-This interface has been deprecated since version `0.0.1.6`.
-:::
-
 ### Convert JSON Lyrics to LRC Lyrics 🟢
 
 Used to convert Douyin's original JSON-format lyrics into LRC format.
@@ -1353,42 +1305,6 @@ Asynchronous method to locate last post data.
 | Return       | Type  | Description       |
 | :---------- | :---  | :--------------- |
 | _fetch_get_json() | dict | Last post data |
-
-### SSO Get QR Code API 🔴
-
-Asynchronous method to get SSO login QR code data.
-
-| Parameter | Type        | Description       |
-| :-------- | :--------- | :--------------- |
-| params    | LoginGetQr | Request parameters |
-
-| Return       | Type  | Description       |
-| :---------- | :---  | :--------------- |
-| _fetch_get_json() | dict | SSO QR code data |
-
-### SSO Check QR Scan Status API 🔴
-
-Asynchronous method to check SSO login QR scan status.
-
-| Parameter | Type         | Description       |
-| :-------- | :---------- | :--------------- |
-| params    | LoginCheckQr | Request parameters |
-
-| Return       | Type  | Description       |
-| :---------- | :---  | :--------------- |
-| _fetch_response() | dict | SSO scan status data |
-
-### SSO Check Login Status API 🔴
-
-Asynchronous method to check SSO login status.
-
-| Parameter | Type         | Description       |
-| :-------- | :---------- | :--------------- |
-| params    | LoginCheckQr | Request parameters |
-
-| Return       | Type  | Description       |
-| :---------- | :---  | :--------------- |
-| _fetch_get_json() | dict | SSO login status data |
 
 ### User Following List API 🟢
 
