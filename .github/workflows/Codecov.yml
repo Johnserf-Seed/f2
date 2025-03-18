@@ -32,9 +32,6 @@ jobs:
       - name: Run tests and collect coverage
         run: pytest --cov=./ --cov-report=xml
 
-      - name: Run ATS
-        uses: codecov/codecov-ats@v0
-
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.5.0
         with:
