@@ -7,6 +7,38 @@ from f2.utils.utils import timestamp_2_str, replaceT, filter_to_list
 # Filter
 
 
+class LiveChatSendFilter(JSONModel):
+    @property
+    def status_code(self):
+        return self._get_attr_value("$.status_code")
+
+    @property
+    def msg_id(self):
+        return self._get_attr_value("$.data.msg_id")
+
+    @property
+    def msg_id_str(self):
+        return self._get_attr_value("$.data.msg_id_str")
+
+    @property
+    def content(self):
+        return self._get_attr_value("$.data.content")
+
+    @property
+    def user_id(self):
+        return self._get_attr_value("$.data.user.id")
+
+    def _to_raw(self) -> Dict:
+        return self._data
+
+    def _to_dict(self) -> Dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
+
 class UserProfileFilter(JSONModel):
     @property
     def avatar_url(self):

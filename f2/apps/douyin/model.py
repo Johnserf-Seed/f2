@@ -99,6 +99,14 @@ class BaseWebCastModel(BaseModel):
     live_reason: Any = ""
 
 
+class LiveChatSend(BaseLiveModel):
+    room_id: str
+    content: str
+    type: int = 0
+    rtf_content: str = ""
+    msToken: str = TokenManager.gen_real_msToken()
+
+
 # Model
 class UserProfile(BaseRequestModel):
     sec_user_id: str

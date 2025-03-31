@@ -35,6 +35,7 @@ from f2.apps.douyin.model import (
     FriendFeed,
     LiveWebcast,
     LiveImFetch,
+    LiveChatSend,
     UserLiveStatus,
     QueryUser,
     PostStats,
@@ -59,6 +60,7 @@ from f2.apps.douyin.filter import (
     PostRelatedFilter,
     FriendFeedFilter,
     LiveImFetchFilter,
+    LiveChatSendFilter,
     UserLiveStatusFilter,
     QueryUserFilter,
     PostStatsFilter,
@@ -2100,6 +2102,36 @@ class DouyinHandler:
                 logger.error(_("直播间：{0} 弹幕连接异常").format(room_id))
 
             return
+
+    async def fetch_live_chat_send(
+        self,
+        room_id: str,
+        content: str,
+    ):
+        """
+        用于发送直播间消息。
+
+        Args:
+            room_id: str: 直播间ID
+            content: str: 消息内容
+
+        Return:
+            send: LiveChatSendFilter: 发送弹幕数据过滤器，包含发送弹幕数据的_to_raw、_to_dict方法
+        """
+
+        logger.debug(_("向 {0} 直播间发送消息：{1}").format(room_id, content))
+
+        async with DouyinCrawler(self.kwargs) as crawler:
+            params = LiveChatSend(room_id=room_id, content=content)
+            response = await crawler.fetch_live_chat_send(params)
+            send = LiveChatSendFilter(response)
+
+        if send.status_code == 0:
+            logger.info(_("消息发送成功"))
+        else:
+            logger.warning(_("消息发送失败"))
+
+        return send
 
     async def fetch_user_following_lives(self) -> FollowingUserLiveFilter:
         """

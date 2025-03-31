@@ -111,6 +111,9 @@ class DouyinAPIEndpoints:
     # 用户直播状态 (User Live Status)
     USER_LIVE_STATUS = f"{LIVE_DOMAIN}/webcast/distribution/check_user_live_status/"
 
+    # 直播间弹幕发送 (Live Danmaku Send)
+    LIVE_CHAT_SEND = f"{LIVE_DOMAIN}/webcast/room/chat/"
+
     # 推荐搜索词 (Suggest Words)
     SUGGEST_WORDS = f"{DOUYIN_DOMAIN}/aweme/v1/web/api/suggest_words/"
 
