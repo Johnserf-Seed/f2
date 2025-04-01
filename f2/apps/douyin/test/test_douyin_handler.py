@@ -1,6 +1,7 @@
 import pytest
+
 from f2.apps.douyin.handler import DouyinHandler
-from f2.utils.conf_manager import TestConfigManager
+from f2.utils.config.conf_manager import TestConfigManager
 
 
 @pytest.fixture

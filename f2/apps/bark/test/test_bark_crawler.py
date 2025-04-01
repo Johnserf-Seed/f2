@@ -1,8 +1,10 @@
-import pytest
 from unittest.mock import AsyncMock, patch
+
+import pytest
+
 from f2.apps.bark.filter import BarkNotificationFilter
 from f2.apps.bark.model import BarkModel
-from f2.utils.conf_manager import TestConfigManager
+from f2.utils.config.conf_manager import TestConfigManager
 
 
 @pytest.fixture

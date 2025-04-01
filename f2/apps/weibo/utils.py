@@ -1,27 +1,27 @@
 # path: f2/apps/weibo/utils.py
 
-import f2
-import re
-import httpx
 import asyncio
-
-from typing import Union
+import re
 from pathlib import Path
+from typing import Union
 from urllib.parse import unquote
 
-from f2.i18n.translator import _
-from f2.log.logger import logger
-from f2.utils.conf_manager import ConfigManager
-from f2.utils.utils import extract_valid_urls, split_filename, split_set_cookie
+import httpx
+
+import f2
 from f2.crawlers.base_crawler import BaseCrawler
 from f2.exceptions.api_exceptions import (
     APIConnectionError,
-    APIResponseError,
-    APIUnavailableError,
-    APIUnauthorizedError,
     APINotFoundError,
+    APIResponseError,
+    APIUnauthorizedError,
+    APIUnavailableError,
 )
 from f2.exceptions.conf_exceptions import InvalidConfError
+from f2.i18n.translator import _
+from f2.log.logger import logger
+from f2.utils.config.conf_manager import ConfigManager
+from f2.utils.utils import extract_valid_urls, split_filename, split_set_cookie
 
 
 class ClientConfManager:

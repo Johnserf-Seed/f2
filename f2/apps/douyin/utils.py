@@ -1,39 +1,40 @@
 # path: f2/apps/douyin/utils.py
 
-import f2
-import re
-import json
-import time
-import httpx
-import random
 import asyncio
+import json
+import random
+import re
+import time
 import traceback
-
-from typing import Union
 from pathlib import Path
+from typing import Union
 from urllib.parse import urlparse
 
+import httpx
+
+import f2
 from f2.apps.douyin.algorithm.webcast_signature import DouyinWebcastSignature
-from f2.i18n.translator import _
-from f2.log.logger import logger, trace_logger
-from f2.utils.xbogus import XBogus as XB
-from f2.utils.abogus import ABogus as AB, BrowserFingerprintGenerator as BrowserFpGen
-from f2.utils.conf_manager import ConfigManager
-from f2.utils.utils import (
-    gen_random_str,
-    get_timestamp,
-    extract_valid_urls,
-    split_filename,
-)
 from f2.crawlers.base_crawler import BaseCrawler
 from f2.exceptions.api_exceptions import (
     APIConnectionError,
-    APIResponseError,
-    APIUnauthorizedError,
     APINotFoundError,
+    APIResponseError,
     APITimeoutError,
+    APIUnauthorizedError,
 )
 from f2.exceptions.conf_exceptions import InvalidConfError
+from f2.i18n.translator import _
+from f2.log.logger import logger, trace_logger
+from f2.utils.abogus import ABogus as AB
+from f2.utils.abogus import BrowserFingerprintGenerator as BrowserFpGen
+from f2.utils.config.conf_manager import ConfigManager
+from f2.utils.utils import (
+    extract_valid_urls,
+    gen_random_str,
+    get_timestamp,
+    split_filename,
+)
+from f2.utils.xbogus import XBogus as XB
 
 
 class ClientConfManager:

@@ -1,9 +1,11 @@
 import os
+
 import pytest
-from f2.apps.tiktok.model import UserPost
-from f2.apps.tiktok.filter import UserPostFilter
+
 from f2.apps.tiktok.crawler import TiktokCrawler
-from f2.utils.conf_manager import TestConfigManager
+from f2.apps.tiktok.filter import UserPostFilter
+from f2.apps.tiktok.model import UserPost
+from f2.utils.config.conf_manager import TestConfigManager
 
 # 检查环境变量是否设置为跳过测试
 skip_in_ci = os.getenv("SKIP_IN_CI", "false").lower() == "true"

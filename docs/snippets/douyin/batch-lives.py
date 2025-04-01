@@ -1,12 +1,12 @@
 import asyncio
 import traceback
 
-from f2.apps.douyin.handler import DouyinHandler
 from f2.apps.douyin.db import AsyncUserDB
 from f2.apps.douyin.dl import DouyinDownloader
-from f2.utils.conf_manager import ConfigManager
+from f2.apps.douyin.handler import DouyinHandler
 from f2.cli.cli_console import RichConsoleManager
 from f2.log.logger import logger
+from f2.utils.config.conf_manager import ConfigManager
 
 # 全局配置参数，保护敏感信息
 kwargs = {

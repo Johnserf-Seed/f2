@@ -1,12 +1,11 @@
-import pytest
-
 from unittest.mock import AsyncMock, patch
+
+import pytest
 
 from f2.apps.douyin.handler import DouyinHandler
 from f2.apps.douyin.utils import WebCastIdFetcher
-from f2.utils.conf_manager import TestConfigManager
+from f2.utils.config.conf_manager import TestConfigManager
 from f2.utils.utils import extract_valid_urls
-
 
 test_urls = [
     'https://webcast.amemv.com/douyin/webcast/reflow/7318296342189919011?u_code=l1j9bkbd&did=MS4wLjABAAAAEs86TBQPNwAo-RGrcxWyCdwKhI66AK3Pqf3ieo6HaxI&iid=MS4wLjABAAAA0ptpM-zzoliLEeyvWOCUt-_dQza4uSjlIvbtIazXnCY&with_sec_did=1&use_link_command=1&ecom_share_track_params=&extra_params={"from_request_id":"20231230162057EC005772A8EAA0199906","im_channel_invite_id":"0"}&user_id=3644207898042206&liveId=7318296342189919011&from=share&style=share&enter_method=click_share&roomId=7318296342189919011&activity_info={}',

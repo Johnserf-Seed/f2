@@ -1,18 +1,18 @@
 # path: f2/apps/bark/cli.py
 
-import f2
-import click
 import typing
-
 from pathlib import Path
 
+import click
+
+import f2
 from f2 import helps
-from f2.cli.cli_commands import set_cli_config
-from f2.log.logger import logger
-from f2.utils.utils import merge_config, get_resource_path, check_proxy_avail
-from f2.utils.conf_manager import ConfigManager
-from f2.i18n.translator import TranslationManager, _
 from f2.apps.bark.utils import ClientConfManager
+from f2.cli.cli_commands import set_cli_config
+from f2.i18n.translator import TranslationManager, _
+from f2.log.logger import logger
+from f2.utils.config.conf_manager import ConfigManager
+from f2.utils.utils import check_proxy_avail, get_resource_path, merge_config
 
 
 def handler_help(

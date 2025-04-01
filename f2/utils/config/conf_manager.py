@@ -1,20 +1,20 @@
 # path: f2/utils/conf_manager.py
 
-import f2
 import sys
-import yaml
-import click
 import traceback
-
 from pathlib import Path
 
+import click
+import yaml
+
+import f2
 from f2.exceptions.file_exceptions import (
     FileNotFound,
     FilePermissionError,
 )
-from f2.utils.utils import get_resource_path
 from f2.i18n.translator import _
 from f2.log.logger import logger
+from f2.utils.utils import get_resource_path
 
 
 class ConfigManager:

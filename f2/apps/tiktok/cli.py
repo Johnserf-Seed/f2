@@ -1,26 +1,26 @@
 # path: f2/apps/tiktok/cli.py
 
-import f2
-import click
-import typing
 import traceback
-
+import typing
 from pathlib import Path
 
+import click
+
+import f2
 from f2 import helps
-from f2.cli.cli_commands import set_cli_config
-from f2.log.logger import logger, trace_logger
-from f2.utils.utils import (
-    split_dict_cookie,
-    get_resource_path,
-    get_cookie_from_browser,
-    check_invalid_naming,
-    merge_config,
-    check_proxy_avail,
-)
-from f2.utils.conf_manager import ConfigManager
-from f2.i18n.translator import TranslationManager, _
 from f2.apps.tiktok.utils import ClientConfManager
+from f2.cli.cli_commands import set_cli_config
+from f2.i18n.translator import TranslationManager, _
+from f2.log.logger import logger, trace_logger
+from f2.utils.config.conf_manager import ConfigManager
+from f2.utils.utils import (
+    check_invalid_naming,
+    check_proxy_avail,
+    get_cookie_from_browser,
+    get_resource_path,
+    merge_config,
+    split_dict_cookie,
+)
 
 
 def handler_help(

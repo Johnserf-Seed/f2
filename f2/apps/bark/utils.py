@@ -1,9 +1,9 @@
 # path: f2/apps/bark/utils.py
 
-import f2
 import secrets
 
-from f2.utils.conf_manager import ConfigManager
+import f2
+from f2.utils.config.conf_manager import ConfigManager
 from f2.utils.utils import merge_config
 
 

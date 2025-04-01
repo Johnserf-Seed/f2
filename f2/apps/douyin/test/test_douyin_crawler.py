@@ -1,8 +1,9 @@
 import pytest
-from f2.apps.douyin.model import UserPost
-from f2.apps.douyin.filter import UserPostFilter
+
 from f2.apps.douyin.crawler import DouyinCrawler
-from f2.utils.conf_manager import TestConfigManager
+from f2.apps.douyin.filter import UserPostFilter
+from f2.apps.douyin.model import UserPost
+from f2.utils.config.conf_manager import TestConfigManager
 
 
 @pytest.fixture
