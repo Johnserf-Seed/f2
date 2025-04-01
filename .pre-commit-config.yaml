@@ -1,4 +1,5 @@
 repos:
+# Shell check
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
@@ -6,12 +7,7 @@ repos:
     -   id: end-of-file-fixer
     -   id: check-yaml
 
--   repo: https://github.com/psf/black
-    rev: 24.10.0
-    hooks:
-    -   id: black
-        language_version: python3
-
+# Python type checker
 # -   repo: https://github.com/pre-commit/mirrors-mypy
 #     rev: v1.9.0
 #     hooks:
@@ -19,3 +15,17 @@ repos:
 #         additional_dependencies: [types-protobuf]
 #         args: [--ignore-missing-imports, --check-untyped-defs]
 #         exclude: ^(f2/apps/(douyin|tiktok)/proto/.*_pb2\.py)$
+
+# Python formatters
+-   repo: https://github.com/psf/black
+    rev: 24.10.0
+    hooks:
+    -   id: black
+        language_version: python3
+
+# Python linters
+-   repo: https://github.com/pycqa/isort
+    rev: 6.0.1
+    hooks:
+    -   id: isort
+        args: ["--profile", "black"]
