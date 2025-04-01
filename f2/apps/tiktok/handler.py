@@ -1,52 +1,52 @@
 # path: f2/apps/tiktok/handler.py
 
 import asyncio
+from pathlib import Path
+from typing import Any, AsyncGenerator, List, Union
+from urllib.parse import quote
 
 from rich.rule import Rule
-from pathlib import Path
-from urllib.parse import quote
-from typing import AsyncGenerator, Union, List, Any
 
-from f2.i18n.translator import _
-from f2.log.logger import logger
-from f2.utils.decorators import mode_handler, mode_function_map
 from f2.apps.bark.handler import BarkHandler
 from f2.apps.bark.utils import ClientConfManager as BarkClientConfManager
-from f2.apps.tiktok.db import AsyncUserDB, AsyncVideoDB
 from f2.apps.tiktok.crawler import TiktokCrawler, TiktokWebSocketCrawler
+from f2.apps.tiktok.db import AsyncUserDB, AsyncVideoDB
 from f2.apps.tiktok.dl import TiktokDownloader
+from f2.apps.tiktok.filter import (
+    CheckLiveAliveFilter,
+    PostDetailFilter,
+    PostSearchFilter,
+    UserLiveFilter,
+    UserMixFilter,
+    UserPlayListFilter,
+    UserPostFilter,
+    UserProfileFilter,
+)
 from f2.apps.tiktok.model import (
-    UserProfile,
-    UserPost,
-    UserLike,
-    UserCollect,
-    UserMix,
-    UserPlayList,
-    PostDetail,
-    PostSearch,
-    UserLive,
     CheckLiveAlive,
     LiveImFetch,
     LiveWebcast,
-)
-from f2.apps.tiktok.filter import (
-    UserProfileFilter,
-    UserPostFilter,
-    PostDetailFilter,
-    UserMixFilter,
-    UserPlayListFilter,
-    PostSearchFilter,
-    UserLiveFilter,
-    CheckLiveAliveFilter,
+    PostDetail,
+    PostSearch,
+    UserCollect,
+    UserLike,
+    UserLive,
+    UserMix,
+    UserPlayList,
+    UserPost,
+    UserProfile,
 )
 from f2.apps.tiktok.utils import (
-    SecUserIdFetcher,
     AwemeIdFetcher,
+    SecUserIdFetcher,
     create_or_rename_user_folder,
 )
 from f2.cli.cli_console import RichConsoleManager
 from f2.exceptions.api_exceptions import APIResponseError
-from f2.utils.utils import interval_2_timestamp, timestamp_2_str, get_timestamp
+from f2.i18n.translator import _
+from f2.log.logger import logger
+from f2.utils.core.decorators import mode_function_map, mode_handler
+from f2.utils.utils import get_timestamp, interval_2_timestamp, timestamp_2_str
 
 rich_console = RichConsoleManager().rich_console
 rich_prompt = RichConsoleManager().rich_prompt

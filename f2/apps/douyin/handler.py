@@ -1,88 +1,87 @@
 # path: f2/apps/douyin/handler.py
 
 import asyncio
+from pathlib import Path
+from typing import Any, AsyncGenerator, Dict, List, Union
+from urllib.parse import quote
 
 from rich.rule import Rule
-from pathlib import Path
-from urllib.parse import quote
-from typing import AsyncGenerator, Union, Dict, Any, List
 
-from f2.log.logger import logger
-from f2.i18n.translator import _
-from f2.utils.decorators import mode_handler, mode_function_map
 from f2.apps.bark.handler import BarkHandler
 from f2.apps.bark.utils import ClientConfManager as BarkClientConfManager
-from f2.apps.douyin.db import AsyncUserDB, AsyncVideoDB
+from f2.apps.douyin.algorithm.webcast_signature import DouyinWebcastSignature
 from f2.apps.douyin.crawler import DouyinCrawler, DouyinWebSocketCrawler
+from f2.apps.douyin.db import AsyncUserDB, AsyncVideoDB
 from f2.apps.douyin.dl import DouyinDownloader
+from f2.apps.douyin.filter import (
+    FollowingUserLiveFilter,
+    FriendFeedFilter,
+    HomePostSearchFilter,
+    LiveChatSendFilter,
+    LiveImFetchFilter,
+    PostCommentFilter,
+    PostCommentReplyFilter,
+    PostDetailFilter,
+    PostRelatedFilter,
+    PostStatsFilter,
+    QueryUserFilter,
+    SuggestWordFilter,
+    UserCollectionFilter,
+    UserCollectsFilter,
+    UserFollowerFilter,
+    UserFollowingFilter,
+    UserLive2Filter,
+    UserLiveFilter,
+    UserLiveStatusFilter,
+    UserMixFilter,
+    UserMusicCollectionFilter,
+    UserPostFilter,
+    UserProfileFilter,
+)
 from f2.apps.douyin.model import (
-    UserPost,
-    UserProfile,
-    UserLike,
+    FollowingUserLive,
+    FriendFeed,
+    HomePostSearch,
+    LiveChatSend,
+    LiveImFetch,
+    LiveWebcast,
+    PostComment,
+    PostCommentReply,
+    PostDetail,
+    PostRelated,
+    PostStats,
+    QueryUser,
+    SuggestWord,
     UserCollection,
     UserCollects,
     UserCollectsVideo,
-    UserMusicCollection,
-    UserMix,
-    PostDetail,
-    PostComment,
-    PostCommentReply,
+    UserFollower,
+    UserFollowing,
+    UserLike,
     UserLive,
     UserLive2,
-    UserFollowing,
-    UserFollower,
-    PostRelated,
-    FriendFeed,
-    LiveWebcast,
-    LiveImFetch,
-    LiveChatSend,
     UserLiveStatus,
-    QueryUser,
-    PostStats,
-    FollowingUserLive,
-    SuggestWord,
-    HomePostSearch,
+    UserMix,
+    UserMusicCollection,
+    UserPost,
+    UserProfile,
 )
-from f2.apps.douyin.filter import (
-    UserPostFilter,
-    UserProfileFilter,
-    UserCollectionFilter,
-    UserCollectsFilter,
-    UserMusicCollectionFilter,
-    UserMixFilter,
-    PostDetailFilter,
-    PostCommentFilter,
-    PostCommentReplyFilter,
-    UserLiveFilter,
-    UserLive2Filter,
-    UserFollowingFilter,
-    UserFollowerFilter,
-    PostRelatedFilter,
-    FriendFeedFilter,
-    LiveImFetchFilter,
-    LiveChatSendFilter,
-    UserLiveStatusFilter,
-    QueryUserFilter,
-    PostStatsFilter,
-    FollowingUserLiveFilter,
-    SuggestWordFilter,
-    HomePostSearchFilter,
-)
-from f2.apps.douyin.algorithm.webcast_signature import DouyinWebcastSignature
-from f2.apps.douyin.utils import (
-    SecUserIdFetcher,
+from f2.apps.douyin.utils import (  # VerifyFpManager,
     AwemeIdFetcher,
-    MixIdFetcher,
-    WebCastIdFetcher,
     ClientConfManager,
-    # VerifyFpManager,
+    MixIdFetcher,
+    SecUserIdFetcher,
+    WebCastIdFetcher,
     create_or_rename_user_folder,
 )
 from f2.cli.cli_console import RichConsoleManager
 from f2.exceptions.api_exceptions import APIResponseError
+from f2.i18n.translator import _
+from f2.log.logger import logger
+from f2.utils.core.decorators import mode_function_map, mode_handler
 
 # from f2.utils.utils import split_set_cookie
-from f2.utils.utils import interval_2_timestamp, timestamp_2_str, get_timestamp
+from f2.utils.utils import get_timestamp, interval_2_timestamp, timestamp_2_str
 
 rich_console = RichConsoleManager().rich_console
 rich_prompt = RichConsoleManager().rich_prompt

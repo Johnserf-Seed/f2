@@ -2,18 +2,16 @@
 
 import json
 import traceback
-
 from base64 import b64encode
 
-from f2.log.logger import logger, trace_logger
-from f2.i18n.translator import _
-from f2.utils.decorators import mode_handler, mode_function_map
-from f2.utils.utils import AESEncryptionUtils
 from f2.apps.bark.crawler import BarkCrawler
-from f2.apps.bark.model import BarkModel, BarkCipherModel
 from f2.apps.bark.filter import BarkNotificationFilter
-from f2.apps.bark.utils import generate_numeric_bytes
-from f2.apps.bark.utils import ClientConfManager
+from f2.apps.bark.model import BarkCipherModel, BarkModel
+from f2.apps.bark.utils import ClientConfManager, generate_numeric_bytes
+from f2.i18n.translator import _
+from f2.log.logger import logger, trace_logger
+from f2.utils.core.decorators import mode_function_map, mode_handler
+from f2.utils.utils import AESEncryptionUtils
 
 
 class BarkHandler:

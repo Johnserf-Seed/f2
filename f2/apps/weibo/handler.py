@@ -1,42 +1,41 @@
 # path: f2/apps/weibo/handler.py
 
 import asyncio
-
 from pathlib import Path
-from rich.rule import Rule
-from typing import AsyncGenerator, Union, Dict, Any, List
+from typing import Any, AsyncGenerator, Dict, List, Union
 
-from f2.log.logger import logger
-from f2.i18n.translator import _
-from f2.utils.decorators import mode_handler, mode_function_map
+from rich.rule import Rule
+
 from f2.apps.bark.handler import BarkHandler
 from f2.apps.bark.utils import ClientConfManager as BarkClientConfManager
-from f2.apps.weibo.db import AsyncUserDB
 from f2.apps.weibo.crawler import WeiboCrawler
+from f2.apps.weibo.db import AsyncUserDB
 from f2.apps.weibo.dl import WeiboDownloader
+from f2.apps.weibo.filter import (
+    UserDetailFilter,
+    UserInfoFilter,
+    UserWeiboFilter,
+    WeiboDetailFilter,
+)
 from f2.apps.weibo.model import (
+    UserDetail,
     UserInfo,
     UserInfoByScreenName,
-    UserDetail,
     UserWeibo,
     WeiboDetail,
 )
-from f2.apps.weibo.filter import (
-    UserInfoFilter,
-    UserDetailFilter,
-    WeiboDetailFilter,
-    UserWeiboFilter,
-)
 from f2.apps.weibo.utils import (
     WeiboIdFetcher,
-    WeiboUidFetcher,
     WeiboScreenNameFetcher,
+    WeiboUidFetcher,
     create_or_rename_user_folder,
 )
-from f2.exceptions.api_exceptions import APIResponseError, APINotFoundError
 from f2.cli.cli_console import RichConsoleManager
-from f2.utils.utils import timestamp_2_str, get_timestamp
-
+from f2.exceptions.api_exceptions import APINotFoundError, APIResponseError
+from f2.i18n.translator import _
+from f2.log.logger import logger
+from f2.utils.core.decorators import mode_function_map, mode_handler
+from f2.utils.utils import get_timestamp, timestamp_2_str
 
 rich_console = RichConsoleManager().rich_console
 rich_prompt = RichConsoleManager().rich_prompt
