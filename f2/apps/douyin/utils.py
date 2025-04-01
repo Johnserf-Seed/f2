@@ -846,6 +846,7 @@ class AwemeIdFetcher(BaseCrawler):
 
     _DOUYIN_VIDEO_URL_PATTERN = re.compile(r"video/([^/?]*)")
     _DOUYIN_NOTE_URL_PATTERN = re.compile(r"note/([^/?]*)")
+    _DOUYIN_INVAILID_URL_PATTERN = re.compile(r"vid=([^/?]*)")
     proxies = ClientConfManager.proxies()
 
     def __init__(self):
@@ -895,11 +896,14 @@ class AwemeIdFetcher(BaseCrawler):
                 aweme_id = match.group(1)
             elif match := note_pattern.search(str(response.url)):
                 aweme_id = match.group(1)
+            elif match := cls._DOUYIN_INVAILID_URL_PATTERN.search(str(response.url)):
+                aweme_id = match.group(1)
             else:
+                # 如果没有匹配到，检查作品是否失效
                 raise APIResponseError(
                     _(
-                        "未在响应的地址中找到aweme_id，当前链接暂时不支持。类名：{0}"
-                    ).format(cls.__name__)
+                        "未在响应的地址中找到aweme_id，当前链接暂时不支持或作品已失效。类名：{0} 链接：{1}"
+                    ).format(cls.__name__, url)
                 )
 
             return aweme_id
