@@ -16,16 +16,16 @@ repos:
 #         args: [--ignore-missing-imports, --check-untyped-defs]
 #         exclude: ^(f2/apps/(douyin|tiktok)/proto/.*_pb2\.py)$
 
-# Python formatters
--   repo: https://github.com/psf/black
-    rev: 24.10.0
-    hooks:
-    -   id: black
-        language_version: python3
-
 # Python linters
 -   repo: https://github.com/pycqa/isort
     rev: 6.0.1
     hooks:
     -   id: isort
         args: ["--profile", "black"]
+
+# Python formatters
+-   repo: https://github.com/psf/black
+    rev: 24.10.0
+    hooks:
+    -   id: black
+        language_version: python3
