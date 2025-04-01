@@ -1,6 +1,7 @@
 # path: f2/utils/_singleton.py
 
 import threading
+from typing import Any, Dict, Type
 
 
 class Singleton(type):
@@ -41,7 +42,7 @@ class Singleton(type):
     - 无显式异常处理，异常由类外部的代码或实例化过程中的错误触发。
     """
 
-    _instances = {}  # 存储实例的字典
+    _instances: Dict[Type, Any] = {}  # 存储实例的字典
     _lock: threading.Lock = threading.Lock()  # 线程锁
 
     def __init__(self, *args, **kwargs):

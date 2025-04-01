@@ -1,9 +1,12 @@
 # path: f2/db/base_db.py
 
 import asyncio
+from typing import Any, Optional, Tuple
+
 import aiosqlite
 
-from typing import Optional
+from f2.exceptions.db_exceptions import DatabaseConnectionError, DatabaseTimeoutError
+from f2.i18n.translator import _
 
 
 class BaseDB:
@@ -73,13 +76,29 @@ class BaseDB:
         - 增加缓存大小，提高查询速度。
         - 将临时表存储在内存中，加快查询速度。
         """
-        self.conn = await aiosqlite.connect(self.db_name)
-        await self.conn.execute("PRAGMA journal_mode=WAL;")  # 启用 WAL 模式
-        await self.conn.execute("PRAGMA synchronous = NORMAL;")  # 优化性，,减少同步开销
-        await self.conn.execute("PRAGMA cache_size = 10000;")  # 增加缓存大小
-        await self.conn.execute("PRAGMA temp_store = MEMORY;")  # 临时表存储在内存中
-        # await self.conn.execute("PRAGMA locking_mode = EXCLUSIVE;")  # 限制数据库独占锁模式
-        await self._create_table()
+        try:
+            self.conn = await aiosqlite.connect(self.db_name)
+            if self.conn is not None:
+                await self.conn.execute("PRAGMA journal_mode=WAL;")  # 启用 WAL 模式
+                await self.conn.execute(
+                    "PRAGMA synchronous = NORMAL;"
+                )  # 优化性，,减少同步开销
+                await self.conn.execute("PRAGMA cache_size = 10000;")  # 增加缓存大小
+                await self.conn.execute(
+                    "PRAGMA temp_store = MEMORY;"
+                )  # 临时表存储在内存中
+                # await self.conn.execute("PRAGMA locking_mode = EXCLUSIVE;")  # 限制数据库独占锁模式
+                await self._create_table()
+        except aiosqlite.OperationalError as e:
+            # 捕获数据库连接错误并抛出自定义异常
+            raise DatabaseConnectionError(
+                _("数据库连接失败，请检查数据库路径或权限: {0}").format(self.db_name),
+            ) from e
+        except aiosqlite.DatabaseError as e:
+            # 捕获数据库错误并抛出自定义异常
+            raise DatabaseTimeoutError(
+                _("数据库操作超时: {0}").format(self.db_name)
+            ) from e
 
     async def _create_table(self) -> Optional[None]:
         """
@@ -104,7 +123,9 @@ class BaseDB:
         )
         await self.commit()
 
-    async def execute(self, query: str, parameters: tuple = ()) -> aiosqlite.Cursor:
+    async def execute(
+        self, query: str, parameters: Tuple[Any, ...] = ()
+    ) -> aiosqlite.Cursor:
         """
         执行SQL查询，并增加重试机制以处理潜在的锁定问题。
 
@@ -133,7 +154,9 @@ class BaseDB:
                 else:
                     raise
 
-    async def fetch_one(self, query: str, parameters: tuple = ()) -> tuple:
+    async def fetch_one(
+        self, query: str, parameters: Tuple[Any, ...] = ()
+    ) -> Optional[Tuple[Any, ...]]:
         """
         执行SQL查询并返回一个结果
 

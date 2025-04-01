@@ -1,8 +1,8 @@
 # path: f2/utils/json_filter.py
 
 import json
+from typing import Any, Dict, List, Optional, Union
 
-from typing import Any, Union, List, Optional
 from jsonpath_ng import parse
 
 
@@ -45,7 +45,7 @@ class JSONModel:
 
     def __init__(self, data: Any):
         self._data = data
-        self._cache = {}  # 缓存解析后的 JSONPath 表达式
+        self._cache: Dict[str, Any] = {}  # 缓存解析后的 JSONPath 表达式
 
     def _parse_expression(self, jsonpath_expr: str):
         """

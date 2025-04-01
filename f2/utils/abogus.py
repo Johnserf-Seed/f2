@@ -644,9 +644,9 @@ class ABogus:
             "^/captcha/",
             "^/ecom/",
         ]
-        self.array1 = []  # 加密请求体
-        self.array2 = []  # 加密请求头 为空
-        self.array3 = []  # 加密UA
+        self.array1: list[int] = []  # 加密请求体
+        self.array2: list[int] = []  # 加密请求头 为空
+        self.array3: list[int] = []  # 加密UA
         self.options = options  # GET [0, 1, 8] POST [0, 1, 14]
         self.ua_key = b"\x00\x01\x0E"  # ua加密key
 
