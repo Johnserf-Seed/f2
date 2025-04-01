@@ -1,8 +1,9 @@
 # path: tests/test_rsa.py
 
 import pytest
-from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.asymmetric import rsa
+
 from f2.utils.utils import RSAEncryptionUtils
 
 

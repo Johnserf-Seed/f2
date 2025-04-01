@@ -1,4 +1,5 @@
 import asyncio
+
 from f2.apps.tiktok.handler import TiktokHandler
 from f2.apps.tiktok.utils import SecUserIdFetcher
 

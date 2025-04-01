@@ -18,6 +18,7 @@ if __name__ == "__main__":
 # region model-2-endpoint-snippet
 # 使用用户信息模型生成请求链接
 import asyncio
+
 from f2.apps.tiktok.api import TiktokAPIEndpoints as tkendpoint
 from f2.apps.tiktok.model import UserProfile
 from f2.apps.tiktok.utils import XBogusManager
@@ -44,10 +45,11 @@ if __name__ == "__main__":
 # region model-2-endpoint-2-filter-snippet
 # 使用用户信息模型生成请求链接，请求接口并使用自定义过滤器输出所需接口数据
 import asyncio
+
 from f2.apps.tiktok.api import TiktokAPIEndpoints as tkendpoint
 from f2.apps.tiktok.crawler import TiktokCrawler
-from f2.apps.tiktok.model import UserProfile
 from f2.apps.tiktok.filter import UserProfileFilter
+from f2.apps.tiktok.model import UserProfile
 from f2.apps.tiktok.utils import XBogusManager
 
 kwargs = {

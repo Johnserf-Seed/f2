@@ -1,10 +1,11 @@
 # path: f2/apps/douyin/models.py
 
 from typing import Any
-from pydantic import BaseModel
 from urllib.parse import quote, unquote
 
-from f2.apps.douyin.utils import TokenManager, VerifyFpManager, ClientConfManager
+from pydantic import BaseModel
+
+from f2.apps.douyin.utils import ClientConfManager, TokenManager, VerifyFpManager
 
 
 # Base Model

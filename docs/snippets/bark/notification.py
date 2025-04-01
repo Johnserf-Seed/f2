@@ -1,7 +1,7 @@
 import asyncio
+
 from f2.apps.bark.handler import BarkHandler
 from f2.log.logger import logger
-
 
 kwargs = {
     "key": "YOUR_BARK_KEY_HERE",

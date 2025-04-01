@@ -1,6 +1,6 @@
 # region webcast-signature-snippet
-from f2.log.logger import logger
 from f2.apps.douyin.algorithm.webcast_signature import DouyinWebcastSignature
+from f2.log.logger import logger
 
 if __name__ == "__main__":
     room_id = "7383573503129258802"

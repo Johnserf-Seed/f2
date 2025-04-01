@@ -1,20 +1,20 @@
 # path: tests/test_cli_commands.py
 
-import click
-import pytest
 import logging
 
+import click
+import pytest
 from click.testing import CliRunner
 
-from f2.cli.cli_commands import (
-    handle_help,
-    handle_version,
-    handle_debug,
-    handle_last_version,
-    set_cli_config,
-    DynamicGroup,
-)
 from f2 import __version__ as f2_version
+from f2.cli.cli_commands import (
+    DynamicGroup,
+    handle_debug,
+    handle_help,
+    handle_last_version,
+    handle_version,
+    set_cli_config,
+)
 from f2.i18n.translator import _
 
 

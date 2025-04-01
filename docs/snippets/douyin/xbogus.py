@@ -1,6 +1,6 @@
 # region str-2-endpoint-snippet
 # 使用接口地址直接生成请求链接
-from f2.apps.douyin.utils import XBogusManager, ClientConfManager
+from f2.apps.douyin.utils import ClientConfManager, XBogusManager
 
 
 def main():
@@ -20,9 +20,10 @@ if __name__ == "__main__":
 # region model-2-endpoint-snippet
 # 使用用户信息模型生成请求链接
 import asyncio
+
 from f2.apps.douyin.api import DouyinAPIEndpoints as dyendpoint
 from f2.apps.douyin.model import UserProfile
-from f2.apps.douyin.utils import XBogusManager, ClientConfManager
+from f2.apps.douyin.utils import ClientConfManager, XBogusManager
 
 
 async def gen_user_profile(params: UserProfile):
@@ -48,12 +49,12 @@ if __name__ == "__main__":
 # region model-2-endpoint-2-filter-snippet
 # 使用用户信息模型生成请求链接，请求接口并使用自定义过滤器输出所需接口数据
 import asyncio
+
 from f2.apps.douyin.api import DouyinAPIEndpoints as dyendpoint
 from f2.apps.douyin.crawler import DouyinCrawler
-from f2.apps.douyin.model import UserProfile
 from f2.apps.douyin.filter import UserProfileFilter
-from f2.apps.douyin.utils import XBogusManager, ClientConfManager
-
+from f2.apps.douyin.model import UserProfile
+from f2.apps.douyin.utils import ClientConfManager, XBogusManager
 
 kwargs = {
     "headers": {

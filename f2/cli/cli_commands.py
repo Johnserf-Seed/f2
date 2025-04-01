@@ -1,19 +1,20 @@
 # path: f2/cli/cli_command.py
 
-import f2
-import click
-import typing
 import asyncio
 import importlib
 import traceback
+import typing
 
+import click
+
+import f2
 from f2 import helps
 from f2.apps import __apps__ as apps_module
 from f2.cli.cli_console import RichConsoleManager
-from f2.utils._signal import SignalManager
-from f2.utils.utils import check_f2_version, check_python_version
 from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
+from f2.utils._signal import SignalManager
+from f2.utils.utils import check_f2_version, check_python_version
 
 
 # 处理帮助信息

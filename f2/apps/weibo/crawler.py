@@ -1,16 +1,16 @@
 # path: f2/apps/weibo/crawler.py
 
-from f2.log.logger import logger
-from f2.i18n.translator import _
-from f2.crawlers.base_crawler import BaseCrawler
 from f2.apps.weibo.api import WeiboAPIEndpoints as wbendpoint
 from f2.apps.weibo.model import (
-    UserInfo,
     UserDetail,
+    UserInfo,
     UserWeibo,
     WeiboDetail,
 )
 from f2.apps.weibo.utils import ModelManager
+from f2.crawlers.base_crawler import BaseCrawler
+from f2.i18n.translator import _
+from f2.log.logger import logger
 
 
 class WeiboCrawler(BaseCrawler):

@@ -1,32 +1,32 @@
 # path: f2/utils/utils.py
 
-import f2
-import re
-import sys
-import httpx
-import random
 import asyncio
-import secrets
 import datetime
+import random
+import re
+import secrets
+import sys
 import traceback
-import browser_cookie3
-import importlib_resources
-
 from pathlib import Path
-from rich.console import Console
-from rich.panel import Panel
-from typing import Any, Dict, List, Union, Optional
-from cryptography.exceptions import InvalidTag, InvalidKey
+from typing import Any, Dict, List, Optional, Union
+
+import browser_cookie3
+import httpx
+import importlib_resources
+from cryptography.exceptions import InvalidKey, InvalidTag
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives import padding as aes_padding
-from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.asymmetric import padding as rsa_padding
+from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from rich.console import Console
+from rich.panel import Panel
 
-from f2.log.logger import logger, trace_logger
-from f2.i18n.translator import _
+import f2
 from f2.exceptions.api_exceptions import APIFilterError
+from f2.i18n.translator import _
+from f2.log.logger import logger, trace_logger
 
 # 生成一个 16 字节的随机字节串 (Generate a random byte string of 16 bytes)
 seed_bytes = secrets.token_bytes(16)

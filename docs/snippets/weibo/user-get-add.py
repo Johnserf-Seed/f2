@@ -1,8 +1,8 @@
 import asyncio
-from f2.apps.weibo.handler import WeiboHandler
-from f2.apps.weibo.db import AsyncUserDB
-from f2.log.logger import logger
 
+from f2.apps.weibo.db import AsyncUserDB
+from f2.apps.weibo.handler import WeiboHandler
+from f2.log.logger import logger
 
 kwargs = {
     "headers": {

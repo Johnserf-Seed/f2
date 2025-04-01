@@ -4,7 +4,6 @@ import pytest
 
 from f2.utils.utils import AESEncryptionUtils
 
-
 # 测试用例参数
 TEST_KEY_AES128 = b"6267274627536375"  # 16 字节
 TEST_KEY_AES192 = b"626727462753637592910384"  # 24 字节

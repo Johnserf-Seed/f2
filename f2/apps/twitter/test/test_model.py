@@ -1,4 +1,4 @@
-from f2.apps.twitter.model import encode_model, TweetDetail, TweetDetailEncode
+from f2.apps.twitter.model import TweetDetail, TweetDetailEncode, encode_model
 
 if __name__ == "__main__":
 

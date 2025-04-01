@@ -1,4 +1,5 @@
 import asyncio
+
 from f2.apps.weibo.handler import WeiboHandler
 from f2.apps.weibo.utils import format_file_name
 

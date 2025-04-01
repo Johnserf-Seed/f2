@@ -1,6 +1,7 @@
 import asyncio
-from f2.apps.douyin.handler import DouyinHandler
+
 from f2.apps.douyin.db import AsyncUserDB
+from f2.apps.douyin.handler import DouyinHandler
 
 kwargs = {
     "headers": {

@@ -1,5 +1,6 @@
 # region single-webcast-id-snippet
 import asyncio
+
 from f2.apps.douyin.utils import WebCastIdFetcher
 
 
@@ -16,6 +17,7 @@ if __name__ == "__main__":
 
 # region multi-webcast-id-snippet
 import asyncio
+
 from f2.apps.douyin.utils import WebCastIdFetcher
 from f2.utils.utils import extract_valid_urls
 

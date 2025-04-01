@@ -1,5 +1,7 @@
 import os
+
 import pytest
+
 from f2.apps.tiktok.utils import TokenManager
 
 # 检查环境变量是否设置为跳过测试

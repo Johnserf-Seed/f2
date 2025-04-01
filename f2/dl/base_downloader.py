@@ -1,28 +1,28 @@
 # path: f2/dl/base_downloader.py
 
-import sys
-import httpx
 import asyncio
-import aiofiles
+import sys
 import traceback
-
 from pathlib import Path
-from rich.progress import TaskID
-from typing import Union, Optional, Any, List, Set
+from typing import Any, List, Optional, Set, Union
 
-from f2.log.logger import logger, trace_logger
-from f2.i18n.translator import _
+import aiofiles
+import httpx
+from rich.progress import TaskID
+
 from f2.cli.cli_console import RichConsoleManager
 from f2.crawlers.base_crawler import BaseCrawler
+from f2.exceptions.api_exceptions import APIRetryExhaustedError
+from f2.i18n.translator import _
+from f2.log.logger import logger, trace_logger
+from f2.utils._dl import (
+    get_chunk_size,
+    get_content_length,
+    get_segments_from_m3u8,
+    trim_filename,
+)
 from f2.utils._signal import SignalManager
 from f2.utils.utils import ensure_path
-from f2.utils._dl import (
-    get_content_length,
-    trim_filename,
-    get_chunk_size,
-    get_segments_from_m3u8,
-)
-from f2.exceptions.api_exceptions import APIRetryExhaustedError
 
 # 最大片段缓存数量，超过这个数量就会进行清理
 # (Maximum segment cache count, clear when it exceeds this count)

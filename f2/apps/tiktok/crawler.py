@@ -1,58 +1,58 @@
 # path: f2/apps/tiktok/crawler.py
 
-import json
-import gzip
 import asyncio
+import gzip
+import json
 import traceback
 
 from google.protobuf import json_format
 from google.protobuf.message import DecodeError as ProtoDecodeError
 from websockets import (
     ConnectionClosedOK,
-    WebSocketServerProtocol,
     WebSocketServer,
+    WebSocketServerProtocol,
     serve,
 )
 
-from f2.log.logger import logger, trace_logger
-from f2.i18n.translator import _
-from f2.crawlers.base_crawler import BaseCrawler, WebSocketCrawler
-from f2.utils.utils import BaseEndpointManager
 from f2.apps.tiktok.api import TiktokAPIEndpoints as tkendpoint
 from f2.apps.tiktok.model import (
-    UserProfile,
-    UserPost,
-    UserLike,
-    UserMix,
-    UserCollect,
-    PostDetail,
-    UserPlayList,
-    PostComment,
-    PostSearch,
-    UserLive,
     CheckLiveAlive,
     LiveImFetch,
     LiveWebcast,
+    PostComment,
+    PostDetail,
+    PostSearch,
+    UserCollect,
+    UserLike,
+    UserLive,
+    UserMix,
+    UserPlayList,
+    UserPost,
+    UserProfile,
 )
-from f2.apps.tiktok.utils import XBogusManager, ClientConfManager
 from f2.apps.tiktok.proto.tiktok_webcast_pb2 import (
-    PushFrame,
-    Response,
     ChatMessage,
-    MemberMessage,
-    RoomUserSeqMessage,
     GiftMessage,
-    SocialMessage,
     LikeMessage,
-    LinkMicFanTicketMethod,
-    LinkMicMethod,
-    UserFanTicket,
+    LinkLayerMessage,
     LinkMessage,
     LinkMicBattle,
-    LinkLayerMessage,
-    RoomMessage,
+    LinkMicFanTicketMethod,
+    LinkMicMethod,
+    MemberMessage,
     OecLiveShoppingMessage,
+    PushFrame,
+    Response,
+    RoomMessage,
+    RoomUserSeqMessage,
+    SocialMessage,
+    UserFanTicket,
 )
+from f2.apps.tiktok.utils import ClientConfManager, XBogusManager
+from f2.crawlers.base_crawler import BaseCrawler, WebSocketCrawler
+from f2.i18n.translator import _
+from f2.log.logger import logger, trace_logger
+from f2.utils.utils import BaseEndpointManager
 
 
 class TiktokCrawler(BaseCrawler):

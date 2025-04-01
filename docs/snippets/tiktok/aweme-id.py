@@ -1,5 +1,6 @@
 # region single-aweme-id-snippet
 import asyncio
+
 from f2.apps.tiktok.utils import AwemeIdFetcher
 
 
@@ -17,6 +18,7 @@ if __name__ == "__main__":
 
 # region multi-aweme-id-snippet
 import asyncio
+
 from f2.apps.tiktok.utils import AwemeIdFetcher
 from f2.utils.utils import extract_valid_urls
 

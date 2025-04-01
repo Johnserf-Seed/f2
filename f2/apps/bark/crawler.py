@@ -2,12 +2,12 @@
 
 from urllib.parse import quote
 
-from f2.log.logger import logger
-from f2.i18n.translator import _
-from f2.crawlers.base_crawler import BaseCrawler
-from f2.utils.utils import BaseEndpointManager
-from f2.apps.bark.model import BarkModel, BarkCipherModel
 from f2.apps.bark.api import BarkAPIEndpoints as bkendpoint
+from f2.apps.bark.model import BarkCipherModel, BarkModel
+from f2.crawlers.base_crawler import BaseCrawler
+from f2.i18n.translator import _
+from f2.log.logger import logger
+from f2.utils.utils import BaseEndpointManager
 
 
 class BarkCrawler(BaseCrawler):

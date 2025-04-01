@@ -1,4 +1,5 @@
 import pytest
+
 from f2.apps.tiktok.utils import AwemeIdFetcher
 from f2.utils.utils import extract_valid_urls
 

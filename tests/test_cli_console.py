@@ -1,8 +1,8 @@
 # path: tests/test_cli_console.py
 
 import time
-import pytest
 
+import pytest
 from rich.spinner import Spinner
 
 from f2.cli.cli_console import CustomSpinnerColumn, ProgressManager

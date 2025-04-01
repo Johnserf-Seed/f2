@@ -1,8 +1,8 @@
 # region playlist-sinppet
 import asyncio
+
 from f2.apps.tiktok.handler import TiktokHandler
 from f2.apps.tiktok.utils import SecUserIdFetcher
-
 
 kwargs = {
     "headers": {
@@ -45,8 +45,8 @@ if __name__ == "__main__":
 
 # region select-playlist-sinppet
 import asyncio
-from f2.apps.tiktok.handler import TiktokHandler
 
+from f2.apps.tiktok.handler import TiktokHandler
 
 kwargs = {
     "headers": {

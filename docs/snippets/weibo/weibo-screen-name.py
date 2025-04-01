@@ -1,5 +1,6 @@
 # region single-weibo-screen_name-snippet
 import asyncio
+
 from f2.apps.weibo.utils import WeiboScreenNameFetcher
 from f2.log.logger import logger
 
@@ -17,9 +18,10 @@ if __name__ == "__main__":
 
 # region multi-weibo-screen_name-snippet
 import asyncio
+
 from f2.apps.weibo.utils import WeiboScreenNameFetcher
-from f2.utils.utils import extract_valid_urls
 from f2.log.logger import logger
+from f2.utils.utils import extract_valid_urls
 
 
 async def main():

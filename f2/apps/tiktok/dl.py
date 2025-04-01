@@ -1,19 +1,19 @@
 # path: f2/apps/tiktok/dl.py
 
 import asyncio
-
-from rich.live import Live
-from rich.rule import Rule
 from datetime import datetime
 from typing import Any, Union
 
-from f2.i18n.translator import _
-from f2.log.logger import logger
-from f2.dl.base_downloader import BaseDownloader
-from f2.utils.utils import get_timestamp, timestamp_2_str, filter_by_date_interval
+from rich.live import Live
+from rich.rule import Rule
+
 from f2.apps.tiktok.db import AsyncUserDB
 from f2.apps.tiktok.utils import format_file_name
 from f2.cli.cli_console import RichConsoleManager
+from f2.dl.base_downloader import BaseDownloader
+from f2.i18n.translator import _
+from f2.log.logger import logger
+from f2.utils.utils import filter_by_date_interval, get_timestamp, timestamp_2_str
 
 
 class TiktokDownloader(BaseDownloader):

@@ -1,93 +1,93 @@
 # path: f2/apps/douyin/crawler.py
 
-import json
-import gzip
 import asyncio
+import gzip
+import json
 import traceback
+from urllib.parse import urlencode
 
 from google.protobuf import json_format
 from google.protobuf.message import DecodeError as ProtoDecodeError
 from websockets import (
     ConnectionClosedOK,
-    WebSocketServerProtocol,
     WebSocketServer,
+    WebSocketServerProtocol,
     serve,
 )
-from urllib.parse import urlencode
 
-from f2.log.logger import logger, trace_logger
-from f2.i18n.translator import _
-from f2.crawlers.base_crawler import BaseCrawler, WebSocketCrawler
-from f2.utils.utils import BaseEndpointManager
 from f2.apps.douyin.api import DouyinAPIEndpoints as dyendpoint
 from f2.apps.douyin.model import (
-    UserProfile,
-    UserPost,
-    UserLike,
+    FollowingUserLive,
+    HomePostSearch,
+    LiveChatSend,
+    LiveImFetch,
+    LiveWebcast,
+    PostComment,
+    PostCommentReply,
+    PostDetail,
+    PostStats,
+    QueryUser,
+    SuggestWord,
     UserCollection,
     UserCollects,
     UserCollectsVideo,
-    UserMusicCollection,
-    PostDetail,
-    PostComment,
-    PostCommentReply,
-    UserMix,
+    UserFollower,
+    UserFollowing,
+    UserLike,
     UserLive,
     UserLive2,
-    FollowingUserLive,
-    SuggestWord,
-    HomePostSearch,
-    UserFollowing,
-    UserFollower,
-    LiveWebcast,
-    LiveImFetch,
-    LiveChatSend,
     UserLiveStatus,
-    QueryUser,
-    PostStats,
+    UserMix,
+    UserMusicCollection,
+    UserPost,
+    UserProfile,
+)
+from f2.apps.douyin.proto.douyin_webcast_pb2 import (
+    BattleTeamTaskMessage,
+    ChatMessage,
+    CommonTextMessage,
+    EcomFansClubMessage,
+    EmojiChatMessage,
+    FansclubMessage,
+    GiftMessage,
+    HotChatMessage,
+    HotRoomMessage,
+    InRoomBannerMessage,
+    LightGiftMessage,
+    LikeMessage,
+    LinkerContributeMessage,
+    LinkMessage,
+    LinkMicMethod,
+    LiveEcomGeneralMessage,
+    LiveShoppingMessage,
+    MatchAgainstScoreMessage,
+    MemberMessage,
+    NotifyEffectMessage,
+    ProductChangeMessage,
+    ProfitInteractionScoreMessage,
+    PushFrame,
+    RanklistHourEntranceMessage,
+    Response,
+    RoomDataSyncMessage,
+    RoomMessage,
+    RoomRankMessage,
+    RoomStatsMessage,
+    RoomStreamAdaptationMessage,
+    RoomUserSeqMessage,
+    ScreenChatMessage,
+    SocialMessage,
+    UpdateFanTicketMessage,
 )
 from f2.apps.douyin.utils import (
-    XBogusManager,
     ABogusManager,
     ClientConfManager,
     TokenManager,
+    XBogusManager,
 )
-from f2.apps.douyin.proto.douyin_webcast_pb2 import (
-    PushFrame,
-    Response,
-    RoomMessage,
-    LikeMessage,
-    MemberMessage,
-    ChatMessage,
-    GiftMessage,
-    SocialMessage,
-    RoomUserSeqMessage,
-    UpdateFanTicketMessage,
-    CommonTextMessage,
-    MatchAgainstScoreMessage,
-    EcomFansClubMessage,
-    RoomStatsMessage,
-    LiveShoppingMessage,
-    LiveEcomGeneralMessage,
-    RoomStreamAdaptationMessage,
-    RanklistHourEntranceMessage,
-    ProductChangeMessage,
-    NotifyEffectMessage,
-    LightGiftMessage,
-    ProfitInteractionScoreMessage,
-    RoomRankMessage,
-    FansclubMessage,
-    HotRoomMessage,
-    InRoomBannerMessage,
-    ScreenChatMessage,
-    RoomDataSyncMessage,
-    LinkerContributeMessage,
-    EmojiChatMessage,
-    LinkMicMethod,
-    LinkMessage,
-    BattleTeamTaskMessage,
-    HotChatMessage,
-)
+from f2.crawlers.base_crawler import BaseCrawler, WebSocketCrawler
+from f2.i18n.translator import _
+from f2.log.logger import logger, trace_logger
+from f2.utils.utils import BaseEndpointManager
 
 
 class DouyinCrawler(BaseCrawler):

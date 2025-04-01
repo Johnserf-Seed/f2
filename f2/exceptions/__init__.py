@@ -1,34 +1,33 @@
 # path: f2/exceptions/__init__.py
 
 from .api_exceptions import (
-    APIError,
     APIConnectionError,
-    APIUnavailableError,
+    APIError,
+    APIFilterError,
     APINotFoundError,
-    APITimeoutError,
-    APIUnauthorizedError,
     APIRateLimitError,
     APIResponseError,
-    APIFilterError,
     APIRetryExhaustedError,
+    APITimeoutError,
+    APIUnauthorizedError,
+    APIUnavailableError,
 )
+from .conf_exceptions import ConfError, InvalidEncodingError
 from .db_exceptions import (
     DatabaseConnectionError,
-    RecordNotFoundError,
+    DatabaseConstraintError,
     DatabaseError,
     DatabaseTimeoutError,
-    DatabaseConstraintError,
     MultipleRecordsFoundError,
+    RecordNotFoundError,
 )
 from .file_exceptions import (
     FileError,
-    FileReadError,
     FileNotFound,
     FilePermissionError,
+    FileReadError,
     FileWriteError,
 )
-from .conf_exceptions import ConfError, InvalidEncodingError
-
 
 __all__ = [
     "APIError",

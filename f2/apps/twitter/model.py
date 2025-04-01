@@ -1,9 +1,10 @@
 # path: f2/apps/twitter/models.py
 
-from typing import Any
-from pydantic import BaseModel
 import json
+from typing import Any
 from urllib.parse import quote, unquote
+
+from pydantic import BaseModel
 
 
 def encode_model(model: BaseModel) -> str:

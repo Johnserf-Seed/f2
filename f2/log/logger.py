@@ -1,12 +1,12 @@
 # path: f2/log/logger.py
 
-import time
-import logging
 import datetime
-
-from pathlib import Path
-from rich.logging import RichHandler
+import logging
+import time
 from logging.handlers import TimedRotatingFileHandler
+from pathlib import Path
+
+from rich.logging import RichHandler
 
 from f2.utils._singleton import Singleton
 

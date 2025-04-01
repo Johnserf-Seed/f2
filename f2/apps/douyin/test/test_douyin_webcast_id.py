@@ -1,4 +1,5 @@
 import pytest
+
 from f2.apps.douyin.utils import WebCastIdFetcher
 from f2.utils.utils import extract_valid_urls
 

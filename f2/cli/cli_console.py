@@ -1,22 +1,24 @@
 # path: f2/cli/cli_console.py
 
 from asyncio import Lock
-from typing import Optional, Dict
-from rich.prompt import Prompt
+from typing import Dict, Optional
+
 from rich.console import Console
-from rich.spinner import Spinner
 from rich.progress import (
-    Progress as RichProgress,
-    TaskID,
-    Task,
     BarColumn,
+    DownloadColumn,
+)
+from rich.progress import Progress as RichProgress  # TimeElapsedColumn,
+from rich.progress import (
+    ProgressColumn,
+    Task,
+    TaskID,
     TextColumn,
     TimeRemainingColumn,
-    DownloadColumn,
     TransferSpeedColumn,
-    ProgressColumn,
-    # TimeElapsedColumn,
 )
+from rich.prompt import Prompt
+from rich.spinner import Spinner
 
 from f2.utils._singleton import Singleton
 

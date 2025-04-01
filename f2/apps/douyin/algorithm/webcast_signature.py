@@ -1,8 +1,10 @@
 # path: f2/apps/douyin/algorithm/webcast_signature.py
 
-import execjs
 import hashlib
 from pathlib import Path
+
+import execjs
+
 from f2.utils.utils import get_resource_path
 
 

@@ -1,4 +1,5 @@
 import pytest
+
 from f2.apps.weibo.utils import VisitorManager
 
 

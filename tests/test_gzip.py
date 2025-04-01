@@ -1,10 +1,10 @@
 # path: tests/test_gzip.py
 
 import json
-import pytest
-
-from pathlib import Path
 from gzip import compress, decompress
+from pathlib import Path
+
+import pytest
 
 
 def get_test_data_path(*subpaths):

@@ -1,7 +1,7 @@
 # region user-collection-music-snippet
 import asyncio
-from f2.apps.douyin.handler import DouyinHandler
 
+from f2.apps.douyin.handler import DouyinHandler
 
 kwargs = {
     "headers": {
@@ -35,8 +35,8 @@ if __name__ == "__main__":
 
 # region user-collection-video-snippet
 import asyncio
-from f2.apps.douyin.handler import DouyinHandler
 
+from f2.apps.douyin.handler import DouyinHandler
 
 kwargs = {
     "headers": {

@@ -1,6 +1,5 @@
 from f2.apps.douyin.utils import json_2_lrc
 
-
 data = [
     {"text": "CB on the beat,ho", "timeId": "5.700"},
     {"text": "Wasted CTA lovees wasted", "timeId": "10.210"},

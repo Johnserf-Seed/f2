@@ -1,7 +1,9 @@
 # path: tests/test_utils.py
 
-import pytest
 import datetime
+
+import pytest
+
 from f2.utils.utils import gen_random_str, get_timestamp, merge_config
 
 

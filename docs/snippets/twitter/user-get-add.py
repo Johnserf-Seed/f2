@@ -1,6 +1,7 @@
 import asyncio
-from f2.apps.twitter.handler import TwitterHandler
+
 from f2.apps.twitter.db import AsyncUserDB
+from f2.apps.twitter.handler import TwitterHandler
 
 kwargs = {
     "headers": {

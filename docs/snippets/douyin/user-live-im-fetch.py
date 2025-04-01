@@ -6,7 +6,6 @@ from f2.apps.douyin.handler import DouyinHandler
 from f2.apps.douyin.utils import TokenManager  # [!code ++]
 from f2.log.logger import logger
 
-
 kwargs = {
     "headers": {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0",
@@ -126,7 +125,6 @@ import asyncio
 from f2.apps.douyin.crawler import DouyinWebSocketCrawler
 from f2.apps.douyin.handler import DouyinHandler
 from f2.log.logger import logger
-
 
 kwargs = {
     "headers": {

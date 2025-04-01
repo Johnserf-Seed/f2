@@ -1,17 +1,17 @@
 # path: f2/apps/weibo/dl.py
 
 import asyncio
+from typing import Any, Dict, List, Union
 
 from rich.live import Live
 from rich.rule import Rule
-from typing import Any, Dict, List, Union
 
-from f2.log.logger import logger
-from f2.i18n.translator import _
-from f2.dl.base_downloader import BaseDownloader
-from f2.apps.weibo.utils import format_file_name
 from f2.apps.weibo.api import WeiboAPIEndpoints
+from f2.apps.weibo.utils import format_file_name
 from f2.cli.cli_console import RichConsoleManager
+from f2.dl.base_downloader import BaseDownloader
+from f2.i18n.translator import _
+from f2.log.logger import logger
 
 
 class WeiboDownloader(BaseDownloader):

@@ -65,7 +65,6 @@ bark:
   autoCopy: 1
   title: F2
   body: ""
-  call: 0
   copy: ""
   group: F2下载统计
   badge: 1

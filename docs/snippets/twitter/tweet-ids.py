@@ -1,5 +1,6 @@
 # region single-tweet-id-snippet
 import asyncio
+
 from f2.apps.twitter.utils import TweetIdFetcher
 from f2.log.logger import logger
 
@@ -17,6 +18,7 @@ if __name__ == "__main__":
 
 # region multi-tweet-id-snippet
 import asyncio
+
 from f2.apps.twitter.utils import TweetIdFetcher
 from f2.log.logger import logger
 

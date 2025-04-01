@@ -1,8 +1,10 @@
 # path: tests/test_logger.py
 
-import pytest
 import logging
 from pathlib import Path
+
+import pytest
+
 from f2.log.logger import LogManager
 
 LOG_DIR = Path("./test_logs")

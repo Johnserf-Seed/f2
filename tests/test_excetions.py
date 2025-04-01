@@ -3,15 +3,15 @@
 import pytest
 
 from f2.exceptions import (
-    APIError,
     APIConnectionError,
+    APIError,
     APIUnavailableError,
     DatabaseConnectionError,
-    RecordNotFoundError,
+    DatabaseConstraintError,
     DatabaseError,
     DatabaseTimeoutError,
-    DatabaseConstraintError,
     MultipleRecordsFoundError,
+    RecordNotFoundError,
 )
 
 

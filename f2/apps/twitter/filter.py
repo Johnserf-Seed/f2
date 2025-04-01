@@ -1,9 +1,8 @@
 # path: f2/apps/twitter/filter.py
 
-from f2.utils.json_filter import JSONModel
-from f2.utils.utils import timestamp_2_str, replaceT, filter_to_list
 from f2.apps.twitter.utils import extract_desc
-
+from f2.utils.json_filter import JSONModel
+from f2.utils.utils import filter_to_list, replaceT, timestamp_2_str
 
 # Filter
 

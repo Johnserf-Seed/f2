@@ -1,7 +1,7 @@
 # path: f2/exceptions/conf_exceptions.py
 
-from f2.log.logger import logger
 from f2.i18n.translator import _
+from f2.log.logger import logger
 
 
 class ConfError(Exception):

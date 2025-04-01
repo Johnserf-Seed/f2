@@ -1,7 +1,9 @@
 # path: tests/test_py_version.py
 
-import pytest
 from unittest.mock import patch
+
+import pytest
+
 from f2.utils.utils import check_python_version
 
 

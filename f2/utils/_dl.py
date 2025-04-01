@@ -1,16 +1,16 @@
 # path: f2/utils/_dl.py
 
-import m3u8
-import httpx
 import traceback
-
 from pathlib import Path
 from typing import Union
 from urllib.error import HTTPError
 
-from f2.utils.utils import ensure_path
-from f2.log.logger import logger, trace_logger
+import httpx
+import m3u8
+
 from f2.i18n.translator import _
+from f2.log.logger import logger, trace_logger
+from f2.utils.utils import ensure_path
 
 
 async def get_content_length(

@@ -16,13 +16,13 @@ Change Log  :
 -------------------------------------------------
 """
 
-import f2
 import importlib
 
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
+import f2
 from f2.i18n.translator import _
 
 # 真彩色终端

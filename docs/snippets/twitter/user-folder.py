@@ -1,7 +1,6 @@
 # region create-user-folder
 from f2.apps.twitter.utils import create_user_folder
 
-
 kwargs = {
     "headers": {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0",
@@ -25,10 +24,10 @@ if __name__ == "__main__":
 
 # region rename-user-folder
 import asyncio
-from f2.apps.twitter.db import AsyncUserDB
-from f2.apps.twitter.utils import rename_user_folder
-from f2.apps.twitter.handler import TwitterHandler
 
+from f2.apps.twitter.db import AsyncUserDB
+from f2.apps.twitter.handler import TwitterHandler
+from f2.apps.twitter.utils import rename_user_folder
 
 kwargs = {
     "headers": {

@@ -1,8 +1,8 @@
 import asyncio
-from f2.log.logger import logger
-from f2.apps.tiktok.handler import TiktokHandler
-from f2.apps.tiktok.crawler import TiktokWebSocketCrawler
 
+from f2.apps.tiktok.crawler import TiktokWebSocketCrawler
+from f2.apps.tiktok.handler import TiktokHandler
+from f2.log.logger import logger
 
 kwargs = {
     "headers": {

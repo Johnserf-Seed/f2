@@ -1,9 +1,9 @@
 # path: tests/test_dl.py
 
-import pytest
-
 from pathlib import Path
 from unittest import mock
+
+import pytest
 
 from f2.dl.base_downloader import BaseDownloader
 

@@ -1,7 +1,7 @@
 import pytest
+
 from f2.apps.tiktok.utils import SecUserIdFetcher
 from f2.utils.utils import extract_valid_urls
-
 
 test_urls = [
     "https://www.tiktok.com/@justinbieber",

@@ -8,8 +8,8 @@ f2.APP_CONFIG_FILE_PATH = "app.yaml"
 
 # region set-debug-snippet
 import asyncio
-from f2.apps.douyin.handler import DouyinHandler
 
+from f2.apps.douyin.handler import DouyinHandler
 from f2.log.logger import logger  # [!code focus]
 
 logger.setLevel("WARNING")  # [!code focus]
@@ -35,8 +35,8 @@ if __name__ == "__main__":
 
 # region log-2-console-snippet
 import asyncio
-from f2.apps.douyin.handler import DouyinHandler
 
+from f2.apps.douyin.handler import DouyinHandler
 from f2.log.logger import log_setup  # [!code focus]
 
 logger = log_setup(log_to_console=True)  # [!code focus]

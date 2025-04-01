@@ -1,5 +1,6 @@
 # region single-user-id-snippet
 import asyncio
+
 from f2.apps.douyin.utils import SecUserIdFetcher
 
 
@@ -17,6 +18,7 @@ if __name__ == "__main__":
 
 # region multi-user-id-snippet
 import asyncio
+
 from f2.apps.douyin.utils import SecUserIdFetcher
 from f2.utils.utils import extract_valid_urls
 

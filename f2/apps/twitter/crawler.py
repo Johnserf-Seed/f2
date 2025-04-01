@@ -1,23 +1,23 @@
 # path: f2/apps/twitter/crawler.py
 
-from f2.log.logger import logger
-from f2.i18n.translator import _
-from f2.crawlers.base_crawler import BaseCrawler
 from f2.apps.twitter.api import TwitterAPIEndpoints as xendpoints
-from f2.apps.twitter.model import encode_model
 from f2.apps.twitter.model import (
+    BookmarkTweet,
+    BookmarkTweetEncode,
+    LikeTweet,
+    LikeTweetEncode,
+    PostTweet,
+    PostTweetEncode,
     TweetDetail,
     TweetDetailEncode,
     UserProfile,
     UserProfileEncode,
-    PostTweet,
-    PostTweetEncode,
-    LikeTweet,
-    LikeTweetEncode,
-    BookmarkTweet,
-    BookmarkTweetEncode,
+    encode_model,
 )
-from f2.apps.twitter.utils import ModelManager, ClientConfManager
+from f2.apps.twitter.utils import ClientConfManager, ModelManager
+from f2.crawlers.base_crawler import BaseCrawler
+from f2.i18n.translator import _
+from f2.log.logger import logger
 
 
 class TwitterCrawler(BaseCrawler):

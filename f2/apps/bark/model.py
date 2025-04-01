@@ -1,7 +1,8 @@
 # path:f2/apps/bark/model.py
 
-from typing import Optional, Literal
-from pydantic import BaseModel, Field, ConfigDict
+from typing import Literal, Optional
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # Base Model

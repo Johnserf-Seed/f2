@@ -1,5 +1,6 @@
 # region device-id-snippet
 import asyncio
+
 from f2.apps.tiktok.utils import DeviceIdManager
 
 
@@ -18,6 +19,7 @@ if __name__ == "__main__":
 
 # region device-ids-snippet
 import asyncio
+
 from f2.apps.tiktok.utils import DeviceIdManager
 
 

@@ -1,8 +1,8 @@
 import asyncio
+
 from f2.apps.douyin.handler import DouyinHandler
 from f2.apps.douyin.utils import TokenManager
 from f2.log.logger import logger
-
 
 kwargs = {
     "headers": {

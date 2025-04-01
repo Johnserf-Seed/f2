@@ -1,5 +1,6 @@
 # region single-weibo-id-snippet
 import asyncio
+
 from f2.apps.weibo.utils import WeiboIdFetcher
 from f2.log.logger import logger
 
@@ -17,9 +18,10 @@ if __name__ == "__main__":
 
 # region multi-weibo-id-snippet
 import asyncio
+
 from f2.apps.weibo.utils import WeiboIdFetcher
-from f2.utils.utils import extract_valid_urls
 from f2.log.logger import logger
+from f2.utils.utils import extract_valid_urls
 
 
 async def main():
