@@ -1,6 +1,6 @@
 # path: tests/test_abogus.py
 
-from f2.utils.abogus import ABogus, BrowserFingerprintGenerator
+from f2.utils.crypto.bytedance.abogus import ABogus, BrowserFingerprintGenerator
 
 
 def test_get_abogus():
