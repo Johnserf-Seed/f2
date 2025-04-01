@@ -1,4 +1,4 @@
-# path: f2/utils/conf_manager.py
+# path: f2/utils/config/conf_manager.py
 
 import sys
 import traceback
