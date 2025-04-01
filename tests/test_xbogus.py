@@ -1,6 +1,6 @@
 # path: tests/test_xbogus.py
 
-from f2.utils.xbogus import XBogus
+from f2.utils.crypto.bytedance.xbogus import XBogus
 
 
 def test_get_xbogus():

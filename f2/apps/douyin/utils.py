@@ -28,13 +28,13 @@ from f2.log.logger import logger, trace_logger
 from f2.utils.config.conf_manager import ConfigManager
 from f2.utils.crypto.bytedance.abogus import ABogus as AB
 from f2.utils.crypto.bytedance.abogus import BrowserFingerprintGenerator as BrowserFpGen
+from f2.utils.crypto.bytedance.xbogus import XBogus as XB
 from f2.utils.utils import (
     extract_valid_urls,
     gen_random_str,
     get_timestamp,
     split_filename,
 )
-from f2.utils.xbogus import XBogus as XB
 
 
 class ClientConfManager:
