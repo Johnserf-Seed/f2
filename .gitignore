@@ -154,3 +154,6 @@ Download/
 # secret
 .pypirc
 f2-secrets
+
+# MacOS
+.DS_Store
