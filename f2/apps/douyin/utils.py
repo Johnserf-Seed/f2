@@ -890,13 +890,14 @@ class AwemeIdFetcher(BaseCrawler):
 
             video_pattern = cls._DOUYIN_VIDEO_URL_PATTERN
             note_pattern = cls._DOUYIN_NOTE_URL_PATTERN
+            invalid_pattern = cls._DOUYIN_INVAILID_URL_PATTERN
 
             match = video_pattern.search(str(response.url))
             if match:
                 aweme_id = match.group(1)
             elif match := note_pattern.search(str(response.url)):
                 aweme_id = match.group(1)
-            elif match := cls._DOUYIN_INVAILID_URL_PATTERN.search(str(response.url)):
+            elif match := invalid_pattern.search(str(response.url)):
                 aweme_id = match.group(1)
             else:
                 # 如果没有匹配到，检查作品是否失效
