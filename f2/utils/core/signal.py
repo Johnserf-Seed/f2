@@ -6,7 +6,7 @@ import sys
 from asyncio import CancelledError
 
 from f2.cli.cli_console import RichConsoleManager
-from f2.utils._singleton import Singleton
+from f2.utils.core.singleton import Singleton
 
 
 class SignalManager(metaclass=Singleton):

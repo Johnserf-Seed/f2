@@ -4,7 +4,7 @@ import asyncio
 
 import pytest
 
-from f2.utils._signal import SignalManager
+from f2.utils.core.signal import SignalManager
 
 
 # 模拟长时间运行的任务

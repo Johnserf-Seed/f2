@@ -21,7 +21,7 @@ from f2.utils._dl import (
     get_segments_from_m3u8,
     trim_filename,
 )
-from f2.utils._signal import SignalManager
+from f2.utils.core.signal import SignalManager
 from f2.utils.utils import ensure_path
 
 # 最大片段缓存数量，超过这个数量就会进行清理
