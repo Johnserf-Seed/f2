@@ -54,11 +54,11 @@ class AESEncryptionUtils:
         """
         # 检查算法是否支持
         if algorithm not in self.SUPPORTED_ALGORITHMS:
-            raise ValueError("算法必须为 'AES128', 'AES192' 或 'AES256'。")
+            raise ValueError(_("算法必须为 'AES128', 'AES192' 或 'AES256'。"))
 
         # 检查模式是否支持
         if mode not in self.SUPPORTED_MODES:
-            raise ValueError("模式必须为 'GCM', 'CBC' 或 'ECB'。")
+            raise ValueError(_("模式必须为 'GCM', 'CBC' 或 'ECB'。"))
 
         self.key = key
         self.algorithm = algorithm
@@ -70,7 +70,9 @@ class AESEncryptionUtils:
         expected_key_length = self.SUPPORTED_ALGORITHMS[algorithm]
         if len(self.key) != expected_key_length:
             raise ValueError(
-                f"{algorithm} 算法密钥长度不正确：{len(self.key)} 字节，期望长度为 {expected_key_length} 字节。"
+                _("{0} 算法密钥长度不正确：{1} 字节，期望长度为 {2} 字节。").format(
+                    algorithm, len(self.key), expected_key_length
+                )
             )
 
     def aes_encrypt(self, plaintext: bytes) -> bytes:
@@ -139,7 +141,7 @@ class AESEncryptionUtils:
             decryptor = cipher.decryptor()
             return decryptor.update(ciphertext_data) + decryptor.finalize()
         except InvalidTag:
-            raise ValueError("GCM 模式解密失败：认证标签无效")
+            raise ValueError(_("GCM 模式解密失败：认证标签无效"))
 
     def _aes_encrypt_cbc(self, plaintext: bytes) -> bytes:
         """CBC模式加密"""
