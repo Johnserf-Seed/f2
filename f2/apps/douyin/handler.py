@@ -80,7 +80,7 @@ from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.core.decorators import mode_function_map, mode_handler
 
-# from f2.utils.utils import split_set_cookie
+# from f2.utils.http.cookie import split_set_cookie
 from f2.utils.time.timestamp import get_timestamp, interval_2_timestamp, timestamp_2_str
 
 rich_console = RichConsoleManager().rich_console

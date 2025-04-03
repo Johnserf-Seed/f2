@@ -13,13 +13,13 @@ from f2.cli.cli_commands import set_cli_config
 from f2.i18n.translator import TranslationManager, _
 from f2.log.logger import logger, trace_logger
 from f2.utils.config.conf_manager import ConfigManager
+from f2.utils.http.cookie import split_dict_cookie
 from f2.utils.http.proxy import check_proxy_avail
 from f2.utils.utils import (
     check_invalid_naming,
     get_cookie_from_browser,
     get_resource_path,
     merge_config,
-    split_dict_cookie,
 )
 
 # import asyncio

@@ -21,7 +21,8 @@ from f2.exceptions.conf_exceptions import InvalidConfError
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.config.conf_manager import ConfigManager
-from f2.utils.utils import extract_valid_urls, split_filename, split_set_cookie
+from f2.utils.http.cookie import split_set_cookie
+from f2.utils.utils import extract_valid_urls, split_filename
 
 
 class ClientConfManager:
