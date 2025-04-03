@@ -2,7 +2,7 @@
 
 from typing import Dict
 
-from f2.utils.json_filter import JSONModel
+from f2.utils.json.filter import JSONModel
 from f2.utils.utils import timestamp_2_str
 
 

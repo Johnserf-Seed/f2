@@ -1,4 +1,4 @@
-# path: f2/utils/json_filter.py
+# path: f2/utils/json/filter.py
 
 import json
 from typing import Any, Dict, List, Optional, Union

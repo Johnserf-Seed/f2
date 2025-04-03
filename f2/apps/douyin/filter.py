@@ -2,7 +2,7 @@
 
 from typing import Any, Dict, List
 
-from f2.utils.json_filter import JSONModel
+from f2.utils.json.filter import JSONModel
 from f2.utils.utils import filter_to_list, replaceT, timestamp_2_str
 
 # Filter
