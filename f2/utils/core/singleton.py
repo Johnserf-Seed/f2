@@ -1,4 +1,4 @@
-# path: f2/utils/_singleton.py
+# path: f2/utils/core/singleton.py
 
 import threading
 from typing import Any, Dict, Type

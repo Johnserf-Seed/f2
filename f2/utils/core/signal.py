@@ -1,4 +1,4 @@
-# path: f2/utils/_signal.py
+# path: f2/utils/core/signal.py
 
 import asyncio
 import signal
