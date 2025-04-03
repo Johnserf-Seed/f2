@@ -8,7 +8,7 @@ from pathlib import Path
 
 from rich.logging import RichHandler
 
-from f2.utils._singleton import Singleton
+from f2.utils.core.singleton import Singleton
 
 
 class LogManager(metaclass=Singleton):

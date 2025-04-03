@@ -20,7 +20,7 @@ from rich.progress import (
 from rich.prompt import Prompt
 from rich.spinner import Spinner
 
-from f2.utils._singleton import Singleton
+from f2.utils.core.singleton import Singleton
 
 
 class CustomSpinnerColumn(ProgressColumn):

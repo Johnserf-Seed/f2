@@ -1,6 +1,6 @@
 # path: tests/test_singleton.py
 
-from f2.utils._singleton import Singleton
+from f2.utils.core.singleton import Singleton
 
 
 class Database(metaclass=Singleton):
