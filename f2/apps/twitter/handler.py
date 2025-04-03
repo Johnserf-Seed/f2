@@ -33,7 +33,7 @@ from f2.exceptions.api_exceptions import APIResponseError
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.core.decorators import mode_function_map, mode_handler
-from f2.utils.utils import get_timestamp, timestamp_2_str
+from f2.utils.time.timestamp import get_timestamp, timestamp_2_str
 
 rich_console = RichConsoleManager().rich_console
 rich_prompt = RichConsoleManager().rich_prompt

@@ -13,7 +13,8 @@ from f2.cli.cli_console import RichConsoleManager
 from f2.dl.base_downloader import BaseDownloader
 from f2.i18n.translator import _
 from f2.log.logger import logger
-from f2.utils.utils import filter_by_date_interval, get_timestamp, timestamp_2_str
+from f2.utils.time.timestamp import get_timestamp, timestamp_2_str
+from f2.utils.utils import filter_by_date_interval
 
 
 class TiktokDownloader(BaseDownloader):

@@ -23,10 +23,10 @@ from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
 from f2.utils.config.conf_manager import ConfigManager
 from f2.utils.crypto.bytedance.xbogus import XBogus as XB
+from f2.utils.time.timestamp import get_timestamp
 from f2.utils.utils import (
     extract_valid_urls,
     gen_random_str,
-    get_timestamp,
     split_filename,
     split_set_cookie,
 )

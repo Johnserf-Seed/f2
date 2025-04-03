@@ -3,7 +3,7 @@
 import pytest
 
 from f2.i18n.translator import _
-from f2.utils.utils import get_timestamp, timestamp_2_str
+from f2.utils.time.timestamp import get_timestamp, timestamp_2_str
 
 
 class TestGetTimestamp:
