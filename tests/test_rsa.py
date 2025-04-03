@@ -4,7 +4,7 @@ import pytest
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import rsa
 
-from f2.utils.utils import RSAEncryptionUtils
+from f2.utils.crypto.rsa import RSAEncryptionUtils
 
 
 # 生成RSA密钥对

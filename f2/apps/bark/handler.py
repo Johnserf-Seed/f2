@@ -11,7 +11,7 @@ from f2.apps.bark.utils import ClientConfManager, generate_numeric_bytes
 from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
 from f2.utils.core.decorators import mode_function_map, mode_handler
-from f2.utils.utils import AESEncryptionUtils
+from f2.utils.crypto.aes import AESEncryptionUtils
 
 
 class BarkHandler:

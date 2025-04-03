@@ -2,7 +2,7 @@
 
 import pytest
 
-from f2.utils.utils import AESEncryptionUtils
+from f2.utils.crypto.aes import AESEncryptionUtils
 
 # 测试用例参数
 TEST_KEY_AES128 = b"6267274627536375"  # 16 字节
