@@ -7,6 +7,7 @@ import aiosqlite
 
 from f2.exceptions.db_exceptions import DatabaseConnectionError, DatabaseTimeoutError
 from f2.i18n.translator import _
+from f2.log.logger import logger
 
 
 class BaseDB:
@@ -21,6 +22,7 @@ class BaseDB:
     - conn (aiosqlite.Connection | None): 数据库连接实例，初始化时为 None。
     - semaphore (asyncio.Semaphore): 用于限制并发任务数的信号量。
     - max_retries (int): 最大重试次数，用于处理数据库锁定问题。
+    - TABLE_NAME (str | None): 表名称，默认值为 None，由子类覆盖。
 
     类方法:
     - __init__: 初始化数据库连接管理器，并设置数据库名称。
@@ -61,6 +63,8 @@ class BaseDB:
     ```
     """
 
+    TABLE_NAME = None  # 添加默认 TABLE_NAME 属性，由子类覆盖
+
     def __init__(self, db_name: str, **kwargs) -> Optional[None]:
         self.db_name = db_name
         self.conn = None
@@ -69,7 +73,7 @@ class BaseDB:
 
     async def connect(self) -> Optional[None]:
         """
-        连接到数据库
+        连接到数据库并自动迁移表结构
 
         - 启用 WAL 模式，提高并发读写性能。
         - 设置 `synchronous` 为 `NORMAL`，降低同步写操作的延迟。
@@ -89,6 +93,11 @@ class BaseDB:
                 )  # 临时表存储在内存中
                 # await self.conn.execute("PRAGMA locking_mode = EXCLUSIVE;")  # 限制数据库独占锁模式
                 await self._create_table()
+
+                # 连接后自动执行迁移
+                if hasattr(self, "get_table_schema") and self.TABLE_NAME:
+                    schema = self.get_table_schema()
+                    await self.migrate(schema)
         except aiosqlite.OperationalError as e:
             # 捕获数据库连接错误并抛出自定义异常
             raise DatabaseConnectionError(
@@ -197,11 +206,52 @@ class BaseDB:
         if self.conn:
             await self.conn.close()
 
-    async def migrate(self):
+    async def migrate(self, expected_columns: dict) -> None:
         """
-        Base migration logic. This should be overridden by subclasses
-        to provide specific migration strategies.
+        迁移数据库表结构，添加缺失的列但不删除现有数据
+
+        Args:
+            expected_columns (dict): 期望的列名和列类型的字典，如 {"column_name": "TEXT"}
         """
-        raise NotImplementedError(
-            "Migration strategy not implemented for this DB class"
+        # 检查 TABLE_NAME 是否已定义
+        if not self.TABLE_NAME:
+            logger.warning(_("无法迁移表：未定义 TABLE_NAME"))
+            return
+
+        # 获取表结构
+        if not await self._table_exists():
+            # 如果表不存在，直接返回，让 _create_table 创建完整的表
+            return
+
+        cursor = await self.execute(f"PRAGMA table_info({self.TABLE_NAME})")
+        existing_columns = {column[1]: column[2] for column in await cursor.fetchall()}
+
+        # 添加缺失的列
+        for column, column_type in expected_columns.items():
+            if column not in existing_columns:
+                try:
+                    await self.execute(
+                        f"ALTER TABLE {self.TABLE_NAME} ADD COLUMN {column} {column_type}"
+                    )
+                    logger.info(
+                        _("添加列 {0} 到表 {1}").format(column, self.TABLE_NAME)
+                    )
+                except Exception as e:
+                    logger.error(
+                        _("添加列 {0} 到表 {1} 失败: {2}").format(
+                            column, self.TABLE_NAME, str(e)
+                        )
+                    )
+
+        await self.commit()
+
+    async def _table_exists(self) -> bool:
+        """检查表是否存在"""
+        if not self.TABLE_NAME:
+            return False
+
+        cursor = await self.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name=?",
+            (self.TABLE_NAME,),
         )
+        return await cursor.fetchone() is not None
