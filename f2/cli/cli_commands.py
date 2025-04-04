@@ -14,7 +14,8 @@ from f2.cli.cli_console import RichConsoleManager
 from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
 from f2.utils.core.signal import SignalManager
-from f2.utils.utils import check_f2_version, check_python_version
+from f2.utils.utils import check_python_version
+from f2.utils.version import check_f2_version
 
 
 # 处理帮助信息
@@ -68,8 +69,8 @@ def handle_last_version(
     if not value or ctx.resilient_parsing:
         return
 
-    asyncio.run(check_f2_version())
-
+    # 强制检查版本，忽略配置文件中的设置
+    asyncio.run(check_f2_version(force_check=True))
     ctx.exit()
 
 
@@ -132,8 +133,6 @@ class DynamicGroup(click.Group):
             ctx.fail(_("没有找到 {0} 应用").format(cmd_name))
         try:
             if app_name:
-                # 使用线程池执行异步任务
-                asyncio.run(check_f2_version())
                 # 动态导入app的cli模块
                 module = importlib.import_module(f"f2.apps.{app_name}.cli")
                 logger.info(_("应用：{0}").format(app_name))
@@ -183,6 +182,24 @@ def main(**kwargs):
     SignalManager().register_shutdown_signal()
     # 检查Python版本是否符合要求
     check_python_version()
+
+    # 创建守护线程，使其不会阻塞主程序退出
+    import threading
+
+    t = threading.Thread(
+        target=lambda: run_version_check_thread(), daemon=True  # 设置为守护线程
+    )
+    t.start()
+
+
+# 在单独线程中运行版本检查的安全包装函数
+def run_version_check_thread():
+    try:
+        asyncio.run(check_f2_version())
+    except Exception as e:
+        # 避免线程崩溃，安静地处理异常
+        logger.debug(_("版本检查线程异常: {0}").format(str(e)))
+        pass
 
 
 @click.pass_context

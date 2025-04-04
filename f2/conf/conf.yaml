@@ -1,6 +1,6 @@
 f2:
   version: "0.0.1.7"
-  show_update: true
+  check_update: true
   enable_bark: true
 
   bark:
