@@ -136,93 +136,110 @@ class AsyncUserDB(BaseDB):
 
 
 class AsyncVideoDB(BaseDB):
-    TABLE_NAME = "video_info"
+    TABLE_NAME = "video_info_web"
+
+    def get_table_schema(self) -> dict:
+        """
+        定义表结构模式
+
+        Returns:
+            dict: 列名和数据类型的字典
+        """
+        return {
+            "api_status_code": "TEXT",
+            "aweme_id": "TEXT PRIMARY KEY",
+            "aweme_type": "TEXT",
+            "nickname": "TEXT",
+            "nickname_raw": "TEXT",
+            "sec_user_id": "TEXT",
+            "short_id": "TEXT",
+            "uid": "TEXT",
+            "unique_id": "TEXT",
+            "can_comment": "TEXT",
+            "can_forward": "TEXT",
+            "can_share": "TEXT",
+            "can_show_comment": "TEXT",
+            "comment_gid": "TEXT",
+            "create_time": "TEXT",
+            "caption": "TEXT",
+            "caption_raw": "TEXT",
+            "desc": "TEXT",
+            "desc_raw": "TEXT",
+            "duration": "TEXT",
+            "is_ads": "TEXT",
+            "is_story": "TEXT",
+            "is_top": "TEXT",
+            "video_bit_rate": "JSON",
+            "video_play_addr": "TEXT",
+            "images": "JSON",
+            "animated_cover": "TEXT",
+            "cover": "TEXT",
+            "part_see": "TEXT",
+            "private_status": "TEXT",
+            "is_delete": "TEXT",
+            "is_prohibited": "TEXT",
+            "is_long_video": "TEXT",
+            "media_type": "TEXT",
+            "mix_desc": "TEXT",
+            "mix_desc_raw": "TEXT",
+            "mix_create_time": "TEXT",
+            "mix_id": "TEXT",
+            "mix_name": "TEXT",
+            "mix_pic_type": "TEXT",
+            "mix_type": "TEXT",
+            "mix_share_url": "TEXT",
+            "mix_update_time": "TEXT",
+            "is_commerce_music": "TEXT",
+            "is_original": "TEXT",
+            "is_original_sound": "TEXT",
+            "is_pgc": "TEXT",
+            "music_author": "TEXT",
+            "music_author_raw": "TEXT",
+            "music_author_deleted": "TEXT",
+            "music_duration": "TEXT",
+            "music_id": "TEXT",
+            "music_mid": "TEXT",
+            "pgc_author": "TEXT",
+            "pgc_author_raw": "TEXT",
+            "pgc_author_title": "TEXT",
+            "pgc_author_title_raw": "TEXT",
+            "pgc_music_type": "TEXT",
+            "music_status": "TEXT",
+            "music_owner_handle": "TEXT",
+            "music_owner_handle_raw": "TEXT",
+            "music_owner_id": "TEXT",
+            "music_owner_nickname": "TEXT",
+            "music_owner_nickname_raw": "TEXT",
+            "music_play_url": "TEXT",
+            "position": "TEXT",
+            "region": "TEXT",
+            "seo_ocr_content": "TEXT",
+            "allow_douplus": "TEXT",
+            "download_setting": "TEXT",
+            "allow_share": "TEXT",
+            "admire_count": "TEXT",
+            "collect_count": "TEXT",
+            "comment_count": "TEXT",
+            "digg_count": "TEXT",
+            "share_count": "TEXT",
+            "hashtag_ids": "JSON",
+            "hashtag_names": "JSON",
+        }
 
     async def _create_table(self) -> None:
         """
         在数据库中创建视频信息表
         """
-        await super()._create_table()
-        fields = [
-            "api_status_code TEXT",
-            "aweme_id TEXT PRIMARY KEY",
-            "aweme_type TEXT",
-            "nickname TEXT",
-            "nickname_raw TEXT",
-            "sec_user_id TEXT",
-            "short_id TEXT",
-            "uid TEXT",
-            "unique_id TEXT",
-            "can_comment TEXT",
-            "can_forward TEXT",
-            "can_share TEXT",
-            "can_show_comment TEXT",
-            "comment_gid TEXT",
-            "create_time TEXT",
-            "desc TEXT",
-            "desc_raw TEXT",
-            "duration TEXT",
-            "is_ads TEXT",
-            "is_story TEXT",
-            "is_top TEXT",
-            "video_bit_rate JSON",
-            "video_play_addr TEXT",
-            "images JSON",
-            "animated_cover TEXT",
-            "cover TEXT",
-            "part_see TEXT",
-            "private_status TEXT",
-            "is_delete TEXT",
-            "is_prohibited TEXT",
-            "is_long_video TEXT",
-            "media_type TEXT",
-            "mix_desc TEXT",
-            "mix_desc_raw TEXT",
-            "mix_create_time TEXT",
-            "mix_id TEXT",
-            "mix_name TEXT",
-            "mix_pic_type TEXT",
-            "mix_type TEXT",
-            "mix_share_url TEXT",
-            "mix_update_time TEXT",
-            "is_commerce_music TEXT",
-            "is_original TEXT",
-            "is_original_sound TEXT",
-            "is_pgc TEXT",
-            "music_author TEXT",
-            "music_author_raw TEXT",
-            "music_author_deleted TEXT",
-            "music_duration TEXT",
-            "music_id TEXT",
-            "music_mid TEXT",
-            "pgc_author TEXT",
-            "pgc_author_raw TEXT",
-            "pgc_author_title TEXT",
-            "pgc_author_title_raw TEXT",
-            "pgc_music_type TEXT",
-            "music_status TEXT",
-            "music_owner_handle TEXT",
-            "music_owner_handle_raw TEXT",
-            "music_owner_id TEXT",
-            "music_owner_nickname TEXT",
-            "music_owner_nickname_raw TEXT",
-            "music_play_url TEXT",
-            "position TEXT",
-            "region TEXT",
-            "seo_ocr_content TEXT",
-            "allow_douplus TEXT",
-            "download_setting TEXT",
-            "allow_share TEXT",
-            "admire_count TEXT",
-            "collect_count TEXT",
-            "comment_count TEXT",
-            "digg_count TEXT",
-            "share_count TEXT",
-            "hashtag_ids JSON",
-            "hashtag_names JSON",
-        ]
+        await super()._create_table()  # 先创建元数据表
+
+        schema = self.get_table_schema()
+        fields = []
+        for column, column_type in schema.items():
+            fields.append(f"{column} {column_type}")
 
         fields_sql = ", ".join(fields)
+
+        # 使用 CREATE TABLE IF NOT EXISTS 防止覆盖现有表
         await self.execute(
             f"""CREATE TABLE IF NOT EXISTS {self.TABLE_NAME} ({fields_sql})"""
         )
@@ -236,20 +253,30 @@ class AsyncVideoDB(BaseDB):
             ignore_fields: 要忽略的字段列表，例如 ["field1", "field2"]
             **kwargs: 字段键值对, 例如: aweme_id="some_value", desc="some_desc"
         """
-        # 如果 ignore_fields 未提供或者为 None，将其设置为空列表
-        ignore_fields = ignore_fields or []
+        # 获取表中实际存在的列
+        cursor = await self.execute(f"PRAGMA table_info({self.TABLE_NAME})")
+        existing_columns = [column[1] for column in await cursor.fetchall()]
 
-        # 从 kwargs 中删除要忽略的字段
-        for field in ignore_fields:
-            if field in kwargs:
-                del kwargs[field]
+        # 过滤掉表中不存在的列
+        filtered_kwargs = {k: v for k, v in kwargs.items() if k in existing_columns}
 
-        keys = ", ".join(kwargs.keys())
-        placeholders = ", ".join(["?"] * len(kwargs))
-        values = tuple(kwargs.values())
+        # 过滤掉要忽略的字段
+        if ignore_fields:
+            for field in ignore_fields:
+                if field in filtered_kwargs:
+                    del filtered_kwargs[field]
 
+        if not filtered_kwargs:
+            return  # 如果没有有效的字段，则直接返回
+
+        # 构建 SQL 查询
+        columns = ", ".join(filtered_kwargs.keys())
+        placeholders = ", ".join(["?"] * len(filtered_kwargs))
+        values = tuple(filtered_kwargs.values())
+
+        # 执行 SQL 查询
         await self.execute(
-            f"INSERT OR REPLACE INTO {self.TABLE_NAME} ({keys}) VALUES ({placeholders})",
+            f"INSERT OR REPLACE INTO {self.TABLE_NAME} ({columns}) VALUES ({placeholders})",
             values,
         )
         await self.commit()
