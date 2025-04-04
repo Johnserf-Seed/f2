@@ -1,7 +1,7 @@
 import pytest
 
 from f2.apps.douyin.utils import AwemeIdFetcher
-from f2.utils.utils import extract_valid_urls
+from f2.utils.string.formatter import extract_valid_urls
 
 test_urls = [
     "0.53 02/26 I@v.sE Fus:/ 你别太帅了郑润泽# 现场版live # 音乐节 # 郑润泽  https://v.douyin.com/iRNBho6u/ 复制此链接，打开Dou音搜索，直接观看视频!",

@@ -24,7 +24,7 @@ from f2.exceptions.api_exceptions import (
 from f2.exceptions.conf_exceptions import InvalidEncodingError
 from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
-from f2.utils.utils import timestamp_2_str
+from f2.utils.time.timestamp import timestamp_2_str
 
 
 class BaseCrawler:

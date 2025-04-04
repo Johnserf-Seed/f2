@@ -20,7 +20,7 @@ if __name__ == "__main__":
 import asyncio
 
 from f2.apps.tiktok.utils import AwemeIdFetcher
-from f2.utils.utils import extract_valid_urls
+from f2.utils.string.formatter import extract_valid_urls
 
 
 async def main():

@@ -1,7 +1,7 @@
 import pytest
 
 from f2.apps.douyin.utils import WebCastIdFetcher
-from f2.utils.utils import extract_valid_urls
+from f2.utils.string.formatter import extract_valid_urls
 
 test_urls = [
     "https://live.douyin.com/775841227732",

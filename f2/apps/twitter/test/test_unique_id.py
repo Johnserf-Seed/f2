@@ -4,7 +4,7 @@ from f2.apps.twitter.utils import UniqueIdFetcher
 from f2.exceptions.api_exceptions import (
     APINotFoundError,
 )
-from f2.utils.utils import extract_valid_urls
+from f2.utils.string.formatter import extract_valid_urls
 
 unique_id_test_urls = [
     "https://twitter.com/realDonaldTrump",

@@ -4,7 +4,7 @@ from f2.apps.weibo.utils import WeiboIdFetcher
 from f2.exceptions.api_exceptions import (
     APINotFoundError,
 )
-from f2.utils.utils import extract_valid_urls
+from f2.utils.string.formatter import extract_valid_urls
 
 weibo_id_test_urls = [
     "https://weibo.com/2265830070/O8DM0BLLm",

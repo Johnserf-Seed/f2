@@ -4,7 +4,7 @@ from f2.apps.weibo.utils import WeiboScreenNameFetcher
 from f2.exceptions.api_exceptions import (
     APINotFoundError,
 )
-from f2.utils.utils import extract_valid_urls
+from f2.utils.string.formatter import extract_valid_urls
 
 screen_name_test_urls = [
     "https://weibo.com/n/%E8%87%AA%E6%88%91%E5%85%85%E7%94%B5%E5%8A%9F%E8%83%BD%E4%B8%A7%E5%A4%B1",

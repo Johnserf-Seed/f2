@@ -3,7 +3,7 @@
 from typing import Dict
 
 from f2.utils.json.filter import JSONModel
-from f2.utils.utils import timestamp_2_str
+from f2.utils.time.timestamp import timestamp_2_str
 
 
 class BarkNotificationFilter(JSONModel):

@@ -21,7 +21,7 @@ import asyncio
 
 from f2.apps.weibo.utils import WeiboUidFetcher
 from f2.log.logger import logger
-from f2.utils.utils import extract_valid_urls
+from f2.utils.string.formatter import extract_valid_urls
 
 
 async def main():

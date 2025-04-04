@@ -1,7 +1,7 @@
 import pytest
 
 from f2.apps.tiktok.utils import AwemeIdFetcher
-from f2.utils.utils import extract_valid_urls
+from f2.utils.string.formatter import extract_valid_urls
 
 test_urls = [
     "https://www.tiktok.com/@justinbieber/video/7140296406429977898",
