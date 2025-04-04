@@ -137,9 +137,11 @@ package-lock.json
 Download/
 
 # DataBase
-.db
+*.db
 *_users.db
 *_videos.db
+*.db-shm
+*.db-wal
 
 # Compress
 *.zip
