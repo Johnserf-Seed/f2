@@ -36,6 +36,16 @@ If you are using `VSCode`, the `black` formatter is already configured. Alternat
 $ black **/*.py --exclude venv/*
 ```
 
+## Pre-commit Hooks 🔄
+
+`F2` uses `pre-commit` hooks to automatically check code quality and formatting. After installing pre-commit, you can run all configured hooks on all files with the following command:
+
+```bash
+$ pre-commit run --all-files
+```
+
+This will execute code formatting, type checking, and other configured quality checks to ensure your code meets project standards. It's recommended to run this command before committing, or have it automatically triggered through `git commit -m "message"`.
+
 ## Testing Guidelines 🧪
 `F2` uses `pytest` for unit testing. Here are the steps to run tests:
 
