@@ -6,45 +6,59 @@ from f2.db.base_db import BaseDB
 class AsyncUserDB(BaseDB):
     TABLE_NAME = "user_info_web"
 
+    def get_table_schema(self) -> dict:
+        """
+        定义表结构模式
+
+        Returns:
+            dict: 列名和数据类型的字典
+        """
+        return {
+            "sec_user_id": "TEXT PRIMARY KEY",
+            "avatar_url": "TEXT",
+            "aweme_count": "INTEGER",
+            "city": "TEXT",
+            "country": "TEXT",
+            "favoriting_count": "INTEGER",
+            "follower_count": "INTEGER",
+            "following_count": "INTEGER",
+            "gender": "INTEGER",
+            "ip_location": "TEXT",
+            "is_ban": "BOOLEAN",
+            "is_block": "BOOLEAN",
+            "is_blocked": "BOOLEAN",
+            "is_star": "BOOLEAN",
+            "live_status": "INTEGER",
+            "mix_count": "INTEGER",
+            "mplatform_followers_count": "INTEGER",
+            "nickname": "TEXT",
+            "nickname_raw": "TEXT",
+            "room_id": "TEXT",
+            "school_name": "TEXT",
+            "short_id": "TEXT",
+            "signature": "TEXT",
+            "signature_raw": "TEXT",
+            "total_favorited": "INTEGER",
+            "uid": "TEXT",
+            "unique_id": "TEXT",
+            "user_age": "INTEGER",
+            "last_aweme_id": "TEXT",
+        }
+
     async def _create_table(self) -> None:
         """
         在数据库中创建用户信息表
         """
-        await super()._create_table()
+        await super()._create_table()  # 先创建元数据表
 
-        fields = [
-            "sec_user_id TEXT PRIMARY KEY",
-            "avatar_url TEXT",
-            "aweme_count INTEGER",
-            "city TEXT",
-            "country TEXT",
-            "favoriting_count INTEGER",
-            "follower_count INTEGER",
-            "following_count INTEGER",
-            "gender INTEGER",
-            "ip_location TEXT",
-            "is_ban BOOLEAN",
-            "is_block BOOLEAN",
-            "is_blocked BOOLEAN",
-            "is_star BOOLEAN",
-            "live_status INTEGER",
-            "mix_count INTEGER",
-            "mplatform_followers_count INTEGER",
-            "nickname TEXT",
-            "nickname_raw TEXT",
-            "room_id TEXT",
-            "school_name TEXT",
-            "short_id TEXT",
-            "signature TEXT",
-            "signature_raw TEXT",
-            "total_favorited INTEGER",
-            "uid TEXT",
-            "unique_id TEXT",
-            "user_age INTEGER",
-            "last_aweme_id TEXT",
-        ]
+        schema = self.get_table_schema()
+        fields = []
+        for column, column_type in schema.items():
+            fields.append(f"{column} {column_type}")
 
         fields_sql = ", ".join(fields)
+
+        # 使用 CREATE TABLE IF NOT EXISTS 防止覆盖现有表
         await self.execute(
             f"""CREATE TABLE IF NOT EXISTS {self.TABLE_NAME} ({fields_sql})"""
         )
@@ -58,24 +72,67 @@ class AsyncUserDB(BaseDB):
             ignore_fields: 要忽略的字段列表，例如 ["field1", "field2"]
             **kwargs: 用户的其他字段键值对
         """
+        # 获取表中实际存在的列
+        cursor = await self.execute(f"PRAGMA table_info({self.TABLE_NAME})")
+        existing_columns = [column[1] for column in await cursor.fetchall()]
+
+        # 过滤掉表中不存在的列
+        filtered_kwargs = {k: v for k, v in kwargs.items() if k in existing_columns}
+
+        # 过滤掉要忽略的字段
+        if ignore_fields:
+            for field in ignore_fields:
+                if field in filtered_kwargs:
+                    del filtered_kwargs[field]
+
+        if not filtered_kwargs:
+            return  # 如果没有有效的字段，则直接返回
+
+        # 构建 SQL 查询
+        columns = ", ".join(filtered_kwargs.keys())
+        placeholders = ", ".join(["?"] * len(filtered_kwargs))
+        values = tuple(filtered_kwargs.values())
+
+        # 执行 SQL 查询
+        await self.execute(
+            f"INSERT OR REPLACE INTO {self.TABLE_NAME} ({columns}) VALUES ({placeholders})",
+            values,
+        )
+        await self.commit()
+
+    async def batch_insert_users(
+        self, user_data_list: list, ignore_fields=None
+    ) -> None:
+        """
+        批量添加用户信息
+
+        Args:
+            user_data_list (list): 用户信息列表
+            ignore_fields (list): 要忽略的字段列表，例如 ["field1", "field2"]
+        """
+        # 如果没有数据，直接返回
+        if not user_data_list:
+            return
 
         # 如果 ignore_fields 未提供或者为 None，将其设置为空列表
         ignore_fields = ignore_fields or []
 
-        # 从 kwargs 中删除要忽略的字段
+        # 删除要忽略的字段
         for field in ignore_fields:
-            if field in kwargs:
-                del kwargs[field]
+            for user_data in user_data_list:
+                if field in user_data:
+                    del user_data[field]
 
-        keys = ", ".join(kwargs.keys())
-        placeholders = ", ".join(["?"] * len(kwargs))
-        values = tuple(kwargs.values())
+        keys = ", ".join(user_data_list[0].keys())
+        placeholders = ", ".join(["?" for _ in range(len(user_data_list[0]))])
+
+        # 构建插入数据的元组列表
+        values = [tuple(user_data.values()) for user_data in user_data_list]
 
         await self.execute(
             f"INSERT OR REPLACE INTO {self.TABLE_NAME} ({keys}) VALUES ({placeholders})",
             values,
         )
-        # VALUES (?, {placeholders})', (kwargs.get('sec_user_id'), *values))
         await self.commit()
 
     async def update_user_info(self, sec_user_id: str, **kwargs) -> None:
@@ -86,13 +143,22 @@ class AsyncUserDB(BaseDB):
             sec_user_id (str): 用户唯一标识
             **kwargs: 用户的其他字段键值对
         """
+        # 获取表中实际存在的列
+        cursor = await self.execute(f"PRAGMA table_info({self.TABLE_NAME})")
+        existing_columns = [column[1] for column in await cursor.fetchall()]
+
+        # 过滤掉表中不存在的列
+        filtered_kwargs = {k: v for k, v in kwargs.items() if k in existing_columns}
+
+        if not filtered_kwargs:
+            return  # 如果没有有效的字段，则直接返回
 
         user_data = await self.get_user_info(sec_user_id)
         if user_data:
-            set_sql = ", ".join([f"{key} = ?" for key in kwargs.keys()])
+            set_sql = ", ".join([f"{key} = ?" for key in filtered_kwargs.keys()])
             await self.execute(
                 f"UPDATE {self.TABLE_NAME} SET {set_sql} WHERE sec_user_id=?",
-                (*kwargs.values(), sec_user_id),
+                (*filtered_kwargs.values(), sec_user_id),
             )
             await self.commit()
 
@@ -104,7 +170,7 @@ class AsyncUserDB(BaseDB):
             sec_user_id (str): 用户唯一标识
 
         Returns:
-            dict: 对应的用户信息，如果不存在则返回 None
+            dict: 对应的用户信息，如果不存在则返回空字典
         """
         cursor = await self.execute(
             f"SELECT * FROM {self.TABLE_NAME} WHERE sec_user_id=?", (sec_user_id,)
@@ -129,6 +195,9 @@ class AsyncUserDB(BaseDB):
 
     async def __aenter__(self):
         await self.connect()
+        # 确保数据库结构完整
+        schema = self.get_table_schema()
+        await self.migrate(schema)
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
