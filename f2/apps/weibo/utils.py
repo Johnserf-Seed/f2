@@ -22,7 +22,8 @@ from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.config.conf_manager import ConfigManager
 from f2.utils.http.cookie import split_set_cookie
-from f2.utils.string.formatter import extract_valid_urls, split_filename
+from f2.utils.string.formatter import extract_valid_urls
+from f2.utils.utils import split_filename
 
 
 class ClientConfManager:
