@@ -306,7 +306,7 @@ Class method to generate a randomly faked `msToken`. The length of `msToken` var
 <<< @/snippets/tiktok/token-manager.py#mstoken-false-sinppest{4}
 
 ::: tip :bulb: Hint
-The default length is `126 characters`. You can also call `from f2.utils.utils import gen_random_str` to generate a fake `msToken` of a different length.
+The default length is `126 characters`. You can also call `from from f2.utils.string.generator import gen_random_str` to generate a fake `msToken` of a different length.
 :::
 
 ### Generate `ttwid` 🟢

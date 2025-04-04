@@ -700,7 +700,7 @@ Class method to generate a random fake `msToken`. The length varies by endpoint.
 <<< @/snippets/douyin/token-manager.py#mstoken-false-sinppest{4}
 
 ::: tip 💡 Tip
-Default length is 126 characters.You can also use `from f2.utils.utils import gen_random_str` to generate fake `msToken` of different lengths.
+Default length is 126 characters.You can also use `from from f2.utils.string.generator import gen_random_str` to generate fake `msToken` of different lengths.
 :::
 
 ### Generate ttwid 🟢

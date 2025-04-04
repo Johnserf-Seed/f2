@@ -4,8 +4,9 @@ import datetime
 
 import pytest
 
+from f2.utils.string.generator import gen_random_str
 from f2.utils.time.timestamp import get_timestamp
-from f2.utils.utils import gen_random_str, merge_config
+from f2.utils.utils import merge_config
 
 
 def test_gen_random_str():

@@ -306,7 +306,7 @@ outline: [2,3]
 <<< @/snippets/tiktok/token-manager.py#mstoken-false-sinppest{4}
 
 ::: tip :bulb: 提示
-默认为 `126位`，也可调用 `from f2.utils.utils import gen_random_str`，生成不同长度的虚假msToken。
+默认为 `126位`，也可调用 `from from f2.utils.string.generator import gen_random_str`，生成不同长度的虚假msToken。
 :::
 
 ### 生成ttwid 🟢
