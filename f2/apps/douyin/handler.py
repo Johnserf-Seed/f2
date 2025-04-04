@@ -32,6 +32,7 @@ from f2.apps.douyin.filter import (
     UserFollowingFilter,
     UserLive2Filter,
     UserLiveFilter,
+    UserLiveRankingFilter,
     UserLiveStatusFilter,
     UserMixFilter,
     UserMusicCollectionFilter,
@@ -60,6 +61,7 @@ from f2.apps.douyin.model import (
     UserLike,
     UserLive,
     UserLive2,
+    UserLiveRank,
     UserLiveStatus,
     UserMix,
     UserMusicCollection,
@@ -1384,6 +1386,36 @@ class DouyinHandler:
         )
 
         return live
+
+    async def fetch_live_user_rank(
+        self,
+        room_id: str,
+        anchor_id: str,
+        sec_anchor_id: str,
+        rank_type: str = "30",
+    ):
+        """
+        获取直播间观众排行榜前100名
+        (Get the top 100 viewers in the live room)
+
+        Args:
+            room_id: str: 直播间ID (Live room ID)
+
+        Return:
+            user_live_ranking: UserLiveRankingFilter: 直播间用户列表过滤器，包含用户数据的_to_raw、_to_dict、_to_list方法
+        """
+
+        async with DouyinCrawler(self.kwargs) as crawler:
+            params = UserLiveRank(
+                room_id=room_id,
+                anchor_id=anchor_id,
+                sec_anchor_id=sec_anchor_id,
+                rank_type=rank_type,
+            )
+            response = await crawler.fetch_live_user_rank(params)
+            user_live_ranking = UserLiveRankingFilter(response)
+
+        return user_live_ranking
 
     @mode_handler("feed")
     async def handle_user_feed(self):

@@ -36,6 +36,7 @@ from f2.apps.douyin.model import (
     UserLike,
     UserLive,
     UserLive2,
+    UserLiveRank,
     UserLiveStatus,
     UserMix,
     UserMusicCollection,
@@ -271,6 +272,15 @@ class DouyinCrawler(BaseCrawler):
             return await self._fetch_get_json(endpoint)
         finally:
             self.aclient.headers = original_headers
+
+    async def fetch_live_user_rank(self, params: UserLiveRank):
+        endpoint = self.bogus_manager.model_2_endpoint(
+            self.headers.get("User-Agent"),
+            dyendpoint.LIVE_AUDIENCE_RANKING,
+            params.model_dump(),
+        )
+        logger.debug(_("直播间观众排行榜接口地址：{0}").format(endpoint))
+        return await self._fetch_get_json(endpoint)
 
     async def fetch_following_live(self, params: FollowingUserLive):
         endpoint = self.bogus_manager.model_2_endpoint(

@@ -114,6 +114,9 @@ class DouyinAPIEndpoints:
     # 直播间弹幕发送 (Live Danmaku Send)
     LIVE_CHAT_SEND = f"{LIVE_DOMAIN}/webcast/room/chat/"
 
+    # 直播间观众排行榜 (Live Audience Ranking)
+    LIVE_AUDIENCE_RANKING = f"{LIVE_DOMAIN}/webcast/ranklist/audience/"
+
     # 推荐搜索词 (Suggest Words)
     SUGGEST_WORDS = f"{DOUYIN_DOMAIN}/aweme/v1/web/api/suggest_words/"
 

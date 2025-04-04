@@ -1848,6 +1848,112 @@ class UserLive2Filter(JSONModel):
         }
 
 
+class UserLiveRankingFilter(JSONModel):
+    @property
+    def api_status_code(self):
+        return self._get_attr_value("$.status_code")
+
+    @property
+    def has_more(self):
+        return self._get_attr_value("$.has_more")
+
+    @property
+    def has_once_live(self):
+        return self._get_attr_value("$.has_once_live")
+
+    @property
+    def invisible_total(self):
+        return self._get_attr_value("$.invisible_total")
+
+    @property
+    def total(self):
+        return self._get_attr_value("$.total")
+
+    @property
+    def is_hidden(self):
+        return self._get_attr_value("$.data.ranks.[*].is_hidden")
+
+    @property
+    def rank(self):
+        return self._get_attr_value("$.data.ranks.[*].rank")
+
+    @property
+    def score(self):
+        return self._get_attr_value("$.data.ranks.[*].score")
+
+    # user
+    @property
+    def gender(self):
+        return self._get_attr_value("$.data.ranks.[*].user.gender")
+
+    @property
+    def uid(self):
+        return self._get_attr_value("$.data.ranks.[*].user.id")
+
+    @property
+    def nickname(self):
+        return replaceT(self._get_attr_value("$.data.ranks.[*].user.nickname"))
+
+    @property
+    def nickname_raw(self):
+        return self._get_attr_value("$.data.ranks.[*].user.nickname")
+
+    @property
+    def signature(self):
+        return replaceT(self._get_attr_value("$.data.ranks.[*].user.signature"))
+
+    @property
+    def signature_raw(self):
+        return self._get_attr_value("$.data.ranks.[*].user.signature")
+
+    @property
+    def sec_uid(self):
+        return self._get_attr_value("$.data.ranks.[*].user.sec_uid")
+
+    @property
+    def unique_id(self):
+        return self._get_attr_value("$.data.ranks.[*].user.display_id")
+
+    @property
+    def webcast_uid(self):
+        return self._get_attr_value("$.data.ranks.[*].user.webcast_uid")
+
+    def _to_raw(self) -> Dict:
+        return self._data
+
+    def _to_dict(self) -> Dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
+    def _to_list(self) -> list:
+        exclude_fields = [
+            "api_status_code",
+            "has_more",
+            "has_once_live",
+            "invisible_total",
+            "total",
+        ]
+
+        extra_fields = [
+            "has_more",
+            "has_once_live",
+            "invisible_total",
+            "total",
+        ]
+
+        list_dicts = filter_to_list(
+            self,
+            "$.data.ranks",
+            exclude_fields,
+            extra_fields,
+        )
+
+        return list_dicts
+
+
 class UserLiveStatusFilter(JSONModel):
     @property
     def api_status_code(self):

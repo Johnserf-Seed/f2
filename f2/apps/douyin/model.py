@@ -339,6 +339,27 @@ class LiveImFetch(BaseWebCastModel):
     user_unique_id: str
 
 
+class UserLiveRank(BaseWebCastModel):
+    aid: str = "6383"
+    app_name: str = "douyin_web"
+    live_id: str = "1"
+    device_platform: str = "web"
+    language: str = "zh-CN"
+    enter_from: str = "web_homepage_follow"
+    cookie_enabled: str = "true"
+    screen_width: str = "1920"
+    screen_height: str = "1080"
+    browser_language: str = "zh-CN"
+    browser_platform: str = "Windows"
+    browser_name: str = "Edge"
+    browser_version: str = "134.0.0.0"
+    webcast_sdk_version: str = "0"
+    room_id: str
+    anchor_id: str
+    sec_anchor_id: str
+    rank_type: str
+
+
 class UserLiveStatus(BaseRequestModel):
     user_ids: str
     aid: str = "6383"
