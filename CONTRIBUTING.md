@@ -38,13 +38,26 @@ $ black **/*.py --exclude venv/*
 
 ## Pre-commit 钩子 🔄
 
-`F2` 使用 `pre-commit` 钩子来自动检查代码质量和格式。安装 pre-commit 后，可以通过以下命令对所有文件运行所有配置的钩子：
+`F2` 使用 `pre-commit` 钩子来自动检查代码质量和格式。首先需要安装 pre-commit：
+
+```bash
+$ pip install pre-commit
+$ pre-commit install
+```
+
+安装后，每次执行 `git commit` 时都会自动运行配置的钩子。您也可以手动对所有文件运行所有配置的钩子：
 
 ```bash
 $ pre-commit run --all-files
 ```
 
 这将执行包括代码格式化、类型检查和其他配置的质量检查，确保您的代码符合项目标准。建议在提交前运行此命令，或者通过 `git commit -m "message"` 自动触发。
+
+如果某个钩子失败，请修复相关问题后再次运行命令检查。对于特殊情况，可以使用 `--no-verify` 跳过钩子检查，但不建议经常使用：
+
+```bash
+$ git commit -m "message" --no-verify
+```
 
 ## 测试规范 🧪
 `F2` 使用 `pytest` 进行单元测试。以下是如何进行测试的步骤：

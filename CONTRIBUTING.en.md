@@ -38,13 +38,26 @@ $ black **/*.py --exclude venv/*
 
 ## Pre-commit Hooks 🔄
 
-`F2` uses `pre-commit` hooks to automatically check code quality and formatting. After installing pre-commit, you can run all configured hooks on all files with the following command:
+`F2` uses `pre-commit` hooks to automatically check code quality and formatting. First, install pre-commit:
+
+```bash
+$ pip install pre-commit
+$ pre-commit install
+```
+
+Once installed, hooks will run automatically every time you execute `git commit`. You can also manually run all configured hooks on all files with the following command:
 
 ```bash
 $ pre-commit run --all-files
 ```
 
 This will execute code formatting, type checking, and other configured quality checks to ensure your code meets project standards. It's recommended to run this command before committing, or have it automatically triggered through `git commit -m "message"`.
+
+If a hook fails, fix the issues and run the command again to verify. For special cases, you can skip hook checks using `--no-verify`, but this is not recommended for regular use:
+
+```bash
+$ git commit -m "message" --no-verify
+```
 
 ## Testing Guidelines 🧪
 `F2` uses `pytest` for unit testing. Here are the steps to run tests:
