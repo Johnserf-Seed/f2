@@ -3,6 +3,16 @@ f2:
   check_update: true
   enable_bark: true
 
+  # 多语言支持
+  i18n:
+    language: "zh_CN"            # 当前设置的语言
+    default_language: "auto"     # 默认语言，auto表示自动检测
+    fallback_language: "en_US"   # 回退语言
+    language_path: "languages"   # 语言文件路径
+    supported_languages:         # 支持的语言列表
+      - "zh_CN"
+      - "en_US"
+
   bark:
     headers:
       User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0
