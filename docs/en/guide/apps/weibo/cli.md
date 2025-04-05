@@ -19,7 +19,6 @@ outline: deep
 | `-t`   | `--max-tasks` | `INTEGER` | Number of asynchronous tasks |
 | `-o`   | `--max-counts` | `INTEGER` | Maximum number of posts to download |
 | `-s`   | `--page-counts` | `INTEGER` | Number of posts fetched per page |
-| `-l`   | `--languages` | `ENUM` | Display language |
 | `-P`   | `--proxies` | `TEXT...` | Proxy servers |
 |        | `--update-config` | `BOOLEAN` | Update configuration file |
 |        | `--init-config` | `TEXT` | Initialize configuration file |
@@ -109,10 +108,6 @@ Maximum number of posts to download. Set to `None` or `0` for unlimited. Default
 ### `--page-counts`
 
 Number of posts fetched per API request. It is not recommended to exceed `20`. Default is `20`.
-
-### `--languages`
-
-Specifies the display language. Default is `zh_CN`. Supported options: `zh_CN`, `en_US`. This cannot be modified in the configuration file.
 
 ### `--proxies`
 

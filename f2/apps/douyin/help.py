@@ -70,11 +70,6 @@ def help() -> None:
             _("从接口每页可获取作品数，不建议超过 20"),
         ),
         (
-            "-l --languages",
-            "[dark_cyan]Choice",
-            _("显示语言。默认为 'zh_CN'。可选：'zh_CN'、'en_US'"),
-        ),
-        (
             "-P --proxies",
             "[dark_cyan]str",
             _(

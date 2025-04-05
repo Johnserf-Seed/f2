@@ -44,7 +44,6 @@ def help() -> None:
         ("-t --max-tasks", "[dark_cyan]int", _("异步的任务数，默认为 10")),
         ("-o --max-counts", "[dark_cyan]int", _("最大微博下载数 默认为 0，表示无限制")),
         ("-s --page-counts", "[dark_cyan]int", _("每页微博数，默认为 20个微博/页")),
-        ("-l --languages", "[dark_cyan]Choice", _("语言设置，默认为 'zh_CN'")),
         (
             "-P --proxies",
             "[dark_cyan]str",

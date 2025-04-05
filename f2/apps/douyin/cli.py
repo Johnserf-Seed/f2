@@ -10,7 +10,7 @@ import f2
 from f2 import helps
 from f2.apps.douyin.utils import ClientConfManager
 from f2.cli.cli_commands import set_cli_config
-from f2.i18n.translator import TranslationManager, _
+from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
 from f2.utils.config.conf_manager import ConfigManager
 from f2.utils.http.cookie import split_dict_cookie
@@ -88,27 +88,6 @@ def handler_auto_cookie(
         ctx.abort()
     finally:
         ctx.exit(0)
-
-
-def handler_language(
-    ctx: click.Context,
-    param: typing.Union[click.Option, click.Parameter],
-    value: typing.Any,
-) -> typing.Any:
-    """用于设置语言 (For setting the language)
-
-    Args:
-        ctx: click的上下文对象 (Click's context object)
-        param: 提供的参数或选项 (The provided parameter or option)
-        value: 参数或选项的值 (The value of the parameter or option)
-    """
-
-    if not value or ctx.resilient_parsing:
-        return
-    TranslationManager.get_instance().set_language(value)
-    global _
-    _ = TranslationManager.get_instance().gettext
-    return value
 
 
 def handler_naming(
@@ -306,14 +285,6 @@ def validate_proxies(
     type=int,
     # default=20,
     help=_("从接口每页可获取作品数，不建议超过 20"),
-)
-@click.option(
-    "--languages",
-    "-l",
-    type=click.Choice(["zh_CN", "en_US"]),
-    default="zh_CN",
-    help=_("显示语言。默认为 'zh_CN'，可选：'zh_CN'、'en_US'，不支持配置文件修改"),
-    callback=handler_language,
 )
 @click.option(
     "--proxies",

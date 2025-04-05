@@ -19,7 +19,6 @@ outline: deep
 | `-t`   | `--max-tasks` | `INTEGER` | Number of asynchronous tasks |
 | `-o`   | `--max-counts` | `INTEGER` | Maximum number of works to download |
 | `-s`   | `--page-counts` | `INTEGER` | Number of works retrieved per page |
-| `-l`   | `--languages` | `ENUM` | Display language |
 | `-P`   | `--proxies` | `TEXT...` | Proxy servers |
 |        | `--update-config` | `BOOLEAN` | Update configuration file |
 |        | `--init-config` | `TEXT` | Initialize configuration file |
@@ -110,10 +109,6 @@ Maximum number of works to download. `None` or `0` means unlimited. Default is `
 ### `--page-counts`
 
 Number of works retrieved per page from the API. Not recommended to exceed `20`. Default is `20`.
-
-### `--languages`
-
-Specifies the display language. Default is `zh_CN`. Supported options: `zh_CN` and `en_US`. Cannot be modified via configuration file.
 
 ### `--proxies`
 

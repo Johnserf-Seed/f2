@@ -46,7 +46,6 @@ def help() -> None:
         ("-t --max-tasks", "[dark_cyan]int", _("异步的任务数，默认为 10")),
         ("-o --max-counts", "[dark_cyan]int", _("最大推文下载数 默认为 0，表示无限制")),
         ("-s --page-counts", "[dark_cyan]int", _("每页推文数，默认为 20个推文/页")),
-        ("-l --languages", "[dark_cyan]Choice", _("语言设置，默认为 'zh_CN'")),
         (
             "-P --proxies",
             "[dark_cyan]str",

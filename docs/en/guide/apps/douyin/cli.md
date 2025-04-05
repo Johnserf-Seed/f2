@@ -23,7 +23,6 @@ outline: [2,3]
 | `-t`   | `--max-tasks` | `INTEGER` | Asynchronous task count |
 | `-o`   | `--max-counts` | `INTEGER` | Maximum number of downloads |
 | `-s`   | `--page-counts` | `INTEGER` | Number of works per page |
-| `-l`   | `--languages` | `ENUM` | Display language |
 | `-P`   | `--proxies` | `TEXT...` | Proxy server |
 | `-L`   | `--lyric` | `BOOLEAN` | Whether to save the original lyrics |
 |        | `--update-config` | `BOOLEAN` | Update configuration file |
@@ -137,10 +136,6 @@ Maximum number of work downloads. Set to `None` or `0` for no limit. Default is 
 ### `--page-counts`
 
 The number of works that can be obtained from each page of the interface is not recommended to exceed `20`. Default is `20`.
-
-### `--languages`
-
-Specify the display language. The default value is `zh_CN`, supports options: `zh_CN` and `en_US`, does not support modification through configuration files.
 
 ### `--proxies`
 

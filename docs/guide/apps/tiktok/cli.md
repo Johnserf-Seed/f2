@@ -24,7 +24,6 @@ outline: deep
 | `-t`   | `--max-tasks` | `INTEGER` | 异步的任务数 |
 | `-o`   | `--max-counts` | `INTEGER` | 最大作品下载数 |
 | `-s`   | `--page-counts` | `INTEGER` | 每页获取作品数 |
-| `-l`   | `--languages` | `ENUM` | 显示语言 |
 | `-P`   | `--proxies` | `TEXT...` | 代理服务器 |
 |        | `--update-config` | `BOOLEAN` | 更新配置文件 |
 |        | `--init-config` | `TEXT` | 初始化配置文件 |
@@ -134,10 +133,6 @@ outline: deep
 ### `--page-counts`
 
 从接口每页可获取作品数，不建议超过 `20`。默认为 `20`。
-
-### `--languages`
-
-指定显示语言。默认值为 `zh_CN`，支持选项：`zh_CN` 和 `en_US`，不支持通过配置文件修改。
 
 ### `--proxies`
 
