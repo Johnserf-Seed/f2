@@ -16,7 +16,6 @@ douyin:
   max_counts:
   max_tasks:
   page_counts:
-  languages:
 
 tiktok:
   url:
@@ -36,7 +35,6 @@ tiktok:
   max_retries:
   max_tasks:
   page_counts:
-  languages:
 
 weibo:
   url:
@@ -53,7 +51,6 @@ weibo:
   max_counts:
   max_tasks:
   page_counts:
-  languages:
 
 twitter:
   url:
@@ -69,7 +66,6 @@ twitter:
   max_counts:
   max_tasks:
   page_counts:
-  languages:
 
 bark:
   key:
