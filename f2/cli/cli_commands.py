@@ -11,7 +11,7 @@ import f2
 from f2 import helps
 from f2.apps import __apps__ as apps_module
 from f2.cli.cli_console import RichConsoleManager
-from f2.i18n.translator import _
+from f2.i18n.translator import TranslationManager, _
 from f2.log.logger import logger, trace_logger
 from f2.utils.core.signal import SignalManager
 from f2.utils.utils import check_python_version
@@ -58,6 +58,28 @@ def handle_debug(
 
     logger.setLevel(value)
     logger.debug(_("调试模式：{0}").format(value))
+
+
+# 处理语言
+def handler_language(
+    ctx: click.Context,
+    param: typing.Union[click.Option, click.Parameter],
+    value: typing.Any,
+) -> typing.Any:
+    """用于设置语言 (For setting the language)
+
+    Args:
+        ctx: click的上下文对象 (Click's context object)
+        param: 提供的参数或选项 (The provided parameter or option)
+        value: 参数或选项的值 (The value of the parameter or option)
+    """
+
+    if not value or ctx.resilient_parsing:
+        return
+    TranslationManager.get_instance().set_language(value)
+    global _
+    _ = TranslationManager.get_instance().gettext
+    return value
 
 
 # 版本检测
@@ -168,6 +190,15 @@ class DynamicGroup(click.Group):
     is_eager=True,
     expose_value=False,
     callback=handle_debug,
+)
+@click.option(
+    "--languages",
+    "-l",
+    type=click.Choice(["zh_CN", "en_US"]),
+    is_eager=True,
+    expose_value=False,
+    help=_("显示语言。默认为 'zh_CN'，可选：'zh_CN'、'en_US'，不支持配置文件修改"),
+    callback=handler_language,
 )
 @click.option(
     "--check-version",
