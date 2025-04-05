@@ -69,7 +69,7 @@ dependencies = [
     "httpx==0.28.1",
     "aiofiles==24.1.0",
     "aiosqlite==0.20.0",
-    "pyyaml==6.0.2",
+    "ruamel.yaml==0.18.10",
     "jsonpath-ng==1.6.1",
     "importlib_resources==6.4.5",
     "m3u8==3.6.0",

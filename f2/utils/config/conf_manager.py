@@ -5,7 +5,7 @@ import traceback
 from pathlib import Path
 
 import click
-import yaml
+from ruamel.yaml import YAML
 
 import f2
 from f2.exceptions.file_exceptions import (
@@ -13,7 +13,7 @@ from f2.exceptions.file_exceptions import (
     FilePermissionError,
 )
 from f2.i18n.translator import _
-from f2.log.logger import logger
+from f2.log.logger import logger, trace_logger
 from f2.utils.utils import get_resource_path
 
 
@@ -23,10 +23,12 @@ class ConfigManager:
 
     该类用于加载、管理和更新应用的配置文件。通过提供的路径读取配置，支持配置文件的备份、更新和保存功能。
     它还可以生成默认配置文件，处理与配置相关的错误，并使用字典格式来组织配置数据。
+    使用ruamel.yaml库保留YAML文件的注释、格式和顺序。
 
     类属性:
     - filepath (Path): 配置文件的路径。
     - config (dict): 存储的配置数据，以字典形式表示。
+    - yaml (YAML): ruamel.yaml实例，用于处理YAML文件。
 
     类方法:
     - __init__: 初始化配置管理器，加载配置文件。
@@ -61,6 +63,13 @@ class ConfigManager:
             self.filepath = Path(filepath)
         else:
             self.filepath = Path(get_resource_path(filepath))
+
+        # 配置ruamel.yaml
+        self.yaml = YAML()
+        self.yaml.preserve_quotes = True  # 保留引号
+        self.yaml.width = 160  # 行宽
+        self.yaml.indent(mapping=2, sequence=4, offset=2)  # 设置缩进
+
         self.config = self.load_config()
 
     def _replace_none(self, data, default=""):
@@ -92,14 +101,15 @@ class ConfigManager:
         if not self.filepath.exists():
             raise FileNotFound(_("配置文件不存在"), self.filepath)
         try:
-            config = yaml.safe_load(self.filepath.read_text(encoding="utf-8")) or {}
+            with open(self.filepath, "r", encoding="utf-8") as file:
+                config = self.yaml.load(file) or {}
             # 遍历配置，替换 None 值为空字符串
             return self._replace_none(config)
         except PermissionError:
             raise FilePermissionError(_("配置文件路径无读权限"), self.filepath)
-        except yaml.YAMLError:
-            logger.error(_("配置文件解析错误"))
-            logger.debug(traceback.format_exc())
+        except Exception as e:
+            logger.error(_("配置文件解析错误: {0}").format(str(e)))
+            trace_logger.debug(traceback.format_exc())
             sys.exit(1)
 
     def get_config(self, app_name: str, default=None) -> dict:
@@ -113,18 +123,23 @@ class ConfigManager:
         Return:
             self.config.get 配置字典 (conf dict)
         """
-
         return self.config.get(app_name, default)
 
     def save_config(self, config: dict):
-        """将配置保存到文件 (Save the conf to the file)
+        """将配置保存到文件，保留原始格式和注释 (Save the conf to the file preserving original format and comments)
+
         Args:
             config: dict: 配置字典 (conf dict)
         """
         try:
-            self.filepath.write_text(yaml.dump(config), encoding="utf-8")
+            with open(self.filepath, "w", encoding="utf-8") as file:
+                self.yaml.dump(config, file)
         except PermissionError:
             raise FilePermissionError(_("配置文件路径无写权限"), self.filepath)
+
+    def exists(self):
+        """检查配置文件是否存在"""
+        return self.filepath.exists()
 
     def backup_config(self):
         """在进行更改前备份配置文件 (Backup the conf file before making changes)"""
@@ -135,10 +150,14 @@ class ConfigManager:
         backup_path = self.filepath.with_suffix(".bak")
         if backup_path.exists():
             backup_path.unlink()  # 删除已经存在的备份文件 (Delete existing backup files)
-        self.filepath.rename(backup_path)
+
+        # 直接复制而不是重命名，保留原始文件
+        import shutil
+
+        shutil.copy2(self.filepath, backup_path)
 
     def generate_config(self, app_name: str, save_path: Path):
-        """生成应用程序特定配置文件 (Generate application-specific conf file)"""
+        """生成应用程序特定配置文件，保留格式 (Generate application-specific conf file with formatting)"""
 
         if not isinstance(app_name, str):
             return
@@ -154,26 +173,40 @@ class ConfigManager:
         save_path.parent.mkdir(parents=True, exist_ok=True)
 
         # 读取默认配置
-        default_config = (
-            yaml.safe_load(
-                Path(get_resource_path(f2.F2_DEFAULTS_FILE_PATH)).read_text(
-                    encoding="utf-8"
+        defaults_path = Path(get_resource_path(f2.F2_DEFAULTS_FILE_PATH))
+
+        try:
+            with open(defaults_path, "r", encoding="utf-8") as file:
+                default_config = self.yaml.load(file) or {}
+
+            if app_name in default_config:
+                # 将app_name作为外层键
+                app_config = {app_name: default_config[app_name]}
+
+                # 写入应用程序特定配置，保留格式
+                with open(save_path, "w", encoding="utf-8") as file:
+                    self.yaml.dump(app_config, file)
+
+                logger.info(
+                    _("{0} 应用配置文件生成成功，保存至 {1}").format(
+                        app_name, save_path
+                    )
                 )
-            )
-            or {}
-        )
+            else:
+                logger.info(_("{0} 应用配置未找到").format(app_name))
+        except Exception as e:
+            logger.error(_("生成配置文件失败: {0}").format(str(e)))
+            trace_logger.debug(traceback.format_exc())
 
-        if app_name in default_config:
-            # 将app_name作为外层键 # https://github.com/Johnserf-Seed/TikTokDownload/issues/626  #629
-            app_config = {app_name: default_config[app_name]}
+    def update_config(self, app_name: str, app_config: dict):
+        """更新配置项并保存
 
-            # 写入应用程序特定配置
-            save_path.write_text(yaml.dump(app_config), encoding="utf-8")
-            logger.info(
-                _("{0} 应用配置文件生成成功，保存至 {1}").format(app_name, save_path)
-            )
-        else:
-            logger.info(_("{0} 应用配置未找到").format(app_name))
+        Args:
+            app_name: str: 应用名称
+            app_config: dict: 应用配置
+        """
+        self.config[app_name] = app_config
+        self.save_config(self.config)
 
     def update_config_with_args(self, app_name: str, **kwargs):
         """
@@ -183,7 +216,6 @@ class ConfigManager:
             app_name: str: 应用名称 (app name)
             kwargs: dict: 配置字典 (conf dict)
         """
-
         app_config = self.config.get(app_name, {})
 
         # 使用提供的参数更新特定应用的配置
