@@ -10,7 +10,7 @@ import f2
 from f2 import helps
 from f2.apps.twitter.utils import ClientConfManager
 from f2.cli.cli_commands import set_cli_config
-from f2.i18n.translator import TranslationManager, _
+from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
 from f2.utils.config.conf_manager import ConfigManager
 from f2.utils.core.adapters import adapt_validation_call
