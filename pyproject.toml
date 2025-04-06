@@ -81,6 +81,7 @@ dependencies = [
     "websockets_proxy==0.1.2",
     "PyExecJS==1.5.1",
     "protobuf==5.29.3",
+    "mypy-protobuf==3.6.0",
     "gmssl==3.2.2",
     "cryptography==44.0.0",
 ]
