@@ -36,10 +36,7 @@ class BaseRequestModel(BaseModel):
     downlink: int = 10
     effective_type: str = "4g"
     round_trip_time: int = 100
-    try:
-        msToken: str = TokenManager.gen_real_msToken()
-    except:
-        msToken: str = TokenManager.gen_real_msToken()
+    msToken: str = TokenManager.gen_real_msToken()
 
 
 class BaseLiveModel(BaseModel):

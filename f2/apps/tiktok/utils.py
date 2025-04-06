@@ -1112,11 +1112,7 @@ class DeviceIdManager(BaseCrawler):
     _DEVICE_ID_URL = "https://www.tiktok.com/"
     _DEVICE_ID_FULL_URL = "https://www.tiktok.com/explore"
 
-    try:
-        _MSTOKEN = TokenManager.gen_real_msToken()
-    except Exception as e:
-        _MSTOKEN = TokenManager.gen_real_msToken()
-
+    _MSTOKEN = TokenManager.gen_real_msToken()
     _DEVICE_ID_HEADERS = {
         "User-Agent": ClientConfManager.user_agent(),
         "Cookie": f"msToken={_MSTOKEN}",
