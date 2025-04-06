@@ -12,6 +12,7 @@ from f2.cli.cli_commands import set_cli_config
 from f2.i18n.translator import TranslationManager, _
 from f2.log.logger import logger
 from f2.utils.config.conf_manager import ConfigManager
+from f2.utils.core.adapters import adapt_validation_call
 from f2.utils.http.proxy import check_proxy_avail
 from f2.utils.utils import get_resource_path, merge_config
 
@@ -350,8 +351,8 @@ def bark(
 
     # 验证 key 和 token 的长度（无论从命令行还是配置文件获取）
     try:
-        validate_key_length(ctx, None, key)
-        validate_device_token_length(ctx, None, token)
+        adapt_validation_call(validate_key_length, ctx, key)
+        adapt_validation_call(validate_device_token_length, ctx, token)
     except click.BadParameter as e:
         logger.error(str(e))
         ctx.exit(1)
@@ -376,7 +377,7 @@ def bark(
                 "Bark CLI 缺乏必要参数：[cyan]{0}[/cyan]。详情请查看帮助，[yellow]f2 bark -h/--help[/yellow]"
             ).format("，".join(missing_params))
         )
-        handler_help(ctx, None, True)
+        adapt_validation_call(handler_help, ctx, True)
 
     # 添加app_name到kwargs
     kwargs["app_name"] = "bark"
