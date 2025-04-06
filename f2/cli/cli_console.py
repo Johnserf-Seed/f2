@@ -143,7 +143,7 @@ class ProgressManager:
 
     def __init__(
         self,
-        spinner_column: CustomSpinnerColumn = None,
+        spinner_column: Optional[CustomSpinnerColumn] = None,
         custom_columns: Optional[Dict[str, ProgressColumn]] = None,
         bar_width: Optional[int] = None,
         expand: bool = False,
@@ -160,7 +160,7 @@ class ProgressManager:
             *chosen_columns_dict.values(), transient=False, expand=expand
         )
         self._progress_lock = Lock()
-        self._active_tasks = set()
+        self._active_tasks: set = set()
 
     def start(self):
         self._progress.start()

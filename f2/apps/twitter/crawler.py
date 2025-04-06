@@ -1,5 +1,7 @@
 # path: f2/apps/twitter/crawler.py
 
+from typing import Optional
+
 from f2.apps.twitter.api import TwitterAPIEndpoints as xendpoints
 from f2.apps.twitter.model import (
     BookmarkTweet,
@@ -23,7 +25,7 @@ from f2.log.logger import logger
 class TwitterCrawler(BaseCrawler):
     def __init__(
         self,
-        kwargs: dict = None,
+        kwargs: Optional[dict] = None,
     ):
         # 需要与cli同步
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})

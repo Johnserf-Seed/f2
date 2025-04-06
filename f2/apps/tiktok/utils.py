@@ -5,7 +5,7 @@ import json
 import re
 import traceback
 from pathlib import Path
-from typing import Union
+from typing import Optional, Union
 
 import httpx
 
@@ -1267,8 +1267,8 @@ class DeviceIdManager(BaseCrawler):
 
 def format_file_name(
     naming_template: str,
-    aweme_data: dict = None,
-    custom_fields: dict = None,
+    aweme_data: Optional[dict] = None,
+    custom_fields: Optional[dict] = None,
 ) -> str:
     """
     根据配置文件的全局格式化文件名

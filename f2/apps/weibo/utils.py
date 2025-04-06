@@ -3,7 +3,7 @@
 import asyncio
 import re
 from pathlib import Path
-from typing import Union
+from typing import Optional, Union
 from urllib.parse import unquote
 
 import httpx
@@ -66,7 +66,7 @@ class ClientConfManager:
 class ModelManager:
 
     @classmethod
-    def model_2_endpoint(cls, base_endpoint: str, params: dict = None) -> str:
+    def model_2_endpoint(cls, base_endpoint: str, params: Optional[dict] = None) -> str:
         if not params:
             return base_endpoint
 

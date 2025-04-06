@@ -1,7 +1,7 @@
 # path: f2/apps/douyin/dl.py
 
 import asyncio
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 from rich.live import Live
 from rich.rule import Rule
@@ -17,7 +17,7 @@ from f2.utils.utils import filter_by_date_interval
 
 
 class DouyinDownloader(BaseDownloader):
-    def __init__(self, kwargs: dict = None):
+    def __init__(self, kwargs: Optional[dict] = None):
         if kwargs["cookie"] is None:
             raise ValueError(
                 _(

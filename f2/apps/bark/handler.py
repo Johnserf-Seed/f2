@@ -3,6 +3,7 @@
 import json
 import traceback
 from base64 import b64encode
+from typing import Optional
 
 from f2.apps.bark.crawler import BarkCrawler
 from f2.apps.bark.filter import BarkNotificationFilter
@@ -16,7 +17,7 @@ from f2.utils.crypto.aes import AESEncryptionUtils
 
 class BarkHandler:
 
-    def __init__(self, kwargs: dict = None) -> None:
+    def __init__(self, kwargs: Optional[dict] = None) -> None:
         self.kwargs = kwargs
 
     async def _send_bark_notification(self, send_method: str) -> BarkNotificationFilter:

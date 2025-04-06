@@ -39,7 +39,9 @@ class AsyncUserDB(BaseDB):
         )
         await self.commit()
 
-    async def add_user_info(self, ignore_fields: list = None, **kwargs) -> None:
+    async def add_user_info(
+        self, ignore_fields: Optional[list] = None, **kwargs
+    ) -> None:
         """
         添加用户信息
 

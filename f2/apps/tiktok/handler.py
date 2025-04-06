@@ -2,7 +2,7 @@
 
 import asyncio
 from pathlib import Path
-from typing import Any, AsyncGenerator, List, Union
+from typing import Any, AsyncGenerator, List, Optional, Union
 from urllib.parse import quote
 
 from rich.rule import Rule
@@ -70,7 +70,7 @@ class TiktokHandler:
         "cover",
     ]
 
-    def __init__(self, kwargs: dict = None) -> None:
+    def __init__(self, kwargs: Optional[dict] = None) -> None:
         self.kwargs = kwargs
         self.downloader = TiktokDownloader(kwargs)
         # 初始化 Bark 通知服务
@@ -183,7 +183,7 @@ class TiktokHandler:
         cls,
         aweme_data: dict,
         db: AsyncVideoDB,
-        ignore_fields: list = None,
+        ignore_fields: Optional[list] = None,
     ):
         """
         获取或创建作品数据同时创建用户目录
@@ -1143,7 +1143,7 @@ class TiktokHandler:
         internal_ext: str,
         cursor: str,
         wrss: str,
-        wss_callbacks: dict = None,
+        wss_callbacks: Optional[dict] = None,
     ):
         """
         通过WebSocket连接获取直播间弹幕，再通过回调函数处理弹幕数据。

@@ -1,5 +1,7 @@
 # path: f2/apps/weibo/crawler.py
 
+from typing import Optional
+
 from f2.apps.weibo.api import WeiboAPIEndpoints as wbendpoint
 from f2.apps.weibo.model import (
     UserDetail,
@@ -16,7 +18,7 @@ from f2.log.logger import logger
 class WeiboCrawler(BaseCrawler):
     def __init__(
         self,
-        kwargs: dict = None,
+        kwargs: Optional[dict] = None,
     ):
         # 需要与cli同步
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})

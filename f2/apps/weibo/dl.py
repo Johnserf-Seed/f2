@@ -1,7 +1,7 @@
 # path: f2/apps/weibo/dl.py
 
 import asyncio
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 from rich.live import Live
 from rich.rule import Rule
@@ -15,7 +15,7 @@ from f2.log.logger import logger
 
 
 class WeiboDownloader(BaseDownloader):
-    def __init__(self, kwargs: dict = None) -> None:
+    def __init__(self, kwargs: Optional[dict] = None) -> None:
         if kwargs["cookie"] is None:
             raise ValueError(
                 _(
@@ -29,7 +29,7 @@ class WeiboDownloader(BaseDownloader):
         self,
         kwargs: Dict,
         weibo_datas: Union[List, Dict],
-        user_path: Any = None,
+        user_path: Optional[Any] = None,
     ) -> None:
         """
         创建下载任务

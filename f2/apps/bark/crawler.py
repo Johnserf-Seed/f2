@@ -1,5 +1,6 @@
 # path: f2/apps/bark/crawler.py
 
+from typing import Optional
 from urllib.parse import quote
 
 from f2.apps.bark.api import BarkAPIEndpoints as bkendpoint
@@ -13,7 +14,7 @@ from f2.utils.utils import BaseEndpointManager
 class BarkCrawler(BaseCrawler):
     def __init__(
         self,
-        kwargs: dict = None,
+        kwargs: Optional[dict] = None,
     ):
         # 需要与cli同步
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})

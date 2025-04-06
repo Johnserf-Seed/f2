@@ -111,7 +111,9 @@ class AESEncryptionUtils:
             return self._aes_decrypt_ecb(ciphertext)
 
     # 以下是私有方法实现具体加密算法
-    def _aes_encrypt_gcm(self, plaintext: bytes, nonce: bytes = None) -> bytes:
+    def _aes_encrypt_gcm(
+        self, plaintext: bytes, nonce: Optional[bytes] = None
+    ) -> bytes:
         """GCM模式加密"""
         if nonce is None:
             nonce = self.iv or secrets.token_bytes(12)

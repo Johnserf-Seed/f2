@@ -2,7 +2,7 @@
 
 import traceback
 from pathlib import Path
-from typing import Union
+from typing import Optional, Union
 from urllib.error import HTTPError
 
 import httpx
@@ -14,7 +14,7 @@ from f2.utils.utils import ensure_path
 
 
 async def get_content_length(
-    url: str, headers: dict = None, proxies: dict = None
+    url: str, headers: Optional[dict] = None, proxies: Optional[dict] = None
 ) -> int:
     """
     获取给定URL的Content-Length (Retrieve the Content-Length for a given URL)

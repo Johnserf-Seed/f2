@@ -4,6 +4,7 @@ import asyncio
 import json
 import time
 import traceback
+from typing import Optional
 
 import httpx
 import websockets
@@ -572,9 +573,9 @@ class WebSocketCrawler:
     def __init__(
         self,
         wss_headers: dict,
-        callbacks: dict = None,
+        callbacks: Optional[dict] = None,
         timeout: int = 10,
-        proxy: str = None,
+        proxy: Optional[str] = None,
     ):
         """
         初始化 WebSocketCrawler 实例

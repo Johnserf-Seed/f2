@@ -4,7 +4,7 @@ import datetime
 import re
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 import browser_cookie3
 import importlib_resources
@@ -332,7 +332,7 @@ def filter_to_list(
     filter_instance: Any,
     entries_path: str,
     exclude_fields: List[str],
-    extra_fields: List[str] = None,
+    extra_fields: Optional[List[str]] = None,
 ) -> list:
     """
     通用的 `_to_list` 方法实现。

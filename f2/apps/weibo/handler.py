@@ -2,7 +2,7 @@
 
 import asyncio
 from pathlib import Path
-from typing import Any, AsyncGenerator, Dict, List, Union
+from typing import Any, AsyncGenerator, Dict, List, Optional, Union
 
 from rich.rule import Rule
 
@@ -340,7 +340,7 @@ class WeiboHandler:
         page: int = 1,
         feature: int = 0,
         since_id: str = "",
-        max_counts: int = None,
+        max_counts: Optional[int] = None,
     ) -> AsyncGenerator[UserWeiboFilter, Any]:
         """
         用于获取用户微博数据。

@@ -2,6 +2,7 @@
 
 import hashlib
 from pathlib import Path
+from typing import Optional
 
 import execjs
 
@@ -46,7 +47,7 @@ class DouyinWebcastSignature:
     - `hashlib` 用于计算 MD5 值。
     """
 
-    def __init__(self, user_agent: str = None):
+    def __init__(self, user_agent: Optional[str] = None):
         self.user_agent = (
             user_agent
             if user_agent is not None and user_agent != ""

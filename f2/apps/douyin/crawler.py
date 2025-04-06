@@ -4,6 +4,7 @@ import asyncio
 import gzip
 import json
 import traceback
+from typing import Optional
 from urllib.parse import urlencode
 
 from google.protobuf import json_format
@@ -94,7 +95,7 @@ from f2.utils.utils import BaseEndpointManager
 class DouyinCrawler(BaseCrawler):
     def __init__(
         self,
-        kwargs: dict = None,
+        kwargs: Optional[dict] = None,
     ):
         # 需要与cli同步
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})
@@ -384,7 +385,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
     # 是否显示直播间消息
     show_message = False
 
-    def __init__(self, kwargs: dict = None, callbacks: dict = None):
+    def __init__(self, kwargs: Optional[dict] = None, callbacks: Optional[dict] = None):
         self.__class__.show_message = bool(kwargs.get("show_message", True))
         # 需要与cli同步
         self.headers = kwargs.get("headers", {}) | {

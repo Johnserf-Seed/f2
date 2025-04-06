@@ -2,7 +2,7 @@
 
 import asyncio
 from pathlib import Path
-from typing import Any, AsyncGenerator, Dict, List, Union
+from typing import Any, AsyncGenerator, Dict, List, Optional, Union
 from urllib.parse import quote
 
 from rich.rule import Rule
@@ -108,7 +108,7 @@ class DouyinHandler:
         "images_video",
     ]
 
-    def __init__(self, kwargs: dict = None) -> None:
+    def __init__(self, kwargs: Optional[dict] = None) -> None:
         self.kwargs = kwargs
         self.downloader = DouyinDownloader(self.kwargs)
         # 初始化 Bark 通知服务
@@ -216,7 +216,7 @@ class DouyinHandler:
         cls,
         aweme_data: Dict,
         db: AsyncVideoDB,
-        ignore_fields: List = None,
+        ignore_fields: Optional[List] = None,
     ):
         """
         获取或创建作品数据库数据
@@ -229,7 +229,7 @@ class DouyinHandler:
         """
 
         # 尝试从数据库中获取作品数据
-        local_video_data = await db.get_video_info(aweme_data.get("aweme_id"))
+        local_video_data = await db.get_video_info(str(aweme_data.get("aweme_id")))
 
         # 如果作品不在数据库中，将其添加到数据库
         if not local_video_data:
@@ -375,7 +375,7 @@ class DouyinHandler:
         min_cursor: int = 0,
         max_cursor: int = 0,
         page_counts: int = 20,
-        max_counts: int = None,
+        max_counts: Optional[int] = None,
     ) -> AsyncGenerator[UserPostFilter, Any]:
         """
         用于获取指定用户发布的作品列表。
@@ -505,7 +505,7 @@ class DouyinHandler:
         sec_user_id: str,
         max_cursor: int = 0,
         page_counts: int = 20,
-        max_counts: int = None,
+        max_counts: Optional[int] = None,
     ) -> AsyncGenerator[UserPostFilter, Any]:
         """
         用于获取指定用户点赞的作品列表。
@@ -625,7 +625,7 @@ class DouyinHandler:
         self,
         max_cursor: int = 0,
         page_counts: int = 20,
-        max_counts: int = None,
+        max_counts: Optional[int] = None,
     ) -> AsyncGenerator[UserMusicCollectionFilter, Any]:
         """
         用于获取指定用户收藏的音乐作品列表。
@@ -732,7 +732,7 @@ class DouyinHandler:
         self,
         max_cursor: int = 0,
         page_counts: int = 20,
-        max_counts: int = None,
+        max_counts: Optional[int] = None,
     ) -> AsyncGenerator[UserCollectionFilter, Any]:
         """
         用于获取指定用户收藏的作品列表。
@@ -923,7 +923,7 @@ class DouyinHandler:
         self,
         max_cursor: int = 0,
         page_counts: int = 20,
-        max_counts: int = None,
+        max_counts: Optional[int] = None,
     ) -> AsyncGenerator[UserCollectsFilter, Any]:
         """
         用于获取指定用户收藏夹。
@@ -988,7 +988,7 @@ class DouyinHandler:
         collects_id: str,
         max_cursor: int = 0,
         page_counts: int = 20,
-        max_counts: int = None,
+        max_counts: Optional[int] = None,
     ) -> AsyncGenerator[UserCollectionFilter, Any]:
         """
         用于获取指定用户收藏夹的作品列表。
@@ -1128,7 +1128,7 @@ class DouyinHandler:
         mix_id: str,
         max_cursor: int = 0,
         page_counts: int = 20,
-        max_counts: int = None,
+        max_counts: Optional[int] = None,
     ) -> AsyncGenerator[UserMixFilter, Any]:
         """
         用于获取指定用户合集的作品列表。
@@ -1448,7 +1448,7 @@ class DouyinHandler:
         sec_user_id: str,
         max_cursor: int = 0,
         page_counts: int = 20,
-        max_counts: int = None,
+        max_counts: Optional[int] = None,
     ) -> AsyncGenerator[UserPostFilter, Any]:
         """
         用于获取指定用户feed的作品列表。
@@ -1567,7 +1567,7 @@ class DouyinHandler:
         aweme_id: str,
         filterGids: str = "",
         page_counts: int = 20,
-        max_counts: int = None,
+        max_counts: Optional[int] = None,
     ) -> AsyncGenerator[PostRelatedFilter, Any]:
         """
         用于获取指定作品的相关推荐作品列表。
@@ -1673,7 +1673,7 @@ class DouyinHandler:
         cursor: int = 0,
         level: int = 1,
         pull_type: int = 0,
-        max_counts: int = None,
+        max_counts: Optional[int] = None,
     ) -> AsyncGenerator[FriendFeedFilter, Any]:
         """
         用于获取指定用户好友作品列表。
@@ -1978,7 +1978,7 @@ class DouyinHandler:
             )
             logger.debug(_("结束查询用户基本信息"))
         else:
-            logger.warning(_("请提供正确的ttwid")),
+            logger.warning(_("请提供正确的ttwid"))
 
         return user
 
@@ -2049,7 +2049,7 @@ class DouyinHandler:
         user_unique_id: str,
         internal_ext: str,
         cursor: str,
-        wss_callbacks: dict = None,
+        wss_callbacks: Optional[dict] = None,
     ):
         """
         通过WebSocket连接获取直播间弹幕，再通过回调函数处理弹幕数据。
@@ -2245,7 +2245,7 @@ class DouyinHandler:
         aweme_id: str,
         cursor: int = 0,
         page_counts: int = 20,
-        max_counts: int = None,
+        max_counts: Optional[int] = None,
     ) -> AsyncGenerator[PostCommentFilter, Any]:
         """
         用于获取作品评论。
@@ -2321,7 +2321,7 @@ class DouyinHandler:
         comment_id: str,
         cursor: int = 0,
         page_counts: int = 3,
-        max_counts: int = None,
+        max_counts: Optional[int] = None,
     ) -> AsyncGenerator[PostCommentReplyFilter, Any]:
         """
         用于获取评论的回复。
@@ -2372,7 +2372,7 @@ class DouyinHandler:
             logger.debug(_("当前请求的cursor: {0}").format(cursor))
             logger.debug(
                 _("回复ID: {0} 回复内容: {1} 回复用户: {2}").format(
-                    reply.reply_id, reply.reply_text_raw, reply.nickname_raw
+                    reply.reply_id, reply.reply_comment_text_raw, reply.nickname_raw
                 )
             )
 
@@ -2402,7 +2402,7 @@ class DouyinHandler:
         search_id: str = "",
         offset: int = 0,
         page_counts: int = 20,
-        max_counts: int = None,
+        max_counts: Optional[int] = None,
     ) -> AsyncGenerator[HomePostSearchFilter, Any]:
         """
         用于搜索指定关键词的作品。

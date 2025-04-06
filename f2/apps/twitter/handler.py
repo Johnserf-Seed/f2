@@ -2,7 +2,7 @@
 
 import asyncio
 from pathlib import Path
-from typing import Any, AsyncGenerator
+from typing import Any, AsyncGenerator, Optional
 
 from f2.apps.bark.handler import BarkHandler
 from f2.apps.bark.utils import ClientConfManager as BarkClientConfManager
@@ -41,7 +41,7 @@ rich_prompt = RichConsoleManager().rich_prompt
 
 class TwitterHandler:
 
-    def __init__(self, kwargs: dict = None) -> None:
+    def __init__(self, kwargs: Optional[dict] = None) -> None:
         self.kwargs = kwargs
         self.downloader = TwitterDownloader(kwargs)
         # 初始化 Bark 通知服务
@@ -255,7 +255,7 @@ class TwitterHandler:
         userId: str,
         page_counts: int = 20,
         max_cursor: str = "",
-        max_counts: int = None,
+        max_counts: Optional[int] = None,
     ) -> AsyncGenerator[PostTweetFilter, Any]:
         """
         用于获取用户发布的推文。
@@ -363,7 +363,7 @@ class TwitterHandler:
         userId: str,
         page_counts: int = 20,
         max_cursor: str = "",
-        max_counts: int = None,
+        max_counts: Optional[int] = None,
     ) -> AsyncGenerator[LikeTweetFilter, Any]:
         """
         用于获取用户喜欢的推文。
@@ -469,7 +469,7 @@ class TwitterHandler:
         self,
         page_counts: int = 20,
         max_cursor: str = "",
-        max_counts: int = None,
+        max_counts: Optional[int] = None,
     ) -> AsyncGenerator[LikeTweetFilter, Any]:
         """
         用于获取用户收藏的推文。

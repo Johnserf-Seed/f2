@@ -1,6 +1,7 @@
 # path: f2/utils/http/proxy.py
 
 import traceback
+from typing import Optional
 
 import httpx
 
@@ -12,7 +13,6 @@ def check_proxy_avail(
     http_proxy: str,
     https_proxy: str,
     test_url: str = "https://www.google.com",
-    expected_content: str = None,
     timeout: int = 5,
     method: str = "GET",
     **kwargs,
