@@ -137,7 +137,7 @@ class VisitorManager(BaseCrawler):
                 ).format(
                     instance.visitor_conf["url"],
                     instance.proxies,
-                    instance.__name__,
+                    exc.__class__.__name__,
                     exc,
                 )
             )

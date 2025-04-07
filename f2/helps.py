@@ -104,7 +104,7 @@ def main() -> None:
         _(
             "[green]这里说不定有你需要的答案 [link=https://github.com/Johnserf-Seed/f2/issues]Click Here[/]"
         ),
-    ),
+    )
     table.add_row(
         _("Document📕"),
         _("[yellow]务必先去看文档哦 [link=https://f2.wiki/]Click Here[/]"),

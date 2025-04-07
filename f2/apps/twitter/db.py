@@ -4,7 +4,7 @@ from f2.db.base_db import BaseDB
 
 
 class AsyncUserDB(BaseDB):
-    TABLE_NAME = "user_info_web"
+    TABLE_NAME: str = "user_info_web"
 
     async def _create_table(self) -> None:
         """

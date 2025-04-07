@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-import browser_cookie3
+import browser_cookie3  # type: ignore[import-untyped]
 import importlib_resources
 from rich.console import Console
 from rich.panel import Panel
@@ -97,6 +97,9 @@ def get_cookie_from_browser(browser_choice: str, domain: str = "") -> dict:
         "librewolf": browser_cookie3.librewolf,
     }
     cj_function = BROWSER_FUNCTIONS.get(browser_choice)
+    if not cj_function:
+        logger.error(_("不支持的浏览器：{0}").format(browser_choice))
+        return {}
     cj = cj_function(domain_name=domain)
     cookie_value = {c.name: c.value for c in cj if c.domain.endswith(domain)}
     return cookie_value

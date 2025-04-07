@@ -23,7 +23,7 @@ import random
 import time
 from typing import Callable, Dict, List, Union
 
-from gmssl import func, sm3
+from gmssl import func, sm3  # type: ignore[import-untyped]
 
 
 class StringProcessor:
@@ -487,9 +487,6 @@ class BrowserFingerprintGenerator:
     """
     BrowserFingerprintGenerator 用于生成模拟的浏览器指纹信息，用于在不同浏览器环境中进行测试和数据采集。
 
-    类属性:
-        browsers (Dict[str, Callable[[], str]]): 浏览器类型和生成浏览器指纹的映射关系。
-
     方法:
         generate_fingerprint(browser_type="Edge"):
             根据指定的浏览器类型生成浏览器指纹。
@@ -527,13 +524,13 @@ class BrowserFingerprintGenerator:
         Returns:
             str: 生成的浏览器指纹字符串 (Generated browser fingerprint string).
         """
-        cls.browsers: Dict[str, Callable[[], str]] = {
+        browsers: Dict[str, Callable[[], str]] = {
             "Chrome": cls.generate_chrome_fingerprint,
             "Firefox": cls.generate_firefox_fingerprint,
             "Safari": cls.generate_safari_fingerprint,
             "Edge": cls.generate_edge_fingerprint,
         }
-        return cls.browsers.get(browser_type, cls.generate_chrome_fingerprint)()
+        return browsers.get(browser_type, cls.generate_chrome_fingerprint)()
 
     @classmethod
     def generate_chrome_fingerprint(cls) -> str:

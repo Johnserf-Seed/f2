@@ -1,10 +1,12 @@
 # path: f2/apps/weibo/db.py
 
+from typing import Optional
+
 from f2.db.base_db import BaseDB
 
 
 class AsyncUserDB(BaseDB):
-    TABLE_NAME = "user_info_web"
+    TABLE_NAME: str = "user_info_web"
 
     async def _create_table(self) -> None:
         """在数据库中创建用户信息表"""

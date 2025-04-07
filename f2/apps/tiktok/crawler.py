@@ -248,7 +248,7 @@ class TiktokWebSocketCrawler(WebSocketCrawler):
             wss_package = PushFrame()
             wss_package.ParseFromString(message)
 
-            log_id = wss_package.logid
+            log_id = str(wss_package.logid)
 
             logger.debug(_("[WssPackage] [📦Wss包] | [{0}]").format(wss_package))
 
@@ -318,6 +318,10 @@ class TiktokWebSocketCrawler(WebSocketCrawler):
             log_id: 日志ID
             internal_ext: 内部扩展信息
         """
+        if self.websocket is None:
+            logger.warning(_("[SendAck] [❌ 无法发送 ack 包] | [WebSocket 未连接]"))
+            return
+
         ack = PushFrame()
         ack.logid = log_id
         ack.payload_type = internal_ext
@@ -329,6 +333,9 @@ class TiktokWebSocketCrawler(WebSocketCrawler):
         """
         发送 ping 包
         """
+        if self.websocket is None:
+            logger.warning(_("[SendPing] [❌ 无法发送 ping 包] | [WebSocket 未连接]"))
+            return
 
         ping = PushFrame()
         ping.payload_type = "hb"

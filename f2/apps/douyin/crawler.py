@@ -513,6 +513,10 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
             log_id: 日志ID
             internal_ext: 内部扩展信息
         """
+        if self.websocket is None:
+            logger.warning(_("[SendAck] [❌ 无法发送 ack 包] | [WebSocket 未连接]"))
+            return
+
         ack = PushFrame()
         ack.logId = log_id
         ack.payloadType = internal_ext
@@ -522,6 +526,10 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
 
     async def send_ping(self) -> None:
         """发送 ping 包"""
+        if self.websocket is None:
+            logger.warning(_("[SendPing] [❌ 无法发送 ping 包] | [WebSocket 未连接]"))
+            return
+
         ping = PushFrame()
         ping.payloadType = "hb"
         data = ping.SerializeToString()

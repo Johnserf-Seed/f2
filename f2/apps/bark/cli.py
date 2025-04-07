@@ -326,7 +326,7 @@ def bark(
         custom_manager = ConfigManager(config)
     else:
         custom_manager = main_manager
-        config = main_conf_path
+        config = str(main_conf_path)
 
     custom_conf = custom_manager.get_config("bark")
 

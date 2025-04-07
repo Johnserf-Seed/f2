@@ -8,7 +8,7 @@ from typing import Optional
 
 import httpx
 import websockets
-import websockets_proxy
+import websockets_proxy  # type: ignore[import-untyped]
 from httpx import Response
 from websockets.exceptions import ConnectionClosedError, ConnectionClosedOK
 
@@ -186,7 +186,7 @@ class BaseCrawler:
             return await self.get_fetch_data(endpoint)
         except Exception as exc:
             trace_logger.error(traceback.format_exc())
-            return Response()
+            return Response(status_code=500)
 
     async def _fetch_get_json(self, endpoint: str) -> dict:
         """
@@ -360,6 +360,8 @@ class BaseCrawler:
                     ).format(url, self.proxies, self.__class__.__name__, req_err)
                 )
 
+        raise APIConnectionError(_("无法获取GET数据，请检查网络连接和参数"))
+
     async def post_fetch_data(
         self,
         url: str,
@@ -432,6 +434,8 @@ class BaseCrawler:
                     ).format(url, self.proxies, self.__class__.__name__, req_err)
                 )
 
+        raise APIConnectionError(_("无法获取POST数据，请检查网络连接和参数"))
+
     async def head_fetch_data(self, url: str) -> Response:
         """
         获取HEAD端点数据 (Get HEAD endpoint data)
@@ -457,6 +461,8 @@ class BaseCrawler:
 
         except httpx.HTTPStatusError as http_error:
             self.handle_http_status_error(http_error, url, 1)
+
+        raise APIConnectionError(_("无法获取HEAD数据，请检查网络连接和参数"))
 
     def handle_http_status_error(self, http_error, url: str, attempt: int):
         """

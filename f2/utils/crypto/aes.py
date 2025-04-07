@@ -91,6 +91,8 @@ class AESEncryptionUtils:
             return self._aes_encrypt_cbc(plaintext)
         elif self.mode == "ECB":
             return self._aes_encrypt_ecb(plaintext)
+        else:
+            raise ValueError(_("不支持的加密模式：{0}").format(self.mode))
 
     def aes_decrypt(self, ciphertext: bytes, iv: Optional[bytes] = None) -> bytes:
         """
@@ -109,6 +111,8 @@ class AESEncryptionUtils:
             return self._aes_decrypt_cbc(ciphertext, iv)
         elif self.mode == "ECB":
             return self._aes_decrypt_ecb(ciphertext)
+        else:
+            raise ValueError(_("不支持的解密模式：{0}").format(self.mode))
 
     # 以下是私有方法实现具体加密算法
     def _aes_encrypt_gcm(

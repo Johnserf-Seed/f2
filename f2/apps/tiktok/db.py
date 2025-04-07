@@ -4,7 +4,7 @@ from f2.db.base_db import BaseDB
 
 
 class AsyncUserDB(BaseDB):
-    TABLE_NAME = "user_info_web"
+    TABLE_NAME: str = "user_info_web"
 
     async def _create_table(self) -> None:
         """
@@ -133,7 +133,7 @@ class AsyncUserDB(BaseDB):
 
 
 class AsyncVideoDB(BaseDB):
-    TABLE_NAME = "video_info"
+    TABLE_NAME: str = "video_info"
 
     async def _create_table(self) -> None:
         """

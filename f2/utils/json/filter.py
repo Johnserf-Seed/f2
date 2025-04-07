@@ -3,7 +3,7 @@
 import json
 from typing import Any, Dict, List, Optional, Union
 
-from jsonpath_ng import parse
+from jsonpath_ng import parse  # type: ignore[import-untyped]
 
 
 class JSONModel:

@@ -1,7 +1,5 @@
 # path: f2/utils/config/conf_manager.py
 
-import sys
-import traceback
 from pathlib import Path
 
 import click
@@ -13,7 +11,6 @@ from f2.exceptions.file_exceptions import (
     FilePermissionError,
 )
 from f2.i18n.translator import _
-from f2.log.logger import logger, trace_logger
 from f2.utils.utils import get_resource_path
 
 
@@ -108,9 +105,7 @@ class ConfigManager:
         except PermissionError:
             raise FilePermissionError(_("配置文件路径无读权限"), self.filepath)
         except Exception as e:
-            logger.error(_("配置文件解析错误: {0}").format(str(e)))
-            trace_logger.debug(traceback.format_exc())
-            sys.exit(1)
+            raise RuntimeError(_("配置文件解析错误: {0}").format(str(e))) from e
 
     def get_config(self, app_name: str, default=None) -> dict:
         """
@@ -156,7 +151,7 @@ class ConfigManager:
 
         shutil.copy2(self.filepath, backup_path)
 
-    def generate_config(self, app_name: str, save_path: Path):
+    def generate_config(self, app_name: str, save_path: str):
         """生成应用程序特定配置文件，保留格式 (Generate application-specific conf file with formatting)"""
 
         if not isinstance(app_name, str):
@@ -187,16 +182,15 @@ class ConfigManager:
                 with open(save_path, "w", encoding="utf-8") as file:
                     self.yaml.dump(app_config, file)
 
-                logger.info(
+                click.echo(
                     _("{0} 应用配置文件生成成功，保存至 {1}").format(
                         app_name, save_path
                     )
                 )
             else:
-                logger.info(_("{0} 应用配置未找到").format(app_name))
+                click.echo(_("{0} 应用配置未找到").format(app_name))
         except Exception as e:
-            logger.error(_("生成配置文件失败: {0}").format(str(e)))
-            trace_logger.debug(traceback.format_exc())
+            RuntimeError(_("生成配置文件失败: {0}").format(str(e)))
 
     def update_config(self, app_name: str, app_config: dict):
         """更新配置项并保存
