@@ -64,15 +64,15 @@ class BaseDB:
     ```
     """
 
-    TABLE_NAME = None  # 添加默认 TABLE_NAME 属性，由子类覆盖
+    TABLE_NAME: Optional[str] = None  # 添加默认 TABLE_NAME 属性，由子类覆盖
 
-    def __init__(self, db_name: str, **kwargs) -> Optional[None]:
+    def __init__(self, db_name: str, **kwargs) -> None:
         self.db_name = db_name
         self.conn: Optional[Connection] = None
         self.semaphore = asyncio.Semaphore(kwargs.get("max_tasks", 10))
         self.max_retries = kwargs.get("max_retries", 5)
 
-    async def connect(self) -> Optional[None]:
+    async def connect(self) -> None:
         """
         连接到数据库并自动迁移表结构
 
@@ -110,7 +110,7 @@ class BaseDB:
                 _("数据库操作超时: {0}").format(self.db_name)
             ) from e
 
-    async def _create_table(self) -> Optional[None]:
+    async def _create_table(self) -> None:
         """
         在数据库中创建表
         """
@@ -126,13 +126,12 @@ class BaseDB:
         )
         return int(result[0]) if result else 0
 
-    async def set_version(self, version: int) -> Optional[None]:
+    async def set_version(self, version: int) -> None:
         await self.execute(
             "INSERT OR REPLACE INTO _metadata (name, value) VALUES (?, ?)",
             ("version", str(version)),
         )
         await self.commit()
-        return
 
     async def execute(
         self, query: str, parameters: Tuple[Any, ...] = ()
@@ -150,6 +149,9 @@ class BaseDB:
         Returns:
             aiosqlite.Cursor: 查询的光标
         """
+        if self.conn is None:
+            raise DatabaseConnectionError(_("数据库未连接"))
+
         for attempt in range(self.max_retries):
             try:
                 cursor = await self.conn.cursor()
@@ -227,7 +229,7 @@ class BaseDB:
         rows = await cursor.fetchall()
         return [tuple(row) for row in rows]
 
-    async def commit(self) -> Optional[None]:
+    async def commit(self) -> None:
         """
         提交更改到数据库
         """
