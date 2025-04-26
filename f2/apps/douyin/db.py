@@ -129,7 +129,7 @@ class AsyncUserDB(BaseDB):
         # 构建插入数据的元组列表
         values = [tuple(user_data.values()) for user_data in user_data_list]
 
-        await self.execute(
+        await self.executemany(
             f"INSERT OR REPLACE INTO {self.TABLE_NAME} ({keys}) VALUES ({placeholders})",
             values,
         )
@@ -375,7 +375,7 @@ class AsyncVideoDB(BaseDB):
         # 构建插入数据的元组列表
         values = [tuple(video_data.values()) for video_data in video_data_list]
 
-        await self.execute(
+        await self.executemany(
             f"INSERT OR REPLACE INTO {self.TABLE_NAME} ({keys}) VALUES ({placeholders})",
             values,
         )
