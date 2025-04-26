@@ -84,6 +84,7 @@ dependencies = [
     "mypy-protobuf==3.6.0",
     "gmssl==3.2.2",
     "cryptography==44.0.0",
+    "pre-commit==4.2.0",
 ]
 
 [project.scripts]
