@@ -240,48 +240,97 @@ class DouyinDownloader(BaseDownloader):
             )
 
     async def download_images(self):
+        """
+        下载图集相关内容，包括实况视频和图片
+
+        处理逻辑：
+        1. 优先检查并下载实况视频（如果存在）
+        2. 下载图集中的所有图片
+        3. 所有下载都使用统一的命名格式
+        """
+        # 获取基础文件名格式
+        base_filename = format_file_name(
+            self.kwargs.get("naming", "{create}_{desc}"), self.aweme_data_dict
+        )
+
         # 处理实况视频下载
-        images_video_list = self.aweme_data_dict.get("images_video", [])
-        if images_video_list:
-            for i, images_video_url in enumerate(images_video_list):
-                image_video_name = (
-                    format_file_name(
-                        self.kwargs.get("naming", "{create}_{desc}"),
-                        self.aweme_data_dict,
-                    )
-                    + f"_live_{i + 1}"
-                )
-                if images_video_url:
-                    await self.initiate_download(
-                        _("实况"),
-                        images_video_url,
-                        self.base_path,
-                        image_video_name,
-                        ".mp4",
-                    )
-                else:
-                    logger.warning(
-                        _("[{0}] 该图集没有实况链接，无法下载").format(self.aweme_id)
-                    )
-        else:
-            logger.info(_("[{0}] 非实况图集，跳过实况下载").format(self.aweme_id))
+        await self._download_live_videos(base_filename)
 
         # 处理图片下载
-        for i, image_url in enumerate(self.aweme_data_dict.get("images", [])):
-            image_name = (
-                format_file_name(
-                    self.kwargs.get("naming", "{create}_{desc}"), self.aweme_data_dict
-                )
-                + f"_image_{i + 1}"
+        await self._download_gallery_images(base_filename)
+
+    async def _download_live_videos(self, base_filename):
+        """下载图集中的实况视频"""
+        images_video_list = self.aweme_data_dict.get("images_video", [])
+
+        if not images_video_list:
+            logger.info(_("[{0}] 非实况图集，跳过实况视频下载").format(self.aweme_id))
+            return
+
+        # 首先过滤出有效的视频链接
+        valid_videos = [url for url in images_video_list if url]
+
+        if not valid_videos:
+            logger.info(_("[{0}] 未找到有效的实况视频链接").format(self.aweme_id))
+            return
+
+        logger.info(
+            _("[{0}] 检测到有效实况视频，共 {1} 个").format(
+                self.aweme_id, len(valid_videos)
             )
-            if image_url:
-                await self.initiate_download(
-                    _("图集"), image_url, self.base_path, image_name, ".webp"
+        )
+
+        # 使用原始列表的索引以保持序号一致
+        for i, images_video_url in enumerate(images_video_list):
+            if not images_video_url:
+                logger.debug(
+                    _("[{0}] 第 {1} 个实况视频链接无效，跳过").format(
+                        self.aweme_id, i + 1
+                    )
                 )
-            else:
+                continue
+
+            image_video_name = f"{base_filename}_live_{i + 1}"
+
+            # 使用有效视频列表长度作为总数
+            await self.initiate_download(
+                _("实况 {0}/{1}").format(i + 1, len(images_video_list)),
+                images_video_url,
+                self.base_path,
+                image_video_name,
+                ".mp4",
+            )
+
+    async def _download_gallery_images(self, base_filename):
+        """下载图集中的所有图片"""
+        images = self.aweme_data_dict.get("images", [])
+
+        if not images:
+            logger.warning(
+                _("[{0}] 未找到任何图片，请检查作品信息").format(self.aweme_id)
+            )
+            return
+
+        logger.info(
+            _("[{0}] 开始下载图集，共 {1} 张图片").format(self.aweme_id, len(images))
+        )
+
+        for i, image_url in enumerate(images):
+            if not image_url:
                 logger.warning(
-                    _("[{0}] 该图集没有图片链接，无法下载").format(self.aweme_id)
+                    _("[{0}] 第 {1} 张图片链接无效，跳过").format(self.aweme_id, i + 1)
                 )
+                continue
+
+            image_name = f"{base_filename}_image_{i + 1}"
+
+            await self.initiate_download(
+                _("图片 {0}/{1}").format(i + 1, len(images)),
+                image_url,
+                self.base_path,
+                image_name,
+                ".webp",
+            )
 
     async def create_music_download_tasks(
         self, kwargs: Dict, music_datas: Union[List, Dict], user_path: Any
