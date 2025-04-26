@@ -700,10 +700,11 @@ class SecUserIdFetcher(BaseCrawler):
             raise TypeError(_("参数必须是字符串类型"))
 
         # 提取有效URL
-        url = extract_valid_urls(url)
+        extracted_url = extract_valid_urls(url)
 
-        if url is None:
+        if extracted_url is None:
             raise APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
+        url = extracted_url
 
         # 解析URL并检查主机
         parsed_url = urlparse(url)
@@ -874,10 +875,11 @@ class AwemeIdFetcher(BaseCrawler):
             raise TypeError(_("参数必须是字符串类型"))
 
         # 提取有效URL
-        url = extract_valid_urls(url)
+        extracted_url = extract_valid_urls(url)
 
-        if url is None:
+        if extracted_url is None:
             raise APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
+        url = extracted_url
 
         # 创建一个实例以访问 aclient
         instance = cls()
@@ -1041,10 +1043,11 @@ class MixIdFetcher(BaseCrawler):
             raise TypeError(_("参数必须是字符串类型"))
 
         # 提取有效URL
-        url = extract_valid_urls(url)
+        extracted_url = extract_valid_urls(url)
 
-        if url is None:
+        if extracted_url is None:
             raise APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
+        url = extracted_url
 
         instance = cls()
 
@@ -1213,10 +1216,11 @@ class WebCastIdFetcher(BaseCrawler):
             raise TypeError(_("参数必须是字符串类型"))
 
         # 提取有效URL
-        url = extract_valid_urls(url)
+        extracted_url = extract_valid_urls(url)
 
-        if url is None:
+        if extracted_url is None:
             raise APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
+        url = extracted_url
 
         instance = cls()
 
@@ -1340,10 +1344,12 @@ class WebCastIdFetcher(BaseCrawler):
             raise TypeError(_("参数必须是字符串类型"))
 
         # 提取有效URL
-        url = extract_valid_urls(url)
+        extracted_url = extract_valid_urls(url)
 
-        if url is None:
+        if extracted_url is None:
             raise APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
+
+        url = extracted_url
 
         instance = cls()
 

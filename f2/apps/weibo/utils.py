@@ -199,10 +199,11 @@ class WeiboIdFetcher:
             raise TypeError(_("参数必须是字符串类型"))
 
         # 提取有效URL
-        url = extract_valid_urls(url)
+        extracted_url = extract_valid_urls(url)
 
-        if url is None:
+        if extracted_url is None:
             raise APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
+        url = extracted_url
 
         match = cls._WEIBO_ID_PATTERN.search(url)
 
@@ -281,12 +282,11 @@ class WeiboUidFetcher:
             raise TypeError(_("参数必须是字符串类型"))
 
         # 提取有效URL
-        url = extract_valid_urls(url)
+        extracted_url = extract_valid_urls(url)
 
-        if url is None:
-            raise (
-                APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
-            )
+        if extracted_url is None:
+            raise APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
+        url = extracted_url
 
         match = cls._WEIBO_COM_UID_PATTERN.search(url)
         if match:
@@ -368,12 +368,11 @@ class WeiboScreenNameFetcher:
             raise TypeError("参数必须是字符串类型")
 
         # 提取有效URL
-        url = extract_valid_urls(url)
+        extracted_url = extract_valid_urls(url)
 
-        if url is None:
-            raise (
-                APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
-            )
+        if extracted_url is None:
+            raise APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
+        url = extracted_url
 
         match = cls._WEIBO_COM_NAME_PATTERN.search(url)
         if match:

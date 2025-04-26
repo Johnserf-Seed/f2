@@ -117,12 +117,11 @@ class UniqueIdFetcher(BaseCrawler):
             raise TypeError(_("参数必须是字符串类型"))
 
         # 提取有效URL
-        url = extract_valid_urls(url)
+        extracted_url = extract_valid_urls(url)
 
-        if url is None:
-            raise (
-                APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
-            )
+        if extracted_url is None:
+            raise APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
+        url = extracted_url
 
         # 创建一个实例以访问 aclient
         instance = cls()
@@ -256,12 +255,11 @@ class TweetIdFetcher(BaseCrawler):
             raise TypeError(_("参数必须是字符串类型"))
 
         # 提取有效URL
-        url = extract_valid_urls(url)
+        extracted_url = extract_valid_urls(url)
 
-        if url is None:
-            raise (
-                APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
-            )
+        if extracted_url is None:
+            raise APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
+        url = extracted_url
 
         # 创建一个实例以访问 aclient
         instance = cls()

@@ -556,10 +556,11 @@ class SecUserIdFetcher(BaseCrawler):
         if not isinstance(url, str):
             raise TypeError(_("输入参数必须是字符串"))
 
-        url = extract_valid_urls(url)
+        extracted_url = extract_valid_urls(url)
 
-        if url is None:
+        if extracted_url is None:
             raise APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
+        url = extracted_url
 
         # 创建一个实例以访问 aclient
         instance = cls()
@@ -710,10 +711,11 @@ class SecUserIdFetcher(BaseCrawler):
         if not isinstance(url, str):
             raise TypeError(_("输入参数必须是字符串"))
 
-        url = extract_valid_urls(url)
+        extracted_url = extract_valid_urls(url)
 
-        if url is None:
+        if extracted_url is None:
             raise APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
+        url = extracted_url
 
         # 创建一个实例以访问 aclient
         instance = cls()
@@ -921,10 +923,11 @@ class AwemeIdFetcher(BaseCrawler):
         if not isinstance(url, str):
             raise TypeError("输入参数必须是字符串")
 
-        url = extract_valid_urls(url)
+        extracted_url = extract_valid_urls(url)
 
-        if url is None:
+        if extracted_url is None:
             raise APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
+        url = extracted_url
 
         # 创建一个实例以访问 aclient
         instance = cls()
