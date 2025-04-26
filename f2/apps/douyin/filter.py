@@ -298,6 +298,12 @@ class UserPostFilter(JSONModel):
         )
 
     @property
+    def dynamic_cover(self):
+        return self._get_list_attr_value(
+            "$.aweme_list[*].video.dynamic_cover.url_list[0]"
+        )
+
+    @property
     def video_play_addr(self):
         return self._get_list_attr_value(
             "$.aweme_list[*].video.bit_rate[0].play_addr.url_list"
