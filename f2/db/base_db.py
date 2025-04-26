@@ -164,6 +164,36 @@ class BaseDB:
                     await asyncio.sleep(0.1 * (attempt + 1))  # 指数级退避
                 else:
                     raise
+        # 如果所有尝试都失败，抛出异常
+        raise DatabaseTimeoutError(_("SQL 执行失败，已重试多次：{0}").format(query))
+
+    async def executemany(
+        self, query: str, parameters_sequence: List[Tuple[Any, ...]]
+    ) -> None:
+        """
+        批量执行SQL查询，每条记录使用不同的参数。
+
+        适用于批量插入或更新多行数据。
+
+        Args:
+            query (str): SQL查询语句
+            parameters_sequence (List[Tuple[Any, ...]]): 参数列表，每个元素是一个元组
+        """
+        if self.conn is None:
+            raise DatabaseConnectionError(_("数据库未连接"))
+
+        for attempt in range(self.max_retries):
+            try:
+                async with self.semaphore:
+                    await self.conn.executemany(query, parameters_sequence)
+                return
+            except aiosqlite.OperationalError as e:
+                if "database is locked" in str(e) and attempt < self.max_retries - 1:
+                    await asyncio.sleep(0.1 * (attempt + 1))  # 指数级退避
+                else:
+                    raise
+        # 如果所有尝试都失败，抛出异常
+        raise DatabaseTimeoutError(_("批量SQL执行失败，已重试多次：{0}").format(query))
 
     async def fetch_one(
         self, query: str, parameters: Tuple[Any, ...] = ()
@@ -204,7 +234,7 @@ class BaseDB:
         if self.conn is not None:
             await self.conn.commit()
 
-    async def close(self) -> Optional[None]:
+    async def close(self) -> None:
         """
         关闭与数据库的连接
         """
