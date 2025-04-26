@@ -134,10 +134,10 @@ class ProgressManager:
         ),
         "bar": BarColumn(bar_width=None),
         "percentage": TextColumn("[progress.percentage]{task.percentage:>4.2f}%"),
-        "•": "•",
+        "•": TextColumn("•"),
         "filesize": DownloadColumn(),
         "speed": TransferSpeedColumn(),
-        "ETA": "[bold blue]ETA",
+        "ETA": TextColumn("[bold blue]ETA"),
         "remaining": TimeRemainingColumn(),
     }
 
