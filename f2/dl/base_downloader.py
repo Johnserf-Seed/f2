@@ -4,7 +4,7 @@ import asyncio
 import sys
 import traceback
 from pathlib import Path
-from typing import Any, List, Optional, Set, Union
+from typing import Any, List, Optional, Set, Union, Dict
 
 import aiofiles
 import httpx
@@ -75,12 +75,13 @@ class BaseDownloader(BaseCrawler):
     """
 
     def __init__(self, kwargs: Optional[dict] = None):
+        kwargs = kwargs or {}
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})
-        self.headers = kwargs.get("headers", {}) | {"Cookie": kwargs["cookie"]}
+        self.headers = kwargs.get("headers", {}) | {"Cookie": kwargs.get("cookie", "")}
         super().__init__(kwargs, proxies=proxies, crawler_headers=self.headers)
 
         self.progress = RichConsoleManager().progress
-        self.download_tasks = []
+        self.download_tasks: List[asyncio.Task] = []
 
     @staticmethod
     def _ensure_path(path: Union[str, Path]) -> Path:
@@ -158,8 +159,7 @@ class BaseDownloader(BaseCrawler):
         """
         async with self.semaphore:
             # 如果urls是单个链接，则转换为列表以便统一处理
-            if isinstance(urls, str):
-                urls = [urls]
+            urls = [urls] if isinstance(urls, str) else urls
 
             # 确保目标路径存在 (Ensure target path exists)
             full_path = self._ensure_path(full_path)
@@ -317,7 +317,7 @@ class BaseDownloader(BaseCrawler):
         mode = "wb" if isinstance(content, bytes) else "w"
 
         # 准备 aiofiles.open 的参数 (Prepare parameters for aiofiles.open)
-        open_params = {"file": full_path, "mode": mode}
+        open_params: Dict[str, Any] = {"file": full_path, "mode": mode}
         if mode == "w":  # 文本模式时添加 encoding 参数
             open_params["encoding"] = "utf-8"
 
@@ -326,7 +326,7 @@ class BaseDownloader(BaseCrawler):
             task_id, advance=1024, total=int(sys.getsizeof(content))
         )
         # 创建异步文件对象并写入内容 (Create an async file object and write content)
-        async with aiofiles.open(**open_params) as f:
+        async with aiofiles.open(**open_params) as f:  # type: ignore
             await f.write(content)
 
         logger.info(_("[green][  完成  ]：{0}[/green]").format(Path(full_path).name))
