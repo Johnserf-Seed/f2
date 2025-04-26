@@ -4,7 +4,7 @@ import hashlib
 from pathlib import Path
 from typing import Optional
 
-import execjs
+import execjs  # type: ignore[import-untyped]
 
 from f2.utils.utils import get_resource_path
 

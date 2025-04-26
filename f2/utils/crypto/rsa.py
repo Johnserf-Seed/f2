@@ -2,6 +2,7 @@
 
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding, rsa
+from typing import Union
 
 from f2.i18n.translator import _
 
@@ -80,6 +81,7 @@ class RSAEncryptionUtils:
         Returns:
             bytes: 密文数据
         """
+        padding_scheme: Union[padding.PKCS1v15, padding.OAEP]
         if self.padding_scheme == "pkcs1":
             padding_scheme = padding.PKCS1v15()
         elif self.padding_scheme == "oaep":
@@ -102,7 +104,7 @@ class RSAEncryptionUtils:
         Returns:
             bytes: 明文数据
         """
-
+        padding_scheme: Union[padding.PKCS1v15, padding.OAEP]
         if self.padding_scheme == "pkcs1":
             padding_scheme = padding.PKCS1v15()
         elif self.padding_scheme == "oaep":

@@ -379,9 +379,9 @@ class DouyinDownloader(BaseDownloader):
             if kwargs.get("folderize")
             else user_path
         )
-        music_name = music_data_dict.get("title") + "_music"
+        music_name = music_data_dict.get("title", "") + "_music"
         music_url = music_data_dict.get("play_url")
-        lyric_name = music_data_dict.get("title") + "_lyric"
+        lyric_name = music_data_dict.get("title", "") + "_lyric"
         lyric_url = music_data_dict.get("lyric_url")
 
         if music_url != None:

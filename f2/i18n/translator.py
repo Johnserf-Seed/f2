@@ -5,7 +5,7 @@ import locale
 import os
 import pathlib
 
-from ruamel.yaml import YAML
+from ruamel.yaml import YAML  # type: ignore[import-untyped]
 
 import f2
 

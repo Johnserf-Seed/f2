@@ -1,5 +1,7 @@
 # path: f2/apps/twitter/filter.py
 
+from typing import List
+
 from f2.apps.twitter.utils import extract_desc
 from f2.utils.json.filter import JSONModel
 from f2.utils.string.formatter import replaceT
@@ -645,13 +647,13 @@ class PostTweetFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_fields = [
+        exclude_fields: List[str] = [
             "max_cursor",
             "min_cursor",
             "cursorType",
         ]
 
-        extra_fields = [
+        extra_fields: List[str] = [
             "max_cursor",
             "min_cursor",
         ]
@@ -938,13 +940,13 @@ class BookmarkTweetFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_fields = [
+        exclude_fields: List[str] = [
             "max_cursor",
             "min_cursor",
             "cursorType",
         ]
 
-        extra_fields = [
+        extra_fields: List[str] = [
             "max_cursor",
             "min_cursor",
         ]

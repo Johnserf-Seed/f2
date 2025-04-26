@@ -1,9 +1,10 @@
 # path: f2/db/base_db.py
 
 import asyncio
-from typing import Any, Optional, Tuple
-
 import aiosqlite
+
+from typing import Any, Optional, Tuple, List
+from aiosqlite import Connection
 
 from f2.exceptions.db_exceptions import DatabaseConnectionError, DatabaseTimeoutError
 from f2.i18n.translator import _
@@ -67,7 +68,7 @@ class BaseDB:
 
     def __init__(self, db_name: str, **kwargs) -> Optional[None]:
         self.db_name = db_name
-        self.conn = None
+        self.conn: Optional[Connection] = None
         self.semaphore = asyncio.Semaphore(kwargs.get("max_tasks", 10))
         self.max_retries = kwargs.get("max_retries", 5)
 
@@ -131,6 +132,7 @@ class BaseDB:
             ("version", str(version)),
         )
         await self.commit()
+        return
 
     async def execute(
         self, query: str, parameters: Tuple[Any, ...] = ()
@@ -177,7 +179,8 @@ class BaseDB:
             tuple: 查询的结果
         """
         cursor = await self.execute(query, parameters)
-        return await cursor.fetchone()
+        row = await cursor.fetchone()
+        return tuple(row) if row else None
 
     async def fetch_all(self, query: str, parameters: tuple = ()) -> list:
         """
@@ -191,13 +194,15 @@ class BaseDB:
             list: 查询的结果
         """
         cursor = await self.execute(query, parameters)
-        return await cursor.fetchall()
+        rows = await cursor.fetchall()
+        return [tuple(row) for row in rows]
 
     async def commit(self) -> Optional[None]:
         """
         提交更改到数据库
         """
-        await self.conn.commit()
+        if self.conn is not None:
+            await self.conn.commit()
 
     async def close(self) -> Optional[None]:
         """

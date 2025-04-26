@@ -1,5 +1,7 @@
 # path: f2/apps/weibo/filter.py
 
+from typing import List
+
 from f2.apps.weibo.utils import extract_desc
 from f2.utils.json.filter import JSONModel
 from f2.utils.string.formatter import replaceT
@@ -470,13 +472,13 @@ class UserWeiboFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_fields = [
+        exclude_fields: List[str] = [
             "status",
             "message",
             "since_id",
             "weibo_total",
         ]
-        extra_fields = [
+        extra_fields: List[str] = [
             "status",
             "message",
             "since_id",

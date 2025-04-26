@@ -10,6 +10,7 @@ import httpx
 import websockets
 import websockets_proxy  # type: ignore[import-untyped]
 from httpx import Response
+from websockets.client import WebSocketClientProtocol
 from websockets.exceptions import ConnectionClosedError, ConnectionClosedOK
 
 from f2.exceptions.api_exceptions import (
@@ -591,7 +592,7 @@ class WebSocketCrawler:
             callbacks: WebSocket 回调函数
             timeout: WebSocket 超时时间
         """
-        self.websocket = None
+        self.websocket: Optional[WebSocketClientProtocol] = None
         self.wss_headers = wss_headers
         self.proxy = websockets_proxy.Proxy.from_url(proxy) if proxy else None
         self.callbacks = callbacks or {}  # 存储回调函数

@@ -389,7 +389,7 @@ class UserPostFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_fields = [
+        exclude_fields:List[str] = [
             "status_code",
             "has_more",
             "max_cursor",
@@ -398,7 +398,7 @@ class UserPostFilter(JSONModel):
             "locate_item_cursor",
         ]
 
-        extra_fields = [
+        extra_fields: List[str] = [
             "status_code",
             "has_more",
             "max_cursor",
@@ -672,14 +672,14 @@ class UserMusicCollectionFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_fields = [
+        exclude_fields:List[str] = [
             "has_more",
             "max_cursor",
             "status_code",
             "msg",
         ]
 
-        extra_fields = [
+        extra_fields:List[str] = [
             "has_more",
             "max_cursor",
             "status_code",
@@ -897,7 +897,7 @@ class UserFollowingFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_fields = [
+        exclude_fields: List[str] = [
             "status_code",
             "status_msg",
             "has_more",
@@ -909,7 +909,7 @@ class UserFollowingFilter(JSONModel):
             "min_time",
         ]
 
-        extra_fields = [
+        extra_fields: List[str] = [
             "has_more",
             "total",
             "mix_count",
@@ -1058,7 +1058,7 @@ class UserFollowerFilter(UserFollowingFilter):
         return self._get_list_attr_value("$.followers[*].unique_id")
 
     def _to_list(self) -> list:
-        exclude_fields = [
+        exclude_fields:List[str] = [
             "status_code",
             "status_msg",
             "has_more",
@@ -1070,7 +1070,7 @@ class UserFollowerFilter(UserFollowingFilter):
             "min_time",
         ]
 
-        extra_fields = [
+        extra_fields: List[str] = [
             "has_more",
             "total",
             "mix_count",
@@ -1586,14 +1586,14 @@ class PostCommentFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_fields = [
+        exclude_fields:List[str] = [
             "api_status_code",
             "has_more",
             "total",
             "cursor",
         ]
 
-        extra_fields = [
+        extra_fields:List[str] = [
             "has_more",
             "total",
             "cursor",
@@ -1935,7 +1935,7 @@ class UserLiveRankingFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_fields = [
+        exclude_fields:List[str] = [
             "api_status_code",
             "has_more",
             "has_once_live",
@@ -1943,7 +1943,7 @@ class UserLiveRankingFilter(JSONModel):
             "total",
         ]
 
-        extra_fields = [
+        extra_fields:List[str] = [
             "has_more",
             "has_once_live",
             "invisible_total",
@@ -2277,7 +2277,7 @@ class FriendFeedFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_fields = [
+        exclude_fields:List[str] = [
             "status_code",
             "status_msg",
             "has_more",
@@ -2286,7 +2286,7 @@ class FriendFeedFilter(JSONModel):
             "cursor",
             "level",
         ]
-        extra_fields = [
+        extra_fields:List[str] = [
             "has_more",
             "has_aweme",
             "friend_update_count",
@@ -2522,11 +2522,11 @@ class FollowingUserLiveFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_fields = [
+        exclude_fields: List[str] = [
             "status_code",
             "status_msg",
         ]
-        extra_fields = []
+        extra_fields: List[str] = []
 
         list_dicts = filter_to_list(
             self,
@@ -2771,7 +2771,7 @@ class HomePostSearchFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_fields = [
+        exclude_fields:List[str] = [
             "status_code",
             "status_msg",
             "has_aweme",
@@ -2781,7 +2781,7 @@ class HomePostSearchFilter(JSONModel):
             "search_keyword",
             "search_id",
         ]
-        extra_fields = [
+        extra_fields:List[str] = [
             "has_more",
             "cursor",
             "home_text",
@@ -2823,10 +2823,10 @@ class SuggestWordFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_fields = [
+        exclude_fields:List[str] = [
             "status_msg",
         ]
-        extra_fields = []
+        extra_fields: List[str] = []
 
         list_dicts = filter_to_list(
             self,

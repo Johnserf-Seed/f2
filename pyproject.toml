@@ -115,3 +115,10 @@ target-version = ['py311']
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "ruamel.*"
+ignore_missing_imports = true

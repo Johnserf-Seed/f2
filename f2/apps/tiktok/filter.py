@@ -1,5 +1,7 @@
 # path: f2/apps/tiktok/filter.py
 
+from typing import List
+
 from f2.utils.json.filter import JSONModel
 from f2.utils.string.formatter import replaceT
 from f2.utils.time.timestamp import timestamp_2_str
@@ -361,13 +363,13 @@ class UserPostFilter(JSONModel):
 
     def _to_list(self) -> list:
         # 定义不需要的属性列表
-        exclude_fields = [
+        exclude_fields: List[str] = [
             "hasMore",
             "cursor",
             "has_aweme",
             "api_status_code",
         ]
-        extra_fields = [
+        extra_fields: List[str] = [
             "hasMore",
             "cursor",
         ]
@@ -672,8 +674,8 @@ class PostDetailFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_fields = []
-        extra_fields = []
+        exclude_fields: List[str] = []
+        extra_fields: List[str] = []
 
         list_dicts = filter_to_list(
             self,
@@ -892,13 +894,13 @@ class PostSearchFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_fields = [
+        exclude_fields: List[str] = [
             "has_more",
             "cursor",
             "has_aweme",
             "api_status_code",
         ]
-        extra_fields = [
+        extra_fields: List[str] = [
             "has_more",
             "cursor",
         ]
@@ -921,7 +923,7 @@ class UserLiveFilter(JSONModel):
     @property
     def has_live(self) -> bool:
         data = self._get_attr_value("$.data")
-        return bool(data) and len(data) != 4
+        return bool(data) and (len(data) != 4 if data is not None else False)
 
     # user
     @property
@@ -1065,8 +1067,8 @@ class CheckLiveAliveFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_fields = ["api_status_code"]
-        extra_fields = []
+        exclude_fields: List[str] = ["api_status_code"]
+        extra_fields: List[str] = []
 
         list_dicts = filter_to_list(
             self,

@@ -82,7 +82,7 @@ def get_cookie_from_browser(browser_choice: str, domain: str = "") -> dict:
     """
 
     if not browser_choice or not domain:
-        return ""
+        return {}
 
     BROWSER_FUNCTIONS = {
         "chrome": browser_cookie3.chrome,
@@ -344,7 +344,7 @@ def filter_to_list(
         filter_instance (Any): Filter 实例
         entries_path (str): entries 的路径
         exclude_fields (List[str]): 排除的字段列表
-        extra_fields (List[str], optional): 额外的字段列表
+        extra_fields (Optional[List[str]]): 额外的字段列表
 
     Returns:
         list: entries 列表
@@ -363,7 +363,7 @@ def filter_to_list(
     list_dicts = []
     # 使用集合避免重复记录相同的错误
     errors = set()
-    extra_fields = extra_fields or {}
+    extra_fields = extra_fields or []  # 使用空列表而不是空字典作为默认值
 
     # 遍历每个条目并创建一个字典
     for entry in entries:

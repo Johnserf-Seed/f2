@@ -3,7 +3,7 @@
 from pathlib import Path
 
 import click
-from ruamel.yaml import YAML
+from ruamel.yaml import YAML  # type: ignore[import-untyped]
 
 import f2
 from f2.exceptions.file_exceptions import (
@@ -157,15 +157,15 @@ class ConfigManager:
         if not isinstance(app_name, str):
             return
 
-        # 将save_path转换为Path对象
-        save_path = Path(save_path)
+        # 将save_path转换为Path对象，但使用新变量而不是重新赋值给参数
+        save_path_obj = Path(save_path)
 
         # 如果save_path是相对路径，则将其转换为绝对路径
-        if not save_path.is_absolute():
-            save_path = Path.cwd() / save_path
+        if not save_path_obj.is_absolute():
+            save_path_obj = Path.cwd() / save_path
 
         # 确保目录存在，如果不存在则创建
-        save_path.parent.mkdir(parents=True, exist_ok=True)
+        save_path_obj.parent.mkdir(parents=True, exist_ok=True)
 
         # 读取默认配置
         defaults_path = Path(get_resource_path(f2.F2_DEFAULTS_FILE_PATH))
@@ -179,18 +179,18 @@ class ConfigManager:
                 app_config = {app_name: default_config[app_name]}
 
                 # 写入应用程序特定配置，保留格式
-                with open(save_path, "w", encoding="utf-8") as file:
+                with open(save_path_obj, "w", encoding="utf-8") as file:
                     self.yaml.dump(app_config, file)
 
                 click.echo(
                     _("{0} 应用配置文件生成成功，保存至 {1}").format(
-                        app_name, save_path
+                        app_name, save_path_obj
                     )
                 )
             else:
                 click.echo(_("{0} 应用配置未找到").format(app_name))
         except Exception as e:
-            RuntimeError(_("生成配置文件失败: {0}").format(str(e)))
+            raise RuntimeError(_("生成配置文件失败：{0}").format(str(e)))
 
     def update_config(self, app_name: str, app_config: dict):
         """更新配置项并保存
