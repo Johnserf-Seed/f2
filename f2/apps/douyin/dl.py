@@ -166,25 +166,48 @@ class DouyinDownloader(BaseDownloader):
             logger.warning(_("[{0}] 该原声已被屏蔽，无法下载").format(self.aweme_id))
 
     async def download_cover(self):
+        """
+        下载作品封面，按优先级尝试：动画封面 -> 动态封面 -> 静态封面
+
+        优先下载质量最好的封面类型，如果首选类型不存在则尝试下一种类型
+        """
         cover_name = (
             format_file_name(
                 self.kwargs.get("naming", "{create}_{desc}"), self.aweme_data_dict
             )
             + "_cover"
         )
-        animated_cover_url = self.aweme_data_dict.get("animated_cover")
-        cover_url = self.aweme_data_dict.get("cover")
+        # 获取所有可能的封面URL
+        animated_cover_url = self.aweme_data_dict.get(
+            "animated_cover"
+        )  # 动画封面（gif格式）
+        dynamic_cover_url = self.aweme_data_dict.get(
+            "dynamic_cover"
+        )  # 动态封面（通常质量更好）
+        static_cover_url = self.aweme_data_dict.get("cover")  # 静态封面（webp格式）
+
+        # 尝试按优先级下载不同类型的封面
         if animated_cover_url:
+            logger.debug(_("[{0}] 正在下载动画封面").format(self.aweme_id))
             await self.initiate_download(
-                _("封面"), animated_cover_url, self.base_path, cover_name, ".webp"
+                _("动画封面"), animated_cover_url, self.base_path, cover_name, ".gif"
             )
-        elif cover_url:
-            logger.debug(_("[{0}] 该作品没有动态封面").format(self.aweme_id))
+        elif dynamic_cover_url:
+            logger.debug(
+                _("[{0}] 没有动画封面，正在下载动态封面").format(self.aweme_id)
+            )
             await self.initiate_download(
-                _("封面"), cover_url, self.base_path, cover_name, ".jpeg"
+                _("动态封面"), dynamic_cover_url, self.base_path, cover_name, ".gif"
+            )
+        elif static_cover_url:
+            logger.debug(
+                _("[{0}] 没有动画或动态封面，正在下载静态封面").format(self.aweme_id)
+            )
+            await self.initiate_download(
+                _("静态封面"), static_cover_url, self.base_path, cover_name, ".webp"
             )
         else:
-            logger.warning(_("[{0}] 该作品没有封面").format(self.aweme_id))
+            logger.warning(_("[{0}] 该作品没有任何可用的封面").format(self.aweme_id))
 
     async def download_desc(self):
         desc_name = (
