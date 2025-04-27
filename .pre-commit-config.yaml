@@ -26,6 +26,6 @@ repos:
     rev: v1.9.0
     hooks:
     -   id: mypy
-        additional_dependencies: [types-protobuf]
+        additional_dependencies: [types-protobuf, types-aiofiles]
         args: [--ignore-missing-imports, --check-untyped-defs]
         exclude: ^(f2/apps/(douyin|tiktok)/proto/.*_pb2\.py)$
