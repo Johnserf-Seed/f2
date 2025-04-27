@@ -16,6 +16,7 @@ from f2.log.logger import logger
 
 class WeiboDownloader(BaseDownloader):
     def __init__(self, kwargs: Optional[dict] = None) -> None:
+        kwargs = kwargs or {}
         if kwargs["cookie"] is None:
             raise ValueError(
                 _(

@@ -18,6 +18,7 @@ from f2.utils.crypto.aes import AESEncryptionUtils
 class BarkHandler:
 
     def __init__(self, kwargs: Optional[dict] = None) -> None:
+        kwargs = kwargs or {}
         self.kwargs = kwargs
 
     async def _send_bark_notification(self, send_method: str) -> BarkNotificationFilter:
@@ -32,6 +33,10 @@ class BarkHandler:
             BarkNotificationFilter: 处理后的Bark通知过滤结果
         """
         logger.debug(_("正在发送 Bark 通知"))
+
+        # 确保 kwargs 不为 None
+        if self.kwargs is None:
+            self.kwargs = {}
 
         # 获取并确保 body 存在
         self.kwargs["body"] = self.kwargs.get("body", _("无内容"))
@@ -58,7 +63,7 @@ class BarkHandler:
             trace_logger.error(traceback.format_exc())
             logger.error(_("Bark 通知发送失败，请检查 key 和网络连接：{0}").format(e))
 
-        return None
+        return BarkNotificationFilter(None)
 
     @mode_handler("get")
     async def fetch_bark_notification(self) -> BarkNotificationFilter:
@@ -75,6 +80,10 @@ class BarkHandler:
         """用于发送加密 Bark 通知"""
 
         logger.debug(_("正在发送 Bark 加密通知"))
+
+        # 确保 kwargs 不为 None
+        if self.kwargs is None:
+            self.kwargs = {}
 
         # 获取 Bark 加密设置参数
         encryption = self.kwargs.get("encryption")
@@ -142,6 +151,8 @@ class BarkHandler:
             trace_logger.error(traceback.format_exc())
             logger.error(_("Bark 通知发送失败，请检查 key 和网络连接：{0}").format(e))
 
+        return BarkNotificationFilter(None)
+
     async def send_quick_notification(
         self,
         title: str,
@@ -161,6 +172,10 @@ class BarkHandler:
         Returns:
             BarkNotificationFilter: Bark通知过滤器，包含结果数据的_to_raw()、_to_dict()方法
         """
+        # 确保 self.kwargs 不为 None
+        if self.kwargs is None:
+            self.kwargs = {}
+
         self.kwargs.update({"title": title, "body": body, **kwargs})
 
         # 获取加密配置

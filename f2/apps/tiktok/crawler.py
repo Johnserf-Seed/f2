@@ -4,7 +4,7 @@ import asyncio
 import gzip
 import json
 import traceback
-from typing import Optional
+from typing import Any, Optional, Union
 
 from google.protobuf import json_format
 from google.protobuf.message import DecodeError as ProtoDecodeError
@@ -62,9 +62,10 @@ class TiktokCrawler(BaseCrawler):
         kwargs: Optional[dict] = None,
     ):
         # 需要与cli同步
+        kwargs = kwargs or {}
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})
         self.headers = kwargs.get("headers", {}) | {"Cookie": kwargs["cookie"]}
-        super().__init__(kwargs, proxies=proxies, crawler_headers=self.headers)
+        super().__init__(kwargs=kwargs, proxies=proxies, crawler_headers=self.headers)
 
     async def fetch_user_profile(self, params: UserProfile):
         endpoint = XBogusManager.model_2_endpoint(
@@ -198,12 +199,13 @@ class TiktokWebSocketCrawler(WebSocketCrawler):
     show_message = False
 
     def __init__(self, kwargs: Optional[dict] = None, callbacks: dict = {}):
-        self.__class__.show_message = bool(kwargs.get("show_message", True))
         # 需要与cli同步
+        kwargs = kwargs or {}
+        self.__class__.show_message = bool(kwargs.get("show_message", True))
         self.headers = kwargs.get("headers", {}) | {"Cookie": kwargs.get("cookie", {})}
         self.callbacks = callbacks or {}
         self.timeout = kwargs.get("timeout", 10)
-        self.connected_clients = set()  # 管理连接的客户端
+        self.connected_clients: set[WebSocketServerProtocol] = set()  # 管理连接的客户端
         super().__init__(
             wss_headers=self.headers,
             callbacks=self.callbacks,
@@ -248,8 +250,6 @@ class TiktokWebSocketCrawler(WebSocketCrawler):
             wss_package = PushFrame()
             wss_package.ParseFromString(message)
 
-            log_id = str(wss_package.logid)
-
             logger.debug(_("[WssPackage] [📦Wss包] | [{0}]").format(wss_package))
 
             # 检查数据是否为 gzip 格式
@@ -272,19 +272,18 @@ class TiktokWebSocketCrawler(WebSocketCrawler):
 
             # 发送 ack 包
             if payload_package.needAck:
-                await self.send_ack(log_id, payload_package.internalExt)
+                await self.send_ack(wss_package.logid, payload_package.internalExt)
 
             # 处理每个消息
+            tasks = []
             for msg in payload_package.messages:
                 method = msg.method
                 payload = msg.payload
 
                 # 调用对应的回调函数处理消息
                 if method in self.callbacks:
-                    processed_data = await self.callbacks[method](data=payload)
-                    # 转发处理后的数据
-                    if processed_data is not None:
-                        await self.broadcast_message(processed_data)
+                    # 创建异步任务
+                    tasks.append(self.callbacks[method](data=payload))
                 else:
                     logger.warning(
                         _(
@@ -292,8 +291,25 @@ class TiktokWebSocketCrawler(WebSocketCrawler):
                         ).format(method)
                     )
 
+            # 并发运行所有回调
+            if tasks:
+                results = await asyncio.gather(*tasks, return_exceptions=True)
+
+                # 处理每个任务的结果
+                for i, result in enumerate(results):
+                    if isinstance(result, Exception):
+                        logger.error(
+                            _(
+                                "[HandleWssMessage] [⚠️ 回调执行出错] | [方法：{0}] | [错误：{1}]"
+                            ).format(payload_package.messages[i].method, result)
+                        )
+                    else:
+                        if result is not None:
+                            # 转发处理后的数据
+                            await self.broadcast_message(result)
+
             # 增加保活机制
-            await self.send_ack(log_id, payload_package.internalExt)
+            await self.send_ack(wss_package.logid, payload_package.internalExt)
 
         except ProtoDecodeError as e:
             logger.error(
@@ -310,7 +326,7 @@ class TiktokWebSocketCrawler(WebSocketCrawler):
                 )
             )
 
-    async def send_ack(self, log_id: str, internal_ext: str) -> None:
+    async def send_ack(self, log_id: int, internal_ext: str) -> None:
         """
         发送 ack 包
 
@@ -433,7 +449,7 @@ class TiktokWebSocketCrawler(WebSocketCrawler):
         finally:
             self.connected_clients.remove(websocket)
 
-    async def broadcast_message(self, message: str) -> None:
+    async def broadcast_message(self, message: Union[str, dict, list, Any]) -> None:
         """
         转发消息给所有连接的客户端
 

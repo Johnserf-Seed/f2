@@ -56,9 +56,16 @@ class TwitterDownloader(BaseDownloader):
         if kwargs.get("interval") is None:
             logger.warning(_("未提供日期区间参数"))
         elif kwargs.get("interval") != "all":
-            tweet_datas_list = await filter_by_date_interval(
-                tweet_datas_list, kwargs.get("interval"), "tweet_created_at"
+            filtered_data = await filter_by_date_interval(
+                tweet_datas_list, str(kwargs.get("interval")), "createTime"
             )
+            # 处理返回结果确保类型一致
+            if filtered_data is None:
+                tweet_datas_list = []
+            elif isinstance(filtered_data, dict):
+                tweet_datas_list = [filtered_data]
+            else:
+                tweet_datas_list = filtered_data
 
         # 检查是否有符合条件的推文
         if not tweet_datas_list:

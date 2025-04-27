@@ -68,7 +68,10 @@ class TiktokDownloader(BaseDownloader):
             return None
 
         if isinstance(aweme_datas, dict):
-            aweme_date_str = aweme_datas.get("createTime")
+            aweme_date_str = str(aweme_datas.get("createTime"))
+            if not aweme_date_str:
+                logger.warning(_("作品发布时间为空"))
+                return None
             try:
                 aweme_date = datetime.strptime(aweme_date_str, "%Y-%m-%d %H-%M-%S")
             except ValueError:
@@ -96,8 +99,14 @@ class TiktokDownloader(BaseDownloader):
                 filtered_data = await self.filter_aweme_datas_by_interval(
                     aweme_data, interval
                 )
-                if filtered_data:
-                    filtered_list.append(filtered_data)
+                # 确保只添加非空的字典类型结果
+                if filtered_data is not None:
+                    if isinstance(filtered_data, dict):
+                        filtered_list.append(filtered_data)
+                    elif isinstance(filtered_data, list):
+                        # 扁平化列表结果
+                        filtered_list.extend(filtered_data)
+
             return filtered_list
 
     async def create_download_tasks(
@@ -129,9 +138,16 @@ class TiktokDownloader(BaseDownloader):
         if kwargs.get("interval") is None:
             logger.warning(_("未提供日期区间参数"))
         elif kwargs.get("interval") != "all":
-            aweme_datas_list = await filter_by_date_interval(
-                aweme_datas_list, kwargs.get("interval"), "createTime"
+            filtered_data = await filter_by_date_interval(
+                aweme_datas_list, str(kwargs.get("interval")), "createTime"
             )
+            # 处理返回结果确保类型一致
+            if filtered_data is None:
+                aweme_datas_list = []
+            elif isinstance(filtered_data, dict):
+                aweme_datas_list = [filtered_data]
+            else:
+                aweme_datas_list = filtered_data
 
         # 检查是否有符合条件的作品
         if not aweme_datas_list:

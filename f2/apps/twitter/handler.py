@@ -2,7 +2,7 @@
 
 import asyncio
 from pathlib import Path
-from typing import Any, AsyncGenerator, Optional
+from typing import Any, AsyncGenerator, Optional, Union
 
 from f2.apps.bark.handler import BarkHandler
 from f2.apps.bark.utils import ClientConfManager as BarkClientConfManager
@@ -42,6 +42,7 @@ rich_prompt = RichConsoleManager().rich_prompt
 class TwitterHandler:
 
     def __init__(self, kwargs: Optional[dict] = None) -> None:
+        kwargs = kwargs or {}
         self.kwargs = kwargs
         self.downloader = TwitterDownloader(kwargs)
         # 初始化 Bark 通知服务
@@ -255,7 +256,7 @@ class TwitterHandler:
         userId: str,
         page_counts: int = 20,
         max_cursor: str = "",
-        max_counts: Optional[int] = None,
+        max_counts: Optional[Union[int, float]] = None,
     ) -> AsyncGenerator[PostTweetFilter, Any]:
         """
         用于获取用户发布的推文。
@@ -289,7 +290,7 @@ class TwitterHandler:
 
             async with TwitterCrawler(self.kwargs) as crawler:
                 params = PostTweetEncode(
-                    userId=userId, count=current_request_size, cursor=max_cursor
+                    userId=userId, count=int(current_request_size), cursor=max_cursor
                 )
                 response = await crawler.fetch_post_tweet(params)
                 tweet = PostTweetFilter(response)
@@ -363,7 +364,7 @@ class TwitterHandler:
         userId: str,
         page_counts: int = 20,
         max_cursor: str = "",
-        max_counts: Optional[int] = None,
+        max_counts: Optional[Union[int, float]] = None,
     ) -> AsyncGenerator[LikeTweetFilter, Any]:
         """
         用于获取用户喜欢的推文。
@@ -397,7 +398,7 @@ class TwitterHandler:
 
             async with TwitterCrawler(self.kwargs) as crawler:
                 params = LikeTweetEncode(
-                    userId=userId, count=current_request_size, cursor=max_cursor
+                    userId=userId, count=int(current_request_size), cursor=max_cursor
                 )
                 response = await crawler.fetch_like_tweet(params)
                 like = LikeTweetFilter(response)
@@ -469,8 +470,8 @@ class TwitterHandler:
         self,
         page_counts: int = 20,
         max_cursor: str = "",
-        max_counts: Optional[int] = None,
-    ) -> AsyncGenerator[LikeTweetFilter, Any]:
+        max_counts: Optional[Union[int, float]] = None,
+    ) -> AsyncGenerator[BookmarkTweetFilter, Any]:
         """
         用于获取用户收藏的推文。
 
@@ -480,7 +481,7 @@ class TwitterHandler:
             max_counts: int: 最大请求次数
 
         Return:
-            like: LikeTweetFilter: 用户收藏的推文数据过滤器
+            bookmark: BookmarkTweetFilter: 用户收藏的推文数据过滤器
 
         Note:
             不需要传入用户ID，提供Cookie即可
@@ -505,7 +506,7 @@ class TwitterHandler:
 
             async with TwitterCrawler(self.kwargs) as crawler:
                 params = BookmarkTweetEncode(
-                    count=current_request_size, cursor=max_cursor
+                    count=int(current_request_size), cursor=max_cursor
                 )
                 response = await crawler.fetch_bookmark_tweet(params)
                 bookmark = BookmarkTweetFilter(response)

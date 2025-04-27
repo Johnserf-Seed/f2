@@ -108,6 +108,11 @@ class AESEncryptionUtils:
         if self.mode == "GCM":
             return self._aes_decrypt_gcm(ciphertext)
         elif self.mode == "CBC":
+            # 确保 CBC 模式下有有效的 IV
+            if iv is None:
+                iv = self.iv
+            if iv is None:
+                raise ValueError(_("CBC 模式解密需要提供初始化向量(IV)"))
             return self._aes_decrypt_cbc(ciphertext, iv)
         elif self.mode == "ECB":
             return self._aes_decrypt_ecb(ciphertext)
@@ -151,6 +156,9 @@ class AESEncryptionUtils:
 
     def _aes_encrypt_cbc(self, plaintext: bytes) -> bytes:
         """CBC模式加密"""
+        if self.iv is None:
+            raise ValueError(_("CBC 模式加密需要提供初始化向量(IV)"))
+
         # 使用 PKCS7 填充
         padder = padding.PKCS7(128).padder()
         padded_data = padder.update(plaintext) + padder.finalize()

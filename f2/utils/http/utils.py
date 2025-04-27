@@ -2,7 +2,7 @@
 
 import traceback
 from pathlib import Path
-from typing import Optional, Union, List
+from typing import List, Optional, Union
 from urllib.error import HTTPError
 
 import httpx
@@ -197,7 +197,7 @@ async def get_segments_from_m3u8(url: str) -> Optional[List[Segment]]:
     return segments
 
 
-async def get_segments_duration(url: str) -> Union[list, int, float, None]:
+async def get_segments_duration(url: str) -> Union[List[float], None]:
     """
     从给定的m3u8文件中获取segments的duration
 
@@ -205,7 +205,9 @@ async def get_segments_duration(url: str) -> Union[list, int, float, None]:
         url (str): m3u8文件的URL
 
     Returns:
-        segments的duration列表
+        Union[List[float], None]: segments的duration列表，如果获取失败则返回None
     """
     segments = await get_segments_from_m3u8(url)
+    if segments is None:
+        return None
     return [segment.duration for segment in segments]

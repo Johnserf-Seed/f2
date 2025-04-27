@@ -17,11 +17,12 @@ class BarkCrawler(BaseCrawler):
         kwargs: Optional[dict] = None,
     ):
         # 需要与cli同步
+        kwargs = kwargs or {}
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})
         api_key = kwargs.get("key", "")
         self.server_endpoint = f"{bkendpoint.BARK_DOMAIN}/{api_key}"
         super().__init__(
-            kwargs, proxies=proxies, crawler_headers=kwargs.get("headers", {})
+            kwargs=kwargs, proxies=proxies, crawler_headers=kwargs.get("headers", {})
         )
 
     async def fetch_bark_notification(self, params: BarkModel) -> dict:

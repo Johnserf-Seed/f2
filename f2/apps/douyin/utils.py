@@ -567,6 +567,7 @@ class XBogusManager:
         user_agent: str,
         base_endpoint: str,
         params: dict,
+        body: str = "",
     ) -> str:
         if not isinstance(params, dict):
             raise TypeError(_("参数必须是字典类型"))
@@ -574,7 +575,7 @@ class XBogusManager:
         param_str = "&".join([f"{k}={v}" for k, v in params.items()])
 
         try:
-            xb_value = XB(user_agent).getXBogus(param_str)
+            xb_value = XB(user_agent).getXBogus(param_str, body)
         except Exception as e:
             trace_logger.error(traceback.format_exc())
             raise RuntimeError(_("生成X-Bogus失败: {0})").format(e))
@@ -736,6 +737,7 @@ class SecUserIdFetcher(BaseCrawler):
                         ).format(cls.__name__)
                     )
             response.raise_for_status()
+            raise APIResponseError(_("获取sec_user_id失败，未知错误"))
 
         except httpx.TimeoutException as exc:
             raise APITimeoutError(
@@ -1250,6 +1252,10 @@ class WebCastIdFetcher(BaseCrawler):
                     _("未在响应的地址中找到webcast_id，检查链接是否为直播页")
                 )
 
+            # 确保match不为None再调用group
+            if match is None:
+                raise APIResponseError(_("提取webcast_id失败，检查链接格式"))
+
             return match.group(1)
         except httpx.TimeoutException as exc:
             raise APITimeoutError(
@@ -1595,18 +1601,33 @@ def json_2_lrc(data: Union[str, list, dict]) -> str:
     """
     try:
         lrc_lines = []
+        # 确保data是列表类型
+        if isinstance(data, str):
+            data = json.loads(data)
+        elif isinstance(data, dict):
+            # 转换为列表以统一处理
+            data = [data]
+
         for item in data:
-            text = item["text"]
-            time_seconds = float(item["timeId"])
+            # 确保item是字典类型
+            if not isinstance(item, dict):
+                raise TypeError(_("歌词数据项必须是字典类型"))
+
+            text = item.get("text", "")
+            time_id = item.get("timeId", 0)
+
+            time_seconds = float(time_id)
             minutes = int(time_seconds // 60)
             seconds = int(time_seconds % 60)
             milliseconds = int((time_seconds % 1) * 1000)
             time_str = f"{minutes:02}:{seconds:02}.{milliseconds:03}"
             lrc_lines.append(f"[{time_str}] {text}")
+
+        return "\n".join(lrc_lines)
+
     except KeyError as e:
         raise KeyError(_("歌词数据字段错误：{0}").format(e))
     except RuntimeError as e:
         raise RuntimeError(_("生成歌词文件失败：{0}，请检查歌词 `data` 内容").format(e))
     except TypeError as e:
         raise TypeError(_("歌词数据类型错误：{0}").format(e))
-    return "\n".join(lrc_lines)

@@ -186,7 +186,6 @@ class LiveImFetch(BaseWebCastModel):
     history_comment_count: int = 6
     history_comment_cursor: str = "7386962392254958354"
     msToken: str = TokenManager.gen_real_msToken()
-    _signature: str
 
 
 class LiveWebcast(BaseWebCastModel):

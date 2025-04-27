@@ -4,7 +4,7 @@ import asyncio
 import gzip
 import json
 import traceback
-from typing import Optional
+from typing import Any, Optional, Type, Union
 from urllib.parse import urlencode
 
 from google.protobuf import json_format
@@ -26,6 +26,7 @@ from f2.apps.douyin.model import (
     PostComment,
     PostCommentReply,
     PostDetail,
+    PostSearch,
     PostStats,
     QueryUser,
     SuggestWord,
@@ -98,13 +99,13 @@ class DouyinCrawler(BaseCrawler):
         kwargs: Optional[dict] = None,
     ):
         # 需要与cli同步
+        kwargs = kwargs or {}
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})
-        self.headers = kwargs.get("headers", {}) | {"Cookie": kwargs["cookie"]}
-        if ClientConfManager.encryption() == "ab":
-            self.bogus_manager = ABogusManager
-        else:
-            self.bogus_manager = XBogusManager
-        super().__init__(kwargs, proxies=proxies, crawler_headers=self.headers)
+        self.headers = kwargs.get("headers", {}) | {"Cookie": kwargs.get("cookie")}
+        self.bogus_manager: Union[Type[ABogusManager], Type[XBogusManager]] = (
+            ABogusManager if ClientConfManager.encryption() == "ab" else XBogusManager
+        )
+        super().__init__(kwargs=kwargs, proxies=proxies, crawler_headers=self.headers)
 
     async def fetch_user_profile(self, params: UserProfile):
         endpoint = self.bogus_manager.model_2_endpoint(
@@ -386,14 +387,15 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
     show_message = False
 
     def __init__(self, kwargs: Optional[dict] = None, callbacks: Optional[dict] = None):
-        self.__class__.show_message = bool(kwargs.get("show_message", True))
         # 需要与cli同步
+        kwargs = kwargs or {}
+        self.__class__.show_message = bool(kwargs.get("show_message", True))
         self.headers = kwargs.get("headers", {}) | {
             "Cookie": f"ttwid={TokenManager.gen_ttwid()};"
         }
         self.callbacks = callbacks or {}
         self.timeout = kwargs.get("timeout", 10)
-        self.connected_clients = set()  # 管理连接的客户端
+        self.connected_clients: set[WebSocketServerProtocol] = set()  # 管理连接的客户端
         super().__init__(
             wss_headers=self.headers,
             callbacks=self.callbacks,
@@ -442,7 +444,6 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
 
             logger.debug(_("[WssPackage] [📦Wss包] | [{0}]").format(wss_package))
 
-            log_id = wss_package.logId
             decompressed = gzip.decompress(wss_package.payload)
 
             payload_package = Response()
@@ -454,7 +455,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
 
             # 发送 ack 包
             if payload_package.need_ack:
-                await self.send_ack(log_id, payload_package.internal_ext)
+                await self.send_ack(wss_package.logId, payload_package.internal_ext)
 
             # 并发处理每个消息
             tasks = []
@@ -490,6 +491,9 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
                             # 转发处理后的数据
                             await self.broadcast_message(result)
 
+            # 增加保活机制
+            await self.send_ack(wss_package.logId, payload_package.internal_ext)
+
         except ProtoDecodeError as e:
             logger.error(
                 _(
@@ -505,7 +509,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
                 )
             )
 
-    async def send_ack(self, log_id: str, internal_ext: str) -> None:
+    async def send_ack(self, log_id: int, internal_ext: str) -> None:
         """
         发送 ack 包
 
@@ -625,7 +629,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         finally:
             self.connected_clients.remove(websocket)
 
-    async def broadcast_message(self, message: str) -> None:
+    async def broadcast_message(self, message: Union[str, dict, list, Any]) -> None:
         """
         转发消息给所有连接的客户端
 

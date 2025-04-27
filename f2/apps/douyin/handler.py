@@ -109,6 +109,7 @@ class DouyinHandler:
     ]
 
     def __init__(self, kwargs: Optional[dict] = None) -> None:
+        kwargs = kwargs or {}
         self.kwargs = kwargs
         self.downloader = DouyinDownloader(self.kwargs)
         # 初始化 Bark 通知服务
@@ -375,7 +376,7 @@ class DouyinHandler:
         min_cursor: int = 0,
         max_cursor: int = 0,
         page_counts: int = 20,
-        max_counts: Optional[int] = None,
+        max_counts: Optional[Union[int, float]] = None,
     ) -> AsyncGenerator[UserPostFilter, Any]:
         """
         用于获取指定用户发布的作品列表。
@@ -414,7 +415,7 @@ class DouyinHandler:
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserPost(
                     max_cursor=max_cursor,
-                    count=current_request_size,
+                    count=int(current_request_size),
                     sec_user_id=sec_user_id,
                 )
                 response = await crawler.fetch_user_post(params)
@@ -505,7 +506,7 @@ class DouyinHandler:
         sec_user_id: str,
         max_cursor: int = 0,
         page_counts: int = 20,
-        max_counts: Optional[int] = None,
+        max_counts: Optional[Union[int, float]] = None,
     ) -> AsyncGenerator[UserPostFilter, Any]:
         """
         用于获取指定用户点赞的作品列表。
@@ -544,7 +545,7 @@ class DouyinHandler:
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserLike(
                     max_cursor=max_cursor,
-                    count=current_request_size,
+                    count=int(current_request_size),
                     sec_user_id=sec_user_id,
                 )
                 response = await crawler.fetch_user_like(params)
@@ -625,7 +626,7 @@ class DouyinHandler:
         self,
         max_cursor: int = 0,
         page_counts: int = 20,
-        max_counts: Optional[int] = None,
+        max_counts: Optional[Union[int, float]] = None,
     ) -> AsyncGenerator[UserMusicCollectionFilter, Any]:
         """
         用于获取指定用户收藏的音乐作品列表。
@@ -662,7 +663,7 @@ class DouyinHandler:
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserMusicCollection(
-                    cursor=max_cursor, count=current_request_size
+                    cursor=max_cursor, count=int(current_request_size)
                 )
                 response = await crawler.fetch_user_music_collection(params)
                 music = UserMusicCollectionFilter(response)
@@ -732,7 +733,7 @@ class DouyinHandler:
         self,
         max_cursor: int = 0,
         page_counts: int = 20,
-        max_counts: Optional[int] = None,
+        max_counts: Optional[Union[int, float]] = None,
     ) -> AsyncGenerator[UserCollectionFilter, Any]:
         """
         用于获取指定用户收藏的作品列表。
@@ -775,7 +776,9 @@ class DouyinHandler:
             )
 
             async with DouyinCrawler(self.kwargs) as crawler:
-                params = UserCollection(cursor=max_cursor, count=current_request_size)
+                params = UserCollection(
+                    cursor=max_cursor, count=int(current_request_size)
+                )
                 response = await crawler.fetch_user_collection(params)
                 collection = UserCollectionFilter(response)
                 yield collection
@@ -923,7 +926,7 @@ class DouyinHandler:
         self,
         max_cursor: int = 0,
         page_counts: int = 20,
-        max_counts: Optional[int] = None,
+        max_counts: Optional[Union[int, float]] = None,
     ) -> AsyncGenerator[UserCollectsFilter, Any]:
         """
         用于获取指定用户收藏夹。
@@ -988,7 +991,7 @@ class DouyinHandler:
         collects_id: str,
         max_cursor: int = 0,
         page_counts: int = 20,
-        max_counts: Optional[int] = None,
+        max_counts: Optional[Union[int, float]] = None,
     ) -> AsyncGenerator[UserCollectionFilter, Any]:
         """
         用于获取指定用户收藏夹的作品列表。
@@ -1028,7 +1031,7 @@ class DouyinHandler:
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserCollectsVideo(
                     cursor=max_cursor,
-                    count=current_request_size,
+                    count=int(current_request_size),
                     collects_id=str(collects_id),
                 )
                 response = await crawler.fetch_user_collects_video(params)
@@ -1128,7 +1131,7 @@ class DouyinHandler:
         mix_id: str,
         max_cursor: int = 0,
         page_counts: int = 20,
-        max_counts: Optional[int] = None,
+        max_counts: Optional[Union[int, float]] = None,
     ) -> AsyncGenerator[UserMixFilter, Any]:
         """
         用于获取指定用户合集的作品列表。
@@ -1166,7 +1169,7 @@ class DouyinHandler:
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserMix(
-                    cursor=max_cursor, count=current_request_size, mix_id=mix_id
+                    cursor=max_cursor, count=int(current_request_size), mix_id=mix_id
                 )
                 response = await crawler.fetch_user_mix(params)
                 mix = UserMixFilter(response)
@@ -1266,7 +1269,7 @@ class DouyinHandler:
                     )
                 )
             )
-            return
+            return UserLiveFilter(None)
 
         async with DouyinCrawler(self.kwargs) as crawler:
             params = UserLive(web_rid=webcast_id, room_id_str="")
@@ -1448,7 +1451,7 @@ class DouyinHandler:
         sec_user_id: str,
         max_cursor: int = 0,
         page_counts: int = 20,
-        max_counts: Optional[int] = None,
+        max_counts: Optional[Union[int, float]] = None,
     ) -> AsyncGenerator[UserPostFilter, Any]:
         """
         用于获取指定用户feed的作品列表。
@@ -1487,7 +1490,7 @@ class DouyinHandler:
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = UserPost(
                     max_cursor=max_cursor,
-                    count=current_request_size,
+                    count=int(current_request_size),
                     sec_user_id=sec_user_id,
                 )
                 response = await crawler.fetch_user_post(params)
@@ -1567,7 +1570,7 @@ class DouyinHandler:
         aweme_id: str,
         filterGids: str = "",
         page_counts: int = 20,
-        max_counts: Optional[int] = None,
+        max_counts: Optional[Union[int, float]] = None,
     ) -> AsyncGenerator[PostRelatedFilter, Any]:
         """
         用于获取指定作品的相关推荐作品列表。
@@ -1603,7 +1606,7 @@ class DouyinHandler:
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = PostRelated(
-                    count=current_request_size,
+                    count=int(current_request_size),
                     aweme_id=aweme_id,
                     filterGids=quote(filterGids),
                 )
@@ -1673,7 +1676,7 @@ class DouyinHandler:
         cursor: int = 0,
         level: int = 1,
         pull_type: int = 0,
-        max_counts: Optional[int] = None,
+        max_counts: Optional[Union[int, float]] = None,
     ) -> AsyncGenerator[FriendFeedFilter, Any]:
         """
         用于获取指定用户好友作品列表。
@@ -1815,7 +1818,7 @@ class DouyinHandler:
                     offset=offset,
                     min_time=min_time,
                     max_time=max_time,
-                    count=current_request_size,
+                    count=int(current_request_size),
                     source_type=source_type,
                 )
                 response = await crawler.fetch_user_following(params)
@@ -1846,7 +1849,7 @@ class DouyinHandler:
                 3: (0, 0, following.max_time),  # 按最早关注排序
                 4: (following.offset, 0, 0),  # 按综合排序
             }
-            offset, max_time, min_time = logicmap.get(source_type)
+            offset, max_time, min_time = logicmap.get(source_type, (0, 0, 0))
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -1913,7 +1916,7 @@ class DouyinHandler:
                     offset=offset,
                     min_time=min_time,
                     max_time=max_time,
-                    count=current_request_size,
+                    count=int(current_request_size),
                     source_type=source_type,
                 )
                 response = await crawler.fetch_user_follower(params)
@@ -2245,7 +2248,7 @@ class DouyinHandler:
         aweme_id: str,
         cursor: int = 0,
         page_counts: int = 20,
-        max_counts: Optional[int] = None,
+        max_counts: Optional[Union[int, float]] = None,
     ) -> AsyncGenerator[PostCommentFilter, Any]:
         """
         用于获取作品评论。
@@ -2279,7 +2282,7 @@ class DouyinHandler:
 
             async with DouyinCrawler(self.kwargs) as crawler:
                 params = PostComment(
-                    aweme_id=aweme_id, cursor=cursor, count=current_request_size
+                    aweme_id=aweme_id, cursor=cursor, count=int(current_request_size)
                 )
                 response = await crawler.fetch_post_comment(params)
                 comment = PostCommentFilter(response)
@@ -2321,7 +2324,7 @@ class DouyinHandler:
         comment_id: str,
         cursor: int = 0,
         page_counts: int = 3,
-        max_counts: Optional[int] = None,
+        max_counts: Optional[Union[int, float]] = None,
     ) -> AsyncGenerator[PostCommentReplyFilter, Any]:
         """
         用于获取评论的回复。
@@ -2359,7 +2362,7 @@ class DouyinHandler:
                     item_id=aweme_id,
                     comment_id=comment_id,
                     cursor=cursor,
-                    count=current_request_size,
+                    count=int(current_request_size),
                 )
                 response = await crawler.fetch_post_comment_reply(params)
                 reply = PostCommentReplyFilter(response)
@@ -2402,7 +2405,7 @@ class DouyinHandler:
         search_id: str = "",
         offset: int = 0,
         page_counts: int = 20,
-        max_counts: Optional[int] = None,
+        max_counts: Optional[Union[int, float]] = None,
     ) -> AsyncGenerator[HomePostSearchFilter, Any]:
         """
         用于搜索指定关键词的作品。
@@ -2440,7 +2443,7 @@ class DouyinHandler:
                     keyword=quote(keyword),
                     search_id=str(search_id),
                     offset=offset,
-                    count=current_request_size,
+                    count=int(current_request_size),
                 )
                 response = await crawler.fetch_home_post_search(params)
                 search = HomePostSearchFilter(response)

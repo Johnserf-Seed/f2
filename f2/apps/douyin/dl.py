@@ -18,6 +18,7 @@ from f2.utils.utils import filter_by_date_interval
 
 class DouyinDownloader(BaseDownloader):
     def __init__(self, kwargs: Optional[dict] = None):
+        kwargs = kwargs or {}
         if kwargs["cookie"] is None:
             raise ValueError(
                 _(
@@ -27,13 +28,13 @@ class DouyinDownloader(BaseDownloader):
 
         super().__init__(kwargs)
 
-    async def save_last_aweme_id(self, sec_user_id: str, aweme_id: int) -> None:
+    async def save_last_aweme_id(self, sec_user_id: str, aweme_id: str) -> None:
         """
         保存最后一个请求的aweme_id
         (Save the last requested aweme_id)
 
         Args:
-            aweme_id (int): 作品id (aweme_id)
+            aweme_id (str): 作品id (aweme_id)
         """
 
         async with AsyncUserDB("douyin_users.db") as db:
@@ -71,9 +72,16 @@ class DouyinDownloader(BaseDownloader):
         if kwargs.get("interval") is None:
             logger.warning(_("未提供日期区间参数"))
         elif kwargs.get("interval") != "all":
-            aweme_datas_list = await filter_by_date_interval(
-                aweme_datas_list, kwargs.get("interval"), "create_time"
+            filtered_data = await filter_by_date_interval(
+                aweme_datas_list, str(kwargs.get("interval")), "createTime"
             )
+            # 处理返回结果确保类型一致
+            if filtered_data is None:
+                aweme_datas_list = []
+            elif isinstance(filtered_data, dict):
+                aweme_datas_list = [filtered_data]
+            else:
+                aweme_datas_list = filtered_data
 
         # 检查是否有符合条件的作品
         if not aweme_datas_list:
@@ -468,7 +476,7 @@ class DouyinDownloader(BaseDownloader):
             )
             + "_live"
         )
-        webcast_url = webcast_data_dict.get("m3u8_pull_url").get("FULL_HD1")
+        webcast_url = webcast_data_dict.get("m3u8_pull_url", {}).get("FULL_HD1")
 
         await self.initiate_m3u8_download(
             _("直播"), webcast_url, base_path, webcast_name, ".flv"

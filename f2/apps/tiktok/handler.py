@@ -71,6 +71,7 @@ class TiktokHandler:
     ]
 
     def __init__(self, kwargs: Optional[dict] = None) -> None:
+        kwargs = kwargs or {}
         self.kwargs = kwargs
         self.downloader = TiktokDownloader(kwargs)
         # 初始化 Bark 通知服务
@@ -713,7 +714,7 @@ class TiktokHandler:
 
         if not playlist.hasPlayList:
             logger.info(_("用户：{0} 没有作品合集").format(secUid))
-            return {}
+            return playlist
 
         logger.debug(_("当前请求的cursor：{0}").format(cursor))
         logger.debug(
@@ -725,22 +726,22 @@ class TiktokHandler:
 
     async def select_playlist(
         self,
-        playlists: Union[dict, UserPlayListFilter],
+        playlists: Union[UserPlayListFilter],
     ) -> Union[str, List[str]]:
         """
         用于选择要下载的作品合集
         (Used to select the video mix to download)
 
         Args:
-            playlists: Union[dict, UserPlayListFilter]: 作品合集列表 (Video mix list)
+            playlists: Union[UserPlayListFilter]: 作品合集列表 (Video mix list)
 
         Return:
             selected_index: Union[str, List[str]]: 选择的作品合集序号 (Selected video mix index)
         """
 
-        if playlists == {}:
+        if not playlists.hasPlayList:
             logger.warning(_("用户没有作品合集"))
-            return
+            return []  # 返回空列表而不是None
 
         rich_console.print("[bold]请选择要下载的合集：[/bold]")
         rich_console.print("0: [bold]全部下载[/bold]")

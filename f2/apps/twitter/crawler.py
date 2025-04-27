@@ -28,6 +28,7 @@ class TwitterCrawler(BaseCrawler):
         kwargs: Optional[dict] = None,
     ):
         # 需要与cli同步
+        kwargs = kwargs or {}
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})
         self.authorization = (
             kwargs.get("Authorization") or ClientConfManager.authorization()
@@ -41,7 +42,7 @@ class TwitterCrawler(BaseCrawler):
             "X-Csrf-Token": self.x_csrf_token,
         }
 
-        super().__init__(kwargs, proxies=proxies, crawler_headers=self.headers)
+        super().__init__(kwargs=kwargs, proxies=proxies, crawler_headers=self.headers)
 
     async def fetch_tweet_detail(self, params: TweetDetailEncode):
         endpoint = ModelManager.model_2_endpoint(

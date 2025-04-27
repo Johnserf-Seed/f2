@@ -150,7 +150,7 @@ class XBogus:
             + self.character[x3 & 63]
         )
 
-    def getXBogus(self, url_params):
+    def getXBogus(self, url_params: str, body: str = ""):
         """
         获取 X-Bogus 值。
         Get the X-Bogus value.

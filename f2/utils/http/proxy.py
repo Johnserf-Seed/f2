@@ -13,6 +13,7 @@ def check_proxy_avail(
     http_proxy: str,
     https_proxy: str,
     test_url: str = "https://www.google.com",
+    expected_content: Optional[str] = None,
     timeout: int = 5,
     method: str = "GET",
     **kwargs,

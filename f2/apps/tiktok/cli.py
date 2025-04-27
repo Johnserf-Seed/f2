@@ -108,7 +108,7 @@ def handler_naming(
     """
     # 避免和配置文件参数冲突
     if not value or ctx.resilient_parsing:
-        return
+        return value
 
     # 允许的模式和分隔符
     ALLOWED_PATTERNS = [
@@ -388,7 +388,7 @@ def tiktok(
         custom_manager = ConfigManager(config)
     else:
         custom_manager = main_manager
-        config = main_conf_path
+        config = str(main_conf_path)
 
     custom_conf = custom_manager.get_config("tiktok")
 

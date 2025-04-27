@@ -340,7 +340,7 @@ class WeiboHandler:
         page: int = 1,
         feature: int = 0,
         since_id: str = "",
-        max_counts: Optional[int] = None,
+        max_counts: Optional[Union[int, float]] = None,
     ) -> AsyncGenerator[UserWeiboFilter, Any]:
         """
         用于获取用户微博数据。

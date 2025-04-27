@@ -168,7 +168,7 @@ class TokenManager(BaseCrawler):
 
             msToken = str(httpx.Cookies(response.cookies).get("msToken"))
 
-            if len(msToken) != 148 or msToken is None:
+            if len(msToken) != 152 or msToken is None:
                 raise APIResponseError(_("{0} 内容不符合要求").format("msToken"))
 
             logger.debug(_("生成真实的 msToken：{0}").format(msToken))
@@ -242,7 +242,7 @@ class TokenManager(BaseCrawler):
         Returns:
             false_msToken: 生成的虚假 msToken
         """
-        false_msToken = gen_random_str(146) + "=="
+        false_msToken = gen_random_str(150) + "=="
         logger.debug(_("生成虚假的 msToken：{0}").format(false_msToken))
         return false_msToken
 
@@ -680,8 +680,8 @@ class SecUserIdFetcher(BaseCrawler):
         urls = extract_valid_urls(urls)
 
         if urls == []:
-            raise APINotFoundError("输入的URL List不合法。类名：{0}").format(
-                cls.__name__
+            raise APINotFoundError(
+                _("输入的URL List不合法。类名：{0}").format(cls.__name__)
             )
 
         secuids = [cls.get_secuid(url) for url in urls]
@@ -1298,6 +1298,9 @@ def format_file_name(
 
     if not naming_template:
         raise InvalidConfError(key="naming", value=naming_template)
+
+    if not aweme_data:
+        raise APIResponseError(_("缺少视频数据信息，无法格式化文件名"), status_code=400)
 
     # 为不同系统设置不同的文件名长度限制
     os_limit = {

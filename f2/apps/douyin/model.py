@@ -74,8 +74,8 @@ class BaseWebCastModel(BaseModel):
     version_code: str = "180800"
     device_platform: str = "web"
     cookie_enabled: str = "true"
-    screen_width: int = 1920
-    screen_height: int = 1080
+    screen_width: str = "1920"
+    screen_height: str = "1080"
     browser_language: str = "zh-CN"
     browser_platform: str = "Win32"
     browser_name: str = "Mozilla"
@@ -86,8 +86,8 @@ class BaseWebCastModel(BaseModel):
     browser_online: str = "true"
     tz_name: str = "Asia/Hong_Kong"
     host: str = "https://live.douyin.com"
-    aid: int = 6383
-    live_id: int = 1
+    aid: str = "6383"
+    live_id: str = "1"
     did_rule: int = 3
     endpoint: str = "live_pc"
     support_wrds: int = 1
