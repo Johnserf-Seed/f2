@@ -528,6 +528,7 @@ class SecUserIdFetcher(BaseCrawler):
     _TIKTOK_NOTFOUND_PARREN = re.compile(r"notfound")
 
     proxies = ClientConfManager.proxies()
+    msToken = TokenManager.gen_real_msToken()
 
     def __init__(self):
         super().__init__(proxies=self.proxies)
@@ -569,6 +570,7 @@ class SecUserIdFetcher(BaseCrawler):
             headers = {
                 "User-Agent": ClientConfManager.user_agent(),
                 "Referer": url,
+                "Cookie": f"msToken={cls.msToken}",
             }
             response = await instance.aclient.get(
                 url, headers=headers, follow_redirects=True
@@ -585,7 +587,7 @@ class SecUserIdFetcher(BaseCrawler):
                 if not match:
                     raise APIResponseError(
                         _("未在响应中找到 {0}，请检查链接。类名：{1}").format(
-                            "sec_uid", cls.__name__
+                            "__UNIVERSAL_DATA_FOR_REHYDRATION__", cls.__name__
                         )
                     )
 
