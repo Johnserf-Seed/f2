@@ -4,6 +4,7 @@ import asyncio
 import signal
 import sys
 from asyncio import CancelledError
+from types import FrameType
 
 from f2.cli.cli_console import RichConsoleManager
 from f2.utils.core.singleton import Singleton
@@ -52,7 +53,7 @@ class SignalManager(metaclass=Singleton):
         """提供对shutdown_event的只读访问"""
         return self._shutdown_event
 
-    def _handle_signal(self, received_signal: signal.Signals, frame: object) -> None:
+    def _handle_signal(self, received_signal: int, frame: FrameType | None) -> None:
         """内部处理接收到的信号"""
         self._shutdown_event.set()
 
