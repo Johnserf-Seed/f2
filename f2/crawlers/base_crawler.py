@@ -663,6 +663,10 @@ class WebSocketCrawler:
 
         while True:
             try:
+                if self.websocket is None:
+                    logger.error(_("[ReceiveMessages] [❌ WebSocket未连接]"))
+                    return "closed"
+
                 message = await asyncio.wait_for(
                     self.websocket.recv(), timeout=self.timeout
                 )
@@ -686,11 +690,11 @@ class WebSocketCrawler:
                     logger.warning(
                         _(
                             "[ReceiveMessages] [❌ 超时关闭连接] | "
-                            "[超时次数：{0}] [连接状态：{1}]"
-                        ).format(timeout_count, self.websocket.closed)
+                            "[超时次数：{0}] [连接状态：未连接]"
+                        ).format(timeout_count)
                     )
                     return "closed"
-                if self.websocket.closed:
+                if self.websocket is None or self.websocket.closed:
                     logger.warning(
                         _(
                             "[ReceiveMessages] [🔒 远程服务器关闭] | [WebSocket 连接结束]"

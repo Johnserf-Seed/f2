@@ -4,6 +4,7 @@ import gettext
 import locale
 import os
 import pathlib
+from typing import Optional
 
 from ruamel.yaml import YAML  # type: ignore[import-untyped]
 
@@ -115,10 +116,12 @@ class TranslationManager:
             )
 
             if env_lang:
-                system_lang = env_lang.split(":")[0].replace("-", "_").split(".")[0]
+                system_lang: Optional[str] = (
+                    env_lang.split(":")[0].replace("-", "_").split(".")[0]
+                )
             else:
                 # 使用locale模块获取系统语言
-                system_lang = locale.getdefaultlocale()[0]
+                system_lang = locale.getdefaultlocale()[0] or "zh_CN"
 
             if not system_lang:
                 # 默认语言设置

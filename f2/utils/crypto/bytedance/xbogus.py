@@ -56,8 +56,8 @@ class XBogus:
             idx = 0
             while idx < len(md5_str):
                 array.append(
-                    (self.Array[ord(md5_str[idx])] << 4)
-                    | self.Array[ord(md5_str[idx + 1])]
+                    ((self.Array[ord(md5_str[idx])] or 0) << 4)
+                    | (self.Array[ord(md5_str[idx + 1])] or 0)
                 )
                 idx += 2
             return array
