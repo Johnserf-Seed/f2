@@ -136,9 +136,9 @@ class UserPostFilter(JSONModel):
     def createTime(self):
         create_times = self._get_list_attr_value("$.itemList[*].createTime")
         return (
-            [timestamp_2_str(ct) for ct in create_times]
+            [timestamp_2_str(ct or "") for ct in create_times]
             if isinstance(create_times, list)
-            else timestamp_2_str(create_times)
+            else timestamp_2_str(create_times or "")
         )
 
     @property
@@ -294,6 +294,8 @@ class UserPostFilter(JSONModel):
     @property
     def video_bitrateInfo(self):
         bit_rate_data = self._get_list_attr_value("$.itemList[*].video.bitrateInfo")
+        if bit_rate_data is None:
+            return []
         return [
             (
                 (
@@ -505,9 +507,10 @@ class PostDetailFilter(JSONModel):
     # aweme
     @property
     def createTime(self):
-        return timestamp_2_str(
-            str(self._get_attr_value("$.itemInfo.itemStruct.createTime"))
-        )
+        create_time = self._get_attr_value("$.itemInfo.itemStruct.createTime")
+        if create_time is None:
+            return ""
+        return timestamp_2_str(create_time)
 
     @property
     def desc(self):
@@ -721,9 +724,9 @@ class PostSearchFilter(JSONModel):
     def createTime(self):
         create_times = self._get_list_attr_value("$.item_list[*].createTime")
         return (
-            [timestamp_2_str(ct) for ct in create_times]
+            [timestamp_2_str(ct or "") for ct in create_times]
             if isinstance(create_times, list)
-            else timestamp_2_str(create_times)
+            else timestamp_2_str(create_times or "")
         )
 
     @property
@@ -986,7 +989,10 @@ class UserLiveFilter(JSONModel):
 
     @property
     def live_startTime(self):
-        return timestamp_2_str(self._get_attr_value("$.data.liveRoom.startTime"))
+        start_time = self._get_attr_value("$.data.liveRoom.startTime")
+        if start_time is None:
+            return ""
+        return timestamp_2_str(start_time)
 
     @property
     def live_status(self):
@@ -1016,9 +1022,12 @@ class UserLiveFilter(JSONModel):
 
     @property
     def live_stream_data(self):
-        return unescape_json(
-            self._get_attr_value("$.data.liveRoom.streamData.pull_data.stream_data")
+        stream_data = self._get_attr_value(
+            "$.data.liveRoom.streamData.pull_data.stream_data"
         )
+        if stream_data is None:
+            return {}
+        return unescape_json(stream_data)
 
     @property
     def live_flv_url(self):
