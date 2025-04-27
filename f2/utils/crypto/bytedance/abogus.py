@@ -6,7 +6,7 @@
 @Description:abogus.py
 @Date       :2024/06/16 11:21:14
 @Author     :JohnserfSeed
-@version    :0.0.3
+@version    :0.0.4
 @License    :Apache License 2.0
 @Github     :https://github.com/johnserf-seed
 @Mail       :support@f2.wiki
@@ -15,7 +15,8 @@ Change Log  :
 2024/06/16 17:27:47 - Create ABogus algorithm & black style
 2024/06/16 17:27:47 - Limit custom ua late open source full version
 2024/07/08 21:50:12 - Open the full version of the custom UA
-2025/03/05 155:55:42 - Perf Post Method Generate
+2025/03/05 15:55:42 - Perf Post Method Generate
+2025/04/27 17:15:26 - Fix mypy type error
 -------------------------------------------------
 """
 
@@ -90,7 +91,7 @@ class StringProcessor:
         Returns:
             str: 转换后的 ASCII 码字符串 (Converted ASCII code string).
         """
-        return "".join([chr(i) for i in s])
+        return "".join([chr(ord(char)) for char in s])
 
     @staticmethod
     def to_ord_array(s: str) -> List[int]:
@@ -106,17 +107,24 @@ class StringProcessor:
         return [ord(char) for char in s]
 
     @staticmethod
-    def to_char_str(s: str) -> str:
+    def to_char_str(s: Union[str, List[int]]) -> str:
         """
         将 ASCII 码列表转换为字符串 (Convert a list of ASCII codes to a string).
 
         Args:
-            s (str): ASCII 码列表 (List of ASCII codes).
+            s (Union[str, List[int]]): ASCII 码列表或字符串 (List of ASCII codes or string).
 
         Returns:
             str: 转换后的字符串 (Converted string).
         """
-        return "".join([chr(i) for i in s])
+        if isinstance(s, list):
+            return "".join([chr(i) for i in s])
+        elif isinstance(s, str):
+            return s
+        else:
+            raise TypeError(
+                "Expected str or List[int], got {}".format(type(s).__name__)
+            )
 
     @staticmethod
     def to_char_array(s: str) -> List[int]:
@@ -353,6 +361,7 @@ class CryptoUtility:
         result_str = []
         index_b = self.big_array[1]
         initial_value = 0
+        value_e = 0
 
         for index, char in enumerate(bytes_str):
             if index == 0:
@@ -738,8 +747,13 @@ class ABogus:
         )
         array3 = self.crypto_utility.params_to_array(
             self.crypto_utility.base64_encode(
-                StringProcessor.to_ord_str(
-                    self.crypto_utility.rc4_encrypt(self.ua_key, self.user_agent)
+                "".join(
+                    [
+                        chr(b)
+                        for b in self.crypto_utility.rc4_encrypt(
+                            self.ua_key, self.user_agent
+                        )
+                    ]
                 ),
                 1,
             ),
@@ -811,7 +825,15 @@ class ABogus:
         ab_dir[65] = len(self.browser_fp)
 
         # 获取 ab_dir 中 sort_index 的值
-        sorted_values = [ab_dir.get(i, 0) for i in self.sort_index]
+        sorted_values: List[int] = []
+        for i in self.sort_index:
+            value = ab_dir.get(i, 0)
+            if isinstance(value, (int, float)):
+                sorted_values.append(int(value))
+            elif isinstance(value, str) and value.isdigit():
+                sorted_values.append(int(value))
+            else:
+                sorted_values.append(0)  # 对于不能转换为整数的值使用0作为默认值
 
         # 将浏览器指纹转换为 ASCII 码列表
         edge_fp_array = StringProcessor.to_char_array(self.browser_fp)
@@ -822,10 +844,27 @@ class ABogus:
         # 进行异或计算
         for index in range(len(self.sort_index_2) - 1):
             if index == 0:
-                ab_xor = ab_dir.get(self.sort_index_2[index], 0)
-            ab_xor ^= ab_dir.get(self.sort_index_2[index + 1], 0)
+                # 防御性编程，确保返回的是整数
+                value = ab_dir.get(self.sort_index_2[index], 0)
+                if isinstance(value, (int, float)):
+                    ab_xor = int(value)
+                else:
+                    ab_xor = 0
+            # 同样防御性地处理第二个值
+            value = ab_dir.get(self.sort_index_2[index + 1], 0)
+            if isinstance(value, (int, float)):
+                ab_xor ^= int(value)
 
-        sorted_values.extend(edge_fp_array)
+        # 安全转换edge_fp_array中的值为整数
+        clean_edge_fp = []
+        for x in edge_fp_array:
+            if isinstance(x, (int, float, str)) and str(x).isdigit():
+                clean_edge_fp.append(int(x))
+            else:
+                # 对于无法转换的值使用0填充
+                clean_edge_fp.append(0)
+
+        sorted_values.extend(clean_edge_fp)
         sorted_values.append(ab_xor)
 
         abogus_bytes_str = (
@@ -843,6 +882,7 @@ if __name__ == "__main__":
     # 24/07/08 支持自定义ua和浏览器指纹
     # 24/11/15 完成1.0.1.19版本abogus算法，择日开源
     # 25/03/05 修复POST请求参数加密错误，修补环境
+    # 25/04/27 修复mypy检查错误
 
     user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0"
     chrome_fp = BrowserFingerprintGenerator.generate_fingerprint("Edge")
