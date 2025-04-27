@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 import pytest
 
-from f2.utils.utils import check_python_version
+from f2.utils.version import check_python_version
 
 
 # 测试 Python 版本满足最低要求时不会退出程序

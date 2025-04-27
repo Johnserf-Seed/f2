@@ -1,12 +1,13 @@
 # path: tests/test_utils.py
 
 import datetime
+from typing import Dict, Optional
 
 import pytest
 
+from f2.utils.config.merge import merge_config
 from f2.utils.string.generator import gen_random_str
 from f2.utils.time.timestamp import get_timestamp
-from f2.utils.utils import merge_config
 
 
 def test_gen_random_str():
@@ -85,7 +86,7 @@ def test_merge_config():
 
     # 测试主配置和自定义配置合并
     main_conf = {"key1": "value1", "key2": "value2"}
-    custom_conf = {"key2": None, "key3": ""}
+    custom_conf: Dict[str, Optional[str]] = {"key2": None, "key3": ""}
     result = merge_config(main_conf, custom_conf)
     expected = {
         "key1": "value1",  # 主配置保留
@@ -94,7 +95,7 @@ def test_merge_config():
     assert result == expected
 
     # 测试 CLI 参数覆盖自定义配置和主配置
-    cli_args = {"key2": "cli_value2", "key4": "cli_value4"}
+    cli_args: Dict[str, Optional[str]] = {"key2": "cli_value2", "key4": "cli_value4"}
     result = merge_config(main_conf, custom_conf, **cli_args)
     expected = {
         "key1": "value1",  # 主配置保留
@@ -103,10 +104,10 @@ def test_merge_config():
     }
     assert result == expected
 
-    # 测试空值和 None 不会覆盖已有值
-    custom_conf = {"key2": None, "key3": ""}
-    cli_args = {"key3": None, "key4": ""}
-    result = merge_config(main_conf, custom_conf, **cli_args)
+    # 使用不同的变量名测试空值和 None 不会覆盖已有值
+    custom_conf2: Dict[str, Optional[str]] = {"key2": None, "key3": ""}
+    cli_args2: Dict[str, Optional[str]] = {"key3": None, "key4": ""}
+    result = merge_config(main_conf, custom_conf2, **cli_args2)
     expected = {
         "key1": "value1",  # 主配置保留
         "key2": "value2",  # 自定义配置的 None 不覆盖主配置

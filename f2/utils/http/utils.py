@@ -11,7 +11,7 @@ from m3u8.model import Segment
 
 from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
-from f2.utils.utils import ensure_path
+from f2.utils.file.path import ensure_path
 
 
 async def get_content_length(

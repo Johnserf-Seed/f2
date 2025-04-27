@@ -90,7 +90,7 @@ from f2.apps.douyin.utils import (
 from f2.crawlers.base_crawler import BaseCrawler, WebSocketCrawler
 from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
-from f2.utils.utils import BaseEndpointManager
+from f2.utils.http.endpoint import BaseEndpointManager
 
 
 class DouyinCrawler(BaseCrawler):

@@ -6,7 +6,7 @@ from typing import Optional
 
 import execjs  # type: ignore[import-untyped]
 
-from f2.utils.utils import get_resource_path
+from f2.utils.file.path import get_resource_path
 
 
 class DouyinWebcastSignature:

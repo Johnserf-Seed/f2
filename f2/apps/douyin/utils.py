@@ -29,10 +29,10 @@ from f2.utils.config.conf_manager import ConfigManager
 from f2.utils.crypto.bytedance.abogus import ABogus as AB
 from f2.utils.crypto.bytedance.abogus import BrowserFingerprintGenerator as BrowserFpGen
 from f2.utils.crypto.bytedance.xbogus import XBogus as XB
+from f2.utils.file.name import split_filename
 from f2.utils.string.formatter import extract_valid_urls
 from f2.utils.string.generator import gen_random_str
 from f2.utils.time.timestamp import get_timestamp
-from f2.utils.utils import split_filename
 
 
 class ClientConfManager:

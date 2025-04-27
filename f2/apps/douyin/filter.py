@@ -2,10 +2,9 @@
 
 from typing import Any, Dict, List
 
-from f2.utils.json.filter import JSONModel
+from f2.utils.json.filter import JSONModel, filter_to_list
 from f2.utils.string.formatter import replaceT
 from f2.utils.time.timestamp import timestamp_2_str
-from f2.utils.utils import filter_to_list
 
 # Filter
 

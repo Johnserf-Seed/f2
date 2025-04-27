@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 import pytest
 
-from f2.utils.utils import split_filename
+from f2.utils.file.name import split_filename
 
 # 操作系统字符限制
 os_limit = {

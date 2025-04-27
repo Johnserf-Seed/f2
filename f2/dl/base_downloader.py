@@ -4,7 +4,7 @@ import asyncio
 import sys
 import traceback
 from pathlib import Path
-from typing import Any, List, Optional, Set, Union, Dict
+from typing import Any, Dict, List, Optional, Set, Union
 
 import aiofiles
 import httpx
@@ -16,13 +16,13 @@ from f2.exceptions.api_exceptions import APIRetryExhaustedError
 from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
 from f2.utils.core.signal import SignalManager
+from f2.utils.file.path import ensure_path
 from f2.utils.http.utils import (
     get_chunk_size,
     get_content_length,
     get_segments_from_m3u8,
     trim_filename,
 )
-from f2.utils.utils import ensure_path
 
 # 最大片段缓存数量，超过这个数量就会进行清理
 # (Maximum segment cache count, clear when it exceeds this count)
@@ -76,7 +76,9 @@ class BaseDownloader(BaseCrawler):
 
     def __init__(self, kwargs: Optional[dict] = None):
         kwargs = kwargs or {}
-        proxies = kwargs.get("proxies", {"http://": None, "https://": None})
+        proxies: Dict[str, Optional[str]] = kwargs.get(
+            "proxies", {"http://": None, "https://": None}
+        )
         self.headers = kwargs.get("headers", {}) | {"Cookie": kwargs.get("cookie", "")}
         super().__init__(kwargs, proxies=proxies, crawler_headers=self.headers)
 

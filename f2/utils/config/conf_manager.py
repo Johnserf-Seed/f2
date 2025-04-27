@@ -11,7 +11,7 @@ from f2.exceptions.file_exceptions import (
     FilePermissionError,
 )
 from f2.i18n.translator import _
-from f2.utils.utils import get_resource_path
+from f2.utils.file.path import get_resource_path
 
 
 class ConfigManager:

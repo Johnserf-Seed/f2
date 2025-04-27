@@ -5,6 +5,9 @@ from typing import Any, Dict, List, Optional, Union
 
 from jsonpath_ng import parse  # type: ignore[import-untyped]
 
+from f2.exceptions.api_exceptions import APIFilterError
+from f2.i18n.translator import _
+
 
 class JSONModel:
     """
@@ -127,3 +130,68 @@ class JSONModel:
 
         # 返回 JSON 字符串或列表
         return json.dumps(values, ensure_ascii=False) if as_json else values
+
+
+def filter_to_list(
+    filter_instance: Any,
+    entries_path: str,
+    exclude_fields: List[str],
+    extra_fields: Optional[List[str]] = None,
+) -> list:
+    """
+    通用的 `_to_list` 方法实现。
+
+    Args:
+        filter_instance (Any): Filter 实例
+        entries_path (str): entries 的路径
+        exclude_fields (List[str]): 排除的字段列表
+        extra_fields (Optional[List[str]]): 额外的字段列表
+
+    Returns:
+        list: entries 列表
+    """
+    # 生成属性名称列表，然后过滤掉排除的属性
+    keys = [
+        prop_name
+        for prop_name in dir(filter_instance)
+        if not prop_name.startswith("__")
+        and not prop_name.startswith("_")
+        and prop_name not in exclude_fields
+    ]
+
+    entries = filter_instance._get_attr_value(entries_path) or []
+    list_dicts = []
+    # 使用集合避免重复记录相同的错误
+    errors = set()
+    extra_fields = extra_fields or []  # 使用空列表而不是空字典作为默认值
+
+    # 遍历每个条目并创建一个字典
+    for entry in entries:
+        d = {key: getattr(filter_instance, key, None) for key in extra_fields}
+        for key in keys:
+            try:
+                attr_values = getattr(filter_instance, key)
+                # 当前entry在属性列表中的索引
+                index = entries.index(entry)
+                # 如果属性值的长度足够则赋值，否则赋None
+                d[key] = attr_values[index] if index < len(attr_values) else None
+            except TypeError as e:
+                # 如果字段已出错，跳过重复记录
+                error_message = _("字段 {0} 出错: {1}").format(key, str(e))
+                if error_message not in errors:
+                    errors.add(error_message)
+                d[key] = None
+            except Exception as e:
+                # 捕获其他未预料的异常
+                error_message = _("字段 {0} 出现未预料的错误: {1}").format(key, str(e))
+                if error_message not in errors:
+                    errors.add(error_message)
+                d[key] = None
+
+        list_dicts.append(d)
+
+    # 如果有错误，统一抛出异常
+    if errors:
+        raise APIFilterError(_("由于接口更新，部分字段处理失败:\n") + "\n".join(errors))
+
+    return list_dicts

@@ -14,8 +14,7 @@ from f2.cli.cli_console import RichConsoleManager
 from f2.i18n.translator import TranslationManager, _
 from f2.log.logger import logger, trace_logger
 from f2.utils.core.signal import SignalManager
-from f2.utils.utils import check_python_version
-from f2.utils.version import check_f2_version
+from f2.utils.version import check_f2_version, check_python_version
 
 
 # 处理帮助信息

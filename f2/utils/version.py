@@ -1,6 +1,7 @@
 # path: f2/utils/version.py
 
 import asyncio
+import sys
 import traceback
 from typing import Optional
 
@@ -97,3 +98,28 @@ async def check_f2_version(force_check: bool = False) -> None:
                 border_style="yellow",
             )
         )
+
+
+def check_python_version(min_version: tuple = (3, 10)) -> None:
+    """
+    检查当前 Python 版本是否满足最低要求
+
+    Args:
+        min_version (tuple, optional): 最低 Python 版本要求，默认为 (3, 10)
+
+    Raises:
+        SystemExit: 当 Python 版本不满足最低要求时，退出程序
+    """
+
+    console = Console()
+    if sys.version_info < min_version:
+        message = _("当前 Python 版本：{0} 不满足最低要求：{1}").format(
+            sys.version.split()[0], ".".join(map(str, min_version))
+        )
+        panel = Panel(
+            f"[bold red]{message}[/bold red]",
+            title=_("[bold red]Python 版本错误[/bold red]"),
+            border_style="red",
+        )
+        console.print(panel)
+        sys.exit(1)

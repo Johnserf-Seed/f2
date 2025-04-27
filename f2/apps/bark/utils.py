@@ -4,7 +4,7 @@ import secrets
 
 import f2
 from f2.utils.config.conf_manager import ConfigManager
-from f2.utils.utils import merge_config
+from f2.utils.config.merge import merge_config
 
 
 class ClientConfManager:
