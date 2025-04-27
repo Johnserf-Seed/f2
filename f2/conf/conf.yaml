@@ -105,7 +105,7 @@ f2:
 
       os: windows
       region: SG
-      priority_region: ""
+      priority_region:
       webcast_language: zh-Hans
       tz_name: Asia/Hong_Kong
 
@@ -123,20 +123,24 @@ f2:
       verify: false
 
     msToken:
-      url: https://mssdk-sg.tiktok.com/web/common?msToken=QnC7zMMh1cpaDTxHDHnabNOrqaWv49JwA1IAq3AIFvrdaqQi8Rs_YlXSya1vN-4b6C1MgpWpS2cL1oakaUEDe3pUDMLpCbdSc3b3V98Fux0AuwXn_9Ns3FyMTnFRmSOOOVeGg6bVXMSGoMG6dq3k
-      url2: https://mssdk-sg.tiktok.com/web/report?msToken=QnC7zMMh1cpaDTxHDHnabNOrqaWv49JwA1IAq3AIFvrdaqQi8Rs_YlXSya1vN-4b6C1MgpWpS2cL1oakaUEDe3pUDMLpCbdSc3b3V98Fux0AuwXn_9Ns3FyMTnFRmSOOOVeGg6bVXMSGoMG6dq3k
+      url:
+        https://mssdk-sg.tiktok.com/web/common?msToken=BsWeh8WL7dBqguqQ4AOAwNNFZFFe1C1XbRCtb4bfc_VzGDjF6K97eS9XFbtE_PAiabdY8eZOhZUdMwfMi8GrmFOvX2hedbGUrGiT8Z8bPhIs5Gjw5LaGKe7klUoQ41SzKSFScRkSFMBx3GqV87-usA==
+      url2:
+        https://mssdk-sg.tiktok.com/web/report?msToken=BsWeh8WL7dBqguqQ4AOAwNNFZFFe1C1XbRCtb4bfc_VzGDjF6K97eS9XFbtE_PAiabdY8eZOhZUdMwfMi8GrmFOvX2hedbGUrGiT8Z8bPhIs5Gjw5LaGKe7klUoQ41SzKSFScRkSFMBx3GqV87-usA==
       magic: 538969122
       version: 1
       dataType: 8
-      strData: 3g+ZrAO5JQgfqCRzb689RAbiueodAexjAjn2plyPVBdOArbRM66UOTnZPoVTDDw8GZ8TL/CO13bWedlvWSA8kCODHA6mjO1Af5hgak+1NHbb8EvfuahWFDL8x8hruWn4t6qb79DhOy64REx1nsO6ub4SX4cKdgs+ZXTjUItB2WKddXo7CKikuywT8SJ0TcwZ+z/9hSsawqJXawopS5H8bOF0o3qPn+CwkoWkXBUu4iwkI5UzL9/k18Gwq1BxAiCbyl2kCHJaox7md1H+KfQ0lU9fBhfVBuXa3jNkT5GfyASaBNeJXdhHwuPfEGI6a+4FOaO0MEGzOWDzhu6joo89ooEPo1XV+UJE2KLC5tStxSBibUvn+wZSfGmcpPfYl0jB0H2vLqyaveYraOx8WRE/G/Y9DkbBLJvz7E8sDZ/v1fCUVs1JDDewE/yn2aqOHr3NxUjOnylKl5WWSCPeSR4ZTXRR1ZJhvpGKP7XYc3tkOjBSQ70cXnl53dAQ6aouUVMcztSlkXh4goI46tgJDjTiJJILHBr03dM/1KwVzqoEEO8f7JBhfQo4OR6Y48PXomshJmZhDiEmtkqLndpZY2I/B8q0EShuPlDCFRW7iob6kFahyqDfpOmK15kzCX2n7eu7zqDGgpJuHEtULF9803lR5QBt104ET49RbnDJ+ipbz1bFvS2FJQ2rfktNlwjqdBT8UzfFPHyZk6z4cSxYIfPRj1lB8fDwTwv3PUSRxUZSwkuGoZbc6j/6hxwZaY0xxIEbb9DlOmQZY4qyiqSziZ8HGWsQ9uD95dO4lX6GlZaeh7mKsjLSKSdUt13YeGAciqjTvSPyO/pZ5xc3+i+5hY4A290/JiTmIyFBOrRrlmIhPEQe9OEJn0DPXYgliYUO1nljEi6q/4HMFdXFmlw6nC8/kL9EeinisX7g6PbdHuRcKONXZpXxBevL8xD5Z8SvFKH/uQmYHrJlybiKHjDIMq7vc59NBw2VDQBmRqa8NTh2XLwIryjoBIHuNSBngSZwJE==
+      strData:
+        3g+ZrAO5JQgfqCRzb689RAbiueodAexjAjn2plyPVBdOArbRM66UOTnZPoVTDDw8GZ8TL/CO13bWedlvWSA8kCODHA6mjO1Af5hgak+1NHbb8EvfuahWFDL8x8hruWn4t6qb79DhOy64REx1nsO6ub4SX4cKdgs+ZXTjUItB2WKddXo7CKikuywT8SJ0TcwZ+z/9hSsawqJXawopS5H8bOF0o3qPn+CwkoWkXBUu4iwkI5UzL9/k18Gwq1BxAiCbyl2kCHJaox7md1H+KfQ0lU9fBhfVBuXa3jNkT5GfyASaBNeJXdhHwuPfEGI6a+4FOaO0MEGzOWDzhu6joo89ooEPo1XV+UJE2KLC5tStxSBibUvn+wZSfGmcpPfYl0jB0H2vLqyaveYraOx8WRE/G/Y9DkbBLJvz7E8sDZ/v1fCUVs1JDDewE/yn2aqOHr3NxUjOnylKl5WWSCPeSR4ZTXRR1ZJhvpGKP7XYc3tkOjBSQ70cXnl53dAQ6aouUVMcztSlkXh4goI46tgJDjTiJJILHBr03dM/1KwVzqoEEO8f7JBhfQo4OR6Y48PXomshJmZhDiEmtkqLndpZY2I/B8q0EShuPlDCFRW7iob6kFahyqDfpOmK15kzCX2n7eu7zqDGgpJuHEtULF9803lR5QBt104ET49RbnDJ+ipbz1bFvS2FJQ2rfktNlwjqdBT8UzfFPHyZk6z4cSxYIfPRj1lB8fDwTwv3PUSRxUZSwkuGoZbc6j/6hxwZaY0xxIEbb9DlOmQZY4qyiqSziZ8HGWsQ9uD95dO4lX6GlZaeh7mKsjLSKSdUt13YeGAciqjTvSPyO/pZ5xc3+i+5hY4A290/JiTmIyFBOrRrlmIhPEQe9OEJn0DPXYgliYUO1nljEi6q/4HMFdXFmlw6nC8/kL9EeinisX7g6PbdHuRcKONXZpXxBevL8xD5Z8SvFKH/uQmYHrJlybiKHjDIMq7vc59NBw2VDQBmRqa8NTh2XLwIryjoBIHuNSBngSZwJE==
 
     ttwid:
       url: https://www.tiktok.com/ttwid/check/
       data: '{"aid":1988,"service":"www.tiktok.com","union":false,"unionHost":"","needFid":false,"fid":"","migrate_priority":0}'
-      cookie: ttwid=1%7C3uOVjidbOFBmdS6Aci5oeBb8Ta-HWpeyp2dvhl2Ib2E%7C1716637053%7C462867ee452aecd60a854225b854ff4498e9b99c13d4826a3e2a4e58a4c55134;
+      cookie: ttwid=1%7Cx4Ycgq6zI1Hf-o4_l4bm6RDfvAJMgwq96jEl-Cz8aWE%7C1744783663%7C827d22f244aa8c5afad91e9ed08a3c17ba2d0e8f3157381326b95040f7e83c4e;
 
     odin_tt:
-      url: https://www.tiktok.com/passport/web/auth/config?WebIdLastTime=1733387890&account_sdk_source=web&aid=1459&app_language=zh-Hans&app_name=tiktok_web&browser_language=zh-CN&browser_name=Mozilla&browser_online=true&browser_platform=Win32&browser_version=5.0%20%28Windows%20NT%2010.0%3B%20Win64%3B%20x64%29%20AppleWebKit%2F537.36%20%28KHTML%2C%20like%20Gecko%29%20Chrome%2F131.0.0.0%20Safari%2F537.36&channel=tiktok_web&cookie_enabled=true&data_collection_enabled=true&device_id=7444844253941876231&device_platform=web_pc&focus_state=true&from_page=fyp&history_len=3&is_fullscreen=false&is_page_visible=true&odinId=7444842897268327431&os=windows&priority_region=&referer=&region=TW&screen_height=1080&screen_width=1920&tz_name=Asia%2FHong_Kong&user_is_login=false&webcast_language=zh-Hans&msToken=Rr7x4_7ABrw16uXFR33lyk5_HML6vIUi6F_aAeqOy8dIVGXhgJaSB7y7s-8_X4dXdwcoy5RfUQKomZzOg8Hf_6dQwmqosHxTNcn0Y7-gwVjcJ0IW3pqwg5Aq9W-D1gZZ6dFoFFPucU8B2SJ_Ma4brk45tQ==
+      url:
+        https://www.tiktok.com/passport/web/auth/config?WebIdLastTime=1733387890&account_sdk_source=web&aid=1459&app_language=zh-Hans&app_name=tiktok_web&browser_language=zh-CN&browser_name=Mozilla&browser_online=true&browser_platform=Win32&browser_version=5.0%20%28Windows%20NT%2010.0%3B%20Win64%3B%20x64%29%20AppleWebKit%2F537.36%20%28KHTML%2C%20like%20Gecko%29%20Chrome%2F131.0.0.0%20Safari%2F537.36&channel=tiktok_web&cookie_enabled=true&data_collection_enabled=true&device_id=7444844253941876231&device_platform=web_pc&focus_state=true&from_page=fyp&history_len=3&is_fullscreen=false&is_page_visible=true&odinId=7444842897268327431&os=windows&priority_region=&referer=&region=TW&screen_height=1080&screen_width=1920&tz_name=Asia%2FHong_Kong&user_is_login=false&webcast_language=zh-Hans&msToken=Rr7x4_7ABrw16uXFR33lyk5_HML6vIUi6F_aAeqOy8dIVGXhgJaSB7y7s-8_X4dXdwcoy5RfUQKomZzOg8Hf_6dQwmqosHxTNcn0Y7-gwVjcJ0IW3pqwg5Aq9W-D1gZZ6dFoFFPucU8B2SJ_Ma4brk45tQ==
 
   twitter:
     headers:
