@@ -241,6 +241,9 @@ class UserPostFilter(JSONModel):
     def images(self):
         images_list = self._get_list_attr_value("$.aweme_list[*].images")
 
+        if images_list is None:
+            return []
+
         return [
             (
                 [
@@ -257,6 +260,9 @@ class UserPostFilter(JSONModel):
     @property
     def images_video(self):
         images_video_list = self._get_list_attr_value("$.aweme_list[*].images")
+
+        if images_video_list is None:
+            return []
 
         return [
             (
@@ -279,11 +285,14 @@ class UserPostFilter(JSONModel):
         # 获取所有视频
         videos = self._get_list_attr_value("$.aweme_list[*].video")
 
+        if videos is None:
+            return []
+
         # 逐个视频判断是否存在animated_cover
         animated_covers = [
             (
                 video.get("animated_cover", {}).get("url_list", [None])[0]
-                if video.get("animated_cover")
+                if isinstance(video, dict) and video.get("animated_cover")
                 else None
             )
             for video in videos
@@ -312,6 +321,9 @@ class UserPostFilter(JSONModel):
     @property
     def video_bit_rate(self):
         bit_rate_data = self._get_list_attr_value("$.aweme_list[*].video.bit_rate")
+
+        if bit_rate_data is None:
+            return []
 
         def extract_bit_rate(aweme):
             if not aweme:
@@ -389,7 +401,7 @@ class UserPostFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_fields:List[str] = [
+        exclude_fields: List[str] = [
             "status_code",
             "has_more",
             "max_cursor",
@@ -672,14 +684,14 @@ class UserMusicCollectionFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_fields:List[str] = [
+        exclude_fields: List[str] = [
             "has_more",
             "max_cursor",
             "status_code",
             "msg",
         ]
 
-        extra_fields:List[str] = [
+        extra_fields: List[str] = [
             "has_more",
             "max_cursor",
             "status_code",
@@ -1058,7 +1070,7 @@ class UserFollowerFilter(UserFollowingFilter):
         return self._get_list_attr_value("$.followers[*].unique_id")
 
     def _to_list(self) -> list:
-        exclude_fields:List[str] = [
+        exclude_fields: List[str] = [
             "status_code",
             "status_msg",
             "has_more",
@@ -1431,6 +1443,9 @@ class PostDetailFilter(JSONModel):
     def video_bit_rate(self):
         bit_rate_data = self._get_list_attr_value("$.aweme_detail.video.bit_rate")
 
+        if bit_rate_data is None:
+            return []
+
         def extract_bit_rate(aweme):
             if not aweme:
                 return []
@@ -1586,14 +1601,14 @@ class PostCommentFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_fields:List[str] = [
+        exclude_fields: List[str] = [
             "api_status_code",
             "has_more",
             "total",
             "cursor",
         ]
 
-        extra_fields:List[str] = [
+        extra_fields: List[str] = [
             "has_more",
             "total",
             "cursor",
@@ -1935,7 +1950,7 @@ class UserLiveRankingFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_fields:List[str] = [
+        exclude_fields: List[str] = [
             "api_status_code",
             "has_more",
             "has_once_live",
@@ -1943,7 +1958,7 @@ class UserLiveRankingFilter(JSONModel):
             "total",
         ]
 
-        extra_fields:List[str] = [
+        extra_fields: List[str] = [
             "has_more",
             "has_once_live",
             "invisible_total",
@@ -2173,11 +2188,14 @@ class FriendFeedFilter(JSONModel):
         # 获取所有视频
         videos = self._get_list_attr_value("$.data[*].aweme.video")
 
+        if videos is None:
+            return []
+
         # 逐个视频判断是否存在animated_cover
         animated_covers = [
             (
                 video.get("animated_cover", {}).get("url_list", [None])[0]
-                if video.get("animated_cover")
+                if isinstance(video, dict) and video.get("animated_cover")
                 else None
             )
             for video in videos
@@ -2192,6 +2210,10 @@ class FriendFeedFilter(JSONModel):
     @property
     def images(self):
         images_list = self._get_list_attr_value("$.data[*].aweme.images")
+
+        if not images_list:
+            return []
+
         return [
             (
                 [
@@ -2208,6 +2230,10 @@ class FriendFeedFilter(JSONModel):
     @property
     def images_video(self):
         images_list = self._get_list_attr_value("$.data[*].aweme.images")
+
+        if not images_list:
+            return []
+
         return [
             (
                 [
@@ -2277,7 +2303,7 @@ class FriendFeedFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_fields:List[str] = [
+        exclude_fields: List[str] = [
             "status_code",
             "status_msg",
             "has_more",
@@ -2286,7 +2312,7 @@ class FriendFeedFilter(JSONModel):
             "cursor",
             "level",
         ]
-        extra_fields:List[str] = [
+        extra_fields: List[str] = [
             "has_more",
             "has_aweme",
             "friend_update_count",
@@ -2653,6 +2679,10 @@ class HomePostSearchFilter(JSONModel):
     @property
     def images(self):
         images_list = self._get_list_attr_value("$.aweme_list[*].item.images")
+
+        if not images_list:
+            return []
+
         return [
             (
                 [
@@ -2669,6 +2699,10 @@ class HomePostSearchFilter(JSONModel):
     @property
     def images_video(self):
         images_list = self._get_list_attr_value("$.aweme_list[*].item.images")
+
+        if not images_list:
+            return []
+
         return [
             (
                 [
@@ -2742,11 +2776,14 @@ class HomePostSearchFilter(JSONModel):
         # 获取所有视频
         videos = self._get_list_attr_value("$.aweme_list[*].item.video")
 
+        if videos is None:
+            return []
+
         # 逐个视频判断是否存在animated_cover
         animated_covers = [
             (
                 video.get("animated_cover", {}).get("url_list", [None])[0]
-                if video.get("animated_cover")
+                if isinstance(video, dict) and video.get("animated_cover")
                 else None
             )
             for video in videos
@@ -2771,7 +2808,7 @@ class HomePostSearchFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_fields:List[str] = [
+        exclude_fields: List[str] = [
             "status_code",
             "status_msg",
             "has_aweme",
@@ -2781,7 +2818,7 @@ class HomePostSearchFilter(JSONModel):
             "search_keyword",
             "search_id",
         ]
-        extra_fields:List[str] = [
+        extra_fields: List[str] = [
             "has_more",
             "cursor",
             "home_text",
@@ -2823,7 +2860,7 @@ class SuggestWordFilter(JSONModel):
         }
 
     def _to_list(self) -> list:
-        exclude_fields:List[str] = [
+        exclude_fields: List[str] = [
             "status_msg",
         ]
         extra_fields: List[str] = []

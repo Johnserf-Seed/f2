@@ -68,11 +68,13 @@ class TweetDetailFilter(JSONModel):
     # 发布时间
     @property
     def tweet_created_at(self):
-        return timestamp_2_str(
-            self._get_attr_value(
-                "$.data.threaded_conversation_with_injections_v2.instructions[0].entries[0].content.itemContent.tweet_results.result.legacy.created_at"
-            )
+        created_at = self._get_attr_value(
+            "$.data.threaded_conversation_with_injections_v2.instructions[0].entries[0].content.itemContent.tweet_results.result.legacy.created_at"
         )
+        # 添加空值检查
+        if created_at is None:
+            return ""
+        return timestamp_2_str(created_at)
 
     # 推文内容
     @property
@@ -113,6 +115,10 @@ class TweetDetailFilter(JSONModel):
         media_urls = self._get_attr_value(
             "$.data.threaded_conversation_with_injections_v2.instructions[0].entries[0].content.itemContent.tweet_results.result.legacy.entities.media[*].media_url_https"
         )
+
+        if media_urls is None:
+            return []
+
         if not isinstance(media_urls, list):
             media_urls = [media_urls]
         return media_urls
@@ -123,6 +129,8 @@ class TweetDetailFilter(JSONModel):
         all_urls = self._get_attr_value(
             "$.data.threaded_conversation_with_injections_v2.instructions[0].entries[0].content.itemContent.tweet_results.result.legacy.extended_entities.media[*].video_info.variants[*].url"
         )
+        if all_urls is None:
+            return []
         # 剔除包含 `.m3u8` 的链接
         return [url for url in all_urls if ".m3u8" not in url]
 
@@ -301,9 +309,11 @@ class UserProfileFilter(JSONModel):
     # 注册时间
     @property
     def join_time(self):
-        return timestamp_2_str(
-            self._get_attr_value("$.data.user.result.legacy.created_at")
-        )
+        created_at = self._get_attr_value("$.data.user.result.legacy.created_at")
+        # 添加空值检查
+        if created_at is None:
+            return ""
+        return timestamp_2_str(created_at)
 
     # 昵称 example: 核酸酱
     @property
@@ -460,6 +470,9 @@ class PostTweetFilter(JSONModel):
             "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.full_text"
         )
 
+        if text_list is None:
+            return []
+
         return replaceT(
             [
                 extract_desc(text) if text and isinstance(text, str) else ""
@@ -472,6 +485,9 @@ class PostTweetFilter(JSONModel):
         text_list = self._get_list_attr_value(
             "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.full_text"
         )
+
+        if text_list is None:
+            return []
 
         return [
             extract_desc(text) for text in text_list if text and isinstance(text, str)
@@ -495,6 +511,9 @@ class PostTweetFilter(JSONModel):
             "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.entities.media"
         )
 
+        if not media_lists:
+            return []
+
         return [
             (
                 [
@@ -510,10 +529,12 @@ class PostTweetFilter(JSONModel):
 
     @property
     def tweet_video_url(self):
-
         video_url_lists = self._get_list_attr_value(
             "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.entities.media"
         )
+
+        if not video_url_lists:
+            return []
 
         return [
             (
@@ -753,6 +774,9 @@ class BookmarkTweetFilter(JSONModel):
             "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.full_text"
         )
 
+        if text_list is None:
+            return []
+
         return replaceT(
             [
                 extract_desc(text) if text and isinstance(text, str) else ""
@@ -765,6 +789,9 @@ class BookmarkTweetFilter(JSONModel):
         text_list = self._get_list_attr_value(
             "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.full_text"
         )
+
+        if text_list is None:
+            return []
 
         return [
             extract_desc(text) for text in text_list if text and isinstance(text, str)
@@ -788,6 +815,9 @@ class BookmarkTweetFilter(JSONModel):
             "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.entities.media"
         )
 
+        if media_lists is None:
+            return []
+
         return [
             (
                 [
@@ -803,10 +833,12 @@ class BookmarkTweetFilter(JSONModel):
 
     @property
     def tweet_video_url(self):
-
         video_url_lists = self._get_list_attr_value(
             "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.entities.media"
         )
+
+        if not video_url_lists:
+            return []
 
         return [
             (

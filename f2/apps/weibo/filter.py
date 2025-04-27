@@ -82,7 +82,7 @@ class UserInfoFilter(JSONModel):
 
     @property
     def profile_url(self):
-        return "https://weibo.com" + self._get_attr_value("$.data.user.profile_url")
+        return f"https://weibo.com/{self._get_attr_value('$.data.user.profile_url')}"
 
     @property
     def user_type(self):
@@ -138,7 +138,11 @@ class UserDetailFilter(JSONModel):
 
     @property
     def create_at(self):
-        return self._get_attr_value("$.data.created_at").replace(":", "-")
+        created_at = self._get_attr_value("$.data.created_at")
+        # 添加空值检查
+        if created_at is None:
+            return ""
+        return created_at.replace(":", "-")
 
     @property
     def video_play_count(self):
@@ -194,7 +198,11 @@ class WeiboDetailFilter(JSONModel):
 
     @property
     def weibo_created_at(self):
-        return timestamp_2_str(self._get_attr_value("$.created_at"))
+        created_at = self._get_attr_value("$.created_at")
+        # 添加空值检查
+        if created_at is None:
+            return ""
+        return timestamp_2_str(created_at)
 
     @property
     def desc(self):
@@ -405,11 +413,16 @@ class UserWeiboFilter(JSONModel):
         # example: ["超大颗花生汤圆[舔屏] http://t.cn/A6nqzsFe", xxx]
         # 去除最后的链接
         desc = self._get_list_attr_value("$.data.list[*].text_raw")
+        if desc is None:
+            return []
         return [replaceT(extract_desc(d)) for d in desc]
 
     @property
     def weibo_desc_raw(self):
         desc = self._get_list_attr_value("$.data.list[*].text_raw")
+        # 添加空值检查
+        if desc is None:
+            return []
         return [extract_desc(d) for d in desc]
 
     @property

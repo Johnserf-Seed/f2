@@ -215,7 +215,7 @@ class TiktokHandler:
             kwargs: dict: 参数字典 (Parameter dictionary)
         """
 
-        aweme_id = await AwemeIdFetcher.get_aweme_id(self.kwargs.get("url"))
+        aweme_id = await AwemeIdFetcher.get_aweme_id(str(self.kwargs.get("url")))
 
         aweme_data = await self.fetch_one_video(aweme_id)
 
@@ -296,7 +296,7 @@ class TiktokHandler:
         max_counts = self.kwargs.get("max_counts")
         interval = self.kwargs.get("interval")
 
-        secUid = await SecUserIdFetcher.get_secuid(self.kwargs.get("url"))
+        secUid = await SecUserIdFetcher.get_secuid(str(self.kwargs.get("url")))
 
         # 判断是否提供了interval参数，如果有则获取start_date转时间戳提供给max_cursor
         if interval is not None and interval != "all":
@@ -323,7 +323,7 @@ class TiktokHandler:
         cursor: int,
         min_cursor: int,
         page_counts: int,
-        max_counts: float,
+        max_counts: Optional[Union[int, float]] = float("inf"),
     ) -> AsyncGenerator[UserPostFilter, Any]:
         """
         用于获取指定用户发布的作品列表
@@ -334,7 +334,7 @@ class TiktokHandler:
             cursor: int: 分页游标 (Page cursor)
             min_cursor: int: 最小游标 (Min cursor)
             page_counts: int: 分页数量 (Page counts)
-            max_counts: float: 最大数量 (Max counts)
+            max_counts: Optional[Union[int, float]]: 最大数量 (Max counts)
 
         Return:
             video: AsyncGenerator[UserPostFilter, Any]: 用户发布作品信息过滤器 (Video info filter)
@@ -427,7 +427,7 @@ class TiktokHandler:
         page_counts = self.kwargs.get("page_counts", 30)
         max_counts = self.kwargs.get("max_counts")
 
-        secUid = await SecUserIdFetcher.get_secuid(self.kwargs.get("url"))
+        secUid = await SecUserIdFetcher.get_secuid(str(self.kwargs.get("url")))
 
         async with AsyncUserDB("tiktok_users.db") as udb:
             user_path = await self.get_or_add_user_data(
@@ -447,7 +447,7 @@ class TiktokHandler:
         secUid: str,
         cursor: int,
         page_counts: int,
-        max_counts: float,
+        max_counts: Optional[Union[int, float]] = float("inf"),
     ) -> AsyncGenerator[UserPostFilter, Any]:
         """
         用于获取指定用户点赞的作品列表
@@ -457,7 +457,7 @@ class TiktokHandler:
             secUid: str: 用户ID (User ID)
             cursor: int: 分页游标 (Page cursor)
             page_counts: int: 分页数量 (Page counts)
-            max_counts: float: 最大数量 (Max counts)
+            max_counts: Optional[Union[int, float]]: 最大数量 (Max counts)
 
         Return:
             like: AsyncGenerator[UserPostFilter, Any]: 用户点赞作品信息过滤器 (Video info filter)
@@ -547,7 +547,7 @@ class TiktokHandler:
         page_counts = self.kwargs.get("page_counts", 30)
         max_counts = self.kwargs.get("max_counts")
 
-        secUid = await SecUserIdFetcher.get_secuid(self.kwargs.get("url"))
+        secUid = await SecUserIdFetcher.get_secuid(str(self.kwargs.get("url")))
 
         async with AsyncUserDB("tiktok_users.db") as udb:
             user_path = await self.get_or_add_user_data(
@@ -567,7 +567,7 @@ class TiktokHandler:
         secUid: str,
         cursor: int,
         page_counts: int,
-        max_counts: float,
+        max_counts: Optional[Union[int, float]] = float("inf"),
     ) -> AsyncGenerator[UserPostFilter, Any]:
         """
         用于获取指定用户收藏的作品列表
@@ -577,7 +577,7 @@ class TiktokHandler:
             secUid: str: 用户ID (User ID)
             cursor: int: 分页游标 (Page cursor)
             page_counts: int: 分页数量 (Page counts)
-            max_counts: float: 最大数量 (Max counts)
+            max_counts: Optional[Union[int, float]]: 最大数量 (Max counts)
 
         Return:
             collect: AsyncGenerator[UserPostFilter, Any]: 收藏作品信息过滤器 (Video info filter)
@@ -665,7 +665,7 @@ class TiktokHandler:
         page_counts = self.kwargs.get("page_counts", 30)
         max_counts = self.kwargs.get("max_counts")
 
-        secUid = await SecUserIdFetcher.get_secuid(self.kwargs.get("url"))
+        secUid = await SecUserIdFetcher.get_secuid(str(self.kwargs.get("url")))
         playlist = await self.fetch_play_list(secUid, cursor, page_counts)
         mixId = await self.select_playlist(playlist)
 
@@ -677,9 +677,9 @@ class TiktokHandler:
         if isinstance(mixId, str):
             mixId = [mixId]
 
-        for mixId in playlist.mixId:
+        for mix_id in mixId:
             async for aweme_data_list in self.fetch_user_mix_videos(
-                mixId, cursor, page_counts, max_counts
+                mix_id, cursor, page_counts, max_counts
             ):
                 # 创建下载任务
                 await self.downloader.create_download_tasks(
@@ -781,7 +781,7 @@ class TiktokHandler:
         mixId: str,
         cursor: int,
         page_counts: int,
-        max_counts: float,
+        max_counts: Optional[Union[int, float]] = float("inf"),
     ) -> AsyncGenerator[UserMixFilter, Any]:
         """
         用于获取指定用户合集的作品列表
@@ -791,7 +791,7 @@ class TiktokHandler:
             mixId: str: 合集ID (Mix ID)
             cursor: int: 分页游标 (Page cursor)
             page_counts: int: 分页数量 (Page counts)
-            max_counts: float: 最大数量 (Max counts)
+            max_counts: Optional[Union[int, float]]: 最大数量 (Max counts)
 
         Return:
             mix: AsyncGenerator[UserMixFilter, Any]: 合集作品信息过滤器 (Video info filter)
@@ -877,10 +877,10 @@ class TiktokHandler:
 
         cursor = self.kwargs.get("cursor", 0)
         page_counts = self.kwargs.get("page_counts", 30)
-        max_counts = self.kwargs.get("max_counts")
-        keyword = self.kwargs.get("keyword")
+        max_counts = self.kwargs.get("max_counts", float("inf"))
+        keyword = self.kwargs.get("keyword", "")
 
-        secUid = await SecUserIdFetcher.get_secuid(self.kwargs.get("url"))
+        secUid = await SecUserIdFetcher.get_secuid(str(self.kwargs.get("url")))
 
         async with AsyncUserDB("tiktok_users.db") as udb:
             user_path = await self.get_or_add_user_data(
@@ -900,7 +900,7 @@ class TiktokHandler:
         keyword: str,
         offset: int,
         page_counts: int,
-        max_counts: float,
+        max_counts: Optional[Union[int, float]] = float("inf"),
     ) -> AsyncGenerator[PostSearchFilter, Any]:
         """
         用于搜索指定关键词的作品列表
@@ -910,7 +910,7 @@ class TiktokHandler:
             keyword: str: 搜索关键词 (Search keyword)
             offset: int: 分页游标 (Page offset)
             page_counts: int: 分页数量 (Page counts)
-            max_counts: float: 最大数量 (Max counts)
+            max_counts: Optional[Union[int, float]]: 最大数量 (Max counts)
 
         Return:
             search: AsyncGenerator[PostSearchFilter, Any]: 搜索作品信息过滤器 (Search video info filter)
@@ -1000,7 +1000,7 @@ class TiktokHandler:
             kwargs: dict: 参数字典 (Parameter dictionary)
         """
 
-        uniqueId = await SecUserIdFetcher.get_uniqueid(self.kwargs.get("url"))
+        uniqueId = await SecUserIdFetcher.get_uniqueid(str(self.kwargs.get("url")))
 
         webcast_data = await self.fetch_user_live_videos(uniqueId)
 
@@ -1033,10 +1033,7 @@ class TiktokHandler:
         (Used to get live video list of specified user)
 
         Args:
-            secUid: str: 用户ID (User ID)
-            cursor: int: 分页游标 (Page cursor)
-            page_counts: int: 分页数量 (Page counts)
-            max_counts: float: 最大数量 (Max counts)
+            uniqueId: str: 用户ID (User ID)
 
         Return:
             live: [UserLiveFilter: 直播作品信息过滤器 (Live video info filter)

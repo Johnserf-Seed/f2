@@ -1,3 +1,5 @@
+from typing import Optional
+
 import pytest
 
 from f2.apps.weibo.utils import WeiboScreenNameFetcher
@@ -45,7 +47,7 @@ async def test_get_weibo_screen_name():
         ), f"URL: {url} -> 预期: {expected_name}, 实际: {result}"
 
     # 测试无效URL
-    weibo_name_url = ""
+    weibo_name_url: Optional[str] = ""
     with pytest.raises(ValueError):
         await WeiboScreenNameFetcher.get_weibo_screen_name(weibo_name_url)
 

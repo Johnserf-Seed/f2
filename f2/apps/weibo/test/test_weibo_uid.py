@@ -1,3 +1,5 @@
+from typing import Optional
+
 import pytest
 
 from f2.apps.weibo.utils import WeiboUidFetcher
@@ -69,7 +71,7 @@ async def test_get_weibo_uid():
         ), f"URL: {url} -> 预期: {expected_uid}, 实际: {result}"
 
     # 测试无效URL
-    weibo_link = "weibo.com/2265830070/O8DM0BLLm"
+    weibo_link: Optional[str] = "weibo.com/2265830070/O8DM0BLLm"
     with pytest.raises(APINotFoundError):
         await WeiboUidFetcher.get_weibo_uid(weibo_link)
 

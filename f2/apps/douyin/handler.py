@@ -248,7 +248,7 @@ class DouyinHandler:
             kwargs: Dict: 参数字典 (Parameter dictionary)
         """
 
-        aweme_id = await AwemeIdFetcher.get_aweme_id(self.kwargs.get("url"))
+        aweme_id = await AwemeIdFetcher.get_aweme_id(str(self.kwargs.get("url")))
 
         try:
             aweme_data = await self.fetch_one_video(aweme_id)
@@ -354,7 +354,9 @@ class DouyinHandler:
             max_cursor = interval_2_timestamp(interval, date_type="end")
 
         # 获取用户数据并返回创建用户目录
-        sec_user_id = await SecUserIdFetcher.get_sec_user_id(self.kwargs.get("url"))
+        sec_user_id = await SecUserIdFetcher.get_sec_user_id(
+            str(self.kwargs.get("url"))
+        )
         async with AsyncUserDB("douyin_users.db") as udb:
             user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, udb)
 
@@ -481,7 +483,9 @@ class DouyinHandler:
         max_counts = self.kwargs.get("max_counts")
 
         # 获取用户数据并返回创建用户目录
-        sec_user_id = await SecUserIdFetcher.get_sec_user_id(self.kwargs.get("url"))
+        sec_user_id = await SecUserIdFetcher.get_sec_user_id(
+            str(self.kwargs.get("url"))
+        )
         async with AsyncUserDB("douyin_users.db") as db:
             user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, db)
 
@@ -609,7 +613,9 @@ class DouyinHandler:
         # 因此，即使填写了其他人的URL，也只能获取到你自己的音乐收藏作品。
         # 此外，音乐收藏作品的文件夹将根据所配置的URL主页用户名来确定。
         # 为避免将文件下载到其他人的文件夹下，请务必确保填写的URL是你自己的主页URL。
-        sec_user_id = await SecUserIdFetcher.get_sec_user_id(self.kwargs.get("url"))
+        sec_user_id = await SecUserIdFetcher.get_sec_user_id(
+            str(self.kwargs.get("url"))
+        )
 
         async with AsyncUserDB("douyin_users.db") as db:
             user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, db)
@@ -717,7 +723,9 @@ class DouyinHandler:
         # 因此，即使填写了其他人的URL，也只能获取到你自己的收藏作品。
         # 此外，收藏作品的文件夹将根据所配置的URL主页用户名来确定。
         # 为避免将文件下载到其他人的文件夹下，请务必确保填写的URL是你自己的主页URL。
-        sec_user_id = await SecUserIdFetcher.get_sec_user_id(self.kwargs.get("url"))
+        sec_user_id = await SecUserIdFetcher.get_sec_user_id(
+            str(self.kwargs.get("url"))
+        )
 
         async with AsyncUserDB("douyin_users.db") as db:
             user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, db)
@@ -832,7 +840,9 @@ class DouyinHandler:
         # 因此，即使填写了其他人的URL，也只能获取到你自己的收藏夹作品。
         # 此外，收藏夹作品的文件夹将根据所配置的URL主页用户名来确定。
         # 为避免将文件下载到其他人的文件夹下，请务必确保填写的URL是你自己的主页URL。
-        sec_user_id = await SecUserIdFetcher.get_sec_user_id(self.kwargs.get("url"))
+        sec_user_id = await SecUserIdFetcher.get_sec_user_id(
+            str(self.kwargs.get("url"))
+        )
 
         async with AsyncUserDB("douyin_users.db") as db:
             user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, db)
@@ -1098,7 +1108,7 @@ class DouyinHandler:
         # 先假定合集链接获取合集ID
         try:
             logger.info(_("正在从合集链接获取合集ID"))
-            mix_id = await MixIdFetcher.get_mix_id(self.kwargs.get("url"))
+            mix_id = await MixIdFetcher.get_mix_id(str(self.kwargs.get("url")))
             async for aweme_data in self.fetch_user_mix_videos(mix_id, 0, 20, 1):
                 logger.info(_("正在从合集作品里获取sec_user_id"))
                 sec_user_id = aweme_data.sec_user_id[0]  # 注意这里是一个列表
@@ -1106,10 +1116,11 @@ class DouyinHandler:
             logger.warning(_("获取合集ID失败，尝试从合集作品链接中解析。"))
             # 如果获取失败，则假定作品链接获取作品ID
             logger.info(_("正在从合集作品链接获取合集ID"))
-            aweme_id = await AwemeIdFetcher.get_aweme_id(self.kwargs.get("url"))
-            aweme_data = await self.fetch_one_video(aweme_id)
-            sec_user_id = aweme_data.sec_user_id
-            mix_id = aweme_data.mix_id
+            aweme_id = await AwemeIdFetcher.get_aweme_id(str(self.kwargs.get("url")))
+            one_video_data = await self.fetch_one_video(aweme_id)
+            # 从 one_video_data 获取 sec_user_id 和 mix_id
+            sec_user_id = one_video_data.sec_user_id
+            mix_id = one_video_data.mix_id
 
         async with AsyncUserDB("douyin_users.db") as db:
             user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, db)
@@ -1218,7 +1229,7 @@ class DouyinHandler:
         """
 
         # 获取直播相关信息与主播信息
-        webcast_id = await WebCastIdFetcher.get_webcast_id(self.kwargs.get("url"))
+        webcast_id = await WebCastIdFetcher.get_webcast_id(str(self.kwargs.get("url")))
 
         # 然后下载直播推流
         webcast_data = await self.fetch_user_live_videos(webcast_id)
@@ -1433,7 +1444,9 @@ class DouyinHandler:
         page_counts = self.kwargs.get("page_counts", 20)
         max_counts = self.kwargs.get("max_counts")
 
-        sec_user_id = await SecUserIdFetcher.get_sec_user_id(self.kwargs.get("url"))
+        sec_user_id = await SecUserIdFetcher.get_sec_user_id(
+            str(self.kwargs.get("url"))
+        )
 
         async with AsyncUserDB("douyin_users.db") as db:
             user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, db)
@@ -1546,7 +1559,7 @@ class DouyinHandler:
         page_counts = self.kwargs.get("page_counts", 20)
         max_counts = self.kwargs.get("max_counts")
 
-        aweme_id = await AwemeIdFetcher.get_aweme_id(self.kwargs.get("url"))
+        aweme_id = await AwemeIdFetcher.get_aweme_id(str(self.kwargs.get("url")))
         aweme_data = await self.fetch_one_video(aweme_id)
 
         async with AsyncUserDB("douyin_users.db") as udb:
@@ -1658,7 +1671,9 @@ class DouyinHandler:
         """
 
         max_counts = self.kwargs.get("max_counts")
-        sec_user_id = await SecUserIdFetcher.get_sec_user_id(self.kwargs.get("url"))
+        sec_user_id = await SecUserIdFetcher.get_sec_user_id(
+            str(self.kwargs.get("url"))
+        )
 
         async with AsyncUserDB("douyin_users.db") as db:
             user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, db)
@@ -1771,7 +1786,7 @@ class DouyinHandler:
         max_time: int = 0,
         count: int = 20,
         source_type: int = 4,
-        max_counts: float = float("inf"),
+        max_counts: Optional[Union[int, float]] = float("inf"),
     ) -> AsyncGenerator[UserFollowingFilter, Any]:
         """
         用于获取指定用户关注的用户的作品列表。
@@ -1875,7 +1890,7 @@ class DouyinHandler:
         max_time: int = 0,
         count: int = 20,
         source_type: int = 1,
-        max_counts: float = float("inf"),
+        max_counts: Optional[Union[int, float]] = float("inf"),
     ) -> AsyncGenerator[UserFollowerFilter, Any]:
         """
         用于获取指定用户的粉丝列表。
@@ -1888,7 +1903,7 @@ class DouyinHandler:
             max_time: int: 最大时间戳，秒级，初始为0
             count: int: 每页粉丝数，默认为20
             source_type: int: 排序类型，没有指明，默认为1即可
-            max_counts: float: 最大粉丝数，默认为无穷大
+            max_counts: Optional[Union[int, float]]: 最大粉丝数，默认为无穷大
 
         Return:
             follower: AsyncGenerator[UserFollowerFilter, Any]: 粉丝数据过滤器，包含用户ID列表、用户昵称、用户头像、起始页

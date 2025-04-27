@@ -254,7 +254,7 @@ class WeiboHandler:
             kwargs: dict: 参数字典 (Parameter dictionary)
         """
 
-        weibo_id = await WeiboIdFetcher.get_weibo_id(self.kwargs.get("url"))
+        weibo_id = await WeiboIdFetcher.get_weibo_id(str(self.kwargs.get("url")))
 
         weibo = await self.fetch_one_weibo(weibo_id)
 
@@ -323,7 +323,7 @@ class WeiboHandler:
             kwargs: dict: 参数字典 (Parameter dictionary)
         """
 
-        uid = await self.extract_weibo_uid(self.kwargs.get("url"))
+        uid = await self.extract_weibo_uid(str(self.kwargs.get("url")))
 
         async with AsyncUserDB("weibo_users.db") as audb:
             user_path = await self.get_or_add_user_data(self.kwargs, uid, audb)

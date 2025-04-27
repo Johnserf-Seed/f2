@@ -217,7 +217,7 @@ class TiktokDownloader(BaseDownloader):
             )
 
             video_url = aweme_data_dict.get("video_playAddr")
-            if video_url != None:
+            if video_url is not None:
                 await self.initiate_download(
                     _("视频"), video_url, base_path, video_name, ".mp4"
                 )
@@ -234,7 +234,7 @@ class TiktokDownloader(BaseDownloader):
                 )
 
                 music_url = aweme_data_dict.get("music_playUrl")
-                if music_url != None:
+                if music_url is not None:
                     await self.initiate_download(
                         _("原声"), music_url, base_path, music_name, ".mp3"
                     )
@@ -251,11 +251,11 @@ class TiktokDownloader(BaseDownloader):
                 )
                 animated_cover_url = aweme_data_dict.get("video_dynamicCover")
                 cover_url = aweme_data_dict.get("video_cover")
-                if animated_cover_url != None:
+                if animated_cover_url is not None:
                     await self.initiate_download(
                         _("封面"), animated_cover_url, base_path, cover_name, ".webp"
                     )
-                elif cover_url != None:
+                elif cover_url is not None:
                     logger.debug(_("{0} 该作品没有动态封面").format(aweme_id))
                     await self.initiate_download(
                         _("封面"), cover_url, base_path, cover_name, ".jpeg"

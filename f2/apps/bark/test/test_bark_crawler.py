@@ -33,15 +33,11 @@ async def test_send_notification_success(mock_fetch_bark_notification, bark_fixt
     mock_client.fetch_bark_notification = AsyncMock(return_value=mock_response)
     mock_fetch_bark_notification.return_value = mock_client
 
-    # 定义测试参数
-    test_params = {
-        "title": "Test",
-        "body": "This is a test message",
-    }
-
     # 模拟发送消息
     bark = BarkNotificationFilter(
-        await mock_client.fetch_bark_notification(BarkModel(**test_params))
+        await mock_client.fetch_bark_notification(
+            BarkModel(title="Test", body="This is a test message", level="active")
+        )
     )
 
     # 断言：确保消息发送的响应正确
@@ -71,15 +67,11 @@ async def test_send_notification_error(mock_fetch_bark_notification, bark_fixtur
     mock_client.fetch_bark_notification = AsyncMock(return_value=mock_response)
     mock_fetch_bark_notification.return_value = mock_client
 
-    # 定义测试参数
-    test_params = {
-        "title": "Test",
-        "body": "This is a test message",
-    }
-
     # 模拟发送消息
     bark = BarkNotificationFilter(
-        await mock_client.fetch_bark_notification(BarkModel(**test_params))
+        await mock_client.fetch_bark_notification(
+            BarkModel(title="Test", body="This is a test message", level="active")
+        )
     )
 
     # 断言：确保消息发送的响应正确

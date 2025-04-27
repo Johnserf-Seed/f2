@@ -180,7 +180,7 @@ class WeiboIdFetcher:
     )
 
     @classmethod
-    async def get_weibo_id(cls, url: str) -> str:
+    async def get_weibo_id(cls, url: Optional[str]) -> str:
         """
         从微博链接中提取微博ID
         (Extract weibo ID from weibo link)
@@ -263,7 +263,7 @@ class WeiboUidFetcher:
     )
 
     @classmethod
-    async def get_weibo_uid(cls, url: str) -> str:
+    async def get_weibo_uid(cls, url: Optional[str]) -> str:
         """
         从微博主页链接中提取微博UID
         (Extract weibo UID from weibo link)
@@ -350,7 +350,7 @@ class WeiboScreenNameFetcher:
     )
 
     @classmethod
-    async def get_weibo_screen_name(cls, url: str) -> str:
+    async def get_weibo_screen_name(cls, url: Optional[str]) -> str:
         """
         从微博链接中提取URL编码的昵称并解码
         (Extract encoded name from weibo link and decode it)

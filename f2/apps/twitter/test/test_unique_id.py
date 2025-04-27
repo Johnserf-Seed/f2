@@ -72,6 +72,6 @@ async def test_get_all_unique_id():
     ), f"预期: {unique_id_expected_results}, 实际: {results}"
 
     # 测试无效URL
-    test_urls = []
+    test_urls: list[str] = []
     with pytest.raises(APINotFoundError):
         await UniqueIdFetcher.get_all_unique_ids(test_urls)

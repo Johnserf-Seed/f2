@@ -1,3 +1,5 @@
+from typing import Optional
+
 import pytest
 
 from f2.apps.weibo.utils import WeiboIdFetcher
@@ -72,7 +74,7 @@ class TestWeiboIdFetcher:
             ), f"URL: {url} -> 预期: {expected_id}, 实际: {result}"
 
         # 测试无效URL
-        weibo_link = "https://weibo.com/u/2265830070/O8DM0BLLm"
+        weibo_link: Optional[str] = "https://weibo.com/u/2265830070/O8DM0BLLm"
         with pytest.raises(APINotFoundError):
             await WeiboIdFetcher.get_weibo_id(weibo_link)
 
@@ -132,7 +134,7 @@ class TestWeiboAllIdFetcher:
         ), f"预期: {weibo_id_expected_results}, 实陋: {results}"
 
         # 测试无效URL
-        weibo_links = []
+        weibo_links: list[str] = []
         with pytest.raises(APINotFoundError):
             await WeiboIdFetcher.get_all_weibo_id(weibo_links)
 

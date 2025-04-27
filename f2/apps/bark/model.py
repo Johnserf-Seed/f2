@@ -20,7 +20,7 @@ class BarkModel(BaseModel):
     volume: Optional[int] = 5
     url: Optional[str] = "https://f2.wiki/"
     copy_text: Optional[str] = Field(
-        "", alias="copy"
+        default="", alias="copy"
     )  # 'copy' 使用别名 'copy_text'，原因是关键词冲突
     badge: Optional[int] = 1
     autoCopy: Optional[int] = 1

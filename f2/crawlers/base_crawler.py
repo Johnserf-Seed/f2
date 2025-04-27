@@ -109,10 +109,10 @@ class BaseCrawler:
         self.timeout = httpx.Timeout(self._timeout)
 
         # 异步客户端 / Asynchronous client
-        self._aclient = None
+        self._aclient: Optional[httpx.AsyncClient] = None
 
         # 同步客户端 / Synchronous client
-        self._client = None
+        self._client: Optional[httpx.Client] = None
 
     def _create_mount(self, async_mode=False) -> dict:
         """

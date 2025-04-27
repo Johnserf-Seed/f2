@@ -392,7 +392,7 @@ class DouyinDownloader(BaseDownloader):
         lyric_name = music_data_dict.get("title", "") + "_lyric"
         lyric_url = music_data_dict.get("lyric_url")
 
-        if music_url != None:
+        if music_url is not None:
             await self.initiate_download(
                 _("音乐"), music_url, base_path, music_name, ".mp3"
             )
