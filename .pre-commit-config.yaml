@@ -7,15 +7,6 @@ repos:
     -   id: end-of-file-fixer
     -   id: check-yaml
 
-# Python type checker
-# -   repo: https://github.com/pre-commit/mirrors-mypy
-#     rev: v1.9.0
-#     hooks:
-#     -   id: mypy
-#         additional_dependencies: [types-protobuf]
-#         args: [--ignore-missing-imports, --check-untyped-defs]
-#         exclude: ^(f2/apps/(douyin|tiktok)/proto/.*_pb2\.py)$
-
 # Python linters
 -   repo: https://github.com/pycqa/isort
     rev: 6.0.1
@@ -29,3 +20,12 @@ repos:
     hooks:
     -   id: black
         language_version: python3
+
+# Python type checker
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.9.0
+    hooks:
+    -   id: mypy
+        additional_dependencies: [types-protobuf]
+        args: [--ignore-missing-imports, --check-untyped-defs]
+        exclude: ^(f2/apps/(douyin|tiktok)/proto/.*_pb2\.py)$
