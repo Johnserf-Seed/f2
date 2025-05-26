@@ -82,7 +82,7 @@ dependencies = [
     "PyExecJS==1.5.1",
     "protobuf==5.28.3",
     "gmssl==3.2.2",
-    "cryptography==44.0.1",
+    "cryptography==45.0.3",
 ]
 
 [project.scripts]
