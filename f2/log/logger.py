@@ -2,13 +2,70 @@
 
 import datetime
 import logging
+import os
 import time
+import uuid
 from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
 
 from rich.logging import RichHandler
 
 from f2.utils.core.singleton import Singleton
+
+
+class TrueLazyFileHandler(logging.Handler):
+    """真正延迟创建文件的日志处理器"""
+
+    def __init__(self, filename, when="h", interval=1, backupCount=0, encoding=None):
+        super().__init__()
+        self.filename = filename
+        self.when = when
+        self.interval = interval
+        self.backupCount = backupCount
+        self.encoding = encoding
+        self._real_handler = None
+        self._file_created = False
+
+    def _create_real_handler(self):
+        """创建真正的文件处理器"""
+        if not self._file_created:
+            # 确保目录存在
+            Path(self.filename).parent.mkdir(parents=True, exist_ok=True)
+
+            # 创建 TimedRotatingFileHandler
+            self._real_handler = TimedRotatingFileHandler(
+                self.filename,
+                when=self.when,
+                interval=self.interval,
+                backupCount=self.backupCount,
+                encoding=self.encoding,
+            )
+
+            # 复制格式器
+            if self.formatter:
+                self._real_handler.setFormatter(self.formatter)
+
+            self._file_created = True
+
+    def emit(self, record):
+        """只有在真正需要记录日志时才创建文件"""
+        if not self._file_created:
+            self._create_real_handler()
+
+        if self._real_handler:
+            self._real_handler.emit(record)
+
+    def close(self):
+        """关闭处理器"""
+        if self._real_handler:
+            self._real_handler.close()
+        super().close()
+
+    def setFormatter(self, formatter):
+        """设置格式器"""
+        super().setFormatter(formatter)
+        if self._real_handler:
+            self._real_handler.setFormatter(formatter)
 
 
 class LogManager(metaclass=Singleton):
@@ -70,6 +127,7 @@ class LogManager(metaclass=Singleton):
         level=logging.INFO,
         log_to_console=False,
         log_path=None,
+        lazy_file_creation=False,
     ):
         self.logger.handlers.clear()
         self.logger.setLevel(level)
@@ -91,20 +149,34 @@ class LogManager(metaclass=Singleton):
             self.log_dir = Path(log_path)
             self.ensure_log_dir_exists(self.log_dir)
 
-            # 根据 log_name 动态设置文件名
+            # 使用进程ID和UUID确保文件名唯一
+            process_id = os.getpid()
+            unique_id = str(uuid.uuid4())[:8]
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+
             log_file_name = (
-                f"{self.logger.name}-{datetime.datetime.now():%Y-%m-%d-%H-%M-%S}.log"
+                f"{self.logger.name}-{timestamp}-{process_id}-{unique_id}.log"
             )
             log_file = self.log_dir.joinpath(log_file_name)
 
-            # 根据日期切割日志文件
-            fh = TimedRotatingFileHandler(
-                log_file,
-                when="midnight",
-                interval=1,
-                backupCount=99,
-                encoding="utf-8",
-            )
+            # 根据是否需要延迟创建选择不同的处理器
+            if lazy_file_creation:
+                fh = TrueLazyFileHandler(
+                    str(log_file),
+                    when="midnight",
+                    interval=1,
+                    backupCount=99,
+                    encoding="utf-8",
+                )
+            else:
+                fh = TimedRotatingFileHandler(
+                    log_file,
+                    when="midnight",
+                    interval=1,
+                    backupCount=99,
+                    encoding="utf-8",
+                )
+
             fh.setFormatter(
                 logging.Formatter(
                     "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -117,22 +189,51 @@ class LogManager(metaclass=Singleton):
         log_path.mkdir(parents=True, exist_ok=True)
 
     def clean_logs(self, keep_last_n=99):
-        """保留最近的n个日志文件并删除其他文件"""
+        """保留最近的n个日志文件并删除其他文件（多进程安全）"""
         if not self.log_dir:
             return
-        # self.shutdown()
-        all_logs = sorted(self.log_dir.glob("*.log"))
-        if keep_last_n == 0:
-            files_to_delete = all_logs
-        else:
-            files_to_delete = all_logs[:-keep_last_n]
-        for log_file in files_to_delete:
-            try:
-                log_file.unlink()
-            except PermissionError:
-                self.logger.warning(
-                    f"无法删除日志文件 {log_file}, 它正被另一个进程使用"
-                )
+
+        try:
+            # 获取所有日志文件，按修改时间排序
+            all_logs = []
+            for log_file in self.log_dir.glob("*.log"):
+                try:
+                    # 检查文件是否被其他进程占用
+                    stat = log_file.stat()
+                    # 跳过空文件（大小为0的文件）
+                    if stat.st_size > 0:
+                        all_logs.append((log_file, stat.st_mtime))
+                    else:
+                        # 直接删除空的日志文件
+                        try:
+                            log_file.unlink()
+                        except (PermissionError, OSError):
+                            pass
+                except (OSError, PermissionError):
+                    # 文件被占用或无法访问，跳过
+                    continue
+
+            # 按修改时间排序（最新的在后面）
+            all_logs.sort(key=lambda x: x[1])
+
+            if keep_last_n == 0:
+                files_to_delete = [item[0] for item in all_logs]
+            else:
+                files_to_delete = [item[0] for item in all_logs[:-keep_last_n]]
+
+            # 安全删除文件
+            for log_file in files_to_delete:
+                try:
+                    # 双重检查文件是否还存在且可删除
+                    if log_file.exists():
+                        log_file.unlink()
+                except (PermissionError, OSError):
+                    # 文件被占用或已被其他进程删除，静默跳过
+                    pass
+
+        except Exception:
+            # 清理过程中的任何异常都不应影响主程序
+            pass
 
     def shutdown(self):
         for handler in self.logger.handlers:
