@@ -142,20 +142,27 @@ class LogManager(metaclass=Singleton):
         time.sleep(1)  # 确保文件被释放
 
 
+_process_logs_cleaned = False  # 添加全局变量跟踪清理状态
+
+
 def log_setup(
     log_to_console=True,
     log_name="f2",
+    lazy_file_creation=False,
 ) -> logging.Logger:
     """
-    配置日志记录器。
+    配置日志记录器（多进程安全）。
 
     Args:
         log_to_console (bool): 是否将日志输出到控制台，默认为 True。
         log_name (str): 日志记录器的名称，默认为 "f2"。
+        lazy_file_creation (bool): 是否延迟创建日志文件，默认为 False。
 
     Returns:
         logging.Logger: 配置好的日志记录器实例。
     """
+    global _process_logs_cleaned
+
     logger = logging.getLogger(log_name)
     if logger.hasHandlers():
         # logger已经被设置，不做任何操作
@@ -171,10 +178,13 @@ def log_setup(
         level=logging.INFO,
         log_to_console=log_to_console,
         log_path=log_dir,
+        lazy_file_creation=lazy_file_creation,
     )
 
-    # 保留200个日志和堆栈文件
-    log_manager.clean_logs(200)
+    # 只在当前进程第一次调用时清理日志文件
+    if not _process_logs_cleaned:
+        log_manager.clean_logs(200)
+        _process_logs_cleaned = True
 
     return logger
 
@@ -182,5 +192,7 @@ def log_setup(
 # 主日志记录器（包含所有日志级别）
 logger = log_setup(log_to_console=True, log_name="f2")
 
-# 错误堆栈日志记录器（不输出到控制台，单独记录错误日志）
-trace_logger = log_setup(log_to_console=False, log_name="f2-trace")
+# 错误堆栈日志记录器（不输出到控制台，单独记录错误日志，延迟创建文件）
+trace_logger = log_setup(
+    log_to_console=False, log_name="f2-trace", lazy_file_creation=True
+)
