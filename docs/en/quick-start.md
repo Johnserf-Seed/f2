@@ -52,6 +52,6 @@ $ f2 apps -h
 
 - Want to learn more about what `F2` can do, like `asynchronous data generators` -> Please refer to the 「[Guide](/guide/what-is-f2)」 section in this documentation to learn more developer methods.
 
-- If you want to further customize the parsed data, explore how to 「[Extend Default Data Models](#)」 or 「[Build Custom Models](#)」.
+- If you want to further customize the parsed data, explore how to "[Extend Default Data Models](/en/guide/custom-model)" or "[Build Custom Models](/en/guide/custom-model)".
 
 - If you're a developer, please make sure to read this 「[guide](/guide/what-is-f2)」 thoroughly.
