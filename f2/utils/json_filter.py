@@ -71,8 +71,15 @@ class JSONModel:
         Returns:
             Union[str, int, float, bool]: 属性值
         """
+        # 如果数据为空，直接返回 None
+        if self._data is None:
+            return None
+
         expr = self._parse_expression(jsonpath_expr)
-        matches = expr.find(self._data)
+        try:
+            matches = expr.find(self._data)
+        except Exception:
+            return None
         if not matches:
             return None
         # 如果只有一个结果，直接返回值；多个结果返回列表
@@ -105,8 +112,15 @@ class JSONModel:
             parent_expr_str = jsonpath_expr
             child_expr_str = ""
 
+        # 若数据为空，直接返回空列表或空 JSON
+        if self._data is None:
+            return "[]" if as_json else []
+
         parent_expr = self._parse_expression(parent_expr_str)
-        parent_matches = parent_expr.find(self._data)
+        try:
+            parent_matches = parent_expr.find(self._data)
+        except Exception:
+            return "[]" if as_json else []
 
         values = []
         if child_expr_str:
