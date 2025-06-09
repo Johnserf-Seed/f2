@@ -999,7 +999,7 @@
   | |___test_cli_console.py
   | |___test_desc_limit.py
   | |___test_dl.py
-  | |___test_excetions.py
+  | |___test_exceptions.py
   | |___test_gzip.py
   | |___test_i18n.py
   | |___test_json_filter.py
