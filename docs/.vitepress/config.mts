@@ -93,6 +93,7 @@ export default defineConfig({
               text: 'API示例',
               items: [{ text: '使用示例', link: '/guide/api-examples' }],
             },
+            { text: "扩展数据模型", link: "/guide/custom-model" },
             {
               text: '开发者接口',
               items: [
@@ -151,6 +152,7 @@ export default defineConfig({
               text: 'API Examples',
               items: [{ text: 'API Examples', link: '/en/guide/api-examples' }],
             },
+            { text: "Extend Data Models", link: "/en/guide/custom-model" },
             {
               text: 'Developer API',
               items: [
