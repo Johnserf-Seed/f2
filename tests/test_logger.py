@@ -41,6 +41,10 @@ def test_log_file_creation(log_manager):
     log_files = list(temp_log_dir.glob("*.log"))
     assert len(log_files) == 1
 
+    # 验证日志文件内容非空且包含预期日志
+    log_text = log_files[0].read_text(encoding="utf-8")
+    assert "Test info message" in log_text
+
 
 def test_clean_logs(log_manager):
     manager, temp_log_dir = log_manager

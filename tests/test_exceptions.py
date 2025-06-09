@@ -1,4 +1,4 @@
-# path: tests/test_excetions.py
+# path: tests/test_exceptions.py
 
 import pytest
 

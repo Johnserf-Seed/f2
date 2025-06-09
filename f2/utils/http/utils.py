@@ -29,7 +29,7 @@ async def get_content_length(
         int: Content-Length的值，如果获取失败则返回0 (Value of Content-Length, or 0 if retrieval fails)
     """
 
-    if proxies is ... or proxies is None:
+    if proxies is None:
         proxies = {"all://": None}
 
     proxy_url = (
