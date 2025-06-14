@@ -4,7 +4,7 @@ import gettext
 import locale
 import os
 import pathlib
-from typing import Optional
+from typing import Any, Callable, Dict, Optional
 
 from ruamel.yaml import YAML  # type: ignore[import-untyped]
 
@@ -61,16 +61,16 @@ class TranslationManager:
     ```
     """
 
-    _instance = None
+    _instance: Optional["TranslationManager"] = None
 
     @staticmethod
-    def get_instance():
+    def get_instance() -> "TranslationManager":
         if TranslationManager._instance is None:
             TranslationManager._instance = TranslationManager()
         return TranslationManager._instance
 
-    def __init__(self):
-        self.translations = {}
+    def __init__(self) -> None:
+        self.translations: Dict[str, Callable[[str], str]] = {}
         # 初始化YAML解析器
         self.yaml = YAML()
         self.yaml.preserve_quotes = True
@@ -78,11 +78,11 @@ class TranslationManager:
         self.yaml.indent(mapping=2, sequence=4, offset=2)
 
         # 加载配置并确定初始语言
-        self.config = self._load_config()
-        self.lang = self._determine_language()
+        self.config: Dict[str, Any] = self._load_config()
+        self.lang: str = self._determine_language()
         self.load_translations(self.lang)
 
-    def _load_config(self):
+    def _load_config(self) -> Dict[str, Any]:
         """使用ruamel.yaml加载i18n配置"""
         try:
             conf_path = pathlib.Path(__file__).parents[1] / "conf" / "conf.yaml"
@@ -104,7 +104,7 @@ class TranslationManager:
             "supported_languages": ["zh_CN", "en_US"],
         }
 
-    def _detect_system_language(self):
+    def _detect_system_language(self) -> str:
         """检测系统语言"""
         try:
             # 尝试从环境变量获取语言设置
@@ -146,7 +146,7 @@ class TranslationManager:
             # 出错时使用fallback语言
             return self.config.get("fallback_language", "en_US")
 
-    def _determine_language(self):
+    def _determine_language(self) -> str:
         """确定要使用的语言"""
         # 首先检查配置中指定的语言
         configured_lang = self.config.get("language")
@@ -164,11 +164,13 @@ class TranslationManager:
         # 如果配置的语言不支持，使用fallback
         return self.config.get("fallback_language", "en_US")
 
-    def load_translations(self, lang=None):
+    def load_translations(self, lang: Optional[str] = None) -> Callable[[str], str]:
         """加载指定语言的翻译"""
+        # 确保 lang 是有效的字符串
         if not lang:
             lang = self.lang
 
+        # 现在 lang 保证是字符串类型
         if lang not in self.translations:
             # 验证语言是否被支持
             supported_languages = self.config.get(
@@ -176,7 +178,9 @@ class TranslationManager:
             )
             if lang not in supported_languages:
                 # 不支持时使用fallback
-                lang = self.config.get("fallback_language", "en_US")
+                fallback_lang = self.config.get("fallback_language", "en_US")
+                if fallback_lang:
+                    lang = fallback_lang
 
             try:
                 # 从配置的路径加载语言文件
@@ -192,7 +196,7 @@ class TranslationManager:
             except FileNotFoundError:
                 # 尝试使用fallback语言
                 fallback_lang = self.config.get("fallback_language", "en_US")
-                if lang != fallback_lang:
+                if fallback_lang and lang != fallback_lang:
                     return self.load_translations(fallback_lang)
                 else:
                     # 如果fallback也失败，不翻译
@@ -200,7 +204,7 @@ class TranslationManager:
 
         return self.translations[lang]
 
-    def set_language(self, lang):
+    def set_language(self, lang: str) -> None:
         """设置语言并使用ruamel.yaml保存到配置文件，保留原始格式和注释"""
         # 验证语言是否被支持
         supported_languages = self.config.get("supported_languages", ["zh_CN", "en_US"])
@@ -237,10 +241,10 @@ class TranslationManager:
             # 如果保存失败，仅在内存中更新
             pass
 
-    def gettext(self, message):
+    def gettext(self, message: str) -> str:
         """获取翻译文本"""
         _ = self.load_translations()
-        if _:
+        if _ is not None:
             return _(message)
         return message
 

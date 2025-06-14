@@ -1,8 +1,9 @@
 # path: f2/utils/crypto/rsa.py
 
+from typing import Union
+
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding, rsa
-from typing import Union
 
 from f2.i18n.translator import _
 

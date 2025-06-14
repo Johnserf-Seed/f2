@@ -196,8 +196,14 @@ class TiktokHandler:
             ignore_fields (list): 剔除的字段
         """
 
+        # 获取aweme_id并检查是否为有效字符串
+        aweme_id = aweme_data.get("aweme_id")
+        if not aweme_id or not isinstance(aweme_id, str):
+            logger.warning(_("无效的aweme_id: {0}").format(aweme_id))
+            return
+
         # 尝试从数据库中获取作品数据
-        local_video_data = await db.get_video_info(aweme_data.get("aweme_id", None))
+        local_video_data = await db.get_video_info(aweme_id)
 
         # 如果作品不在数据库中，将其添加到数据库
         if not local_video_data:

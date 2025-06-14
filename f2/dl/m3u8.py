@@ -2,6 +2,7 @@
 
 import asyncio
 import traceback
+from abc import abstractmethod
 from pathlib import Path
 from typing import Any, Set, Union
 
@@ -31,7 +32,9 @@ class M3U8DownloadMixin:
     aclient: httpx.AsyncClient
     progress: Any
 
+    @abstractmethod
     def _ensure_path(self, path: Union[str, Path]) -> Path: ...
+
     async def download_m3u8_stream(
         self,
         task_id: TaskID,

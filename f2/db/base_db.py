@@ -9,7 +9,6 @@ from aiosqlite import Connection
 from f2.db.migration import MigrationMixin
 from f2.exceptions.db_exceptions import DatabaseConnectionError, DatabaseTimeoutError
 from f2.i18n.translator import _
-from f2.log.logger import logger
 
 
 class BaseDB(MigrationMixin):
