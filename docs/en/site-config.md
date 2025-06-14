@@ -139,7 +139,7 @@ douyin:
 :::
 
 ::: tip :bulb: Description
-This is just an example. In fact, user B's like page is not open, and user C may not live broadcast. Everything is set according to the actual situation, Do whatever you want.
+This is just an example. In fact, user B's like page is not open, and user C may not live broadcast. Everything is set according to the actual situation.
 :::
 
 Then you can open the terminal and directly enter the path to the custom configuration file to download it with one click. The remaining low-frequency parameters will be automatically merged, so there is no need to worry.

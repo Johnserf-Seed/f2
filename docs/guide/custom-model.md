@@ -12,9 +12,7 @@ outline: deep
 
 ## 创建自定义 Filter
 
-```python
 <<< @/snippets/custom-filter.py#custom-filter-snippet
-```
 
 上面的示例展示了如何继承 `JSONModel` 并实现属性及 `_to_dict` 方法，然后在爬虫获取到接口响应后将其传入自定义的 `Filter` 中解析。
 
