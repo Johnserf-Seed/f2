@@ -333,7 +333,7 @@ class DouyinDownloader(BaseDownloader):
             image_name = f"{base_filename}_image_{i + 1}"
 
             await self.initiate_download(
-                _("图片 {0}/{1}").format(i + 1, len(images)),
+                _("图集 {0}/{1}").format(i + 1, len(images)),
                 image_url,
                 self.base_path,
                 image_name,
