@@ -6,3 +6,4 @@
 - [OpenAI](https://openai.com)
 
 - [LRTFK](https://github.com/LRTFK)
+- [Codex](https://github.com) 

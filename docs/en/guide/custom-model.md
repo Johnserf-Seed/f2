@@ -12,9 +12,7 @@ The built-in `Filter` only extracts commonly used fields. If the API response do
 
 ## Create a Custom Filter
 
-```python
 <<< @/snippets/custom-filter.py#custom-filter-snippet
-```
 
 The example above demonstrates how to subclass `JSONModel`, implement properties and a `_to_dict` method, then pass the response to your filter for parsing.
 
