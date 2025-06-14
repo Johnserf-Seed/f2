@@ -74,16 +74,17 @@ f2:
       User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0
       Referer: https://www.douyin.com/
 
+    # 代理配置 - 如果不使用代理，请将以下值设为空
     proxies:
-      type: http  # 支持: http, https, socks4, socks5
-      host: 127.0.0.1
-      port: 1080
-      username: ""  # 可选
-      password: ""  # 可选
-      rdns: true    # 仅SOCKS代理使用
+      type: ""        # 代理类型：http, https, socks4, socks5
+      host: ""        # 代理服务器地址
+      port: ""        # 代理端口
+      username: ""    # 代理用户名（可选）
+      password: ""    # 代理密码（可选）
+      rdns: true      # 仅SOCKS代理使用
       # 兼容旧格式
-      http://:
-      https://:
+      http://:        # HTTP代理地址
+      https://:       # HTTPS代理地址
 
     wss:
       domain: localhost
