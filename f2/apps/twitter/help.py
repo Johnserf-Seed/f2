@@ -50,7 +50,7 @@ def help() -> None:
             "-P --proxies",
             "[dark_cyan]str",
             _(
-                "配置代理服务器，支持最多两个参数，分别对应 http:// 和 https:// 协议。如果代理不支持出口 HTTPS，请使用：http://x.x.x.x http://x.x.x.x"
+                "配置代理服务器，支持多种代理类型。格式：类型 地址，例如：socks5 127.0.0.1:1080 或 http proxy.example.com:8080。支持的类型：http, https, socks4, socks5"
             ),
         ),
         ("--update-config", "[dark_cyan]Flag", _("使用命令行选项更新配置文件")),

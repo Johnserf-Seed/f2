@@ -87,6 +87,7 @@ $ f2 apps --init-config my_apps.yaml
   ```sh [tiktok]
   $ f2 tk/tiktok --init-config tk.yaml
   ```
+
 2. **配置文件支持相对路径吗？**
 
 配置文件路径既支持绝对路径，也支持相对路径。初始化过程中会覆盖目标文件，不会自动备份。
@@ -224,6 +225,79 @@ $ pip3 show f2
 ```
 然后查看 `Location`，并在该目录下找到配置文件。
 :::
+
+## 代理配置
+
+F2 支持多种类型的代理服务器，包括 HTTP、HTTPS、SOCKS4 和 SOCKS5。
+
+### 配置格式
+
+```yaml
+应用名:
+  proxies:
+    type: socks5           # 代理类型：http, https, socks4, socks5
+    host: 127.0.0.1        # 代理服务器地址
+    port: 1080             # 代理服务器端口
+    username: user         # 用户名（可选）
+    password: pass         # 密码（可选）
+    rdns: true             # 远程DNS解析（仅SOCKS代理）
+```
+
+### 代理类型说明
+
+| 类型 | 描述 | 使用场景 |
+|------|------|----------|
+| `http` | HTTP代理 | 适用于大多数HTTP请求 |
+| `https` | HTTPS代理 | 适用于加密连接 |
+| `socks4` | SOCKS4代理 | 基础的SOCKS代理 |
+| `socks5` | SOCKS5代理 | **推荐**，支持认证和UDP |
+
+### 配置示例
+
+::: code-group
+
+```yaml [SOCKS5代理]
+douyin:
+  proxies:
+    type: socks5
+    host: 127.0.0.1
+    port: 1080
+```
+
+```yaml [HTTP代理]
+douyin:
+  proxies:
+    type: http
+    host: proxy.example.com
+    port: 8080
+```
+
+```yaml [带认证的代理]
+douyin:
+  proxies:
+    type: socks5
+    host: proxy.example.com
+    port: 1080
+    username: myuser
+    password: mypass
+```
+:::
+
+### 命令行配置
+
+你也可以通过命令行参数临时设置代理：
+
+```bash
+# SOCKS5代理
+f2 dy --proxies socks5 127.0.0.1:1080
+
+# HTTP代理
+f2 dy --proxies http proxy.example.com:8080
+```
+
+### 代理测试
+
+F2 会在使用前自动测试代理的可用性。如果代理无法连接，将会显示错误信息。
 
 ## 下一步是什么？
 

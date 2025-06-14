@@ -210,12 +210,52 @@ f2 bark -t "Jump Test" -b "Open F2 Docs" --url "https://f2.wiki/"
 
 ### `--proxies`
 
-配置代理服务器，支持最多两个参数，分别对应 `http://` 和 `https://` 协议。
+配置代理服务器，支持多种代理类型，支持最多两个参数，分别指定代理类型和地址。
 
-例如：`--proxies http://x.x.x.x https://x.x.x.x`。
+**语法格式：**
+```bash
+--proxies <type> <address>
+```
 
-> [!IMPORTANT] 重要 ❗❗❗
-> **如果代理不支持出口 HTTPS，请使用：`--proxies http://x.x.x.x http://x.x.x.x`。**
+**支持的代理类型：**
+- `http`: HTTP代理
+- `https`: HTTPS代理
+- `socks4`: SOCKS4代理
+- `socks5`: SOCKS5代理
+
+**使用示例：**
+
+::: code-group
+```bash[SOCKS5代理]
+f2 bk --proxies socks5 127.0.0.1:1080
+```
+
+```bash[HTTP代理]
+f2 bk --proxies http proxy.example.com:8080
+```
+
+```bash[带认证的代理]
+# 可在配置文件中设置用户名密码
+f2 bk --proxies socks5 user:pass@127.0.0.1:1080
+```
+:::
+
+> [!IMPORTANT] 重要提示
+> - **SOCKS代理推荐**：对于Bark等平台，推荐使用 SOCKS5 代理以获得更好的兼容性
+> - **认证支持**：支持用户名密码认证，格式：`username:password@host:port`
+> - **兼容性**：如果代理不支持出口 HTTPS，请使用 HTTP 类型的代理
+
+> [!TIP] 配置文件方式
+> 你也可以在配置文件中设置代理：
+> ```yaml
+> douyin:
+>   proxies:
+>     type: socks5
+>     host: 127.0.0.1
+>     port: 1080
+>     username: user  # 可选
+>     password: pass  # 可选
+> ```
 
 ### `--update-config`
 

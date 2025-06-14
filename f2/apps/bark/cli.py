@@ -112,20 +112,42 @@ def validate_proxies(
     """
 
     if value:
-        # 校验代理参数是否合法的代理参数
-        if not all([value[0].startswith("http://"), value[1].startswith("http://")]):
+        # 解析代理类型和地址
+        proxy_type, proxy_address = value
+
+        # 验证代理类型是否支持
+        if proxy_type not in ("http", "https", "socks4", "socks5"):
             raise click.BadParameter(
-                _(
-                    "代理参数应该以'http://'和'http://'开头，在大多数情况下，https:// 应使用 http:// 方案"
-                )
+                _("代理类型不支持，请使用http、https、socks4或socks5")
             )
+
+        # 验证代理地址格式
+        if ":" not in proxy_address:
+            raise click.BadParameter(_("代理地址格式错误，正确格式为: host:port"))
+
+        # 解析主机和端口
+        try:
+            host, port = proxy_address.split(":", 1)
+            port = int(port)
+        except ValueError:
+            raise click.BadParameter(_("代理端口必须是数字"))
+
+        # 构建新格式的代理配置
+        proxy_config = {
+            "type": proxy_type,
+            "host": host,
+            "port": port,
+        }
+
         # 校验代理服务器是否可用
         if not check_proxy_avail(
-            http_proxy=value[0],
-            https_proxy=value[1],
-            test_url="https://bark.day.app/",
+            proxy_config,
+            test_url="https://api.day.app/",
+            expected_content="code",
         ):
             raise click.BadParameter(_("代理服务器不可用"))
+
+        return proxy_config
 
     return value
 
@@ -255,7 +277,7 @@ def validate_proxies(
     type=str,
     nargs=2,
     help=_(
-        "代理服务器，最多 2 个参数，http://与https://。空格区分 2 个参数 http://x.x.x.x http://x.x.x.x (没有拼写错误，某些情况下，https:// 应使用 http:// 方案)"
+        "配置代理服务器，支持最多两个参数。格式：类型 地址，例如：socks5 127.0.0.1:1080"
     ),
     callback=validate_proxies,
 )
@@ -336,15 +358,54 @@ def bark(
         update_manger.update_config_with_args("bark", **kwargs)
         return
 
-    # 将kwargs["proxies"]中的tuple转换为dict
+    # 检查 kwargs["proxies"] 的类型
     if kwargs.get("proxies"):
-        kwargs["proxies"] = {
-            "http://": kwargs["proxies"][0],
-            "https://": kwargs["proxies"][1],
-        }
+        # 如果 proxies 是字典（来自 validate_proxies 回调），直接使用
+        if isinstance(kwargs["proxies"], dict):
+            pass
+        # 如果 proxies 是元组（理论上不应该发生，但作为后备处理兼容旧版）
+        elif (
+            isinstance(kwargs["proxies"], (tuple, list)) and len(kwargs["proxies"]) >= 2
+        ):
+            proxy_type, proxy_address = kwargs["proxies"]
+            try:
+                host, port = proxy_address.split(":", 1)
+                port = int(port)
+                kwargs["proxies"] = {
+                    "type": proxy_type,
+                    "host": host,
+                    "port": port,
+                }
+            except ValueError:
+                logger.error(_("代理地址格式错误"))
+                ctx.abort()
 
     # 从低频配置开始到高频配置再到cli参数，逐级覆盖，如果键值不存在使用父级的键值
     kwargs = merge_config(main_conf, custom_conf, **kwargs)
+
+    # 添加代理验证逻辑（使用新格式）
+    proxy_config = kwargs.get("proxies", {})
+    if proxy_config and isinstance(proxy_config, dict):
+        # 检查是否有有效的代理配置
+        proxy_type = proxy_config.get("type")
+        proxy_host = proxy_config.get("host")
+        proxy_port = proxy_config.get("port")
+
+        # 如果有完整的代理配置，则进行验证
+        if proxy_type and proxy_host and proxy_port:
+            logger.debug(_("检测到代理配置，正在验证代理可用性..."))
+
+            # 构建代理配置进行测试
+            if not check_proxy_avail(
+                proxy_config,
+                test_url="https://api.day.app/",
+                expected_content="code",
+            ):
+                logger.error(_("代理服务器不可用，请检查代理配置"))
+                # 可以选择是否继续执行或退出
+                # ctx.abort()  # 如果要在代理失败时退出
+            else:
+                logger.info(_("代理服务器验证成功"))
 
     # 从配置文件中获取 key、token，如果命令行没有传入 key、token
     key = kwargs.get("key") or main_conf.get("key")

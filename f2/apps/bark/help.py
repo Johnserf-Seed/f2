@@ -61,7 +61,7 @@ def help() -> None:
             "-P --proxies",
             "[dark_cyan]str",
             _(
-                "代理服务器，空格区分 2 个参数 http://x.x.x.x:xxxx http://x.x.x.x:xxxx (某些情况下，https:// 应使用 http:// 方案)"
+                "配置代理服务器，支持最多两个参数。格式：类型 地址，例如：socks5 127.0.0.1:1080"
             ),
         ),
         (

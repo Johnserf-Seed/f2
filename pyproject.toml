@@ -66,6 +66,7 @@ dependencies = [
     "click==8.1.7",
     "rich==13.9.3",
     "httpx==0.28.1",
+    "httpx-socks==0.10.0",
     "aiofiles==24.1.0",
     "aiosqlite==0.20.0",
     "ruamel.yaml==0.18.10",

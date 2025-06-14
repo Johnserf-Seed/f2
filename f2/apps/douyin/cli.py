@@ -136,26 +136,45 @@ def validate_proxies(
     """验证代理参数 (Validate proxy parameters)
 
     Args:
-        ctx: click的上下文对象 (Click's context object)
-        param: 提供的参数或选项 (The provided parameter or option)
-        value: 参数或选项的值 (The value of the parameter or option)
+        ctx (click.Context): click的上下文对象 (Click's context object)
+        param (typing.Union[click.Option, click.Parameter]): 提供的参数或选项 (The provided parameter or option)
+        value (typing.Any): 参数或选项的值 (The value of the parameter or option)
+    Raises:
+        click.BadParameter: 如果代理格式不正确或不可用 (If the proxy format is incorrect or unavailable)
     """
 
     if value:
-        # 校验代理参数是否合法的代理参数
-        if not all([value[0].startswith("http://"), value[1].startswith("http://")]):
+        # 解析代理类型和地址
+        proxy_type, proxy_address = value
+
+        # 验证代理类型是否支持
+        if proxy_type not in ("http", "https", "socks4", "socks5"):
             raise click.BadParameter(
-                _(
-                    "配置代理服务器，支持最多两个参数，分别对应 http:// 和 https:// 协议。如果代理不支持出口 HTTPS，请使用：http://x.x.x.x http://x.x.x.x"
-                )
+                _("代理类型不支持，请使用http、https、socks4或socks5")
             )
+
+        # 验证代理地址格式
+        if not ":" in proxy_address:
+            raise click.BadParameter(_("代理地址格式错误，正确格式为: host:port"))
+
+        # 构建代理URL
+        proxy_url = f"{proxy_type}://{proxy_address}"
+
         # 校验代理服务器是否可用
         if not check_proxy_avail(
-            http_proxy=value[0],
-            https_proxy=value[1],
-            test_url="https://www.douyin.com/",
+            proxy_url,
+            # test_url="https://www.douyin.com/",
         ):
             raise click.BadParameter(_("代理服务器不可用"))
+
+        # 返回新的代理配置格式 - 确保格式正确
+        return {
+            "type": proxy_type,
+            f"{proxy_type}://": proxy_url,
+            # 兼容旧格式
+            "http://": proxy_url,
+            "https://": proxy_url,
+        }
 
     return value
 
@@ -291,7 +310,8 @@ def validate_proxies(
     type=str,
     nargs=2,
     help=_(
-        "配置代理服务器，支持最多两个参数，分别对应 http:// 和 https:// 协议。如果代理不支持出口 HTTPS，请使用：http://x.x.x.x http://x.x.x.x"
+        "配置代理服务器，支持最多两个参数。格式：类型 地址，例如："
+        "socks5 127.0.0.1:1080"
     ),
     callback=validate_proxies,
 )
@@ -379,15 +399,53 @@ def douyin(
         update_manger.update_config_with_args("douyin", **kwargs)
         return
 
-    # 将kwargs["proxies"]中的tuple转换为dict
+    # 检查 kwargs["proxies"] 的类型
     if kwargs.get("proxies"):
-        kwargs["proxies"] = {
-            "http://": kwargs["proxies"][0],
-            "https://": kwargs["proxies"][1],
-        }
+        # 如果 proxies 是字典（来自 validate_proxies 回调），直接使用
+        if isinstance(kwargs["proxies"], dict):
+            # 已经是正确的格式，不需要转换
+            pass
+        # 如果 proxies 是元组（理论上不应该发生，但作为后备处理兼容旧版）
+        elif (
+            isinstance(kwargs["proxies"], (tuple, list)) and len(kwargs["proxies"]) >= 2
+        ):
+            proxy_url = kwargs["proxies"][1]  # 第二个元素是地址
+            proxy_type = kwargs["proxies"][0]  # 第一个元素是类型
+            kwargs["proxies"] = {
+                "type": proxy_type,
+                f"{proxy_type}://": f"{proxy_type}://{proxy_url}",
+                "http://": (
+                    f"{proxy_type}://{proxy_url}" if proxy_type == "http" else None
+                ),
+                "https://": (
+                    f"{proxy_type}://{proxy_url}" if proxy_type == "https" else None
+                ),
+            }
 
     # 从低频配置开始到高频配置再到cli参数，逐级覆盖，如果键值不存在使用父级的键值
     kwargs = merge_config(main_conf, custom_conf, **kwargs)
+
+    # 添加代理验证逻辑
+    proxy_config = kwargs.get("proxies", {})
+    if proxy_config and isinstance(proxy_config, dict):
+        # 检查是否有有效的代理配置
+        proxy_type = proxy_config.get("type")
+        proxy_host = proxy_config.get("host")
+        proxy_port = proxy_config.get("port")
+
+        # 如果有完整的代理配置，则进行验证
+        if proxy_type and proxy_host and proxy_port:
+            from f2.utils.http.proxy import check_proxy_avail
+
+            logger.debug(_("检测到代理配置，正在验证代理可用性..."))
+
+            # 构建代理配置进行测试
+            if not check_proxy_avail(proxy_config):
+                logger.error(_("代理服务器不可用，请检查代理配置"))
+                # 可以选择是否继续执行或退出
+                # ctx.abort()  # 如果要在代理失败时退出
+            else:
+                logger.info(_("代理服务器验证成功"))
 
     logger.info(_("模式：{0}").format(kwargs.get("mode")))
     logger.info(_("主配置路径：{0}").format(main_conf_path))

@@ -226,6 +226,79 @@ $ pip3 show f2
 Then check `Location` and find the configuration file in that directory.
 :::
 
+## Proxy configuration
+
+F2 supports multiple types of proxy servers, including HTTP, HTTPS, SOCKS4, and SOCKS5.
+
+### Configuration format
+
+```yaml
+app_name:
+  proxies:
+    type: socks5           # Proxy type: http, https, socks4, socks5
+    host: 127.0.0.1        # Proxy server address
+    port: 1080             # Proxy server port
+    username: user         # Username (optional)
+    password: pass         # Password (optional)
+    rdns: true             # Remote DNS resolution (SOCKS proxies only)
+```
+
+### Proxy types
+
+| Type | Description | Use case |
+|------|-------------|----------|
+| `http` | HTTP proxy | Suitable for most HTTP requests |
+| `https` | HTTPS proxy | Suitable for encrypted connections |
+| `socks4` | SOCKS4 proxy | Basic SOCKS proxy |
+| `socks5` | SOCKS5 proxy | **Recommended**, supports authentication and UDP |
+
+### Configuration examples
+
+::: code-group
+
+```yaml [SOCKS5 proxy]
+douyin:
+  proxies:
+    type: socks5
+    host: 127.0.0.1
+    port: 1080
+```
+
+```yaml [HTTP proxy]
+douyin:
+  proxies:
+    type: http
+    host: proxy.example.com
+    port: 8080
+```
+
+```yaml [Authenticated proxy]
+douyin:
+  proxies:
+    type: socks5
+    host: proxy.example.com
+    port: 1080
+    username: myuser
+    password: mypass
+```
+:::
+
+### Command line configuration
+
+You can also temporarily set proxy through command line parameters:
+
+```bash
+# SOCKS5 proxy
+f2 dy --proxies socks5 127.0.0.1:1080
+
+# HTTP proxy
+f2 dy --proxies http proxy.example.com:8080
+```
+
+### Proxy testing
+
+F2 will automatically test proxy availability before use. If the proxy cannot connect, an error message will be displayed.
+
 ## What's next?
 
 - For more details on CLI commands, see [CLI Reference](/cli).

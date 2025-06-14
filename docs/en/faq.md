@@ -168,3 +168,32 @@ or
 pip install -e .
 ```
 :::
+
+## Proxy Connection Failed
+
+When using a proxy and encountering connection failures, check the following issues:
+
+::: details :link: Solution
+1. **Correct proxy type**: Ensure you have selected the correct proxy type (http/https/socks4/socks5)
+2. **Proxy address and port**: Verify that the proxy server address and port are correct
+3. **Authentication credentials**: If the proxy requires authentication, ensure the username and password are correct
+4. **Network connectivity**: Test whether the proxy server can be accessed normally
+5. **Firewall settings**: Check if the firewall is blocking the proxy connection
+
+**Test proxy connection:**
+```bash
+# Test SOCKS5 proxy with curl
+curl --socks5 127.0.0.1:1080 https://httpbin.org/ip
+
+# Test HTTP proxy with curl
+curl --proxy http://127.0.0.1:8080 https://httpbin.org/ip
+```
+
+**Troubleshooting steps:**
+1. Verify proxy server is running and accessible
+2. Check if proxy requires authentication
+3. Test proxy with other tools (curl, browser)
+4. Ensure no firewall blocking the connection
+5. Try different proxy servers or types
+6. Check proxy logs for error messages
+:::

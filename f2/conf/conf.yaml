@@ -1,7 +1,10 @@
 f2:
+  # 配置文件版本
   version: "0.0.1.7"
-  check_update: true
-  enable_bark: true
+  # 是否开启版本检查
+  check_update: false
+  # 是否开启Bark通知
+  enable_bark: false
 
   # 多语言支持
   i18n:
@@ -13,11 +16,13 @@ f2:
       - "zh_CN"
       - "en_US"
 
+  # Bark配置
   bark:
     headers:
       User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0
       Referer: https://api.day.app/
 
+    # 通知内容加密配置
     encryption:
       algorithm: AES128
       enable: true
@@ -25,10 +30,19 @@ f2:
       padding: PKCS7
       key: ""
 
+    # 代理配置 - 如果不使用代理，请将以下值设为空
     proxies:
-      http://:
-      https://:
+      type: ""        # 代理类型：http, https, socks4, socks5
+      host: ""        # 代理服务器地址
+      port: ""        # 代理端口
+      username: ""    # 代理用户名（可选）
+      password: ""    # 代理密码（可选）
+      rdns: true      # 仅SOCKS代理使用
+      # 兼容旧格式
+      http://:        # HTTP代理地址
+      https://:       # HTTPS代理地址
 
+  # Douyin配置
   douyin:
     encryption: ab
 
@@ -61,6 +75,13 @@ f2:
       Referer: https://www.douyin.com/
 
     proxies:
+      type: http  # 支持: http, https, socks4, socks5
+      host: 127.0.0.1
+      port: 1080
+      username: ""  # 可选
+      password: ""  # 可选
+      rdns: true    # 仅SOCKS代理使用
+      # 兼容旧格式
       http://:
       https://:
 
@@ -92,6 +113,7 @@ f2:
         user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0
         user_unique_id: ""
 
+  # TikTok配置
   tiktok:
 
     BaseRequestModel:
@@ -99,10 +121,10 @@ f2:
         language: zh-CN
         name: Mozilla
         platform: Win32
-        version: 5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36
+        version: 5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
 
       device:
-        id: "7377772863376426514"
+        id: "7513169383180830216"
         platform: web_pc
 
       os: windows
@@ -112,12 +134,20 @@ f2:
       tz_name: Asia/Hong_Kong
 
     headers:
-      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36
+      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
       Referer: https://www.tiktok.com/
 
+    # 代理配置 - 如果不使用代理，请将以下值设为空
     proxies:
-      http://:
-      https://:
+      type: ""        # 代理类型：http, https, socks4, socks5
+      host: ""        # 代理服务器地址
+      port: ""        # 代理端口
+      username: ""    # 代理用户名（可选）
+      password: ""    # 代理密码（可选）
+      rdns: true      # 仅SOCKS代理使用
+      # 兼容旧格式
+      http://:        # HTTP代理地址
+      https://:       # HTTPS代理地址
 
     wss:
       domain: localhost
@@ -144,24 +174,43 @@ f2:
       url:
         https://www.tiktok.com/passport/web/auth/config?WebIdLastTime=1733387890&account_sdk_source=web&aid=1459&app_language=zh-Hans&app_name=tiktok_web&browser_language=zh-CN&browser_name=Mozilla&browser_online=true&browser_platform=Win32&browser_version=5.0%20%28Windows%20NT%2010.0%3B%20Win64%3B%20x64%29%20AppleWebKit%2F537.36%20%28KHTML%2C%20like%20Gecko%29%20Chrome%2F131.0.0.0%20Safari%2F537.36&channel=tiktok_web&cookie_enabled=true&data_collection_enabled=true&device_id=7444844253941876231&device_platform=web_pc&focus_state=true&from_page=fyp&history_len=3&is_fullscreen=false&is_page_visible=true&odinId=7444842897268327431&os=windows&priority_region=&referer=&region=TW&screen_height=1080&screen_width=1920&tz_name=Asia%2FHong_Kong&user_is_login=false&webcast_language=zh-Hans&msToken=Rr7x4_7ABrw16uXFR33lyk5_HML6vIUi6F_aAeqOy8dIVGXhgJaSB7y7s-8_X4dXdwcoy5RfUQKomZzOg8Hf_6dQwmqosHxTNcn0Y7-gwVjcJ0IW3pqwg5Aq9W-D1gZZ6dFoFFPucU8B2SJ_Ma4brk45tQ==
 
+  #  Twitter配置
   twitter:
     headers:
       User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0
       Referer: https://twitter.com/
       Authorization: Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA
       X-Csrf-Token:
-    proxies:
-      http://:
-      https://:
 
+    # 代理配置 - 如果不使用代理，请将以下值设为空
+    proxies:
+      type: ""        # 代理类型：http, https, socks4, socks5
+      host: ""        # 代理服务器地址
+      port: ""        # 代理端口
+      username: ""    # 代理用户名（可选）
+      password: ""    # 代理密码（可选）
+      rdns: true      # 仅SOCKS代理使用
+      # 兼容旧格式
+      http://:        # HTTP代理地址
+      https://:       # HTTPS代理地址
+
+  # 微博配置
   weibo:
     headers:
       User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0
       Referer: https://weibo.com/
 
+    # 代理配置 - 如果不使用代理，请将以下值设为空
     proxies:
-      http://:
-      https://:
+      type: ""        # 代理类型：http, https, socks4, socks5
+      host: ""        # 代理服务器地址
+      port: ""        # 代理端口
+      username: ""    # 代理用户名（可选）
+      password: ""    # 代理密码（可选）
+      rdns: true      # 仅SOCKS代理使用
+      # 兼容旧格式
+      http://:        # HTTP代理地址
+      https://:       # HTTPS代理地址
 
     visitor:
       url: https://passport.weibo.com/visitor/genvisitor2

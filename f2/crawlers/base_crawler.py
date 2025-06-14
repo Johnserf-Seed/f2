@@ -7,6 +7,7 @@ from typing import Optional
 
 import httpx
 from httpx import Response
+from httpx_socks import AsyncProxyTransport, SyncProxyTransport
 
 from f2.exceptions.api_exceptions import (
     APIConnectionError,
@@ -81,6 +82,7 @@ class BaseCrawler:
     ):
         # 设置代理 (Set proxy)
         self.proxies = proxies
+        # 兼容旧格式
         self.http_proxy = self.proxies.get("http://", None)
         self.https_proxy = self.proxies.get("https://", None)
 
@@ -108,6 +110,33 @@ class BaseCrawler:
         # 同步客户端 / Synchronous client
         self._client: Optional[httpx.Client] = None
 
+    def _get_proxy_config(self) -> Optional[str]:
+        """
+        获取代理配置URL
+
+        Returns:
+            Optional[str]: 代理URL或None
+        """
+        if not isinstance(self.proxies, dict):
+            return None
+
+        # 新格式：支持多种代理类型
+        proxy_type = self.proxies.get("type")
+        host = self.proxies.get("host")
+        port = self.proxies.get("port")
+        username = self.proxies.get("username")
+        password = self.proxies.get("password")
+
+        if proxy_type and host and port:
+            auth = f"{username}:{password}@" if username and password else ""
+            return f"{proxy_type}://{auth}{host}:{port}"
+
+        # 兼容旧格式
+        if self.http_proxy:
+            return self.http_proxy
+
+        return None
+
     def _create_mount(self, async_mode=False) -> dict:
         """
         创建挂载配置，根据 async_mode 切换异步或同步的 HTTPTransport
@@ -118,25 +147,43 @@ class BaseCrawler:
         Returns:
             dict: 挂载配置
         """
+        proxy_url = self._get_proxy_config()
 
-        transport_class = (
-            httpx.AsyncHTTPTransport if async_mode else httpx.HTTPTransport
-        )
-        if isinstance(self.proxies, dict) and self.http_proxy:
+        if not proxy_url:
+            # 无代理配置
+            transport_class = (
+                httpx.AsyncHTTPTransport if async_mode else httpx.HTTPTransport
+            )
             return {
                 "all://": transport_class(
                     verify=False,
                     limits=self.limits,
-                    proxy=httpx.Proxy(url=self.http_proxy),
-                    local_address="0.0.0.0",
                     retries=self._max_retries,
                 ),
             }
+
+        # 根据代理类型选择传输方式
+        if proxy_url.startswith(("socks4://", "socks5://")):
+            # SOCKS代理使用专门的传输类
+            if async_mode:
+                transport = AsyncProxyTransport.from_url(proxy_url, verify=False)
+            else:
+                transport = SyncProxyTransport.from_url(proxy_url, verify=False)
+
+            return {
+                "all://": transport,
+            }
         else:
+            # HTTP/HTTPS代理
+            transport_class = (
+                httpx.AsyncHTTPTransport if async_mode else httpx.HTTPTransport
+            )
             return {
                 "all://": transport_class(
                     verify=False,
                     limits=self.limits,
+                    proxy=httpx.Proxy(url=proxy_url),
+                    local_address="0.0.0.0",
                     retries=self._max_retries,
                 ),
             }
