@@ -51,6 +51,14 @@ const contributors = [
       { icon: 'github', link: 'https://github.com/LRTFK', ariaLabel: 'GitHub LRTFK' },
     ]
   },
+  {
+    avatar: 'https://avatars.githubusercontent.com/in/1144995',
+    name: 'Codex',
+    title: 'Contributor',
+    links: [
+      { icon: 'github', link: 'https://github.com/apps/chatgpt-connector', ariaLabel: 'GitHub ChatGPT Connector' },
+    ]
+  },
 ]
 
 const sponsors = [
