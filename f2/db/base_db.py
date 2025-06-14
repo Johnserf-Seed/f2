@@ -1,17 +1,18 @@
 # path: f2/db/base_db.py
 
 import asyncio
-import aiosqlite
+from typing import Any, List, Optional, Tuple
 
-from typing import Any, Optional, Tuple, List
+import aiosqlite
 from aiosqlite import Connection
 
+from f2.db.migration import MigrationMixin
 from f2.exceptions.db_exceptions import DatabaseConnectionError, DatabaseTimeoutError
 from f2.i18n.translator import _
 from f2.log.logger import logger
 
 
-class BaseDB:
+class BaseDB(MigrationMixin):
     """
     基础数据库类 (Base Database)
 
@@ -242,53 +243,3 @@ class BaseDB:
         """
         if self.conn:
             await self.conn.close()
-
-    async def migrate(self, expected_columns: dict) -> None:
-        """
-        迁移数据库表结构，添加缺失的列但不删除现有数据
-
-        Args:
-            expected_columns (dict): 期望的列名和列类型的字典，如 {"column_name": "TEXT"}
-        """
-        # 检查 TABLE_NAME 是否已定义
-        if not self.TABLE_NAME:
-            logger.warning(_("无法迁移表：未定义 TABLE_NAME"))
-            return
-
-        # 获取表结构
-        if not await self._table_exists():
-            # 如果表不存在，直接返回，让 _create_table 创建完整的表
-            return
-
-        cursor = await self.execute(f"PRAGMA table_info({self.TABLE_NAME})")
-        existing_columns = {column[1]: column[2] for column in await cursor.fetchall()}
-
-        # 添加缺失的列
-        for column, column_type in expected_columns.items():
-            if column not in existing_columns:
-                try:
-                    await self.execute(
-                        f"ALTER TABLE {self.TABLE_NAME} ADD COLUMN {column} {column_type}"
-                    )
-                    logger.info(
-                        _("添加列 {0} 到表 {1}").format(column, self.TABLE_NAME)
-                    )
-                except Exception as e:
-                    logger.error(
-                        _("添加列 {0} 到表 {1} 失败: {2}").format(
-                            column, self.TABLE_NAME, str(e)
-                        )
-                    )
-
-        await self.commit()
-
-    async def _table_exists(self) -> bool:
-        """检查表是否存在"""
-        if not self.TABLE_NAME:
-            return False
-
-        cursor = await self.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name=?",
-            (self.TABLE_NAME,),
-        )
-        return await cursor.fetchone() is not None
