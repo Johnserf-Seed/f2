@@ -60,7 +60,7 @@ weibo_id_expected_results = [
 
 @pytest.mark.asyncio
 class TestWeiboIdFetcher:
-    async def test_get_weibo_id(self):
+    async def test_get_weibo_id(self) -> None:
         """测试单个 URL 的 weibo_id 提取功能"""
 
         # 提取有效URL
@@ -121,7 +121,7 @@ class TestWeiboIdFetcher:
 
 @pytest.mark.asyncio
 class TestWeiboAllIdFetcher:
-    async def test_get_all_weibo_id(self):
+    async def test_get_all_weibo_id(self) -> None:
         """测试批量 URL 的 weibo_id 提取功能"""
 
         # 提取有效URL

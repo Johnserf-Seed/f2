@@ -63,7 +63,6 @@ keywords = [
 
 dependencies = [
     "babel==2.13.0",
-    "black==24.10.0",
     "click==8.1.7",
     "rich==13.9.3",
     "httpx==0.28.1",
@@ -73,8 +72,6 @@ dependencies = [
     "jsonpath-ng==1.6.1",
     "importlib_resources==6.4.5",
     "m3u8==3.6.0",
-    "pytest==8.3.4",
-    "pytest-asyncio==0.25.0",
     "browser_cookie3==0.20.1",
     "pydantic==2.9.*",
     "websockets<13.0",
@@ -84,7 +81,17 @@ dependencies = [
     "mypy-protobuf==3.6.0",
     "gmssl==3.2.2",
     "cryptography==44.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "mypy==1.16.0",
     "pre-commit==4.2.0",
+    "black==24.10.0",
+    "pytest==8.3.4",
+    "pytest-asyncio==0.25.0",
+    "types-aiofiles",
+    "types-protobuf",
 ]
 
 [project.scripts]
@@ -119,7 +126,13 @@ asyncio_default_fixture_loop_scope = "function"
 
 [tool.mypy]
 ignore_missing_imports = true
+exclude = [
+    "docs/snippets/",
+    "f2-secrets/",
+    "tests/"
+]
 
 [[tool.mypy.overrides]]
 module = "ruamel.*"
 ignore_missing_imports = true
+check_untyped_defs = true

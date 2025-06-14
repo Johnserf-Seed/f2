@@ -39,7 +39,7 @@ unique_id_expected_results = [
 
 
 @pytest.mark.asyncio
-async def test_get_unique_id():
+async def test_get_unique_id() -> None:
     """测试单个 URL 的 unique_id 提取功能"""
 
     # 提取有效URL
@@ -59,7 +59,7 @@ async def test_get_unique_id():
 
 
 @pytest.mark.asyncio
-async def test_get_all_unique_id():
+async def test_get_all_unique_id() -> None:
     """测试批量 URL 的 unique_id 提取功能"""
 
     # 提取有效URL

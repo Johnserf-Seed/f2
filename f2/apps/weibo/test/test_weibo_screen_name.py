@@ -33,7 +33,7 @@ screen_name_expected_results = [
 
 
 @pytest.mark.asyncio
-async def test_get_weibo_screen_name():
+async def test_get_weibo_screen_name() -> None:
     """测试单个 URL 的 screen_name 提取功能"""
 
     # 提取有效URL
@@ -65,7 +65,7 @@ async def test_get_weibo_screen_name():
 
 
 @pytest.mark.asyncio
-async def test_get_weibo_all_screen_name():
+async def test_get_weibo_all_screen_name() -> None:
     """测试批量 URL 的 screen_name 提取功能"""
 
     # 提取有效URL

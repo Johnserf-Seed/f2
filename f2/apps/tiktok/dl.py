@@ -340,6 +340,10 @@ class TiktokDownloader(BaseDownloader):
         webcast_name = f"{formated_name}_live"
         webcast_url = webcast_data_dict.get("live_hls_url", None)
 
-        await self.initiate_m3u8_download(
-            _("直播"), webcast_url, base_path, webcast_name, ".flv"
-        )
+        # 检查直播流URL是否有效
+        if webcast_url is not None and isinstance(webcast_url, str):
+            await self.initiate_m3u8_download(
+                _("直播"), webcast_url, base_path, webcast_name, ".flv"
+            )
+        else:
+            logger.warning(_("直播流URL无效，无法下载"))

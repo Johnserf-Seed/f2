@@ -24,7 +24,7 @@ jobs:
         run: |
           pip install pytest
           pip install pytest-cov
-          pip install -e .
+          pip install -e .[dev]
 
       - name: Print environment variable
         run: echo $SKIP_IN_CI

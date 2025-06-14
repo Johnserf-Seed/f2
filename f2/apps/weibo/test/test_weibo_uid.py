@@ -57,7 +57,7 @@ weibo_uid_expected_results = [
 
 
 @pytest.mark.asyncio
-async def test_get_weibo_uid():
+async def test_get_weibo_uid() -> None:
     """测试单个 URL 的 weibo_uid 提取功能"""
 
     # 提取有效URL
@@ -101,7 +101,7 @@ async def test_get_weibo_uid():
 
 
 @pytest.mark.asyncio
-async def test_get_all_weibo_uid():
+async def test_get_all_weibo_uid() -> None:
     """测试批量 URL 的 weibo_uid 提取功能"""
 
     # 提取有效URL

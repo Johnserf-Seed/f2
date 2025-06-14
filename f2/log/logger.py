@@ -7,6 +7,7 @@ import time
 import uuid
 from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
+from typing import Optional, Union
 
 from rich.logging import RichHandler
 
@@ -16,17 +17,24 @@ from f2.utils.core.singleton import Singleton
 class TrueLazyFileHandler(logging.Handler):
     """真正延迟创建文件的日志处理器"""
 
-    def __init__(self, filename, when="h", interval=1, backupCount=0, encoding=None):
+    def __init__(
+        self,
+        filename: str,
+        when: str = "h",
+        interval: int = 1,
+        backupCount: int = 0,
+        encoding: Optional[str] = None,
+    ) -> None:
         super().__init__()
         self.filename = filename
         self.when = when
         self.interval = interval
         self.backupCount = backupCount
         self.encoding = encoding
-        self._real_handler = None
+        self._real_handler: Optional[TimedRotatingFileHandler] = None
         self._file_created = False
 
-    def _create_real_handler(self):
+    def _create_real_handler(self) -> None:
         """创建真正的文件处理器"""
         if not self._file_created:
             # 确保目录存在
@@ -47,7 +55,7 @@ class TrueLazyFileHandler(logging.Handler):
 
             self._file_created = True
 
-    def emit(self, record):
+    def emit(self, record: logging.LogRecord) -> None:
         """只有在真正需要记录日志时才创建文件"""
         if not self._file_created:
             self._create_real_handler()
@@ -55,16 +63,16 @@ class TrueLazyFileHandler(logging.Handler):
         if self._real_handler:
             self._real_handler.emit(record)
 
-    def close(self):
+    def close(self) -> None:
         """关闭处理器"""
         if self._real_handler:
             self._real_handler.close()
         super().close()
 
-    def setFormatter(self, formatter):
+    def setFormatter(self, formatter: Optional[logging.Formatter]) -> None:
         """设置格式器"""
         super().setFormatter(formatter)
-        if self._real_handler:
+        if self._real_handler and formatter:
             self._real_handler.setFormatter(formatter)
 
 
@@ -113,22 +121,22 @@ class LogManager(metaclass=Singleton):
     - 使用 `Singleton` 元类确保整个应用程序只有一个 `LogManager` 实例。
     """
 
-    def __init__(self, log_name="f2"):
+    def __init__(self, log_name: str = "f2") -> None:
         if getattr(self, "_initialized", False):  # 防止重复初始化
             return
 
         self.logger = logging.getLogger(log_name)
         self.logger.setLevel(logging.INFO)
-        self.log_dir = None
+        self.log_dir: Optional[Path] = None
         self._initialized = True
 
     def setup_logging(
         self,
-        level=logging.INFO,
-        log_to_console=False,
-        log_path=None,
-        lazy_file_creation=False,
-    ):
+        level: int = logging.INFO,
+        log_to_console: bool = False,
+        log_path: Optional[str] = None,
+        lazy_file_creation: bool = False,
+    ) -> None:
         self.logger.handlers.clear()
         self.logger.setLevel(level)
 
@@ -160,6 +168,7 @@ class LogManager(metaclass=Singleton):
             log_file = self.log_dir.joinpath(log_file_name)
 
             # 根据是否需要延迟创建选择不同的处理器
+            fh: Union[TrueLazyFileHandler, TimedRotatingFileHandler]
             if lazy_file_creation:
                 fh = TrueLazyFileHandler(
                     str(log_file),
@@ -185,10 +194,10 @@ class LogManager(metaclass=Singleton):
             self.logger.addHandler(fh)
 
     @staticmethod
-    def ensure_log_dir_exists(log_path: Path):
+    def ensure_log_dir_exists(log_path: Path) -> None:
         log_path.mkdir(parents=True, exist_ok=True)
 
-    def clean_logs(self, keep_last_n=99):
+    def clean_logs(self, keep_last_n: int = 99) -> None:
         """保留最近的n个日志文件并删除其他文件（多进程安全）"""
         if not self.log_dir:
             return
@@ -235,7 +244,7 @@ class LogManager(metaclass=Singleton):
             # 清理过程中的任何异常都不应影响主程序
             pass
 
-    def shutdown(self):
+    def shutdown(self) -> None:
         for handler in self.logger.handlers:
             handler.close()
             self.logger.removeHandler(handler)
@@ -247,9 +256,9 @@ _process_logs_cleaned = False  # 添加全局变量跟踪清理状态
 
 
 def log_setup(
-    log_to_console=True,
-    log_name="f2",
-    lazy_file_creation=False,
+    log_to_console: bool = True,
+    log_name: str = "f2",
+    lazy_file_creation: bool = False,
 ) -> logging.Logger:
     """
     配置日志记录器（多进程安全）。
@@ -278,7 +287,7 @@ def log_setup(
     log_manager.setup_logging(
         level=logging.INFO,
         log_to_console=log_to_console,
-        log_path=log_dir,
+        log_path=str(log_dir),
         lazy_file_creation=lazy_file_creation,
     )
 
