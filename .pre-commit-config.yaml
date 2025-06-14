@@ -29,3 +29,10 @@ repos:
         additional_dependencies: [types-protobuf, types-aiofiles]
         args: [--ignore-missing-imports, --check-untyped-defs]
         exclude: ^(f2/apps/(douyin|tiktok)/proto/.*_pb2\.py)$
+
+# Python security checks
+-   repo: https://github.com/gitleaks/gitleaks
+    rev: v8.27.2
+    hooks:
+    -   id: gitleaks
+        args: ["--verbose"]
