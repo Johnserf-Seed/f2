@@ -126,7 +126,13 @@ asyncio_default_fixture_loop_scope = "function"
 
 [tool.mypy]
 ignore_missing_imports = true
+exclude = [
+    "docs/snippets/",
+    "f2-secrets/",
+    "tests/"
+]
 
 [[tool.mypy.overrides]]
 module = "ruamel.*"
 ignore_missing_imports = true
+check_untyped_defs = true
