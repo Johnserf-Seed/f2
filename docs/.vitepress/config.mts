@@ -35,6 +35,9 @@ export default defineConfig({
   ],
   markdown: {
     // lineNumbers: true
+    image: {
+      lazyLoading: true
+    }
   },
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
