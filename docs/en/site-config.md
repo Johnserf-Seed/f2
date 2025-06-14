@@ -1,16 +1,18 @@
 # Configuration file
 
 ::: warning important
-Please read this chapter in detail, it will help you quickly get started with the `F2` configuration file and operation.
+Read this chapter carefully to understand how `F2` configuration files work and how to operate them efficiently.
 :::
 
 ## Main configuration file
 
-The core of `F2` configuration file consists of three parts, `App low-frequency/main configuration file (app.yaml)`, `F2 configuration file (conf.yaml)`, `App default configuration file (defaults.yaml)`.
+`F2` uses several types of configuration files:
 
-Additional parts include your `App High Frequency/Custom Configuration File`, which can cover all parameters of the `App Default Configuration File`.
-
-As well as the `test.yaml` configuration file, responsible for the configuration of test cases for `F2`.
+- **App low-frequency/main configuration file** (`app.yaml`): stores settings that rarely change, such as `cookie`, filename templates, download paths, and network timeouts.
+- **F2 configuration file** (`conf.yaml`): global settings like computation parameters and proxies for each app.
+- **App default configuration file** (`defaults.yaml`): initialization templates for each app. <font color=red><u>**Do not modify this file**</u></font>.
+- **Test configuration file** (`test.yaml`): configuration for the project's tests.
+- **Custom configuration files**: high-frequency settings tailored for personal use that override defaults.
 
 ::: info :bulb: What is yaml?
 Presents the data serialization format file in an outline-like indentation manner, [what is yaml?](https://zh.wikipedia.org/wiki/YAML).
@@ -31,15 +33,14 @@ Presents the data serialization format file in an outline-like indentation manne
 <<< @../../f2/conf/test.yaml
 :::
 
-The separation of high-frequency and low-frequency parameters means that when there are many custom configuration files created, there is no need to modify the `cookie` in each custom configuration file. You only need to modify the **app low-frequency configuration file (app.yaml)** `cookie` will do.
+With high- and low-frequency parameters separated, you only maintain long-lived settings like `cookie` in `app.yaml`. Frequently changed options—such as home page links or download modes—are placed in custom configuration files. This approach simplifies maintenance when managing multiple profiles.
 
-By setting frequently modified parameters such as `Home Page Link`, `Download Mode`, etc. in your custom configuration, you can flexibly download different types of post from different users.
+Useful links:
 
-- How to initialize the configuration file? Please refer to [Initialization Configuration File](#initialize-configuration-file).
-
-- `F2` supports multi-user personalized configuration files, please follow [Customized Configuration File](#custom-configuration-file) to configure.
-
-- How to configure cookies? Please refer to [Configuring Cookies](#configure-cookies).
+- [Initialize configuration file](#initialize-configuration-file)
+- [Custom configuration file](#custom-configuration-file)
+- [Configure cookies](#configure-cookies)
+- [Advanced usage](./advance-guide)
 
 - If you already know how to use configuration files, you can skip this chapter and view [Advanced Usage](./advance-guide).
 

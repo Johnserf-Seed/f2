@@ -1,13 +1,13 @@
 # Quick Start
 
 ::: info Tip
-- This documentation is still being written and may have omissions or errors. You can contribute to writing the documentation at the bottom of the page.
-- The English version is still under translation~
+This page is still under development and may contain inaccuracies. Contributions are welcome at the bottom of the page.
+The English version is being translated.
 :::
 
 ## Start and Run
 
-`F2` is a flexible `asynchronous` downloading library. The design goal of `F2` is to facilitate users and developers in collecting data from multiple platforms with just one click. It supports both `CLI` command-line invocation and API calls.
+`F2` is a flexible *asynchronous* download library. It helps users and developers fetch data from multiple platforms with a single command, either via the CLI or directly in code.
 
 ![cli-start](/f2-help.png)
 
@@ -46,12 +46,8 @@ $ f2 apps -h
 
 ## What's Next?
 
-- I don't know how to configure -> Please refer to the 「[Configuration File](/site-config)」 section in this documentation.
-
-- Want to know more advanced usage of `F2` -> Please refer to the 「[Advanced Guide](/advance-guide)」 section in this documentation.
-
-- Want to learn more about what `F2` can do, like `asynchronous data generators` -> Please refer to the 「[Guide](/guide/what-is-f2)」 section in this documentation to learn more developer methods.
-
-- If you want to further customize the parsed data, explore how to "[Extend Default Data Models](/en/guide/custom-model)" or "[Build Custom Models](/en/guide/custom-model)".
-
-- If you're a developer, please make sure to read this 「[guide](/guide/what-is-f2)」 thoroughly.
+- Unsure how to configure? See the [Configuration File](/site-config) section.
+- Looking for advanced usage? Check the [Advanced Guide](/advance-guide).
+- To learn more features, such as asynchronous generators, read the [Guide](/guide/what-is-f2).
+- Need custom data models? Explore [Extend Default Data Models](/en/guide/custom-model).
+- Developers should read the full [guide](/guide/what-is-f2).
