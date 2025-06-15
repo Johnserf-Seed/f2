@@ -81,8 +81,6 @@ from f2.exceptions.api_exceptions import APIResponseError
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.core.decorators import mode_function_map, mode_handler
-
-# from f2.utils.http.cookie import split_set_cookie
 from f2.utils.time.timestamp import get_timestamp, interval_2_timestamp, timestamp_2_str
 
 rich_console = RichConsoleManager().rich_console
@@ -1287,42 +1285,30 @@ class DouyinHandler:
             response = await crawler.fetch_live(params)
             live = UserLiveFilter(response)
 
-        logger.info(
-            _("房间ID：{0}，用户：{1}，直播间：{2}，状态：{3}，观看人数：{4}").format(
-                live.room_id,
-                live.nickname_raw or "",
-                (
-                    live.live_title_raw[:20] + "..."
-                    if len(live.live_title_raw) > 20
-                    else live.live_title_raw
-                ),
-                DY_LIVE_STATUS_MAPPING.get(live.live_status, _("未知状态")),
-                live.user_count or 0,
-            )
+        # 优化Bark通知内容
+        bark_title = (
+            "🎬 [DouYin] 直播监控" if live.live_status == 2 else "📺 [DouYin] 直播查询"
         )
+        bark_body = _(
+            "🏠 房间ID: {0}\n"
+            "💁 主播: {1}\n"
+            "📺 标题: {2}\n"
+            "📊 状态: {3}\n"
+            "👥 观看: {4}\n"
+        ).format(
+            live.room_id,
+            live.nickname_raw or "未知",
+            live.live_title_raw,
+            f"{DY_LIVE_STATUS_MAPPING.get(live.live_status, _("未知状态"))}",
+            live.user_count,
+        )
+
+        logger.info(bark_body)
         logger.debug(_("结束直播信息处理"))
 
         await self._send_bark_notification(
-            _("[DouYin] 直播下载"),
-            _(
-                "房间ID：{0}\n"
-                "用户：{1}\n"
-                "直播间：{2}\n"
-                "状态：{3}\n"
-                "观看人数：{4}\n"
-                "下载时间：{5}"
-            ).format(
-                live.room_id,
-                live.nickname_raw or "",
-                (
-                    live.live_title_raw[:20] + "..."
-                    if len(live.live_title_raw) > 20
-                    else live.live_title_raw
-                ),
-                DY_LIVE_STATUS_MAPPING.get(live.live_status, _("未知状态")),
-                live.user_count or 0,
-                timestamp_2_str(get_timestamp("sec")),
-            ),
+            bark_title,
+            bark_body,
             group="DouYin",
         )
 
