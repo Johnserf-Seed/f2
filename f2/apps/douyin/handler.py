@@ -21,9 +21,11 @@ from f2.apps.douyin.filter import (
     LiveImFetchFilter,
     PostCommentFilter,
     PostCommentReplyFilter,
+    PostDanmakuFilter,
     PostDetailFilter,
     PostRelatedFilter,
     PostStatsFilter,
+    PostTimeDanmakuFilter,
     QueryUserFilter,
     SuggestWordFilter,
     UserCollectionFilter,
@@ -48,9 +50,11 @@ from f2.apps.douyin.model import (
     LiveWebcast,
     PostComment,
     PostCommentReply,
+    PostDanmaku,
     PostDetail,
     PostRelated,
     PostStats,
+    PostTimeDanmaku,
     QueryUser,
     SuggestWord,
     UserCollection,
@@ -2167,6 +2171,151 @@ class DouyinHandler:
             logger.warning(_("消息发送失败"))
 
         return send
+
+    async def fetch_post_danmaku(
+        self,
+        aweme_id: str,
+        offset: int = 0,
+        count: int = 50,
+        format: str = "json",
+        max_counts: Optional[Union[int, float]] = None,
+    ) -> AsyncGenerator[PostDanmakuFilter, Any]:
+        """
+        用于获取作品弹幕列表。
+
+        Args:
+            aweme_id: str: 作品ID
+            offset: int: 起始页
+            count: int: 每页弹幕数，默认为50
+            format: str: 返回格式，默认为json
+            max_counts: int: 最大弹幕数
+
+        Return:
+            danmaku: AsyncGenerator[PostDanmakuFilter, Any]: 作品弹幕列表数据过滤器，包含作品弹幕数据的_to_raw、_to_dict、_to_list方法
+        """
+
+        max_counts = max_counts or float("inf")
+        danmaku_collected = 0
+
+        logger.info(_("处理作品：{0} 的弹幕").format(aweme_id))
+
+        while danmaku_collected < max_counts:
+            current_request_size = min(count, max_counts - danmaku_collected)
+
+            logger.debug(
+                _("最大数量：{0} 每次请求数量：{1}").format(
+                    max_counts, current_request_size
+                )
+            )
+            rich_console.print(Rule(_("处理第 {0} 页弹幕").format(offset // count + 1)))
+
+            async with DouyinCrawler(self.kwargs) as crawler:
+                params = PostDanmaku(
+                    item_id=aweme_id,
+                    group_id=aweme_id,
+                    offset=offset,
+                    count=int(current_request_size),
+                    format=format,
+                )
+                response = await crawler.fetch_post_danmaku(params)
+                danmaku = PostDanmakuFilter(response)
+
+            if danmaku.status_code != 0:
+                logger.warning(_("获取弹幕失败：{0}").format(danmaku.status_msg))
+                break
+
+            if not danmaku.has_more:
+                logger.info(_("已获取全部弹幕"))
+                if danmaku.danmaku_id:  # 如果当前页还有弹幕，先返回再退出
+                    yield danmaku
+                    danmaku_collected += len(danmaku.danmaku_id)
+                break
+
+            logger.debug(_("当前请求的offset：{0}").format(offset))
+            logger.debug(
+                _("弹幕ID：{0} 弹幕内容：{1} 用户ID：{2}").format(
+                    danmaku.danmaku_id, danmaku.danmaku_text, danmaku.user_id
+                )
+            )
+
+            yield danmaku
+
+            # 更新已经处理的弹幕数量
+            danmaku_collected += len(danmaku.danmaku_id)
+            offset += danmaku_collected
+
+            # 避免请求过于频繁
+            logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        logger.info(_("结束处理作品弹幕，共处理 {0} 条弹幕").format(danmaku_collected))
+
+        await self._send_bark_notification(
+            _("[DouYin] 作品弹幕下载"),
+            _("作品ID：{0}\n弹幕数：{1}\n下载时间：{2}").format(
+                aweme_id,
+                danmaku_collected,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="DouYin",
+        )
+
+    async def fetch_post_time_danmaku(
+        self,
+        aweme_id: str,
+        start_time: int,
+        end_time: int,
+        authentication_token: str = "",
+        duration: int = 0,
+        format: str = "json",
+    ) -> PostDanmakuFilter:
+        """
+        用于获取指定时间段内的作品弹幕列表。
+        Args:
+            aweme_id: str: 作品ID
+            start_time: int: 起始时间戳，秒级
+            end_time: int: 结束时间戳，秒级
+            authentication_token: str: 作品认证令牌，默认为空
+            duration: int: 弹幕持续时间，默认为0
+            format: str: 返回格式，默认为json
+        Return:
+            danmaku: PostDanmakuFilter: 作品弹幕列表数据过滤器，包含作品弹幕数据的_to_raw、_to_dict、_to_list方法
+        """
+
+        logger.info(
+            _("处理作品：{0} 的弹幕，时间范围：{1}ms - {2}ms").format(
+                aweme_id, start_time, end_time
+            )
+        )
+
+        async with DouyinCrawler(self.kwargs) as crawler:
+            params = PostTimeDanmaku(
+                item_id=aweme_id,
+                group_id=aweme_id,
+                start_time=start_time,
+                end_time=end_time,
+                authentication_token=authentication_token,
+                duration=duration,
+                format=format,
+            )
+            response = await crawler.fetch_post_time_danmaku(params)
+            danmaku = PostDanmakuFilter(response)
+
+        if danmaku.status_code != 0:
+            logger.warning(_("获取弹幕失败：{0}").format(danmaku.status_msg))
+            return danmaku
+
+        await self._send_bark_notification(
+            _("[DouYin] 作品时间段弹幕下载"),
+            _("作品ID：{0}\n弹幕数：{1}\n下载时间：{2}").format(
+                aweme_id,
+                len(danmaku.danmaku_id) if danmaku.danmaku_id else 0,
+                timestamp_2_str(get_timestamp("sec")),
+            ),
+            group="DouYin",
+        )
+
+        return danmaku
 
     async def fetch_user_following_lives(self) -> FollowingUserLiveFilter:
         """

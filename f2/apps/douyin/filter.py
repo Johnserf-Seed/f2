@@ -181,6 +181,12 @@ class UserPostFilter(JSONModel):
         return self._get_attr_value("$.locate_item_cursor")  # 定位作品用
 
     @property
+    def authentication_token(self):
+        return self._get_list_attr_value(
+            "$.aweme_list[*].authentication_token"
+        )  # 弹幕列表需要
+
+    @property
     def aweme_id(self):
         ids = self._get_list_attr_value("$.aweme_list[*].aweme_id")
         return ids if isinstance(ids, list) else [ids]
@@ -1105,6 +1111,12 @@ class PostDetailFilter(JSONModel):
     @property
     def api_status_code(self):
         return self._get_attr_value("$.status_code")
+
+    @property
+    def authentication_token(self):
+        return self._get_attr_value(
+            "$.aweme_detail.authentication_token"
+        )  # 弹幕列表需要
 
     @property
     def aweme_type(self):
@@ -2648,6 +2660,12 @@ class HomePostSearchFilter(JSONModel):
 
     # aweme
     @property
+    def authentication_token(self):
+        return self._get_list_attr_value(
+            "$.aweme_list[*].authentication_token"
+        )  # 弹幕列表需要
+
+    @property
     def aweme_type(self):
         return self._get_list_attr_value("$.aweme_list[*].item.aweme_type")
 
@@ -2872,3 +2890,135 @@ class SuggestWordFilter(JSONModel):
         )
 
         return list_dicts
+
+
+class PostDanmakuFilter(JSONModel):
+    @property
+    def status_code(self):
+        return self._get_attr_value("$.status_code")
+
+    @property
+    def status_msg(self):
+        return self._get_attr_value("$.status_msg")
+
+    @property
+    def has_more(self):
+        return self._get_attr_value("$.has_more")
+
+    @property
+    def danmaku_id(self):
+        return self._get_list_attr_value("$.danmaku_list[*].danmaku_id")
+
+    @property
+    def digg_type(self):
+        return self._get_list_attr_value("$.danmaku_list[*].digg_type")
+
+    @property
+    def dislike_type(self):
+        return self._get_list_attr_value("$.danmaku_list[*].dislike_type")
+
+    @property
+    def has_emoji(self):
+        return self._get_list_attr_value("$.danmaku_list[*].has_emoji")
+
+    @property
+    def item_id(self):
+        return self._get_list_attr_value("$.danmaku_list[*].item_id")
+
+    @property
+    def offset_time(self):
+        return self._get_list_attr_value("$.danmaku_list[*].offset_time")
+
+    @property
+    def danmaku_status(self):
+        return self._get_list_attr_value("$.danmaku_list[*].status")
+
+    @property
+    def danmaku_text(self):
+        return replaceT(self._get_list_attr_value("$.danmaku_list[*].text"))
+
+    @property
+    def user_id(self):
+        return self._get_list_attr_value("$.danmaku_list[*].user_id")
+
+    def _to_raw(self) -> Dict:
+        return self._data
+
+    def _to_dict(self) -> Dict:
+        return {
+            prop_name: getattr(self, prop_name)
+            for prop_name in dir(self)
+            if not prop_name.startswith("__") and not prop_name.startswith("_")
+        }
+
+    def _to_list(self) -> list:
+        exclude_fields: List[str] = [
+            "status_code",
+            "status_msg",
+            "has_more",
+        ]
+        extra_fields: List[str] = [
+            "has_more",
+        ]
+
+        list_dicts = filter_to_list(
+            self,
+            "$.danmaku_list",
+            exclude_fields,
+            extra_fields,
+        )
+
+        return list_dicts
+
+
+class PostTimeDanmakuFilter(PostDanmakuFilter):
+    def __init__(self, data):
+        super().__init__(data)
+
+    @property
+    def start_time(self):
+        return self._get_attr_value("$.start_time")
+
+    @property
+    def end_time(self):
+        return self._get_attr_value("$.end_time")
+
+    @property
+    def total(self):
+        return self._get_attr_value("$.total")
+
+    @property
+    def danmaku_type(self):
+        return self._get_list_attr_value("$.danmaku_list[*].danmaku_type")
+
+    @property
+    def danmaku_type_bits(self):
+        return self._get_list_attr_value("$.danmaku_list[*].danmaku_type_bits")
+
+    @property
+    def digg_count(self):
+        return self._get_list_attr_value("$.danmaku_list[*].digg_count")
+
+    @property
+    def big_thumb(self):
+        return self._get_list_attr_value("$.danmaku_list[*].extra.big_thumb")
+
+    @property
+    def style_list(self):
+        return self._get_list_attr_value("$.danmaku_list[*].extra.style_list")
+
+    @property
+    def from_copy(self):
+        return self._get_list_attr_value("$.danmaku_list[*].from_copy")
+
+    @property
+    def score(self):
+        return self._get_list_attr_value("$.danmaku_list[*].score")
+
+    @property
+    def show_copy(self):
+        return self._get_list_attr_value("$.danmaku_list[*].show_copy")
+
+    @property
+    def show_digg(self):
+        return self._get_list_attr_value("$.danmaku_list[*].show_digg")

@@ -25,9 +25,11 @@ from f2.apps.douyin.model import (
     LiveWebcast,
     PostComment,
     PostCommentReply,
+    PostDanmaku,
     PostDetail,
     PostSearch,
     PostStats,
+    PostTimeDanmaku,
     QueryUser,
     SuggestWord,
     UserCollection,
@@ -375,6 +377,24 @@ class DouyinCrawler(BaseCrawler):
         )
         logger.debug(_("作品统计接口地址：{0}").format(endpoint))
         return await self._fetch_post_json(endpoint, data=params.model_dump())
+
+    async def fetch_post_danmaku(self, params: PostDanmaku):
+        endpoint = self.bogus_manager.model_2_endpoint(
+            self.headers.get("User-Agent"),
+            dyendpoint.POST_DANMAKU_LIST,
+            params.model_dump(),
+        )
+        logger.debug(_("作品弹幕列表接口地址：{0}").format(endpoint))
+        return await self._fetch_get_json(endpoint)
+
+    async def fetch_post_time_danmaku(self, params: PostTimeDanmaku):
+        endpoint = self.bogus_manager.model_2_endpoint(
+            self.headers.get("User-Agent"),
+            dyendpoint.POST_TIME_DANMAKU,
+            params.model_dump(),
+        )
+        logger.debug(_("作品时间弹幕接口地址：{0}").format(endpoint))
+        return await self._fetch_get_json(endpoint)
 
     async def __aenter__(self):
         return self

@@ -140,3 +140,9 @@ class DouyinAPIEndpoints:
 
     # 作品状态 (Post Status)
     POST_STATS = f"{DOUYIN_DOMAIN}/aweme/v2/web/aweme/stats/"
+
+    # 作品弹幕列表 (Post Danmaku List)
+    POST_DANMAKU_LIST = f"{DOUYIN_DOMAIN}/aweme/v1/web/danmaku/list/"
+
+    # 作品时间弹幕  (Post Time Danmaku)
+    POST_TIME_DANMAKU = f"{DOUYIN_DOMAIN}/aweme/v1/web/danmaku/get_v2/"

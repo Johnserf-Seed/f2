@@ -376,3 +376,23 @@ class PostStats(BaseRequestModel):
     item_id: str
     play_delta: int = 1
     source: int = 0
+
+
+class PostDanmaku(BaseRequestModel):
+    app_name: str = "aweme"
+    format: str = "json"
+    group_id: str
+    item_id: str
+    offset: int = 0
+    count: int = 50
+
+
+class PostTimeDanmaku(BaseRequestModel):
+    app_name: str = "aweme"
+    format: str = "json"
+    group_id: str
+    item_id: str
+    start_time: int = 0
+    end_time: int
+    authentication_token: str  # 来自作品数据
+    duration: int  # 作品时长ms

@@ -49,6 +49,8 @@ outline: [2,3]
 | 直播间wss负载数据      | `fetch_live_im`      |     🟢      |
 | 直播间wss弹幕         | `fetch_live_danmaku` |     🟢      |
 | 关注用户的直播间信息    | `fetch_user_following_lives` |     🟢      |
+| 作品弹幕列表信息      | `fetch_post_danmaku` |     🟢      |
+| 作品时间区间弹幕      | `fetch_post_time_danmaku` |     🟢      |
 :::
 
 ::: details utils接口列表
@@ -654,6 +656,42 @@ outline: [2,3]
 | FollowingUserLiveFilter | model | 关注用户直播间数据过滤器，包含关注用户直播间数据的_to_raw、_to_dict方法 |
 
 <<< @/snippets/douyin/user-follow-live.py{16}
+
+### 作品弹幕数据 🟢
+
+异步方法，用于获取指定作品的弹幕列表。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| aweme_id| str | 作品ID |
+| offset| int | 起始页，初始为0 |
+| count| int | 每页弹幕数，初始为50 |
+| format| str | 返回格式，初始为json |
+| max_counts| int | 最大弹幕数，初始为None |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| PostDanmakuFilter | AsyncGenerator | 作品弹幕列表数据过滤器，包含弹幕数据的_to_raw、_to_dict、_to_list方法 |
+
+<<< @/snippets/douyin/post-danmaku.py#post-danmaku-snippet{17,19-21}
+
+### 作品时间区间弹幕数据 🟢
+
+异步方法，用于获取指定作品在指定时间区间内的弹幕列表。
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| aweme_id| str | 作品ID |
+| start_time| int | 起始时间戳，秒级 |
+| end_time| int | 结束时间戳，秒级 |
+| authentication_token| str | 认作品证令牌 |
+| duration| int | 视频时长，单位为毫秒 |
+| format| str | 返回格式，默认为json |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| PostTimeDanmakuFilter | model | 作品时间区间弹幕数据过滤器，包含弹幕数据的_to_raw、_to_dict、_to_list方法 |
+
+<<< @/snippets/douyin/post-danmaku.py#post-time-danmaku-snippet{17,19,21-28}
 
 ## utils接口列表
 

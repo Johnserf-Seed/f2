@@ -49,6 +49,8 @@ outline: [2,3]
 | Fetch live WSS load data       | `fetch_live_im`      |     🟢      |
 | Fetch live WSS danmaku (chat)  | `fetch_live_danmaku` |     🟢      |
 | Fetch following users' live stream info | `fetch_user_following_lives` | 🟢 |
+| Fetch post danmaku | `fetch_post_danmaku` | 🟢 |
+| Fetch post timerange danmaku | `fetch_post_time_danmaku` | 🟢 |
 :::
 
 ::: details utils API List
@@ -654,6 +656,43 @@ Asynchronous method to retrieve a list of livestream information for followed us
 | FollowingUserLiveFilter | model | A filter for followed users' livestream data, containing `_to_raw` and `_to_dict` methods |
 
 <<< @/snippets/douyin/user-follow-live.py{16}
+
+### Post Danmaku 🟢
+
+Asynchronous method to retrieve the danmaku (bullet comments) list for a specified work.
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| aweme_id| str | Aweme ID |
+| offset| int | Starting page number, initially 0 |
+| count| int | Number of pages, initially 20 |
+| format| str | Return format, default is json |
+| max_counts| int | Maximum list count, default is None |
+
+| Return | Type | Description |
+| :--- | :--- | :--- |
+| PostDanmakuFilter | AsyncGenerator | Post danmaku data filter, containing `_to_raw`, `_to_dict`, and `_to_list` methods |
+
+<<< @/snippets/douyin/post-danmaku.py#post-danmaku-snippet{17,19-21}
+
+### Post Time Danmaku Data 🟢
+
+Asynchronous method to retrieve the danmaku (bullet comments) list for a specified work.
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| aweme_id| str | Aweme ID |
+| start_time| int | Start timestamp, in seconds |
+| end_time| int | End timestamp, in seconds |
+| authentication_token| str | Recognition token for the work |
+| duration| int | Video duration, in milliseconds |
+| format| str | Return format, default is json |
+
+| Return | Type | Description |
+| :--- | :--- | :--- |
+| PostTimeDanmakuFilter | model | Post time danmaku data filter, containing `_to_raw`, `_to_dict`, and `_to_list` methods |
+
+<<< @/snippets/douyin/post-danmaku.py#post-time-danmaku-snippet{17,19,21-28}
 
 ## Utils API List
 
