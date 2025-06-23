@@ -136,6 +136,9 @@ package-lock.json
 # Download
 Download/
 
+# Logs
+logs/
+
 # DataBase
 *.db
 *_users.db
