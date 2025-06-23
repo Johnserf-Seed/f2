@@ -1303,7 +1303,7 @@ class DouyinHandler:
             live.room_id,
             live.nickname_raw or "未知",
             live.live_title_raw,
-            f"{DY_LIVE_STATUS_MAPPING.get(live.live_status, _("未知状态"))}",
+            DY_LIVE_STATUS_MAPPING.get(live.live_status, _("未知状态")),
             live.user_count,
         )
 
