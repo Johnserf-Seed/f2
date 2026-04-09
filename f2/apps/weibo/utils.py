@@ -124,7 +124,10 @@ class VisitorManager(BaseCrawler):
             )
             response.raise_for_status()
 
-            visitor_cookie = split_set_cookie(response.headers.get("set-cookie", ""))
+            set_cookie_headers = response.headers.get_list("set-cookie")
+            visitor_cookie = ";".join(
+                c.split(";")[0] for c in set_cookie_headers if c
+            )
             return visitor_cookie
 
         except httpx.RequestError as exc:
