@@ -117,11 +117,9 @@ class TweetDetailFilter(JSONModel):
     # 视频链接（清晰度依次提高）
     @property
     def tweet_video_url(self):
-        all_urls = self._get_attr_value(
+        return self._get_attr_value(
             "$.data.threaded_conversation_with_injections_v2.instructions[0].entries[0].content.itemContent.tweet_results.result.legacy.extended_entities.media[*].video_info.variants[*].url"
         )
-        # 剔除包含 `.m3u8` 的链接
-        return [url for url in all_urls if ".m3u8" not in url]
 
     # 视频时长
     @property
@@ -176,7 +174,7 @@ class TweetDetailFilter(JSONModel):
         )
 
     @property
-    def nickname_raw(self):
+    def nicename_raw(self):
         return self._get_attr_value(
             "$.data.threaded_conversation_with_injections_v2.instructions[0].entries[0].content.itemContent.tweet_results.result.core.user_results.result.legacy.name"
         )
@@ -275,6 +273,7 @@ class TweetDetailFilter(JSONModel):
 
 class UserProfileFilter(JSONModel):
     # User
+
     # 蓝V认证
     @property
     def is_blue_verified(self):
@@ -614,6 +613,10 @@ class PostTweetFilter(JSONModel):
         )
 
     @property
+    def user_unique_id(self):
+        return self.user_screen_name
+
+    @property
     def user_screen_name(self):
         return replaceT(
             self._get_list_attr_value(
@@ -666,11 +669,13 @@ class PostTweetFilter(JSONModel):
 
 
 class LikeTweetFilter(PostTweetFilter):
+
     def __init__(self, data):
         super().__init__(data)
 
 
 class BookmarkTweetFilter(JSONModel):
+
     # 用户发布的推文__typename是TweetWithVisibilityResults
     @property
     def cursorType(self):
@@ -905,6 +910,10 @@ class BookmarkTweetFilter(JSONModel):
         return self._get_list_attr_value(
             "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.name"
         )
+
+    @property
+    def user_unique_id(self):
+        return self.user_screen_name
 
     @property
     def user_screen_name(self):

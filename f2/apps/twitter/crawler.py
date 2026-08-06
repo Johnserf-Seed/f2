@@ -23,15 +23,23 @@ from f2.apps.twitter.utils import ModelManager, ClientConfManager
 class TwitterCrawler(BaseCrawler):
     def __init__(
         self,
-        kwargs: dict = None,
+        kwargs: dict = ...,
     ):
         # 需要与cli同步
+        import re
+
+        cookie_str = kwargs.get("cookie", "") or ""
+        ct0_match = re.search(r"(?:^|;\s*)ct0=([^;]+)", cookie_str)
+        ct0_val = ct0_match.group(1) if ct0_match else ""
+
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})
         self.authorization = (
             kwargs.get("Authorization") or ClientConfManager.authorization()
         )
         self.x_csrf_token = (
-            kwargs.get("X-Csrf-Token") or ClientConfManager.x_csrf_token()
+            kwargs.get("X-Csrf-Token")
+            or ct0_val
+            or ClientConfManager.x_csrf_token()
         )
         self.headers = kwargs.get("headers", {}) | {
             "Cookie": kwargs.get("cookie"),
