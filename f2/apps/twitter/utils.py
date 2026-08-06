@@ -11,7 +11,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 from f2.i18n.translator import _
-from f2.log.logger import logger, trace_logger
+from f2.log.logger import logger
 from f2.utils.conf_manager import ConfigManager
 from f2.utils.utils import extract_valid_urls, split_filename
 from f2.crawlers.base_crawler import BaseCrawler
@@ -22,7 +22,6 @@ from f2.exceptions.api_exceptions import (
     APINotFoundError,
     APITimeoutError,
 )
-from f2.exceptions.conf_exceptions import InvalidConfError
 
 
 class ClientConfManager:
@@ -146,49 +145,49 @@ class UniqueIdFetcher(BaseCrawler):
                 )
 
         except httpx.TimeoutException as exc:
-            trace_logger.error(traceback.format_exc())
+            logger.error(traceback.format_exc())
             raise APITimeoutError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
                 ).format(
                     "请求端点超时",
                     url,
-                    cls.proxies,
+                    getattr(instance, "proxies", {}),
                     cls.__name__,
                     exc,
                 )
             )
 
         except httpx.NetworkError as exc:
-            trace_logger.error(traceback.format_exc())
+            logger.error(traceback.format_exc())
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
                 ).format(
                     "网络连接失败，请检查当前网络环境",
                     url,
-                    cls.proxies,
+                    getattr(instance, "proxies", {}),
                     cls.__name__,
                     exc,
                 )
             )
 
         except httpx.ProtocolError as exc:
-            trace_logger.error(traceback.format_exc())
+            logger.error(traceback.format_exc())
             raise APIUnauthorizedError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
                 ).format(
                     "请求协议错误",
                     url,
-                    cls.proxies,
+                    getattr(instance, "proxies", {}),
                     cls.__name__,
                     exc,
                 )
             )
 
         except httpx.ProxyError as exc:
-            trace_logger.error(traceback.format_exc())
+            logger.error(traceback.format_exc())
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
@@ -362,22 +361,19 @@ def format_file_name(
         str: 格式化的文件名 (Formatted file name)
     """
 
-    if not naming_template:
-        raise InvalidConfError(key="naming", value=naming_template)
-
     # 为不同系统设置不同的文件名长度限制
     os_limit = {
         "win32": 200,
-        "cygwin": 200,
-        "darwin": 200,
-        "linux": 200,
+        "cygwin": 60,
+        "darwin": 60,
+        "linux": 60,
     }
     fields = {
         "create": tweet_data.get("tweet_created_at", ""),  # 长度固定19
         "nickname": tweet_data.get("nickname", ""),  # 不固定
         "tweet_id": tweet_data.get("tweet_id", ""),  # 长度固定19
         "desc": split_filename(tweet_data.get("tweet_desc", ""), os_limit),
-        "uid": tweet_data.get("user_unique_id", ""),  # 不固定
+        "uid": tweet_data.get("user_unique_id") or tweet_data.get("user_screen_name") or "",  # 不固定
     }
 
     if custom_fields:

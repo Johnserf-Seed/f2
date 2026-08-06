@@ -3,13 +3,12 @@
 import f2
 import click
 import typing
-import traceback
 
 from pathlib import Path
 
 from f2 import helps
 from f2.cli.cli_commands import set_cli_config
-from f2.log.logger import logger, trace_logger
+from f2.log.logger import logger
 from f2.utils.utils import (
     split_dict_cookie,
     get_resource_path,
@@ -82,7 +81,6 @@ def handler_auto_cookie(
         )
         ctx.abort()
     except Exception as e:
-        trace_logger.error(traceback.format_exc())
         logger.error(_("自动获取Cookie失败：{0}").format(str(e)))
         ctx.abort()
     finally:
@@ -335,6 +333,13 @@ def twitter(
     kwargs["headers"]["Referer"] = ClientConfManager.referer()
     kwargs["headers"]["Authorization"] = ClientConfManager.authorization()
     kwargs["headers"]["X-Csrf-Token"] = ClientConfManager.x_csrf_token()
+    cookie_str = kwargs.get("cookie", "") or ""
+    if "ct0=" in cookie_str:
+        import re
+
+        ct0_match = re.search(r"(?:^|;\s*)ct0=([^;]+)", cookie_str)
+        if ct0_match:
+            kwargs["headers"]["X-Csrf-Token"] = ct0_match.group(1)
 
     # 如果初始化配置文件，则与更新配置文件互斥
     if init_config and not update_config:
