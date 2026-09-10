@@ -18,6 +18,7 @@
 - 修复启动时清理旧日志会把当前进程刚创建的空日志文件一并删除、导致 macOS/Linux 下 CLI 日志文件丢失的问题。
 - 新增 `ci` 工作流：`ruff`/`black`/`isort`/`mypy` 检查、Python 3.10–3.13 测试矩阵（`pytest -m "not network"`）、构建与 `wheel` 冒烟测试，并接管 Codecov 上传。
 - 新增 `release` 工作流：推送 `v*` 标签后校验版本号并通过 PyPI Trusted Publishing 发布。
+- 修复全新安装后 `import f2` 报 `No module named 'sniffio'` 的问题：`httpx-socks` 升级到 0.11.0（0.10.x 使用 `sniffio` 但未声明依赖，新版 `anyio` 不再附带它）。
 - 平台接口用例统一标记为 `network`，`pytest` 默认收集 `tests` 与 `f2/apps`；新增 `ruff` 配置并修复未使用导入/变量与裸 `except`；`twitter` 的 `UniqueIdFetcher`/`TweetIdFetcher` 改为使用配置代理。
 - 更新文档：证书校验配置、`--insecure` 选项、测试凭据注入方式、直播分片请求头、msToken 获取方式、日志配置与 CI/发布流程说明。
 - 改进配置文件与快速上手文档的表述，提升可读性。
