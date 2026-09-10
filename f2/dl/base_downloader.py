@@ -2,6 +2,7 @@
 
 import asyncio
 import hashlib
+import re
 import sys
 import traceback
 from pathlib import Path
@@ -138,6 +139,31 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
             trace_logger.error(traceback.format_exc())
             logger.error(_("文件区块下载失败：{0} Exception：{1}").format(request, e))
 
+    @staticmethod
+    def _parse_content_range_start(response: httpx.Response) -> Optional[int]:
+        """
+        解析 Content-Range 头中的起始字节 (Parse the start byte of the Content-Range header)
+
+        Args:
+            response (httpx.Response): 响应对象，Content-Range 形如 "bytes 1000-9999/10000"
+
+        Returns:
+            Optional[int]: 起始字节，头缺失或无法解析时返回 None
+        """
+        match = re.match(r"bytes\s+(\d+)-", response.headers.get("Content-Range", ""))
+        return int(match.group(1)) if match else None
+
+    @staticmethod
+    async def _rewind_file(file: Any, size: int) -> None:
+        """
+        把文件截断到 size 字节并把写入位置移到末尾 (Truncate the file to size bytes)
+
+        用于丢弃本次调用中已写入但需要重新下载的数据。
+        """
+        await file.flush()
+        await file.truncate(size)
+        await file.seek(size)
+
     async def _download_chunks_optimized(
         self,
         request: httpx.Request,
@@ -147,14 +173,17 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
         start_byte: int = 0,
     ) -> bool:
         """
-        优化的分块下载方法，支持更好的异步性能和错误处理
+        优化的分块下载方法，支持断点续传、重试与错误处理
+
+        重试时从"已写入文件的位置"继续请求，不会重复写入已下载的字节；
+        当服务器忽略 Range 返回 200 时，会丢弃文件中已有内容后从头写入。
 
         Args:
             request (httpx.Request): HTTP请求对象
             file: 文件对象
             content_length (int): 内容长度
             task_id (TaskID): 任务ID
-            start_byte (int): 开始下载的字节位置，默认为0
+            start_byte (int): 开始下载的字节位置（文件中已有的字节数），默认为0
 
         Returns:
             bool: 下载是否成功
@@ -162,17 +191,23 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
         retry_count = 0
         max_retries = 3
 
-        while retry_count < max_retries:
-            downloaded_bytes = 0  # 每次重试时重置下载字节数
+        # base：调用前文件中已有的字节数（续传起点）
+        # written：本次调用已写入文件的字节数，跨重试保留，重试时从 base + written 继续
+        base = start_byte
+        written = 0
 
+        while retry_count < max_retries:
             try:
                 # 使用更优化的超时配置
                 timeout = httpx.Timeout(connect=15.0, read=60.0, write=30.0, pool=30.0)
 
-                # 更新请求头中的Range，以支持断点续传
-                current_headers = dict(request.headers)
-                if start_byte + downloaded_bytes > 0:
-                    current_headers["Range"] = f"bytes={start_byte + downloaded_bytes}-"
+                # 每次（重）发请求都从文件当前末尾继续
+                offset = base + written
+                current_headers = {
+                    k: v for k, v in request.headers.items() if k.lower() != "range"
+                }
+                if offset > 0:
+                    current_headers["Range"] = f"bytes={offset}-"
 
                 # 使用更简单的方式发送请求，让httpx处理重定向
                 async with self.aclient.stream(
@@ -182,12 +217,34 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
                     timeout=timeout,
                     follow_redirects=True,  # 让httpx自动处理重定向
                 ) as response:
+                    status_code = response.status_code
 
-                    # 检查状态码
-                    if response.status_code not in (200, 206):
+                    if status_code == 200 and offset > 0:
+                        # 服务器忽略了 Range 并返回整个文件：丢弃已有内容，从头写入
+                        logger.warning(
+                            _(
+                                "服务器不支持断点续传，丢弃已下载的 {0} 字节后重新下载"
+                            ).format(offset)
+                        )
+                        await self._rewind_file(file, 0)
+                        base, written, offset = 0, 0, 0
+                    elif status_code == 206:
+                        range_start = self._parse_content_range_start(response)
+                        if range_start is not None and range_start != offset:
+                            logger.warning(
+                                _(
+                                    "服务器返回的续传起点 {0} 与请求的 {1} 不一致，重试 {2}/{3}"
+                                ).format(
+                                    range_start, offset, retry_count + 1, max_retries
+                                )
+                            )
+                            retry_count += 1
+                            await asyncio.sleep(2**retry_count)  # 指数退避
+                            continue
+                    elif status_code != 200:
                         logger.warning(
                             _("下载响应状态码异常: {0}，重试 {1}/{2}").format(
-                                response.status_code, retry_count + 1, max_retries
+                                status_code, retry_count + 1, max_retries
                             )
                         )
                         retry_count += 1
@@ -231,7 +288,6 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
                             return False
 
                         buffer.extend(chunk)
-                        downloaded_bytes += len(chunk)
 
                         # 智能缓冲区写入策略
                         # 1. 当缓冲区满时写入
@@ -239,20 +295,18 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
                         # 3. 批量更新进度条减少UI刷新频率
                         if len(buffer) >= buffer_size:
                             await file.write(buffer)
+                            written += len(buffer)
                             # 对于大文件，减少flush频率以提高性能
                             if content_length > 50 * 1024 * 1024:  # > 50MB时减少flush
-                                if (
-                                    downloaded_bytes % (buffer_size * 4) == 0
-                                ):  # 每16MB flush一次
+                                if written % (buffer_size * 4) == 0:  # 每16MB flush一次
                                     await file.flush()
                             else:
                                 await file.flush()  # 小文件每次都flush确保数据安全
 
                             # 异步更新进度 - 使用 completed 而非 advance 来确保进度准确
-                            current_completed = start_byte + downloaded_bytes
                             await self.progress.update(
                                 task_id,
-                                completed=current_completed,
+                                completed=base + written,
                                 total=content_length,
                             )
                             buffer.clear()
@@ -260,11 +314,11 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
                     # 写入剩余缓冲区数据
                     if buffer:
                         await file.write(buffer)
+                        written += len(buffer)
                         await file.flush()  # 最后确保所有数据都写入磁盘
-                        current_completed = start_byte + downloaded_bytes
                         await self.progress.update(
                             task_id,
-                            completed=current_completed,
+                            completed=base + written,
                             total=content_length,
                         )
 
@@ -274,14 +328,14 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
                 retry_count += 1
                 wait_time = min(2**retry_count, 30)  # 最大等待30秒
                 logger.warning(
-                    _("下载超时，{0} 秒后重试 ({1}/{2}): {3}").format(
-                        wait_time, retry_count, max_retries, str(e)
+                    _("下载超时，{0} 秒后从 {1} 字节继续重试 ({2}/{3}): {4}").format(
+                        wait_time, base + written, retry_count, max_retries, str(e)
                     )
                 )
-                # 重置进度到开始位置
+                # 进度回退到已写入文件的位置
                 await self.progress.update(
                     task_id,
-                    completed=start_byte,
+                    completed=base + written,
                     total=content_length,
                 )
                 if retry_count < max_retries:
@@ -305,14 +359,14 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
             except Exception as e:
                 retry_count += 1
                 logger.warning(
-                    _("下载异常，重试 ({0}/{1}): {2}").format(
-                        retry_count, max_retries, str(e)
+                    _("下载异常，从 {0} 字节继续重试 ({1}/{2}): {3}").format(
+                        base + written, retry_count, max_retries, str(e)
                     )
                 )
-                # 重置进度到开始位置
+                # 进度回退到已写入文件的位置
                 await self.progress.update(
                     task_id,
-                    completed=start_byte,
+                    completed=base + written,
                     total=content_length,
                 )
                 if retry_count < max_retries:
