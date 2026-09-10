@@ -1,0 +1,72 @@
+name: Release
+
+# 推送 v* 标签即发布到 PyPI（Trusted Publishing，不需要 API token）：
+# 1. PyPI 项目 Publishing 设置里添加 GitHub publisher：owner Johnserf-Seed、repo f2、
+#    workflow release.yml、environment pypi
+# 2. 仓库 Settings -> Environments 创建 pypi 环境（可配置审批人）
+# 3. 更新 f2/__init__.py 的 __version__ 与 CHANGELOG，打 vX.Y.Z 标签并推送
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build distribution
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check tag matches package version
+        run: |
+          version=$(python -c "import re, pathlib; print(re.search(r'__version__ = \"([^\"]+)\"', pathlib.Path('f2/__init__.py').read_text()).group(1))")
+          tag="${GITHUB_REF_NAME#v}"
+          if [ "$tag" != "$version" ]; then
+            echo "::error::tag v$tag does not match f2.__version__ $version"
+            exit 1
+          fi
+
+      - name: Install build tools
+        run: pip install build twine
+
+      - name: Build sdist and wheel
+        run: python -m build
+
+      - name: Check metadata
+        run: twine check --strict dist/*
+
+      - name: Upload dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    name: Publish to PyPI
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: pypi
+      url: https://pypi.org/project/f2/
+    permissions:
+      id-token: write # Trusted Publishing 通过 OIDC 换取上传令牌
+    steps:
+      - name: Download dist
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish
+        uses: pypa/gh-action-pypi-publish@release/v1
