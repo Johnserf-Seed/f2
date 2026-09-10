@@ -11,7 +11,7 @@ from f2.apps.bark.utils import ClientConfManager
 from f2.cli.cli_commands import set_cli_config
 from f2.i18n.translator import TranslationManager, _
 from f2.log.logger import logger
-from f2.utils.config.conf_manager import ConfigManager
+from f2.utils.config.conf_manager import ConfigManager, get_f2_setting
 from f2.utils.config.merge import merge_config
 from f2.utils.core.adapters import adapt_validation_call
 from f2.utils.file.path import get_resource_path
@@ -142,6 +142,9 @@ def validate_proxies(
         # 校验代理服务器是否可用
         if not check_proxy_avail(
             proxy_config,
+            verify=(
+                False if ctx.params.get("insecure") else get_f2_setting("verify", True)
+            ),
             test_url="https://api.day.app/",
             expected_content="code",
         ):
@@ -291,6 +294,12 @@ def validate_proxies(
     "--init-config", type=str, help=_("初始化配置文件。不能同时初始化和更新配置文件")
 )
 @click.option(
+    "--insecure",
+    is_flag=True,
+    is_eager=True,
+    help=_("关闭 TLS 证书校验，仅建议在受信任的调试代理环境中使用"),
+)
+@click.option(
     "-h",
     is_flag=True,
     is_eager=True,
@@ -325,6 +334,13 @@ def bark(
 
     # 更新主配置文件中的代理参数
     main_conf["proxies"] = ClientConfManager.proxies()
+
+    # 更新主配置文件中的 TLS 证书校验参数
+    main_conf["verify"] = get_f2_setting("verify", True)
+
+    # --insecure 等价于 verify: false，不以 insecure 键写入配置文件
+    if kwargs.pop("insecure", False):
+        kwargs["verify"] = False
     main_conf["encryption"] = ClientConfManager.encryption()
 
     # 更新主配置文件中的headers参数
@@ -398,6 +414,7 @@ def bark(
             # 构建代理配置进行测试
             if not check_proxy_avail(
                 proxy_config,
+                verify=kwargs.get("verify", True),
                 test_url="https://api.day.app/",
                 expected_content="code",
             ):

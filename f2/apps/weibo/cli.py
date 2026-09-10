@@ -12,7 +12,7 @@ from f2.apps.weibo.utils import ClientConfManager
 from f2.cli.cli_commands import set_cli_config
 from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
-from f2.utils.config.conf_manager import ConfigManager
+from f2.utils.config.conf_manager import ConfigManager, get_f2_setting
 from f2.utils.config.merge import merge_config
 from f2.utils.core.adapters import adapt_validation_call
 from f2.utils.file.path import get_resource_path
@@ -156,6 +156,9 @@ def validate_proxies(
         # 校验代理服务器是否可用
         if not check_proxy_avail(
             proxy_url,
+            verify=(
+                False if ctx.params.get("insecure") else get_f2_setting("verify", True)
+            ),
             test_url="https://www.weibo.com/",
         ):
             raise click.BadParameter(_("代理服务器不可用"))
@@ -279,6 +282,12 @@ def validate_proxies(
     callback=handler_auto_cookie,
 )
 @click.option(
+    "--insecure",
+    is_flag=True,
+    is_eager=True,
+    help=_("关闭 TLS 证书校验，仅建议在受信任的调试代理环境中使用"),
+)
+@click.option(
     "-h",
     is_flag=True,
     is_eager=True,
@@ -301,6 +310,13 @@ def weibo(
 
     # 更新主配置文件中的代理参数
     main_conf["proxies"] = ClientConfManager.proxies()
+
+    # 更新主配置文件中的 TLS 证书校验参数
+    main_conf["verify"] = get_f2_setting("verify", True)
+
+    # --insecure 等价于 verify: false，不以 insecure 键写入配置文件
+    if kwargs.pop("insecure", False):
+        kwargs["verify"] = False
 
     # 更新主配置文件中的headers参数
     kwargs.setdefault("headers", {})
@@ -373,7 +389,7 @@ def weibo(
             logger.debug(_("检测到代理配置，正在验证代理可用性..."))
 
             # 构建代理配置进行测试
-            if not check_proxy_avail(proxy_config):
+            if not check_proxy_avail(proxy_config, verify=kwargs.get("verify", True)):
                 logger.error(_("代理服务器不可用，请检查代理配置"))
                 # 可以选择是否继续执行或退出
                 # ctx.abort()  # 如果要在代理失败时退出
