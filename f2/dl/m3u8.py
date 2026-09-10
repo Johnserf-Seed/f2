@@ -36,6 +36,18 @@ class M3U8DownloadMixin:
     @abstractmethod
     def _ensure_path(self, path: Union[str, Path]) -> Path: ...
 
+    def _build_segment_request(self, ts_url: str) -> httpx.Request:
+        """
+        构建 TS 片段请求 (Build the request for a TS segment)
+
+        部分 CDN 会拒绝带 Referer/Cookie 的片段请求，因此只从本次请求中去掉这两个头，
+        不修改共享 aclient 的默认请求头，避免影响同一下载器上并发的其它请求。
+        """
+        request = self.aclient.build_request("GET", ts_url, timeout=15.0)
+        request.headers.pop("referer", None)
+        request.headers.pop("cookie", None)
+        return request
+
     async def download_m3u8_stream(
         self,
         task_id: TaskID,
@@ -120,14 +132,7 @@ class M3U8DownloadMixin:
 
                                 ts_response = None
                                 try:
-                                    # 2025/oct/08: 删除aclient.headers的referer与cookie字段，避免部分服务器拒绝访问
-                                    self.aclient.headers.pop("referer", None)
-                                    self.aclient.headers.pop("cookie", None)
-                                    ts_request = self.aclient.build_request(
-                                        "GET",
-                                        ts_url,
-                                        timeout=15.0,
-                                    )
+                                    ts_request = self._build_segment_request(ts_url)
                                     ts_response = await self.aclient.send(
                                         ts_request,
                                         stream=True,
