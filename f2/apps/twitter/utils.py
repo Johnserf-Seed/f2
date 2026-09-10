@@ -20,7 +20,7 @@ from f2.exceptions.api_exceptions import (
 )
 from f2.exceptions.conf_exceptions import InvalidConfError
 from f2.i18n.translator import _
-from f2.log.logger import logger, trace_logger
+from f2.log.logger import trace_logger
 from f2.utils.config.conf_manager import ConfigManager
 from f2.utils.file.name import split_filename
 from f2.utils.string.formatter import extract_valid_urls
@@ -99,6 +99,11 @@ class UniqueIdFetcher(BaseCrawler):
     _UNIQUE_ID_PATTERN = re.compile(
         r"(?:https?://)?(?:www\.)?(twitter\.com|x\.com)/(?:@)?([a-zA-Z0-9_]+)"
     )
+
+    proxies = ClientConfManager.proxies()
+
+    def __init__(self):
+        super().__init__(proxies=self.proxies)
 
     @classmethod
     async def get_unique_id(cls, url: str) -> str:
@@ -237,6 +242,11 @@ class TweetIdFetcher(BaseCrawler):
     _TWEET_URL_PATTERN = re.compile(
         r"(?:https?://)?(?:www\.)?(?:twitter|x)\.com/.*/status/(\d+)(?:/|\?|#.*$|$)"
     )
+
+    proxies = ClientConfManager.proxies()
+
+    def __init__(self):
+        super().__init__(proxies=self.proxies)
 
     @classmethod
     async def get_tweet_id(cls, url: str) -> str:
