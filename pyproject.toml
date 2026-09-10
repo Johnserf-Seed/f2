@@ -19,6 +19,8 @@ classifiers = [
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Intended Audience :: Developers",
     "Intended Audience :: Customer Service",
     "License :: OSI Approved :: Apache Software License",
@@ -90,6 +92,8 @@ dev = [
     "mypy==1.16.0",
     "pre-commit==4.2.0",
     "black==24.10.0",
+    "isort==6.0.1",
+    "ruff==0.16.6",
     "pytest==8.3.4",
     "pytest-asyncio==0.25.0",
     "types-aiofiles",
@@ -137,6 +141,24 @@ target-version = ['py311']
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests", "f2/apps"]
+markers = [
+    "apps: 各平台接口用例",
+    "network: 需要访问真实网络或平台接口的用例，CI 中以 -m \"not network\" 跳过",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+extend-exclude = [
+    "f2/apps/*/proto/*_pb2.py",
+    "f2/apps/*/proto/*_pb2.pyi",
+    "docs/",
+]
+
+[tool.ruff.lint]
+# 与 black/isort 分工：ruff 只负责语法错误、未定义名与未使用导入/变量等正确性检查
+select = ["E4", "E7", "E9", "F"]
 
 [tool.mypy]
 ignore_missing_imports = true

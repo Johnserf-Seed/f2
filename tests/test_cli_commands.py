@@ -15,7 +15,6 @@ from f2.cli.cli_commands import (
     handle_version,
     set_cli_config,
 )
-from f2.i18n.translator import _
 
 
 # 测试 handle_help
@@ -121,7 +120,7 @@ def test_set_cli_config():
         (["--help"], "命令帮助"),
         (["--version"], f"Version {f2_version}"),
         (["--debug", "DEBUG"], ""),
-        (["--check-version"], "版本检查"),
+        pytest.param(["--check-version"], "版本检查", marks=pytest.mark.network),
     ],
 )
 def test_cli_options(args, expected_output):
