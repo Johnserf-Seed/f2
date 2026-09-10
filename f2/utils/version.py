@@ -6,6 +6,7 @@ import traceback
 from typing import Optional
 
 import httpx
+from packaging.version import InvalidVersion, Version
 from rich.console import Console
 from rich.panel import Panel
 
@@ -28,7 +29,6 @@ async def get_latest_version(package_name: str) -> Optional[str]:
     async with httpx.AsyncClient(
         timeout=5.0,
         transport=httpx.AsyncHTTPTransport(retries=5),
-        verify=False,
     ) as aclient:
         try:
             response = await aclient.get(f"{f2.PYPI_URL}/{package_name}/json")
@@ -42,6 +42,24 @@ async def get_latest_version(package_name: str) -> Optional[str]:
         except (httpx.HTTPStatusError, httpx.RequestError, KeyError) as e:
             logger.debug(traceback.format_exc())
             return None
+
+
+def is_outdated(current: str, latest: str) -> Optional[bool]:
+    """
+    按 PEP 440 规则比较版本号 (Compare versions according to PEP 440)
+
+    Args:
+        current (str): 当前版本号
+        latest (str): 最新版本号
+
+    Returns:
+        Optional[bool]: 当前版本落后返回 True，不落后返回 False，任一版本号无法解析返回 None
+    """
+    try:
+        return Version(current) < Version(latest)
+    except InvalidVersion:
+        logger.debug(_("无法比较版本号：{0} 与 {1}").format(current, latest))
+        return None
 
 
 async def check_f2_version(force_check: bool = False) -> None:
@@ -64,7 +82,8 @@ async def check_f2_version(force_check: bool = False) -> None:
     console = Console()
 
     if latest_version:
-        if f2.__version__ < latest_version:
+        outdated = is_outdated(f2.__version__, latest_version)
+        if outdated:
             message = _(
                 "您当前使用的版本 {0} 可能已过时，请考虑及时升级到最新版本 {1}，"
                 "使用 pip install -U f2 更新"
@@ -78,7 +97,7 @@ async def check_f2_version(force_check: bool = False) -> None:
                     border_style="red",
                 )
             )
-        elif f2.__version__ >= latest_version:
+        elif outdated is False:
             message = _("您当前使用的是最新版本：{0}").format(f2.__version__)
             console.print(
                 Panel(
@@ -86,6 +105,17 @@ async def check_f2_version(force_check: bool = False) -> None:
                     title=_("F2 版本检查"),
                     style="bold green",
                     border_style="green",
+                )
+            )
+        else:
+            console.print(
+                Panel(
+                    _("无法比较版本号：{0} 与 {1}").format(
+                        f2.__version__, latest_version
+                    ),
+                    title=_("F2 版本检查"),
+                    style="bold yellow",
+                    border_style="yellow",
                 )
             )
     else:
