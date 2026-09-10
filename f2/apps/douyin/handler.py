@@ -2249,6 +2249,7 @@ class DouyinHandler:
                 # WebcastDecorationModifyMethod
                 # WebcastLinkSettingNotifyMessage
                 # WebcastLinkMicBattleMethod
+                # WebcastBackupSEIMessage
             }
 
         async with DouyinWebSocketCrawler(self.kwargs, callbacks=wss_callbacks) as wss:

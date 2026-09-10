@@ -121,12 +121,12 @@ f2:
       browser:
         language: zh-CN
         name: Mozilla
-        platform: Win32
-        version: 5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+        platform: MacIntel
+        version: 5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36
 
       device:
-        id: "7513169383180830216"
-        platform: web_pc
+        id: "7506143103948195349"
+        platform: web
 
       os: windows
       region: SG
@@ -135,7 +135,7 @@ f2:
       tz_name: Asia/Hong_Kong
 
     headers:
-      User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+      User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36
       Referer: https://www.tiktok.com/
 
     # 代理配置 - 如果不使用代理，请将以下值设为空

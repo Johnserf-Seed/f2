@@ -1132,7 +1132,7 @@ class TiktokHandler:
             live_im = await crawler.fetch_live_im_fetch(params)
 
         if live_im:
-            logger.debug(
+            logger.info(
                 _("直播间room_id：{0} 弹幕cursor：{1}").format(room_id, live_im)
             )
             logger.info(_("结束直播间信息查询"))
