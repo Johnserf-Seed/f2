@@ -1,16 +1,10 @@
 # path: f2/utils/string/generator.py
 
 import random
-import secrets
 
-# 生成一个 16 字节的随机字节串 (Generate a random byte string of 16 bytes)
-seed_bytes = secrets.token_bytes(16)
-
-# 将字节字符串转换为整数 (Convert the byte string to an integer)
-seed_int = int.from_bytes(seed_bytes, "big")
-
-# 设置随机种子 (Seed the random module)
-random.seed(seed_int)
+# 使用独立的系统随机源，导入本模块不会改动全局 random 模块的状态
+# (Use a dedicated system RNG so importing this module never reseeds the global random module)
+_rng = random.SystemRandom()
 
 
 def gen_random_str(randomlength: int) -> str:
@@ -25,4 +19,4 @@ def gen_random_str(randomlength: int) -> str:
     """
 
     base_str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-"
-    return "".join(random.choice(base_str) for _ in range(randomlength))
+    return "".join(_rng.choice(base_str) for _ in range(randomlength))
