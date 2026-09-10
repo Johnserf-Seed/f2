@@ -6,6 +6,9 @@
 
 ## [Unreleased]
 
+- 测试配置支持通过环境变量 `F2_TEST_<APP>_<KEY>` 与 `conf/test.local.yaml` 覆盖，个人 cookie 无需写入仓库。
+- `wheel` 不再打包 `f2/apps/*/test` 测试目录与 `conf/test.yaml` 测试配置。
+- 新增 `security` 工作流：`gitleaks` 泄露扫描与 `wheel` 内容检查。
 - 改进配置文件与快速上手文档的表述，提升可读性。
 - 新增文档，介绍如何扩展默认数据模型并在接口中使用自定义 `Filter`。
 - 将在 `0.0.1.8` 版本中添加 `BiliBili` & `NetEaseMusic` 支持。
