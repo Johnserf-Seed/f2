@@ -36,6 +36,8 @@
 $ black **/*.py --exclude venv/*
 ```
 
+提交前还请运行 `ruff check .`（未使用的导入/变量、未定义名等正确性检查）与 `isort .`，`CI` 会以同样的命令检查。
+
 ## Pre-commit 钩子 🔄
 
 `F2` 使用 `pre-commit` 钩子来自动检查代码质量和格式。首先需要安装 pre-commit：
@@ -70,9 +72,14 @@ $ git commit -m "message" --no-verify
 
 在项目根目录运行以下命令来运行
 
-普通测试：
+普通测试（不访问网络，与 CI 一致）：
 ```bash
-$ pytest -vv
+$ pytest -m "not network" -vv
+```
+
+平台接口测试（`f2/apps/*/test` 与版本检查用例带有 `network` 标记，需要真实网络与测试凭据）：
+```bash
+$ pytest -m network -vv
 ```
 
 覆盖率测试：
@@ -127,6 +134,17 @@ $ pnpm docs:build
 1. **ChangeLog**：在 `CHANGELOG.md` 文件中更新您的更改摘要。
 2. **贡献者**：将您的名字添加到 `CONTRIBUTORS.md` 文件中。
 3. **团队**：请将您的信息添加到文档的 `team.md` 中。
+
+## 持续集成与发布 🚦
+每个 `PR` 和推送都会触发 `.github/workflows/ci.yml`：
+
+1. **Lint**：`ruff check .`、`black --check .`、`isort --check-only .`、`mypy f2/`，与本地 `pre-commit` 钩子一致。
+2. **Test**：在 Python 3.10–3.13 上运行 `pytest -m "not network"`，并上传覆盖率到 Codecov。
+3. **Build**：构建 `sdist`/`wheel`，`twine check` 校验元数据，并在干净环境安装 `wheel` 做冒烟测试。
+
+`security.yml` 另外运行 `gitleaks` 泄露扫描与 `wheel` 内容检查。
+
+发布由 `.github/workflows/release.yml` 完成：维护者更新 `f2/__init__.py` 的 `__version__` 与 `CHANGELOG.md` 后，推送 `vX.Y.Z` 标签即可通过 PyPI 的 Trusted Publishing 自动发布，不需要在仓库保存 API token（工作流会校验标签与版本号一致）。首次使用需在 PyPI 项目的 Publishing 设置中添加 GitHub publisher（仓库 `Johnserf-Seed/f2`、工作流 `release.yml`、环境 `pypi`），并在仓库 Settings → Environments 中创建 `pypi` 环境。
 
 ## 创建 PR 🚀
 一旦对您的代码感到满意，并确保已遵守上述所有步骤，且通过了所有测试，您就可以创建一个您所 `fork` 分支的 `Pull Request`。

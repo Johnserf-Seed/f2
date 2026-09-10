@@ -36,6 +36,8 @@ If you are using `VSCode`, the `black` formatter is already configured. Alternat
 $ black **/*.py --exclude venv/*
 ```
 
+Before committing, also run `ruff check .` (unused imports/variables, undefined names and similar correctness checks) and `isort .`; `CI` runs the same commands.
+
 ## Pre-commit Hooks 🔄
 
 `F2` uses `pre-commit` hooks to automatically check code quality and formatting. First, install pre-commit:
@@ -70,10 +72,16 @@ $ git commit -m "message" --no-verify
 
 To run tests from the project root, use the following commands:
 
-Normal tests:
+Normal tests (offline, same as CI):
 
 ```bash
-$ pytest -vv
+$ pytest -m "not network" -vv
+```
+
+Platform API tests (`f2/apps/*/test` and the version-check test carry the `network` marker and need real network access plus test credentials):
+
+```bash
+$ pytest -m network -vv
 ```
 Coverage tests:
 ```bash
@@ -127,6 +135,17 @@ You need to update the following files:
 1. **ChangeLog**: Update the summary of your changes in the `CHANGELOG.md` file.
 2. **Contributors**: Add your name to the `CONTRIBUTORS.md` file.
 3. **Team**: Add your information to the `team.md` file in the documentation.
+
+## Continuous Integration and Releases 🚦
+Every `PR` and push triggers `.github/workflows/ci.yml`:
+
+1. **Lint**: `ruff check .`, `black --check .`, `isort --check-only .` and `mypy f2/`, matching the local `pre-commit` hooks.
+2. **Test**: `pytest -m "not network"` on Python 3.10–3.13, with coverage uploaded to Codecov.
+3. **Build**: builds the `sdist`/`wheel`, validates metadata with `twine check`, and installs the `wheel` in a clean environment as a smoke test.
+
+`security.yml` additionally runs the `gitleaks` secret scan and the `wheel` content check.
+
+Releases are handled by `.github/workflows/release.yml`: after updating `__version__` in `f2/__init__.py` and `CHANGELOG.md`, maintainers push a `vX.Y.Z` tag and the package is published through PyPI Trusted Publishing, so no API token is stored in the repository (the workflow verifies that the tag matches the version). One-time setup: add a GitHub publisher in the PyPI project's Publishing settings (repository `Johnserf-Seed/f2`, workflow `release.yml`, environment `pypi`) and create the `pypi` environment under the repository's Settings → Environments.
 
 ## Creating a PR 🚀
 Once you are satisfied with your code and have followed all the above steps, and your code passes all tests, you can create a `Pull Request` for your `forked` branch.
