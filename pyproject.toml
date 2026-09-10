@@ -68,7 +68,8 @@ dependencies = [
     "click==8.1.7",
     "rich==13.9.3",
     "httpx==0.28.1",
-    "httpx-socks==0.10.0",
+    # 0.10.x 依赖 sniffio 却未声明，anyio>=4.10 不再附带 sniffio 时全新安装会 ImportError
+    "httpx-socks==0.11.0",
     "aiofiles==24.1.0",
     "aiosqlite==0.20.0",
     "ruamel.yaml==0.18.10",
