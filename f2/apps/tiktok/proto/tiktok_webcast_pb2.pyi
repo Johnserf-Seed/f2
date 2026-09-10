@@ -12064,7 +12064,7 @@ class Image(google.protobuf.message.Message):
             ],
         ) -> None: ...
 
-    URLLIST_FIELD_NUMBER: builtins.int
+    URL_LIST_FIELD_NUMBER: builtins.int
     URI_FIELD_NUMBER: builtins.int
     HEIGHT_FIELD_NUMBER: builtins.int
     WIDTH_FIELD_NUMBER: builtins.int
@@ -12081,7 +12081,7 @@ class Image(google.protobuf.message.Message):
     openWebUrl: builtins.str
     isAnimated: builtins.bool
     @property
-    def urlList(
+    def url_list(
         self,
     ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
         builtins.str
@@ -12091,7 +12091,7 @@ class Image(google.protobuf.message.Message):
     def __init__(
         self,
         *,
-        urlList: collections.abc.Iterable[builtins.str] | None = ...,
+        url_list: collections.abc.Iterable[builtins.str] | None = ...,
         uri: builtins.str = ...,
         height: builtins.int = ...,
         width: builtins.int = ...,
@@ -12121,8 +12121,8 @@ class Image(google.protobuf.message.Message):
             b"openWebUrl",
             "uri",
             b"uri",
-            "urlList",
-            b"urlList",
+            "url_list",
+            b"url_list",
             "width",
             b"width",
         ],

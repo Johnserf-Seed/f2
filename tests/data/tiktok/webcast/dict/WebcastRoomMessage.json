@@ -1,0 +1,29 @@
+{
+    "common": {
+        "method": "WebcastRoomMessage",
+        "msgId": "7527287231045288990",
+        "roomId": "7527254791005752078",
+        "createTime": "1752583132454",
+        "isShowMsg": true,
+        "displayText": {
+            "content": "pm_mt_fan_live_joined_comment",
+            "fontColor": "{0:user} became the No. {1:string} fan in the Fan Club"
+        },
+        "foldType": "2",
+        "anchorFoldType": "2",
+        "anchorPriorityScore": "1000",
+        "roomMessageHeatLevel": "5",
+        "foldTypeForWeb": "2",
+        "anchorFoldTypeForWeb": "2"
+    },
+    "content": " ",
+    "icon": {
+        "url_list": [
+            "https: //p16-webcast.tiktokcdn.com/webcast-va/heart_icon.png~tplv-obj.image",
+            "https://p19-webcast.tiktokcdn.com/webcast-va/heart_icon.png~tplv-obj.image"
+        ],
+        "uri": "webcast-va/heart_icon.png",
+        "avgColor": "#D6D6D6"
+    },
+    "scene": "user_join_fans"
+}
