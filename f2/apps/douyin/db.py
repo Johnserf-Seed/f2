@@ -15,6 +15,7 @@ class AsyncUserDB(BaseDB):
         """
         return {
             "sec_user_id": "TEXT PRIMARY KEY",
+            "webcast_uid": "TEXT",
             "avatar_url": "TEXT",
             "aweme_count": "INTEGER",
             "city": "TEXT",
