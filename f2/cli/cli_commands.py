@@ -13,7 +13,7 @@ from f2.apps import __apps__ as apps_module
 from f2.cli.cli_console import RichConsoleManager
 from f2.cli.wizard_command import config_wizard_command
 from f2.i18n.translator import TranslationManager, _
-from f2.log.logger import logger, trace_logger
+from f2.log.logger import log_setup, logger, trace_logger
 from f2.utils.core.signal import SignalManager
 from f2.utils.version import check_f2_version, check_python_version
 
@@ -114,6 +114,16 @@ for attr in dir(apps_module):
 REVERSE_APP_MAPPINGS = {v: k for k, v in APP_MAPPINGS.items()}
 
 
+def setup_cli_logging() -> None:
+    """
+    配置 CLI 日志：控制台输出并写入 ./logs 目录（作为库导入 f2 时不会执行）
+    (Configure CLI logging: console output plus log files under ./logs)
+    """
+
+    log_setup(log_to_console=True, log_name="f2")
+    log_setup(log_to_console=False, log_name="f2-trace", lazy_file_creation=True)
+
+
 class DynamicGroup(click.Group):
     """
     DynamicGroup 类继承自 click.Group，提供动态加载和执行命令的功能。
@@ -124,6 +134,7 @@ class DynamicGroup(click.Group):
     - 无
 
     类方法:
+    - main: 重写 click.Group 的 `main` 方法，在解析参数前配置 CLI 日志。
     - get_command: 重写 click.Group 的 `get_command` 方法，根据传入的命令名称 `cmd_name` 查找并导入对应应用的 CLI 模块。
         执行异步检查任务并返回相关命令。如果发生错误，返回 None。
 
@@ -159,6 +170,11 @@ class DynamicGroup(click.Group):
         app_commands = list(APP_MAPPINGS.keys()) + list(REVERSE_APP_MAPPINGS.keys())
 
         return sorted(builtin_commands + app_commands)
+
+    def main(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
+        # 在解析参数前配置日志，保证 -d/--debug 等选项回调中的日志可正常输出
+        setup_cli_logging()
+        return super().main(*args, **kwargs)
 
     def get_command(self, ctx: click.Context, cmd_name: str):
         # 首先检查是否是内置命令
