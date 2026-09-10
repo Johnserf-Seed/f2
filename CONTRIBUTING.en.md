@@ -66,6 +66,7 @@ $ git commit -m "message" --no-verify
 2. **Write Tests**: Always add tests for new features or bug fixes.
 3. **Mock External Dependencies**: Use `unittest.mock` to mock external dependencies.
 4. **Check Test Coverage**: Review test coverage to ensure nothing is missed.
+5. **Provide Test Credentials**: `f2/conf/test.yaml` only holds guest data used by the tests. Supply personal cookies through the `F2_TEST_<APP>_<KEY>` environment variables (e.g. `F2_TEST_DOUYIN_COOKIE`) or a `test.local.yaml` next to it (git-ignored); never write them back into `test.yaml`.
 
 To run tests from the project root, use the following commands:
 

@@ -66,6 +66,7 @@ $ git commit -m "message" --no-verify
 2. **编写测试**：对于新功能或 bug 修复，始终添加相应的测试。
 3. **模拟外部依赖**：使用 `unittest.mock` 进行依赖模拟。
 4. **检查测试覆盖率**：查看测试覆盖率，确保没有遗漏。
+5. **提供测试凭据**：`f2/conf/test.yaml` 只保存用于测试的游客数据。需要个人 cookie 时，通过环境变量 `F2_TEST_<APP>_<KEY>`（如 `F2_TEST_DOUYIN_COOKIE`）或同目录的 `test.local.yaml`（已忽略，不会提交）提供，不要写回 `test.yaml`。
 
 在项目根目录运行以下命令来运行
 
