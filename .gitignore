@@ -159,6 +159,7 @@ logs/
 # secret
 .pypirc
 f2-secrets
+f2/conf/test.local.yaml
 
 # MacOS
 .DS_Store

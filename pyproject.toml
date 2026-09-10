@@ -114,6 +114,16 @@ path = "f2/__init__.py"
 include = [
     "/f2",
 ]
+exclude = [
+    "f2/conf/test.local.yaml",
+]
+
+[tool.hatch.build.targets.wheel]
+exclude = [
+    "f2/apps/*/test/",
+    "f2/conf/test.yaml",
+    "f2/conf/test.local.yaml",
+]
 
 [tool.isort]
 profile = "black"
