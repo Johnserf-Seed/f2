@@ -202,15 +202,30 @@ class LogManager(metaclass=Singleton):
     def ensure_log_dir_exists(log_path: Path) -> None:
         log_path.mkdir(parents=True, exist_ok=True)
 
+    def _active_log_files(self) -> Set[Path]:
+        """当前记录器的文件处理器正在使用的日志文件，清理时必须跳过"""
+        active: Set[Path] = set()
+        for handler in self.logger.handlers:
+            if isinstance(handler, TimedRotatingFileHandler):
+                active.add(Path(handler.baseFilename).resolve())
+            elif isinstance(handler, TrueLazyFileHandler):
+                active.add(Path(handler.filename).resolve())
+        return active
+
     def clean_logs(self, keep_last_n: int = 99) -> None:
         """保留最近的n个日志文件并删除其他文件（多进程安全）"""
         if not self.log_dir:
             return
 
         try:
+            active_logs = self._active_log_files()
+
             # 获取所有日志文件，按修改时间排序
             all_logs = []
             for log_file in self.log_dir.glob("*.log"):
+                # 跳过本进程正在写入的日志文件（刚创建时大小为 0，不能当作空文件删除）
+                if log_file.resolve() in active_logs:
+                    continue
                 try:
                     # 检查文件是否被其他进程占用
                     stat = log_file.stat()
