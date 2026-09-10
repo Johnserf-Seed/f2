@@ -39,7 +39,7 @@ async def get_latest_version(package_name: str) -> Optional[str]:
         except asyncio.CancelledError:
             logger.warning(_("取消检查更新"))
             return None
-        except (httpx.HTTPStatusError, httpx.RequestError, KeyError) as e:
+        except (httpx.HTTPStatusError, httpx.RequestError, KeyError):
             logger.debug(traceback.format_exc())
             return None
 

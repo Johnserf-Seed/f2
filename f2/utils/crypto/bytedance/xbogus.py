@@ -89,7 +89,7 @@ class XBogus:
         return md5_hash.hexdigest()
 
     def encoding_conversion(
-        self, a, b, c, e, d, t, f, r, n, o, i, _, x, u, s, l, v, h, p
+        self, a, b, c, e, d, t, f, r, n, o, i, _, x, u, s, l, v, h, p  # noqa: E741
     ):
         """
         第一次编码转换。

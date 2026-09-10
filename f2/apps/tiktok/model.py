@@ -1,14 +1,10 @@
 # path: f2/apps/tiktok/models.py
 
-import traceback
-from typing import Any
-from urllib.parse import quote, unquote
+from urllib.parse import quote
 
 from pydantic import BaseModel, Field
 
 from f2.apps.tiktok.utils import ClientConfManager, TokenManager
-from f2.i18n.translator import _
-from f2.log.logger import logger
 from f2.utils.time.timestamp import get_timestamp
 
 

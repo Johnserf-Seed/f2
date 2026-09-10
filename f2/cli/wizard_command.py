@@ -52,7 +52,7 @@ def config_wizard_command(output: Optional[str], app: Optional[str]) -> None:
     except click.Abort:
         # 重新抛出 Abort 异常，让 Click 处理
         raise
-    except Exception as e:
+    except Exception:
         # 简化错误信息
         print("❌ 配置向导出现错误，请重试")
         raise click.Abort()

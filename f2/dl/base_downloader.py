@@ -348,7 +348,7 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
                     )
                     return False
 
-            except httpx.HTTPStatusError as e:
+            except httpx.HTTPStatusError:
                 # 对于HTTP错误，不重试，直接失败
                 trace_logger.error(traceback.format_exc())
                 await self.progress.update(

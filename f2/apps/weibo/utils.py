@@ -15,11 +15,9 @@ from f2.exceptions.api_exceptions import (
     APINotFoundError,
     APIResponseError,
     APIUnauthorizedError,
-    APIUnavailableError,
 )
 from f2.exceptions.conf_exceptions import InvalidConfError
 from f2.i18n.translator import _
-from f2.log.logger import logger
 from f2.utils.config.conf_manager import ConfigManager
 from f2.utils.file.name import split_filename
 from f2.utils.http.cookie import split_set_cookie

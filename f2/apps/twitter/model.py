@@ -1,8 +1,7 @@
 # path: f2/apps/twitter/models.py
 
 import json
-from typing import Any
-from urllib.parse import quote, unquote
+from urllib.parse import quote
 
 from pydantic import BaseModel
 

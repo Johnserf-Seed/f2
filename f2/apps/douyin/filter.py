@@ -1,6 +1,6 @@
 # path: f2/apps/douyin/filter.py
 
-from typing import Any, Dict, List
+from typing import Dict, List
 
 from f2.utils.json.filter import JSONModel, filter_to_list
 from f2.utils.string.formatter import replaceT

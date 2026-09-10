@@ -3,7 +3,7 @@
 import secrets
 from typing import Optional
 
-from cryptography.exceptions import InvalidKey, InvalidTag
+from cryptography.exceptions import InvalidTag
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes

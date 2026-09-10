@@ -154,7 +154,7 @@ def validate_proxies(
             )
 
         # 验证代理地址格式
-        if not ":" in proxy_address:
+        if ":" not in proxy_address:
             raise click.BadParameter(_("代理地址格式错误，正确格式为: host:port"))
 
         # 构建代理URL

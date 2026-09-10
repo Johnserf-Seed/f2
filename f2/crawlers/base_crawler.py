@@ -245,7 +245,7 @@ class BaseCrawler:
         """
         try:
             return await self.get_fetch_data(endpoint)
-        except Exception as exc:
+        except Exception:
             trace_logger.error(traceback.format_exc())
             return Response(status_code=500)
 
@@ -262,7 +262,7 @@ class BaseCrawler:
         try:
             response = await self.get_fetch_data(endpoint)
             return self.parse_json(response)
-        except Exception as exc:
+        except Exception:
             trace_logger.error(traceback.format_exc())
             return {}
 
@@ -280,7 +280,7 @@ class BaseCrawler:
         try:
             response = await self.post_fetch_data(endpoint, **kwargs)
             return self.parse_json(response)
-        except Exception as e:
+        except Exception:
             trace_logger.error(traceback.format_exc())
             return {}
 

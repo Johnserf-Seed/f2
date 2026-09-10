@@ -27,7 +27,6 @@ from f2.apps.douyin.model import (
     PostCommentReply,
     PostDanmaku,
     PostDetail,
-    PostSearch,
     PostStats,
     PostTimeDanmaku,
     QueryUser,

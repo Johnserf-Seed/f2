@@ -1,6 +1,5 @@
 # path: f2/apps/weibo/model.py
 
-from typing import Any
 
 from pydantic import BaseModel
 

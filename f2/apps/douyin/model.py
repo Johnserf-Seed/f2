@@ -1,7 +1,7 @@
 # path: f2/apps/douyin/models.py
 
 from typing import Any
-from urllib.parse import quote, unquote
+from urllib.parse import quote
 
 from pydantic import BaseModel, Field
 

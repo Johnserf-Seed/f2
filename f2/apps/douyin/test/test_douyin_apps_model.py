@@ -1,5 +1,3 @@
-import pytest
-
 from f2.apps.douyin.api import DouyinAPIEndpoints as dyendpoint
 from f2.apps.douyin.model import UserPost
 from f2.apps.douyin.utils import ABogusManager, XBogusManager

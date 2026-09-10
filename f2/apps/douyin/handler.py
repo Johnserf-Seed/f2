@@ -1241,7 +1241,7 @@ class DouyinHandler:
             async for aweme_data in self.fetch_user_mix_videos(mix_id, 0, 20, 1):
                 logger.info(_("正在从合集作品里获取sec_user_id"))
                 sec_user_id = aweme_data.sec_user_id[0]  # 注意这里是一个列表
-        except Exception as e:
+        except Exception:
             logger.warning(_("获取合集ID失败，尝试从合集作品链接中解析。"))
             # 如果获取失败，则假定作品链接获取作品ID
             logger.info(_("正在从合集作品链接获取合集ID"))

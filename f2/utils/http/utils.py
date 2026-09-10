@@ -93,7 +93,7 @@ async def get_content_length(
                 httpx.TimeoutException,
                 httpx.ConnectTimeout,
                 httpx.ReadTimeout,
-            ) as e:
+            ):
                 if attempt < max_retries - 1:
                     wait_time = (attempt + 1) * 2  # 递增等待时间
                     logger.warning(

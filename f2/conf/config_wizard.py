@@ -501,7 +501,7 @@ class ConfigWizard:
                     self.console.print(
                         f"     ❌ 请输入 1-{len(app_templates)} 之间的数字"
                     )
-            except:
+            except Exception:
                 self.console.print("     ❌ 请输入有效的数字")
 
     def _configure_path_field(self, app_name: str) -> str:
@@ -540,7 +540,7 @@ class ConfigWizard:
                     self.console.print(
                         f"     ❌ 请输入 1-{len(common_paths)} 之间的数字"
                     )
-            except:
+            except Exception:
                 self.console.print("     ❌ 请输入有效的数字")
 
     def _configure_cookie_field(self, app_name: str) -> str:
@@ -588,7 +588,7 @@ class ConfigWizard:
                         continue
                 else:
                     self.console.print("     ❌ 请输入 1-3 之间的数字")
-            except:
+            except Exception:
                 self.console.print("     ❌ 请输入有效的数字")
 
     def _configure_max_counts_field(self, app_name: str) -> int:
@@ -620,7 +620,7 @@ class ConfigWizard:
                     self.console.print(
                         f"     ❌ 请输入 1-{len(count_options)} 之间的数字"
                     )
-            except:
+            except Exception:
                 self.console.print("     ❌ 请输入有效的数字")
 
     def _configure_timeout_field(self, app_name: str) -> int:
@@ -653,7 +653,7 @@ class ConfigWizard:
                     self.console.print(
                         f"     ❌ 请输入 1-{len(timeout_options)} 之间的数字"
                     )
-            except:
+            except Exception:
                 self.console.print("     ❌ 请输入有效的数字")
 
     def _configure_interval_field(self, app_name: str) -> str:
@@ -733,7 +733,7 @@ class ConfigWizard:
                     self.console.print(
                         f"     ❌ 请输入 1-{len(interval_options)} 之间的数字"
                     )
-            except:
+            except Exception:
                 self.console.print("     ❌ 请输入有效的数字")
 
     def preview_config(self, config_data: Dict[str, Dict]) -> bool:
