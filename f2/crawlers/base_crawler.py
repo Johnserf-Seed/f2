@@ -1,9 +1,10 @@
 # path: f2/crawlers/base_crawler.py
 
 import asyncio
+import functools
 import json
 import traceback
-from typing import Optional
+from typing import Optional, Union
 
 import httpx
 from httpx import Response
@@ -24,6 +25,12 @@ from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
 
 
+@functools.lru_cache(maxsize=None)
+def _warn_insecure_once() -> None:
+    """关闭 TLS 证书校验时只提示一次 (Warn only once when TLS verification is disabled)"""
+    logger.warning(_("已关闭 TLS 证书校验，请仅在受信任的调试代理环境中使用"))
+
+
 class BaseCrawler:
     """
     基础爬虫客户端 (Base Crawler Client)
@@ -41,6 +48,7 @@ class BaseCrawler:
     - limits (httpx.Limits): 用于限制最大连接数的配置。
     - _max_retries (int): 请求重试次数。
     - _timeout (int): 请求超时时间。
+    - _verify (bool | str): TLS 证书校验，True / False / CA 证书路径，默认 True。
     - timeout (httpx.Timeout): 超时设置。
     - _aclient (httpx.AsyncClient): 异步 HTTP 客户端。
     - _client (httpx.Client): 同步 HTTP 客户端。
@@ -109,6 +117,12 @@ class BaseCrawler:
             pool=self._timeout * 3,  # 连接池超时设置更长
         )
 
+        # TLS 证书校验 / TLS certificate verification
+        # True（默认）/ False / CA 证书文件路径；作为库使用时通过 kwargs["verify"] 传入
+        self._verify: Union[bool, str] = kwargs.get("verify", True)
+        if self._verify is False:
+            _warn_insecure_once()
+
         # 异步客户端 / Asynchronous client
         self._aclient: Optional[httpx.AsyncClient] = None
 
@@ -161,7 +175,7 @@ class BaseCrawler:
             )
             return {
                 "all://": transport_class(
-                    verify=False,
+                    verify=self._verify,
                     limits=self.limits,
                     retries=self._max_retries,
                 ),
@@ -171,9 +185,9 @@ class BaseCrawler:
         if proxy_url.startswith(("socks4://", "socks5://")):
             # SOCKS代理使用专门的传输类
             if async_mode:
-                transport = AsyncProxyTransport.from_url(proxy_url, verify=False)
+                transport = AsyncProxyTransport.from_url(proxy_url, verify=self._verify)
             else:
-                transport = SyncProxyTransport.from_url(proxy_url, verify=False)
+                transport = SyncProxyTransport.from_url(proxy_url, verify=self._verify)
 
             return {
                 "all://": transport,
@@ -185,7 +199,7 @@ class BaseCrawler:
             )
             return {
                 "all://": transport_class(
-                    verify=False,
+                    verify=self._verify,
                     limits=self.limits,
                     proxy=httpx.Proxy(url=proxy_url),
                     local_address="0.0.0.0",

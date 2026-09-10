@@ -3,6 +3,8 @@ f2:
   version: "0.0.1.7"
   # 是否开启版本检查
   check_update: false
+  # 是否校验 TLS 证书：true / false / CA 证书文件路径。仅在受信任的调试代理环境下才建议设为 false
+  verify: true
   # 是否开启Bark通知
   enable_bark: false
 

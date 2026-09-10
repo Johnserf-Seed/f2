@@ -432,7 +432,7 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
                 try:
                     # 获取文件内容大小
                     content_length = await get_content_length(
-                        link, self.headers, self.proxies
+                        link, self.headers, self.proxies, verify=self._verify
                     )
 
                     if content_length == 0:

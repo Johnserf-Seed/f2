@@ -20,6 +20,7 @@ async def get_content_length(
     headers: Optional[dict] = None,
     proxies: Optional[dict] = None,
     max_retries: int = 3,
+    verify: Union[bool, str] = True,
 ) -> int:
     """
     获取给定URL的Content-Length，使用HEAD请求重试，失败后退避到GET请求
@@ -29,6 +30,7 @@ async def get_content_length(
         headers (Optional[dict], optional): 自定义请求头
         proxies (Optional[dict], optional): 代理配置
         max_retries (int, optional): 最大重试次数，默认为3
+        verify (Union[bool, str], optional): TLS 证书校验，True / False / CA 证书路径，默认为 True
 
     Returns:
         int: 文件的Content-Length，单位为字节
@@ -65,7 +67,7 @@ async def get_content_length(
             retries=2,
             proxy=proxy_url,
         ),
-        verify=False,
+        verify=verify,
         follow_redirects=True,
         limits=httpx.Limits(max_connections=10, max_keepalive_connections=5),
     ) as aclient:

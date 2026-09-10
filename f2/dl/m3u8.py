@@ -29,6 +29,7 @@ class M3U8DownloadMixin:
     semaphore: asyncio.Semaphore
     headers: dict
     proxies: dict
+    _verify: Union[bool, str]
     aclient: httpx.AsyncClient
     progress: Any
 
@@ -107,6 +108,7 @@ class M3U8DownloadMixin:
                                     ts_url,
                                     self.headers,
                                     self.proxies,
+                                    verify=self._verify,
                                 )
                                 if ts_content_length == 0:
                                     ts_content_length = default_chunks

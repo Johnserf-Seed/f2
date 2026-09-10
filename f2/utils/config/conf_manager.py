@@ -2,6 +2,7 @@
 
 import os
 from pathlib import Path
+from typing import Any
 
 import click
 from ruamel.yaml import YAML  # type: ignore[import-untyped]
@@ -235,6 +236,22 @@ class ConfigManager:
             click.echo(_("配置文件已更新!"))
         else:
             click.echo(_("已取消更新配置文件!"))
+
+
+def get_f2_setting(key: str, default: Any = None) -> Any:
+    """
+    读取 conf.yaml 顶层 `f2` 段中的全局设置 (Read a global setting from the `f2` section of conf.yaml)
+
+    Args:
+        key: str: 设置名，例如 "verify"、"check_update"
+        default: Any: 配置缺失时的默认值
+
+    Returns:
+        Any: 配置值，缺失时返回 default
+    """
+    return (ConfigManager(f2.F2_CONFIG_FILE_PATH).get_config("f2") or {}).get(
+        key, default
+    )
 
 
 class TestConfigManager:
