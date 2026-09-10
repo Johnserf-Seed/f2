@@ -4,7 +4,7 @@ import traceback
 from typing import Any
 from urllib.parse import quote, unquote
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from f2.apps.tiktok.utils import ClientConfManager, TokenManager
 from f2.i18n.translator import _
@@ -56,7 +56,8 @@ class BaseRequestModel(BaseModel):
     tz_name: str = quote(
         ClientConfManager.base_request_model().get("tz_name", "Asia/Hong_Kong"), safe=""
     )
-    msToken: str = TokenManager.gen_real_msToken()
+    # 首次实例化时才联网获取（进程内缓存），导入模块不再联网
+    msToken: str = Field(default_factory=TokenManager.cached_msToken)
 
 
 class BaseWebCastModel(BaseModel):
@@ -185,7 +186,8 @@ class LiveImFetch(BaseWebCastModel):
     room_id: str
     history_comment_count: int = 6
     history_comment_cursor: str = "7386962392254958354"
-    msToken: str = TokenManager.gen_real_msToken()
+    # 首次实例化时才联网获取（进程内缓存），导入模块不再联网
+    msToken: str = Field(default_factory=TokenManager.cached_msToken)
 
 
 class LiveWebcast(BaseWebCastModel):

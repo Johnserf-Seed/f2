@@ -7,7 +7,7 @@ import re
 import time
 import traceback
 from pathlib import Path
-from typing import Union
+from typing import Optional, Union
 from urllib.parse import urlparse
 
 import httpx
@@ -136,6 +136,7 @@ class TokenManager(BaseCrawler):
     类方法:
     - __init__: 初始化 TokenManager 实例，并调用父类的初始化方法。
     - gen_real_msToken: 类方法，生成真实的 msToken，当出现错误时返回虚假的值。
+    - cached_msToken: 类方法，返回进程内缓存的真实 msToken，首次调用时才生成。
     - gen_false_msToken: 类方法，生成随机 msToken。
     - gen_ttwid: 类方法，生成请求必带的 ttwid。
 
@@ -146,6 +147,9 @@ class TokenManager(BaseCrawler):
     ```python
         # 生成真实的 msToken
         msToken = TokenManager.gen_real_msToken()
+
+        # 获取进程内缓存的真实 msToken（首次调用时生成）
+        msToken = TokenManager.cached_msToken()
 
         # 生成虚假的 msToken
         false_msToken = TokenManager.gen_false_msToken()
@@ -176,6 +180,8 @@ class TokenManager(BaseCrawler):
         "Content-Type": "application/json; charset=UTF-8",
         "Referer": "https://www.douyin.com/",
     }
+    # 进程内缓存的真实 msToken，由 cached_msToken 按需生成
+    _msToken_cache: Optional[str] = None
 
     def __init__(self):
         super().__init__(proxies=self.proxies)
@@ -289,6 +295,29 @@ class TokenManager(BaseCrawler):
                     exc,
                 )
             )
+
+    @classmethod
+    def cached_msToken(cls) -> str:
+        """
+        返回进程内缓存的真实 msToken。
+
+        首次调用时才通过 gen_real_msToken 联网生成，之后复用同一个值；
+        请求模型以此作为 msToken 的默认值，因此导入模块不会联网。
+        生成失败时不缓存，下一次调用会重新生成。
+
+        Returns:
+            str: 真实的 msToken。
+
+        Raises:
+            APITimeoutError: 请求超时错误。
+            APIConnectionError: 网络连接错误。
+            APIUnauthorizedError: 请求协议错误。
+            APIResponseError: 状态码错误或响应内容不符合要求。
+        """
+
+        if cls._msToken_cache is None:
+            cls._msToken_cache = cls.gen_real_msToken()
+        return cls._msToken_cache
 
     @classmethod
     def gen_false_msToken(cls) -> str:

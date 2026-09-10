@@ -97,6 +97,7 @@ class TokenManager(BaseCrawler):
 
     该类继承自 BaseCrawler，利用其中的 client 进行 HTTP 请求。主要包含以下方法：
     - gen_real_msToken: 生成真实的 msToken。
+    - cached_msToken: 返回进程内缓存的真实 msToken，首次调用时才生成。
     - gen_false_msToken: 生成虚假的 msToken。
     - gen_ttwid: 生成 ttwid。
     - gen_odin_tt: 生成 odin_tt。
@@ -128,6 +129,8 @@ class TokenManager(BaseCrawler):
         "Referer": ClientConfManager.referer(),
         "User-Agent": user_agent,
     }
+    # 进程内缓存的真实 msToken，由 cached_msToken 按需生成
+    _msToken_cache: Optional[str] = None
 
     def __init__(self):
         super().__init__(proxies=self.proxies)
@@ -233,6 +236,29 @@ class TokenManager(BaseCrawler):
                     exc,
                 )
             )
+
+    @classmethod
+    def cached_msToken(cls) -> str:
+        """
+        返回进程内缓存的真实 msToken。
+
+        首次调用时才通过 gen_real_msToken 联网生成，之后复用同一个值；
+        请求模型以此作为 msToken 的默认值，因此导入模块不会联网。
+        生成失败时不缓存，下一次调用会重新生成。
+
+        Returns:
+            str: 真实的 msToken。
+
+        Raises:
+            APITimeoutError: 请求超时错误。
+            APIConnectionError: 网络连接错误。
+            APIUnauthorizedError: 请求协议错误。
+            APIResponseError: 状态码错误或响应内容不符合要求。
+        """
+
+        if cls._msToken_cache is None:
+            cls._msToken_cache = cls.gen_real_msToken()
+        return cls._msToken_cache
 
     @classmethod
     def gen_false_msToken(cls) -> str:
@@ -528,7 +554,6 @@ class SecUserIdFetcher(BaseCrawler):
     _TIKTOK_NOTFOUND_PARREN = re.compile(r"notfound")
 
     proxies = ClientConfManager.proxies()
-    msToken = TokenManager.gen_real_msToken()
 
     def __init__(self):
         super().__init__(proxies=self.proxies)
@@ -570,7 +595,7 @@ class SecUserIdFetcher(BaseCrawler):
             headers = {
                 "User-Agent": ClientConfManager.user_agent(),
                 "Referer": url,
-                "Cookie": f"msToken={cls.msToken}",
+                "Cookie": f"msToken={TokenManager.cached_msToken()}",
             }
             response = await instance.aclient.get(
                 url, headers=headers, follow_redirects=True
@@ -1073,7 +1098,7 @@ class DeviceIdManager(BaseCrawler):
     类属性:
     - _DEVICE_ID_PARTTERN: 编译后的正则表达式，用于匹配设备 ID。
     - _DEVICE_ID_URL: 设备 ID 生成器的 URL。
-    - _DEVICE_ID_HEADERS: 设备 ID 生成器的请求头。
+    - _device_id_headers: 类方法，构建设备 ID 生成器的请求头（首次调用时才获取 msToken）。
     - proxies: 从 ClientConfManager 获取的代理配置。
 
     方法:
@@ -1117,15 +1142,18 @@ class DeviceIdManager(BaseCrawler):
     _DEVICE_ID_URL = "https://www.tiktok.com/"
     _DEVICE_ID_FULL_URL = "https://www.tiktok.com/explore"
 
-    _MSTOKEN = TokenManager.gen_real_msToken()
-    _DEVICE_ID_HEADERS = {
-        "User-Agent": ClientConfManager.user_agent(),
-        "Cookie": f"msToken={_MSTOKEN}",
-    }
     proxies = ClientConfManager.proxies()
 
     def __init__(self):
         super().__init__(proxies=self.proxies)
+
+    @classmethod
+    def _device_id_headers(cls) -> dict:
+        """设备 ID 生成器的请求头，首次调用时才获取 msToken"""
+        return {
+            "User-Agent": ClientConfManager.user_agent(),
+            "Cookie": f"msToken={TokenManager.cached_msToken()}",
+        }
 
     @classmethod
     async def gen_device_id(cls, full_cookie: bool = False) -> dict:
@@ -1157,7 +1185,7 @@ class DeviceIdManager(BaseCrawler):
                     if not full_cookie
                     else instance._DEVICE_ID_FULL_URL
                 ),
-                headers=instance._DEVICE_ID_HEADERS,
+                headers=instance._device_id_headers(),
                 follow_redirects=True,
             )
             response.raise_for_status()

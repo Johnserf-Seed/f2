@@ -3,7 +3,7 @@
 from typing import Any
 from urllib.parse import quote, unquote
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from f2.apps.douyin.utils import ClientConfManager, TokenManager, VerifyFpManager
 
@@ -36,7 +36,8 @@ class BaseRequestModel(BaseModel):
     downlink: int = 10
     effective_type: str = "4g"
     round_trip_time: int = 100
-    msToken: str = TokenManager.gen_real_msToken()
+    # 首次实例化时才联网获取（进程内缓存），导入模块不再联网
+    msToken: str = Field(default_factory=TokenManager.cached_msToken)
 
 
 class BaseLiveModel(BaseModel):
@@ -102,7 +103,8 @@ class LiveChatSend(BaseLiveModel):
     content: str
     type: int = 0
     rtf_content: str = ""
-    msToken: str = TokenManager.gen_real_msToken()
+    # 首次实例化时才联网获取（进程内缓存），导入模块不再联网
+    msToken: str = Field(default_factory=TokenManager.cached_msToken)
 
 
 # Model
