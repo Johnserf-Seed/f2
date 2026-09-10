@@ -20,6 +20,7 @@ outline: deep
 | `-o`   | `--max-counts` | `INTEGER` | Maximum number of posts to download |
 | `-s`   | `--page-counts` | `INTEGER` | Number of posts fetched per page |
 | `-P`   | `--proxies` | `TEXT...` | Proxy servers |
+|        | `--insecure` | `FLAG` | Disable TLS certificate verification |
 |        | `--update-config` | `BOOLEAN` | Update configuration file |
 |        | `--init-config` | `TEXT` | Initialize configuration file |
 |        | `--auto-cookie` | `ENUM` | Automatically retrieve the cookie |
@@ -117,6 +118,14 @@ Example: `--proxies http://x.x.x.x https://x.x.x.x`。
 
 > [!IMPORTANT] IMPORTANT ❗❗❗
 > **If the proxy does not support egress HTTPS, use: `--proxies http://x.x.x.x http://x.x.x.x`.**
+
+### `--insecure`
+
+Disable `TLS` certificate verification. Use it only behind a trusted debugging proxy. The flag affects the current run only and is not written to the configuration file; set `verify: false` in `conf.yaml` to disable it permanently. See [TLS certificate verification](/en/site-config#tls-certificate-verification).
+
+```bash
+f2 wb --insecure --proxies http 127.0.0.1:8888 ...
+```
 
 ### `--update-config`
 

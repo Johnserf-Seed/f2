@@ -25,6 +25,7 @@ outline: deep
 | `-o`   | `--max-counts` | `INTEGER` | 最大作品下载数 |
 | `-s`   | `--page-counts` | `INTEGER` | 每页获取作品数 |
 | `-P`   | `--proxies` | `TEXT...` | 代理服务器 |
+|        | `--insecure` | `FLAG` | 关闭 TLS 证书校验 |
 |        | `--update-config` | `BOOLEAN` | 更新配置文件 |
 |        | `--init-config` | `TEXT` | 初始化配置文件 |
 |        | `--auto-cookie` | `ENUM` | 自动获取cookie |
@@ -182,6 +183,14 @@ f2 tk --proxies socks5 user:pass@127.0.0.1:1080
 >     username: user  # 可选
 >     password: pass  # 可选
 > ```
+
+### `--insecure`
+
+关闭 `TLS` 证书校验，仅建议在受信任的调试代理环境中使用。该选项只对本次运行生效，不会写入配置文件；需要持久关闭请在 `conf.yaml` 中设置 `verify: false`。详见：[证书校验](/site-config#证书校验)。
+
+```bash
+f2 tk --insecure --proxies http 127.0.0.1:8888 ...
+```
 
 ### `--update-config`
 

@@ -83,6 +83,16 @@ Non-project issue, requires investigation.
 4. Adjust timeout settings.
 :::
 
+## CERTIFICATE_VERIFY_FAILED
+
+`certificate verify failed` or `CERTIFICATE_VERIFY_FAILED` means `F2` could not verify the server certificate. `F2` verifies certificates for every `HTTPS` request by default.
+
+::: details :link: Solutions
+1. Check the system clock and make sure the root certificates are up to date (`pip install -U certifi` refreshes the bundle).
+2. Behind a capture tool or corporate proxy with a self-signed certificate, put its `CA` bundle path into `verify` in `conf.yaml`.
+3. Only in a trusted debugging environment, disable verification temporarily with `--insecure`, or set `verify: false` in `conf.yaml`. See [TLS certificate verification](/en/site-config#tls-certificate-verification).
+:::
+
 ## tiktok 403 Forbidden
 
 A `403 Forbidden` error when downloading TikTok videos occurs due to the `device_Id`being banned.

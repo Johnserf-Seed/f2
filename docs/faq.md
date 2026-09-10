@@ -83,6 +83,16 @@
 4. 调整超时设置。
 :::
 
+## CERTIFICATE_VERIFY_FAILED 证书校验失败
+
+出现 `certificate verify failed` 或 `CERTIFICATE_VERIFY_FAILED` 说明 `F2` 无法验证服务器证书。`F2` 默认校验所有 `HTTPS` 请求的证书。
+
+::: details :link: 解决办法
+1. 先确认系统时间正确、根证书没有过期（`pip install -U certifi` 可更新证书库）。
+2. 如果你在使用抓包工具或公司代理（自签名证书），可以把它的 `CA` 证书路径填到 `conf.yaml` 的 `verify` 中。
+3. 仅在受信任的调试环境下，才用 `--insecure` 临时关闭校验，或在 `conf.yaml` 中设置 `verify: false`。详见 [证书校验](/site-config#证书校验)。
+:::
+
 ## tiktok 403 Forbidden
 
 当下载 `tiktok` 视频时出现 `403 Forbidden` 错误时，是由于 `设备id` 被封禁导致的。

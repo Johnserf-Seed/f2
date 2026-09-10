@@ -67,6 +67,6 @@ tiktok:
 :::
 
 > [!IMPORTANT] Important ❗❗❗
-> The current version does not support enabling `SSL` certificate verification, so the `verify` parameter must always be set to `false`.
+> The `verify` under the `wss` section configures the certificate of the local danmaku forwarding service; the current version does not support enabling it, so keep it `false`. It is unrelated to the top-level `verify` in `conf.yaml`, which controls certificate verification for `HTTP` requests (enabled by default).
 > The default timeout for both local and remote connections is `10` seconds.
 > If the local connection does not connect to `WSS` within the timeout, `F2` will automatically disconnect to save resources.

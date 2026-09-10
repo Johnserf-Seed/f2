@@ -9,9 +9,9 @@
 `F2` 的配置由以下几类文件构成：
 
 - **应用低频/主配置文件** (`app.yaml`)：保存不经常修改的设置，例如 `cookie`、文件名模板、下载目录及网络超时等。
-- **F2 配置文件** (`conf.yaml`)：保存各应用的计算参数和代理等全局配置。
+- **F2 配置文件** (`conf.yaml`)：保存各应用的计算参数、代理，以及证书校验、更新检查等全局开关。
 - **应用默认配置文件** (`defaults.yaml`)：提供各应用的初始化模板，<font color=red><u>**请勿直接修改**</u></font>。
-- **测试配置文件** (`test.yaml`)：用于 `F2` 的测试用例配置，运行 `pytest` 前请先完成设置。
+- **测试配置文件** (`test.yaml`)：用于 `F2` 的测试用例配置，只保存测试用的游客数据，不随 `wheel` 发布。
 - **自定义配置文件**：根据实际需求编写的高频配置，可覆盖默认配置的任意参数。
 
 ::: info :bulb: 什么是 yaml？
@@ -24,7 +24,11 @@
 
 **应用默认配置文件(defaults.yaml)**：用来保存各个app的初始化默认配置模板，<font color=red><u>**_请不要修改与使用它_**</u></font>。
 
-**测试配置文件(test.yaml)**：用来保存 `F2` 的测试用例的配置，运行 `pytest` 前务必先配置好。
+**测试配置文件(test.yaml)**：用来保存 `F2` 测试用例的配置，只保存用于测试的游客数据，不随 `wheel` 发布。需要用个人 `cookie` 跑测试时，不要写回该文件，按以下优先级提供（高覆盖低）：
+
+1. 环境变量 `F2_TEST_<APP>_<KEY>`，例如 `F2_TEST_DOUYIN_COOKIE`、`F2_TEST_BARK_KEY`、`F2_TEST_TIKTOK_DEVICE_ID`；
+2. 与 `test.yaml` 同目录的 `test.local.yaml`（已加入 `.gitignore`，结构与 `test.yaml` 相同）；
+3. `test.yaml` 中的默认值。
 
 ::: code-group
 <<< @../../f2/conf/app.yaml
@@ -298,6 +302,35 @@ f2 dy --proxies http proxy.example.com:8080
 ### 代理测试
 
 F2 会在使用前自动测试代理的可用性。如果代理无法连接，将会显示错误信息。
+
+## 证书校验
+
+`F2` 默认对所有 `HTTPS` 请求校验 `TLS` 证书。只有在受信任的调试代理（例如抓包工具的自签名证书）环境下才需要关闭，可以三选一：
+
+::: code-group
+```yaml [conf.yaml]
+f2:
+  # true（默认）/ false / CA 证书文件路径
+  verify: true
+```
+
+```bash [命令行]
+# 临时关闭证书校验，不写入配置文件
+f2 dy --insecure -u "https://www.douyin.com/user/xxx" -M post
+```
+
+```python [作为库使用]
+kwargs = {
+    "headers": {...},
+    "cookie": "...",
+    "verify": False,  # 或者填 CA 证书文件路径
+}
+```
+:::
+
+> [!WARNING] 注意
+> - 关闭校验后 `cookie` 等凭据可能被中间人截获，`F2` 会在关闭时输出一次警告。
+> - 该开关只作用于 `HTTP` 请求。`wss` 段里的 `verify` 是本地弹幕转发服务的设置，与此无关。
 
 ## 下一步是什么？
 

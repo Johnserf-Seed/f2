@@ -9,9 +9,9 @@ Read this chapter carefully to understand how `F2` configuration files work and 
 `F2` uses several types of configuration files:
 
 - **App low-frequency/main configuration file** (`app.yaml`): stores settings that rarely change, such as `cookie`, filename templates, download paths, and network timeouts.
-- **F2 configuration file** (`conf.yaml`): global settings like computation parameters and proxies for each app.
+- **F2 configuration file** (`conf.yaml`): global settings such as computation parameters, proxies, certificate verification and update checks.
 - **App default configuration file** (`defaults.yaml`): initialization templates for each app. <font color=red><u>**Do not modify this file**</u></font>.
-- **Test configuration file** (`test.yaml`): configuration for the project's tests.
+- **Test configuration file** (`test.yaml`): configuration for the project's tests; it only holds guest data and is not shipped in the `wheel`.
 - **Custom configuration files**: high-frequency settings tailored for personal use that override defaults.
 
 ::: info :bulb: What is yaml?
@@ -24,7 +24,11 @@ Presents the data serialization format file in an outline-like indentation manne
 
 **App default configuration file (defaults.yaml)**: used to save the initialization default configuration template of each app, <font color=red><u>**_Please do not modify and use it_**</u> </font>.
 
-**Test Configuration File (test.yaml)**: Used to save the configuration of test cases for `F2`, it is necessary to configure it before running `pytest`.
+**Test Configuration File (test.yaml)**: Holds the configuration used by the `F2` test cases. It only contains guest data and is not shipped in the `wheel`. To run tests with personal cookies, do not write them into this file; supply them in this order of precedence (higher overrides lower):
+
+1. Environment variables `F2_TEST_<APP>_<KEY>`, e.g. `F2_TEST_DOUYIN_COOKIE`, `F2_TEST_BARK_KEY`, `F2_TEST_TIKTOK_DEVICE_ID`;
+2. A `test.local.yaml` next to `test.yaml` (git-ignored, same structure);
+3. The defaults in `test.yaml`.
 
 ::: code-group
 <<< @../../f2/conf/app.yaml
@@ -298,6 +302,35 @@ f2 dy --proxies http proxy.example.com:8080
 ### Proxy testing
 
 F2 will automatically test proxy availability before use. If the proxy cannot connect, an error message will be displayed.
+
+## TLS certificate verification
+
+`F2` verifies `TLS` certificates for every `HTTPS` request by default. Disable it only behind a trusted debugging proxy (for example a capture tool with a self-signed certificate). Any of the following works:
+
+::: code-group
+```yaml [conf.yaml]
+f2:
+  # true (default) / false / path to a CA bundle
+  verify: true
+```
+
+```bash [Command line]
+# Disable verification for this run only; nothing is written to the config file
+f2 dy --insecure -u "https://www.douyin.com/user/xxx" -M post
+```
+
+```python [As a library]
+kwargs = {
+    "headers": {...},
+    "cookie": "...",
+    "verify": False,  # or the path to a CA bundle
+}
+```
+:::
+
+> [!WARNING] Note
+> - With verification disabled, credentials such as `cookie` can be intercepted; `F2` logs one warning when it is off.
+> - This switch only affects `HTTP` requests. The `verify` under the `wss` section configures the local danmaku forwarding service and is unrelated.
 
 ## What's next?
 

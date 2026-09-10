@@ -41,6 +41,7 @@ If you encounter any issues during development, please describe them in detail a
 > 4. **Device Performance**: Ensure sufficient device performance to prevent lag from large-scale collection tasks.
 > 5. **Concurrency Settings**: When collecting multiple livestreams, increase `max_connections` and `max_tasks` appropriately to support asynchronous concurrency. Otherwise, tasks may become blocked.
 > 6. **Polling for Live Streams**: If you need to poll for live stream status updates and collect them, refer to the changes in the provided code snippet.
+> 7. **Segment request headers**: some live `CDN`s reject `TS` segment requests that carry `Referer`/`Cookie`, so segment requests drop these two headers by default (other requests are unaffected). If a platform needs them, override `SEGMENT_HEADERS_TO_DROP` on its downloader subclass (an empty tuple keeps all headers).
 
 ::: details :link: Example Code
 ::: code-group
