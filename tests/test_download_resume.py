@@ -161,3 +161,14 @@ def test_segment_request_does_not_touch_shared_client_headers(downloader):
     # 共享客户端的默认请求头必须保持不变
     assert downloader.aclient.headers["referer"] == "https://x/"
     assert downloader.aclient.headers["cookie"] == "a=b"
+
+
+def test_segment_headers_to_drop_is_configurable(downloader):
+    class KeepHeadersDownloader(type(downloader)):
+        SEGMENT_HEADERS_TO_DROP = ()
+
+    downloader.__class__ = KeepHeadersDownloader
+    request = downloader._build_segment_request("https://cdn.example.com/seg.ts")
+
+    assert request.headers["referer"] == "https://x/"
+    assert request.headers["cookie"] == "a=b"

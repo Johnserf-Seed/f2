@@ -36,16 +36,20 @@ class M3U8DownloadMixin:
     @abstractmethod
     def _ensure_path(self, path: Union[str, Path]) -> Path: ...
 
+    # 2025/oct/08: 部分服务器（如抖音直播的 CDN）会拒绝带 Referer/Cookie 的 TS 片段请求，
+    # 因此片段请求默认去掉这两个头。各应用的下载器可覆盖此属性（设为空元组则保留全部请求头）。
+    SEGMENT_HEADERS_TO_DROP: tuple = ("referer", "cookie")
+
     def _build_segment_request(self, ts_url: str) -> httpx.Request:
         """
         构建 TS 片段请求 (Build the request for a TS segment)
 
-        部分 CDN 会拒绝带 Referer/Cookie 的片段请求，因此只从本次请求中去掉这两个头，
-        不修改共享 aclient 的默认请求头，避免影响同一下载器上并发的其它请求。
+        只从本次请求中去掉 SEGMENT_HEADERS_TO_DROP 里的请求头，
+        不修改共享 aclient 的默认请求头，避免影响复用该客户端的其它请求。
         """
         request = self.aclient.build_request("GET", ts_url, timeout=15.0)
-        request.headers.pop("referer", None)
-        request.headers.pop("cookie", None)
+        for name in self.SEGMENT_HEADERS_TO_DROP:
+            request.headers.pop(name, None)
         return request
 
     async def download_m3u8_stream(
