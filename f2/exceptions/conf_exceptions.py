@@ -23,6 +23,8 @@ class ConfError(Exception):
 
         logger.error(log_message)
         logger.error(_("请前往 QA 文档 https://f2.wiki/faq 查看相关帮助"))
+        logger.error(_("请提供以下信息以帮助我们解决问题"))
+        logger.error(_("配置文件: {0}（注意：请删除敏感信息）").format(filepath or ""))
 
         super().__init__(message)
 

@@ -9,6 +9,9 @@ class APIError(Exception):
 
     def __init__(self, message=None, status_code=None):
         logger.error(_("请前往QA文档 https://f2.wiki/faq 查看相关帮助"))
+        logger.error(_("请提供以下信息以帮助我们解决问题"))
+        logger.error(_("错误信息: ") + str(message))
+        logger.error(_("状态码: ") + str(status_code))
         self.status_code = status_code
         super().__init__(message)
 
