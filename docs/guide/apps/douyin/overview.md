@@ -61,6 +61,7 @@ outline: [2,3]
 | :------------------ | :--------------------- | :-------------------------- | :--: |
 | 管理客户端配置        | `ClientConfManager`    |                              |  🟢  |
 | 生成真实msToken      | `TokenManager`         | `gen_real_msToken`           |  🟢  |
+| 获取缓存的真实msToken | `TokenManager`         | `cached_msToken`             |  🟢  |
 | 生成虚假msToken      | `TokenManager`         | `gen_false_msToken`          |  🟢  |
 | 生成ttwid           | `TokenManager`         | `gen_ttwid`                  |  🟢  |
 | 生成webid           | `TokenManager`         | `gen_webid`                  |  🟢  |
@@ -769,6 +770,20 @@ outline: [2,3]
 | msToken | str | 真实的msToken |
 
 <<< @/snippets/douyin/token-manager.py#mstoken-real-sinppest{4}
+
+### 获取缓存的真实msToken 🟢
+
+类方法，返回进程内缓存的真实 `msToken`，首次调用时才联网生成。请求模型的 `msToken` 字段默认通过它在实例化时获取，因此导入模块不会联网。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| 无 | 无 | 无 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| msToken | str | 缓存的真实msToken |
+
+<<< @/snippets/douyin/token-manager.py#mstoken-cached-sinppest{4}
 
 ### 生成虚假msToken 🟢
 

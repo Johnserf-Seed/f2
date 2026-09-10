@@ -39,7 +39,7 @@ import asyncio
 from f2.apps.douyin.handler import DouyinHandler
 from f2.log.logger import log_setup  # [!code focus]
 
-logger = log_setup(log_to_console=True)  # [!code focus]
+logger = log_setup(log_to_console=True, log_path="./logs")  # [!code focus]
 
 kwargs = {
     "headers": {

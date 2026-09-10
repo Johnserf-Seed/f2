@@ -27,12 +27,14 @@ $ f2 -d WARNING dy -M post
 
 ## Log Output to Console
 
+When `F2` is imported as a library, logs are only written to the console by default: no `logs` directory is created in the current directory and no old log files are cleaned up. To also write log files, call `log_setup` with a `log_path` (defaults to `./logs`; pass `None` to disable file logging). The `CLI` performs this setup automatically on startup.
+
 <<< @/snippets/set-debug.py#log-2-console-snippet{6}
 
 ![log-2-console](/douyin/log-2-console.png)
 
 ::: tip :bulb: Tip
-If you want more detailed logs in the console, you can use the `DEBUG` level. You must then use the `logger` object to output logs, otherwise, they won't be shown in the console.
+If you want more detailed logs in the console, you can use the `DEBUG` level. `log_setup` only takes effect once per process; later calls simply return the already configured `logger`. Exception tracebacks go to the separate `f2-trace` logger; as a library user you can enable its file output with `log_setup(log_to_console=False, log_name="f2-trace", lazy_file_creation=True)`.
 :::
 
 ## WSS Configuration <Badge type="warning" text="Experimental" />

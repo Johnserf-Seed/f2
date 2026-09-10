@@ -59,6 +59,7 @@ outline: [2,3]
 | :---------------------- | :--------------------- | :-------------------------- | :----: |
 | Manage client configuration | `ClientConfManager`    |                              |  🟢  |
 | Generate real msToken  | `TokenManager`         | `gen_real_msToken`           |  🟢  |
+| Get cached real msToken | `TokenManager`        | `cached_msToken`             |  🟢  |
 | Generate fake msToken  | `TokenManager`         | `gen_false_msToken`          |  🟢  |
 | Generate ttwid         | `TokenManager`         | `gen_ttwid`                  |  🟢  |
 | Generate webid         | `TokenManager`         | `gen_webid`                  |  🟢  |
@@ -723,6 +724,20 @@ Class method to generate a real `msToken`. Returns a fake value if an error occu
 | msToken | str | The real `msToken` |
 
 <<< @/snippets/douyin/token-manager.py#mstoken-real-sinppest{4}
+
+### Get Cached Real msToken 🟢
+
+Class method that returns the real `msToken` cached for the current process; it is only generated over the network on the first call. Request models use it as the default value of their `msToken` field when instantiated, so importing a module no longer makes network requests.
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| None | None | None |
+
+| Return | Type | Description |
+| :--- | :--- | :--- |
+| msToken | str | The cached real `msToken` |
+
+<<< @/snippets/douyin/token-manager.py#mstoken-cached-sinppest{4}
 
 ### Generate Fake msToken 🟢
 

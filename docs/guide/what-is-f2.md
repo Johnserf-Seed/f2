@@ -27,12 +27,14 @@ $ f2 -d WARNING dy -M post
 
 ## 日志输出到控制台
 
+作为库导入 `F2` 时，日志默认只输出到控制台，不会在当前目录创建 `logs` 目录，也不会清理旧日志。如需同时写入日志文件，调用 `log_setup` 并指定 `log_path`（默认 `./logs`，传 `None` 表示不写文件）；`CLI` 启动时会自动完成这一配置。
+
 <<< @/snippets/set-debug.py#log-2-console-snippet{6}
 
 ![log-2-console](/douyin/log-2-console.png)
 
 ::: tip :bulb: 提示
-如果你想要输出到控制台的日志更加详细，可以使用 `DEBUG` 级别。并且后续必须使用该`logger` 对象来输出日志，否则日志将不会输出到控制台。
+如果你想要输出到控制台的日志更加详细，可以使用 `DEBUG` 级别。`log_setup` 在同一进程内只会生效一次，之后再调用会直接返回已配置好的 `logger`。异常堆栈单独记录在 `f2-trace` 记录器中，作为库使用时可通过 `log_setup(log_to_console=False, log_name="f2-trace", lazy_file_creation=True)` 开启它的文件输出。
 :::
 
 ## WSS配置 <Badge type="warning" text="实验性" />

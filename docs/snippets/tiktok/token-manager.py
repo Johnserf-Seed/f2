@@ -7,6 +7,15 @@ if __name__ == "__main__":
 # endregion mstoken-real-sinppest
 
 
+# region mstoken-cached-sinppest
+from f2.apps.tiktok.utils import TokenManager
+
+if __name__ == "__main__":
+    print("tiktok cached msToken:", TokenManager.cached_msToken())
+
+# endregion mstoken-cached-sinppest
+
+
 # region mstoken-false-sinppest
 from f2.apps.tiktok.utils import TokenManager
 
