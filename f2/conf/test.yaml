@@ -1,3 +1,9 @@
+# F2 测试配置 (test.yaml)
+# 本文件只保存用于测试的游客数据，不随 wheel 发布。
+# 需要个人 cookie / key 等敏感值时不要写在这里，按以下优先级提供（高覆盖低）：
+#   1. 环境变量 F2_TEST_<APP>_<KEY>，例如 F2_TEST_DOUYIN_COOKIE、F2_TEST_BARK_KEY、F2_TEST_TIKTOK_DEVICE_ID
+#   2. 同目录下的 test.local.yaml（已加入 .gitignore，结构与本文件相同）
+#   3. 本文件的默认值
 douyin:
   headers:
     User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0

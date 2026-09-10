@@ -1,5 +1,6 @@
 # path: f2/utils/config/conf_manager.py
 
+import os
 from pathlib import Path
 
 import click
@@ -237,11 +238,69 @@ class ConfigManager:
 
 
 class TestConfigManager:
-    # 返回传入app的测试配置内容 (Return the test conf content passed in app)
+    """
+    测试配置管理器 (Test Configuration Manager)
+
+    读取 `conf/test.yaml` 中指定应用的测试配置。`test.yaml` 只保存用于测试的游客数据，
+    且不会随 wheel 发布；需要使用个人 cookie 等敏感值时，按以下优先级覆盖（高的覆盖低的）：
+
+    1. 环境变量 `F2_TEST_<APP>_<KEY>`，例如 `F2_TEST_DOUYIN_COOKIE`、`F2_TEST_BARK_KEY`。
+    2. 与 `test.yaml` 同目录的 `test.local.yaml`（已加入 .gitignore，不会提交）。
+    3. `conf/test.yaml` 中的默认值。
+
+    类属性:
+    - OVERRIDE_KEYS (tuple): 允许通过环境变量覆盖的字段。
+    - LOCAL_CONFIG_FILE_NAME (str): 本地覆盖文件名。
+
+    使用示例:
+    ```python
+        # F2_TEST_DOUYIN_COOKIE=... pytest f2/apps/douyin/test
+        conf = TestConfigManager.get_test_config("douyin")
+        crawler = DouyinCrawler(conf)
+    ```
+    """
+
+    OVERRIDE_KEYS = ("cookie", "key", "token", "device_id")
+    LOCAL_CONFIG_FILE_NAME = "test.local.yaml"
+
+    @classmethod
+    def _template_path(cls) -> Path:
+        """返回 test.yaml 的绝对路径（不要求文件存在）"""
+        template = Path(f2.TEST_CONFIG_FILE_PATH)
+        if template.is_absolute():
+            return template
+        return Path(get_resource_path(f2.TEST_CONFIG_FILE_PATH))
+
+    @classmethod
+    def _load_app_config(cls, path: Path, app_name: str) -> dict:
+        """读取指定文件中某个应用的配置，文件不存在时返回空字典"""
+        if not path.exists():
+            return {}
+        return dict(ConfigManager(str(path)).get_config(app_name) or {})
 
     @classmethod
     def get_test_config(cls, app_name: str) -> dict:
-        return ConfigManager(f2.TEST_CONFIG_FILE_PATH).get_config(app_name)
+        """
+        获取指定应用的测试配置 (Get the test conf of the given app)
+
+        Args:
+            app_name: str: 应用名称 (app name)
+
+        Returns:
+            dict: 合并了 test.yaml、test.local.yaml 与环境变量后的配置
+        """
+        template_path = cls._template_path()
+        config = cls._load_app_config(template_path, app_name)
+
+        local_path = template_path.with_name(cls.LOCAL_CONFIG_FILE_NAME)
+        config.update(cls._load_app_config(local_path, app_name))
+
+        for key in cls.OVERRIDE_KEYS:
+            value = os.environ.get(f"F2_TEST_{app_name.upper()}_{key.upper()}")
+            if value:
+                config[key] = value
+
+        return config
 
 
 if __name__ == "__main__":
