@@ -63,33 +63,35 @@ keywords = [
     "watermark",
 ]
 
+# 作为库发布，运行时依赖使用版本范围而不是 ==：下限是已验证可用（或已修复已知漏洞）的版本，
+# 上限是离线测试与 CLI 冒烟验证过的最新版本的下一个大版本。
 dependencies = [
-    "babel==2.13.0",
-    "click==8.1.7",
-    "rich==13.9.3",
-    "httpx==0.28.1",
+    "click>=8.3.3,<9",
+    "rich>=13.9.3,<16",
+    "httpx>=0.28.1,<0.29",
     # 0.10.x 依赖 sniffio 却未声明，anyio>=4.10 不再附带 sniffio 时全新安装会 ImportError
-    "httpx-socks==0.11.0",
-    "aiofiles==24.1.0",
-    "aiosqlite==0.20.0",
-    "ruamel.yaml==0.18.10",
-    "jsonpath-ng==1.6.1",
-    "importlib_resources==6.4.5",
-    "m3u8==3.6.0",
-    "browser_cookie3==0.20.1",
-    "pydantic==2.9.*",
+    "httpx-socks>=0.11.0,<0.14",
+    "aiofiles>=24.1.0,<26",
+    "aiosqlite>=0.20.0,<0.23",
+    "ruamel.yaml>=0.18.10,<0.20",
+    "jsonpath-ng>=1.6.1,<2",
+    "m3u8>=3.6.0,<7",
+    "browser_cookie3>=0.20.1,<0.21",
+    "pydantic>=2.9,<3",
     "websockets<13.0",
-    "websockets_proxy==0.1.2",
-    "PyExecJS==1.5.1",
-    "protobuf==5.29.3",
-    "mypy-protobuf==3.6.0",
-    "gmssl==3.2.2",
-    "cryptography==44.0.0",
+    "websockets_proxy>=0.1.2,<0.2",
+    "PyExecJS>=1.5.1,<2",
+    # 生成的 *_pb2.py 与 protobuf 运行时大版本必须一致
+    "protobuf>=5.29.6,<6",
+    "gmssl>=3.2.2,<4",
+    "cryptography>=44.0.1,<51",
     "packaging>=24.0",
 ]
 
 [project.optional-dependencies]
 dev = [
+    "babel>=2.13.0,<3",
+    "mypy-protobuf>=3.6.0,<6",
     "mypy==1.16.0",
     "pre-commit==4.2.0",
     "black==24.10.0",
