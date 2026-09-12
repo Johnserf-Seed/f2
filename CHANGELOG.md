@@ -18,6 +18,8 @@
 - 修复启动时清理旧日志会把当前进程刚创建的空日志文件一并删除、导致 macOS/Linux 下 CLI 日志文件丢失的问题。
 - 新增 `ci` 工作流：`ruff`/`black`/`isort`/`mypy` 检查、Python 3.10–3.13 测试矩阵（`pytest -m "not network"`）、构建与 `wheel` 冒烟测试，并接管 Codecov 上传。
 - 新增 `release` 工作流：发布 GitHub Release 后校验标签与版本号一致，并通过 PyPI Trusted Publishing 发布（草稿不触发，pre-release 只构建不发布）。
+- 删除 `pytest.ini`，pytest 配置统一到 `pyproject.toml`（此前 `pytest.ini` 优先生效，`testpaths` 与 `network` 标记的注册都未起作用）；`isort` 跳过被 git 忽略的目录。
+- 新增根异常 `f2.exceptions.F2Error`，接口/配置/数据库/文件四类异常都继承它；`CLI` 遇到 `F2Error` 时只输出一行错误并以退出码 `1` 结束（堆栈写入 `f2-trace` 日志），各应用 `handler.main` 对未知模式改为抛出异常。
 - 随包发布 `py.typed`，类型检查器可以使用 `f2` 的类型标注（分类器早已声明 `Typing :: Typed`）。
 - 富文本帮助（`-h`）补充 `--insecure` 选项，`-r` 显示为实际的 `--max_retries`；新增测试保证富文本帮助包含命令行定义的全部长选项。
 - 补充本分支新增文案的英文翻译（证书校验、断点续传重试、版本比较）。
