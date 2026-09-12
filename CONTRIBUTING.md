@@ -142,7 +142,7 @@ $ pnpm docs:build
 2. **Test**：在 Python 3.10–3.13 上运行 `pytest -m "not network"`，并上传覆盖率到 Codecov。
 3. **Build**：构建 `sdist`/`wheel`，`twine check` 校验元数据，并在干净环境安装 `wheel` 做冒烟测试。
 
-`security.yml` 另外运行 `gitleaks` 泄露扫描与 `wheel` 内容检查。
+`security.yml` 另外运行 `gitleaks` 泄露扫描、`wheel` 内容检查与 `pip-audit` 依赖漏洞扫描（每周一也会定时扫一次）。
 
 发布由 `.github/workflows/release.yml` 完成：维护者更新 `f2/__init__.py` 的 `__version__` 与 `CHANGELOG.md` 并合并后，在 GitHub 的 Releases 页面以 `vX.Y.Z` 为标签创建 Release，点击 Publish release 才会触发构建并通过 PyPI 的 Trusted Publishing 发布，不需要在仓库保存 API token（工作流会校验标签与版本号一致）。草稿不触发；勾选 pre-release 的版本只构建、不发布，构建产物可在工作流页面下载核对；单独推送标签不会发布。首次使用需在 PyPI 项目的 Publishing 设置中添加 GitHub publisher（仓库 `Johnserf-Seed/f2`、工作流 `release.yml`、环境 `pypi`），并在仓库 Settings → Environments 中创建 `pypi` 环境，可加 Required reviewers 在发布前再做一道人工审批。
 

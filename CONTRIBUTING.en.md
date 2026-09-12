@@ -143,7 +143,7 @@ Every `PR` and push triggers `.github/workflows/ci.yml`:
 2. **Test**: `pytest -m "not network"` on Python 3.10–3.13, with coverage uploaded to Codecov.
 3. **Build**: builds the `sdist`/`wheel`, validates metadata with `twine check`, and installs the `wheel` in a clean environment as a smoke test.
 
-`security.yml` additionally runs the `gitleaks` secret scan and the `wheel` content check.
+`security.yml` additionally runs the `gitleaks` secret scan, the `wheel` content check and a `pip-audit` dependency vulnerability scan (also scheduled weekly on Mondays).
 
 Releases are handled by `.github/workflows/release.yml`: after updating `__version__` in `f2/__init__.py` and `CHANGELOG.md` and merging, maintainers create a GitHub Release tagged `vX.Y.Z`; clicking Publish release triggers the build and publishes through PyPI Trusted Publishing, so no API token is stored in the repository (the workflow verifies that the tag matches the version). Drafts do not trigger anything; releases marked as pre-release are only built, not published, and the artifacts can be downloaded from the workflow run; pushing a tag on its own never publishes. One-time setup: add a GitHub publisher in the PyPI project's Publishing settings (repository `Johnserf-Seed/f2`, workflow `release.yml`, environment `pypi`) and create the `pypi` environment under the repository's Settings → Environments, optionally with required reviewers as a final approval gate.
 
