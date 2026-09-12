@@ -12,6 +12,7 @@ from f2 import helps
 from f2.apps import __apps__ as apps_module
 from f2.cli.cli_console import RichConsoleManager
 from f2.cli.wizard_command import config_wizard_command
+from f2.exceptions import F2Error
 from f2.i18n.translator import TranslationManager, _
 from f2.log.logger import log_setup, logger, trace_logger
 from f2.utils.core.signal import SignalManager
@@ -281,7 +282,13 @@ def set_cli_config(ctx: click.Context, **kwargs):
     """
 
     with RichConsoleManager().progress:
-        asyncio.run(run_app(kwargs))
+        try:
+            asyncio.run(run_app(kwargs))
+        except F2Error as e:
+            # 业务错误：堆栈只进 trace 日志，控制台给出一行结论并返回非零退出码
+            trace_logger.error(traceback.format_exc())
+            logger.error(_("运行中止：{0}").format(e))
+            ctx.exit(1)
 
 
 async def run_app(kwargs):

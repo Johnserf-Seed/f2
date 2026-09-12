@@ -1,10 +1,11 @@
 # path: f2/exceptions/db_exceptions.py
 
+from f2.exceptions.base import F2Error
 from f2.i18n.translator import _
 from f2.log.logger import logger
 
 
-class DatabaseError(Exception):
+class DatabaseError(F2Error):
     """基本数据库异常类，其他数据库异常都会继承这个类"""
 
     def __init__(self, message=None, db=None):

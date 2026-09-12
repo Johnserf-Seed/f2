@@ -32,6 +32,7 @@ from f2.apps.weibo.utils import (
 )
 from f2.cli.cli_console import RichConsoleManager
 from f2.exceptions.api_exceptions import APINotFoundError, APIResponseError
+from f2.exceptions.base import F2Error
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.core.decorators import get_mode_handlers, mode_handler
@@ -410,4 +411,4 @@ async def main(kwargs):
     if mode in handlers:
         await handlers[mode](WeiboHandler(kwargs))
     else:
-        logger.error(_("不存在该模式: {0}").format(mode))
+        raise F2Error(_("不存在该模式: {0}").format(mode))

@@ -9,6 +9,7 @@ from f2.apps.bark.crawler import BarkCrawler
 from f2.apps.bark.filter import BarkNotificationFilter
 from f2.apps.bark.model import BarkCipherModel, BarkModel
 from f2.apps.bark.utils import ClientConfManager, generate_numeric_bytes
+from f2.exceptions.base import F2Error
 from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
 from f2.utils.core.decorators import get_mode_handlers, mode_handler
@@ -197,4 +198,4 @@ async def main(kwargs):
     if mode in handlers:
         await handlers[mode](BarkHandler(kwargs))
     else:
-        logger.error(_("不存在该模式：{0}").format(mode))
+        raise F2Error(_("不存在该模式：{0}").format(mode))

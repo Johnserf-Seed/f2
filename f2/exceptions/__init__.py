@@ -12,6 +12,7 @@ from .api_exceptions import (
     APIUnauthorizedError,
     APIUnavailableError,
 )
+from .base import F2Error
 from .conf_exceptions import ConfError, InvalidEncodingError
 from .db_exceptions import (
     DatabaseConnectionError,
@@ -30,6 +31,7 @@ from .file_exceptions import (
 )
 
 __all__ = [
+    "F2Error",
     "APIError",
     "APIConnectionError",
     "APIUnavailableError",

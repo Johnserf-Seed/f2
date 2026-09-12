@@ -1,10 +1,11 @@
 # path: f2/exceptions/api_exceptions.py
 
+from f2.exceptions.base import F2Error
 from f2.i18n.translator import _
 from f2.log.logger import logger
 
 
-class APIError(Exception):
+class APIError(F2Error):
     """基本API异常类，其他API异常都会继承这个类"""
 
     def __init__(self, message=None, status_code=None):
