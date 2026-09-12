@@ -1,9 +1,8 @@
 # path: f2/utils/file/path.py
 
+from importlib.resources import files
 from pathlib import Path
 from typing import Union
-
-import importlib_resources
 
 
 def get_resource_path(filepath: str) -> Path:
@@ -13,7 +12,7 @@ def get_resource_path(filepath: str) -> Path:
     Args:
         filepath: str: 文件路径 (file path)
     """
-    return importlib_resources.files("f2") / filepath
+    return Path(str(files("f2") / filepath))
 
 
 def ensure_path(path: Union[str, Path]) -> Path:
