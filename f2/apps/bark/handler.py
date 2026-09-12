@@ -11,7 +11,7 @@ from f2.apps.bark.model import BarkCipherModel, BarkModel
 from f2.apps.bark.utils import ClientConfManager, generate_numeric_bytes
 from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
-from f2.utils.core.decorators import mode_function_map, mode_handler
+from f2.utils.core.decorators import get_mode_handlers, mode_handler
 from f2.utils.crypto.aes import AESEncryptionUtils
 
 
@@ -193,7 +193,8 @@ class BarkHandler:
 
 async def main(kwargs):
     mode = kwargs.get("mode")
-    if mode in mode_function_map:
-        await mode_function_map[mode](BarkHandler(kwargs))
+    handlers = get_mode_handlers(__name__)
+    if mode in handlers:
+        await handlers[mode](BarkHandler(kwargs))
     else:
         logger.error(_("不存在该模式：{0}").format(mode))

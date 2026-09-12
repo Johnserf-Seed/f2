@@ -89,7 +89,7 @@ from f2.cli.cli_console import RichConsoleManager
 from f2.exceptions.api_exceptions import APIResponseError
 from f2.i18n.translator import _
 from f2.log.logger import logger
-from f2.utils.core.decorators import mode_function_map, mode_handler
+from f2.utils.core.decorators import get_mode_handlers, mode_handler
 from f2.utils.time.timestamp import get_timestamp, interval_2_timestamp, timestamp_2_str
 
 rich_console = RichConsoleManager().rich_console
@@ -2799,7 +2799,8 @@ class DouyinHandler:
 
 async def main(kwargs):
     mode = kwargs.get("mode")
-    if mode in mode_function_map:
-        await mode_function_map[mode](DouyinHandler(kwargs))
+    handlers = get_mode_handlers(__name__)
+    if mode in handlers:
+        await handlers[mode](DouyinHandler(kwargs))
     else:
         logger.error(_("不存在该模式: {0}").format(mode))
