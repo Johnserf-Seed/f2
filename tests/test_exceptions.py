@@ -10,6 +10,7 @@ from f2.exceptions import (
     DatabaseConstraintError,
     DatabaseError,
     DatabaseTimeoutError,
+    F2Error,
     MultipleRecordsFoundError,
     RecordNotFoundError,
 )
@@ -78,3 +79,22 @@ def test_db_exceptions():
 
     with pytest.raises(MultipleRecordsFoundError):
         db.raise_exception("MultipleRecordsFoundError")
+
+
+def test_all_exception_families_share_the_f2_root():
+    from f2.exceptions import APIError, ConfError, DatabaseError, FileError
+
+    for cls in (APIError, ConfError, DatabaseError, FileError):
+        assert issubclass(cls, F2Error)
+    # 库使用者只捕获 F2Error 即可
+    with pytest.raises(F2Error):
+        raise APIError("boom", status_code=500)
+
+
+def test_handler_main_rejects_unknown_mode():
+    import asyncio
+
+    from f2.apps.douyin import handler
+
+    with pytest.raises(F2Error):
+        asyncio.run(handler.main({"mode": "no-such-mode"}))

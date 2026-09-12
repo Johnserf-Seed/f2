@@ -152,3 +152,23 @@ def test_cli_options(args, expected_output):
         assert expected_output in result.output
     except SystemExit as e:
         pytest.fail(f"SystemExit with exit code {e.code} occurred: {e}")
+
+
+# F2 业务异常：CLI 以退出码 1 结束且不打印堆栈
+def test_f2_error_exits_with_code_1(monkeypatch):
+    from f2.cli import cli_commands
+    from f2.exceptions import APIError
+
+    async def failing_run_app(kwargs):
+        raise APIError("boom", status_code=500)
+
+    monkeypatch.setattr(cli_commands, "run_app", failing_run_app)
+
+    @click.command()
+    @click.pass_context
+    def cli(ctx):
+        ctx.invoke(set_cli_config, app_name="douyin", mode="post")
+
+    result = CliRunner().invoke(cli)
+    assert result.exit_code == 1
+    assert "Traceback" not in result.output
