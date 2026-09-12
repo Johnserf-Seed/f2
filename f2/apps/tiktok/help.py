@@ -61,7 +61,7 @@ def help() -> None:
         ),
         ("-w --keyword", "[dark_cyan]str", _("搜索关键词，用于搜索作品。")),
         ("-e --timeout", "[dark_cyan]int", _("网络请求超时时间。")),
-        ("-r --max-retries", "[dark_cyan]int", _("网络请求超时重试数。")),
+        ("-r --max_retries", "[dark_cyan]int", _("网络请求超时重试数。")),
         ("-x --max-connections", "[dark_cyan]int", _("网络请求并发连接数。")),
         ("-t --max-tasks", "[dark_cyan]int", _("异步的任务数。")),
         (
@@ -80,6 +80,11 @@ def help() -> None:
             _(
                 "配置代理服务器，支持多种代理类型。格式：类型 地址，例如：socks5 127.0.0.1:1080 或 http proxy.example.com:8080。支持的类型：http, https, socks4, socks5"
             ),
+        ),
+        (
+            "--insecure",
+            "[dark_cyan]Flag",
+            _("关闭 TLS 证书校验，仅建议在受信任的调试代理环境中使用"),
         ),
         (
             "--update-config",

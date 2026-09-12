@@ -65,6 +65,11 @@ def help() -> None:
             ),
         ),
         (
+            "--insecure",
+            "[dark_cyan]Flag",
+            _("关闭 TLS 证书校验，仅建议在受信任的调试代理环境中使用"),
+        ),
+        (
             "--update-config",
             "[dark_cyan]Bool",
             _("使用命令行选项更新配置文件。需要先使用'-c'选项提供一个配置文件路径"),
