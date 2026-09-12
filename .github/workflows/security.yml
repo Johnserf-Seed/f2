@@ -2,7 +2,7 @@ name: Security
 
 on:
   push:
-    branches: [main]
+    branches: [main, "v*"]
   pull_request:
   workflow_dispatch:
   schedule:
