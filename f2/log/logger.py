@@ -11,6 +11,7 @@ from typing import Optional, Set, Union
 
 from rich.logging import RichHandler
 
+from f2.log.redact import install_redact_filter
 from f2.utils.core.singleton import Singleton
 
 
@@ -335,3 +336,6 @@ if not logger.handlers:
 trace_logger = logging.getLogger("f2-trace")
 if not trace_logger.handlers:
     trace_logger.addHandler(logging.NullHandler())
+
+# 记录在进入处理器与向上传播前脱敏：cookie/token/密钥/代理密码不会明文写入任何输出
+install_redact_filter((logger, trace_logger))
