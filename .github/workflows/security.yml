@@ -5,6 +5,8 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * 1" # 每周一 03:00 UTC 扫一次依赖漏洞
 
 permissions:
   contents: read
@@ -28,6 +30,26 @@ jobs:
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  pip-audit:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install package and pip-audit
+        run: pip install -e . pip-audit
+
+      # 只审计按当前版本范围解析出的运行时依赖
+      - name: Audit resolved dependencies
+        run: pip-audit --skip-editable
 
   wheel-contents:
     name: Wheel contents
