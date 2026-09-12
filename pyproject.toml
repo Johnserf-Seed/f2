@@ -136,6 +136,7 @@ exclude = [
 [tool.isort]
 profile = "black"
 line_length = 88
+skip_gitignore = true # 与 black/ruff 一致，跳过被 git 忽略的本地目录（如 f2-secrets）
 
 [tool.black]
 line-length = 88
