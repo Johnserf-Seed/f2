@@ -18,6 +18,7 @@
 - 修复启动时清理旧日志会把当前进程刚创建的空日志文件一并删除、导致 macOS/Linux 下 CLI 日志文件丢失的问题。
 - 新增 `ci` 工作流：`ruff`/`black`/`isort`/`mypy` 检查、Python 3.10–3.13 测试矩阵（`pytest -m "not network"`）、构建与 `wheel` 冒烟测试，并接管 Codecov 上传。
 - 新增 `release` 工作流：发布 GitHub Release 后校验标签与版本号一致，并通过 PyPI Trusted Publishing 发布（草稿不触发，pre-release 只构建不发布）。
+- 随包发布 `py.typed`，类型检查器可以使用 `f2` 的类型标注（分类器早已声明 `Typing :: Typed`）。
 - 富文本帮助（`-h`）补充 `--insecure` 选项，`-r` 显示为实际的 `--max_retries`；新增测试保证富文本帮助包含命令行定义的全部长选项。
 - 补充本分支新增文案的英文翻译（证书校验、断点续传重试、版本比较）。
 - 修复同一进程导入多个应用时模式表互相覆盖的问题：`mode_handler` 改为按应用注册，各应用 `handler.main` 通过 `get_mode_handlers(__name__)` 查找自己的模式；全局 `mode_function_map` 移除。
