@@ -41,6 +41,21 @@ $ f2 -d WARNING dy -M post
 如果你想要输出到控制台的日志更加详细，可以使用 `DEBUG` 级别。`log_setup` 在同一进程内只会生效一次，之后再调用会直接返回已配置好的 `logger`。异常堆栈单独记录在 `f2-trace` 记录器中，作为库使用时可通过 `log_setup(log_to_console=False, log_name="f2-trace", lazy_file_creation=True)` 开启它的文件输出。
 :::
 
+## 异常与退出码
+
+`F2` 的全部自定义异常都继承自 `f2.exceptions.F2Error`，下面分为接口（`APIError`）、配置（`ConfError`）、数据库（`DatabaseError`）与文件（`FileError`）四个分支。作为库使用时只需捕获根类：
+
+```python
+from f2.exceptions import F2Error
+
+try:
+    await handler.fetch_user_post(...)
+except F2Error as e:
+    print("F2 运行失败：", e)
+```
+
+`CLI` 遇到 `F2Error` 时只在控制台输出一行错误（完整堆栈写入 `f2-trace` 日志），并以退出码 `1` 结束；参数错误由 `click` 以退出码 `2` 结束；正常完成为 `0`，便于在脚本里判断结果。
+
 ## WSS配置 <Badge type="warning" text="实验性" />
 
 如果你想使用 `douyin` 或 `tiktok` 的直播弹幕转发功能，那么你需要配置 `WSS` 服务的地址和端口。

@@ -41,6 +41,21 @@ When `F2` is imported as a library, logs are only written to the console by defa
 If you want more detailed logs in the console, you can use the `DEBUG` level. `log_setup` only takes effect once per process; later calls simply return the already configured `logger`. Exception tracebacks go to the separate `f2-trace` logger; as a library user you can enable its file output with `log_setup(log_to_console=False, log_name="f2-trace", lazy_file_creation=True)`.
 :::
 
+## Exceptions and Exit Codes
+
+Every exception raised by `F2` inherits from `f2.exceptions.F2Error`, with four families below it: `APIError`, `ConfError`, `DatabaseError` and `FileError`. When using `F2` as a library, catching the root class is enough:
+
+```python
+from f2.exceptions import F2Error
+
+try:
+    await handler.fetch_user_post(...)
+except F2Error as e:
+    print("F2 failed:", e)
+```
+
+When the `CLI` hits an `F2Error` it prints a single error line (the full traceback goes to the `f2-trace` log) and exits with code `1`; usage errors are reported by `click` with exit code `2`; a successful run exits with `0`, so scripts can check the result.
+
 ## WSS Configuration <Badge type="warning" text="Experimental" />
 
 If you want to use the live-streaming bullet chat forwarding feature for `douyin` or `tiktok`, you need to configure the WSS service address and port.
