@@ -18,6 +18,7 @@
 - 修复启动时清理旧日志会把当前进程刚创建的空日志文件一并删除、导致 macOS/Linux 下 CLI 日志文件丢失的问题。
 - 新增 `ci` 工作流：`ruff`/`black`/`isort`/`mypy` 检查、Python 3.10–3.13 测试矩阵（`pytest -m "not network"`）、构建与 `wheel` 冒烟测试，并接管 Codecov 上传。
 - 新增 `release` 工作流：发布 GitHub Release 后校验标签与版本号一致，并通过 PyPI Trusted Publishing 发布（草稿不触发，pre-release 只构建不发布）。
+- 修复同一进程导入多个应用时模式表互相覆盖的问题：`mode_handler` 改为按应用注册，各应用 `handler.main` 通过 `get_mode_handlers(__name__)` 查找自己的模式；全局 `mode_function_map` 移除。
 - 运行时依赖改为版本范围（下限为已验证或已修复漏洞的版本，上限为已验证最新版的下一个大版本），`babel`、`mypy-protobuf` 移至开发依赖，移除 `importlib_resources`（改用标准库）；`click`、`protobuf`、`cryptography` 的下限提升到已修复已知漏洞的版本。
 - `security` 工作流新增 `pip-audit` 依赖漏洞扫描，并每周定时运行。
 - 日志脱敏：`f2` 记录器在输出与向上传播前自动打码 cookie、token、密钥、密码与代理地址中的凭据；各应用调试日志打印配置时经 `redact_config` 处理，`bark` 不再以明文记录 API 密钥与设备密钥，代理探测不再记录带密码的地址。
