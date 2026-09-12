@@ -25,6 +25,10 @@ $ f2 -d WARNING dy -M post
 
 ![set-debug](/douyin/set-debug.png)
 
+::: tip :bulb: Tip
+`F2` redacts its logs automatically: `cookie`, `key`, `token` and password values from the configuration, as well as credentials inside proxy URLs, are masked (only a short prefix and the length remain) before a record reaches the console, log files or your own logging handlers. When using `F2` as a library and printing configuration yourself, run it through `from f2.log.redact import redact_config` first.
+:::
+
 ## Log Output to Console
 
 When `F2` is imported as a library, logs are only written to the console by default: no `logs` directory is created in the current directory and no old log files are cleaned up. To also write log files, call `log_setup` with a `log_path` (defaults to `./logs`; pass `None` to disable file logging). The `CLI` performs this setup automatically on startup.

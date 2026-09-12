@@ -25,6 +25,10 @@ $ f2 -d WARNING dy -M post
 
 ![set-debug](/douyin/set-debug.png)
 
+::: tip :bulb: 提示
+`F2` 的日志会自动脱敏：配置里的 `cookie`、`key`、`token`、密码以及代理地址中的账号密码在写入控制台、文件或向上传播到你自己的日志处理器之前就会被打码（只保留开头几个字符和长度）。作为库使用时，如需在自己的日志里打印配置，可以用 `from f2.log.redact import redact_config` 先脱敏。
+:::
+
 ## 日志输出到控制台
 
 作为库导入 `F2` 时，日志默认只输出到控制台，不会在当前目录创建 `logs` 目录，也不会清理旧日志。如需同时写入日志文件，调用 `log_setup` 并指定 `log_path`（默认 `./logs`，传 `None` 表示不写文件）；`CLI` 启动时会自动完成这一配置。
