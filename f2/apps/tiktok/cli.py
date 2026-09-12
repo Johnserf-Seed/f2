@@ -12,6 +12,7 @@ from f2.apps.tiktok.utils import ClientConfManager
 from f2.cli.cli_commands import set_cli_config
 from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
+from f2.log.redact import redact_config
 from f2.utils.config.conf_manager import ConfigManager, get_f2_setting
 from f2.utils.config.merge import merge_config
 from f2.utils.core.adapters import adapt_validation_call
@@ -467,9 +468,9 @@ def tiktok(
     logger.info(_("模式：{0}").format(kwargs.get("mode")))
     logger.info(_("主配置路径：{0}").format(main_conf_path))
     logger.info(_("自定义配置路径：{0}").format(Path.cwd() / config))
-    logger.debug(_("主配置参数：{0}").format(main_conf))
-    logger.debug(_("自定义配置参数：{0}").format(custom_conf))
-    logger.debug(_("CLI参数：{0}").format(kwargs))
+    logger.debug(_("主配置参数：{0}").format(redact_config(main_conf)))
+    logger.debug(_("自定义配置参数：{0}").format(redact_config(custom_conf)))
+    logger.debug(_("CLI参数：{0}").format(redact_config(kwargs)))
 
     # 尝试从命令行参数或kwargs中获取url和mode
     missing_params = [param for param in ["url", "mode"] if not kwargs.get(param)]

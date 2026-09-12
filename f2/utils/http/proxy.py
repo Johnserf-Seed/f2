@@ -10,6 +10,7 @@ from httpx_socks import SyncProxyTransport
 
 from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
+from f2.log.redact import redact_text
 
 
 class ProxyType(Enum):
@@ -105,7 +106,7 @@ def check_proxy_avail(
 
     try:
         logger.info(_("正在测试代理服务器是否可用🚀"))
-        logger.debug(_("代理URL：{0}").format(proxy_url))
+        logger.debug(_("代理URL：{0}").format(redact_text(proxy_url)))
 
         # 根据代理类型选择合适的传输方式
         if proxy_url.startswith(("socks4://", "socks5://")):
