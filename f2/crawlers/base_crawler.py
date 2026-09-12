@@ -183,7 +183,8 @@ class BaseCrawler:
 
         # 根据代理类型选择传输方式
         if proxy_url.startswith(("socks4://", "socks5://")):
-            # SOCKS代理使用专门的传输类
+            # SOCKS代理使用专门的传输类（显式标注联合类型，兼容 httpx-socks 0.13 起的精确返回类型）
+            transport: Union[httpx.AsyncBaseTransport, httpx.BaseTransport]
             if async_mode:
                 transport = AsyncProxyTransport.from_url(proxy_url, verify=self._verify)
             else:
