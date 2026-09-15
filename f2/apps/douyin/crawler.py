@@ -90,13 +90,30 @@ from f2.apps.douyin.proto.douyin_webcast_pb2 import (
 
 
 class DouyinCrawler(BaseCrawler):
+    @staticmethod
+    def _gateway_headers(cookie: str) -> dict:
+        """Build headers required by Douyin's list endpoint gateway."""
+        cookie_values = {
+            name.strip().casefold(): value
+            for part in (cookie or "").split(";")
+            if "=" in part
+            for name, value in [part.strip().split("=", 1)]
+            if name.strip()
+        }
+        uifid = cookie_values.get("uifid")
+        if not uifid:
+            return {}
+        return {"uifid": uifid, "x-tt-argus": "1"}
+
     def __init__(
         self,
         kwargs: dict = None,
     ):
         # 需要与cli同步
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})
-        self.headers = kwargs.get("headers", {}) | {"Cookie": kwargs["cookie"]}
+        cookie = kwargs["cookie"]
+        self.headers = self._gateway_headers(cookie) | kwargs.get("headers", {})
+        self.headers["Cookie"] = cookie
         if ClientConfManager.encryption() == "ab":
             self.bogus_manager = ABogusManager
         else:
