@@ -4,7 +4,7 @@ import asyncio
 import re
 import traceback
 from pathlib import Path
-from typing import Union
+from typing import Any, List, Optional, Union
 from urllib.parse import urlparse
 
 import httpx
@@ -484,6 +484,38 @@ def rename_user_folder(old_path: Path, new_nickname: str) -> Path:
     new_path = old_path.rename(parent_directory / new_nickname).resolve()
 
     return new_path
+
+
+def sort_mp4_urls(variants: Any) -> List[str]:
+    """
+    从视频变体中取出 MP4 链接，按码率从低到高排列，最后一个清晰度最高。
+
+    变体里还有 application/x-mpegURL 的 m3u8 播放列表，它不是视频文件，
+    直接保存会得到只有几 KB 的文本（#436）；接口返回的顺序也不保证按码率排列。
+
+    Args:
+        variants (Any): 单个变体字典，或变体字典的列表
+
+    Returns:
+        List[str]: MP4 链接列表
+    """
+    if isinstance(variants, dict):
+        variants = [variants]
+    mp4_variants = [
+        variant
+        for variant in variants or []
+        if isinstance(variant, dict)
+        and variant.get("content_type") == "video/mp4"
+        and variant.get("url")
+    ]
+    mp4_variants.sort(key=lambda variant: variant.get("bitrate") or 0)
+    return [variant["url"] for variant in mp4_variants]
+
+
+def best_mp4_url(variants: Any) -> Optional[str]:
+    """返回码率最高的 MP4 链接，没有 MP4 时返回 None"""
+    urls = sort_mp4_urls(variants)
+    return urls[-1] if urls else None
 
 
 def extract_desc(text):

@@ -2,7 +2,7 @@
 
 from typing import Any, List, Optional, Tuple
 
-from f2.apps.twitter.utils import extract_desc
+from f2.apps.twitter.utils import best_mp4_url, extract_desc, sort_mp4_urls
 from f2.utils.json.filter import JSONModel, filter_to_list
 from f2.utils.string.formatter import replaceT
 from f2.utils.time.timestamp import timestamp_2_str
@@ -152,16 +152,14 @@ class TweetDetailFilter(JSONModel):
             media_urls = [media_urls]
         return media_urls
 
-    # 视频链接（清晰度依次提高）
+    # 视频链接：只保留 MP4，按码率从低到高排列，下载时取最后一个（#436）
     @property
     def tweet_video_url(self):
-        all_urls = self._get_attr_value(
-            f"{self._result_path}.legacy.extended_entities.media[*].video_info.variants[*].url"
+        return sort_mp4_urls(
+            self._get_attr_value(
+                f"{self._result_path}.legacy.extended_entities.media[*].video_info.variants[*]"
+            )
         )
-        if all_urls is None:
-            return []
-        # 剔除包含 `.m3u8` 的链接
-        return [url for url in all_urls if ".m3u8" not in url]
 
     # 视频时长
     @property
@@ -566,9 +564,13 @@ class PostTweetFilter(JSONModel):
         return [
             (
                 [
-                    video_url["video_info"]["variants"][-1]["url"]
-                    for video_url in video_url_list
-                    if isinstance(video_url, dict) and "video_info" in video_url
+                    url
+                    for url in (
+                        best_mp4_url(video_url["video_info"].get("variants"))
+                        for video_url in video_url_list
+                        if isinstance(video_url, dict) and "video_info" in video_url
+                    )
+                    if url
                 ]
                 if video_url_list
                 else None
@@ -870,9 +872,13 @@ class BookmarkTweetFilter(JSONModel):
         return [
             (
                 [
-                    video_url["video_info"]["variants"][-1]["url"]
-                    for video_url in video_url_list
-                    if isinstance(video_url, dict) and "video_info" in video_url
+                    url
+                    for url in (
+                        best_mp4_url(video_url["video_info"].get("variants"))
+                        for video_url in video_url_list
+                        if isinstance(video_url, dict) and "video_info" in video_url
+                    )
+                    if url
                 ]
                 if video_url_list
                 else None
