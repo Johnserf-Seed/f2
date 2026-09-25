@@ -27,6 +27,7 @@ outline: [2,3]
 | :-------------- | :------------------ | :---------------- | :--: |
 | 管理客户端配置     | `ClientConfManager` |        -         |  🟢  |
 | 生成随机数字字节       | -       | `generate_numeric_bytes` |  🟢  |
+| 生成随机字母数字字节   | -       | `generate_alphanumeric_bytes` |  🟢  |
 :::
 
 ::: details crawler接口列表
@@ -41,6 +42,7 @@ outline: [2,3]
 ::: tip :bulb: 提示
 - `Bark` 是 `F2` 内置的一个 `iOS` 端通知推送工具，用于将任务执行结果推送到 `iOS` 设备。同时也可以通过 `CLI` 模式来发送通知。[CLI指引](/guide/apps/bark/cli)
 - `Bark` 的 `GCM` 推送加密模式仍在实验阶段，建议先使用 `AES-256-CBC` 加密模式。
+- 不建议使用 `ECB` 加密模式，`F2` 在使用时会输出安全警告。
 :::
 
 ## handler接口列表
@@ -90,6 +92,20 @@ outline: [2,3]
 | numeric_str | bytes | 随机字节 |
 
 <<< @/snippets/bark/generate-bytes.py{7}
+
+### 生成随机字母数字字节 🟢
+
+用于生成由大小写字母与数字组成的随机字节，结果只包含可打印的 `ASCII` 字符。`F2` 用它生成推送加密的 `iv`。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| length | int | 字节长度 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| random_bytes | bytes | 随机字节 |
+
+<<< @/snippets/bark/generate-alphanumeric-bytes.py{7}
 
 ## crawler接口列表
 

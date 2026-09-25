@@ -184,6 +184,7 @@ For the complete list of features, please refer to the [API Documentation](https
   |---|---|---|---|
   |Manage Client Configuration|`ClientConfManager`|-|🟢|
   |Generate Random Numeric Bytes|-|`generate_numeric_bytes`|🟢|
+  |Generate Random Alphanumeric Bytes|-|`generate_alphanumeric_bytes`|🟢|
 </details>
 
 <details>

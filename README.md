@@ -184,6 +184,7 @@
   |---|---|---|---|
   | 管理客户端配置     | `ClientConfManager` |   -    |  🟢  |
   | 生成随机数字字节   | - | `generate_numeric_bytes` |  🟢  |
+  | 生成随机字母数字字节 | - | `generate_alphanumeric_bytes` |  🟢  |
 </details>
 
 <details>

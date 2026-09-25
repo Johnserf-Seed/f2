@@ -27,6 +27,7 @@ outline: [2,3]
 | :----------- | :-------------- | :---------------- | :--: |
 | Manage Client Configuration | `ClientConfManager` |  -  |  🟢  |
 | Generate Random Numeric Bytes | - | `generate_numeric_bytes` |  🟢  |
+| Generate Random Alphanumeric Bytes | - | `generate_alphanumeric_bytes` |  🟢  |
 :::
 
 ::: details Crawler API List
@@ -41,6 +42,7 @@ outline: [2,3]
 ::: tip :bulb: Note
 - `Bark` is an integrated `iOS` notification push tool in `F2`, used to push task execution results to `iOS` devices. It can also send notifications via `CLI` mode. [CLI Guide](/guide/apps/bark/cli)
 - `Bark`'s `GCM` push encryption mode is still in the experimental stage. It is recommended to use `AES-256-CBC` encryption mode for now.
+- `ECB` encryption mode is not recommended; `F2` logs a security warning when it is used.
 :::
 
 ## handler API List
@@ -90,6 +92,20 @@ Used to generate random numeric bytes.
 | numeric_str | bytes | Random bytes |
 
 <<< @/snippets/bark/generate-bytes.py{7}
+
+### Generate Random Alphanumeric Bytes 🟢
+
+Used to generate random bytes made of upper- and lowercase letters and digits. The result contains only printable `ASCII` characters, and `F2` uses it to generate the `iv` for push encryption.
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| length | int | Byte length |
+
+| Return | Type | Description |
+| :--- | :--- | :--- |
+| random_bytes | bytes | Random bytes |
+
+<<< @/snippets/bark/generate-alphanumeric-bytes.py{7}
 
 ## crawler API List
 

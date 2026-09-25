@@ -110,8 +110,9 @@ f2 bark -t "Test Title" -b "Test Body" -M cipher
 > [!IMPORTANT] IMPORTANT ❗❗❗
 > - After enabling push encryption, the default `get` request mode will no longer be applicable and needs to be switched to `cipher` mode.
 > - In the `Push Encryption` settings on the `Bark` homepage, a custom key must be configured as required. The length of the key is determined by the selected encryption algorithm.
-> - To enhance safety and reduce collision probability, `F2` automatically uses random `iv`. In `Bark`, `iv` can be filled in arbitrarily.
+> - To enhance safety and reduce collision probability, `F2` generates a random alphanumeric `iv` for every push (16 characters for `CBC`, 12 for `GCM`) and sends it with the request. In `Bark`, `iv` can be filled in arbitrarily.
 > - Although the push encryption feature is still in the experimental stage, it is recommended to use the `AES-256-CBC` encryption mode first. Because the `GCM` mode of the current `Bark v1.4.3(5)` version is not fully supported yet and will need to be enabled in a future version. [Allows use of GCM Mode#262](https://github.com/Finb/Bark/commit/8a2a7fc2b44073498e4abea54f62497a0e06926e).
+> - `ECB` mode is not recommended: identical plaintext blocks produce identical ciphertext, which can reveal patterns in the push content. `F2` keeps `ECB` only for compatibility with the matching `Bark` option and logs a security warning when it is used.
 > - For more information, see `Bark`'s [Push Encryption](https://bark.day.app/#/encryption).
 
 ### `--title`
