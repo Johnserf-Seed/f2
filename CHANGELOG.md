@@ -6,6 +6,7 @@
 
 ## [Unreleased]
 
+- 翻译源文件 `.po` 纳入版本控制：由现有 `.mo` 重建 `en_US.po` 与 `zh_CN.po`，放在各自 `.mo` 所在目录且不打包进 wheel；`make_pot` 脚本改为只用 `pybabel` 从 `f2` 与 `tests` 抽取文案、更新这两个 `.po` 并编译 `.mo`，位置引用只保留文件名；新增测试检查 `.mo` 与 `.po` 的译文一致。重建时移除了 74 条代码中已不存在的旧译文，现行文案的译文不变；`Babel` 开发依赖下限提高到 2.14.0。
 - 修复 GitHub 安全页的文档依赖告警：文档站 `vitepress` 升级到 1.6.4，并通过 `pnpm.overrides` 使用 `vite` 6.4.3，同时刷新锁文件中的 `esbuild`、`rollup`、`postcss`、`nanoid`、`preact` 与 `mdast-util-to-hast`；这些依赖只用于构建文档，不影响 PyPI 包。
 - 开发依赖升级：`black` 26.5.1（修复缓存文件任意写入漏洞，`pre-commit` 同步到同一版本，并按新版风格重新格式化）、`pytest` 9.1.1（修复临时目录处理漏洞）与 `pytest-asyncio` 1.4.0（旧版不支持 `pytest` 9）。
 - `bark` 推送加密使用 `ECB` 模式时输出安全警告；保留该模式只为兼容 Bark App 的同名选项，推荐使用 `CBC`。
