@@ -1,0 +1,40 @@
+name: Issue labeler
+
+# 根据 issue 表单里选择的「平台」自动添加平台标签。
+# issue 事件只运行默认分支上的工作流，本文件合并进默认分支后才会生效。
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  issues: write
+
+jobs:
+  platform:
+    name: Platform label
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Add platform label
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.issue.body || "";
+            const match = body.match(/###\s*平台[^\n]*\n+\s*([^\n]+)/);
+            if (!match) return;
+            const choice = match[1].trim();
+            const labels = {
+              "抖音": "抖音(douyin)",
+              "TikTok": "TikTok(tiktok)",
+              "微博": "微博(weibo)",
+              "推特": "推特(twitter)",
+              "Bark": "Bark(bark)",
+            };
+            const found = Object.entries(labels).find(([prefix]) => choice.startsWith(prefix));
+            if (!found) return;
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: [found[1]],
+            });
