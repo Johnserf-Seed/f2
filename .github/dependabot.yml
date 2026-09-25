@@ -7,10 +7,12 @@ version: 2
 updates:
   - package-ecosystem: "github-actions"
     directory: "/" # Location of package manifests
+    target-branch: "v0.0.1.8-pw3" # 当前开发分支，切换开发分支时同步更新；仅在默认分支上的本文件生效
     schedule:
       interval: "weekly"
 
   - package-ecosystem: "pip"
     directory: "/" # Location of package manifests
+    target-branch: "v0.0.1.8-pw3" # 当前开发分支，切换开发分支时同步更新
     schedule:
       interval: "weekly"
