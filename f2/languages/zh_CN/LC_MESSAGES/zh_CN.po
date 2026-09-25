@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-25 04:53-0700\n"
+"POT-Creation-Date: 2026-09-25 05:08-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -1520,16 +1520,27 @@ msgid "正在从合集链接获取合集ID"
 msgstr "正在从合集链接获取合集ID"
 
 #: f2/apps/douyin/handler.py
-msgid "正在从合集作品里获取sec_user_id"
-msgstr "正在从合集作品里获取sec_user_id"
-
-#: f2/apps/douyin/handler.py
-msgid "获取合集ID失败，尝试从合集作品链接中解析。"
-msgstr "获取合集ID失败，尝试从合集作品链接中解析。"
+#, python-brace-format
+msgid "获取合集ID失败，尝试从合集作品链接中解析：{0}"
+msgstr "获取合集ID失败，尝试从合集作品链接中解析：{0}"
 
 #: f2/apps/douyin/handler.py
 msgid "正在从合集作品链接获取合集ID"
 msgstr "正在从合集作品链接获取合集ID"
+
+#: f2/apps/douyin/handler.py
+#, python-brace-format
+msgid "作品 {0} 不属于任何合集"
+msgstr "作品 {0} 不属于任何合集"
+
+#: f2/apps/douyin/handler.py
+msgid "正在从合集作品里获取sec_user_id"
+msgstr "正在从合集作品里获取sec_user_id"
+
+#: f2/apps/douyin/handler.py
+#, python-brace-format
+msgid "合集 {0} 中没有作品"
+msgstr "合集 {0} 中没有作品"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
@@ -2276,8 +2287,8 @@ msgid "未在响应的地址中找到aweme_id，当前链接暂时不支持或�
 msgstr "未在响应的地址中找到aweme_id，当前链接暂时不支持。类名：{0}"
 
 #: f2/apps/douyin/utils.py
-msgid "未在响应的地址中找到mix_id，检查链接是否为合集页"
-msgstr "未在响应的地址中找到mix_id，检查链接是否为合集页"
+msgid "未在响应的地址中找到mix_id，检查链接是否为合集或短剧页"
+msgstr "未在响应的地址中找到mix_id，检查链接是否为合集或短剧页"
 
 #: f2/apps/douyin/utils.py
 msgid "该链接返回的是room_id，请使用`fetch_user_live_videos_by_room_id`接口处理APP端分享链接。"
