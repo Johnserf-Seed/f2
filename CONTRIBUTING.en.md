@@ -124,11 +124,13 @@ Ideally, new code should be covered by tests and should not break existing tests
 
 ## Localization 🌍
 > [!IMPORTANT]
-> If you have the `F2` localization tool `Babel` installed, you do not need to install `gettext` separately.
+> If you have the `F2` localization tool `Babel` installed, you do not need to install `gettext` separately. The development dependencies (`pip install -e ".[dev]"`) include `Babel`.
 
-To add translations:
+The translation sources are `f2/languages/<locale>/LC_MESSAGES/<locale>.po`, and the compiled `.mo` files live in the same directory. Commit both the `.po` and the `.mo` files; a test checks that their translations match.
 
-1. Run the following script from the project root to generate `.pot` and `.po` files:
+To add or change translations:
+
+1. Run the following script from the project root. It extracts messages from `f2` and `tests`, updates both `.po` files, and recompiles the `.mo` files:
 
 (Windows)
 ```bash
@@ -136,10 +138,10 @@ $ make_pot.bat
 ```
 (Linux/macOS)
 ```bash
-$ make_pot.sh
+$ bash make_pot.sh
 ```
-2. Translate the `.po` files to the desired language. We recommend using the [Poedit](https://poedit.net/) tool.
-3. Compile the `.po` files into `.mo` files and place them in the respective language folder under `languages`.
+2. Translate the untranslated and fuzzy entries in `en_US.po`. We recommend using the [Poedit](https://poedit.net/) tool. Fuzzy entries carry suggested translations based on similar messages; review them and clear the fuzzy flag, otherwise they are not compiled into the `.mo` file. Entries left empty in `zh_CN.po` fall back to the original text, so they usually need no work.
+3. Run the script again to recompile the `.mo` files, then commit the `.po` and `.mo` files together.
 
 ## Documentation 📚
 Consider whether the changes you make require documentation updates. If so, you should add documentation.

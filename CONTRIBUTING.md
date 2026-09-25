@@ -123,11 +123,13 @@ $ pytest --cov-report term-missing --cov=f2 ./ -vv
 
 ## 本地化 🌍
 > [!IMPORTANT]
-> 如果安装了 `F2` 本地化工具 `Babel`，则不需要额外安装 `gettext`。
+> 如果安装了 `F2` 本地化工具 `Babel`，则不需要额外安装 `gettext`。开发依赖（`pip install -e ".[dev]"`）已包含 `Babel`。
 
-添加翻译的步骤：
+翻译源文件是 `f2/languages/<语言>/LC_MESSAGES/<语言>.po`，编译后的 `.mo` 放在同一目录。`.po` 与 `.mo` 都需要提交，测试会检查两者的译文是否一致。
 
-1. 在项目根目录运行以下脚本以生成 `.pot` 与 `.po` 文件：
+添加或修改翻译的步骤：
+
+1. 在项目根目录运行以下脚本。它会从 `f2` 与 `tests` 抽取文案，更新两个 `.po`，并重新编译 `.mo`：
 
 （适用于 Windows）
 ```bash
@@ -135,10 +137,10 @@ $ make_pot.bat
 ```
 （适用于 Linux/macOS）
 ```bash
-$ make_pot.sh
+$ bash make_pot.sh
 ```
-2. 将 `.po` 文件翻译为所需语言，这里推荐使用 [Poedit](https://poedit.net/) 工具。
-3. 将不同语言的 `.po` 文件编译为 `.mo` 文件并放置在相应语言的 `languages` 文件夹下。
+2. 在 `en_US.po` 中翻译未翻译和标记为模糊（fuzzy）的条目，推荐使用 [Poedit](https://poedit.net/) 工具。模糊条目是根据相似文案自动给出的参考译文，确认或修改后要去掉模糊标记，否则不会编译进 `.mo`。`zh_CN.po` 中留空的条目会直接显示原文，一般无需处理。
+3. 再次运行脚本重新编译 `.mo`，然后把 `.po` 与 `.mo` 一起提交。
 
 ## 文档编写 📚
 考虑一下您所做的更改是否会从文档中受益。如果该更改需要文档支持，答案是肯定的。
