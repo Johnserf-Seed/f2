@@ -15,7 +15,8 @@ class FileError(F2Error):
 
     def __str__(self):
         """返回错误信息和文件路径（如果有的话）"""
-        return f"{super().__str__()} Filepath: {self.filepath}" if self.filepath else ""
+        message = super().__str__()
+        return f"{message} Filepath: {self.filepath}" if self.filepath else message
 
 
 class FileNotFound(FileError):

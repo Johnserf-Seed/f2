@@ -11,6 +11,7 @@ from f2.exceptions import (
     DatabaseError,
     DatabaseTimeoutError,
     F2Error,
+    FileNotFound,
     MultipleRecordsFoundError,
     RecordNotFoundError,
 )
@@ -98,3 +99,12 @@ def test_handler_main_rejects_unknown_mode():
 
     with pytest.raises(F2Error):
         asyncio.run(handler.main({"mode": "no-such-mode"}))
+
+
+def test_file_error_message_is_kept_without_filepath():
+    # 没有文件路径时不能返回空字符串，否则 CLI 的"运行中止"只剩一个冒号（#433）
+    assert str(FileNotFound("config missing")) == "config missing"
+    assert (
+        str(FileNotFound("config missing", filepath="/tmp/app.yaml"))
+        == "config missing Filepath: /tmp/app.yaml"
+    )
