@@ -75,8 +75,8 @@ $ f2 dy --init-config my_dy.yaml
 
 `my_dy.yaml` is the generated custom configuration file; adjust it as needed. For other apps, replace `dy` with their short name, e.g. `f2 wb --init-config my_wb.yaml`.
 
-::: warning Note
-`--init-config` overwrites an existing file with the same name, and each file holds the configuration of a single app. Use a separate file name for each app.
+::: tip Tip
+When the target file already exists, `--init-config` does not overwrite it: if the file has no configuration for the app yet, the default configuration is appended; otherwise only the missing settings are added. Existing values, other apps' settings and comments are kept, and the original file is backed up to a `.bak` file with the same name before any change. The same file can therefore be initialized for several apps in turn, e.g. `f2 dy --init-config my.yaml` followed by `f2 tk --init-config my.yaml`.
 :::
 
 Then check the [Command Line Guide](guide/what-is-f2) of the **app** and configure your custom configuration file according to the documentation, otherwise it will not work properly.
