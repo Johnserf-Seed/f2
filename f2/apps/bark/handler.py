@@ -8,7 +8,7 @@ from typing import Optional
 from f2.apps.bark.crawler import BarkCrawler
 from f2.apps.bark.filter import BarkNotificationFilter
 from f2.apps.bark.model import BarkCipherModel, BarkModel
-from f2.apps.bark.utils import ClientConfManager, generate_numeric_bytes
+from f2.apps.bark.utils import ClientConfManager, generate_alphanumeric_bytes
 from f2.exceptions.base import F2Error
 from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
@@ -107,7 +107,7 @@ class BarkHandler:
 
         aes_key = aes_key.encode("utf-8")
 
-        # 根据加密模式生成不同位数的 IV
+        # 根据加密模式生成不同位数的 IV；IV 以字符串随请求发送，所以只用字母与数字
         if aes_mode == "ECB":
             # ECB 只为兼容 Bark App 的同名选项而保留
             logger.warning(
@@ -117,9 +117,9 @@ class BarkHandler:
             )
             aes_iv = None
         elif aes_mode == "CBC":
-            aes_iv = generate_numeric_bytes(16)
+            aes_iv = generate_alphanumeric_bytes(16)
         elif aes_mode == "GCM":
-            aes_iv = generate_numeric_bytes(12)
+            aes_iv = generate_alphanumeric_bytes(12)
         else:
             raise ValueError(_("无效的加密模式：{0}").format(aes_mode))
 

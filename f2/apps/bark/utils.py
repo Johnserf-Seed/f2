@@ -1,6 +1,7 @@
 # path: f2/apps/bark/utils.py
 
 import secrets
+import string
 
 import f2
 from f2.utils.config.conf_manager import ConfigManager
@@ -73,3 +74,20 @@ def generate_numeric_bytes(length: int) -> bytes:
     """生成由纯数字组成的字节"""
     numeric_str = "".join(secrets.choice("0123456789") for _ in range(length))
     return numeric_str.encode("utf-8")
+
+
+def generate_alphanumeric_bytes(length: int) -> bytes:
+    """
+    生成由大小写字母与数字组成的随机字节
+
+    结果只包含可打印的 ASCII 字符，可以直接作为字符串传给 Bark 的 iv 参数；
+    每个字符约 5.95 比特随机性，纯数字只有约 3.32 比特。
+
+    Args:
+        length (int): 字节长度
+
+    Returns:
+        bytes: 随机字节
+    """
+    alphabet = string.ascii_letters + string.digits
+    return "".join(secrets.choice(alphabet) for _ in range(length)).encode("ascii")
