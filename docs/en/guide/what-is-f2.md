@@ -54,14 +54,14 @@ except F2Error as e:
     print("F2 failed:", e)
 ```
 
-When an API request fails, for example because of an HTTP error status, exhausted retries, a network error or a response that is not JSON, `crawler` and `handler` methods raise the matching `APIError` subclass. Its `status_code` attribute holds the real HTTP status code. They no longer return empty data, so "no posts" and "request failed" can be told apart.
+When an API request fails, for example because of an HTTP error status, exhausted retries, a network error or a response that is not JSON, `crawler` and `handler` methods raise the matching `APIError` subclass. Its `status_code` attribute holds the real HTTP status code. They no longer return empty data, so "no posts" and "request failed" can be told apart. Exceptions no longer log anything when they are created; callers decide whether to log them.
 
 `CLI` exit codes:
 
 | Exit code | Meaning |
 | :--- | :--- |
 | `0` | Everything completed |
-| `1` | Aborted by an `F2Error` (a single error line is printed and the full traceback goes to the `f2-trace` log), or at least one file still failed after all of its links were tried; the failed files are listed at the end |
+| `1` | Aborted by an `F2Error` (a single error line plus the FAQ link is printed and the full traceback goes to the `f2-trace` log; errors raised while preparing the run, such as reading the configuration, are reported the same way), or at least one file still failed after all of its links were tried; the failed files are listed at the end |
 | `2` | Invalid command line usage, reported by `click` |
 
 ## WSS Configuration <Badge type="warning" text="Experimental" />
