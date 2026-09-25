@@ -1,12 +1,17 @@
 {
   "devDependencies": {
-    "@types/node": "^20.8.10",
-    "vitepress": "^1.6.3"
+    "@types/node": "^20.19.43",
+    "vitepress": "^1.6.4"
   },
   "scripts": {
     "docs:dev": "vitepress dev",
     "docs:build": "vitepress build",
     "docs:preview": "vitepress preview"
   },
-  "f2_version": "v0.0.1.7-pw.2"
+  "f2_version": "v0.0.1.7-pw.2",
+  "pnpm": {
+    "overrides": {
+      "vite": "^6.4.3"
+    }
+  }
 }
