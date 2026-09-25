@@ -58,3 +58,15 @@ from f2.apps.douyin.utils import VerifyFpManager
 if __name__ == "__main__":
     print("douyin s_v_web_id:", VerifyFpManager.gen_s_v_web_id())
 # endregion s-v-web-id-sinppest
+
+
+# region gateway-headers-sinppest
+from f2.apps.douyin.utils import GatewayHeaderManager
+
+if __name__ == "__main__":
+    print(
+        "douyin gateway headers:",
+        GatewayHeaderManager.gen_gateway_headers("YOUR_COOKIE_HERE"),
+    )
+
+# endregion gateway-headers-sinppest

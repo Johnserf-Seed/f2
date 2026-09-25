@@ -67,6 +67,7 @@ outline: [2,3]
 | 生成webid           | `TokenManager`         | `gen_webid`                  |  🟢  |
 | 生成verify_fp       | `VerifyFpManager`      | `gen_verify_fp`              |  🟢  |
 | 生成s_v_web_id      | `VerifyFpManager`      | `gen_s_v_web_id`             |  🟢  |
+| 生成网关请求头        | `GatewayHeaderManager` | `gen_gateway_headers`        |  🟢  |
 | 生成直播signature    | `DouyinWebcastSignature` | `get_signature`            |  🟢  |
 | 使用接口地址生成Xb参数 | `XBogusManager`        | `str_2_endpoint`             |  🟢  |
 | 使用接口模型生成Xb参数 | `XBogusManager`        | `model_2_endpoint`           |  🟢  |
@@ -858,6 +859,20 @@ outline: [2,3]
 | s_v_web_id | str | s_v_web_id参数 |
 
 <<< @/snippets/douyin/token-manager.py#s-v-web-id-sinppest{4}
+
+### 生成网关请求头 🟢
+
+类方法，根据 `cookie` 生成抖音接口网关要求的请求头：总是包含 `x-tt-argus`，`cookie` 中有 `UIFID`（未登录时为 `UIFID_TEMP`）时还包含 `uifid`。`DouyinCrawler` 会自动附加这些请求头，已配置的同名请求头优先。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| cookie | str | 请求使用的 cookie，可为空 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| headers | dict | 需要附加的请求头 |
+
+<<< @/snippets/douyin/token-manager.py#gateway-headers-sinppest{4}
 
 ### 生成直播signature 🟢
 

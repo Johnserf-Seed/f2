@@ -93,6 +93,31 @@
 3. 仅在受信任的调试环境下，才用 `--insecure` 临时关闭校验，或在 `conf.yaml` 中设置 `verify: false`。详见 [证书校验](/site-config#证书校验)。
 :::
 
+## douyin 403 Forbidden：Blocked by ArgusSecurityPlugin
+
+下载 `douyin` 的主页作品、单个作品、点赞或收藏时出现 `403 Forbidden`，直接访问接口地址看到 `Blocked by ArgusSecurityPlugin Uifid Not Found`，是因为抖音在 2026 年 8 月给接口网关加了 ArgusSecurityPlugin 校验，请求缺少 `x-tt-argus` 请求头就会被拦截。
+
+新版 `F2` 会自动附加 `x-tt-argus`，并从 `cookie` 中读取 `UIFID`（未登录时为 `UIFID_TEMP`）作为 `uifid` 请求头，不需要手动配置。
+
+::: details :link: 解决办法
+1. 升级到最新版本的 `F2`。
+2. 如果仍然出现 403，从浏览器重新复制完整的 `cookie`，不要只复制其中几个字段。
+3. 网关目前只校验 `x-tt-argus` 是否存在。如果将来开始校验取值，可以在 `conf.yaml` 的 `douyin.headers` 中填写浏览器请求里的值来覆盖默认值：
+
+```yaml
+f2:
+  douyin:
+    headers:
+      User-Agent: ...
+      Referer: https://www.douyin.com/
+      x-tt-argus: 从浏览器开发者工具的请求头中复制
+      uifid: 从浏览器开发者工具的请求头中复制
+```
+:::
+**参考链接：**
+- https://github.com/Johnserf-Seed/f2/issues/443
+- https://github.com/Johnserf-Seed/f2/pull/446
+
 ## tiktok 403 Forbidden
 
 当下载 `tiktok` 视频时出现 `403 Forbidden` 错误时，是由于 `设备id` 被封禁导致的。

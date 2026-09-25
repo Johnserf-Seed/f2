@@ -93,6 +93,31 @@ Non-project issue, requires investigation.
 3. Only in a trusted debugging environment, disable verification temporarily with `--insecure`, or set `verify: false` in `conf.yaml`. See [TLS certificate verification](/en/site-config#tls-certificate-verification).
 :::
 
+## douyin 403 Forbidden: Blocked by ArgusSecurityPlugin
+
+If downloading `douyin` posts, single videos, likes or collections fails with `403 Forbidden`, and opening the API URL directly shows `Blocked by ArgusSecurityPlugin Uifid Not Found`, it is because Douyin added an ArgusSecurityPlugin check to its API gateway in August 2026: requests without the `x-tt-argus` header are blocked.
+
+Recent versions of `F2` attach `x-tt-argus` automatically and send the `UIFID` cookie value (`UIFID_TEMP` when logged out) as the `uifid` header, so no manual configuration is needed.
+
+::: details :link: Solution
+1. Upgrade `F2` to the latest version.
+2. If the 403 persists, copy the complete `cookie` from your browser again instead of only a few fields.
+3. The gateway currently only checks that `x-tt-argus` is present. If it starts validating the value in the future, override the defaults with the values from your browser's requests in the `douyin.headers` section of `conf.yaml`:
+
+```yaml
+f2:
+  douyin:
+    headers:
+      User-Agent: ...
+      Referer: https://www.douyin.com/
+      x-tt-argus: copy from the request headers in your browser's developer tools
+      uifid: copy from the request headers in your browser's developer tools
+```
+:::
+**Reference Links:**
+- https://github.com/Johnserf-Seed/f2/issues/443
+- https://github.com/Johnserf-Seed/f2/pull/446
+
 ## tiktok 403 Forbidden
 
 A `403 Forbidden` error when downloading TikTok videos occurs due to the `device_Id`being banned.

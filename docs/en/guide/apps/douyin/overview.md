@@ -65,6 +65,7 @@ outline: [2,3]
 | Generate webid         | `TokenManager`         | `gen_webid`                  |  🟢  |
 | Generate verify_fp     | `VerifyFpManager`      | `gen_verify_fp`              |  🟢  |
 | Generate s_v_web_id    | `VerifyFpManager`      | `gen_s_v_web_id`             |  🟢  |
+| Generate gateway headers | `GatewayHeaderManager` | `gen_gateway_headers`      |  🟢  |
 | Generate live signature | `DouyinWebcastSignature` | `get_signature`            |  🟢  |
 | Generate Xb params using API URL | `XBogusManager`        | `str_2_endpoint`             |  🟢  |
 | Generate Xb params using API model | `XBogusManager`        | `model_2_endpoint`           |  🟢  |
@@ -812,6 +813,20 @@ Class method to generate `s_v_web_id`, which is required for some requests.This 
 | s_v_web_id | str | The `s_v_web_id` parameter |
 
 <<< @/snippets/douyin/token-manager.py#s-v-web-id-sinppest{4}
+
+### Generate Gateway Headers 🟢
+
+Class method that builds the headers required by Douyin's API gateway from a `cookie`: it always includes `x-tt-argus`, and adds `uifid` when the `cookie` contains `UIFID` (or `UIFID_TEMP` when logged out). `DouyinCrawler` attaches these headers automatically; headers you configure yourself take precedence.
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| cookie | str | The cookie used for requests; may be empty |
+
+| Return | Type | Description |
+| :--- | :--- | :--- |
+| headers | dict | Headers to attach |
+
+<<< @/snippets/douyin/token-manager.py#gateway-headers-sinppest{4}
 
 ### Generate Livestream Signature 🟢
 
