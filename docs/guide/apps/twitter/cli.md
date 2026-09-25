@@ -76,8 +76,8 @@ outline: deep
 :::
 
 ::: tip :bulb: 提示
-- `Twitter` 还需要额外获取 `X-Csrf-Token`，请确保在[**F2配置文件**](/site-config#主配置文件)中配置。
-- 无法采集或风控时请及时更新 `Cookie` 与 `X-Csrf-Token`。
+- `Twitter` 的请求需要 `X-Csrf-Token`。`F2` 会自动使用 `cookie` 中的 `ct0`，复制完整的 `cookie` 即可；只有 `cookie` 里没有 `ct0` 时，才会使用[**F2配置文件**](/site-config#主配置文件)中的 `X-Csrf-Token`。
+- 无法采集或风控时请及时更新 `Cookie`。
 - 不可以出现除 `ascii` 以外的字符，更新配置前请仔细检查。
 :::
 

@@ -160,14 +160,14 @@ Once feedback is received, the issue will be addressed in the next version, or y
 
 ## twitter 403 Forbidden
 
-A `403 Forbidden` error when downloading Twitter posts is caused by an expired `cookie` or `X-Csrf-Token`.
+A `403 Forbidden` error when downloading Twitter posts is usually caused by an expired `cookie`, or by an `X-Csrf-Token` that does not match the `cookie`.
 
 ::: details :link: Solution
-1. Regenerate the `cookie` and `X-Csrf-Token`.
-2. Update the `cookie` and `X-Csrf-Token` in the config files.
+1. Log in and copy the complete `cookie` from your browser again. It should contain `auth_token` and `ct0`.
+2. Replace the `cookie` in the config files.
 3. Retry the download command.
 
-The `X-Csrf-Token` is in the `F2 config file (conf.yaml)`, while the cookie is in the app's main or custom config files.
+`F2` automatically uses the `ct0` value in the `cookie` as the `X-Csrf-Token`, so you usually do not need to configure it separately. The `X-Csrf-Token` in the `F2 config file (conf.yaml)` is only used when the `cookie` has no `ct0`. The cookie is in the app's main or custom config files.
 :::
 
 ## Installing build dependencies error

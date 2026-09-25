@@ -76,8 +76,8 @@ Login `Cookie`. Most APIs require login to access data, so a logged-in `Cookie` 
 :::
 
 ::: tip :bulb: Tip
-- `Twitter` also requires `X-Csrf-Token`. Ensure it is configured in [**F2 Configuration File**](/site-config#main-configuration-file).
-- If unable to fetch data or facing restrictions, update `Cookie` and `X-Csrf-Token` promptly.
+- `Twitter` requests need an `X-Csrf-Token`. `F2` automatically uses the `ct0` value in the `cookie`, so copying the complete `cookie` is enough. The `X-Csrf-Token` in the [**F2 Configuration File**](/site-config#main-configuration-file) is only used when the `cookie` has no `ct0`.
+- If unable to fetch data or facing restrictions, update the `Cookie` promptly.
 - Only ASCII characters are allowed. Double-check before updating configurations.
 :::
 

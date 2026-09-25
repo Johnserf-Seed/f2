@@ -160,14 +160,14 @@ f2:
 
 ## twitter 403 forbidden
 
-当下载 `twitter` 推文时出现 `403 Forbidden` 错误时，是由于 `cookie` 或 `X-Csrf-Token` 失效导致的。
+当下载 `twitter` 推文时出现 `403 Forbidden` 错误时，通常是由于 `cookie` 失效，或者 `X-Csrf-Token` 与 `cookie` 不匹配导致的。
 
 ::: details :link: 解决办法
-1. 重新获取 `cookie` 和 `X-Csrf-Token`。
-2. 将新的 `cookie` 和 `X-Csrf-Token` 替换到配置文件中。
+1. 登录后从浏览器重新复制完整的 `cookie`，其中应包含 `auth_token` 与 `ct0`。
+2. 将新的 `cookie` 替换到配置文件中。
 3. 重新运行下载命令。
 
-需要注意的是，`X-Csrf-Token` 配置在 `F2配置文件(conf.yaml)` 中，`cookie` 配置在 `应用低频/主配置文件(app.yaml)` 或 `应用高频/自定义配置文件` 中。
+`F2` 会自动把 `cookie` 中的 `ct0` 作为 `X-Csrf-Token` 使用，所以一般不需要单独配置。只有 `cookie` 里没有 `ct0` 时，才会使用 `F2配置文件(conf.yaml)` 中的 `X-Csrf-Token`。`cookie` 配置在 `应用低频/主配置文件(app.yaml)` 或 `应用高频/自定义配置文件` 中。
 :::
 
 ## Installing build dependencies error
