@@ -92,7 +92,7 @@ def test_cli_reports_f2_error_exactly_once(monkeypatch, caplog):
 
 def test_group_reports_errors_raised_before_the_run(monkeypatch, caplog):
     # 模拟读取配置阶段抛出的配置异常：不打印堆栈，只报告一次并以退出码 1 结束
-    monkeypatch.setattr(cli_commands, "setup_cli_logging", lambda: None)
+    monkeypatch.setattr(cli_commands, "setup_cli_logging", lambda **kwargs: None)
     group = DynamicGroup(name="f2")
 
     @group.command(name="boom")
