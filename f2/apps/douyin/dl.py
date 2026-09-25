@@ -166,6 +166,12 @@ class DouyinDownloader(BaseDownloader):
                     await task_func()
 
             await self.download_media(aweme_type)
+        else:
+            logger.warning(
+                _("[{0}] 作品的可见状态 private_status={1} 不支持下载，已跳过").format(
+                    self.aweme_id, aweme_status
+                )
+            )
 
         # 保存最后一个 aweme_id
         await self.save_last_aweme_id(self.sec_user_id, self.aweme_id)
