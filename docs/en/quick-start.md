@@ -11,22 +11,24 @@ The English version is being translated.
 
 ![cli-start](/f2-help.png)
 
-To learn about the help information for different applications, you can use the `-h` parameter.
+To see the help for an app, put the app name or its short name after `f2` and add `-h`, for example for Douyin:
 
 ::: code-group
 
 ```sh [Windows]
-$ f2 apps -h
+$ f2 dy -h
 ```
 
 ```sh [Linux]
-$ f2 apps -h
+$ f2 dy -h
 ```
 
 ```sh [MacOS]
-$ f2 apps -h
+$ f2 dy -h
 ```
 :::
+
+Supported apps and short names: `douyin` (`dy`), `tiktok` (`tk`), `weibo` (`wb`), `twitter` (`x`) and `bark` (`bk`). Run `f2 -h` to list all apps.
 
 ## Start with Configuration File
 

@@ -56,24 +56,28 @@ Check out the list of currently supported apps
 $ f2 -h
 ```
 
-After `F2` is installed, the first step is to run the app’s initialization configuration file command:
+After `F2` is installed, first generate the initial configuration for the app you want to use, for example Douyin:
 
 ::: code-group
 
 ```sh [Windows]
-$ f2 apps --init-config my_apps.yaml
+$ f2 dy --init-config my_dy.yaml
 ```
 
 ```sh [Linux]
-$ f2 apps --init-config my_apps.yaml
+$ f2 dy --init-config my_dy.yaml
 ```
 
 ```sh [MacOS]
-$ f2 apps --init-config my_apps.yaml
+$ f2 dy --init-config my_dy.yaml
 ```
 :::
 
-`my_apps.yaml` is the custom configuration file of the app.
+`my_dy.yaml` is the generated custom configuration file; adjust it as needed. For other apps, replace `dy` with their short name, e.g. `f2 wb --init-config my_wb.yaml`.
+
+::: warning Note
+`--init-config` overwrites an existing file with the same name, and each file holds the configuration of a single app. Use a separate file name for each app.
+:::
 
 Then check the [Command Line Guide](guide/what-is-f2) of the **app** and configure your custom configuration file according to the documentation, otherwise it will not work properly.
 

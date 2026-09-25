@@ -11,22 +11,24 @@
 
 ![cli-start](/f2-help.png)
 
-要想知道不同应用的帮助信息，可以使用 `-h` 参数。
+要查看某个应用的帮助信息，在 `f2` 后面写上应用名或简称，再加 `-h` 参数，例如抖音：
 
 ::: code-group
 
 ```sh [Windows]
-$ f2 apps -h
+$ f2 dy -h
 ```
 
 ```sh [Linux]
-$ f2 apps -h
+$ f2 dy -h
 ```
 
 ```sh [MacOS]
-$ f2 apps -h
+$ f2 dy -h
 ```
 :::
+
+支持的应用与简称：`douyin`（`dy`）、`tiktok`（`tk`）、`weibo`（`wb`）、`twitter`（`x`）、`bark`（`bk`）。执行 `f2 -h` 可以列出全部应用。
 
 ## 启动配置文件
 

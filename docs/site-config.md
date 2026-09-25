@@ -56,24 +56,28 @@
 $ f2 -h
 ```
 
-安装完成后，首先执行以下命令生成各应用的初始配置：
+安装完成后，先为要使用的应用生成初始配置，例如抖音：
 
 ::: code-group
 
 ```sh [Windows]
-$ f2 apps --init-config my_apps.yaml
+$ f2 dy --init-config my_dy.yaml
 ```
 
 ```sh [Linux]
-$ f2 apps --init-config my_apps.yaml
+$ f2 dy --init-config my_dy.yaml
 ```
 
 ```sh [MacOS]
-$ f2 apps --init-config my_apps.yaml
+$ f2 dy --init-config my_dy.yaml
 ```
 :::
 
-`my_apps.yaml` 即生成的自定义配置文件，可按需调整。
+`my_dy.yaml` 即生成的自定义配置文件，可按需调整。其它应用把 `dy` 换成对应的简称即可，例如 `f2 wb --init-config my_wb.yaml`。
+
+::: warning 注意
+`--init-config` 会覆盖同名文件，并且一个文件只写入一个应用的配置。请为每个应用使用单独的文件名。
+:::
 
 随后参阅对应**应用**的 [命令行指引](guide/what-is-f2)，根据文档说明完善配置，确保功能正常。
 
