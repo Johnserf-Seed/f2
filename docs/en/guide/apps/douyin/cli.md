@@ -77,7 +77,7 @@ Download mode:
 ::: info :information_source: Tips
 - `collection` mode requires login.
 - `music` mode requires the `--lyric` parameter to specify whether to save original lyrics.
-- `mix` mode requires the `--url` parameter, which can be a collection link or a link to a work in the collection.
+- `mix` mode takes a collection link, a short drama link, or a link to a work in the collection or short drama as `--url`. Douyin treats short dramas as collections, so they are downloaded the same way.
 - `live` mode does not currently support special live broadcast rooms, such as `360°` live broadcast.
 :::
 

@@ -985,7 +985,7 @@ Class method used to extract a list of post IDs.
 
 ### Extract Single Collection ID 🟢
 
-Class method used to extract a collection ID from a collection URL.
+Class method used to extract a collection ID from a collection or short drama URL. It supports collection pages (`collection/`), collection share pages (`share/mix/detail/`), short drama share pages (`share/playlet/detail/`), and short links that redirect to them. When the URL already contains the collection ID, it is returned without sending a request.
 
 | Parameter | Type | Description |
 | :-------- | :--- | :---------- |
@@ -999,7 +999,7 @@ Class method used to extract a collection ID from a collection URL.
 
 ### Extract List of Collection IDs 🟢
 
-Class method used to extract collection IDs from a list of collection URLs.
+Class method used to extract collection IDs from a list of collection or short drama URLs. It supports the same URL formats as above.
 
 | Parameter | Type  | Description  |
 | :-------- | :---- | :----------- |
