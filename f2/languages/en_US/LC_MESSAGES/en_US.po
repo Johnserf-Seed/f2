@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-25 04:51-0700\n"
+"POT-Creation-Date: 2026-09-25 04:53-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -891,7 +891,7 @@ msgid "[HandleWssMessage] [⚠️ 处理消息出错] | [错误：{0}]"
 msgstr "[HandleWssMessage] [⚠️ Error processing message] | [Error: {0}]"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
-#, fuzzy, python-brace-format
+#, fuzzy
 msgid "[SendAck] [❌ 无法发送 ack 包] | [WebSocket 未连接]"
 msgstr "[SendAck] [💓 Send ack packet] | [Log ID: {0}]"
 
@@ -4667,10 +4667,12 @@ msgstr "Invalid timestamp string"
 
 #~ msgid ""
 #~ "_get_first_item_from_list is deprecated and "
-#~ "will be removed in version 0.0.1.7. \n"
+#~ "will be removed in version 0.0.1.7."
+#~ " \n"
 #~ msgstr ""
 #~ "_get_first_item_from_list is deprecated and "
-#~ "will be removed in version 0.0.1.7. \n"
+#~ "will be removed in version 0.0.1.7."
+#~ " \n"
 
 #~ msgid "f2 请求 Content-Length 时发生未知错误: {0}, 错误详情: {1}"
 #~ msgstr ""
