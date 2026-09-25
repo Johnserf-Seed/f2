@@ -1,7 +1,7 @@
 name: 文档问题 / Documentation
 description: 文档错误、过时或看不懂 / Docs are wrong, outdated or unclear
 title: "[DOCS] "
-labels: ["文献资料(documentation)"]
+labels: ["文档改进(docs)"]
 body:
   - type: input
     id: page

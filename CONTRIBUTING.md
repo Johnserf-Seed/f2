@@ -35,7 +35,7 @@
 
 | 类别 | 标签 |
 | :--- | :--- |
-| 类型 | `故障(bug)`、`需求建议(enhancement)`、`提问(question)`、`文献资料(documentation)` |
+| 类型 | `故障(bug)`、`需求建议(enhancement)`、`提问(question)`、`文档改进(docs)` |
 | 平台 | `抖音(douyin)`、`TikTok(tiktok)`、`微博(weibo)`、`推特(twitter)`、`Bark(bark)`，按模板中选择的平台自动添加 |
 | 区域 | `直播(live)`、`下载(download)`、`配置(config)` |
 | 状态 | `已确认(confirmed)`、`等待反馈(feedback)`、`接口变化(api-change)`、`开发分支已修复(fixed-in-dev)`、`重复(duplicate)`、`无效(invalid)`、`不修复(wontfix)` |

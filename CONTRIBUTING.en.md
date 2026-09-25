@@ -35,7 +35,7 @@ Maintainers organize issues with these kinds of labels:
 
 | Kind | Labels |
 | :--- | :--- |
-| Type | `故障(bug)`, `需求建议(enhancement)`, `提问(question)`, `文献资料(documentation)` |
+| Type | `故障(bug)`, `需求建议(enhancement)`, `提问(question)`, `文档改进(docs)` |
 | Platform | `抖音(douyin)`, `TikTok(tiktok)`, `微博(weibo)`, `推特(twitter)`, `Bark(bark)`, added automatically from the platform chosen in the template |
 | Area | `直播(live)`, `下载(download)`, `配置(config)` |
 | Status | `已确认(confirmed)`, `等待反馈(feedback)`, `接口变化(api-change)`, `开发分支已修复(fixed-in-dev)`, `重复(duplicate)`, `无效(invalid)`, `不修复(wontfix)` |
