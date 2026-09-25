@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-25 12:46-0700\n"
+"POT-Creation-Date: 2026-09-25 13:45-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -152,6 +152,10 @@ msgstr "f2 -d DEBUG"
 #: f2/helps.py
 msgid "⚠  记录app的调试日志到[blue]/logs[/]下查看，如遇BUG提交Issue时请附带该文件并[red]删除个人敏感信息[/red] ⚠"
 msgstr "⚠  记录app的调试日志到[blue]/logs[/]下查看，如遇BUG提交Issue时请附带该文件并[red]删除个人敏感信息[/red] ⚠"
+
+#: f2/cli/cli_commands.py f2/helps.py
+msgid "不写入日志文件，只在控制台输出，也不会创建 logs 目录"
+msgstr "不写入日志文件，只在控制台输出，也不会创建 logs 目录"
 
 #: f2/helps.py
 msgid "Issues❓"

@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-25 12:46-0700\n"
+"POT-Creation-Date: 2026-09-25 13:45-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -159,6 +159,12 @@ msgstr ""
 "⚠ Record the debugging log of the app and check it under [blue]/logs[/]. "
 "If you encounter a bug and submit an issue, please attach the file and "
 "[red]delete personal sensitive information[/red] ⚠"
+
+#: f2/cli/cli_commands.py f2/helps.py
+msgid "不写入日志文件，只在控制台输出，也不会创建 logs 目录"
+msgstr ""
+"Do not write log files; log to the console only and do not create the "
+"logs directory"
 
 #: f2/helps.py
 msgid "Issues❓"
