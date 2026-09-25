@@ -1,0 +1,29 @@
+name: PR target branch
+
+# 外部 PR 不能以 main 为目标，main 只接收维护者从本仓库开发分支（v*）发起的发布合并。
+# 注意：针对 main 的 PR 会使用 main 上的工作流定义，本检查在合并进 main 后才会生效。
+on:
+  pull_request:
+    types: [opened, reopened, edited, synchronize]
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check-target:
+    name: Target branch
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Only release merges may target main
+        env:
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if [ "$HEAD_REPO" = "$GITHUB_REPOSITORY" ] && [[ "$HEAD_REF" == v* ]]; then
+            echo "发布合并：$HEAD_REF -> main"
+            exit 0
+          fi
+          echo "::error title=目标分支错误 / Wrong base branch::请不要向 main 提交 PR。请在 PR 页面点击 Edit，把目标分支改为当前开发分支（见 README 顶部的 Dev Branch 徽章）。Please retarget this PR to the current development branch instead of main, see CONTRIBUTING.md."
+          exit 1
