@@ -19,8 +19,7 @@ from f2.utils.string import generator
 REPO_ROOT = Path(f2.__file__).resolve().parents[1]
 
 # 在干净的子进程中导入各应用模块：禁止任何 HTTP 请求，且不能创建 logs 目录或文件日志处理器
-IMPORT_PROBE = textwrap.dedent(
-    """
+IMPORT_PROBE = textwrap.dedent("""
     import importlib
     import logging
     import os
@@ -46,8 +45,7 @@ IMPORT_PROBE = textwrap.dedent(
             assert not isinstance(
                 handler, (TimedRotatingFileHandler, TrueLazyFileHandler)
             ), f"导入 f2 不应给 {name} 挂载文件日志处理器"
-    """
-)
+    """)
 
 
 def _close_handlers(logger):

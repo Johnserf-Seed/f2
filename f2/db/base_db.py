@@ -114,10 +114,8 @@ class BaseDB(MigrationMixin):
         """
         在数据库中创建表
         """
-        await self.execute(
-            """CREATE TABLE IF NOT EXISTS _metadata
-                    (name TEXT PRIMARY KEY, value TEXT)"""
-        )
+        await self.execute("""CREATE TABLE IF NOT EXISTS _metadata
+                    (name TEXT PRIMARY KEY, value TEXT)""")
         await self.commit()
 
     async def get_version(self) -> int:

@@ -863,7 +863,9 @@ class TiktokWebSocketCrawler(WebSocketCrawler):
         )
 
         cls._log(
-            _("[WebcastOecLiveShoppingMessage] [🛍️直播间购物消息] {0}").format(data_json)
+            _("[WebcastOecLiveShoppingMessage] [🛍️直播间购物消息] {0}").format(
+                data_json
+            )
         )
         return data_json
 

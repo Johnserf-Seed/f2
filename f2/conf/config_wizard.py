@@ -278,7 +278,9 @@ class ConfigWizard:
         """配置单个应用"""
         app_info = self.app_info[app_name]
         self.console.print()
-        self.console.print(f"⚙️  [bold cyan]配置 {app_info['display_name']}[/bold cyan]")
+        self.console.print(
+            f"⚙️  [bold cyan]配置 {app_info['display_name']}[/bold cyan]"
+        )
         self.console.print()
 
         config = {}
