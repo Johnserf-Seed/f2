@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-25 05:08-0700\n"
+"POT-Creation-Date: 2026-09-25 12:46-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -1155,6 +1155,18 @@ msgstr "Current task processing completed"
 #, python-brace-format
 msgid "[{0}] 该作品已被屏蔽，无法下载"
 msgstr "[{0}] The work has been blocked and cannot be downloaded"
+
+#: f2/apps/douyin/dl.py
+#, python-brace-format
+msgid "[{0}] 作品的可见状态 private_status={1} 不支持下载，已跳过"
+msgstr ""
+"[{0}] Posts with visibility status private_status={1} cannot be "
+"downloaded, skipped"
+
+#: f2/apps/douyin/dl.py
+#, python-brace-format
+msgid "[{0}] 作品类型 {1} 没有可下载的视频或图片"
+msgstr "[{0}] Post type {1} has no downloadable video or images"
 
 #: f2/apps/douyin/dl.py f2/apps/tiktok/dl.py
 msgid "原声"
