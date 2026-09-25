@@ -105,16 +105,11 @@ class WebSocketCrawler:
             )
         except ConnectionRefusedError as exc:
             trace_logger.error(traceback.format_exc())
-            logger.error(
+            raise APIConnectionError(
                 _("[ConnectWebSocket] [🚫 WebSocket 连接被拒绝] | [错误：{0}]").format(
                     exc
                 )
-            )
-            raise APIConnectionError(
-                _("[ConnectWebSocket] [❌ WebSocket 连接失败] | [服务器：{0}]").format(
-                    exc
-                )
-            )
+            ) from exc
 
         except websockets.InvalidStatusCode as exc:
             trace_logger.error(traceback.format_exc())

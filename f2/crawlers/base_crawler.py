@@ -549,8 +549,9 @@ class BaseCrawler:
         response = getattr(http_error, "response", None)
         status_code = getattr(response, "status_code", None)
 
+        # 异常信息由 CLI 统一输出一次，这里只在调试日志中记录请求地址与尝试次数
         if response is None or status_code is None:
-            logger.error(
+            logger.debug(
                 _("HTTP状态错误：{0}, URL：{1}, 尝试次数：{2}").format(
                     http_error, url, attempt
                 )
@@ -585,7 +586,7 @@ class BaseCrawler:
             return
 
         # 未知状态码的处理
-        logger.error(
+        logger.debug(
             _("未知HTTP状态码：{0}, URL：{1}, 尝试次数：{2}").format(
                 status_code, url, attempt
             )
