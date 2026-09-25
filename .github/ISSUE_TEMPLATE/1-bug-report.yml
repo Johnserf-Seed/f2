@@ -1,0 +1,98 @@
+name: 故障反馈 / Bug report
+description: F2 运行出错或结果不符合预期 / F2 crashes or behaves unexpectedly
+title: "[BUG] "
+labels: ["故障(bug)"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈！提交前请先查看 [常见问题](https://f2.wiki/faq) 和 [已关闭的 issue](https://github.com/Johnserf-Seed/f2/issues?q=is%3Aissue+is%3Aclosed)。很多问题在开发分支上已经修复，可以按 [测试最新功能](https://f2.wiki/install#测试最新功能) 安装开发分支后再试。
+        之前正常、突然出现 403 或响应为空，多半是平台接口变化，请改用「平台接口失效」模板。
+  - type: dropdown
+    id: platform
+    attributes:
+      label: 平台 (Platform)
+      options:
+        - 抖音 (douyin)
+        - TikTok (tiktok)
+        - 微博 (weibo)
+        - 推特 / X (twitter)
+        - Bark
+        - 通用 / 其它 (general)
+    validations:
+      required: true
+  - type: input
+    id: mode
+    attributes:
+      label: 下载模式 (Mode)
+      description: 例如 one、post、like、live / e.g. one, post, like, live
+      placeholder: post
+  - type: input
+    id: version
+    attributes:
+      label: F2 版本 (Version)
+      description: 运行 `f2 --version` 查看 / Run `f2 --version`
+      placeholder: 0.0.1.7
+    validations:
+      required: true
+  - type: dropdown
+    id: source
+    attributes:
+      label: 安装来源 (Installed from)
+      options:
+        - PyPI 正式版 (pip install f2)
+        - 开发分支 (development branch)
+        - 本地源码 (local source)
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: 运行环境 (Environment)
+      description: 操作系统与 Python 版本 / OS and Python version
+      placeholder: Windows 11 / Python 3.12
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: 问题描述 (Description)
+      description: 发生了什么，你期望发生什么 / What happened and what you expected
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: 执行的命令 (Command)
+      description: 完整的命令，请删除其中的 cookie / The full command, with cookies removed
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: config
+    attributes:
+      label: 配置文件 (Config)
+      description: 相关的配置片段，请删除 cookie、token 等敏感信息 / Relevant config, with cookies and tokens removed
+      render: yaml
+  - type: textarea
+    id: logs
+    attributes:
+      label: 日志 (Logs)
+      description: 加上 `-d DEBUG` 重新运行后的完整输出，或 logs 目录下的日志 / Output of the command rerun with `-d DEBUG`
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: 截图与补充 (Screenshots and more)
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 提交前确认 (Checklist)
+      options:
+        - label: 我已查看常见问题与已关闭的 issue，没有找到相同的问题 / I searched the FAQ and closed issues
+          required: true
+        - label: 我已在最新的开发分支上复现该问题 / I reproduced it on the latest development branch
+        - label: 我已删除 cookie、token 等敏感信息 / I removed cookies, tokens and other secrets
+          required: true

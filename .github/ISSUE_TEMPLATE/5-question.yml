@@ -1,0 +1,47 @@
+name: 使用提问 / Question
+description: 使用方法相关的问题 / Questions about using F2
+title: "[QUESTION] "
+labels: ["提问(question)"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        一般的使用问题更适合发到讨论区的 [Q&A](https://github.com/Johnserf-Seed/f2/discussions/categories/q-a) 分类，答案可以被采纳，也方便后来的人搜索。确定是 F2 出错请改用「故障反馈」模板。
+  - type: dropdown
+    id: platform
+    attributes:
+      label: 平台 (Platform)
+      options:
+        - 抖音 (douyin)
+        - TikTok (tiktok)
+        - 微博 (weibo)
+        - 推特 / X (twitter)
+        - Bark
+        - 通用 / 其它 (general)
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: 问题 (Question)
+    validations:
+      required: true
+  - type: textarea
+    id: tried
+    attributes:
+      label: 已经尝试过的办法 (What you tried)
+  - type: textarea
+    id: command
+    attributes:
+      label: 相关的命令或代码 (Command or code)
+      description: 请删除其中的 cookie / With cookies removed
+      render: shell
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 提交前确认 (Checklist)
+      options:
+        - label: 我已查阅文档与常见问题 / I read the docs and the FAQ
+          required: true
+        - label: 我已删除 cookie、token 等敏感信息 / I removed cookies, tokens and other secrets
+          required: true

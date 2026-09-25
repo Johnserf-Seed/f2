@@ -1,0 +1,48 @@
+name: 需求建议 / Feature request
+description: 新功能或改进建议 / Suggest a new feature or improvement
+title: "[FEATURE] "
+labels: ["需求建议(enhancement)"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        还不成熟的想法可以先发到讨论区的 [Ideas](https://github.com/Johnserf-Seed/f2/discussions/categories/ideas) 分类。
+  - type: dropdown
+    id: platform
+    attributes:
+      label: 平台 (Platform)
+      options:
+        - 抖音 (douyin)
+        - TikTok (tiktok)
+        - 微博 (weibo)
+        - 推特 / X (twitter)
+        - Bark
+        - 通用 / 其它 (general)
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: 想解决的问题 (Problem)
+      description: 现在遇到了什么不便 / What is inconvenient today
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 期望的做法 (Proposal)
+      description: 希望的命令行用法、配置项或接口示例 / The CLI usage, config option or API you would like
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 替代方案 (Alternatives)
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 提交前确认 (Checklist)
+      options:
+        - label: 我已搜索过类似的建议 / I searched for similar requests
+          required: true
+        - label: 我愿意提交 PR，目标分支为当前开发分支（见 CONTRIBUTING.md） / I am willing to open a PR against the current development branch

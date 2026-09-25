@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 常见问题 / FAQ
+    url: https://f2.wiki/faq
+    about: 403、响应为空、cookie 与安装等问题的常见解决办法 / Common fixes for 403, empty responses, cookies and installation
+  - name: 使用讨论 / Q&A
+    url: https://github.com/Johnserf-Seed/f2/discussions/categories/q-a
+    about: 一般的使用问题在这里提问，答案可以被采纳和搜索 / Ask usage questions here
+  - name: 功能想法 / Ideas
+    url: https://github.com/Johnserf-Seed/f2/discussions/categories/ideas
+    about: 还不成熟的想法先在这里讨论 / Discuss early ideas here
+  - name: 安全漏洞 / Security vulnerability
+    url: https://github.com/Johnserf-Seed/f2/security/advisories/new
+    about: 请私下报告安全问题，不要公开提交 issue / Report security issues privately

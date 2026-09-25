@@ -1,0 +1,91 @@
+name: 平台接口失效 / Platform API change
+description: 之前正常，突然出现 403、响应为空或字段缺失 / Worked before, now 403, empty responses or missing fields
+title: "[接口失效] "
+labels: ["接口变化(api-change)"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        平台修改接口或风控后通常会有很多人同时反馈。请先搜索是否已有相同的 issue，有的话直接在原 issue 里补充信息，不需要重复提交。
+  - type: dropdown
+    id: platform
+    attributes:
+      label: 平台 (Platform)
+      options:
+        - 抖音 (douyin)
+        - TikTok (tiktok)
+        - 微博 (weibo)
+        - 推特 / X (twitter)
+        - Bark
+        - 通用 / 其它 (general)
+    validations:
+      required: true
+  - type: input
+    id: affected
+    attributes:
+      label: 受影响的模式或接口 (Affected mode or endpoint)
+      placeholder: like 模式 / aweme/v1/web/aweme/favorite/
+    validations:
+      required: true
+  - type: dropdown
+    id: symptom
+    attributes:
+      label: 现象 (Symptom)
+      multiple: true
+      options:
+        - 403 Forbidden
+        - 响应为空，状态码 200 (empty response)
+        - 返回的数据缺少字段 (missing fields)
+        - 链接无法解析 (link cannot be parsed)
+        - 其它 (other)
+    validations:
+      required: true
+  - type: input
+    id: since
+    attributes:
+      label: 开始出现的日期 (Since)
+      placeholder: 2026-08-17
+  - type: dropdown
+    id: cookie
+    attributes:
+      label: 使用的 cookie (Cookie)
+      options:
+        - 登录后的 cookie (logged in)
+        - 游客 cookie (guest)
+        - 未设置 (not set)
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: F2 版本与安装来源 (Version and source)
+      placeholder: 0.0.1.7 PyPI / 开发分支
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: 报错与日志 (Errors and logs)
+      description: 加上 `-d DEBUG` 重新运行后的输出 / Output of the command rerun with `-d DEBUG`
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: tried
+    attributes:
+      label: 已经尝试过的办法 (What you tried)
+      placeholder: 更新 cookie、更换网络、安装开发分支……
+  - type: textarea
+    id: capture
+    attributes:
+      label: 与浏览器请求的对比（可选） (Comparison with the browser request)
+      description: 浏览器里同一请求多出的请求头或参数，请删除 cookie 等敏感信息 / Extra headers or parameters the browser sends, with secrets removed
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 提交前确认 (Checklist)
+      options:
+        - label: 我已搜索过现有的 issue，没有相同的反馈 / I searched existing issues
+          required: true
+        - label: 我已删除 cookie、token 等敏感信息 / I removed cookies, tokens and other secrets
+          required: true

@@ -1,0 +1,22 @@
+name: 文档问题 / Documentation
+description: 文档错误、过时或看不懂 / Docs are wrong, outdated or unclear
+title: "[DOCS] "
+labels: ["文献资料(documentation)"]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: 页面链接 (Page URL)
+      placeholder: https://f2.wiki/site-config
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: 问题 (What is wrong)
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: 建议的修改 (Suggested change)
