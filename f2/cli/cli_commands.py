@@ -2,6 +2,7 @@
 
 import asyncio
 import importlib
+import sys
 import traceback
 import typing
 
@@ -119,14 +120,51 @@ REVERSE_APP_MAPPINGS = {v: k for k, v in APP_MAPPINGS.items()}
 MAX_FAILED_DOWNLOADS_SHOWN = 10
 
 
-def setup_cli_logging() -> None:
+NO_LOG_FILE_OPTION = "--no-log-file"
+# 根命令中带值的选项，预扫描参数时要跳过它们的值
+_ROOT_OPTIONS_WITH_VALUE = {"-d", "--debug", "-l", "--languages"}
+
+
+def file_logging_disabled(args: typing.Sequence[str]) -> bool:
     """
-    配置 CLI 日志：控制台输出并写入 ./logs 目录（作为库导入 f2 时不会执行）
-    (Configure CLI logging: console output plus log files under ./logs)
+    检查根命令参数里是否带有 --no-log-file，只看子命令之前的部分
+    (Check whether the root command arguments contain --no-log-file)
+
+    日志要在 click 解析参数之前初始化（-d/--debug 等选项的回调需要输出日志），
+    所以不能等 click 解析完再决定是否写文件，只能先预扫描一遍参数（#293）。
+    """
+    skip_value = False
+    for arg in args:
+        if skip_value:
+            skip_value = False
+            continue
+        if arg == NO_LOG_FILE_OPTION:
+            return True
+        if arg in _ROOT_OPTIONS_WITH_VALUE:
+            skip_value = True
+        elif not arg.startswith("-"):
+            # 遇到子命令名，后面的参数属于应用命令
+            return False
+    return False
+
+
+def setup_cli_logging(log_to_file: bool = True) -> None:
+    """
+    配置 CLI 日志：控制台输出，并按需写入 ./logs 目录（作为库导入 f2 时不会执行）
+    (Configure CLI logging: console output plus optional log files under ./logs)
+
+    Args:
+        log_to_file (bool): 是否写入日志文件；为 False 时不创建 logs 目录，也不清理旧日志
     """
 
-    log_setup(log_to_console=True, log_name="f2")
-    log_setup(log_to_console=False, log_name="f2-trace", lazy_file_creation=True)
+    log_path = "./logs" if log_to_file else None
+    log_setup(log_to_console=True, log_name="f2", log_path=log_path)
+    log_setup(
+        log_to_console=False,
+        log_name="f2-trace",
+        lazy_file_creation=True,
+        log_path=log_path,
+    )
 
 
 def report_f2_error(error: F2Error) -> None:
@@ -191,8 +229,11 @@ class DynamicGroup(click.Group):
         return sorted(builtin_commands + app_commands)
 
     def main(self, *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
-        # 在解析参数前配置日志，保证 -d/--debug 等选项回调中的日志可正常输出
-        setup_cli_logging()
+        # 在解析参数前配置日志，保证 -d/--debug 等选项回调中的日志可正常输出；
+        # 带有 --no-log-file 时只输出到控制台
+        argv = kwargs.get("args", args[0] if args else None)
+        argv = sys.argv[1:] if argv is None else list(argv)
+        setup_cli_logging(log_to_file=not file_logging_disabled(argv))
         return super().main(*args, **kwargs)
 
     def invoke(self, ctx: click.Context) -> typing.Any:
@@ -263,6 +304,12 @@ class DynamicGroup(click.Group):
     expose_value=False,
     help=_("显示语言。默认为 'zh_CN'，可选：'zh_CN'、'en_US'，不支持配置文件修改"),
     callback=handler_language,
+)
+@click.option(
+    NO_LOG_FILE_OPTION,
+    is_flag=True,
+    expose_value=False,
+    help=_("不写入日志文件，只在控制台输出，也不会创建 logs 目录"),
 )
 @click.option(
     "--check-version",

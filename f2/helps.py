@@ -87,6 +87,10 @@ def main() -> None:
         ),
     )
     table.add_row(
+        "f2 --no-log-file",
+        _("不写入日志文件，只在控制台输出，也不会创建 logs 目录"),
+    )
+    table.add_row(
         _("Issues❓"),
         _(
             "[green]这里说不定有你需要的答案 [link=https://github.com/Johnserf-Seed/f2/issues]Click Here[/]"
