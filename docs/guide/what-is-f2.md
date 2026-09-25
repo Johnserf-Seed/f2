@@ -33,6 +33,12 @@ $ f2 -d WARNING dy -M post
 
 作为库导入 `F2` 时，日志默认只输出到控制台，不会在当前目录创建 `logs` 目录，也不会清理旧日志。如需同时写入日志文件，调用 `log_setup` 并指定 `log_path`（默认 `./logs`，传 `None` 表示不写文件）；`CLI` 启动时会自动完成这一配置。
 
+`CLI` 默认把日志写入当前目录的 `logs` 目录。在没有写文件权限的环境里，可以在应用名之前加上 `--no-log-file`，只在控制台输出，也不会创建 `logs` 目录或清理旧日志：
+
+```bash
+f2 --no-log-file dy -M one -u <作品链接>
+```
+
 <<< @/snippets/set-debug.py#log-2-console-snippet{6}
 
 ![log-2-console](/douyin/log-2-console.png)
