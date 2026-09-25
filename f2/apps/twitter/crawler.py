@@ -20,6 +20,7 @@ from f2.apps.twitter.utils import ClientConfManager, ModelManager
 from f2.crawlers.base_crawler import BaseCrawler
 from f2.i18n.translator import _
 from f2.log.logger import logger
+from f2.utils.http.cookie import parse_cookie_str
 
 
 class TwitterCrawler(BaseCrawler):
@@ -33,8 +34,11 @@ class TwitterCrawler(BaseCrawler):
         self.authorization = (
             kwargs.get("Authorization") or ClientConfManager.authorization()
         )
+        # X 要求 X-Csrf-Token 与 cookie 里的 ct0 一致，cookie 带有 ct0 时优先使用它，
+        # 避免配置文件里过期的值导致 403（#426，移植自 #442）
+        ct0 = parse_cookie_str(kwargs.get("cookie") or "").get("ct0")
         self.x_csrf_token = (
-            kwargs.get("X-Csrf-Token") or ClientConfManager.x_csrf_token()
+            ct0 or kwargs.get("X-Csrf-Token") or ClientConfManager.x_csrf_token()
         )
         self.headers = kwargs.get("headers", {}) | {
             "Cookie": kwargs.get("cookie"),
