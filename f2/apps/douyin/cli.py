@@ -385,8 +385,10 @@ def douyin(
     if kwargs.pop("insecure", False):
         kwargs["verify"] = False
 
-    # 更新主配置文件中的headers参数
+    # 更新主配置文件中的headers参数：conf.yaml 中 douyin.headers 的全部请求头都会生效，
+    # 例如需要手动覆盖的 x-tt-argus / uifid
     kwargs.setdefault("headers", {})
+    kwargs["headers"].update(ClientConfManager.headers())
     kwargs["headers"]["User-Agent"] = ClientConfManager.user_agent()
     kwargs["headers"]["Referer"] = ClientConfManager.referer()
 
