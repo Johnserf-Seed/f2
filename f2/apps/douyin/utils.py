@@ -29,6 +29,7 @@ from f2.utils.crypto.bytedance.abogus import ABogus as AB
 from f2.utils.crypto.bytedance.abogus import BrowserFingerprintGenerator as BrowserFpGen
 from f2.utils.crypto.bytedance.xbogus import XBogus as XB
 from f2.utils.file.name import split_filename
+from f2.utils.http.cookie import parse_cookie_str
 from f2.utils.string.formatter import extract_valid_urls
 from f2.utils.string.generator import gen_random_str
 from f2.utils.time.timestamp import get_timestamp
@@ -572,6 +573,86 @@ class VerifyFpManager:
     @classmethod
     def gen_s_v_web_id(cls) -> str:
         return cls.gen_verify_fp()
+
+
+class GatewayHeaderManager:
+    """
+    抖音接口网关请求头管理 (Headers required by Douyin's API gateway)
+
+    2026 年 8 月起，抖音在接口网关挂载了 ArgusSecurityPlugin：请求缺少 `x-tt-argus` 头时，
+    主页作品、单个作品、点赞、收藏等接口直接返回 403
+    `Blocked by ArgusSecurityPlugin Uifid Not Found`。实测网关目前只校验该请求头是否存在，
+    与 cookie 是否登录、是否包含 `UIFID` 都无关，因此默认发送占位值。
+
+    浏览器还会发送 `uifid` 请求头，取值为 cookie 中的 `UIFID`（未登录时为 `UIFID_TEMP`）。
+    这两个 cookie 由网页端经过虚拟机混淆的脚本根据浏览器指纹生成，这里直接从 cookie 读取，
+    与浏览器保持一致；cookie 中没有时不发送，避免出现空值。
+
+    类属性:
+    - ARGUS_PLACEHOLDER: `x-tt-argus` 请求头的占位值。
+
+    类方法:
+    - gen_gateway_headers: 根据 cookie 生成网关要求的请求头。
+    - merge_headers: 把网关请求头合并进已配置的请求头，已配置的同名请求头优先（不区分大小写）。
+
+    使用示例:
+    ```python
+        headers = GatewayHeaderManager.gen_gateway_headers(cookie)
+        # {"x-tt-argus": "1", "uifid": "..."}
+    ```
+
+    备注:
+    - `x-tt-argus` 是权宜之计：若网关将来开始校验取值，可在 `conf.yaml` 的 `douyin.headers`
+      中填写浏览器请求里的 `x-tt-argus` 与 `uifid` 覆盖默认值。
+    - 参考 https://github.com/Johnserf-Seed/f2/issues/443
+    """
+
+    ARGUS_PLACEHOLDER = "1"
+
+    @classmethod
+    def gen_gateway_headers(cls, cookie: Optional[str] = None) -> dict:
+        """
+        根据 cookie 生成网关要求的请求头 (Build the gateway headers from a cookie)
+
+        Args:
+            cookie (Optional[str]): 请求使用的 cookie 字符串
+
+        Returns:
+            dict: 总是包含 `x-tt-argus`；cookie 中有 `UIFID` 或 `UIFID_TEMP` 时包含 `uifid`
+        """
+
+        headers = {"x-tt-argus": cls.ARGUS_PLACEHOLDER}
+        cookies = parse_cookie_str(cookie) if isinstance(cookie, str) else {}
+        uifid = cookies.get("UIFID") or cookies.get("UIFID_TEMP")
+        if uifid:
+            headers["uifid"] = uifid
+        return headers
+
+    @classmethod
+    def merge_headers(
+        cls, headers: Optional[dict], cookie: Optional[str] = None
+    ) -> dict:
+        """
+        把网关请求头合并进已配置的请求头 (Merge the gateway headers into configured headers)
+
+        已配置的同名请求头优先，比较时不区分大小写，避免同一个请求头被发送两次。
+
+        Args:
+            headers (Optional[dict]): 已配置的请求头
+            cookie (Optional[str]): 请求使用的 cookie 字符串
+
+        Returns:
+            dict: 合并后的请求头
+        """
+
+        configured = dict(headers or {})
+        present = {name.lower() for name in configured}
+        gateway = {
+            name: value
+            for name, value in cls.gen_gateway_headers(cookie).items()
+            if name.lower() not in present
+        }
+        return {**gateway, **configured}
 
 
 class XBogusManager:
