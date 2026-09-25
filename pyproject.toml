@@ -128,6 +128,7 @@ exclude = [
 
 [tool.hatch.build.targets.wheel]
 exclude = [
+    "f2/languages/*/LC_MESSAGES/*.po",
     "f2/apps/*/test/",
     "f2/conf/test.yaml",
     "f2/conf/test.local.yaml",

@@ -5,6 +5,8 @@ repos:
     hooks:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
+        # pybabel 生成的 .po 以空行结尾，保持与工具输出一致
+        exclude: ^f2/languages/.*\.po$
     -   id: check-yaml
 
 # Python linters
