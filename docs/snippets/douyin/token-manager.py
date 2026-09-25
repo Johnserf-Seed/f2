@@ -34,6 +34,15 @@ if __name__ == "__main__":
 # endregion ttwid-sinppest
 
 
+# region secsdk-uid-sinppest
+from f2.apps.douyin.utils import TokenManager
+
+if __name__ == "__main__":
+    print("douyin x-web-secsdk-uid:", TokenManager.gen_secsdk_uid())
+
+# endregion secsdk-uid-sinppest
+
+
 # region webid-sinppest
 from f2.apps.douyin.utils import TokenManager
 

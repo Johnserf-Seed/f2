@@ -62,6 +62,7 @@ outline: [2,3]
 | Get cached real msToken | `TokenManager`        | `cached_msToken`             |  🟢  |
 | Generate fake msToken  | `TokenManager`         | `gen_false_msToken`          |  🟢  |
 | Generate ttwid         | `TokenManager`         | `gen_ttwid`                  |  🟢  |
+| Generate x-web-secsdk-uid | `TokenManager`      | `gen_secsdk_uid`             |  🟢  |
 | Generate webid         | `TokenManager`         | `gen_webid`                  |  🟢  |
 | Generate verify_fp     | `VerifyFpManager`      | `gen_verify_fp`              |  🟢  |
 | Generate s_v_web_id    | `VerifyFpManager`      | `gen_s_v_web_id`             |  🟢  |
@@ -581,7 +582,7 @@ Queries basic user information using `ttwid`. Use `fetch_user_profile` for more 
 
 ### Livestream WSS Load Data 🟢
 
-Asynchronous method to fetch livestream WSS load data, required for handling chat messages.
+Asynchronous method to fetch livestream WSS load data, required for handling chat messages. If the cookie lacks `x-web-secsdk-uid`, `F2` adds one automatically; otherwise the API returns an empty response.
 
 | Parameter  | Type | Description |
 | :-------- | :-- | :---------- |
@@ -773,6 +774,20 @@ Class method to generate `ttwid`. Required for some requests and necessary in gu
 | ttwid | str | The `ttwid` parameter |
 
 <<< @/snippets/douyin/token-manager.py#ttwid-sinppest{4}
+
+### Generate x-web-secsdk-uid 🟢
+
+Class method to generate the `x-web-secsdk-uid` cookie field, which is a random UUID. The livestream chat initialization API strictly validates this field; when the cookie passed to `fetch_live_im` does not contain it, `F2` adds one automatically with `ensure_secsdk_uid`.
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| None | None | None |
+
+| Return | Type | Description |
+| :--- | :--- | :--- |
+| secsdk_uid | str | The `x-web-secsdk-uid` parameter |
+
+<<< @/snippets/douyin/token-manager.py#secsdk-uid-sinppest{4}
 
 ### Generate webid 🟢
 

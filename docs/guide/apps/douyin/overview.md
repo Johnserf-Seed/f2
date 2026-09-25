@@ -64,6 +64,7 @@ outline: [2,3]
 | 获取缓存的真实msToken | `TokenManager`         | `cached_msToken`             |  🟢  |
 | 生成虚假msToken      | `TokenManager`         | `gen_false_msToken`          |  🟢  |
 | 生成ttwid           | `TokenManager`         | `gen_ttwid`                  |  🟢  |
+| 生成x-web-secsdk-uid | `TokenManager`         | `gen_secsdk_uid`             |  🟢  |
 | 生成webid           | `TokenManager`         | `gen_webid`                  |  🟢  |
 | 生成verify_fp       | `VerifyFpManager`      | `gen_verify_fp`              |  🟢  |
 | 生成s_v_web_id      | `VerifyFpManager`      | `gen_s_v_web_id`             |  🟢  |
@@ -585,7 +586,7 @@ outline: [2,3]
 
 ### 直播间wss负载数据 🟢
 
-异步方法，用于获取直播间wss负载数据，是弹幕wss的必要参数。
+异步方法，用于获取直播间wss负载数据，是弹幕wss的必要参数。cookie 中缺少 `x-web-secsdk-uid` 时会自动补上，否则接口会返回空内容。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -819,6 +820,20 @@ outline: [2,3]
 | ttwid | str | ttwid参数 |
 
 <<< @/snippets/douyin/token-manager.py#ttwid-sinppest{4}
+
+### 生成x-web-secsdk-uid 🟢
+
+类方法，用于生成 cookie 字段 `x-web-secsdk-uid`，它是一个随机 UUID。直播弹幕初始化接口会强校验这个字段；调用 `fetch_live_im` 时如果 cookie 里没有，`F2` 会用 `ensure_secsdk_uid` 自动补上。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| 无 | 无 | 无 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| secsdk_uid | str | x-web-secsdk-uid参数 |
+
+<<< @/snippets/douyin/token-manager.py#secsdk-uid-sinppest{4}
 
 ### 生成webid 🟢
 
