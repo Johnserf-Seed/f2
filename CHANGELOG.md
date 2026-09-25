@@ -6,6 +6,9 @@
 
 ## [Unreleased]
 
+- 修复出错时 `CLI` 退出码仍为 `0` 的问题：接口请求失败（HTTP 状态码错误、重试耗尽、网络错误、返回内容不是 JSON）不再被吞成空数据，而是抛出 `F2Error` 子类，`CLI` 以退出码 `1` 结束；有文件在所有链接都尝试后仍下载失败时，同样以退出码 `1` 结束并列出失败的文件。
+- 作为库使用时，`crawler` 与 `handler` 的方法在接口请求失败时抛出异常，不再返回空数据；接口异常的 `status_code` 为真实的 HTTP 状态码（此前为 `None`）。
+- 修复 `bark` 通知发送失败时仍提示发送成功的问题；`f2 bark` 发送失败时以退出码 `1` 结束，作为下载通知时失败仍只记录日志。
 - 修复抖音主页作品、单个作品、点赞、收藏等接口返回 `403`（`Blocked by ArgusSecurityPlugin`）的问题：请求自动附加网关要求的 `x-tt-argus` 请求头，并从 cookie 读取 `UIFID`/`UIFID_TEMP` 作为 `uifid` 请求头，游客 cookie 同样适用 #443（移植并扩展自 #446）。
 - `conf.yaml` 中 `douyin.headers` 的全部请求头都会生效，不再只取 `User-Agent` 与 `Referer`，便于手动覆盖网关请求头。
 - 新增 `f2.utils.http.cookie.parse_cookie_str`，把 Cookie 字符串解析为字典。
