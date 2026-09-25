@@ -15,6 +15,7 @@ from f2.cli.wizard_command import config_wizard_command
 from f2.exceptions import F2Error
 from f2.i18n.translator import TranslationManager, _
 from f2.log.logger import log_setup, logger, trace_logger
+from f2.utils.core.run_report import collect_run_report
 from f2.utils.core.signal import SignalManager
 from f2.utils.version import check_f2_version, check_python_version
 
@@ -113,6 +114,9 @@ for attr in dir(apps_module):
         APP_MAPPINGS[app_data[0]] = app_data[1]
 
 REVERSE_APP_MAPPINGS = {v: k for k, v in APP_MAPPINGS.items()}
+
+# 运行结束时最多列出的下载失败文件数
+MAX_FAILED_DOWNLOADS_SHOWN = 10
 
 
 def setup_cli_logging() -> None:
@@ -281,7 +285,7 @@ def set_cli_config(ctx: click.Context, **kwargs):
         **kwargs: 关键字参数，代表CLI的各种设置选项
     """
 
-    with RichConsoleManager().progress:
+    with collect_run_report() as report, RichConsoleManager().progress:
         try:
             asyncio.run(run_app(kwargs))
         except F2Error as e:
@@ -289,6 +293,20 @@ def set_cli_config(ctx: click.Context, **kwargs):
             trace_logger.error(traceback.format_exc())
             logger.error(_("运行中止：{0}").format(e))
             ctx.exit(1)
+
+    # 有文件最终下载失败时同样返回非零退出码，便于脚本判断结果
+    if not report.ok:
+        failed = report.failed_downloads
+        logger.error(_("有 {0} 个文件下载失败：").format(len(failed)))
+        for path in failed[:MAX_FAILED_DOWNLOADS_SHOWN]:
+            logger.error(f"  {path}")
+        if len(failed) > MAX_FAILED_DOWNLOADS_SHOWN:
+            logger.error(
+                _("以及另外 {0} 个文件").format(
+                    len(failed) - MAX_FAILED_DOWNLOADS_SHOWN
+                )
+            )
+        ctx.exit(1)
 
 
 async def run_app(kwargs):

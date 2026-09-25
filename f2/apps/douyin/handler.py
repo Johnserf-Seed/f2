@@ -350,12 +350,8 @@ class DouyinHandler:
         """
 
         aweme_id = await AwemeIdFetcher.get_aweme_id(str(self.kwargs.get("url")))
-
-        try:
-            aweme_data = await self.fetch_one_video(aweme_id)
-        except APIResponseError as e:
-            logger.error(e)
-            return
+        # 接口异常直接向上抛出，由 CLI 记录并以非零退出码结束
+        aweme_data = await self.fetch_one_video(aweme_id)
 
         async with AsyncUserDB("douyin_users.db") as db:
             user_path = await self.get_or_add_user_data(

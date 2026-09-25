@@ -196,6 +196,10 @@ async def main(kwargs):
     mode = kwargs.get("mode")
     handlers = get_mode_handlers(__name__)
     if mode in handlers:
-        await handlers[mode](BarkHandler(kwargs))
+        result = await handlers[mode](BarkHandler(kwargs))
+        # 作为独立命令发送失败时抛出异常，CLI 以非零退出码结束；
+        # 作为其它应用的下载通知时失败只记录日志，不影响下载
+        if result is None or result.code is None:
+            raise F2Error(_("Bark 通知发送失败"))
     else:
         raise F2Error(_("不存在该模式：{0}").format(mode))
