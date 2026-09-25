@@ -666,6 +666,11 @@ class PostTweetFilter(JSONModel):
             "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.name"
         )
 
+    # 用户唯一ID（推特ID），命名模板的 {uid} 读取这个字段（移植自 #442）
+    @property
+    def user_unique_id(self):
+        return self.user_screen_name
+
     @property
     def user_screen_name(self):
         return replaceT(
@@ -973,6 +978,11 @@ class BookmarkTweetFilter(JSONModel):
         return self._get_list_attr_value(
             "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.name"
         )
+
+    # 用户唯一ID（推特ID），命名模板的 {uid} 读取这个字段（移植自 #442）
+    @property
+    def user_unique_id(self):
+        return self.user_screen_name
 
     @property
     def user_screen_name(self):
