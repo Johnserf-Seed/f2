@@ -18,6 +18,10 @@ from f2.utils.time.timestamp import get_timestamp, timestamp_2_str
 
 
 class DouyinDownloader(BaseDownloader):
+    # 图集作品的类型。其他类型只要带有视频链接就按视频下载，
+    # 抖音新增的 51、53、66 等类型与视频的数据结构相同（#402）
+    IMAGE_AWEME_TYPES = frozenset({68})
+
     def __init__(self, kwargs: Optional[dict] = None):
         kwargs = kwargs or {}
         if kwargs["cookie"] is None:
@@ -161,13 +165,28 @@ class DouyinDownloader(BaseDownloader):
                 if self.kwargs.get(task_name):
                     await task_func()
 
-            if aweme_type in [0, 4, 55, 61, 109, 201]:
-                await self.download_video()
-            elif aweme_type == 68:
-                await self.download_images()
+            await self.download_media(aweme_type)
 
         # 保存最后一个 aweme_id
         await self.save_last_aweme_id(self.sec_user_id, self.aweme_id)
+
+    async def download_media(self, aweme_type: Any) -> None:
+        """
+        按作品数据选择下载内容：图集类型或带有图片时下载图集，否则有视频链接就下载视频
+
+        Args:
+            aweme_type (Any): 作品类型
+        """
+        if aweme_type in self.IMAGE_AWEME_TYPES or self.aweme_data_dict.get("images"):
+            await self.download_images()
+        elif self.aweme_data_dict.get("video_play_addr"):
+            await self.download_video()
+        else:
+            logger.warning(
+                _("[{0}] 作品类型 {1} 没有可下载的视频或图片").format(
+                    self.aweme_id, aweme_type
+                )
+            )
 
     async def download_music(self):
         if self.aweme_data_dict.get("music_status") == 1:
