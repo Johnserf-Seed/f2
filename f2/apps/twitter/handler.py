@@ -189,7 +189,7 @@ class TwitterHandler:
         async with TwitterCrawler(self.kwargs) as crawler:
             params = TweetDetailEncode(focalTweetId=tweet_id)
             response = await crawler.fetch_tweet_detail(params)
-            tweet = TweetDetailFilter(response)
+            tweet = TweetDetailFilter(response, tweet_id)
 
         logger.info(
             _("推文ID：{0} 文案：{1} 作者：{2} 阅读量：{3}").format(
