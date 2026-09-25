@@ -28,6 +28,21 @@ Next, follow the steps for [PR Contributors](https://f2.wiki/install#pr贡献者
 - **External `PR`s targeting `main`**: they are blocked by the `PR target branch` check. Maintainers will ask you to retarget, or port your change to the development branch and credit you with `Co-authored-by`.
 - **Release flow**: once the development branch is tested it is merged into `main`, released to `PyPI` from `main`, and the next development branch is created.
 
+## Issues and Labels 🏷️
+When opening an issue, pick the matching template: bug report, platform API change, feature request, documentation or question. Please ask general usage questions in the [Q&A](https://github.com/Johnserf-Seed/f2/discussions/categories/q-a) discussion category, and report security issues through [private reporting](https://github.com/Johnserf-Seed/f2/security/advisories/new).
+
+Maintainers organize issues with these kinds of labels:
+
+| Kind | Labels |
+| :--- | :--- |
+| Type | `故障(bug)`, `需求建议(enhancement)`, `提问(question)`, `文献资料(documentation)` |
+| Platform | `抖音(douyin)`, `TikTok(tiktok)`, `微博(weibo)`, `推特(twitter)`, `Bark(bark)`, added automatically from the platform chosen in the template |
+| Area | `直播(live)`, `下载(download)`, `配置(config)` |
+| Status | `已确认(confirmed)`, `等待反馈(feedback)`, `接口变化(api-change)`, `开发分支已修复(fixed-in-dev)`, `重复(duplicate)`, `无效(invalid)`, `不修复(wontfix)` |
+| Priority | `紧急(P0)`, `重要(P1)`, `一般(P2)` |
+
+Issues labeled `开发分支已修复(fixed-in-dev)` can be verified by installing the development branch as described in [Test the Latest Features](https://f2.wiki/en/install#test-the-latest-features); they are closed once the fix ships in a release.
+
 ## Development Guidelines 📝
 When developing for `F2`, keep the following points in mind:
 

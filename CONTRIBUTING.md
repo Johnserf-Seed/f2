@@ -28,6 +28,21 @@
 - **目标为 `main` 的外部 `PR`**：会被 `PR target branch` 检查拦下。维护者会请你修改目标分支，或把改动移植到开发分支，并在提交中用 `Co-authored-by` 署名原作者。
 - **发布流程**：开发分支测试完成后合并到 `main`，从 `main` 发布到 `PyPI`，随后创建下一个开发分支。
 
+## Issue 与标签 🏷️
+提交 issue 时请选择对应的模板：故障反馈、平台接口失效、需求建议、文档问题、使用提问。一般的使用问题请发到讨论区的 [Q&A](https://github.com/Johnserf-Seed/f2/discussions/categories/q-a)，安全问题请通过 [私密报告](https://github.com/Johnserf-Seed/f2/security/advisories/new) 提交。
+
+维护者用以下几类标签整理 issue：
+
+| 类别 | 标签 |
+| :--- | :--- |
+| 类型 | `故障(bug)`、`需求建议(enhancement)`、`提问(question)`、`文献资料(documentation)` |
+| 平台 | `抖音(douyin)`、`TikTok(tiktok)`、`微博(weibo)`、`推特(twitter)`、`Bark(bark)`，按模板中选择的平台自动添加 |
+| 区域 | `直播(live)`、`下载(download)`、`配置(config)` |
+| 状态 | `已确认(confirmed)`、`等待反馈(feedback)`、`接口变化(api-change)`、`开发分支已修复(fixed-in-dev)`、`重复(duplicate)`、`无效(invalid)`、`不修复(wontfix)` |
+| 优先级 | `紧急(P0)`、`重要(P1)`、`一般(P2)` |
+
+标记为 `开发分支已修复(fixed-in-dev)` 的 issue 可以按 [测试最新功能](https://f2.wiki/install#测试最新功能) 安装开发分支验证，会在正式版发布后关闭。
+
 ## 开发规范 📝
 在开发 `F2` 代码时，请注意以下几点：
 
