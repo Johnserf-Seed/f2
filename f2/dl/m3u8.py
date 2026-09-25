@@ -12,6 +12,7 @@ from rich.progress import TaskID
 
 from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
+from f2.utils.core.run_report import record_failed_download
 from f2.utils.core.signal import SignalManager
 from f2.utils.http.utils import (
     get_chunk_size,
@@ -244,6 +245,7 @@ class M3U8DownloadMixin:
                 except Exception as e:
                     trace_logger.error(traceback.format_exc())
                     logger.error(_("m3u8文件解析失败：{0}").format(e))
+                    record_failed_download(str(full_path))
                     await self.progress.update(
                         task_id,
                         description=_("[red][  失败  ]：[/red]"),

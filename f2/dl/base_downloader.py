@@ -17,6 +17,7 @@ from f2.crawlers.base_crawler import BaseCrawler
 from f2.dl.m3u8 import M3U8DownloadMixin
 from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
+from f2.utils.core.run_report import record_failed_download
 from f2.utils.core.signal import SignalManager
 from f2.utils.file.path import ensure_path
 from f2.utils.http.utils import (
@@ -658,8 +659,9 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
                     )
                     continue
 
-            # 所有链接都失败
+            # 所有链接都失败：计入本次运行结果，CLI 结束时据此返回非零退出码
             logger.warning(_("所有链接都无法下载"))
+            record_failed_download(str(full_path))
             # 清理可能残留的临时文件
             tmp_path.unlink(missing_ok=True)
             await self.progress.update(
