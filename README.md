@@ -13,6 +13,8 @@
 
 [简体中文 readme](https://github.com/Johnserf-Seed/f2/blob/main/README.md) • [English readme](https://github.com/Johnserf-Seed/f2/blob/main/README.en.md)
 
+> 仓库默认显示开发分支（目前为 `v0.0.1.8-pw3`），其中的改动可能尚未发布到 PyPI。正式版的使用文档以 [f2.wiki](https://f2.wiki) 为准。
+
 `F2` 是一个 [Python](https://pypi.org/project/f2/) 库，提供多平台的作品下载与接口数据处理。支持 `DouYin`、`TikTok`、`Twitter`、`WeiBo` 等平台，且方便适配更多平台。
 
 <img src='https://github.com/user-attachments/assets/92a70f27-c93f-422e-ba9a-040060323654'>

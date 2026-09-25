@@ -181,7 +181,7 @@ $ pnpm docs:build
 切换到新的开发分支时，维护者需要同步更新以下位置：
 
 1. 从 `main` 创建新的开发分支，例如 `v0.0.1.9-pw1`。
-2. 更新 `README.md` 与 `README.en.md` 顶部的 `Dev Branch` 徽章、本文件与 `CONTRIBUTING.en.md` 中的当前开发分支、`.github/dependabot.yml` 的 `target-branch`。
+2. 更新 `README.md` 与 `README.en.md` 顶部的 `Dev Branch` 徽章与开发分支提示、本文件与 `CONTRIBUTING.en.md` 中的当前开发分支、`.github/dependabot.yml` 的 `target-branch`。
 3. 建议在开发期间把仓库的默认分支（Settings → General → Default branch）设为开发分支：新建 `PR` 会默认指向它，`dependabot`、`PR` 模板与定时扫描也都以默认分支上的配置为准。
 
 ## 创建 PR 🚀

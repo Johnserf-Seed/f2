@@ -13,6 +13,8 @@
 
 [🇨🇳 简体中文 readme](https://github.com/Johnserf-Seed/f2/blob/main/README.md) • [🇬🇧 English readme](https://github.com/Johnserf-Seed/f2/blob/main/README.en.md)
 
+> The repository shows the development branch by default (currently `v0.0.1.8-pw3`), which may contain changes that are not yet released on PyPI. For the released version, refer to the documentation at [f2.wiki](https://f2.wiki).
+
 `F2` is a [`Python` library](https://pypi.org/project/f2/) that provides multi-platform content downloading and API data processing. It supports platforms like `DouYin`、`TikTok`、`Twitter`、`WeiBo`, and is easily adaptable to more platforms.
 
 <img src='https://github.com/user-attachments/assets/92a70f27-c93f-422e-ba9a-040060323654'>

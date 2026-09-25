@@ -182,7 +182,7 @@ Releases are handled by `.github/workflows/release.yml`: after updating `__versi
 When switching to a new development branch, maintainers update the following:
 
 1. Create the new development branch from `main`, e.g. `v0.0.1.9-pw1`.
-2. Update the `Dev Branch` badge at the top of `README.md` and `README.en.md`, the current development branch in `CONTRIBUTING.md` and this file, and `target-branch` in `.github/dependabot.yml`.
+2. Update the `Dev Branch` badge and the development branch note at the top of `README.md` and `README.en.md`, the current development branch in `CONTRIBUTING.md` and this file, and `target-branch` in `.github/dependabot.yml`.
 3. During development, set the repository's default branch (Settings → General → Default branch) to the development branch: new `PR`s then target it by default, and `dependabot`, the `PR` template and scheduled scans all read their configuration from the default branch.
 
 ## Creating a PR 🚀
