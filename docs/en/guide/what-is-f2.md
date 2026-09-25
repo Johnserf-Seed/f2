@@ -54,7 +54,15 @@ except F2Error as e:
     print("F2 failed:", e)
 ```
 
-When the `CLI` hits an `F2Error` it prints a single error line (the full traceback goes to the `f2-trace` log) and exits with code `1`; usage errors are reported by `click` with exit code `2`; a successful run exits with `0`, so scripts can check the result.
+When an API request fails, for example because of an HTTP error status, exhausted retries, a network error or a response that is not JSON, `crawler` and `handler` methods raise the matching `APIError` subclass. Its `status_code` attribute holds the real HTTP status code. They no longer return empty data, so "no posts" and "request failed" can be told apart.
+
+`CLI` exit codes:
+
+| Exit code | Meaning |
+| :--- | :--- |
+| `0` | Everything completed |
+| `1` | Aborted by an `F2Error` (a single error line is printed and the full traceback goes to the `f2-trace` log), or at least one file still failed after all of its links were tried; the failed files are listed at the end |
+| `2` | Invalid command line usage, reported by `click` |
 
 ## WSS Configuration <Badge type="warning" text="Experimental" />
 
