@@ -82,7 +82,7 @@ dependencies = [
     "websockets_proxy>=0.1.2,<0.2",
     "PyExecJS>=1.5.1,<2",
     # 生成的 *_pb2.py 与 protobuf 运行时大版本必须一致
-    "protobuf>=5.29.6,<6",
+    "protobuf>=5.29.6,<8",
     "gmssl>=3.2.2,<4",
     "cryptography>=44.0.1,<51",
     "packaging>=24.0",
