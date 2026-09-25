@@ -1100,7 +1100,8 @@ class MixIdFetcher(BaseCrawler):
     该类继承自 BaseCrawler，并利用其 HTTP 客户端功能来发送请求。
 
     类属性:
-    - _DOUYIN_MIX_URL_PATTERN (re.Pattern): 抖音合集 URL 的正则表达式模式。
+    - _DOUYIN_MIX_URL_PATTERN (re.Pattern): 抖音合集 URL 的正则表达式模式，支持合集页 collection/、
+      合集分享页 share/mix/detail/ 与短剧分享页 share/playlet/detail/（短剧也是合集）。
     - proxies (dict): 代理配置。
 
     方法:
@@ -1125,7 +1126,9 @@ class MixIdFetcher(BaseCrawler):
     ```
     """
 
-    _DOUYIN_MIX_URL_PATTERN = re.compile(r"collection/([^/?]*)")
+    _DOUYIN_MIX_URL_PATTERN = re.compile(
+        r"(?:collection|mix/detail|playlet/detail)/(\d+)"
+    )
     proxies = ClientConfManager.proxies()
 
     def __init__(self):
@@ -1161,20 +1164,22 @@ class MixIdFetcher(BaseCrawler):
             raise APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
         url = extracted_url
 
+        # 地址里已经带有合集ID时直接返回，短链接才需要请求跳转后的地址
+        if match := cls._DOUYIN_MIX_URL_PATTERN.search(url):
+            return match.group(1)
+
         instance = cls()
 
         try:
             response = await instance.aclient.get(url, follow_redirects=True)
             response.raise_for_status()
 
-            mix_pattern = cls._DOUYIN_MIX_URL_PATTERN
-
-            match = mix_pattern.search(str(response.url))
+            match = cls._DOUYIN_MIX_URL_PATTERN.search(str(response.url))
             if match:
                 mix_id = match.group(1)
             else:
                 raise APIResponseError(
-                    _("未在响应的地址中找到mix_id，检查链接是否为合集页")
+                    _("未在响应的地址中找到mix_id，检查链接是否为合集或短剧页")
                 )
             return mix_id
 
