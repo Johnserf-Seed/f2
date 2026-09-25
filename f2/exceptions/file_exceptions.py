@@ -1,15 +1,12 @@
 # path: f2/exceptions/file_exceptions.py
 
 from f2.exceptions.base import F2Error
-from f2.i18n.translator import _
-from f2.log.logger import logger
 
 
 class FileError(F2Error):
-    """基本的文件错误异常类，其他文件异常都会继承这个类"""
+    """基本的文件错误异常类，其他文件异常都会继承这个类（构造时不记录日志）"""
 
     def __init__(self, message, filepath=None):
-        logger.error(_("请前往QA文档 https://f2.wiki/faq 查看相关帮助"))
         self.filepath = filepath
         super().__init__(message)
 

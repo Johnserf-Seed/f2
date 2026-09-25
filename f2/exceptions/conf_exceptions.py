@@ -2,42 +2,32 @@
 
 from f2.exceptions.base import F2Error
 from f2.i18n.translator import _
-from f2.log.logger import logger
 
 
 class ConfError(F2Error):
-    """基本配置异常类，其他配置异常都会继承这个类"""
+    """
+    基本配置异常类，其他配置异常都会继承这个类
+
+    文件路径、配置键与值会拼接在 `str()` 结果中；异常在构造时不记录日志。
+    """
 
     def __init__(self, message=None, filepath=None, key=None, value=None):
         self.filepath = filepath
         self.key = key
         self.value = value
-
-        # 记录日志，包含更多详细信息
-        log_message = _("配置错误: {message}").format(message=message or _("未知错误"))
-        if filepath:
-            log_message += f" | Filepath: {filepath}"
-        if key:
-            log_message += f" | Key: {key}"
-        if value:
-            log_message += f" | Value: {value}"
-
-        logger.error(log_message)
-        logger.error(_("请前往 QA 文档 https://f2.wiki/faq 查看相关帮助"))
-        logger.error(_("请提供以下信息以帮助我们解决问题"))
-        logger.error(_("配置文件: {0}（注意：请删除敏感信息）").format(filepath or ""))
-
         super().__init__(message)
 
     def __str__(self):
-        """返回详细的错误信息"""
-        parts = [super().__str__()]
-        if self.filepath:
-            parts.append(f"Filepath: {self.filepath}")
-        if self.key:
-            parts.append(f"Key: {self.key}")
-        if self.value:
-            parts.append(f"Value: {self.value}")
+        """返回详细的错误信息，子类已写进消息的字段不再重复追加"""
+        message = super().__str__()
+        parts = [message]
+        for label, detail in (
+            ("Filepath", self.filepath),
+            ("Key", self.key),
+            ("Value", self.value),
+        ):
+            if detail and str(detail) not in message:
+                parts.append(f"{label}: {detail}")
         return " | ".join(parts)
 
 

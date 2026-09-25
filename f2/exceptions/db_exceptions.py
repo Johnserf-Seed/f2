@@ -1,15 +1,12 @@
 # path: f2/exceptions/db_exceptions.py
 
 from f2.exceptions.base import F2Error
-from f2.i18n.translator import _
-from f2.log.logger import logger
 
 
 class DatabaseError(F2Error):
-    """基本数据库异常类，其他数据库异常都会继承这个类"""
+    """基本数据库异常类，其他数据库异常都会继承这个类（构造时不记录日志）"""
 
     def __init__(self, message=None, db=None):
-        logger.error(_("请前往QA文档 https://f2.wiki/faq 查看相关帮助"))
         self.db = db
         super().__init__(message)
 
