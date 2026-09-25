@@ -6,6 +6,7 @@ import random
 import re
 import time
 import traceback
+import uuid
 from pathlib import Path
 from typing import Optional, Union
 from urllib.parse import urlparse
@@ -428,6 +429,37 @@ class TokenManager(BaseCrawler):
                     exc,
                 )
             )
+
+    @classmethod
+    def gen_secsdk_uid(cls) -> str:
+        """
+        生成 cookie 字段 x-web-secsdk-uid (Generate the x-web-secsdk-uid cookie field)
+
+        直播弹幕初始化接口 im/fetch 会强校验这个字段，缺少时返回空内容（#412），
+        浏览器里它是一个随机 UUID。
+
+        Returns:
+            str: x-web-secsdk-uid 的值
+        """
+        return str(uuid.uuid4())
+
+    @classmethod
+    def ensure_secsdk_uid(cls, cookie: Optional[str]) -> str:
+        """
+        cookie 中没有 x-web-secsdk-uid 时补上一个随机值，已有时保持不变
+
+        Args:
+            cookie (Optional[str]): 原始 cookie
+
+        Returns:
+            str: 带有 x-web-secsdk-uid 的 cookie
+        """
+        cookie = (cookie or "").strip()
+        if "x-web-secsdk-uid" in parse_cookie_str(cookie):
+            return cookie
+        if cookie and not cookie.endswith(";"):
+            cookie += ";"
+        return f"{cookie} x-web-secsdk-uid={cls.gen_secsdk_uid()}".strip()
 
     @classmethod
     def gen_webid(cls) -> str:

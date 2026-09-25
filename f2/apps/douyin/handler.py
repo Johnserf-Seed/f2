@@ -82,6 +82,7 @@ from f2.apps.douyin.utils import (  # VerifyFpManager,
     ClientConfManager,
     MixIdFetcher,
     SecUserIdFetcher,
+    TokenManager,
     WebCastIdFetcher,
     create_or_rename_user_folder,
 )
@@ -2173,7 +2174,11 @@ class DouyinHandler:
 
         # user = await self.fetch_query_user()
 
-        async with DouyinCrawler(self.kwargs) as crawler:
+        # 弹幕初始化接口强校验 cookie 中的 x-web-secsdk-uid，缺少时补上随机值（#412）
+        kwargs = self.kwargs | {
+            "cookie": TokenManager.ensure_secsdk_uid(self.kwargs.get("cookie"))
+        }
+        async with DouyinCrawler(kwargs) as crawler:
             params = LiveImFetch(room_id=room_id, user_unique_id=unique_id)
             response = await crawler.fetch_live_im_fetch(params)
             live_im = LiveImFetchFilter(response)
