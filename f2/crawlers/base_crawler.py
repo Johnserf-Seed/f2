@@ -3,7 +3,6 @@
 import asyncio
 import functools
 import json
-import traceback
 from typing import Optional, Union
 
 import httpx
@@ -22,7 +21,7 @@ from f2.exceptions.api_exceptions import (
 )
 from f2.exceptions.conf_exceptions import InvalidEncodingError
 from f2.i18n.translator import _
-from f2.log.logger import logger, trace_logger
+from f2.log.logger import logger
 
 
 @functools.lru_cache(maxsize=None)
@@ -243,12 +242,11 @@ class BaseCrawler:
 
         Returns:
             Response: 原始响应对象 (Raw response object)
+
+        Raises:
+            APIError: 请求失败时抛出对应的接口异常 (Raised when the request fails)
         """
-        try:
-            return await self.get_fetch_data(endpoint)
-        except Exception:
-            trace_logger.error(traceback.format_exc())
-            return Response(status_code=500)
+        return await self.get_fetch_data(endpoint)
 
     async def _fetch_get_json(self, endpoint: str) -> dict:
         """
@@ -259,13 +257,13 @@ class BaseCrawler:
 
         Returns:
             dict: 解析后的JSON数据 (Parsed JSON data)
+
+        Raises:
+            APIError: 请求失败或响应不是有效 JSON 时抛出对应的接口异常，
+                不再返回空字典，调用方可据此区分"没有数据"与"请求失败"
         """
-        try:
-            response = await self.get_fetch_data(endpoint)
-            return self.parse_json(response)
-        except Exception:
-            trace_logger.error(traceback.format_exc())
-            return {}
+        response = await self.get_fetch_data(endpoint)
+        return self.parse_json(response)
 
     async def _fetch_post_json(self, endpoint: str, **kwargs) -> dict:
         """
@@ -277,13 +275,12 @@ class BaseCrawler:
 
         Returns:
             dict: 解析后的 JSON 数据 (Parsed JSON data)
+
+        Raises:
+            APIError: 请求失败或响应不是有效 JSON 时抛出对应的接口异常
         """
-        try:
-            response = await self.post_fetch_data(endpoint, **kwargs)
-            return self.parse_json(response)
-        except Exception:
-            trace_logger.error(traceback.format_exc())
-            return {}
+        response = await self.post_fetch_data(endpoint, **kwargs)
+        return self.parse_json(response)
 
     def parse_json(self, response: Response) -> dict:
         """
@@ -294,31 +291,31 @@ class BaseCrawler:
 
         Returns:
             dict: 解析后的JSON数据 (Parsed JSON data)
-        """
-        if (
-            response is not None
-            and isinstance(response, Response)
-            and response.status_code == 200
-        ):
-            try:
-                return response.json()
-            except json.JSONDecodeError as e:
-                logger.error(
-                    _("解析 {0} 接口 JSON 失败：{1}").format(str(response.url), e)
-                )
-            except UnicodeDecodeError as e:
-                logger.error(
-                    _("接口 {0} JSON 解码错误：{1}").format(str(response.url), e)
-                )
-        else:
-            if isinstance(response, Response):
-                logger.error(
-                    _("获取数据失败。状态码: {0}").format(response.status_code)
-                )
-            else:
-                logger.error(_("无效的Json响应"))
 
-        return {}
+        Raises:
+            APIResponseError: 响应无效、状态码不是 200 或内容不是有效 JSON
+        """
+        if not isinstance(response, Response):
+            raise APIResponseError(_("无效的Json响应"))
+
+        if response.status_code != 200:
+            raise APIResponseError(
+                _("获取数据失败。状态码: {0}").format(response.status_code),
+                status_code=response.status_code,
+            )
+
+        try:
+            return response.json()
+        except json.JSONDecodeError as e:
+            raise APIResponseError(
+                _("解析 {0} 接口 JSON 失败：{1}").format(str(response.url), e),
+                status_code=response.status_code,
+            ) from e
+        except UnicodeDecodeError as e:
+            raise APIResponseError(
+                _("接口 {0} JSON 解码错误：{1}").format(str(response.url), e),
+                status_code=response.status_code,
+            ) from e
 
     async def get_fetch_data(self, url: str) -> Response:
         """
@@ -576,7 +573,9 @@ class BaseCrawler:
         # 根据状态码抛出对应的异常
         if status_code in status_code_exception_map:
             exception_class = status_code_exception_map[status_code]
-            raise exception_class(_("HTTP状态码错误：{0}").format(status_code))
+            raise exception_class(
+                _("HTTP状态码错误：{0}").format(status_code), status_code=status_code
+            )
 
         # 特殊处理状态码 302
         if status_code == 302:
@@ -591,7 +590,9 @@ class BaseCrawler:
                 status_code, url, attempt
             )
         )
-        raise APIResponseError(_("未知HTTP状态码错误：{0}").format(status_code))
+        raise APIResponseError(
+            _("未知HTTP状态码错误：{0}").format(status_code), status_code=status_code
+        )
 
     async def close(self):
         # 如果没有初始化客户端，则不关闭 (If the client is not initialized, do not close)
