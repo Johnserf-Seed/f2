@@ -109,6 +109,12 @@ class BarkHandler:
 
         # 根据加密模式生成不同位数的 IV
         if aes_mode == "ECB":
+            # ECB 只为兼容 Bark App 的同名选项而保留
+            logger.warning(
+                _(
+                    "Bark 推送加密正在使用 ECB 模式，相同的明文块会得到相同的密文，安全性较弱，建议在 Bark App 与配置文件中都改用 CBC 模式"
+                )
+            )
             aes_iv = None
         elif aes_mode == "CBC":
             aes_iv = generate_numeric_bytes(16)
