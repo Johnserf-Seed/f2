@@ -90,7 +90,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "babel>=2.13.0,<3",
+    "babel>=2.14.0,<3",
     "mypy-protobuf>=3.6.0,<6",
     "mypy==1.16.0",
     "pre-commit==4.2.0",
