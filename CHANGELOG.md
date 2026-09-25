@@ -6,6 +6,9 @@
 
 ## [Unreleased]
 
+- 修复抖音主页作品、单个作品、点赞、收藏等接口返回 `403`（`Blocked by ArgusSecurityPlugin`）的问题：请求自动附加网关要求的 `x-tt-argus` 请求头，并从 cookie 读取 `UIFID`/`UIFID_TEMP` 作为 `uifid` 请求头，游客 cookie 同样适用 #443（移植并扩展自 #446）。
+- `conf.yaml` 中 `douyin.headers` 的全部请求头都会生效，不再只取 `User-Agent` 与 `Referer`，便于手动覆盖网关请求头。
+- 新增 `f2.utils.http.cookie.parse_cookie_str`，把 Cookie 字符串解析为字典。
 - 测试配置支持通过环境变量 `F2_TEST_<APP>_<KEY>` 与 `conf/test.local.yaml` 覆盖，个人 cookie 无需写入仓库。
 - `wheel` 不再打包 `f2/apps/*/test` 测试目录与 `conf/test.yaml` 测试配置。
 - 新增 `security` 工作流：`gitleaks` 泄露扫描与 `wheel` 内容检查。
