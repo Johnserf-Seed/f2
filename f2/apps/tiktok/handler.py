@@ -40,6 +40,7 @@ from f2.apps.tiktok.utils import (
     AwemeIdFetcher,
     SecUserIdFetcher,
     create_or_rename_user_folder,
+    normalize_cursor,
 )
 from f2.cli.cli_console import RichConsoleManager
 from f2.exceptions.api_exceptions import APIResponseError
@@ -59,6 +60,22 @@ TK_LIVE_STATUS_MAPPING = {
     # 3: _("直播中"),
     4: _("已关播"),
 }
+
+
+def _next_cursor(page: Any, current: Any) -> Optional[int]:
+    """
+    计算下一页的游标，没有下一页时返回 None（#270）
+
+    TikTok 返回的 cursor 有时是字符串；最后一页之后的 cursor 可能是 0 或 -1，
+    继续请求会从头重新抓取。因此 hasMore 为假、游标无效或没有前进时都视为结束。
+    """
+
+    if not page.hasMore:
+        return None
+    next_cursor = normalize_cursor(page.cursor)
+    if next_cursor is None or next_cursor <= 0 or next_cursor == current:
+        return None
+    return next_cursor
 
 
 class TiktokHandler:
@@ -349,6 +366,10 @@ class TiktokHandler:
 
         max_counts = max_counts or float("inf")
         videos_collected = 0
+        # 默认使用 secUid：没有作品时，nickname_raw 也有值（#401）
+        nickname_raw = secUid
+        cursor = normalize_cursor(cursor, 0) or 0
+        min_cursor = normalize_cursor(min_cursor, 0) or 0
 
         logger.info(_("处理用户：{0} 发布的作品").format(secUid))
 
@@ -375,15 +396,16 @@ class TiktokHandler:
 
             if not video.has_aweme:
                 logger.info(_("第 {0} 页没有找到作品").format(cursor))
-                if not video.hasMore and str(video.api_status_code) == "0":
+                next_cursor = _next_cursor(video, cursor)
+                if next_cursor is None:
                     logger.info(_("用户：{0} 所有作品采集完毕").format(secUid))
                     break
-                else:
-                    cursor = video.cursor
-                    continue
+                cursor = next_cursor
+                continue
 
-            # 防止最后一页不包含任何作品导致无法获取nickname_raw
-            nickname_raw = video.nickname_raw[0]
+            # 只在本页有作品时更新昵称
+            if video.nickname_raw:
+                nickname_raw = video.nickname_raw[0]
 
             logger.debug(_("当前请求的cursor：{0}").format(cursor))
             logger.debug(
@@ -400,7 +422,13 @@ class TiktokHandler:
 
             # 更新已经处理的作品数量 (Update the number of videos processed)
             videos_collected += len(video.aweme_id)
-            cursor = video.cursor
+
+            # 最后一页之后不再请求，否则会拿着 0 或 -1 的游标从头重新抓取（#270）
+            next_cursor = _next_cursor(video, cursor)
+            if next_cursor is None:
+                logger.info(_("用户：{0} 所有作品采集完毕").format(secUid))
+                break
+            cursor = next_cursor
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -516,9 +544,11 @@ class TiktokHandler:
                     logger.debug(_("用户：{0} 所有作品采集完毕").format(secUid))
                     break
 
-            # 更新已经处理的作品数量 (Update the number of videos processed)
-            videos_collected += len(like.aweme_id)
-            cursor = like.cursor
+            next_cursor = _next_cursor(like, cursor)
+            if next_cursor is None:
+                logger.debug(_("用户：{0} 所有作品采集完毕").format(secUid))
+                break
+            cursor = next_cursor
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -637,9 +667,11 @@ class TiktokHandler:
                     logger.debug(_("用户：{0} 所有作品采集完毕").format(secUid))
                     break
 
-            # 更新已经处理的作品数量 (Update the number of videos processed)
-            videos_collected += len(collect.aweme_id)
-            cursor = collect.cursor
+            next_cursor = _next_cursor(collect, cursor)
+            if next_cursor is None:
+                logger.debug(_("用户：{0} 所有作品采集完毕").format(secUid))
+                break
+            cursor = next_cursor
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -850,9 +882,11 @@ class TiktokHandler:
                     logger.debug(_("合集: {0} 所有作品采集完毕").format(mixId))
                     break
 
-            # 更新已经处理的作品数量 (Update the number of videos processed)
-            videos_collected += len(mix.aweme_id)
-            cursor = mix.cursor
+            next_cursor = _next_cursor(mix, cursor)
+            if next_cursor is None:
+                logger.debug(_("合集: {0} 所有作品采集完毕").format(mixId))
+                break
+            cursor = next_cursor
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))

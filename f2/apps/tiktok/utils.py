@@ -1298,6 +1298,26 @@ class DeviceIdManager(BaseCrawler):
         return {"deviceId": device_ids, "cookie": cookies}
 
 
+def normalize_cursor(cursor, default: Optional[int] = None) -> Optional[int]:
+    """
+    把分页游标统一转换为整数 (Normalize a pagination cursor to int)
+
+    TikTok 接口返回的 cursor 有时是字符串、有时是整数，与整数比较前需要先统一类型（#270）。
+
+    Args:
+        cursor: 接口返回或配置中的游标 (Cursor from the API or config)
+        default (Optional[int]): 无法解析时返回的值 (Value returned when parsing fails)
+
+    Returns:
+        Optional[int]: 整数游标 (Integer cursor)
+    """
+
+    try:
+        return int(cursor)
+    except (TypeError, ValueError):
+        return default
+
+
 def format_file_name(
     naming_template: str,
     aweme_data: Optional[dict] = None,
