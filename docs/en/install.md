@@ -111,8 +111,9 @@ $ pip3 install -e . # Install in development mode
 ### For PR Contributors
 
 1. First, `fork` this project and clone your fork.
-2. Submit your ideas in `Discussions`, or report issues in `Issues`.
-3. After updating your code, submit a `PR` following the instructions in [CONTRIBUTING](https://github.com/Johnserf-Seed/f2/blob/main/CONTRIBUTING.en.md).
+2. Create your branch from the current development branch (currently `v0.0.1.8-pw3`; the `Dev Branch` badge at the top of the README always shows it), not from `main`.
+3. Submit your ideas in `Discussions`, or report issues in `Issues`.
+4. After updating your code, submit a `PR` following the instructions in [CONTRIBUTING](https://github.com/Johnserf-Seed/f2/blob/v0.0.1.8-pw3/CONTRIBUTING.en.md), **with the current development branch as the target, not `main`**.
 
 ### Test the Latest Features
 

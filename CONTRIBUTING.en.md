@@ -11,6 +11,23 @@ To get started with the project, follow the [Installation](https://f2.wiki/insta
 
 Next, follow the steps for [PR Contributors](https://f2.wiki/install#pr贡献者).
 
+## Branches and PR Targets 🌿
+> [!IMPORTANT]
+> Please do not open `PR`s against `main`. `main` only holds released code; development happens on the current development branch, which is currently [`v0.0.1.8-pw3`](https://github.com/Johnserf-Seed/f2/tree/v0.0.1.8-pw3).
+
+- **Branch naming**: development branches are named `v<next version>-pw<sequence>`, e.g. `v0.0.1.8-pw3`. The `Dev Branch` badge at the top of the README always shows the current one.
+- **Start from the development branch**: after forking, create your feature branch from the development branch:
+
+  ```bash
+  git remote add upstream https://github.com/Johnserf-Seed/f2.git
+  git fetch upstream
+  git checkout -b fix/your-change upstream/v0.0.1.8-pw3
+  ```
+
+- **PR target**: choose the current development branch as the `base` when opening a `PR`. If you already opened it against `main`, click `Edit` next to the title on the `PR` page and change the base branch; there is no need to close and reopen it. Rebase onto the development branch if there are conflicts.
+- **External `PR`s targeting `main`**: they are blocked by the `PR target branch` check. Maintainers will ask you to retarget, or port your change to the development branch and credit you with `Co-authored-by`.
+- **Release flow**: once the development branch is tested it is merged into `main`, released to `PyPI` from `main`, and the next development branch is created.
+
 ## Development Guidelines 📝
 When developing for `F2`, keep the following points in mind:
 
@@ -147,8 +164,14 @@ Every `PR` and push triggers `.github/workflows/ci.yml`:
 
 Releases are handled by `.github/workflows/release.yml`: after updating `__version__` in `f2/__init__.py` and `CHANGELOG.md` and merging, maintainers create a GitHub Release tagged `vX.Y.Z`; clicking Publish release triggers the build and publishes through PyPI Trusted Publishing, so no API token is stored in the repository (the workflow verifies that the tag matches the version). Drafts do not trigger anything; releases marked as pre-release are only built, not published, and the artifacts can be downloaded from the workflow run; pushing a tag on its own never publishes. One-time setup: add a GitHub publisher in the PyPI project's Publishing settings (repository `Johnserf-Seed/f2`, workflow `release.yml`, environment `pypi`) and create the `pypi` environment under the repository's Settings → Environments, optionally with required reviewers as a final approval gate.
 
+When switching to a new development branch, maintainers update the following:
+
+1. Create the new development branch from `main`, e.g. `v0.0.1.9-pw1`.
+2. Update the `Dev Branch` badge at the top of `README.md` and `README.en.md`, the current development branch in `CONTRIBUTING.md` and this file, and `target-branch` in `.github/dependabot.yml`.
+3. During development, set the repository's default branch (Settings → General → Default branch) to the development branch: new `PR`s then target it by default, and `dependabot`, the `PR` template and scheduled scans all read their configuration from the default branch.
+
 ## Creating a PR 🚀
-Once you are satisfied with your code and have followed all the above steps, and your code passes all tests, you can create a `Pull Request` for your `forked` branch.
+Once you are satisfied with your code and have followed all the above steps, and your code passes all tests, you can create a `Pull Request` for your `forked` branch. **Choose the current development branch as the `base`, not `main`**, and go through the checklist in the `PR` template.
 
 `GitHub` provides a useful [guide](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) to help you create a `PR`. Be sure to include a description of your changes and link to the related `Issue` or discussion.
 
@@ -156,4 +179,4 @@ Once you are satisfied with your code and have followed all the above steps, and
 All code changes are subject to a code review. Wait for the repository's code review bot to automatically check your code. There may be some discussions and iterations. In most cases, a few iterations are needed to fully address any issues.
 
 ## Final Step 🏁
-Once your `PR` is approved, it will be merged into the `main` branch and made available to all users in the next release. 🚀
+Once your `PR` is approved, it will be merged into the current development branch, then merged into `main` and released to `PyPI` with the next version. 🚀

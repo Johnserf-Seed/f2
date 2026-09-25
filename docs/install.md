@@ -111,8 +111,9 @@ $ pip3 install -e . # 在当前目录下进行开发安装
 ### PR贡献者
 
 1. 请先 `fork` 本项目，然后克隆你的项目。
-2. 在 `Discussions` 中提出你的想法，或者在 `Issues` 中报告错误。
-3. 更新完代码后，按照 [CONTRIBUTING](https://github.com/Johnserf-Seed/f2/blob/main/CONTRIBUTING.md) 的指导提交 `PR`。
+2. 基于当前开发分支（目前为 `v0.0.1.8-pw3`，以 README 顶部的 `Dev Branch` 徽章为准）创建你的分支，不要基于 `main`。
+3. 在 `Discussions` 中提出你的想法，或者在 `Issues` 中报告错误。
+4. 更新完代码后，按照 [CONTRIBUTING](https://github.com/Johnserf-Seed/f2/blob/v0.0.1.8-pw3/CONTRIBUTING.md) 的指导提交 `PR`，**目标分支选择当前开发分支，不要选择 `main`**。
 
 ### 测试最新功能
 

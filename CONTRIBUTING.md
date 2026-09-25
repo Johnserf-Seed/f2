@@ -11,6 +11,23 @@
 
 接下来按照 [PR贡献者](https://f2.wiki/install#pr贡献者) 的步骤进行操作。
 
+## 分支与 PR 目标 🌿
+> [!IMPORTANT]
+> 请不要向 `main` 分支提交 `PR`。`main` 只保存已发布的代码，开发都在当前的开发分支上进行，目前是 [`v0.0.1.8-pw3`](https://github.com/Johnserf-Seed/f2/tree/v0.0.1.8-pw3)。
+
+- **分支约定**：开发分支命名为 `v<下一个版本号>-pw<序号>`，例如 `v0.0.1.8-pw3`。当前开发分支以 README 顶部的 `Dev Branch` 徽章为准。
+- **基于开发分支开发**：`fork` 之后，从开发分支创建你自己的功能分支：
+
+  ```bash
+  git remote add upstream https://github.com/Johnserf-Seed/f2.git
+  git fetch upstream
+  git checkout -b fix/your-change upstream/v0.0.1.8-pw3
+  ```
+
+- **PR 的目标分支**：创建 `PR` 时，`base` 选择当前开发分支。如果已经提交到了 `main`，在 `PR` 页面标题旁点击 `Edit`，把目标分支改为开发分支即可，不需要关闭重开；出现冲突时先 `rebase` 到开发分支。
+- **目标为 `main` 的外部 `PR`**：会被 `PR target branch` 检查拦下。维护者会请你修改目标分支，或把改动移植到开发分支，并在提交中用 `Co-authored-by` 署名原作者。
+- **发布流程**：开发分支测试完成后合并到 `main`，从 `main` 发布到 `PyPI`，随后创建下一个开发分支。
+
 ## 开发规范 📝
 在开发 `F2` 代码时，请注意以下几点：
 
@@ -146,8 +163,14 @@ $ pnpm docs:build
 
 发布由 `.github/workflows/release.yml` 完成：维护者更新 `f2/__init__.py` 的 `__version__` 与 `CHANGELOG.md` 并合并后，在 GitHub 的 Releases 页面以 `vX.Y.Z` 为标签创建 Release，点击 Publish release 才会触发构建并通过 PyPI 的 Trusted Publishing 发布，不需要在仓库保存 API token（工作流会校验标签与版本号一致）。草稿不触发；勾选 pre-release 的版本只构建、不发布，构建产物可在工作流页面下载核对；单独推送标签不会发布。首次使用需在 PyPI 项目的 Publishing 设置中添加 GitHub publisher（仓库 `Johnserf-Seed/f2`、工作流 `release.yml`、环境 `pypi`），并在仓库 Settings → Environments 中创建 `pypi` 环境，可加 Required reviewers 在发布前再做一道人工审批。
 
+切换到新的开发分支时，维护者需要同步更新以下位置：
+
+1. 从 `main` 创建新的开发分支，例如 `v0.0.1.9-pw1`。
+2. 更新 `README.md` 与 `README.en.md` 顶部的 `Dev Branch` 徽章、本文件与 `CONTRIBUTING.en.md` 中的当前开发分支、`.github/dependabot.yml` 的 `target-branch`。
+3. 建议在开发期间把仓库的默认分支（Settings → General → Default branch）设为开发分支：新建 `PR` 会默认指向它，`dependabot`、`PR` 模板与定时扫描也都以默认分支上的配置为准。
+
 ## 创建 PR 🚀
-一旦对您的代码感到满意，并确保已遵守上述所有步骤，且通过了所有测试，您就可以创建一个您所 `fork` 分支的 `Pull Request`。
+一旦对您的代码感到满意，并确保已遵守上述所有步骤，且通过了所有测试，您就可以创建一个您所 `fork` 分支的 `Pull Request`。**目标分支（`base`）请选择当前开发分支，不要选择 `main`**，并按 `PR` 模板中的检查清单逐项确认。
 
 `GitHub` 提供了一个很好的 [指南](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) 来帮助您创建 `PR`。请确保 `PR` 中包含您对更改的描述，并将其链接到相关的 `Issue` 或讨论。
 
@@ -155,4 +178,4 @@ $ pnpm docs:build
 所有的代码更改都需要经过代码审查。等待仓库的代码审查机器人自动检查您的代码。如果有问题，可能会有一些讨论和迭代。大多数情况下，需要几次迭代才能完全解决问题。
 
 ## 最后一步 🏁
-一旦您的 `PR` 被批准，它将被合并到 `main` 分支中，并在下次发布时供所有用户使用。🚀
+一旦您的 `PR` 被批准，它将被合并到当前开发分支，并随下一个版本合入 `main`、发布到 `PyPI`，供所有用户使用。🚀

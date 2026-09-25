@@ -4,7 +4,7 @@
 
 [![Downloads](https://pepy.tech/badge/f2/month)](https://pepy.tech/project/f2)
 [![PyPI version](https://badge.fury.io/py/f2.svg)](https://badge.fury.io/py/f2)
-[![Dev Branch](https://badgen.net/badge/branch/v0.0.1.7-pw2/blue)](https://github.com/Johnserf-Seed/f2/tree/v0.0.1.7-pw2)
+[![Dev Branch](https://badgen.net/badge/branch/v0.0.1.8-pw3/blue)](https://github.com/Johnserf-Seed/f2/tree/v0.0.1.8-pw3)
 [![Discord](https://img.shields.io/discord/1146473603450282004?label=Discord)](https://discord.gg/3PhtPmgHf8)
 [![codecov](https://codecov.io/gh/Johnserf-Seed/f2/graph/badge.svg?token=T9DH4QPZSS)](https://codecov.io/gh/Johnserf-Seed/f2)
 [![TikHub](https://img.shields.io/badge/%E8%B5%9E%E5%8A%A9%E5%95%86-TikHub-orange?style=flat-square&logo=tiktok)](https://beta-web.tikhub.io/users/signup?referral_code=6hLcGD94)
@@ -1030,7 +1030,7 @@
 
 ## 👨‍💻 贡献
 
-如果你有兴趣为 `F2` 贡献代码，请查看[贡献指南](https://github.com/Johnserf-Seed/f2/blob/main/CONTRIBUTING.md)。
+如果你有兴趣为 `F2` 贡献代码，请查看[贡献指南](https://github.com/Johnserf-Seed/f2/blob/v0.0.1.8-pw3/CONTRIBUTING.md)。`PR` 请提交到当前开发分支 `v0.0.1.8-pw3`（见顶部 `Dev Branch` 徽章），不要提交到 `main`。
 
 ## 🙏 鸣谢
 
