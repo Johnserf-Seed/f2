@@ -108,11 +108,11 @@ class WeiboDownloader(BaseDownloader):
             logger.debug(_("开始下载微博：{0}").format(self.weibo_id))
             await self.download_desc()
 
-        # 检查微博是否有图片
+        # 检查微博是否有图片；视频的 page_info.type 既可能是整数 11，也可能是字符串 "11"（#249）
         if (
             self.weibo_data_dict.get("weibo_pic_num") == 0
             and weibo_data_dict.get("weibo_pic_ids") is None
-            and weibo_data_dict.get("is_video") == "11"
+            and str(weibo_data_dict.get("is_video")) == "11"
         ):
             await self.download_video()
         else:
