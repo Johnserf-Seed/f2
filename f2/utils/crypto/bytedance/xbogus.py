@@ -16,6 +16,7 @@ Change Log  :
 2023/06/07 17:26:02 - Refactor the XB algorithm using Python.
 2024/04/01 00:32:30 - Black Code Style & Support custom ua
 2024/04/13 14:42:10 - Correction examples
+2026/09/25 00:00:00 - Hash raw strings as text, short query strings are no longer parsed as hex (#389)
 -------------------------------------------------
 """
 
@@ -27,14 +28,6 @@ import time
 class XBogus:
     def __init__(self, user_agent: str = "") -> None:
         # fmt: off
-        self.Array = [
-            None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-            None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-            None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, None, None, None, None, None, None, None, None, None, None, None,
-            None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-            None, None, None, None, None, None, None, None, None, None, None, None, 10, 11, 12, 13, 14, 15
-        ]
         self.character = "Dkdpgh4ZKsQB80/Mfvw36XI1R25-WUAlEi7NLboqYTOPuzmFjJnryx9HVGcaStCe="
         # fmt: on
         self.ua_key = b"\x00\x01\x0c"
@@ -44,23 +37,25 @@ class XBogus:
             else "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0"
         )
 
+    def str_to_array(self, text):
+        """
+        将原始字符串（查询串、UA 等）逐字符转换为整数数组。
+        Convert a raw string (query string, user agent) into a list of character codes.
+        """
+        return [ord(char) for char in text]
+
     def md5_str_to_array(self, md5_str):
         """
-        将字符串使用md5哈希算法转换为整数数组。
-        Convert a string to an array of integers using the md5 hashing algorithm.
+        将 md5 十六进制摘要转换为整数数组。
+        Convert an md5 hex digest into a list of integers.
+
+        超过 32 个字符的字符串沿用旧行为逐字符转换；其余输入必须是十六进制，否则抛出 ValueError。
+        Strings longer than 32 characters are still converted character by character;
+        anything else must be hexadecimal, otherwise ValueError is raised.
         """
         if isinstance(md5_str, str) and len(md5_str) > 32:
-            return [ord(char) for char in md5_str]
-        else:
-            array = []
-            idx = 0
-            while idx < len(md5_str):
-                array.append(
-                    ((self.Array[ord(md5_str[idx])] or 0) << 4)
-                    | (self.Array[ord(md5_str[idx + 1])] or 0)
-                )
-                idx += 2
-            return array
+            return self.str_to_array(md5_str)
+        return list(bytes.fromhex(md5_str))
 
     def md5_encrypt(self, url_params):
         """
@@ -78,7 +73,9 @@ class XBogus:
         Calculate the md5 hash value of the input data.
         """
         if isinstance(input_data, str):
-            array = self.md5_str_to_array(input_data)
+            # 字符串一律按原始字符计算。此前按长度判断，不超过 32 个字符的查询串
+            # 会被当成十六进制摘要解析，导致越界或签名错误（#389）
+            array = self.str_to_array(input_data)
         elif isinstance(input_data, list):
             array = input_data
         else:
