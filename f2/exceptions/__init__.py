@@ -13,7 +13,12 @@ from .api_exceptions import (
     APIUnavailableError,
 )
 from .base import F2Error
-from .conf_exceptions import ConfError, InvalidEncodingError
+from .conf_exceptions import (
+    ConfError,
+    InvalidConfError,
+    InvalidConfPathError,
+    InvalidEncodingError,
+)
 from .db_exceptions import (
     DatabaseConnectionError,
     DatabaseConstraintError,
@@ -55,4 +60,6 @@ __all__ = [
     "FileWriteError",
     "ConfError",
     "InvalidEncodingError",
+    "InvalidConfError",
+    "InvalidConfPathError",
 ]
