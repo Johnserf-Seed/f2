@@ -161,6 +161,7 @@ outline: [2,3]
 | 保存最后请求的作品ID | `DouyinDownloader` | `save_last_aweme_id` |  🟢  |
 | 创建下载任务   | `DouyinDownloader` | `create_download_task` |  🟢  |
 | 处理下载任务   | `DouyinDownloader` | `handler_download` |  🟢  |
+| 按作品数据下载视频或图集 | `DouyinDownloader` | `download_media` |  🟢  |
 | 下载原声      | `DouyinDownloader` | `download_music`   |  🟢  |
 | 下载封面      | `DouyinDownloader` | `download_cover`   |  🟢  |
 | 下载文案      | `DouyinDownloader` | `download_desc`    |  🟢  |
@@ -178,6 +179,7 @@ outline: [2,3]
 - 当 `max_counts` 设置为 `None` 或不传入时，将会获取所有的作品数据。
 - 在一些后端框架 `FastAPI`、`Flask`、`Django` 中可以方便的集成等。
 - 使用登录的 `cookie` 可以无视该账号的私密设置，例如该账号设置私密的 `作品`、`主页`、`喜欢`、`收藏` 等。
+- 下载器不再按固定的作品类型名单下载：图集作品或带有图片的作品下载图集，其他作品只要有视频链接就下载视频，所以 `51`、`53`、`66` 等新类型也能下载。作品没有可下载的内容、被屏蔽或可见状态不支持下载时，会输出警告说明原因。
 :::
 
 ## handler接口列表

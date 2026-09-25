@@ -157,6 +157,7 @@ Live Room Hot Chat Messages | `DouyinWebSocketCrawler` | `WebcastHotChatMessage`
 | Save Last Requested Work ID | `DouyinDownloader` | `save_last_aweme_id` | 🟢 |
 | Create Download Task | `DouyinDownloader` | `create_download_task` | 🟢 |
 | Handle Download Task | `DouyinDownloader` | `handler_download` | 🟢 |
+| Download Video or Gallery by Post Data | `DouyinDownloader` | `download_media` | 🟢 |
 | Download Original Sound | `DouyinDownloader` | `download_music` | 🟢 |
 | Download Cover | `DouyinDownloader` | `download_cover` | 🟢 |
 | Download Caption | `DouyinDownloader` | `download_desc` | 🟢 |
@@ -174,6 +175,7 @@ Live Room Hot Chat Messages | `DouyinWebSocketCrawler` | `WebcastHotChatMessage`
 - If `max_counts` is set to `None` or omitted, all available work data will be retrieved.
 - Can be conveniently integrated with backend frameworks like `FastAPI`, `Flask`, and `Django`.
 - Using a logged-in `cookie` bypasses the account's privacy settings, allowing access to private `works`, `homepage`, `likes`, `collections`, etc.
+- The downloader no longer relies on a fixed list of post types: gallery posts and posts with images are downloaded as galleries, and any other post with a video link is downloaded as a video, so new types such as `51`, `53`, and `66` work too. When a post has nothing to download, is blocked, or has an unsupported visibility status, a warning explains why.
 :::
 
 ## Handler Interface List
