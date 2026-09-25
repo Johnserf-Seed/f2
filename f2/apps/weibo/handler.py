@@ -359,6 +359,8 @@ class WeiboHandler:
 
         max_counts = max_counts or float("inf")
         weibos_collected = 0
+        # 默认使用 uid：第一页就结束或没有微博时，nickname_raw 也有值（#401）
+        nickname_raw = uid
 
         logger.info(_("处理用户：{0} 发布的微博").format(uid))
 
@@ -376,6 +378,10 @@ class WeiboHandler:
                 weibo_data = UserWeiboFilter(response)
                 yield weibo_data
 
+            # 只在本页有微博时更新昵称，最后一页可能不包含任何微博
+            if weibo_data.weibo_user_name_raw:
+                nickname_raw = weibo_data.weibo_user_name_raw[0]
+
             # 更新已经处理的微博数量
             weibos_collected += len(weibo_data.weibo_id)
             page += 1
@@ -384,9 +390,6 @@ class WeiboHandler:
                 break
             else:
                 since_id = str(weibo_data.since_id)
-
-            # 防止最后一页不包含任何微博导致无法获取nickname_raw
-            nickname_raw = weibo_data.weibo_user_name_raw[0]
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))

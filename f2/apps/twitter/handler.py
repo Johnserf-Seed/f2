@@ -274,6 +274,8 @@ class TwitterHandler:
 
         max_counts = max_counts or float("inf")
         tweets_collected = 0
+        # 默认使用 userId：第一页就结束时，nickname_raw 也有值（#401）
+        nickname_raw = userId
 
         logger.info(_("开始爬取用户：{0} 发布的推文").format(userId))
 
@@ -309,8 +311,9 @@ class TwitterHandler:
 
             yield tweet
 
-            # 防止最后一页不包含任何作品导致无法获取nickname_raw
-            nickname_raw = tweet.nickname_raw[0]
+            # 只在本页有推文时更新昵称，最后一页可能不包含任何推文
+            if tweet.nickname_raw:
+                nickname_raw = tweet.nickname_raw[0]
 
             # 更新已经处理的推文数量 (Update the number of videos processed)
             tweets_collected += len(list(filter(None, tweet.tweet_id)))
