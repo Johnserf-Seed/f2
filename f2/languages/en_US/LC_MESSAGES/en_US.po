@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-25 13:45-0700\n"
+"POT-Creation-Date: 2026-09-25 13:58-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -4275,18 +4275,43 @@ msgstr "Configuration file does not exist"
 
 #: f2/utils/config/conf_manager.py
 #, python-brace-format
+msgid "{0} 应用配置未找到"
+msgstr "{0} Application configuration not found"
+
+#: f2/utils/config/conf_manager.py
+#, python-brace-format
 msgid "{0} 应用配置文件生成成功，保存至 {1}"
 msgstr "{0} Application configuration file generated successfully, saved to {1}"
 
 #: f2/utils/config/conf_manager.py
 #, python-brace-format
-msgid "{0} 应用配置未找到"
-msgstr "{0} Application configuration not found"
+msgid "{0} 已包含 {1} 应用的全部配置项，无需修改"
+msgstr "{0} already contains every setting of the {1} app; nothing to change"
 
 #: f2/utils/config/conf_manager.py
-#, fuzzy, python-brace-format
-msgid "生成配置文件失败：{0}"
-msgstr "Attempt to delete temporary file failed: {0}"
+#, python-brace-format
+msgid "已向 {0} 补充 {1} 应用缺少的 {2} 个配置项，原文件备份为 {3}"
+msgstr ""
+"Added {2} missing {1} settings to {0}; the original file was backed up to"
+" {3}"
+
+#: f2/utils/config/conf_manager.py
+#, python-brace-format
+msgid "已在 {0} 中追加 {1} 应用的默认配置，原文件备份为 {2}"
+msgstr ""
+"Appended the default {1} settings to {0}; the original file was backed up"
+" to {2}"
+
+#: f2/utils/config/conf_manager.py
+#, python-brace-format
+msgid "无法解析配置文件，未做任何修改：{0}"
+msgstr "Unable to parse the config file; nothing was changed: {0}"
+
+#: f2/utils/config/conf_manager.py
+msgid "配置文件的顶层不是键值映射，未做任何修改"
+msgstr ""
+"The top level of the config file is not a key-value mapping; nothing was "
+"changed"
 
 #: f2/utils/config/conf_manager.py
 msgid "是否要使用命令行的参数更新配置文件？"
@@ -4858,4 +4883,7 @@ msgstr "Invalid timestamp string"
 
 #~ msgid "重定向次数过多：{0}"
 #~ msgstr "Too many redirects: {0}"
+
+#~ msgid "生成配置文件失败：{0}"
+#~ msgstr "Attempt to delete temporary file failed: {0}"
 

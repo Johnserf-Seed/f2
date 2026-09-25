@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-25 13:45-0700\n"
+"POT-Creation-Date: 2026-09-25 13:58-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -4046,18 +4046,37 @@ msgstr "配置文件路径无写权限"
 
 #: f2/utils/config/conf_manager.py
 #, python-brace-format
+msgid "{0} 应用配置未找到"
+msgstr "{0} 应用配置未找到"
+
+#: f2/utils/config/conf_manager.py
+#, python-brace-format
 msgid "{0} 应用配置文件生成成功，保存至 {1}"
 msgstr "{0} 应用配置文件生成成功，保存至 {1}"
 
 #: f2/utils/config/conf_manager.py
 #, python-brace-format
-msgid "{0} 应用配置未找到"
-msgstr "{0} 应用配置未找到"
+msgid "{0} 已包含 {1} 应用的全部配置项，无需修改"
+msgstr "{0} 已包含 {1} 应用的全部配置项，无需修改"
 
 #: f2/utils/config/conf_manager.py
-#, fuzzy, python-brace-format
-msgid "生成配置文件失败：{0}"
-msgstr "尝试删除临时文件失败：{0}"
+#, python-brace-format
+msgid "已向 {0} 补充 {1} 应用缺少的 {2} 个配置项，原文件备份为 {3}"
+msgstr "已向 {0} 补充 {1} 应用缺少的 {2} 个配置项，原文件备份为 {3}"
+
+#: f2/utils/config/conf_manager.py
+#, python-brace-format
+msgid "已在 {0} 中追加 {1} 应用的默认配置，原文件备份为 {2}"
+msgstr "已在 {0} 中追加 {1} 应用的默认配置，原文件备份为 {2}"
+
+#: f2/utils/config/conf_manager.py
+#, python-brace-format
+msgid "无法解析配置文件，未做任何修改：{0}"
+msgstr "无法解析配置文件，未做任何修改：{0}"
+
+#: f2/utils/config/conf_manager.py
+msgid "配置文件的顶层不是键值映射，未做任何修改"
+msgstr "配置文件的顶层不是键值映射，未做任何修改"
 
 #: f2/utils/config/conf_manager.py
 msgid "是否要使用命令行的参数更新配置文件？"
@@ -4583,4 +4602,7 @@ msgstr "无效的时间戳字符串"
 
 #~ msgid "重定向次数过多：{0}"
 #~ msgstr "重定向次数过多：{0}"
+
+#~ msgid "生成配置文件失败：{0}"
+#~ msgstr "尝试删除临时文件失败：{0}"
 
