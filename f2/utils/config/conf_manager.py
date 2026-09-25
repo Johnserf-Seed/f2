@@ -1,19 +1,46 @@
 # path: f2/utils/config/conf_manager.py
 
+import copy
 import os
+import shutil
 from pathlib import Path
 from typing import Any
 
 import click
 from ruamel.yaml import YAML  # type: ignore[import-untyped]
+from ruamel.yaml.comments import CommentedMap  # type: ignore[import-untyped]
 
 import f2
+from f2.exceptions.conf_exceptions import ConfError
 from f2.exceptions.file_exceptions import (
     FileNotFound,
     FilePermissionError,
 )
 from f2.i18n.translator import _
 from f2.utils.file.path import get_resource_path
+
+
+def merge_missing_keys(target: dict, defaults: dict) -> int:
+    """
+    把 defaults 里 target 缺少的键补进 target，嵌套的字典会递归补充，已有的值保持不变
+    (Copy keys that are missing from target out of defaults, recursively, without
+    touching existing values)
+
+    Args:
+        target (dict): 要补充的配置，会被原地修改
+        defaults (dict): 默认配置
+
+    Returns:
+        int: 补充的键数量
+    """
+    added = 0
+    for key, value in defaults.items():
+        if key not in target:
+            target[key] = copy.deepcopy(value)
+            added += 1
+        elif isinstance(target[key], dict) and isinstance(value, dict):
+            added += merge_missing_keys(target[key], value)
+    return added
 
 
 class ConfigManager:
@@ -154,7 +181,12 @@ class ConfigManager:
         shutil.copy2(self.filepath, backup_path)
 
     def generate_config(self, app_name: str, save_path: str):
-        """生成应用程序特定配置文件，保留格式 (Generate application-specific conf file with formatting)"""
+        """
+        生成应用配置文件，保留格式 (Generate an application-specific conf file with formatting)
+
+        目标文件不存在时写入该应用的默认配置；已存在时只补充缺少的配置项，
+        其他应用的配置、已有的值与注释都保持不变，修改前备份为同名 .bak 文件。
+        """
 
         if not isinstance(app_name, str):
             return
@@ -166,33 +198,86 @@ class ConfigManager:
         if not save_path_obj.is_absolute():
             save_path_obj = Path.cwd() / save_path
 
-        # 确保目录存在，如果不存在则创建
-        save_path_obj.parent.mkdir(parents=True, exist_ok=True)
-
         # 读取默认配置
         defaults_path = Path(get_resource_path(f2.F2_DEFAULTS_FILE_PATH))
+        with open(defaults_path, "r", encoding="utf-8") as file:
+            default_config = self.yaml.load(file) or {}
 
-        try:
-            with open(defaults_path, "r", encoding="utf-8") as file:
-                default_config = self.yaml.load(file) or {}
+        if app_name not in default_config:
+            click.echo(_("{0} 应用配置未找到").format(app_name))
+            return
+        default_app_config = default_config[app_name]
 
-            if app_name in default_config:
-                # 将app_name作为外层键
-                app_config = {app_name: default_config[app_name]}
+        if not save_path_obj.exists():
+            # 确保目录存在，如果不存在则创建
+            save_path_obj.parent.mkdir(parents=True, exist_ok=True)
+            self._write_yaml(save_path_obj, {app_name: default_app_config})
+            click.echo(
+                _("{0} 应用配置文件生成成功，保存至 {1}").format(
+                    app_name, save_path_obj
+                )
+            )
+            return
 
-                # 写入应用程序特定配置，保留格式
-                with open(save_path_obj, "w", encoding="utf-8") as file:
-                    self.yaml.dump(app_config, file)
-
+        # 文件已存在：不再覆盖，只补充缺少的内容
+        existing = self._load_existing_config(save_path_obj)
+        current = existing.get(app_name)
+        if isinstance(current, dict):
+            added = merge_missing_keys(current, default_app_config)
+            if added == 0:
                 click.echo(
-                    _("{0} 应用配置文件生成成功，保存至 {1}").format(
-                        app_name, save_path_obj
+                    _("{0} 已包含 {1} 应用的全部配置项，无需修改").format(
+                        save_path_obj, app_name
                     )
                 )
-            else:
-                click.echo(_("{0} 应用配置未找到").format(app_name))
+                return
+        else:
+            existing[app_name] = copy.deepcopy(default_app_config)
+
+        backup_path = save_path_obj.with_suffix(".bak")
+        shutil.copy2(save_path_obj, backup_path)
+        self._write_yaml(save_path_obj, existing)
+
+        if isinstance(current, dict):
+            click.echo(
+                _("已向 {0} 补充 {1} 应用缺少的 {2} 个配置项，原文件备份为 {3}").format(
+                    save_path_obj, app_name, added, backup_path
+                )
+            )
+        else:
+            click.echo(
+                _("已在 {0} 中追加 {1} 应用的默认配置，原文件备份为 {2}").format(
+                    save_path_obj, app_name, backup_path
+                )
+            )
+
+    def _load_existing_config(self, path: Path) -> Any:
+        """读取已存在的配置文件，无法解析或不是键值映射时报错且不做修改"""
+        try:
+            with open(path, "r", encoding="utf-8") as file:
+                data = self.yaml.load(file)
+        except PermissionError:
+            raise FilePermissionError(_("配置文件路径无读权限"), path)
         except Exception as e:
-            raise RuntimeError(_("生成配置文件失败：{0}").format(str(e)))
+            raise ConfError(
+                _("无法解析配置文件，未做任何修改：{0}").format(e), filepath=path
+            ) from e
+
+        if data is None:
+            return CommentedMap()
+        if not isinstance(data, dict):
+            raise ConfError(
+                _("配置文件的顶层不是键值映射，未做任何修改"), filepath=path
+            )
+        return data
+
+    def _write_yaml(self, path: Path, data: Any) -> None:
+        """写入 YAML，保留格式与注释"""
+        try:
+            with open(path, "w", encoding="utf-8") as file:
+                self.yaml.dump(data, file)
+        except PermissionError:
+            raise FilePermissionError(_("配置文件路径无写权限"), path)
 
     def update_config(self, app_name: str, app_config: dict):
         """更新配置项并保存
