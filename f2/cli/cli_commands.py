@@ -129,6 +129,19 @@ def setup_cli_logging() -> None:
     log_setup(log_to_console=False, log_name="f2-trace", lazy_file_creation=True)
 
 
+def report_f2_error(error: F2Error) -> None:
+    """
+    报告中止运行的 F2Error (Report the F2Error that aborted the run)
+
+    异常在构造时不记录日志，这里统一输出一次：控制台一行错误原因加帮助链接，
+    完整堆栈写入 f2-trace 日志。需要在 except 块中调用。
+    """
+
+    trace_logger.error(traceback.format_exc())
+    logger.error(_("运行中止：{0}").format(error))
+    logger.info(_("请前往QA文档 https://f2.wiki/faq 查看相关帮助"))
+
+
 class DynamicGroup(click.Group):
     """
     DynamicGroup 类继承自 click.Group，提供动态加载和执行命令的功能。
@@ -140,6 +153,7 @@ class DynamicGroup(click.Group):
 
     类方法:
     - main: 重写 click.Group 的 `main` 方法，在解析参数前配置 CLI 日志。
+    - invoke: 重写 click.Group 的 `invoke` 方法，统一报告子命令抛出的 F2Error 并以退出码 1 结束。
     - get_command: 重写 click.Group 的 `get_command` 方法，根据传入的命令名称 `cmd_name` 查找并导入对应应用的 CLI 模块。
         执行异步检查任务并返回相关命令。如果发生错误，返回 None。
 
@@ -180,6 +194,15 @@ class DynamicGroup(click.Group):
         # 在解析参数前配置日志，保证 -d/--debug 等选项回调中的日志可正常输出
         setup_cli_logging()
         return super().main(*args, **kwargs)
+
+    def invoke(self, ctx: click.Context) -> typing.Any:
+        # 应用命令在开始下载前（例如读取配置时）抛出的 F2Error 也在这里统一报告，
+        # 不再打印完整堆栈；下载过程中的异常由 set_cli_config 处理
+        try:
+            return super().invoke(ctx)
+        except F2Error as e:
+            report_f2_error(e)
+            ctx.exit(1)
 
     def get_command(self, ctx: click.Context, cmd_name: str):
         # 首先检查是否是内置命令
@@ -290,8 +313,7 @@ def set_cli_config(ctx: click.Context, **kwargs):
             asyncio.run(run_app(kwargs))
         except F2Error as e:
             # 业务错误：堆栈只进 trace 日志，控制台给出一行结论并返回非零退出码
-            trace_logger.error(traceback.format_exc())
-            logger.error(_("运行中止：{0}").format(e))
+            report_f2_error(e)
             ctx.exit(1)
 
     # 有文件最终下载失败时同样返回非零退出码，便于脚本判断结果
