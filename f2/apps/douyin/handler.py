@@ -1230,23 +1230,34 @@ class DouyinHandler:
         max_cursor = self.kwargs.get("max_cursor", 0)
         page_counts = self.kwargs.get("page_counts", 20)
         max_counts = self.kwargs.get("max_counts")
+        url = str(self.kwargs.get("url"))
 
-        # 先假定合集链接获取合集ID
+        # 合集、短剧链接可以直接解析出合集ID；不是合集链接时，再按合集中的作品链接处理
+        sec_user_id = None
         try:
             logger.info(_("正在从合集链接获取合集ID"))
-            mix_id = await MixIdFetcher.get_mix_id(str(self.kwargs.get("url")))
-            async for aweme_data in self.fetch_user_mix_videos(mix_id, 0, 20, 1):
-                logger.info(_("正在从合集作品里获取sec_user_id"))
-                sec_user_id = aweme_data.sec_user_id[0]  # 注意这里是一个列表
-        except Exception:
-            logger.warning(_("获取合集ID失败，尝试从合集作品链接中解析。"))
-            # 如果获取失败，则假定作品链接获取作品ID
+            mix_id = await MixIdFetcher.get_mix_id(url)
+        except APIResponseError as exc:
+            logger.warning(
+                _("获取合集ID失败，尝试从合集作品链接中解析：{0}").format(exc)
+            )
             logger.info(_("正在从合集作品链接获取合集ID"))
-            aweme_id = await AwemeIdFetcher.get_aweme_id(str(self.kwargs.get("url")))
+            aweme_id = await AwemeIdFetcher.get_aweme_id(url)
             one_video_data = await self.fetch_one_video(aweme_id)
             # 从 one_video_data 获取 sec_user_id 和 mix_id
             sec_user_id = one_video_data.sec_user_id
             mix_id = one_video_data.mix_id
+            if not mix_id:
+                raise APIResponseError(_("作品 {0} 不属于任何合集").format(aweme_id))
+
+        if not sec_user_id:
+            async for aweme_data in self.fetch_user_mix_videos(mix_id, 0, 20, 1):
+                logger.info(_("正在从合集作品里获取sec_user_id"))
+                sec_user_ids = aweme_data.sec_user_id or []  # 注意这里是一个列表
+                sec_user_id = sec_user_ids[0] if sec_user_ids else None
+                break
+        if not sec_user_id:
+            raise APIResponseError(_("合集 {0} 中没有作品").format(mix_id))
 
         async with AsyncUserDB("douyin_users.db") as db:
             user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, db)
