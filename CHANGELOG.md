@@ -6,6 +6,7 @@
 
 ## [Unreleased]
 
+- CLI 新增全局选项 `--no-log-file`（#293）：写在应用名之前时只在控制台输出日志，不创建 `logs` 目录，也不清理旧日志，适合没有写文件权限的环境；作为库使用时本来就不会写日志文件。
 - 修复抖音直播弹幕无法获取的问题（#412）：弹幕初始化接口新增了对 cookie 字段 `x-web-secsdk-uid` 的强校验，缺少时返回空内容。`fetch_live_im` 现在会在 cookie 缺少该字段时自动补上随机值；新增 `TokenManager.gen_secsdk_uid` 与 `TokenManager.ensure_secsdk_uid`，文档示例的 cookie 同步更新（`__live_version__` 更新为 `1.1.4.7838`）。
 - 修复 Twitter 单条推文下载失败（#436、#404）：接口在 `instructions` 前面插入了 `TimelineClearCache` 指令，推文详情改为按指令内容与 `entryId` 定位目标推文；评论或回复的链接不再下载到上层推文（#234）；受限推文（`TweetWithVisibilityResults`）也能读取。
 - 修复 Twitter 推文文案为空时报 `'NoneType' object has no attribute 'strip'` 的问题（#436、#404）。
