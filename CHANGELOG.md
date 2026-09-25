@@ -6,6 +6,10 @@
 
 ## [Unreleased]
 
+- 修复 GitHub 安全页的文档依赖告警：文档站 `vitepress` 升级到 1.6.4，并通过 `pnpm.overrides` 使用 `vite` 6.4.3，同时刷新锁文件中的 `esbuild`、`rollup`、`postcss`、`nanoid`、`preact` 与 `mdast-util-to-hast`；这些依赖只用于构建文档，不影响 PyPI 包。
+- 开发依赖升级：`black` 26.5.1（修复缓存文件任意写入漏洞，`pre-commit` 同步到同一版本，并按新版风格重新格式化）、`pytest` 9.1.1（修复临时目录处理漏洞）与 `pytest-asyncio` 1.4.0（旧版不支持 `pytest` 9）。
+- `bark` 推送加密使用 `ECB` 模式时输出安全警告；保留该模式只为兼容 Bark App 的同名选项，推荐使用 `CBC`。
+- `bark` 推送加密的随机 `iv` 改为由字母和数字组成，不再只用数字（此前 `GCM` 的 12 位 `iv` 只有约 40 比特随机性，同一密钥推送量大时可能重复）；新增 `generate_alphanumeric_bytes`。
 - Issue 模板改为表单：关键信息设为必填，新增「平台接口失效」与「文档问题」模板，关闭空白 issue，并把一般提问与功能想法引导到讨论区、安全问题引导到私密报告；新增按表单中所选平台自动添加标签的工作流。
 - 修复微博、TikTok、twitter 在第一页就结束或没有作品时报 `nickname_raw` 未绑定的问题（#401，此前只修复了抖音）。
 - 修复微博视频的类型为整数 `11` 时被判定为无法下载的问题（#249、#359）。
