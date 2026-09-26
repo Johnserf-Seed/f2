@@ -6,6 +6,7 @@
 
 ## [Unreleased]
 
+- 修复 twitter 主页推文与书签在一页只有一个条目时崩溃的问题：`jsonpath_ng` 对超出列表长度的负数下标（如只有 1 项时取 `[-2]`）会抛出 `IndexError`，`min_cursor` 因此报错，连带 `_to_list`、`_to_dict` 失败。`JSONModel` 的查询现在把这种情况视为字段缺失，所有平台的过滤器都受益。
 - 抖音按分辨率与码率选择最高清晰度（#214）：此前固定取清晰度列表的第一项，而接口按码率排序，2K、4K 只有 H.265 版本时码率可能低于 1080p 的 H.264，会下载到 1080p。现在先比较分辨率、再比较码率，清晰度列表为空时改用 `video.play_addr`；普通作品下载的文件不变。新增 `select_best_bit_rate`、`get_video_play_urls`。最高清晰度可能只有 H.265 编码，FAQ 已说明。
 - 抖音作品被删除或设为私密时，报错给出接口返回的原因（如“因作品权限或已被删除，无法观看”），不再提示“动图作品接口正在维护中”。
 - `--auto-cookie` 读取 Chrome、Edge 失败时给出原因与解决办法（#193、#205）：Windows 上的新版 Chrome、Edge 改用了应用绑定加密，`browser_cookie3`（0.20.1，目前的最新版）还不能解密。报错 `Unable to get key for cookie decryption` 时现在会提示改用 `--auto-cookie firefox` 或手动复制 cookie，并附上 FAQ 链接；cookie 数据库被占用时提示关闭浏览器后重试。FAQ 新增对应条目，各应用的 `--auto-cookie` 说明链接到它。新增 `f2.utils.http.browser.explain_browser_error`。
