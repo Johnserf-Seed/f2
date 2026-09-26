@@ -1,6 +1,6 @@
 # path: tests/test_tiktok_xgnarly_manager.py
 
-from urllib.parse import urlsplit
+from urllib.parse import quote, urlsplit
 
 import httpx
 import pytest
@@ -82,7 +82,22 @@ def test_web_models_carry_raw_values_without_ms_token():
     assert " (" in params["browser_version"]
     assert "%" not in params["tz_name"]
     url = XGnarlyManager.model_2_endpoint(UA, USER_POST, params)
-    assert "&browser_version=5.0%20(" in url
+    # 与网页一样按 RFC 3986 编码，括号、斜杠也会编码
+    assert "&browser_version=5.0%20%28" in url
+    assert f"&tz_name={quote(params['tz_name'], safe='')}&" in url
+
+
+def test_query_hash_covers_the_encoded_query():
+    # 2026-09-26 抓包：0x2E 是实际发送的业务查询串（编码后）的哈希
+    params = {"keyword": "猫 (cat)", "root_referer": "https://www.tiktok.com/"}
+    url = XGnarlyManager.model_2_endpoint(UA, USER_POST, params)
+    query = urlsplit(url).query
+    business = query[: query.index("&X-Dynosaur=")]
+    assert business == (
+        "keyword=%E7%8C%AB%20%28cat%29&root_referer=https%3A%2F%2Fwww.tiktok.com%2F"
+    )
+    payload, _key = unseal(dict(query_params(url))["X-Dynosaur"])
+    assert unpack_payload(payload)[0x2E] == hash_state(business).to_bytes(4, "big")
 
 
 def test_webcast_check_alive_keeps_legacy_encoding(monkeypatch):

@@ -18,7 +18,7 @@ class BaseRequestModel(BaseModel):
     browser_name: str = ClientConfManager.brm_browser().get("name", "Mozilla")
     browser_online: str = "true"
     browser_platform: str = ClientConfManager.brm_browser().get("platform", "Win32")
-    # 保存原始值，由 XGnarlyManager 按浏览器的方式编码后签名
+    # 保存原始值，由 XGnarlyManager 与网页一样按 RFC 3986 编码后签名
     browser_version: str = ClientConfManager.brm_browser().get(
         "version",
         "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0",

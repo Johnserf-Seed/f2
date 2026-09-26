@@ -6,6 +6,7 @@ import re
 import traceback
 from pathlib import Path
 from typing import Optional, Union
+from urllib.parse import quote
 
 import httpx
 
@@ -506,8 +507,9 @@ class XGnarlyManager:
     为 TikTok 网页接口生成签名参数 (Sign TikTok web API requests)
 
     按网页 SDK 的顺序在业务参数之后追加 X-Dynosaur、msToken、X-Bogus（固定为 1）与 X-Gnarly。
-    查询串按浏览器的方式编码，签名后不能再重新编码；msToken 只取 cookie 中已有的值，
-    没有时留空，不会伪造，伪造的 msToken 会让接口返回空内容。
+    参数值与网页一样按 RFC 3986 编码（括号、分号、斜杠等都会编码），签名覆盖的就是这串字节，
+    签名后不能再重新编码；msToken 只取 cookie 中已有的值，没有时留空，不会伪造，
+    伪造的 msToken 会让接口返回空内容。
     """
 
     @classmethod
@@ -535,7 +537,11 @@ class XGnarlyManager:
             raise TypeError(_("参数必须是字典类型"))
 
         ms_token = parse_cookie_str(cookie or "").get("msToken", "")
-        pairs = [(str(key), str(value)) for key, value in params.items()]
+        # 2026-09-26 的浏览器抓包中，X-Dynosaur 的查询串哈希对应按 RFC 3986 完整编码的参数值，
+        # 编码后的内容只含非保留字符与 %XX，encode_query 不会再改动
+        pairs = [
+            (str(key), quote(str(value), safe="")) for key, value in params.items()
+        ]
 
         try:
             signed_query, _unused = XGnarly(user_agent).sign(pairs, ms_token=ms_token)

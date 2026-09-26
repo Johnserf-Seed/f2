@@ -132,14 +132,14 @@ def encode_query(pairs: Iterable[Tuple[str, str]]) -> str:
     """
     按浏览器的方式序列化业务参数 (Serialize business parameters as a browser does)
 
-    这不是 urlencode。X-Dynosaur 的 0x2E 字段是查询串的 hash_state，SDK 计算的是浏览器
-    规范化之后的地址。Chrome 只把空格转义为 %20，括号、斜杠、冒号保持原样，所以真实页面
-    计算的是 browser_version=5.0%20(Windows)&root_referer=https://www.tiktok.com/。
-    如果全部百分号编码，得到的是另一个字符串、另一个哈希，签名绑定到了平台收不到的字节上；
-    /api/user/detail/ 会校验这一点，而 /api/item/detail/、/api/comment/list/ 不校验，
-    于是表现为只有一个接口不返回内容。
+    这不是 urlencode。X-Dynosaur 的 0x2E 字段是查询串（只有查询串，不含路径）的 hash_state，
+    计算哈希的字符串必须与实际发送的完全一致，因此这里必须是唯一的编码入口，签名后也不能再重新编码。
 
-    计算哈希与实际发送的必须是同一个字符串，因此这里必须是唯一的编码入口。
+    TikTok 网页在交给 SDK 之前已经按 RFC 3986 编码了参数值，2026-09-26 的浏览器抓包中 0x2E
+    对应的是 browser_version=5.0%20%28Windows...&root_referer=https%3A%2F%2Fwww.tiktok.com%2F。
+    XGnarlyManager 同样先编码再调用这里，编码后只剩非保留字符与 %XX，这里不会再改动。
+    未编码的原始值只转义浏览器必须转义的字符：空格转义为 %20，括号、斜杠、冒号保持原样，
+    与 Chrome 规范化文本查询串的结果一致。
 
     Args:
         pairs (Iterable[Tuple[str, str]]): 按平台顺序排列的业务参数
