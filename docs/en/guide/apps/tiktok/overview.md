@@ -282,7 +282,7 @@ Class method to manage client configuration.
 
 ### Generate Real `msToken` 🟢
 
-Class method to generate a real `msToken`. Returns a fake value in case of errors.
+Class method that generates a real `msToken` through the mssdk API and raises `APIResponseError` when the API does not issue one. The length of `msToken` changes with the SDK version (currently 168 characters), so only its presence is checked. `F2`'s own requests no longer call it and read `msToken` from the cookie instead.
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
@@ -296,7 +296,7 @@ Class method to generate a real `msToken`. Returns a fake value in case of error
 
 ### Get Cached Real msToken 🟢
 
-Class method that returns the real `msToken` cached for the current process; it is only generated over the network on the first call. Request models of the live APIs on `webcast.tiktok.com` (`CheckLiveAlive`, `LiveImFetch`) use it as the default value of their `msToken` field when instantiated, so importing a module no longer makes network requests; request models of `www.tiktok.com` no longer carry `msToken`, which is read from the cookie when signing.
+Class method that returns the real `msToken` cached for the current process; it is only generated over the network on the first call. `F2`'s own requests no longer call it: request models of both `www.tiktok.com` and `webcast.tiktok.com` no longer carry `msToken`, which is read from the cookie when signing.
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
@@ -401,7 +401,7 @@ For more advanced use cases, call `fetch_user_profile` from the `handler` interf
 
 ### Generate New Signature Parameters Using API Model 🟢
 
-Class method that generates the web SDK signature parameters for `www.tiktok.com` APIs, appending `X-Dynosaur`, `msToken`, `X-Bogus` (always `1`) and `X-Gnarly` after the business parameters, in that order. Live APIs on `webcast.tiktok.com` still use `XBogusManager`.
+Class method that generates the web SDK signature parameters for `www.tiktok.com` APIs, appending `X-Dynosaur`, `msToken`, `X-Bogus` (always `1`) and `X-Gnarly` after the business parameters, in that order. Live APIs on `webcast.tiktok.com` (checking live status and initializing live danmaku) use it as well; with only `X-Bogus`, the danmaku initialization API returns empty responses.
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
@@ -419,7 +419,7 @@ Class method that generates the web SDK signature parameters for `www.tiktok.com
 ::: warning :warning: Note
 - `msToken` only comes from the value already in the cookie and is left empty otherwise; a fake `msToken` makes the API return empty responses.
 - Parameter values are encoded per RFC 3986 before signing and the signature covers exactly these bytes, so the URL must not be re-encoded or reordered before sending.
-- `www.tiktok.com` APIs check the client's TLS and HTTP/2 fingerprints, so requests sent by `httpx` only get empty responses even when the signature is correct. `TiktokCrawler` automatically impersonates Chrome for these requests through `curl_cffi`, which is installed with `F2`; when sending requests yourself, use a client that can impersonate a browser fingerprint as well.
+- `www.tiktok.com` and `webcast.tiktok.com` APIs check the client's TLS and HTTP/2 fingerprints, so requests sent by `httpx` only get empty responses even when the signature is correct. `TiktokCrawler` automatically impersonates Chrome for these requests through `curl_cffi`, which is installed with `F2`; when sending requests yourself, use a client that can impersonate a browser fingerprint as well.
 - APIs such as user profile (`/api/user/detail/`) require a logged-in cookie; a guest cookie only gets empty responses.
 :::
 

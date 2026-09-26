@@ -282,7 +282,7 @@ outline: [2,3]
 
 ### 生成真实msToken 🟢
 
-类方法，用于生成真实的 `msToken`，当出现错误时返回虚假的值。
+类方法，通过 mssdk 接口生成真实的 `msToken`，接口没有下发时抛出 `APIResponseError`。`msToken` 的长度随 SDK 版本变化（目前为 168 位），因此只检查是否下发。`F2` 自身的请求已不再调用它，而是读取 cookie 中的 `msToken`。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -296,7 +296,7 @@ outline: [2,3]
 
 ### 获取缓存的真实msToken 🟢
 
-类方法，返回进程内缓存的真实 `msToken`，首次调用时才联网生成。`webcast.tiktok.com` 直播接口的请求模型（`CheckLiveAlive`、`LiveImFetch`）的 `msToken` 字段默认通过它在实例化时获取，因此导入模块不会联网；`www.tiktok.com` 的请求模型不再携带 `msToken`，签名时从 cookie 中读取。
+类方法，返回进程内缓存的真实 `msToken`，首次调用时才联网生成。`F2` 自身的请求已不再调用它：`www.tiktok.com` 与 `webcast.tiktok.com` 的请求模型都不再携带 `msToken`，签名时从 cookie 中读取。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -401,7 +401,7 @@ outline: [2,3]
 
 ### 使用接口模型生成新版签名参数 🟢
 
-类方法，为 `www.tiktok.com` 的接口生成网页 SDK 的签名参数，在业务参数之后依次追加 `X-Dynosaur`、`msToken`、`X-Bogus`（固定为 `1`）与 `X-Gnarly`。`webcast.tiktok.com` 的直播接口仍使用 `XBogusManager`。
+类方法，为 `www.tiktok.com` 的接口生成网页 SDK 的签名参数，在业务参数之后依次追加 `X-Dynosaur`、`msToken`、`X-Bogus`（固定为 `1`）与 `X-Gnarly`。`webcast.tiktok.com` 的直播接口（检查开播状态、直播弹幕初始化）同样使用它，只用 `X-Bogus` 签名时直播弹幕初始化接口会返回空内容。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -419,7 +419,7 @@ outline: [2,3]
 ::: warning :warning: 注意
 - `msToken` 只取 cookie 中已有的值，没有时留空；伪造的 `msToken` 会让接口返回空内容。
 - 参数值按 RFC 3986 编码后签名，签名覆盖的就是这串字节，发送前不能再重新编码或调整参数顺序。
-- `www.tiktok.com` 的接口会校验客户端的 TLS 与 HTTP/2 指纹，`httpx` 发出的请求即使签名正确也只会得到空内容。`TiktokCrawler` 会通过 `curl_cffi`（随 `F2` 一起安装）自动模拟 Chrome 发送这些请求，自行发送请求时也需要使用能模拟浏览器指纹的客户端。
+- `www.tiktok.com` 与 `webcast.tiktok.com` 的接口会校验客户端的 TLS 与 HTTP/2 指纹，`httpx` 发出的请求即使签名正确也只会得到空内容。`TiktokCrawler` 会通过 `curl_cffi`（随 `F2` 一起安装）自动模拟 Chrome 发送这些请求，自行发送请求时也需要使用能模拟浏览器指纹的客户端。
 - 用户信息（`/api/user/detail/`）等接口需要登录后的 cookie，游客 cookie 只会得到空内容。
 :::
 

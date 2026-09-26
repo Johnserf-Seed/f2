@@ -137,7 +137,7 @@ Device IDs are tied to `cookies`, and a banned device ID results in invalid cook
 
 ## tiktok Empty Response with Status Code 200
 
-When TikTok web APIs (`www.tiktok.com/api/...`) return `200` with an empty body and the log says the retry limit was reached, the request was blocked by risk control, and the response carries the header `tt_orcas_res: 1`. There are two common causes:
+When TikTok web APIs (`www.tiktok.com/api/...` and the live APIs under `webcast.tiktok.com/webcast/...`) return `200` with an empty body and the log says the retry limit was reached, the request was blocked by risk control, and the response carries the header `tt_orcas_res: 1`. There are two common causes:
 
 1. Client fingerprint: these APIs check the TLS and HTTP/2 fingerprints, so requests sent by `httpx` are blocked even when the signature is correct. `F2` automatically impersonates Chrome for these requests through `curl_cffi`, and logs a hint when `curl_cffi` is missing.
 2. Guest cookie: APIs such as user profile only accept a logged-in `cookie`, while user posts can also be fetched with a guest `cookie`.

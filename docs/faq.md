@@ -137,7 +137,7 @@ f2:
 
 ## tiktok 响应内容为空，状态码 200
 
-`TikTok` 网页接口（`www.tiktok.com/api/...`）返回 `200` 但内容为空、日志提示重试次数达到上限时，说明请求被风控拦截了，响应头中会带有 `tt_orcas_res: 1`。常见原因有两个：
+`TikTok` 网页接口（`www.tiktok.com/api/...` 与直播的 `webcast.tiktok.com/webcast/...`）返回 `200` 但内容为空、日志提示重试次数达到上限时，说明请求被风控拦截了，响应头中会带有 `tt_orcas_res: 1`。常见原因有两个：
 
 1. 客户端指纹：这些接口会校验 TLS 与 HTTP/2 指纹，`httpx` 发出的请求即使签名正确也会被拦截。`F2` 会通过 `curl_cffi` 自动模拟 Chrome 发送这些请求，缺少 `curl_cffi` 时日志中会有提示。
 2. 游客 cookie：用户信息等接口只接受登录后的 `cookie`；用户发布作品用游客 `cookie` 也能获取。
