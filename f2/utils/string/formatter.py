@@ -48,6 +48,14 @@ def extract_valid_urls(inputs: Union[str, List[str]]) -> Union[str, List[str], N
     return [] if isinstance(inputs, list) else None
 
 
+# 保留中文、日文假名（平假名、片假名及其扩展）、英文字母、数字与 #，其余字符替换为下划线。
+# 假名是正常文字，不该被替换（#248）；标点与空格仍然替换，否则几乎所有已下载作品的
+# 文件名都会变化，下次同步主页时会重复下载。
+_REPLACE_T_PATTERN = re.compile(
+    r"[^\u4e00-\u9fa5\u3040-\u309f\u30a0-\u30ff\u31f0-\u31ffa-zA-Z0-9#]"
+)
+
+
 def replaceT(obj: Union[str, Any]) -> Union[str, Any]:
     """
     替换文案非法字符 (Replace illegal characters in the text)
@@ -59,12 +67,13 @@ def replaceT(obj: Union[str, Any]) -> Union[str, Any]:
         new: 处理后的内容 (Processed content)
     """
 
-    reSub = r"[^\u4e00-\u9fa5a-zA-Z0-9#]"
-
     if isinstance(obj, list):
-        return [re.sub(reSub, "_", i) if isinstance(i, str) else i or "" for i in obj]
+        return [
+            _REPLACE_T_PATTERN.sub("_", i) if isinstance(i, str) else i or ""
+            for i in obj
+        ]
 
     if isinstance(obj, str):
-        return re.sub(reSub, "_", obj)
+        return _REPLACE_T_PATTERN.sub("_", obj)
 
     return obj
