@@ -172,9 +172,10 @@ class TokenManager(BaseCrawler):
             )
             response.raise_for_status()
 
-            msToken = str(httpx.Cookies(response.cookies).get("msToken"))
+            msToken = httpx.Cookies(response.cookies).get("msToken")
 
-            if len(msToken) != 152 or msToken is None:
+            # 长度随 SDK 版本变化（2026-09 起为 168，此前为 152），只检查是否下发
+            if not msToken:
                 raise APIResponseError(_("{0} 内容不符合要求").format("msToken"))
 
             logger.debug(_("生成真实的 msToken：{0}").format(msToken))
