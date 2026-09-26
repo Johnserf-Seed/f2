@@ -8,7 +8,7 @@ import re
 import sys
 import traceback
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import aiofiles  # type: ignore
 import httpx
@@ -21,6 +21,7 @@ from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
 from f2.utils.core.run_report import record_failed_download
 from f2.utils.core.signal import SignalManager
+from f2.utils.file.name import fit_filename
 from f2.utils.file.path import ensure_path
 from f2.utils.http.utils import (
     get_chunk_size,
@@ -88,6 +89,21 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
     @staticmethod
     def _ensure_path(path: Union[str, Path]) -> Path:
         return ensure_path(path)
+
+    def _build_target(
+        self,
+        base_path: Union[str, Path],
+        file_name: str,
+        file_suffix: Optional[str],
+    ) -> Tuple[str, Path]:
+        """
+        拼出文件名与保存路径 (Build the file name and the save path)
+
+        文件名连同后缀不超过 255 字节，超出时截断中间部分，
+        否则在按字节限制文件名长度的文件系统（如 NAS）上无法创建。
+        """
+        file_path = fit_filename(file_name, file_suffix or "")
+        return file_path, self._ensure_path(base_path) / file_path
 
     async def _record_local_file_error(
         self, task_id: TaskID, full_path: Path, error: OSError
@@ -783,10 +799,8 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
                 it represents multiple links to the file)
         """
 
-        # 文件路径
-        file_path = f"{file_name}{file_suffix}"
-        # 文件全路径
-        full_path = self._ensure_path(base_path) / file_path
+        # 文件名与全路径
+        file_path, full_path = self._build_target(base_path, file_name, file_suffix)
 
         # Path.exists 遇到文件名过长等错误会直接抛出异常，os.path.exists 则返回 False
         if os.path.exists(full_path):
@@ -832,10 +846,8 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
             file_suffix (Optional[str]): 文件后缀 (File suffix)
         """
 
-        # 文件路径
-        file_path = f"{file_name}{file_suffix}"
-        # 文件全路径
-        full_path = self._ensure_path(base_path) / file_path
+        # 文件名与全路径
+        file_path, full_path = self._build_target(base_path, file_name, file_suffix)
 
         # Path.exists 遇到文件名过长等错误会直接抛出异常，os.path.exists 则返回 False
         if os.path.exists(full_path):
@@ -882,10 +894,8 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
             file_suffix (Optional[str]): 文件后缀 (File suffix)
             stream_status_callback: 直播状态检查回调函数（可选）
         """
-        # 文件路径
-        file_path = f"{file_name}{file_suffix}"
-        # 文件全路径
-        full_path = self._ensure_path(base_path) / file_path
+        # 文件名与全路径
+        file_path, full_path = self._build_target(base_path, file_name, file_suffix)
 
         # Path.exists 遇到文件名过长等错误会直接抛出异常，os.path.exists 则返回 False
         if os.path.exists(full_path):
