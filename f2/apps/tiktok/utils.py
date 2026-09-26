@@ -24,7 +24,7 @@ from f2.log.logger import logger, trace_logger
 from f2.utils.config.conf_manager import ConfigManager
 from f2.utils.crypto.bytedance.xbogus import XBogus as XB
 from f2.utils.file.name import split_filename
-from f2.utils.http.cookie import split_set_cookie
+from f2.utils.http.cookie import join_set_cookie_headers
 from f2.utils.string.formatter import extract_valid_urls
 from f2.utils.string.generator import gen_random_str
 from f2.utils.time.timestamp import get_timestamp
@@ -1196,7 +1196,8 @@ class DeviceIdManager(BaseCrawler):
                 raise APIResponseError(_("未能找到所需的设备 ID 信息"))
 
             data = match.group(1).strip()
-            cookie = split_set_cookie(response.headers.get("Set-Cookie", ""))
+            # 逐个读取 Set-Cookie 头，避免值里带逗号时被截断（同 #434）
+            cookie = join_set_cookie_headers(response.headers)
             deviceId = (
                 json.loads(data)
                 .get("__DEFAULT_SCOPE__", {})
