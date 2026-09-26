@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-25 17:48-0700\n"
+"POT-Creation-Date: 2026-09-26 02:48-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -2514,7 +2514,7 @@ msgstr "[WebcastRoomMessage] [📜直播间消息] {0}"
 msgid "[WebcastOecLiveShoppingMessage] [🛍️直播间购物消息] {0}"
 msgstr "[WebcastOecLiveShoppingMessage] [🛍️直播间购物消息] {0}"
 
-#: f2/apps/tiktok/dl.py
+#: f2/apps/tiktok/dl.py f2/apps/weibo/handler.py
 #, python-brace-format
 msgid "筛选日期区间：{0} 至 {1}"
 msgstr "筛选日期区间：{0} 至 {1}"
@@ -3192,6 +3192,10 @@ msgstr "下载模式：单个微博(one)，主页微博(post)"
 msgid "全局微博文件命名方式，前往文档查看更多帮助"
 msgstr "全局微博文件命名方式，前往文档查看更多帮助"
 
+#: f2/apps/weibo/cli.py f2/apps/weibo/help.py
+msgid "下载日期区间内发布的微博，格式：YYYY-MM-DD|YYYY-MM-DD，'all' 为下载所有微博"
+msgstr "下载日期区间内发布的微博，格式：YYYY-MM-DD|YYYY-MM-DD，'all' 为下载所有微博"
+
 #: f2/apps/weibo/cli.py
 msgid "最大微博下载数。0 表示无限制"
 msgstr "最大微博下载数。0 表示无限制"
@@ -3326,6 +3330,15 @@ msgstr "处理用户：{0} 发布的微博"
 
 #: f2/apps/weibo/handler.py
 #, python-brace-format
+msgid "本页 {0} 条微博中有 {1} 条在日期区间内"
+msgstr "本页 {0} 条微博中有 {1} 条在日期区间内"
+
+#: f2/apps/weibo/handler.py
+msgid "已获取到日期区间开始之前的微博，停止翻页"
+msgstr "已获取到日期区间开始之前的微博，停止翻页"
+
+#: f2/apps/weibo/handler.py
+#, python-brace-format
 msgid "已爬取完所有微博，共处理 {0} 个微博"
 msgstr "已爬取完所有微博，共处理 {0} 个微博"
 
@@ -3409,6 +3422,11 @@ msgstr "微博链接列表不能为空"
 #, python-brace-format
 msgid "未在响应的地址中找到screen_name，检查链接是否为微博昵称链接。类名：{0}"
 msgstr "未在响应的地址中找到screen_name，检查链接是否为微博昵称链接。类名：{0}"
+
+#: f2/apps/weibo/utils.py
+#, python-brace-format
+msgid "无法解析微博 {0} 的发布时间：{1}，已跳过"
+msgstr "无法解析微博 {0} 的发布时间：{1}，已跳过"
 
 #: f2/cli/cli_commands.py
 #, python-brace-format
@@ -4403,7 +4421,7 @@ msgstr "单个作品数据：{0}"
 msgid "日期区间设置为'all'，返回所有作品"
 msgstr ""
 
-#: f2/utils/time/filter.py
+#: f2/utils/time/filter.py f2/utils/time/timestamp.py
 msgid "结束日期早于开始日期，请检查日期区间"
 msgstr "结束日期早于开始日期，请检查日期区间"
 

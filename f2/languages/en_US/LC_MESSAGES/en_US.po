@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-25 17:48-0700\n"
+"POT-Creation-Date: 2026-09-26 02:48-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -2664,7 +2664,7 @@ msgstr "[WebcastRoomMessage] [📜Live broadcast room message] {0}"
 msgid "[WebcastOecLiveShoppingMessage] [🛍️直播间购物消息] {0}"
 msgstr "[WebcastOecLiveShoppingMessage] [🛍️Live shopping message] {0}"
 
-#: f2/apps/tiktok/dl.py
+#: f2/apps/tiktok/dl.py f2/apps/weibo/handler.py
 #, python-brace-format
 msgid "筛选日期区间：{0} 至 {1}"
 msgstr "Filter Date Range: {0} to {1}"
@@ -3370,6 +3370,12 @@ msgstr ""
 "Global microblogging file naming convention, go to the documentation for "
 "more help"
 
+#: f2/apps/weibo/cli.py f2/apps/weibo/help.py
+msgid "下载日期区间内发布的微博，格式：YYYY-MM-DD|YYYY-MM-DD，'all' 为下载所有微博"
+msgstr ""
+"Download weibos published within the date range, format: YYYY-MM-DD|YYYY-"
+"MM-DD, 'all' downloads all weibos"
+
 #: f2/apps/weibo/cli.py
 msgid "最大微博下载数。0 表示无限制"
 msgstr "Maximum number of microblog downloads. 0 means unlimited"
@@ -3516,6 +3522,17 @@ msgstr "Handle users: {0} Weibo posts"
 
 #: f2/apps/weibo/handler.py
 #, python-brace-format
+msgid "本页 {0} 条微博中有 {1} 条在日期区间内"
+msgstr "{1} of {0} weibos on this page are within the date range"
+
+#: f2/apps/weibo/handler.py
+msgid "已获取到日期区间开始之前的微博，停止翻页"
+msgstr ""
+"Reached weibos published before the start of the date range, stopped "
+"paging"
+
+#: f2/apps/weibo/handler.py
+#, python-brace-format
 msgid "已爬取完所有微博，共处理 {0} 个微博"
 msgstr "All Weibo posts have been crawled, a total of {0} posts processed"
 
@@ -3607,6 +3624,11 @@ msgid "未在响应的地址中找到screen_name，检查链接是否为微博�
 msgstr ""
 "Screen_name was not found in the response address. Check whether the link"
 " is a Weibo nickname link. Class name: {0}"
+
+#: f2/apps/weibo/utils.py
+#, python-brace-format
+msgid "无法解析微博 {0} 的发布时间：{1}，已跳过"
+msgstr "Unable to parse the publish time of weibo {0}: {1}, skipped"
 
 #: f2/cli/cli_commands.py
 #, python-brace-format
@@ -4646,7 +4668,7 @@ msgstr "Individual work data: {0}"
 msgid "日期区间设置为'all'，返回所有作品"
 msgstr ""
 
-#: f2/utils/time/filter.py
+#: f2/utils/time/filter.py f2/utils/time/timestamp.py
 msgid "结束日期早于开始日期，请检查日期区间"
 msgstr "The end date is earlier than the start date, check the date range"
 
