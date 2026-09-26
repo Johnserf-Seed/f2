@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-25 13:58-0700\n"
+"POT-Creation-Date: 2026-09-25 17:48-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -4268,6 +4268,25 @@ msgstr "Configuration file path has no read permission"
 #, fuzzy, python-brace-format
 msgid "配置文件解析错误: {0}"
 msgstr "Configuration file parsing error"
+
+#: f2/utils/config/conf_manager.py
+#, python-brace-format
+msgid "环境变量 {0} 指定的配置文件不存在"
+msgstr "The config file set by the {0} environment variable does not exist"
+
+#: f2/utils/config/conf_manager.py
+msgid "用户配置文件的顶层不是键值映射"
+msgstr "The top level of the user config file is not a key-value mapping"
+
+#: f2/utils/config/conf_manager.py
+#, python-brace-format
+msgid "用户配置文件无效：{0}"
+msgstr "Invalid user config file: {0}"
+
+#: f2/utils/config/conf_manager.py
+#, python-brace-format
+msgid "已加载用户配置：{0}"
+msgstr "Loaded user config: {0}"
 
 #: f2/utils/config/conf_manager.py
 msgid "配置文件路径无写权限"
