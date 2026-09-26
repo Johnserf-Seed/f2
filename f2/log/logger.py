@@ -199,6 +199,10 @@ class LogManager(metaclass=Singleton):
             )
             self.logger.addHandler(fh)
 
+        # 既不输出到控制台也不写文件时丢弃记录，否则会经 logging.lastResort 打印到 stderr
+        if not self.logger.handlers:
+            self.logger.addHandler(logging.NullHandler())
+
     @staticmethod
     def ensure_log_dir_exists(log_path: Path) -> None:
         log_path.mkdir(parents=True, exist_ok=True)
