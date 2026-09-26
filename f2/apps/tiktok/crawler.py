@@ -56,6 +56,7 @@ from f2.crawlers.websocket_crawler import WebSocketCrawler
 from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
 from f2.utils.http.endpoint import BaseEndpointManager
+from f2.utils.http.impersonate import create_impersonate_transport
 
 
 class TiktokCrawler(BaseCrawler):
@@ -68,6 +69,25 @@ class TiktokCrawler(BaseCrawler):
         proxies = kwargs.get("proxies", {"http://": None, "https://": None})
         self.headers = kwargs.get("headers", {}) | {"Cookie": kwargs["cookie"]}
         super().__init__(kwargs=kwargs, proxies=proxies, crawler_headers=self.headers)
+
+    def _create_mount(self, async_mode=False) -> dict:
+        """
+        www.tiktok.com 的接口会校验 TLS 与 HTTP/2 指纹，改由模拟 Chrome 的传输层发送
+        (Send www.tiktok.com requests through a transport that impersonates Chrome)
+
+        httpx 发出的请求即使签名正确也只会得到 200 空内容；webcast.tiktok.com 等其他域名
+        仍使用 httpx，未安装 curl_cffi 时全部使用 httpx。
+        """
+        mounts = super()._create_mount(async_mode)
+        if async_mode:
+            transport = create_impersonate_transport(
+                proxy=self._get_proxy_config(),
+                verify=self._verify,
+                max_clients=self._max_connections,
+            )
+            if transport is not None:
+                mounts["https://www.tiktok.com"] = transport
+        return mounts
 
     def _web_endpoint(self, base_endpoint: str, params: BaseModel) -> str:
         """
