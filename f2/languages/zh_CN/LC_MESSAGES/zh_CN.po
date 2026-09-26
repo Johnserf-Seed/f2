@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-26 02:48-0700\n"
+"POT-Creation-Date: 2026-09-26 05:56-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -3694,6 +3694,15 @@ msgstr "作品ID: {0} 作品文案: {1} 作者: {2}"
 
 #: f2/dl/base_downloader.py
 #, python-brace-format
+msgid "无法写入文件 {0}：{1}"
+msgstr "无法写入文件 {0}：{1}"
+
+#: f2/dl/base_downloader.py f2/dl/m3u8.py
+msgid "[red][  失败  ]：[/red]"
+msgstr "[red][  失败  ]：[/red]"
+
+#: f2/dl/base_downloader.py
+#, python-brace-format
 msgid "文件区块超时：{0}"
 msgstr "文件区块超时：{0}"
 
@@ -3780,10 +3789,6 @@ msgstr "[red][  完成  ]：[/red]"
 #, python-brace-format
 msgid "下载异常，从 {0} 字节继续重试 ({1}/{2}): {3}"
 msgstr "下载异常，从 {0} 字节继续重试 ({1}/{2}): {3}"
-
-#: f2/dl/base_downloader.py f2/dl/m3u8.py
-msgid "[red][  失败  ]：[/red]"
-msgstr "[red][  失败  ]：[/red]"
 
 #: f2/dl/base_downloader.py
 #, python-brace-format

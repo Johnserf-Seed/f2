@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-26 02:48-0700\n"
+"POT-Creation-Date: 2026-09-26 05:56-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -3914,6 +3914,15 @@ msgstr "Work ID: {0} Work Text: {1} Author: {2}"
 
 #: f2/dl/base_downloader.py
 #, python-brace-format
+msgid "无法写入文件 {0}：{1}"
+msgstr "Unable to write file {0}: {1}"
+
+#: f2/dl/base_downloader.py f2/dl/m3u8.py
+msgid "[red][  失败  ]：[/red]"
+msgstr "[red][  Failed  ]: [/red]"
+
+#: f2/dl/base_downloader.py
+#, python-brace-format
 msgid "文件区块超时：{0}"
 msgstr "File block timeout: {0}"
 
@@ -4004,10 +4013,6 @@ msgstr "[red][  Complete  ]: [/red]"
 #, python-brace-format
 msgid "下载异常，从 {0} 字节继续重试 ({1}/{2}): {3}"
 msgstr "Download error, resuming from byte {0} (retry {1}/{2}): {3}"
-
-#: f2/dl/base_downloader.py f2/dl/m3u8.py
-msgid "[red][  失败  ]：[/red]"
-msgstr "[red][  Failed  ]: [/red]"
 
 #: f2/dl/base_downloader.py
 #, python-brace-format
