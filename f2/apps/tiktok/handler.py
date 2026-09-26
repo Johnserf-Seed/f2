@@ -182,6 +182,10 @@ class TiktokHandler:
             secUid=secUid, uniqueId=uniqueId
         )
 
+        # 只按 uniqueId 查询时，用户改过 uniqueId 就查不到旧记录，再按 secUid 查一次
+        if not local_user_data and not secUid and current_user_data.secUid:
+            local_user_data = await db.get_user_info(secUid=current_user_data.secUid)
+
         # 获取当前用户最新昵称
         current_uniqueId = current_user_data.uniqueId
 
