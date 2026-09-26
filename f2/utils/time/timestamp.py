@@ -2,8 +2,9 @@
 
 import datetime
 import traceback
-from typing import List, Union
+from typing import List, Optional, Tuple, Union
 
+from f2.exceptions.conf_exceptions import ConfError
 from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
 
@@ -165,3 +166,43 @@ def interval_2_timestamp(
         trace_logger.error(traceback.format_exc())
         logger.error(_("日期区间参数格式错误，请查阅文档后重试"))
     return 0
+
+
+def parse_interval(
+    interval: Optional[str],
+    unit: str = "sec",
+    tz: datetime.timezone = datetime.timezone(datetime.timedelta(hours=8)),
+) -> Optional[Tuple[int, int]]:
+    """
+    解析并校验日期区间，返回包含首尾两天的时间戳区间
+
+    Args:
+        interval (str): 日期区间，格式为 '2022-01-01|2023-01-01'，'all' 或空值表示不限制
+        unit (str, optional): 时间单位，默认为 'sec'
+        tz (datetime.timezone, optional): 时区，默认为东八区北京时间
+
+    Returns:
+        Optional[Tuple[int, int]]: (开始时间戳, 结束时间戳)，不限制时返回 None
+
+    Raises:
+        ConfError: 日期区间格式错误，或结束日期早于开始日期
+    """
+
+    text = "" if interval is None else str(interval).strip()
+    if not text or text.lower() == "all":
+        return None
+
+    try:
+        start_date, end_date = (part.strip() for part in text.split("|"))
+        start = str_2_timestamp(f"{start_date} 00-00-00", unit=unit, tz=tz)
+        end = str_2_timestamp(f"{end_date} 23-59-59", unit=unit, tz=tz)
+    except ValueError:
+        raise ConfError(
+            _("日期区间参数格式错误，请查阅文档后重试"), key="interval", value=interval
+        ) from None
+
+    if end < start:
+        raise ConfError(
+            _("结束日期早于开始日期，请检查日期区间"), key="interval", value=interval
+        )
+    return start, end

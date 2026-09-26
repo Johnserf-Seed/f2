@@ -38,6 +38,13 @@ def help() -> None:
             ),
         ),
         ("-k --cookie", "[dark_cyan]str", _("登录后的cookie")),
+        (
+            "-i --interval",
+            "[dark_cyan]str",
+            _(
+                "下载日期区间内发布的微博，格式：YYYY-MM-DD|YYYY-MM-DD，'all' 为下载所有微博"
+            ),
+        ),
         ("-e --timeout", "[dark_cyan]int", _("网络请求超时时间，默认为 10")),
         ("-r --max_retries", "[dark_cyan]int", _("网络请求超时重试数，默认为 5")),
         ("-x --max-connections", "[dark_cyan]int", _("网络请求并发连接数，默认为 5")),

@@ -2,8 +2,9 @@
 
 import asyncio
 import re
+from datetime import datetime
 from pathlib import Path
-from typing import Optional, Union
+from typing import Any, List, Optional, Tuple, Union
 from urllib.parse import unquote
 
 import httpx
@@ -18,6 +19,7 @@ from f2.exceptions.api_exceptions import (
 )
 from f2.exceptions.conf_exceptions import InvalidConfError
 from f2.i18n.translator import _
+from f2.log.logger import logger
 from f2.utils.config.conf_manager import ConfigManager
 from f2.utils.file.name import split_filename
 from f2.utils.http.cookie import join_set_cookie_headers
@@ -559,6 +561,70 @@ def rename_user_folder(old_path: Path, new_nickname: str) -> Path:
     new_path = old_path.rename(parent_directory / new_nickname).resolve()
 
     return new_path
+
+
+def weibo_created_at_to_timestamp(created_at: Any) -> Optional[int]:
+    """
+    将微博的发布时间转换为秒级时间戳
+    (Convert the publish time of a weibo to a UNIX timestamp in seconds)
+
+    Args:
+        created_at (str): 发布时间，如 "Sat Sep 26 12:34:56 +0800 2026"
+
+    Returns:
+        Optional[int]: 秒级时间戳，无法解析时返回 None
+    """
+
+    if not isinstance(created_at, str):
+        return None
+    try:
+        return int(
+            datetime.strptime(created_at.strip(), "%a %b %d %H:%M:%S %z %Y").timestamp()
+        )
+    except ValueError:
+        return None
+
+
+def is_pinned_weibo(weibo: dict) -> bool:
+    """置顶微博排在主页最前面，不受发布时间倒序的限制"""
+    return bool(weibo.get("isTop")) or weibo.get("mblogtype") == 2
+
+
+def filter_weibos_by_interval(
+    weibos: List[dict], start: int, end: int
+) -> Tuple[List[dict], bool]:
+    """
+    按发布时间筛选一页主页微博
+    (Filter a page of profile weibos by publish time)
+
+    主页微博按发布时间倒序排列（置顶微博除外），本页最后一条非置顶微博早于开始时间时，
+    之后的页面都在区间之前，不需要继续翻页。
+
+    Args:
+        weibos (List[dict]): 接口返回的微博列表 (data.list)
+        start (int): 开始时间戳，秒，包含
+        end (int): 结束时间戳，秒，包含
+
+    Returns:
+        Tuple[List[dict], bool]: (区间内的微博, 是否已经翻过开始时间)
+    """
+
+    kept = []
+    last_regular_ts = None
+    for weibo in weibos:
+        ts = weibo_created_at_to_timestamp(weibo.get("created_at"))
+        if ts is None:
+            logger.warning(
+                _("无法解析微博 {0} 的发布时间：{1}，已跳过").format(
+                    weibo.get("idstr"), weibo.get("created_at")
+                )
+            )
+            continue
+        if start <= ts <= end:
+            kept.append(weibo)
+        if not is_pinned_weibo(weibo):
+            last_regular_ts = ts
+    return kept, last_regular_ts is not None and last_regular_ts < start
 
 
 def extract_desc(text):

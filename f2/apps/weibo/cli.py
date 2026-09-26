@@ -221,6 +221,14 @@ def validate_proxies(
     help=_("登录后的[yellow]cookie[/yellow]"),
 )
 @click.option(
+    "--interval",
+    "-i",
+    type=str,
+    help=_(
+        "下载日期区间内发布的微博，格式：YYYY-MM-DD|YYYY-MM-DD，'all' 为下载所有微博"
+    ),
+)
+@click.option(
     "--timeout",
     "-e",
     type=int,

@@ -2,7 +2,7 @@
 
 import asyncio
 from pathlib import Path
-from typing import Any, AsyncGenerator, Optional, Union
+from typing import Any, AsyncGenerator, Optional, Tuple, Union
 
 from rich.rule import Rule
 
@@ -29,6 +29,7 @@ from f2.apps.weibo.utils import (
     WeiboScreenNameFetcher,
     WeiboUidFetcher,
     create_or_rename_user_folder,
+    filter_weibos_by_interval,
 )
 from f2.cli.cli_console import RichConsoleManager
 from f2.exceptions.api_exceptions import APINotFoundError, APIResponseError
@@ -36,7 +37,7 @@ from f2.exceptions.base import F2Error
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.core.decorators import get_mode_handlers, mode_handler
-from f2.utils.time.timestamp import get_timestamp, timestamp_2_str
+from f2.utils.time.timestamp import get_timestamp, parse_interval, timestamp_2_str
 
 rich_console = RichConsoleManager().rich_console
 rich_prompt = RichConsoleManager().rich_prompt
@@ -329,6 +330,9 @@ class WeiboHandler:
             kwargs: dict: 参数字典 (Parameter dictionary)
         """
 
+        # 先校验日期区间，格式错误时不发起任何请求
+        interval = parse_interval(self.kwargs.get("interval"))
+
         uid = await self.extract_weibo_uid(str(self.kwargs.get("url")))
 
         async with AsyncUserDB("weibo_users.db") as audb:
@@ -336,7 +340,7 @@ class WeiboHandler:
 
         # 获取用户微博数据
         async for weibo_data in self.fetch_user_weibo(
-            uid, max_counts=self.kwargs.get("max_counts")
+            uid, max_counts=self.kwargs.get("max_counts"), interval=interval
         ):
             await self.downloader.create_download_tasks(
                 self.kwargs, weibo_data._to_list(), user_path
@@ -349,6 +353,7 @@ class WeiboHandler:
         feature: int = 0,
         since_id: str = "",
         max_counts: Optional[Union[int, float]] = None,
+        interval: Optional[Tuple[int, int]] = None,
     ) -> AsyncGenerator[UserWeiboFilter, Any]:
         """
         用于获取用户微博数据。
@@ -359,6 +364,7 @@ class WeiboHandler:
             feature: int: 微博类型
             since_id: str: 起始页码
             max_counts: int: 最大数量
+            interval: Tuple[int, int]: 发布时间区间，秒级时间戳（开始, 结束），包含首尾，为 None 时不限制
 
         Return:
             UserWeiboFilter: AsyncGenerator[UserWeiboFilter, Any]: 用户微博数据过滤器
@@ -372,6 +378,13 @@ class WeiboHandler:
         nickname_raw = uid
 
         logger.info(_("处理用户：{0} 发布的微博").format(uid))
+        if interval:
+            logger.info(
+                _("筛选日期区间：{0} 至 {1}").format(
+                    timestamp_2_str(interval[0], "%Y-%m-%d %H:%M:%S"),
+                    timestamp_2_str(interval[1], "%Y-%m-%d %H:%M:%S"),
+                )
+            )
 
         while weibos_collected < max_counts:
             rich_console.print(Rule(_("处理第 {0} 页").format(page)))
@@ -388,6 +401,15 @@ class WeiboHandler:
 
             page_weibos = (response.get("data") or {}).get("list") or []
             weibos = page_weibos
+            reached_start = False
+            # 接口不支持按日期查询，只能逐页筛选
+            if interval:
+                weibos, reached_start = filter_weibos_by_interval(weibos, *interval)
+                logger.info(
+                    _("本页 {0} 条微博中有 {1} 条在日期区间内").format(
+                        len(page_weibos), len(weibos)
+                    )
+                )
             # 接口不支持指定每页数量，超出最大数量的部分在这里截掉
             remaining = max_counts - weibos_collected
             if len(weibos) > remaining:
@@ -407,6 +429,10 @@ class WeiboHandler:
             weibos_collected += len(weibos)
             weibos_scanned += len(page_weibos)
             page += 1
+
+            if reached_start:
+                logger.info(_("已获取到日期区间开始之前的微博，停止翻页"))
+                break
 
             if (
                 weibos_collected >= max_counts
