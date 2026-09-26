@@ -65,7 +65,7 @@ Global file naming format for works. Defaults to `{create}_{desc}`. Supported va
 
 ::: tip :bulb: Tip
 - `custom_fields` allows developers to define custom field mappings. See: [Global Formatting for Filenames 🟢](/guide/apps/twitter/overview#global-formatting-filenames-🟢).
-- In file names, captions and nicknames keep punctuation, spaces and all scripts as they are; only characters that file systems do not allow (`\ / : * ? " < > |`) are replaced with similar full-width characters (for example `?` becomes `？`), and newlines and other control characters are turned into spaces or removed. Long captions are shortened in the middle to fit the file system's byte limit.
+- In file names, captions and nicknames keep punctuation, spaces and all scripts as they are; only characters that file systems do not allow (`\ / : * ? " < > |`) are replaced with similar full-width characters (for example `?` becomes `？`), and newlines and other control characters are turned into spaces or removed. Captions longer than 200 bytes are shortened in the middle, and so is any file name that would exceed 255 bytes with its suffix, so files can also be saved to a NAS or other file systems that limit names by bytes. On Windows, paths longer than 260 characters automatically use the long path form, so no system setting needs to be changed.
 :::
 
 ### `--cookie`

@@ -311,9 +311,9 @@ Class method to extract multiple Weibo usernames from a list of Weibo profile UR
 
 Formats filenames globally based on the configuration file.
 ::: details :page_facing_up: Filename Formatting Rules
-- `Windows` filename length limit: `255` characters; with long filename support, up to `32,767` characters.
-- `Unix` filename length limit: `255` characters.
-- Extracts `20` characters from the cleaned name and appends the suffix, ensuring it generally does not exceed `255` characters.
+- Captions (`desc`) longer than `200` bytes are shortened in the middle and joined with `......`.
+- When downloading, the whole file name including its suffix is kept within `255` bytes and shortened in the middle if needed. This is the limit of `ext4` and most `NAS` file systems; `NTFS` and `APFS` count characters and are never exceeded.
+- On `Windows`, paths longer than `260` characters automatically use the extended-length form (`\\?\`), so long path support does not need to be enabled.
 - Developers can define custom fields in `custom_fields` to generate custom filenames.
 :::
 

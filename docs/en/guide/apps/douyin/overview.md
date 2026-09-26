@@ -1071,9 +1071,9 @@ For example, the 3rd and 4th links in `raw_urls` will only return `room_id`.To r
 Format filenames globally according to the configuration file.
 
 ::: details :page_facing_up: Filename Formatting Rules
-- `Windows` filename length limit: `255` characters (or `32,767` if long filenames are enabled).
-- `Unix` filename length limit: `255` characters.
-- Extracts up to `20` characters after sanitization, plus the file extension, ensuring filenames generally remain within `255` characters.
+- Captions (`desc`) longer than `200` bytes are shortened in the middle and joined with `......`.
+- When downloading, the whole file name including its suffix is kept within `255` bytes and shortened in the middle if needed. This is the limit of `ext4` and most `NAS` file systems; `NTFS` and `APFS` count characters and are never exceeded.
+- On `Windows`, paths longer than `260` characters automatically use the extended-length form (`\\?\`), so long path support does not need to be enabled.
 - Developers can customize the `custom_fields` parameter to define custom filenames.
 :::
 

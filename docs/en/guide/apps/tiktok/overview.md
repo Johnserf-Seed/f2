@@ -523,9 +523,9 @@ Class method to generate multiple `deviceId` and `tt_chain_token` values.
 Formats filenames globally based on the configuration file.
 
 ::: details :page_facing_up: Filename Formatting Rules
-- `Windows`: Filename length is limited to `255` characters (or `32,767` with long filename support).
-- `Unix`: Filename length is limited to `255` characters.
-- Truncates to `20` characters, plus suffix, to stay within the `255` limit.
+- Captions (`desc`) longer than `200` bytes are shortened in the middle and joined with `......`.
+- When downloading, the whole file name including its suffix is kept within `255` bytes and shortened in the middle if needed. This is the limit of `ext4` and most `NAS` file systems; `NTFS` and `APFS` count characters and are never exceeded.
+- On `Windows`, paths longer than `260` characters automatically use the extended-length form (`\\?\`), so long path support does not need to be enabled.
 - Developers can customize `custom_fields` to define their own filenames.
 :::
 

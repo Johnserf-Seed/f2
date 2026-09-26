@@ -250,9 +250,9 @@ Class method for extracting multiple tweet IDs.
 Formats filenames globally based on the configuration file.
 
 ::: details :page_facing_up: Filename Formatting Rules
-- `Windows` filename limit: `255` characters (or `32,767` with long filename support).
-- `Unix` filename limit: `255` characters.
-- Extracts `20` characters after cleaning and appends the suffix, ensuring the filename remains under `255` characters.
+- Captions (`desc`) longer than `200` bytes are shortened in the middle and joined with `......`.
+- When downloading, the whole file name including its suffix is kept within `255` bytes and shortened in the middle if needed. This is the limit of `ext4` and most `NAS` file systems; `NTFS` and `APFS` count characters and are never exceeded.
+- On `Windows`, paths longer than `260` characters automatically use the extended-length form (`\\?\`), so long path support does not need to be enabled.
 - Developers can use the `custom_fields` parameter to customize filenames.
 :::
 
