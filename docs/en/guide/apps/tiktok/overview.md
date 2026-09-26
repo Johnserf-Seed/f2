@@ -419,7 +419,7 @@ Class method that generates the web SDK signature parameters for `www.tiktok.com
 ::: warning :warning: Note
 - `msToken` only comes from the value already in the cookie and is left empty otherwise; a fake `msToken` makes the API return empty responses.
 - Parameter values are encoded per RFC 3986 before signing and the signature covers exactly these bytes, so the URL must not be re-encoded or reordered before sending.
-- `www.tiktok.com` APIs check the client's TLS and HTTP/2 fingerprints, so requests sent by `httpx` only get empty responses even when the signature is correct. With `curl_cffi` installed, `TiktokCrawler` automatically impersonates Chrome for these requests; when sending requests yourself, use a client that can impersonate a browser fingerprint as well.
+- `www.tiktok.com` APIs check the client's TLS and HTTP/2 fingerprints, so requests sent by `httpx` only get empty responses even when the signature is correct. `TiktokCrawler` automatically impersonates Chrome for these requests through `curl_cffi`, which is installed with `F2`; when sending requests yourself, use a client that can impersonate a browser fingerprint as well.
 - APIs such as user profile (`/api/user/detail/`) require a logged-in cookie; a guest cookie only gets empty responses.
 :::
 

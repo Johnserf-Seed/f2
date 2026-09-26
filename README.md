@@ -1045,6 +1045,7 @@
 - [click](https://github.com/pallets/click)
 - [rich](https://github.com/Textualize/rich)
 - [httpx](https://github.com/encode/httpx)
+- [curl_cffi](https://github.com/lexiforest/curl_cffi)
 - [aiofiles](https://github.com/Tinche/aiofiles)
 - [aiosqlite](https://github.com/omnilib/aiosqlite)
 - [jsonpath-ng](https://github.com/h2non/jsonpath-ng)

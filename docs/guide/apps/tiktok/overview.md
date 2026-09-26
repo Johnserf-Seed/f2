@@ -419,7 +419,7 @@ outline: [2,3]
 ::: warning :warning: 注意
 - `msToken` 只取 cookie 中已有的值，没有时留空；伪造的 `msToken` 会让接口返回空内容。
 - 参数值按 RFC 3986 编码后签名，签名覆盖的就是这串字节，发送前不能再重新编码或调整参数顺序。
-- `www.tiktok.com` 的接口会校验客户端的 TLS 与 HTTP/2 指纹，`httpx` 发出的请求即使签名正确也只会得到空内容。安装 `curl_cffi` 后 `TiktokCrawler` 会自动模拟 Chrome 发送这些请求，自行发送请求时也需要使用能模拟浏览器指纹的客户端。
+- `www.tiktok.com` 的接口会校验客户端的 TLS 与 HTTP/2 指纹，`httpx` 发出的请求即使签名正确也只会得到空内容。`TiktokCrawler` 会通过 `curl_cffi`（随 `F2` 一起安装）自动模拟 Chrome 发送这些请求，自行发送请求时也需要使用能模拟浏览器指纹的客户端。
 - 用户信息（`/api/user/detail/`）等接口需要登录后的 cookie，游客 cookie 只会得到空内容。
 :::
 

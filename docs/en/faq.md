@@ -139,11 +139,11 @@ Device IDs are tied to `cookies`, and a banned device ID results in invalid cook
 
 When TikTok web APIs (`www.tiktok.com/api/...`) return `200` with an empty body and the log says the retry limit was reached, the request was blocked by risk control, and the response carries the header `tt_orcas_res: 1`. There are two common causes:
 
-1. Client fingerprint: these APIs check the TLS and HTTP/2 fingerprints, so requests sent by `httpx` are blocked even when the signature is correct. When `curl_cffi` is installed, `F2` automatically impersonates Chrome for these requests; otherwise a hint is logged.
+1. Client fingerprint: these APIs check the TLS and HTTP/2 fingerprints, so requests sent by `httpx` are blocked even when the signature is correct. `F2` automatically impersonates Chrome for these requests through `curl_cffi`, and logs a hint when `curl_cffi` is missing.
 2. Guest cookie: APIs such as user profile only accept a logged-in `cookie`, while user posts can also be fetched with a guest `cookie`.
 
 ::: details :link: Solution
-1. Install `curl_cffi` with `pip install curl_cffi`, then run the command again.
+1. Update to the development branch `v0.0.1.8-pw3` or a later release, which installs `curl_cffi` as a dependency. If the log says `curl_cffi` is not installed (for example after installing with `--no-deps`), run `pip install curl_cffi` and try again.
 2. Use a logged-in `cookie` in the config file; see "Empty Response on the nth Request" on this page for how to get it.
 3. `msToken` is read from the `cookie`. It does not need to be configured separately and must not be faked: a fake value also leads to empty responses.
 :::
