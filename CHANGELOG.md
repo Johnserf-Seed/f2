@@ -6,6 +6,8 @@
 
 ## [Unreleased]
 
+- 抖音按分辨率与码率选择最高清晰度（#214）：此前固定取清晰度列表的第一项，而接口按码率排序，2K、4K 只有 H.265 版本时码率可能低于 1080p 的 H.264，会下载到 1080p。现在先比较分辨率、再比较码率，清晰度列表为空时改用 `video.play_addr`；普通作品下载的文件不变。新增 `select_best_bit_rate`、`get_video_play_urls`。最高清晰度可能只有 H.265 编码，FAQ 已说明。
+- 抖音作品被删除或设为私密时，报错给出接口返回的原因（如“因作品权限或已被删除，无法观看”），不再提示“动图作品接口正在维护中”。
 - `--auto-cookie` 读取 Chrome、Edge 失败时给出原因与解决办法（#193、#205）：Windows 上的新版 Chrome、Edge 改用了应用绑定加密，`browser_cookie3`（0.20.1，目前的最新版）还不能解密。报错 `Unable to get key for cookie decryption` 时现在会提示改用 `--auto-cookie firefox` 或手动复制 cookie，并附上 FAQ 链接；cookie 数据库被占用时提示关闭浏览器后重试。FAQ 新增对应条目，各应用的 `--auto-cookie` 说明链接到它。新增 `f2.utils.http.browser.explain_browser_error`。
 - 修复 `--auto-cookie` 获取失败时退出码仍为 `0` 的问题：`finally` 中的 `ctx.exit(0)` 会覆盖失败时的 `abort`。现在读取浏览器失败、没有取到 cookie 或权限不足时输出原因并以退出码 `1` 结束，确认更新配置时被取消（如输入已结束）同样以 `1` 结束；获取成功或选择不更新配置时仍为 `0`。
 - 没有提供 cookie 时抛出 `ConfError`，只报一行错误：此前抖音、TikTok、twitter、微博的下载器抛出 `ValueError`（`kwargs` 里没有 `cookie` 时是 `KeyError`），会打印完整堆栈。只检查是否提供了 cookie，空字符串仍然允许，因为抖音直播等请求不需要用户的 cookie；通过 CLI 运行时，配置里空的 cookie 是空字符串，所以主要影响作为库使用的场景。微博的提示文字与其他应用统一。
