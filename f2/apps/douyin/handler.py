@@ -408,6 +408,17 @@ class DouyinHandler:
             video = PostDetailFilter(response)
 
             if video.nickname is None:
+                # 作品被删除、设为私密等情况下，接口会在 filter_detail 中说明原因
+                filter_detail = (
+                    response.get("filter_detail")
+                    if isinstance(response, dict)
+                    else None
+                )
+                reason = (filter_detail or {}).get("detail_msg")
+                if reason:
+                    raise APIResponseError(
+                        _("作品 {0} 无法获取：{1}").format(aweme_id, reason)
+                    )
                 # 说明接口内容异常
                 raise APIResponseError(
                     _(
