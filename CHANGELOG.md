@@ -6,6 +6,7 @@
 
 ## [Unreleased]
 
+- TikTok 生成设备 ID 时同样逐个读取 `Set-Cookie` 头，`tt_chain_token` 等值里带逗号时不再被截断；新增 `f2.utils.http.cookie.join_set_cookie_headers`，微博游客 cookie 也改用它。
 - 微博生成游客 cookie 时逐个读取 `Set-Cookie` 头，不再把多个头拼成一行后按逗号切分，值里带逗号时不会被截断（移植自 #434）。
 - 支持用户级 `conf.yaml` 覆盖默认配置（#377）：按优先级从低到高读取 `~/.f2/conf.yaml`、当前目录的 `conf.yaml` 与环境变量 `F2_CONFIG` 指定的文件，叠加在 `site-packages` 中的 `conf.yaml` 之上，只需写出要修改的部分；用户配置不会写回默认配置文件，界面语言仍由 `-l` 设置。
 - `--init-config` 不再覆盖已有的配置文件：文件里没有该应用时追加默认配置，已有时只补充缺少的配置项，已有的值、其他应用的配置和注释都会保留，修改前把原文件备份为同名 `.bak` 文件；配置文件无法解析或顶层不是键值映射时报错且不做修改。同一个文件可以依次为多个应用初始化。
