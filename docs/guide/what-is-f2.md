@@ -26,7 +26,7 @@ $ f2 -d WARNING dy -M post
 ![set-debug](/douyin/set-debug.png)
 
 ::: tip :bulb: 提示
-`F2` 的日志会自动脱敏：配置里的 `cookie`、`key`、`token`、密码以及代理地址中的账号密码在写入控制台、文件或向上传播到你自己的日志处理器之前就会被打码（只保留开头几个字符和长度）。作为库使用时，如需在自己的日志里打印配置，可以用 `from f2.log.redact import redact_config` 先脱敏。
+`F2` 的日志会自动脱敏：配置里的 `cookie`、`key`、`token`、密码以及代理地址中的账号密码在写入控制台、文件或向上传播到你自己的日志处理器之前就会被打码（只保留开头几个字符和长度）。作为库使用时，如需在自己的日志里打印配置，可以用 `from f2.log.redact import redact_config` 先脱敏。配置错误（`ConfError`）的报错文本会列出出错的配置项名称，其中敏感配置项的值同样已经打码，可以直接输出。
 :::
 
 ## 日志输出到控制台

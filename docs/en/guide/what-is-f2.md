@@ -26,7 +26,7 @@ $ f2 -d WARNING dy -M post
 ![set-debug](/douyin/set-debug.png)
 
 ::: tip :bulb: Tip
-`F2` redacts its logs automatically: `cookie`, `key`, `token` and password values from the configuration, as well as credentials inside proxy URLs, are masked (only a short prefix and the length remain) before a record reaches the console, log files or your own logging handlers. When using `F2` as a library and printing configuration yourself, run it through `from f2.log.redact import redact_config` first.
+`F2` redacts its logs automatically: `cookie`, `key`, `token` and password values from the configuration, as well as credentials inside proxy URLs, are masked (only a short prefix and the length remain) before a record reaches the console, log files or your own logging handlers. When using `F2` as a library and printing configuration yourself, run it through `from f2.log.redact import redact_config` first. The text of a configuration error (`ConfError`) names the offending setting and already masks the values of sensitive settings, so it is safe to print.
 :::
 
 ## Log Output to Console
