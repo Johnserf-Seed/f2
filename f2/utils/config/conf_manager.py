@@ -122,10 +122,14 @@ class ConfigManager:
 
     # 如果不传入应用配置路径，则返回项目配置 (If the application conf path is not passed in, the project conf is returned)
     def __init__(self, filepath: str = f2.F2_CONFIG_FILE_PATH):
-        if Path(filepath).exists():
-            self.filepath = Path(filepath)
-        else:
-            self.filepath = Path(get_resource_path(filepath))
+        # 先按给出的路径查找，再按包内资源（如 conf/app.yaml）查找；
+        # 都不存在时保留给出的路径，报错时显示用户写的位置
+        path = Path(filepath)
+        if not path.exists():
+            resource = Path(get_resource_path(filepath))
+            if resource.exists():
+                path = resource
+        self.filepath = path
 
         # 配置ruamel.yaml
         self.yaml = YAML()

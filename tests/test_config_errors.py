@@ -4,10 +4,11 @@ import os
 import re
 import subprocess
 import sys
+from pathlib import Path
 
 import pytest
 
-from f2.exceptions import ConfError
+from f2.exceptions import ConfError, FileNotFound
 from f2.utils.config.conf_manager import ConfigManager, describe_yaml_error
 
 UNCLOSED = "douyin:\n  path: [Download\n"
@@ -71,6 +72,19 @@ def test_top_level_must_be_a_mapping(tmp_path, content):
 
 def test_describe_generic_error_collapses_lines():
     assert describe_yaml_error(ValueError("第一行\n  第二行")) == "第一行 第二行"
+
+
+def test_missing_file_reports_given_path(tmp_path, monkeypatch):
+    # 此前会退回包内目录查找，报错显示的是 site-packages 下的路径
+    monkeypatch.chdir(tmp_path)
+    with pytest.raises(FileNotFound) as exc_info:
+        ConfigManager("missing.yaml")
+    assert exc_info.value.filepath == Path("missing.yaml")
+
+
+def test_package_resources_are_still_found(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    assert ConfigManager("conf/app.yaml").get_app_config("douyin")
 
 
 # ---------------- 应用的配置段 ----------------
