@@ -50,7 +50,11 @@ def help() -> None:
         ("-x --max-connections", "[dark_cyan]int", _("网络请求并发连接数，默认为 5")),
         ("-t --max-tasks", "[dark_cyan]int", _("异步的任务数，默认为 10")),
         ("-o --max-counts", "[dark_cyan]int", _("最大微博下载数 默认为 0，表示无限制")),
-        ("-s --page-counts", "[dark_cyan]int", _("每页微博数，默认为 20个微博/页")),
+        (
+            "-s --page-counts",
+            "[dark_cyan]int",
+            _("微博接口每页固定返回约 20 条微博，此参数不生效"),
+        ),
         (
             "-P --proxies",
             "[dark_cyan]str",

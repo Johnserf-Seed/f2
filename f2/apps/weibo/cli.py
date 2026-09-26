@@ -267,7 +267,7 @@ def validate_proxies(
     "--page-counts",
     "-s",
     type=int,
-    help=_("从接口每页可获取微博数，不建议超过 20"),
+    help=_("微博接口每页固定返回约 20 条微博，此参数不生效"),
 )
 @click.option(
     "--proxies",
