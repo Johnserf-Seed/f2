@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-26 07:00-0700\n"
+"POT-Creation-Date: 2026-09-26 07:23-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -4219,6 +4219,20 @@ msgstr "无法将用户目录 {0} 重命名为 {1}：{2}，本次继续使用旧
 #, python-brace-format
 msgid "用户名称已变化，已将用户目录 {0} 重命名为 {1}"
 msgstr "用户名称已变化，已将用户目录 {0} 重命名为 {1}"
+
+#: f2/utils/http/browser.py
+#, python-brace-format
+msgid ""
+"{0}。Windows 上的新版 Chrome、Edge 改用了应用绑定加密，暂时无法自动获取 cookie；macOS "
+"需要在钥匙串弹窗中允许访问。可以改用 --auto-cookie firefox，或在浏览器中手动复制 cookie，详见 {1}"
+msgstr ""
+"{0}。Windows 上的新版 Chrome、Edge 改用了应用绑定加密，暂时无法自动获取 cookie；macOS "
+"需要在钥匙串弹窗中允许访问。可以改用 --auto-cookie firefox，或在浏览器中手动复制 cookie，详见 {1}"
+
+#: f2/utils/http/browser.py
+#, python-brace-format
+msgid "{0}。浏览器的 cookie 数据库被占用，请完全关闭浏览器后重试"
+msgstr "{0}。浏览器的 cookie 数据库被占用，请完全关闭浏览器后重试"
 
 #: f2/utils/http/browser.py
 #, fuzzy, python-brace-format
