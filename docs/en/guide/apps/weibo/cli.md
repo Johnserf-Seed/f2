@@ -64,7 +64,7 @@ Supported separators: `_`, `-`.
 
 ::: tip :bulb: Tip
 - `custom_fields` allows developers to define custom field mappings. See: [Global File Name Formatting 🟢](/guide/apps/weibo/overview#global-file-name-formatting-🟢).
-- In file names, captions and nicknames keep only Chinese characters, Japanese kana, English letters, digits and `#`; other characters, including punctuation and spaces, are replaced with underscores. Long captions are shortened in the middle to fit the file system's byte limit.
+- In file names, captions and nicknames keep punctuation, spaces and all scripts as they are; only characters that file systems do not allow (`\ / : * ? " < > |`) are replaced with similar full-width characters (for example `?` becomes `？`), and newlines and other control characters are turned into spaces or removed. Long captions are shortened in the middle to fit the file system's byte limit.
 :::
 
 ### `--cookie`

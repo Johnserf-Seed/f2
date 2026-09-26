@@ -85,7 +85,7 @@ Global work file naming method. The default is `{create}_{desc}`, supported vari
 - `{uid}`: Author ID
 
 ::: tip :bulb: Tip
-In file names, captions and nicknames keep only Chinese characters, Japanese kana, English letters, digits and `#`; other characters, including punctuation and spaces, are replaced with underscores. Long captions are shortened in the middle to fit the file system's byte limit. Use `--desc` to save the complete original caption to a `_desc.txt` file.
+In file names, captions and nicknames keep punctuation, spaces and all scripts as they are; only characters that file systems do not allow (`\ / : * ? " < > |`) are replaced with similar full-width characters (for example `?` becomes `？`), and newlines and other control characters are turned into spaces or removed. Long captions are shortened in the middle to fit the file system's byte limit. Use `--desc` to save the complete original caption to a `_desc.txt` file.
 :::
 
 ### `--cookie`
