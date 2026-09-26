@@ -5,7 +5,9 @@ import pytest
 from f2.apps.douyin.utils import format_file_name as douyin_format_file_name
 from f2.dl.base_downloader import BaseDownloader
 from f2.utils.core.run_report import collect_run_report
+from f2.utils.file import path as path_module
 from f2.utils.file.name import FILENAME_BYTE_LIMIT, fit_filename
+from f2.utils.file.path import WINDOWS_MAX_DIR_PATH, extended_length_path, long_path
 
 SUFFIX = "_video.mp4"
 
@@ -107,3 +109,66 @@ async def test_download_task_uses_truncated_name(downloader, tmp_path, monkeypat
     await downloader.execute_tasks()
 
     assert targets == [tmp_path / fit_filename("b" * 300, ".mp4")]
+
+
+# ---------------- Windows 长路径 ----------------
+
+
+@pytest.mark.parametrize(
+    "raw, expected",
+    [
+        (r"C:\Users\f2\Download\a.mp4", r"\\?\C:\Users\f2\Download\a.mp4"),
+        # #179 报告中的 NAS 共享目录
+        (r"\\hy-nas\Data\douyin_f2\a.mp4", r"\\?\UNC\hy-nas\Data\douyin_f2\a.mp4"),
+        (r"\\?\C:\Users\a.mp4", r"\\?\C:\Users\a.mp4"),
+        (r"\\.\C:\Users\a.mp4", r"\\.\C:\Users\a.mp4"),
+    ],
+)
+def test_extended_length_path(raw, expected):
+    assert extended_length_path(raw) == expected
+
+
+def test_long_path_keeps_paths_outside_windows(monkeypatch):
+    monkeypatch.setattr(path_module.sys, "platform", "linux")
+    raw = "/data/" + "a" * 300
+    assert str(long_path(raw)) == raw
+
+
+def windows_path(length):
+    """生成指定长度的 Windows 绝对路径"""
+    head = "C:\\Users\\f2\\Download\\douyin\\post\\"
+    return head + "a" * (length - len(head) - len(".mp4")) + ".mp4"
+
+
+def test_long_path_keeps_short_windows_paths(monkeypatch):
+    monkeypatch.setattr(path_module.sys, "platform", "win32")
+    raw = windows_path(WINDOWS_MAX_DIR_PATH)
+    assert str(long_path(raw)) == raw
+
+
+@pytest.mark.parametrize("length", [WINDOWS_MAX_DIR_PATH + 1, 400])
+def test_long_path_extends_long_windows_paths(monkeypatch, length):
+    monkeypatch.setattr(path_module.sys, "platform", "win32")
+    raw = windows_path(length)
+    assert str(long_path(raw)) == "\\\\?\\" + raw
+
+
+def test_long_path_normalizes_before_extending(monkeypatch):
+    # 扩展长度路径不再解析 . 与 ..，也不接受 /，转换前需要先规范化
+    monkeypatch.setattr(path_module.sys, "platform", "win32")
+    raw = "C:/Users/f2/./Download/../Download/" + "b" * 250 + ".mp4"
+    expected = "\\\\?\\C:\\Users\\f2\\Download\\" + "b" * 250 + ".mp4"
+    assert str(long_path(raw)) == expected
+
+
+def test_long_path_extends_long_unc_paths(monkeypatch):
+    monkeypatch.setattr(path_module.sys, "platform", "win32")
+    raw = "\\\\hy-nas\\Data\\douyin_f2\\" + "c" * 250 + ".mp4"
+    assert str(long_path(raw)) == "\\\\?\\UNC\\" + raw[2:]
+
+
+async def test_download_targets_use_long_path_on_windows(downloader, monkeypatch):
+    monkeypatch.setattr(path_module.sys, "platform", "win32")
+    base = "C:\\Users\\f2\\Download\\douyin\\post\\" + "昵称" * 20
+    file_path, full_path = downloader._build_target(base, "d" * 200, ".mp4")
+    assert str(full_path) == "\\\\?\\" + base + "\\" + file_path

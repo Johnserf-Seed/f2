@@ -22,7 +22,7 @@ from f2.log.logger import logger, trace_logger
 from f2.utils.core.run_report import record_failed_download
 from f2.utils.core.signal import SignalManager
 from f2.utils.file.name import fit_filename
-from f2.utils.file.path import ensure_path
+from f2.utils.file.path import ensure_path, long_path
 from f2.utils.http.utils import (
     get_chunk_size,
     get_content_length,
@@ -100,10 +100,11 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
         拼出文件名与保存路径 (Build the file name and the save path)
 
         文件名连同后缀不超过 255 字节，超出时截断中间部分，
-        否则在按字节限制文件名长度的文件系统（如 NAS）上无法创建。
+        否则在按字节限制文件名长度的文件系统（如 NAS）上无法创建；
+        Windows 下路径较长时改用扩展长度路径，不受 260 个字符的限制。
         """
         file_path = fit_filename(file_name, file_suffix or "")
-        return file_path, self._ensure_path(base_path) / file_path
+        return file_path, long_path(self._ensure_path(base_path) / file_path)
 
     async def _record_local_file_error(
         self, task_id: TaskID, full_path: Path, error: OSError
