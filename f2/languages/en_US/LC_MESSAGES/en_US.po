@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-26 06:15-0700\n"
+"POT-Creation-Date: 2026-09-26 06:26-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -4224,9 +4224,10 @@ msgid "请检查配置文件格式是否正确: {key} 不能为空，使用默�
 msgstr ""
 
 #: f2/exceptions/conf_exceptions.py
-#, python-brace-format
-msgid "请检查配置文件格式是否正确 | Key: {key}, Value: {value}，使用默认配置"
+msgid "请检查配置文件格式是否正确，使用默认配置"
 msgstr ""
+"Please check whether the config file format is correct, using the default"
+" config"
 
 #: f2/exceptions/conf_exceptions.py
 msgid "请检查配置文件路径是否正确"
@@ -4957,4 +4958,7 @@ msgstr "Invalid timestamp string"
 
 #~ msgid "生成配置文件失败：{0}"
 #~ msgstr "Attempt to delete temporary file failed: {0}"
+
+#~ msgid "请检查配置文件格式是否正确 | Key: {key}, Value: {value}，使用默认配置"
+#~ msgstr ""
 
