@@ -11,6 +11,7 @@ from f2.apps.douyin.db import AsyncUserDB
 from f2.apps.douyin.utils import format_file_name, json_2_lrc
 from f2.cli.cli_console import RichConsoleManager
 from f2.dl.base_downloader import BaseDownloader
+from f2.exceptions.conf_exceptions import ConfError
 from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
 from f2.utils.time.filter import filter_by_date_interval
@@ -38,11 +39,13 @@ class DouyinDownloader(BaseDownloader):
 
     def __init__(self, kwargs: Optional[dict] = None):
         kwargs = kwargs or {}
-        if kwargs["cookie"] is None:
-            raise ValueError(
+        # 只检查是否提供了 cookie：空字符串允许通过，抖音直播等请求不需要用户的 cookie
+        if kwargs.get("cookie") is None:
+            raise ConfError(
                 _(
                     "cookie不能为空。请提供有效的 cookie 参数，或自动从浏览器获取。如 `--auto-cookie edge`"
-                )
+                ),
+                key="cookie",
             )
 
         # 日期区间格式错误时在请求前报错，否则各模式会翻完所有页面，却因筛选失败一个都不下载
