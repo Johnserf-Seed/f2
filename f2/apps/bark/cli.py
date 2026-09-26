@@ -331,7 +331,7 @@ def bark(
     # 读取低频主配置文件
     main_manager = ConfigManager(f2.APP_CONFIG_FILE_PATH)
     main_conf_path = get_resource_path(f2.APP_CONFIG_FILE_PATH)
-    main_conf = main_manager.get_config("bark")
+    main_conf = main_manager.get_app_config("bark")
 
     # 更新主配置文件中的代理参数
     main_conf["proxies"] = ClientConfManager.proxies()
@@ -368,12 +368,13 @@ def bark(
         custom_manager = main_manager
         config = str(main_conf_path)
 
-    custom_conf = custom_manager.get_config("bark")
-
     if update_config:  # 如果指定了 update_config，更新配置文件
         update_manger = ConfigManager(config)
         update_manger.update_config_with_args("bark", **kwargs)
         return
+
+    # 缺少该应用的配置或格式不对时报错；更新配置时允许文件里还没有这一段
+    custom_conf = custom_manager.get_app_config("bark")
 
     # 检查 kwargs["proxies"] 的类型
     if kwargs.get("proxies"):

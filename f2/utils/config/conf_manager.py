@@ -39,6 +39,24 @@ def _file_signature(path: Path) -> tuple:
         return (str(path), None, None)
 
 
+def describe_yaml_error(error: Exception) -> str:
+    """
+    把读取 YAML 时的错误整理成一行 (Describe a YAML loading error in one line)
+
+    语法错误给出问题与出错的行列号；文件不是 UTF-8 编码时直接说明，
+    常见于用记事本以 ANSI（GBK）编码保存的配置文件。
+    """
+    if isinstance(error, UnicodeDecodeError):
+        return _("文件不是 UTF-8 编码，请另存为 UTF-8 后重试")
+    problem = getattr(error, "problem", None)
+    mark = getattr(error, "problem_mark", None)
+    if problem and mark is not None:
+        return _("{0}（第 {1} 行第 {2} 列）").format(
+            problem, mark.line + 1, mark.column + 1
+        )
+    return " ".join(str(error).split())
+
+
 def merge_missing_keys(target: dict, defaults: dict) -> int:
     """
     把 defaults 里 target 缺少的键补进 target，嵌套的字典会递归补充，已有的值保持不变
@@ -152,12 +170,18 @@ class ConfigManager:
         try:
             with open(self.filepath, "r", encoding="utf-8") as file:
                 config = self.yaml.load(file) or {}
-            # 遍历配置，替换 None 值为空字符串
-            return self._replace_none(config)
         except PermissionError:
             raise FilePermissionError(_("配置文件路径无读权限"), self.filepath)
         except Exception as e:
-            raise RuntimeError(_("配置文件解析错误: {0}").format(str(e))) from e
+            raise ConfError(
+                _("配置文件解析错误: {0}").format(describe_yaml_error(e)),
+                filepath=self.filepath,
+            ) from e
+
+        if not isinstance(config, dict):
+            raise ConfError(_("配置文件的顶层不是键值映射"), filepath=self.filepath)
+        # 遍历配置，替换 None 值为空字符串
+        return self._replace_none(config)
 
     def get_config(self, app_name: str, default=None) -> dict:
         """
@@ -174,6 +198,34 @@ class ConfigManager:
         if app_name in self._overrides:
             # 叠加用户级配置，只影响返回值，不修改 self.config
             return deep_merge(value, self._overrides[app_name])
+        return value
+
+    def get_app_config(self, app_name: str) -> dict:
+        """
+        读取应用的配置段，缺少或不是键值映射时报错 (Get an app section, raising if it is missing or invalid)
+
+        CLI 读取主配置与 -c 指定的自定义配置时使用，报错中给出配置文件的路径。
+
+        Args:
+            app_name: str: 应用名称 (app name)
+
+        Return:
+            dict: 应用的配置 (app conf)
+        """
+        value = self.get_config(app_name)
+        # 缺少这一段时为 None，只写了 "douyin:" 时为空字符串
+        if value in (None, "", {}):
+            raise ConfError(
+                _(
+                    "配置文件中没有 {0} 应用的配置，可以用 --init-config 向该文件补充默认配置"
+                ).format(app_name),
+                filepath=self.filepath,
+            )
+        if not isinstance(value, dict):
+            raise ConfError(
+                _("配置文件中 {0} 应用的配置不是键值映射").format(app_name),
+                filepath=self.filepath,
+            )
         return value
 
     def _load_user_overrides(self) -> dict:
@@ -202,7 +254,8 @@ class ConfigManager:
                 raise ConfError(_("用户配置文件的顶层不是键值映射"), filepath=path)
             except Exception as e:
                 raise ConfError(
-                    _("用户配置文件无效：{0}").format(e), filepath=path
+                    _("用户配置文件无效：{0}").format(describe_yaml_error(e)),
+                    filepath=path,
                 ) from e
             logger.info(_("已加载用户配置：{0}").format(path))
 
@@ -321,7 +374,8 @@ class ConfigManager:
             raise FilePermissionError(_("配置文件路径无读权限"), path)
         except Exception as e:
             raise ConfError(
-                _("无法解析配置文件，未做任何修改：{0}").format(e), filepath=path
+                _("无法解析配置文件，未做任何修改：{0}").format(describe_yaml_error(e)),
+                filepath=path,
             ) from e
 
         if data is None:
