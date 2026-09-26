@@ -8,7 +8,13 @@ from pathlib import Path
 
 import pytest
 
-from f2.exceptions import ConfError, FileNotFound
+from f2.exceptions import (
+    ConfError,
+    FileNotFound,
+    InvalidConfError,
+    InvalidEncodingError,
+)
+from f2.log.redact import redact_text
 from f2.utils.config.conf_manager import ConfigManager, describe_yaml_error
 
 UNCLOSED = "douyin:\n  path: [Download\n"
@@ -165,3 +171,67 @@ def test_cli_update_config_accepts_file_without_app_section(tmp_path):
     )
     assert code == 0, output
     assert "Traceback" not in output
+
+
+# ---------------- 报错中的配置项与脱敏 ----------------
+
+# 低熵的假值，避免被 gitleaks 当成真实密钥
+SECRET = "f2" * 8
+COOKIE = f"sid_tt={SECRET}; sessionid={SECRET}"
+
+
+def test_setting_name_survives_log_redaction():
+    error = ConfError(
+        "日期区间参数格式错误，请查阅文档后重试",
+        key="interval",
+        value="2024-13-01|2024-12-31",
+    )
+    message = str(error)
+    assert "Setting: interval" in message
+    assert "Value: 2024-13-01|2024-12-31" in message
+    # 此前标签为 Key，日志脱敏会把配置项名称 interval 当成密钥打码
+    assert redact_text(message) == message
+
+
+@pytest.mark.parametrize(
+    "error",
+    [
+        ConfError("配置有误", key="cookie", value=COOKIE),
+        InvalidEncodingError(key="cookie", value=COOKIE),
+        InvalidConfError(key="token", value=COOKIE),
+    ],
+)
+def test_sensitive_values_are_masked(error):
+    # 此前被打码的是键名，Value 中的 cookie 反而原样输出
+    message = str(error)
+    assert SECRET not in message
+    assert "Setting: " in message
+    assert redact_text(message) == message
+
+
+def test_invalid_conf_error_lists_setting_and_value():
+    message = str(InvalidConfError(key="naming", value="{create}"))
+    assert message.endswith(" | Setting: naming | Value: {create}")
+
+
+def test_invalid_conf_error_without_value():
+    assert str(InvalidConfError(key="naming", value="")) == (
+        "请检查配置文件格式是否正确: naming 不能为空，使用默认配置"
+    )
+
+
+def test_cli_shows_setting_name(tmp_path):
+    code, output = run_cli(
+        tmp_path,
+        "--no-log-file",
+        "wb",
+        "-M",
+        "post",
+        "-u",
+        "https://weibo.com/u/2265830070",
+        "-i",
+        "2024-13-01|2024-12-31",
+    )
+    assert code == 1
+    assert "Setting: interval" in output
+    assert "***" not in output
