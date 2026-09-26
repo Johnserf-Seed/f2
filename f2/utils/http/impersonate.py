@@ -139,7 +139,8 @@ def create_impersonate_transport(
     """
     创建模拟浏览器指纹的传输层 (Create a transport that impersonates a browser)
 
-    curl_cffi 是可选依赖，未安装时返回 None 并提示一次，调用方继续使用 httpx。
+    curl_cffi 随 F2 一起安装；缺少时（例如使用 --no-deps 安装）返回 None 并提示一次，
+    调用方继续使用 httpx。
 
     Args:
         proxy (Optional[str]): 代理地址，支持 http、https、socks4、socks5

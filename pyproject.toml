@@ -71,6 +71,8 @@ dependencies = [
     "httpx>=0.28.1,<0.29",
     # 0.10.x 依赖 sniffio 却未声明，anyio>=4.10 不再附带 sniffio 时全新安装会 ImportError
     "httpx-socks>=0.11.0,<0.14",
+    # TikTok 网页接口会校验 TLS 与 HTTP/2 指纹，httpx 发出的请求只会得到空内容，由它模拟 Chrome 发送（#384）
+    "curl_cffi>=0.16.3,<0.17",
     "aiofiles>=24.1.0,<26",
     "aiosqlite>=0.20.0,<0.23",
     "ruamel.yaml>=0.18.10,<0.20",
