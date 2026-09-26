@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-26 06:43-0700\n"
+"POT-Creation-Date: 2026-09-26 07:00-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -1035,6 +1035,7 @@ msgid "[WebcastHotChatMessage] [🔥热聊消息] | [内容：{0}]"
 msgstr "[WebcastHotChatMessage] [🔥热聊消息] | [内容：{0}]"
 
 #: f2/apps/douyin/dl.py f2/apps/tiktok/dl.py f2/apps/twitter/dl.py
+#: f2/apps/weibo/dl.py
 msgid "cookie不能为空。请提供有效的 cookie 参数，或自动从浏览器获取。如 `--auto-cookie edge`"
 msgstr "cookie不能为空。请提供有效的 cookie 参数，或自动从浏览器获取。如 `--auto-cookie edge`"
 
@@ -3236,10 +3237,6 @@ msgid "单条微博接口地址:"
 msgstr "单条微博接口地址:"
 
 #: f2/apps/weibo/dl.py
-msgid "cookie不能为空。请提供有效的 cookie 参数，或自动从浏览器获取 `--auto-cookie edge`"
-msgstr "cookie不能为空。请提供有效的 cookie 参数，或自动从浏览器获取 `--auto-cookie edge`"
-
-#: f2/apps/weibo/dl.py
 #, python-brace-format
 msgid "微博：{0} 无查看权限"
 msgstr "微博：{0} 无查看权限"
@@ -4693,4 +4690,7 @@ msgstr "无效的时间戳字符串"
 
 #~ msgid "请检查配置文件格式是否正确 | Key: {key}, Value: {value}，使用默认配置"
 #~ msgstr ""
+
+#~ msgid "cookie不能为空。请提供有效的 cookie 参数，或自动从浏览器获取 `--auto-cookie edge`"
+#~ msgstr "cookie不能为空。请提供有效的 cookie 参数，或自动从浏览器获取 `--auto-cookie edge`"
 
