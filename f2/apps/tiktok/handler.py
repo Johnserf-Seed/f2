@@ -48,7 +48,7 @@ from f2.exceptions.base import F2Error
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.core.decorators import get_mode_handlers, mode_handler
-from f2.utils.time.timestamp import get_timestamp, interval_2_timestamp, timestamp_2_str
+from f2.utils.time.timestamp import get_timestamp, parse_interval, timestamp_2_str
 
 rich_console = RichConsoleManager().rich_console
 rich_prompt = RichConsoleManager().rich_prompt
@@ -318,15 +318,13 @@ class TiktokHandler:
         min_cursor = 0
         page_counts = self.kwargs.get("page_counts", 35)
         max_counts = self.kwargs.get("max_counts")
-        interval = self.kwargs.get("interval")
+
+        # 提供了日期区间时，从区间结束时间开始倒序翻页，翻过开始时间后停止
+        time_range = parse_interval(self.kwargs.get("interval"), unit="milli")
+        if time_range:
+            min_cursor, cursor = time_range
 
         secUid = await SecUserIdFetcher.get_secuid(str(self.kwargs.get("url")))
-
-        # 判断是否提供了interval参数，如果有则获取start_date转时间戳提供给max_cursor
-        if interval is not None and interval != "all":
-            # 倒序查找
-            min_cursor = interval_2_timestamp(interval, date_type="start")
-            cursor = interval_2_timestamp(interval, date_type="end")
 
         async with AsyncUserDB("tiktok_users.db") as udb:
             user_path = await self.get_or_add_user_data(
