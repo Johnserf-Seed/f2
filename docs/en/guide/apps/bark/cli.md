@@ -37,6 +37,8 @@ outline: [2,3]
 
 Specify the path to the configuration file, with the lowest priority. The default path for the **main configuration file** is `f2/conf/app.yaml`, which supports **absolute paths** and **relative paths**.
 
+If the file cannot be parsed, `F2` reports the line and column of the error; it also stops with an error if the top level is not a key-value mapping or the file has no settings for this app, exiting with code `1`. When the app's settings are missing, use `--init-config` to add the default settings to the file.
+
 ### `--key`
 
 The `key` of `Bark` is a 22-character string. It can be viewed on the homepage of the `Bark` app.

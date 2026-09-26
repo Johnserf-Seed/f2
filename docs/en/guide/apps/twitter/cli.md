@@ -33,6 +33,8 @@ outline: deep
 
 Specifies the path to the configuration file, with the lowest priority. The default **main configuration file** path is `f2/conf/app.yaml`. Supports **absolute** and **relative paths**.
 
+If the file cannot be parsed, `F2` reports the line and column of the error; it also stops with an error if the top level is not a key-value mapping or the file has no settings for this app, exiting with code `1`. When the app's settings are missing, use `--init-config` to add the default settings to the file.
+
 ### `--url`
 
 Provides the corresponding link based on the mode.
