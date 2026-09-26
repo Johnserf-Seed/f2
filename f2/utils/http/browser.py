@@ -5,6 +5,32 @@ import browser_cookie3  # type: ignore[import-untyped]
 from f2.i18n.translator import _
 from f2.log.logger import logger
 
+FAQ_URL = "https://f2.wiki/faq"
+
+
+def explain_browser_error(error: Exception) -> str:
+    """
+    为 browser_cookie3 的常见错误补充原因与解决办法 (Explain common browser_cookie3 errors)
+
+    Args:
+        error (Exception): browser_cookie3 抛出的异常
+
+    Returns:
+        str: 原始错误信息，常见错误后面附上原因与解决办法
+    """
+    message = str(error)
+    if "Unable to get key for cookie decryption" in message:
+        # Windows 上的 Chrome、Edge 自 2024 年 8 月起改用应用绑定加密（#193）
+        return _(
+            "{0}。Windows 上的新版 Chrome、Edge 改用了应用绑定加密，暂时无法自动获取 cookie；"
+            "macOS 需要在钥匙串弹窗中允许访问。可以改用 --auto-cookie firefox，或在浏览器中手动复制 cookie，详见 {1}"
+        ).format(message, FAQ_URL)
+    if "Unable to read database file" in message:
+        return _("{0}。浏览器的 cookie 数据库被占用，请完全关闭浏览器后重试").format(
+            message
+        )
+    return message
+
 
 def get_cookie_from_browser(browser_choice: str, domain: str = "") -> dict:
     """
@@ -36,6 +62,9 @@ def get_cookie_from_browser(browser_choice: str, domain: str = "") -> dict:
     if not cj_function:
         logger.error(_("不支持的浏览器：{0}").format(browser_choice))
         return {}
-    cj = cj_function(domain_name=domain)
+    try:
+        cj = cj_function(domain_name=domain)
+    except browser_cookie3.BrowserCookieError as e:
+        raise browser_cookie3.BrowserCookieError(explain_browser_error(e)) from e
     cookie_value = {c.name: c.value for c in cj if c.domain.endswith(domain)}
     return cookie_value
