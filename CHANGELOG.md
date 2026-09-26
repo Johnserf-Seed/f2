@@ -6,6 +6,7 @@
 
 ## [Unreleased]
 
+- `--auto-cookie` 读取 Chrome、Edge 失败时给出原因与解决办法（#193、#205）：Windows 上的新版 Chrome、Edge 改用了应用绑定加密，`browser_cookie3`（0.20.1，目前的最新版）还不能解密。报错 `Unable to get key for cookie decryption` 时现在会提示改用 `--auto-cookie firefox` 或手动复制 cookie，并附上 FAQ 链接；cookie 数据库被占用时提示关闭浏览器后重试。FAQ 新增对应条目，各应用的 `--auto-cookie` 说明链接到它。新增 `f2.utils.http.browser.explain_browser_error`。
 - 修复 `--auto-cookie` 获取失败时退出码仍为 `0` 的问题：`finally` 中的 `ctx.exit(0)` 会覆盖失败时的 `abort`。现在读取浏览器失败、没有取到 cookie 或权限不足时输出原因并以退出码 `1` 结束，确认更新配置时被取消（如输入已结束）同样以 `1` 结束；获取成功或选择不更新配置时仍为 `0`。
 - 没有提供 cookie 时抛出 `ConfError`，只报一行错误：此前抖音、TikTok、twitter、微博的下载器抛出 `ValueError`（`kwargs` 里没有 `cookie` 时是 `KeyError`），会打印完整堆栈。只检查是否提供了 cookie，空字符串仍然允许，因为抖音直播等请求不需要用户的 cookie；通过 CLI 运行时，配置里空的 cookie 是空字符串，所以主要影响作为库使用的场景。微博的提示文字与其他应用统一。
 - 修复作者改名后另建文件夹、重新下载全部作品的问题：此前 `create_or_rename_user_folder` 先按新名称建目录，再把新目录「重命名」为它自己，旧目录从不搬动。现在名称变化时，把各下载模式下旧名称的目录一起重命名为新名称，已下载的作品随目录保留；某个模式下新名称的目录已存在时，该模式的两个目录都保持不变，不覆盖也不合并，并在日志中提示；重命名失败（例如目录中的文件正被占用）时当前模式本次继续使用旧目录。各模式的旧目录都改名后，数据库中的名称更新为新名称（此前从不更新），作者以后再改名也能继续跟随；还有冲突或改名失败的旧目录时保留旧名称，下次运行继续处理。抖音、推特、微博按昵称，TikTok 按用户名（`uniqueId`）；TikTok 单个作品与直播模式按新用户名查不到本地记录时改按 `secUid` 查找。#248 调整文件名规则后很多作者的文件夹名会变化，升级后旧文件夹会在下次下载时自动改为新名称，不再另建文件夹（文件名变化的作品仍会按新名称重新下载一次）。新增 `f2.utils.file.path.get_user_folder_path`、`migrate_user_folder`、`migrate_user_folders` 与 `is_user_folder_migrated`；微博 `AsyncUserDB` 新增拼写正确的 `update_user_info`（`updat_user_info` 仍可使用）。
