@@ -30,7 +30,7 @@ from f2.utils.crypto.bytedance.abogus import ABogus as AB
 from f2.utils.crypto.bytedance.abogus import BrowserFingerprintGenerator as BrowserFpGen
 from f2.utils.crypto.bytedance.xbogus import XBogus as XB
 from f2.utils.file.name import split_filename
-from f2.utils.file.path import get_user_folder_path, migrate_user_folder
+from f2.utils.file.path import get_user_folder_path, migrate_user_folders
 from f2.utils.http.cookie import parse_cookie_str
 from f2.utils.string.formatter import extract_valid_urls
 from f2.utils.string.generator import gen_random_str
@@ -1713,19 +1713,19 @@ def create_or_rename_user_folder(
         user_path (Path): 用户目录路径 (User directory path)
 
     Note:
-        昵称变化时，如果旧昵称的目录存在、新昵称的目录不存在，就把旧目录重命名为新昵称，
-        已下载的文件随目录保留；新昵称的目录已存在时两个目录都保持不变。
-        (When the nickname changes, the folder of the old nickname is renamed to the new
-        nickname if that folder does not exist yet, keeping the downloaded files;
-        otherwise both folders are left as they are.)
+        昵称变化时，把各下载模式下旧昵称的目录都重命名为新昵称，已下载的文件随目录保留；
+        某个模式下新昵称的目录已存在时，该模式的两个目录都保持不变。
+        (When the nickname changes, the folders of the old nickname are renamed to the
+        new nickname in every download mode, keeping the downloaded files; in a mode
+        where a folder of the new nickname already exists, both folders are left as
+        they are.)
     """
     local_nickname = local_user_data.get("nickname") if local_user_data else None
 
     if local_nickname and current_nickname and local_nickname != current_nickname:
-        # 昵称不一致，把旧昵称的目录重命名为新昵称
-        user_path = migrate_user_folder(
-            get_user_folder_path(kwargs, "douyin", local_nickname),
-            get_user_folder_path(kwargs, "douyin", current_nickname),
+        # 昵称不一致，把各下载模式下旧昵称的目录重命名为新昵称
+        user_path = migrate_user_folders(
+            kwargs, "douyin", local_nickname, current_nickname
         )
         user_path.mkdir(parents=True, exist_ok=True)
         return user_path
