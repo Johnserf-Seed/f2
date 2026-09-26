@@ -1,7 +1,9 @@
 # path: f2/dl/base_downloader.py
 
 import asyncio
+import contextlib
 import hashlib
+import os
 import re
 import sys
 import traceback
@@ -86,6 +88,28 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
     @staticmethod
     def _ensure_path(path: Union[str, Path]) -> Path:
         return ensure_path(path)
+
+    async def _record_local_file_error(
+        self, task_id: TaskID, full_path: Path, error: OSError
+    ) -> None:
+        """
+        本地文件无法创建或写入时记为下载失败，不影响其它下载任务
+        (Record a failed download when the local file cannot be created or written)
+
+        路径过长、名称含系统不支持的字符、没有写入权限或磁盘已满都会导致这类错误，
+        换一个下载链接也无法解决，所以不再重试。
+        """
+        logger.error(
+            _("无法写入文件 {0}：{1}").format(full_path, error.strerror or error)
+        )
+        record_failed_download(str(full_path))
+        await self.progress.update(
+            task_id,
+            description=_("[red][  失败  ]：[/red]"),
+            filename=trim_filename(full_path.name, 45),
+            state="error",
+            visible=False,
+        )
 
     async def _download_chunks(
         self,
@@ -477,10 +501,15 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
             # 如果urls是单个链接，则转换为列表以便统一处理
             urls = [urls] if isinstance(urls, str) else urls
 
-            # 确保目标路径存在
             full_path = self._ensure_path(full_path)
-            full_path.parent.mkdir(parents=True, exist_ok=True)
             tmp_path = full_path.with_suffix(".tmp")
+
+            # 确保目标路径存在，无法创建时不发起请求
+            try:
+                full_path.parent.mkdir(parents=True, exist_ok=True)
+            except OSError as e:
+                await self._record_local_file_error(task_id, full_path, e)
+                return
 
             # 遍历所有链接
             for link_index, link in enumerate(urls):
@@ -636,6 +665,11 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
                             )
                             continue
 
+                    except OSError as e:
+                        # 本地文件无法创建或改名，换链接也无济于事
+                        await self._record_local_file_error(task_id, full_path, e)
+                        return
+
                     except Exception as e:
                         logger.error(_("下载过程异常: {0}").format(str(e)))
                         # 清理异常产生的临时文件
@@ -686,9 +720,7 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
             content (Any): 文件内容 (File content)
             full_path (Union[str, Path]): 保存路径 (Save path)
         """
-        # 确保目标路径存在 (Ensure target path exists)
         full_path = self._ensure_path(full_path)
-        full_path.parent.mkdir(parents=True, exist_ok=True)
 
         # 确定打开文件的模式 (Determine the mode in which the file is opened)
         mode = "wb" if isinstance(content, bytes) else "w"
@@ -702,9 +734,18 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
         await self.progress.update(
             task_id, advance=1024, total=int(sys.getsizeof(content))
         )
-        # 创建异步文件对象并写入内容 (Create an async file object and write content)
-        async with aiofiles.open(**open_params) as f:  # type: ignore
-            await f.write(content)
+        # 确保目标路径存在后写入内容，无法写入时记为失败，不影响其它任务
+        # (Ensure the target directory exists, then write; failures don't stop other tasks)
+        try:
+            full_path.parent.mkdir(parents=True, exist_ok=True)
+            async with aiofiles.open(**open_params) as f:  # type: ignore
+                await f.write(content)
+        except OSError as e:
+            # 写到一半失败时删除残缺的文件，避免下次被当成已下载而跳过
+            with contextlib.suppress(OSError):
+                full_path.unlink(missing_ok=True)
+            await self._record_local_file_error(task_id, full_path, e)
+            return
 
         logger.info(_("[green][  完成  ]：{0}[/green]").format(Path(full_path).name))
         await self.progress.update(
@@ -747,7 +788,8 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
         # 文件全路径
         full_path = self._ensure_path(base_path) / file_path
 
-        if full_path.exists():
+        # Path.exists 遇到文件名过长等错误会直接抛出异常，os.path.exists 则返回 False
+        if os.path.exists(full_path):
             logger.info(_("[cyan][  跳过  ]: {0}[/cyan]").format(Path(full_path).name))
             task_id = await self.progress.add_task(
                 description=_("[cyan][  跳过  ]:[/cyan]"),
@@ -795,7 +837,8 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
         # 文件全路径
         full_path = self._ensure_path(base_path) / file_path
 
-        if full_path.exists():
+        # Path.exists 遇到文件名过长等错误会直接抛出异常，os.path.exists 则返回 False
+        if os.path.exists(full_path):
             logger.info(_("[cyan][  跳过  ]: {0}[/cyan]").format(Path(full_path).name))
             task_id = await self.progress.add_task(
                 description=_("[cyan][  跳过  ]:[/cyan]"),
@@ -844,7 +887,8 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
         # 文件全路径
         full_path = self._ensure_path(base_path) / file_path
 
-        if full_path.exists():
+        # Path.exists 遇到文件名过长等错误会直接抛出异常，os.path.exists 则返回 False
+        if os.path.exists(full_path):
             logger.info(_("[cyan][  跳过  ]: {0}[/cyan]").format(Path(full_path).name))
             task_id = await self.progress.add_task(
                 description=_("[cyan][  跳过  ]:[/cyan]"),
