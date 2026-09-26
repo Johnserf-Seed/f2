@@ -243,7 +243,8 @@ Asynchronous method to fetch or create user data while creating a user directory
 <<< @/snippets/tiktok/user-get-add.py{17-23}
 
 ::: tip :bulb: Hint
-This is an interface for `cli` mode. Developers can define their own functions to create user directories.
+- This is an interface for `cli` mode. Developers can define their own functions to create user directories.
+- After a user changes their username (`uniqueId`), the directories of the old username in every download mode are renamed together (see `create_or_rename_user_folder`), and the username in the database is updated once all of them are renamed; if a conflict or a failed rename leaves an old directory, the old username is kept and the next run handles it again.
 :::
 
 ### Create Video Download Record 🟢
@@ -593,7 +594,7 @@ If the directory does not exist, it will be created before renaming.
 
 ### Create or Rename User Directory 🟢
 
-Used to create or rename a user directory. TikTok user directories are named after the username (`uniqueId`). When the username in the local record (`local_user_data["uniqueId"]`) differs from the current username, the directory of the old username is renamed to the current username and the downloaded files are kept; without a local record, or when the username has not changed, the user directory is simply created.
+Used to create or rename a user directory. TikTok user directories are named after the username (`uniqueId`). When the username in the local record (`local_user_data["uniqueId"]`) differs from the current username, the directories of the old username in every download mode are renamed to the current username and the downloaded files are kept; without a local record, or when the username has not changed, the user directory is simply created.
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
@@ -606,10 +607,10 @@ Used to create or rename a user directory. TikTok user directories are named aft
 | user_path | Path | User directory path object |
 
 ::: tip :bulb: Note
-- The directories of the old and the new username are computed the same way as `create_user_folder` (`path`, app name, `mode`); only the directory of the current download mode is handled.
-- If the directory of the old username does not exist, a new directory is created. If the directory of the new username already exists, both directories are left as they are, nothing is overwritten or merged, and a message is logged.
-- If renaming fails (for example because a file in the directory is in use by another program), the old directory is used this time and renaming is retried on the next run.
-- It is integrated into `get_or_add_user_data` of the `handler`; when only the new username is known (single video, live), the local record is also looked up by `secUid`, so developers only need to call the `handler` data interface.
+- Directories are computed the same way as `create_user_folder` (`path`, app name, `mode`); every download mode directory of the app under the current `path` is handled, and the user directory of the current download mode is returned.
+- A mode without a directory of the old username is skipped. If the directory of the new username already exists in a mode, both directories of that mode are left as they are, nothing is overwritten or merged, and a message is logged.
+- If renaming fails (for example because a file in the directory is in use by another program), a message is logged; the current mode keeps using the old directory this time and renaming is retried on the next run.
+- It is integrated into `get_or_add_user_data` of the `handler`, which updates the username in the database once the old directories in every mode have been renamed; when only the new username is known (single video, live), the local record is also looked up by `secUid`, so developers only need to call the `handler` data interface.
 :::
 
 ## crawler Interface

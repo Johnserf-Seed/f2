@@ -62,7 +62,7 @@ Whether to save the video copy. Defaults to `true`. Keep the original desc infor
 The location where the video is saved. Defaults to `Download` in the current directory. Supports **absolute paths** and **relative paths**.
 
 ::: tip :bulb: Tip
-Works are saved in `<path>/tiktok/<mode>/<username>`, where the username is the `uniqueId` (the part after `@`). When an author changes their username, the next download renames the folder of the old username to the new one, so the downloaded works stay with it and works whose file names have not changed are not downloaded again; the folder of each download mode is renamed the next time that mode is used. If a folder with the new username already exists, both folders are left as they are and a message is logged; merge them manually if needed.
+Works are saved in `<path>/tiktok/<mode>/<username>`, where the username is the `uniqueId` (the part after `@`). When an author changes their username, the next download of that author (in any mode) renames the folders of the old username in every download mode to the new one, so the downloaded works stay with them and works whose file names have not changed are not downloaded again; later changes are followed as well. If a folder with the new username already exists in a mode, both folders of that mode are left as they are and a message is logged until you merge them and delete the old folder.
 :::
 
 ### `--folderize`

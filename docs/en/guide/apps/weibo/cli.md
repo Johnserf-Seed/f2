@@ -45,7 +45,7 @@ Provide the corresponding link based on the selected mode.
 Save location for posts. The default is `Download` in the current directory. Supports **absolute** and **relative** paths.
 
 ::: tip :bulb: Tip
-Posts are saved in `<path>/weibo/<mode>/<user nickname>`. When a user changes their nickname, the next download renames the folder of the old nickname to the new one, so the downloaded posts stay with it and posts whose file names have not changed are not downloaded again; the folder of each download mode is renamed the next time that mode is used. If a folder with the new nickname already exists, both folders are left as they are and a message is logged; merge them manually if needed.
+Posts are saved in `<path>/weibo/<mode>/<user nickname>`. When a user changes their nickname, the next download of that user (in any mode) renames the folders of the old nickname in every download mode to the new one, so the downloaded posts stay with them and posts whose file names have not changed are not downloaded again; later changes are followed as well. If a folder with the new nickname already exists in a mode, both folders of that mode are left as they are and a message is logged until you merge them and delete the old folder.
 :::
 
 ### `--folderize`
