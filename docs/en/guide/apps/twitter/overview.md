@@ -320,7 +320,7 @@ If the directory does not exist, it will first create the user directory before 
 
 ### Create or Rename User Directory 🟢
 
-Used to create or rename a user directory. A combination of the two interfaces above.
+Used to create or rename a user directory. When the nickname in the local record (`local_user_data["nickname"]`) differs from the current nickname, the directory of the old nickname is renamed to the current nickname and the downloaded files are kept; without a local record, or when the nickname has not changed, the user directory is simply created.
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
@@ -333,7 +333,10 @@ Used to create or rename a user directory. A combination of the two interfaces a
 | user_path | Path | User directory path object |
 
 ::: tip :information_source: Note
-This interface effectively prevents redundant directory creation when a user changes their nickname. Integrated into the `handler` interface, developers do not need to worry about it—just call the data interface of `handler` directly.
+- The directories of the old and the new nickname are computed the same way as `create_user_folder` (`path`, app name, `mode`); only the directory of the current download mode is handled.
+- If the directory of the old nickname does not exist, a new directory is created. If the directory of the new nickname already exists, both directories are left as they are, nothing is overwritten or merged, and a message is logged.
+- If renaming fails (for example because a file in the directory is in use by another program), the old directory is used this time and renaming is retried on the next run.
+- It is integrated into `get_or_add_user_data` of the `handler`, so developers only need to call the `handler` data interface.
 :::
 
 ### Extract Weibo Text 🟢

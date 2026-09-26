@@ -43,6 +43,10 @@ Provides the corresponding link based on the mode.
 
 The save location for works. Defaults to `Download` in the current directory. Supports **absolute** and **relative paths**.
 
+::: tip :bulb: Tip
+Tweets are saved in `<path>/twitter/<mode>/<user nickname>`. When a user changes their nickname, the next download renames the folder of the old nickname to the new one, so the downloaded tweets stay with it and tweets whose file names have not changed are not downloaded again; the folder of each download mode is renamed the next time that mode is used. If a folder with the new nickname already exists, both folders are left as they are and a message is logged; merge them manually if needed.
+:::
+
 ### `--folderize`
 
 Determines whether works should be saved in separate folders. Default is `true`.

@@ -551,7 +551,7 @@ If no path is specified in the configuration file, the default is `Download`. Bo
 ├── Download
 │   ├── tiktok
 │   │   ├── post
-│   │   │   ├── user_nickname
+│   │   │   ├── user_uniqueId
 │   │   │   │   ├── 2023-12-31_23-59-59_desc
 │   │   │   │   │   ├── 2023-12-31_23-59-59_desc-video.mp4
 │   │   │   │   │   ├── 2023-12-31_23-59-59_desc-desc.txt
@@ -564,7 +564,7 @@ If no path is specified in the configuration file, the default is `Download`. Bo
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | kwargs | dict | `cli` configuration file |
-| nickname | Union[str, int] | User nickname |
+| uniqueId | Union[str, int] | Username (uniqueId) |
 
 | Return | Type | Description |
 | :--- | :--- | :--- |
@@ -579,7 +579,7 @@ Used to rename a user directory.
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | old_path | Path | Old user directory path object |
-| new_nickname | str | New user nickname |
+| new_uniqueId | str | New username (uniqueId) |
 
 | Return | Type | Description |
 | :--- | :--- | :--- |
@@ -593,20 +593,23 @@ If the directory does not exist, it will be created before renaming.
 
 ### Create or Rename User Directory 🟢
 
-Used to create or rename a user directory. This is a combination of the two interfaces above.
+Used to create or rename a user directory. TikTok user directories are named after the username (`uniqueId`). When the username in the local record (`local_user_data["uniqueId"]`) differs from the current username, the directory of the old username is renamed to the current username and the downloaded files are kept; without a local record, or when the username has not changed, the user directory is simply created.
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | kwargs | dict | cli configuration file |
 | local_user_data | dict | Local user data |
-| current_nickname | str | Current user nickname |
+| current_uniqueId | str | Current username (uniqueId) |
 
 | Return | Type | Description |
 | :--- | :--- | :--- |
 | user_path | Path | User directory path object |
 
 ::: tip :bulb: Note
-This interface effectively resolves the issue of duplicate downloads when a user changes their nickname. It is integrated into the `get_or_add_user_data` method in the handler interface, so developers can call the handler’s data interface directly without worrying about this issue.
+- The directories of the old and the new username are computed the same way as `create_user_folder` (`path`, app name, `mode`); only the directory of the current download mode is handled.
+- If the directory of the old username does not exist, a new directory is created. If the directory of the new username already exists, both directories are left as they are, nothing is overwritten or merged, and a message is logged.
+- If renaming fails (for example because a file in the directory is in use by another program), the old directory is used this time and renaming is retried on the next run.
+- It is integrated into `get_or_add_user_data` of the `handler`; when only the new username is known (single video, live), the local record is also looked up by `secUid`, so developers only need to call the `handler` data interface.
 :::
 
 ## crawler Interface

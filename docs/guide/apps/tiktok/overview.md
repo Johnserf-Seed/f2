@@ -550,7 +550,7 @@ outline: [2,3]
 ├── Download
 │   ├── tiktok
 │   │   ├── post
-│   │   │   ├── user_nickname
+│   │   │   ├── user_uniqueId
 │   │   │   │   ├── 2023-12-31_23-59-59_desc
 │   │   │   │   │   ├── 2023-12-31_23-59-59_desc-video.mp4
 │   │   │   │   │   ├── 2023-12-31_23-59-59_desc-desc.txt
@@ -564,7 +564,7 @@ outline: [2,3]
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | kwargs | dict | `cli` 配置文件 |
-| nickname | Union[str, int] | 用户昵称 |
+| uniqueId | Union[str, int] | 用户名（uniqueId） |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -579,7 +579,7 @@ outline: [2,3]
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | old_path | Path | 旧的用户目录路径对象 |
-| new_nickname | str | 新的用户昵称 |
+| new_uniqueId | str | 新的用户名（uniqueId） |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -593,20 +593,23 @@ outline: [2,3]
 
 ### 创建或重命名用户目录 🟢
 
-用于创建或重命名用户目录。为上面2个接口的组合。
+用于创建或重命名用户目录。TikTok 的用户目录按用户名（`uniqueId`）命名，本地记录中的用户名（`local_user_data["uniqueId"]`）与当前用户名不同时，把旧用户名的用户目录重命名为当前用户名，已下载的文件随目录保留；没有本地记录或用户名没有变化时直接创建用户目录。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | kwargs | dict | cli配置文件 |
 | local_user_data | dict | 本地用户数据 |
-| current_nickname | str | 当前用户昵称 |
+| current_uniqueId | str | 当前用户名（uniqueId） |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | user_path | Path | 用户目录路径对象 |
 
 ::: tip :bulb: 提示
-该接口很好的解决了用户改名之后重复重新下载的问题。集合在handler接口的`get_or_add_user_data`中，开发者无需关心直接调用handler的数据接口即可。
+- 旧用户名与新用户名的目录都按 `create_user_folder` 的规则计算（`path`、应用名、`mode`），只处理当前下载模式下的目录。
+- 旧用户名的目录不存在时直接创建新目录；新用户名的目录已存在时两个目录都保持不变，不会覆盖或合并，并在日志中提示。
+- 重命名失败（例如目录中的文件正被其他程序占用）时本次继续使用旧目录，下次运行再尝试。
+- 该接口集成在 `handler` 的 `get_or_add_user_data` 中；只知道新用户名（单个作品、直播）时会再按 `secUid` 查找本地记录，开发者无需关心，直接调用 `handler` 的数据接口即可。
 :::
 
 ## crawler接口
