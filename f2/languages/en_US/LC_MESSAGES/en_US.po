@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-26 05:56-0700\n"
+"POT-Creation-Date: 2026-09-26 06:15-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -4284,6 +4284,15 @@ msgid "[bold red]Python 版本错误[/bold red]"
 msgstr "[bold red]Python version error[/bold red]"
 
 #: f2/utils/config/conf_manager.py
+msgid "文件不是 UTF-8 编码，请另存为 UTF-8 后重试"
+msgstr "The file is not UTF-8 encoded, please save it as UTF-8 and try again"
+
+#: f2/utils/config/conf_manager.py
+#, python-brace-format
+msgid "{0}（第 {1} 行第 {2} 列）"
+msgstr "{0} (line {1}, column {2})"
+
+#: f2/utils/config/conf_manager.py
 msgid "配置文件不存在"
 msgstr "Configuration file does not exist"
 
@@ -4295,6 +4304,22 @@ msgstr "Configuration file path has no read permission"
 #, fuzzy, python-brace-format
 msgid "配置文件解析错误: {0}"
 msgstr "Configuration file parsing error"
+
+#: f2/utils/config/conf_manager.py
+msgid "配置文件的顶层不是键值映射"
+msgstr "The top level of the config file is not a key-value mapping"
+
+#: f2/utils/config/conf_manager.py
+#, python-brace-format
+msgid "配置文件中没有 {0} 应用的配置，可以用 --init-config 向该文件补充默认配置"
+msgstr ""
+"The config file has no settings for the {0} app, use --init-config to add"
+" the default settings to it"
+
+#: f2/utils/config/conf_manager.py
+#, python-brace-format
+msgid "配置文件中 {0} 应用的配置不是键值映射"
+msgstr "The {0} settings in the config file are not a key-value mapping"
 
 #: f2/utils/config/conf_manager.py
 #, python-brace-format
