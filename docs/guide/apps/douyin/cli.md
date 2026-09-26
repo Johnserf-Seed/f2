@@ -233,6 +233,8 @@ f2 dy --insecure --proxies http 127.0.0.1:8888 ...
 
 获取成功后会把 cookie 写入配置文件（用 `-c` 指定了自定义配置文件时写入该文件）并退出，不会开始下载；获取失败时输出原因并以退出码 `1` 结束。
 
+Windows 上的新版 Chrome、Edge 暂时无法自动获取 cookie，解决办法见 [FAQ](/faq#自动获取-cookie-失败-unable-to-get-key-for-cookie-decryption)。
+
 不支持切换浏览器用户配置。
 
 > [!IMPORTANT] 重要 ❗❗❗

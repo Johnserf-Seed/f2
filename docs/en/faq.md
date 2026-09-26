@@ -232,3 +232,22 @@ curl --proxy http://127.0.0.1:8080 https://httpbin.org/ip
 5. Try different proxy servers or types
 6. Check proxy logs for error messages
 :::
+
+## Auto Cookie Failed: Unable to get key for cookie decryption
+
+This error with `--auto-cookie chrome` or `--auto-cookie edge` usually means the latest Chrome or Edge on Windows (versions released after August 2024) stores cookies with app-bound encryption, which `browser_cookie3` (currently 0.20.1), the library `F2` uses, cannot decrypt yet. On macOS, it usually means access was not allowed in the Keychain prompt.
+
+::: details :link: Solution
+1. Log in with Firefox and use `--auto-cookie firefox`; Firefox is not affected.
+2. Log in in the browser and copy the cookie manually, then put it in the `cookie` setting of your config file or pass it with `-k`; see the `--cookie` section of each app for how to get it.
+3. On macOS, run the command again and choose "Allow" in the Keychain prompt.
+4. If you see `Unable to read database file` or a request to close all browser processes, the browser is still running and its cookie database is in use; close the browser completely and try again.
+:::
+
+::: tip :bulb: Tip
+When fetching fails, `F2` leaves the config file unchanged and exits with code `1`.
+:::
+
+**Reference Links:**
+- https://github.com/Johnserf-Seed/f2/issues/193
+- https://github.com/borisbabic/browser_cookie3/issues/210

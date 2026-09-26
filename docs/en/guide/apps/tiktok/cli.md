@@ -186,6 +186,8 @@ Automatically obtain `cookie` from the browser. Please make sure to close the se
 
 On success, the cookie is written to the configuration file (the custom file given with `-c`, if any) and `F2` exits without downloading; on failure, it prints the reason and exits with code `1`.
 
+Cookies from the latest Chrome and Edge on Windows cannot be read automatically for now; see the [FAQ](/en/faq#auto-cookie-failed-unable-to-get-key-for-cookie-decryption) for workarounds.
+
 Not supported to switch browser user settings.
 
 > [!IMPORTANT] IMPORTANT ❗❗❗

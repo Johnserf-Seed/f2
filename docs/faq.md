@@ -232,3 +232,22 @@ curl --proxy http://127.0.0.1:8080 https://httpbin.org/ip
 5. 尝试不同的代理服务器或类型
 6. 检查代理日志中的错误消息
 :::
+
+## 自动获取 Cookie 失败：Unable to get key for cookie decryption
+
+使用 `--auto-cookie chrome` 或 `--auto-cookie edge` 时出现这个错误，多半是因为 Windows 上的新版 Chrome、Edge（2024 年 8 月以后的版本）改用了与应用绑定的加密方式（App-Bound Encryption）保存 cookie，`F2` 依赖的 `browser_cookie3`（目前为 0.20.1）还不能解密。macOS 上出现这个错误，通常是没有在钥匙串弹窗中允许访问。
+
+::: details :link: 解决办法
+1. 在 Firefox 中登录后使用 `--auto-cookie firefox`，Firefox 不受影响。
+2. 在浏览器中登录后手动复制 cookie，写入配置文件的 `cookie`，或用 `-k` 传入，获取方法见各应用的 `--cookie` 说明。
+3. macOS 上重新执行命令，并在钥匙串弹窗中选择“允许”。
+4. 提示 `Unable to read database file` 或“请结束所有浏览器相关的进程”时，是浏览器仍在运行、cookie 数据库被占用，完全关闭浏览器后重试。
+:::
+
+::: tip :bulb: 提示
+获取失败时 `F2` 不会修改配置文件，并以退出码 `1` 结束。
+:::
+
+**参考链接：**
+- https://github.com/Johnserf-Seed/f2/issues/193
+- https://github.com/borisbabic/browser_cookie3/issues/210
