@@ -80,13 +80,18 @@ def handler_auto_cookie(
         logger.error(
             _("请结束所有浏览器相关的进程，并确保你有管理员的权限访问浏览器后重试！")
         )
-        ctx.abort()
+        ctx.exit(1)
+    except click.Abort:
+        # 确认更新配置时被取消，交给 click 输出 Aborted! 并以退出码 1 结束
+        raise
     except Exception as e:
         trace_logger.error(traceback.format_exc())
         logger.error(_("自动获取Cookie失败：{0}").format(str(e)))
-        ctx.abort()
-    finally:
-        ctx.exit(0)
+        ctx.exit(1)
+
+    # 获取成功后只更新配置文件，不继续下载；
+    # 此前 ctx.exit(0) 写在 finally 中，会覆盖失败时的退出码
+    ctx.exit(0)
 
 
 def handler_naming(
