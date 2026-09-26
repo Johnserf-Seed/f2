@@ -157,6 +157,8 @@ Automatically retrieves `cookie` from the browser. Ensure the selected browser i
 - `vivaldi`
 - `librewolf`
 
+On success, the cookie is written to the configuration file (the custom file given with `-c`, if any) and `F2` exits without downloading; on failure, it prints the reason and exits with code `1`.
+
 User settings switching is not supported.
 
 > [!IMPORTANT] IMPORTANT ❗❗❗
