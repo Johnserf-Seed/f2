@@ -20,6 +20,7 @@ from f2.exceptions.conf_exceptions import InvalidConfError
 from f2.i18n.translator import _
 from f2.utils.config.conf_manager import ConfigManager
 from f2.utils.file.name import split_filename
+from f2.utils.http.cookie import join_set_cookie_headers
 from f2.utils.string.formatter import extract_valid_urls
 
 
@@ -123,13 +124,8 @@ class VisitorManager(BaseCrawler):
             )
             response.raise_for_status()
 
-            # 逐个读取 Set-Cookie 头，不再把多个头拼成一行后按逗号切分，
-            # 避免值里带逗号时被截断（移植自 #434）
-            visitor_cookie = "; ".join(
-                cookie.split(";")[0]
-                for cookie in response.headers.get_list("set-cookie")
-                if cookie
-            )
+            # 逐个读取 Set-Cookie 头，避免值里带逗号时被截断（移植自 #434）
+            visitor_cookie = join_set_cookie_headers(response.headers)
             return visitor_cookie
 
         except httpx.RequestError as exc:
