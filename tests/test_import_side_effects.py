@@ -68,10 +68,9 @@ def test_importing_apps_has_no_network_or_filesystem_side_effects(tmp_path):
     assert not (tmp_path / "logs").exists()
 
 
-@pytest.mark.parametrize("app", ["douyin", "tiktok"])
-def test_mstoken_is_fetched_once_on_first_use(monkeypatch, app):
-    utils = importlib.import_module(f"f2.apps.{app}.utils")
-    model = importlib.import_module(f"f2.apps.{app}.model")
+def test_mstoken_is_fetched_once_on_first_use(monkeypatch):
+    from f2.apps.douyin import model, utils
+
     calls = []
 
     def fake_gen(cls):
@@ -83,24 +82,28 @@ def test_mstoken_is_fetched_once_on_first_use(monkeypatch, app):
 
     # 定义模型不触发生成，实例化时才生成，且整个进程只生成一次
     assert calls == []
-    if app == "douyin":
-        first = model.BaseRequestModel()
-        second = model.BaseRequestModel()
-    else:
-        # www.tiktok.com 的模型不再携带 msToken（签名时从 cookie 读取），只有 webcast 模型仍会生成
-        assert "msToken" not in model.BaseRequestModel().model_dump()
-        assert calls == []
-        first = model.CheckLiveAlive(room_ids="1")
-        second = model.LiveImFetch(room_id="1")
+    first = model.BaseRequestModel()
+    second = model.BaseRequestModel()
     assert first.msToken == second.msToken == "tok-1"
+    assert model.LiveChatSend(room_id="1", content="hi").msToken == "tok-1"
     assert len(calls) == 1
 
-    if app == "douyin":
-        assert model.LiveChatSend(room_id="1", content="hi").msToken == "tok-1"
-    else:
-        # 获取设备 ID 的首页请求不需要 msToken，不会再触发生成
-        assert "Cookie" not in utils.DeviceIdManager._device_id_headers()
-    assert len(calls) == 1
+
+def test_tiktok_never_generates_mstoken(monkeypatch):
+    from f2.apps.tiktok import model, utils
+
+    def fake_gen(cls):
+        raise AssertionError("TikTok 不应再生成 msToken")
+
+    monkeypatch.setattr(utils.TokenManager, "_msToken_cache", None)
+    monkeypatch.setattr(utils.TokenManager, "gen_real_msToken", classmethod(fake_gen))
+
+    # 旧的 msToken 生成接口已失效：www 与 webcast 接口都在签名时从 cookie 读取 msToken
+    assert "msToken" not in model.BaseRequestModel().model_dump()
+    assert "msToken" not in model.CheckLiveAlive(room_ids="1").model_dump()
+    assert "msToken" not in model.LiveImFetch(room_id="1").model_dump()
+    # 获取设备 ID 的首页请求也不需要 msToken
+    assert "Cookie" not in utils.DeviceIdManager._device_id_headers()
 
 
 def test_mstoken_failure_is_not_cached(monkeypatch):

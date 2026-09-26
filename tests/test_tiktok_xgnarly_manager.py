@@ -6,7 +6,8 @@ import httpx
 import pytest
 
 from f2.apps.tiktok.crawler import TiktokCrawler
-from f2.apps.tiktok.model import CheckLiveAlive, UserPost
+from f2.apps.tiktok.model import CheckLiveAlive, LiveImFetch, UserPost
+from f2.apps.tiktok.proto.tiktok_webcast_pb2 import Response
 from f2.apps.tiktok.utils import TokenManager, XGnarlyManager
 from f2.utils.crypto.bytedance.xgnarly import hash_state, unpack_payload, unseal
 
@@ -100,36 +101,54 @@ def test_query_hash_covers_the_encoded_query():
     assert unpack_payload(payload)[0x2E] == hash_state(business).to_bytes(4, "big")
 
 
-def test_webcast_check_alive_keeps_legacy_encoding(monkeypatch):
-    # webcast 接口仍使用 X-Bogus，参数与之前完全一致
-    monkeypatch.setattr(TokenManager, "_msToken_cache", "legacy_token")
-    params = CheckLiveAlive(room_ids="1").model_dump()
-    assert params["msToken"] == "legacy_token"
-    assert "%28" in params["browser_version"] and "%2F" in params["tz_name"]
-    assert list(params)[-2:] == ["msToken", "room_ids"]
+def test_webcast_models_carry_raw_values_without_ms_token():
+    # webcast 接口与 www 接口一样使用新版签名，模型保存原始值
+    check = CheckLiveAlive(room_ids="1").model_dump()
+    im = LiveImFetch(room_id="1").model_dump()
+    assert "msToken" not in check and "msToken" not in im
+    assert " (" in check["browser_version"] and " (" in im["browser_version"]
+    assert im["host"] == "https://webcast.tiktok.com"
+    url = XGnarlyManager.model_2_endpoint(UA, "https://webcast.tiktok.com/x/", im)
+    assert "&host=https%3A%2F%2Fwebcast.tiktok.com&" in url
 
 
 # ---------------- 爬虫 ----------------
 
 
-@pytest.fixture
-def crawler_requests(monkeypatch):
-    monkeypatch.setattr(TokenManager, "_msToken_cache", "legacy_token")
-    sent = []
-
+def make_crawler(sent, cookie="ttwid=x; msToken=cookie_token"):
     def handler(request):
         sent.append(request)
+        if request.url.path == "/webcast/im/fetch/":
+            return httpx.Response(
+                200, content=Response(cursor="c1").SerializeToString()
+            )
         return httpx.Response(200, json={"statusCode": 0})
 
     crawler = TiktokCrawler(
         {
             "headers": {"User-Agent": UA, "Referer": "https://www.tiktok.com/"},
-            "cookie": "ttwid=x; msToken=cookie_token",
+            "cookie": cookie,
             "proxies": {"http://": None, "https://": None},
         }
     )
     crawler._aclient = httpx.AsyncClient(transport=httpx.MockTransport(handler))
-    return crawler, sent
+    return crawler
+
+
+@pytest.fixture(autouse=True)
+def forbid_mstoken_generation(monkeypatch):
+    # 旧的 msToken 生成接口已失效，TikTok 的任何请求都不应再调用
+    def gen_real_msToken(cls):
+        raise AssertionError("不应生成 msToken")
+
+    monkeypatch.setattr(TokenManager, "_msToken_cache", None)
+    monkeypatch.setattr(TokenManager, "gen_real_msToken", classmethod(gen_real_msToken))
+
+
+@pytest.fixture
+def crawler_requests():
+    sent = []
+    return make_crawler(sent), sent
 
 
 async def test_web_api_requests_use_new_signature(crawler_requests):
@@ -148,7 +167,7 @@ async def test_web_api_requests_use_new_signature(crawler_requests):
     assert ua_hash == hash_state(request.headers["User-Agent"]).to_bytes(4, "big")
 
 
-async def test_webcast_requests_keep_x_bogus(crawler_requests):
+async def test_webcast_requests_use_new_signature(crawler_requests):
     crawler, sent = crawler_requests
     await crawler.fetch_check_live_alive(CheckLiveAlive(room_ids="1"))
     await crawler.close()
@@ -156,5 +175,30 @@ async def test_webcast_requests_keep_x_bogus(crawler_requests):
     [request] = sent
     params = dict(query_params(str(request.url)))
     assert request.url.host == "webcast.tiktok.com"
-    assert "X-Gnarly" not in params
-    assert len(params["X-Bogus"]) == 28
+    # 2026-09-26 实测 im/fetch 只用 X-Bogus 签名时返回空内容，webcast 接口也改用新版签名
+    assert params["X-Bogus"] == "1" and params["X-Gnarly"]
+    assert params["msToken"] == "cookie_token"
+    names = [name for name, _value in query_params(str(request.url))]
+    assert names[-5:] == ["room_ids", "X-Dynosaur", "msToken", "X-Bogus", "X-Gnarly"]
+
+
+async def test_webcast_im_fetch_uses_new_signature(crawler_requests):
+    crawler, sent = crawler_requests
+    response = await crawler.fetch_live_im_fetch(LiveImFetch(room_id="1"))
+    await crawler.close()
+
+    assert response.cursor == "c1"
+    [request] = sent
+    params = query_params(str(request.url))
+    assert request.url.path == "/webcast/im/fetch/"
+    assert [value for name, value in params if name == "msToken"] == ["cookie_token"]
+    assert dict(params)["X-Gnarly"]
+
+
+async def test_webcast_mstoken_is_empty_without_cookie_value():
+    sent = []
+    crawler = make_crawler(sent, cookie="ttwid=x")
+    await crawler.fetch_check_live_alive(CheckLiveAlive(room_ids="1"))
+    await crawler.close()
+
+    assert "&msToken=&X-Bogus=1&X-Gnarly=" in str(sent[0].url)

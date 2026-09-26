@@ -2,9 +2,9 @@
 
 from urllib.parse import quote
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
-from f2.apps.tiktok.utils import ClientConfManager, TokenManager
+from f2.apps.tiktok.utils import ClientConfManager
 from f2.utils.time.timestamp import get_timestamp
 
 
@@ -163,18 +163,15 @@ class UserLive(BaseRequestModel):
 
 
 class CheckLiveAlive(BaseRequestModel):
-    # webcast 接口仍使用 X-Bogus 签名，沿用预先编码的参数与 msToken，请求保持不变
-    browser_version: str = quote(
-        BaseRequestModel.model_fields["browser_version"].default, safe=""
-    )
-    tz_name: str = quote(BaseRequestModel.model_fields["tz_name"].default, safe="")
-    # 首次实例化时才联网获取（进程内缓存），导入模块不再联网
-    msToken: str = Field(default_factory=TokenManager.cached_msToken)
     from_page: str = "live"
     room_ids: str
 
 
 class LiveImFetch(BaseWebCastModel):
+    # 与 www 接口一样使用新版签名：保存原始值，由 XGnarlyManager 编码后签名，msToken 签名时从 cookie 读取
+    browser_version: str = BaseRequestModel.model_fields["browser_version"].default
+    host: str = "https://webcast.tiktok.com"
+    tz_name: str = BaseRequestModel.model_fields["tz_name"].default
     # resp_content_type: str = "protobuf"
     device_id: str = ""
     did_rule: int = 3
@@ -186,8 +183,6 @@ class LiveImFetch(BaseWebCastModel):
     room_id: str
     history_comment_count: int = 6
     history_comment_cursor: str = "7386962392254958354"
-    # 首次实例化时才联网获取（进程内缓存），导入模块不再联网
-    msToken: str = Field(default_factory=TokenManager.cached_msToken)
 
 
 class LiveWebcast(BaseWebCastModel):

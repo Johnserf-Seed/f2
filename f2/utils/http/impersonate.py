@@ -84,6 +84,7 @@ class ImpersonateTransport(httpx.AsyncBaseTransport):
 
     def __init__(self, session: Any) -> None:
         self._session = session
+        self._closed = False
 
     async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
         headers = [
@@ -126,7 +127,10 @@ class ImpersonateTransport(httpx.AsyncBaseTransport):
         )
 
     async def aclose(self) -> None:
-        await self._session.close()
+        # 同一个传输层可能挂载在多个域名上，httpx 关闭客户端时会逐个调用
+        if not self._closed:
+            self._closed = True
+            await self._session.close()
 
 
 def create_impersonate_transport(

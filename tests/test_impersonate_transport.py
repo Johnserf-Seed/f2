@@ -43,6 +43,7 @@ class FakeSession:
 
     async def close(self):
         self.closed = True
+        self.close_calls = getattr(self, "close_calls", 0) + 1
 
 
 # ---------------- ImpersonateTransport ----------------
@@ -207,7 +208,7 @@ def test_sync_client_keeps_httpx(monkeypatch):
     assert list(make_crawler()._create_mount()) == ["all://"]
 
 
-async def test_only_www_tiktok_goes_through_curl(monkeypatch):
+async def test_tiktok_api_hosts_go_through_curl(monkeypatch):
     curl = FakeSession()
     monkeypatch.setattr(
         crawler_module,
@@ -228,10 +229,14 @@ async def test_only_www_tiktok_goes_through_curl(monkeypatch):
     )
     crawler = make_crawler()
 
+    webcast = "https://webcast.tiktok.com/webcast/im/fetch/?room_id=1"
     await crawler.aclient.get(SIGNED_URL)
-    await crawler.aclient.get("https://webcast.tiktok.com/webcast/room/check_alive/")
+    await crawler.aclient.get(webcast)
+    await crawler.aclient.get("https://v16-webapp-prime.tiktok.com/video/tos/a")
     await crawler.close()
 
-    assert [url for _method, url, _kwargs in curl.calls] == [SIGNED_URL]
-    assert httpx_hosts == ["webcast.tiktok.com"]
-    assert curl.closed
+    # www 与 webcast 的接口经由 curl_cffi，视频 CDN 等其他域名仍使用 httpx
+    assert [url for _method, url, _kwargs in curl.calls] == [SIGNED_URL, webcast]
+    assert httpx_hosts == ["v16-webapp-prime.tiktok.com"]
+    # 两个域名共用一个传输层，只关闭一次
+    assert curl.close_calls == 1

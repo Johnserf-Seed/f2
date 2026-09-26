@@ -50,7 +50,7 @@ from f2.apps.tiktok.proto.tiktok_webcast_pb2 import (
     SocialMessage,
     UserFanTicket,
 )
-from f2.apps.tiktok.utils import ClientConfManager, XBogusManager, XGnarlyManager
+from f2.apps.tiktok.utils import ClientConfManager, XGnarlyManager
 from f2.crawlers.base_crawler import BaseCrawler
 from f2.crawlers.websocket_crawler import WebSocketCrawler
 from f2.i18n.translator import _
@@ -72,11 +72,11 @@ class TiktokCrawler(BaseCrawler):
 
     def _create_mount(self, async_mode=False) -> dict:
         """
-        www.tiktok.com 的接口会校验 TLS 与 HTTP/2 指纹，改由模拟 Chrome 的传输层发送
-        (Send www.tiktok.com requests through a transport that impersonates Chrome)
+        www.tiktok.com 与 webcast.tiktok.com 的接口会校验 TLS 与 HTTP/2 指纹，改由模拟 Chrome 的传输层发送
+        (Send TikTok API requests through a transport that impersonates Chrome)
 
-        httpx 发出的请求即使签名正确也只会得到 200 空内容；webcast.tiktok.com 等其他域名
-        仍使用 httpx，未安装 curl_cffi 时全部使用 httpx。
+        httpx 发出的请求即使签名正确也只会得到 200 空内容；视频 CDN 等其他域名仍使用 httpx，
+        未安装 curl_cffi 时全部使用 httpx。
         """
         mounts = super()._create_mount(async_mode)
         if async_mode:
@@ -86,15 +86,18 @@ class TiktokCrawler(BaseCrawler):
                 max_clients=self._max_connections,
             )
             if transport is not None:
-                mounts["https://www.tiktok.com"] = transport
+                # 两个域名共用同一个 curl_cffi 会话
+                for origin in ("https://www.tiktok.com", "https://webcast.tiktok.com"):
+                    mounts[origin] = transport
         return mounts
 
     def _web_endpoint(self, base_endpoint: str, params: BaseModel) -> str:
         """
-        www.tiktok.com 接口的请求地址：按网页 SDK 追加 X-Dynosaur、msToken、X-Bogus 与 X-Gnarly
-        (Build the signed URL of a www.tiktok.com API)
+        TikTok 网页接口的请求地址：按网页 SDK 追加 X-Dynosaur、msToken、X-Bogus 与 X-Gnarly
+        (Build the signed URL of a TikTok web API)
 
-        webcast.tiktok.com 的接口仍使用 X-Bogus 签名。
+        webcast.tiktok.com 的直播接口同样使用新版签名：2026-09-26 实测 im/fetch 只用 X-Bogus
+        签名时返回空内容。
         """
         return XGnarlyManager.model_2_endpoint(
             self.headers.get("User-Agent", ""),
@@ -159,20 +162,12 @@ class TiktokCrawler(BaseCrawler):
         return await self._fetch_get_json(endpoint)
 
     async def fetch_check_live_alive(self, params: CheckLiveAlive):
-        endpoint = XBogusManager.model_2_endpoint(
-            self.headers.get("User-Agent"),
-            tkendpoint.CHECK_LIVE_ALIVE,
-            params.model_dump(),
-        )
+        endpoint = self._web_endpoint(tkendpoint.CHECK_LIVE_ALIVE, params)
         logger.debug(_("检查开播状态接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_live_im_fetch(self, params: LiveImFetch):
-        endpoint = XBogusManager.model_2_endpoint(
-            self.headers.get("User-Agent"),
-            tkendpoint.LIVE_IM_FETCH,
-            params.model_dump(),
-        )
+        endpoint = self._web_endpoint(tkendpoint.LIVE_IM_FETCH, params)
         logger.debug(_("直播弹幕初始化接口地址：{0}").format(endpoint))
         response = await self._fetch_response(endpoint)
         payload_package = Response()
