@@ -92,6 +92,7 @@ from f2.exceptions.base import F2Error
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.core.decorators import get_mode_handlers, mode_handler
+from f2.utils.file.path import is_user_folder_migrated
 from f2.utils.time.timestamp import get_timestamp, parse_interval, timestamp_2_str
 
 rich_console = RichConsoleManager().rich_console
@@ -311,6 +312,17 @@ class DouyinHandler:
         if not local_user_data:
             await db.add_user_info(**current_user_data._to_dict())
             logger.debug(_("用户：{0} 已添加到数据库").format(current_nickname))
+        # 昵称变化且各下载模式的旧目录都已改名时，把数据库中的昵称改为新昵称，
+        # 以后再改名时从新昵称开始处理；还有旧目录时保留旧昵称，下次运行继续处理
+        elif is_user_folder_migrated(
+            kwargs, "douyin", local_user_data.get("nickname"), current_nickname
+        ):
+            await db.update_user_info(
+                sec_user_id=sec_user_id,
+                nickname=current_nickname,
+                nickname_raw=current_user_data.nickname_raw,
+            )
+            logger.debug(_("用户：{0} 的新名称已更新到数据库").format(current_nickname))
 
         return user_path
 

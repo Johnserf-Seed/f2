@@ -70,7 +70,7 @@ class AsyncUserDB(BaseDB):
         )
         await self.commit()
 
-    async def updat_user_info(self, uid: str, **kwargs) -> None:
+    async def update_user_info(self, uid: str, **kwargs) -> None:
         """
         更新用户信息
 
@@ -87,6 +87,9 @@ class AsyncUserDB(BaseDB):
                 (*kwargs.values(), uid),
             )
             await self.commit()
+
+    # 旧的拼写，保留以兼容已有代码
+    updat_user_info = update_user_info
 
     async def get_user_info(self, uid: str) -> dict:
         """

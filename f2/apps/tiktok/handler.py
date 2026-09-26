@@ -48,6 +48,7 @@ from f2.exceptions.base import F2Error
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.core.decorators import get_mode_handlers, mode_handler
+from f2.utils.file.path import is_user_folder_migrated
 from f2.utils.time.timestamp import get_timestamp, parse_interval, timestamp_2_str
 
 rich_console = RichConsoleManager().rich_console
@@ -198,6 +199,15 @@ class TiktokHandler:
         if not local_user_data:
             await db.add_user_info(**current_user_data._to_dict())
             logger.debug(_("用户：{0} 已添加到数据库").format(current_uniqueId))
+        # uniqueId 变化且各下载模式的旧目录都已改名时，把数据库中的 uniqueId 改为新值，
+        # 以后再改名时从新 uniqueId 开始处理；还有旧目录时保留旧值，下次运行继续处理
+        elif is_user_folder_migrated(
+            self.kwargs, "tiktok", local_user_data.get("uniqueId"), current_uniqueId
+        ):
+            await db.update_user_info(
+                secUid=current_user_data.secUid, uniqueId=current_uniqueId
+            )
+            logger.debug(_("用户：{0} 的新名称已更新到数据库").format(current_uniqueId))
 
         return user_path
 
