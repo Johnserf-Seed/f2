@@ -24,6 +24,7 @@ from f2.log.logger import logger, trace_logger
 from f2.utils.config.conf_manager import ConfigManager
 from f2.utils.crypto.bytedance.xbogus import XBogus as XB
 from f2.utils.file.name import split_filename
+from f2.utils.file.path import get_user_folder_path, migrate_user_folder
 from f2.utils.http.cookie import join_set_cookie_headers
 from f2.utils.string.formatter import extract_valid_urls
 from f2.utils.string.generator import gen_random_str
@@ -1400,25 +1401,13 @@ def create_user_folder(kwargs: dict, uniqueId: Union[str, int]) -> Path:
         (If kwargs is not in dict format, TypeError will be raised.)
     """
 
-    # 确定函数参数是否正确
-    if not isinstance(kwargs, dict):
-        raise TypeError("kwargs 参数必须是字典")
-
-    # 创建基础路径
-    base_path = Path(kwargs.get("path", "Download"))
-
-    # 添加下载模式和用户名
-    user_path = (
-        base_path / "tiktok" / kwargs.get("mode", "PLEASE_SETUP_MODE") / str(uniqueId)
-    )
-
-    # 获取绝对路径并确保它存在
-    resolve_user_path = user_path.resolve()
+    # 获取绝对路径，与重命名用户目录时的路径计算一致
+    user_path = get_user_folder_path(kwargs, "tiktok", uniqueId)
 
     # 创建目录
-    resolve_user_path.mkdir(parents=True, exist_ok=True)
+    user_path.mkdir(parents=True, exist_ok=True)
 
-    return resolve_user_path
+    return user_path
 
 
 def rename_user_folder(old_path: Path, new_uniqueId: str) -> Path:
@@ -1454,14 +1443,24 @@ def create_or_rename_user_folder(
 
     Returns:
         user_path (Path): 用户目录路径 (User directory path)
-    """
-    user_path = create_user_folder(kwargs, current_uniqueId)
 
-    if not local_user_data:
+    Note:
+        uniqueId 变化时，如果旧 uniqueId 的目录存在、新 uniqueId 的目录不存在，
+        就把旧目录重命名为新 uniqueId，已下载的文件随目录保留；
+        新 uniqueId 的目录已存在时两个目录都保持不变。
+        (When the uniqueId changes, the folder of the old uniqueId is renamed to the new
+        uniqueId if that folder does not exist yet, keeping the downloaded files;
+        otherwise both folders are left as they are.)
+    """
+    local_uniqueId = local_user_data.get("uniqueId") if local_user_data else None
+
+    if local_uniqueId and current_uniqueId and local_uniqueId != current_uniqueId:
+        # uniqueId不一致，把旧 uniqueId 的目录重命名为新 uniqueId
+        user_path = migrate_user_folder(
+            get_user_folder_path(kwargs, "tiktok", local_uniqueId),
+            get_user_folder_path(kwargs, "tiktok", current_uniqueId),
+        )
+        user_path.mkdir(parents=True, exist_ok=True)
         return user_path
 
-    if local_user_data.get("uniqueId") != current_uniqueId:
-        # uniqueId不一致，触发目录更新操作
-        user_path = rename_user_folder(user_path, current_uniqueId)
-
-    return user_path
+    return create_user_folder(kwargs, current_uniqueId)
