@@ -6,6 +6,7 @@
 
 ## [Unreleased]
 
+- 抖音、TikTok、twitter 的日期区间格式错误或结束日期早于开始日期时，在发起请求前以一行错误退出（退出码 `1`）。此前只记一条日志：主页等模式会翻完全部页面，却因筛选失败一个作品都不下载，并且每页重复报错。校验在创建下载器时进行，作为库使用时同样生效；主页作品的翻页游标改用 `parse_interval` 计算，结果不变。
 - 配置错误中的配置项名称不再被日志脱敏打码：`ConfError` 的标签由 `Key` 改为 `Setting`（此前 `Key: interval` 会被当成密钥显示为 `Key: ***`）；`cookie`、`key`、`token` 等敏感配置项的值在异常文本中直接打码，此前被打码的只是键名，`Value` 中的值反而原样输出。`InvalidConfError`、`InvalidEncodingError` 的配置项与值改由 `ConfError` 统一追加。
 - 配置文件出错时只输出一行错误：`-c` 指定的配置文件无法解析时不再抛出 `RuntimeError` 并打印完整堆栈，而是给出出错的行号、列号与文件路径；文件不是 UTF-8 编码、顶层不是键值映射（此前抛出 `AttributeError`）或没有该应用的配置（此前抛出 `ValueError`）时同样只报一行，并以退出码 `1` 结束，缺少应用配置时提示可以用 `--init-config` 补充。用户级 `conf.yaml` 与 `--init-config` 遇到的解析错误也改为同样的一行格式。新增 `ConfigManager.get_app_config`。
 - `-c` 指定的配置文件不存在时，报错中显示用户给出的路径，不再显示包目录下的路径。
