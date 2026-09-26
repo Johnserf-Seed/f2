@@ -8,7 +8,7 @@ import time
 import traceback
 import uuid
 from pathlib import Path
-from typing import Optional, Union
+from typing import Any, List, Optional, Union
 from urllib.parse import urlparse
 
 import httpx
@@ -1731,6 +1731,64 @@ def create_or_rename_user_folder(
         return user_path
 
     return create_user_folder(kwargs, current_nickname)
+
+
+def _to_int(value: Any) -> int:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return 0
+
+
+def select_best_bit_rate(bit_rates: Any) -> Optional[dict]:
+    """
+    从作品的多个清晰度中选出最高的一项 (Pick the highest quality from a work's bit_rate list)
+
+    先比较分辨率（宽 × 高），相同时比较码率，仍相同时保留靠前的一项。接口按码率排序，
+    高分辨率的 H.265 版本码率可能低于 1080p 的 H.264 版本，只取第一项会漏掉 2K、4K（#214）。
+
+    Args:
+        bit_rates (list): 作品数据中的 video.bit_rate 列表
+
+    Returns:
+        Optional[dict]: 清晰度最高的一项，没有可用的播放地址时返回 None
+    """
+
+    candidates = [
+        item
+        for item in bit_rates or []
+        if isinstance(item, dict) and (item.get("play_addr") or {}).get("url_list")
+    ]
+    if not candidates:
+        return None
+
+    def quality(item: dict) -> tuple:
+        play_addr = item["play_addr"]
+        area = _to_int(play_addr.get("width")) * _to_int(play_addr.get("height"))
+        return area, _to_int(item.get("bit_rate"))
+
+    return max(candidates, key=quality)
+
+
+def get_video_play_urls(video: Any) -> Optional[List[str]]:
+    """
+    返回作品视频最高清晰度的播放地址 (Return the play URLs of a work's best quality)
+
+    没有清晰度列表时使用 video.play_addr，都没有时返回 None。
+
+    Args:
+        video (dict): 作品数据中的 video 字段
+
+    Returns:
+        Optional[List[str]]: 同一视频的多个播放地址，下载时依次尝试
+    """
+
+    if not isinstance(video, dict):
+        return None
+    best = select_best_bit_rate(video.get("bit_rate"))
+    if best:
+        return best["play_addr"]["url_list"]
+    return (video.get("play_addr") or {}).get("url_list") or None
 
 
 def json_2_lrc(data: Union[str, list, dict]) -> str:

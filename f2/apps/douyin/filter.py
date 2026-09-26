@@ -2,6 +2,7 @@
 
 from typing import Dict, List
 
+from f2.apps.douyin.utils import get_video_play_urls
 from f2.utils.json.filter import JSONModel, filter_to_list
 from f2.utils.string.formatter import replaceT
 from f2.utils.time.timestamp import timestamp_2_str
@@ -327,9 +328,9 @@ class UserPostFilter(JSONModel):
 
     @property
     def video_play_addr(self):
-        return self._get_list_attr_value(
-            "$.aweme_list[*].video.bit_rate[0].play_addr.url_list"
-        )
+        # 按分辨率和码率选择最高清晰度，不再固定取 bit_rate[0]（#214）
+        videos = self._get_list_attr_value("$.aweme_list[*].video")
+        return [get_video_play_urls(video) for video in videos or []]
 
     @property
     def video_bit_rate(self):
@@ -1485,9 +1486,8 @@ class PostDetailFilter(JSONModel):
 
     @property
     def video_play_addr(self):
-        return self._get_attr_value(
-            "$.aweme_detail.video.bit_rate[0].play_addr.url_list"
-        )
+        # 按分辨率和码率选择最高清晰度，不再固定取 bit_rate[0]（#214）
+        return get_video_play_urls(self._get_attr_value("$.aweme_detail.video"))
 
     # images
     @property
@@ -2276,9 +2276,9 @@ class FriendFeedFilter(JSONModel):
 
     @property
     def video_play_addr(self):
-        return self._get_list_attr_value(
-            "$.data[*].aweme.video.bit_rate[0].play_addr.url_list"
-        )
+        # 按分辨率和码率选择最高清晰度，不再固定取 bit_rate[0]（#214）
+        videos = self._get_list_attr_value("$.data[*].aweme.video")
+        return [get_video_play_urls(video) for video in videos or []]
 
     # music
     @property
@@ -2830,9 +2830,9 @@ class HomePostSearchFilter(JSONModel):
 
     @property
     def video_play_addr(self):
-        return self._get_list_attr_value(
-            "$.aweme_list[*].item.video.bit_rate[0].play_addr.url_list"
-        )
+        # 按分辨率和码率选择最高清晰度，不再固定取 bit_rate[0]（#214）
+        videos = self._get_list_attr_value("$.aweme_list[*].item.video")
+        return [get_video_play_urls(video) for video in videos or []]
 
     def _to_raw(self) -> Dict:
         return self._data
