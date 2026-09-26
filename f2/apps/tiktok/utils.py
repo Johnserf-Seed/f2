@@ -23,9 +23,10 @@ from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
 from f2.utils.config.conf_manager import ConfigManager
 from f2.utils.crypto.bytedance.xbogus import XBogus as XB
+from f2.utils.crypto.bytedance.xgnarly import XGnarly
 from f2.utils.file.name import split_filename
 from f2.utils.file.path import get_user_folder_path, migrate_user_folders
-from f2.utils.http.cookie import join_set_cookie_headers
+from f2.utils.http.cookie import join_set_cookie_headers, parse_cookie_str
 from f2.utils.string.formatter import extract_valid_urls
 from f2.utils.string.generator import gen_random_str
 from f2.utils.time.timestamp import get_timestamp
@@ -498,6 +499,52 @@ class XBogusManager:
         final_endpoint = f"{base_endpoint}{separator}{param_str}&X-Bogus={xb_value[1]}"
 
         return final_endpoint
+
+
+class XGnarlyManager:
+    """
+    为 TikTok 网页接口生成签名参数 (Sign TikTok web API requests)
+
+    按网页 SDK 的顺序在业务参数之后追加 X-Dynosaur、msToken、X-Bogus（固定为 1）与 X-Gnarly。
+    查询串按浏览器的方式编码，签名后不能再重新编码；msToken 只取 cookie 中已有的值，
+    没有时留空，不会伪造，伪造的 msToken 会让接口返回空内容。
+    """
+
+    @classmethod
+    def model_2_endpoint(
+        cls,
+        user_agent: str,
+        base_endpoint: str,
+        params: dict,
+        cookie: str = "",
+    ) -> str:
+        """
+        返回带签名参数的请求地址 (Return the signed request URL)
+
+        Args:
+            user_agent (str): 请求使用的 User-Agent，必须与请求头一致
+            base_endpoint (str): 接口地址
+            params (dict): 业务参数，按字典顺序拼接
+            cookie (str): 请求使用的 cookie，从中读取 msToken
+
+        Returns:
+            str: 签名后的请求地址
+        """
+        # 检查params是否是一个字典 (Check if params is a dict)
+        if not isinstance(params, dict):
+            raise TypeError(_("参数必须是字典类型"))
+
+        ms_token = parse_cookie_str(cookie or "").get("msToken", "")
+        pairs = [(str(key), str(value)) for key, value in params.items()]
+
+        try:
+            signed_query, _unused = XGnarly(user_agent).sign(pairs, ms_token=ms_token)
+        except Exception as e:
+            raise ValueError(_("生成 X-Gnarly 失败：{0}").format(e)) from e
+
+        # 检查base_endpoint是否已有查询参数 (Check if base_endpoint already has query parameters)
+        separator = "&" if "?" in base_endpoint else "?"
+        return f"{base_endpoint}{separator}{signed_query}"
 
 
 class SecUserIdFetcher(BaseCrawler):

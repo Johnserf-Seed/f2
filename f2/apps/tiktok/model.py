@@ -18,12 +18,10 @@ class BaseRequestModel(BaseModel):
     browser_name: str = ClientConfManager.brm_browser().get("name", "Mozilla")
     browser_online: str = "true"
     browser_platform: str = ClientConfManager.brm_browser().get("platform", "Win32")
-    browser_version: str = quote(
-        ClientConfManager.brm_browser().get(
-            "version",
-            "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0",
-        ),
-        safe="",
+    # 保存原始值，由 XGnarlyManager 按浏览器的方式编码后签名
+    browser_version: str = ClientConfManager.brm_browser().get(
+        "version",
+        "5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0",
     )
     channel: str = "tiktok_web"
     cookie_enabled: str = "true"
@@ -49,11 +47,10 @@ class BaseRequestModel(BaseModel):
     webcast_language: str = ClientConfManager.base_request_model().get(
         "webcast_language", "zh-Hans"
     )
-    tz_name: str = quote(
-        ClientConfManager.base_request_model().get("tz_name", "Asia/Hong_Kong"), safe=""
+    tz_name: str = ClientConfManager.base_request_model().get(
+        "tz_name", "Asia/Hong_Kong"
     )
-    # 首次实例化时才联网获取（进程内缓存），导入模块不再联网
-    msToken: str = Field(default_factory=TokenManager.cached_msToken)
+    # msToken 不在业务参数中：由 XGnarlyManager 签名时追加，只使用 cookie 中已有的值
 
 
 class BaseWebCastModel(BaseModel):
@@ -166,6 +163,13 @@ class UserLive(BaseRequestModel):
 
 
 class CheckLiveAlive(BaseRequestModel):
+    # webcast 接口仍使用 X-Bogus 签名，沿用预先编码的参数与 msToken，请求保持不变
+    browser_version: str = quote(
+        BaseRequestModel.model_fields["browser_version"].default, safe=""
+    )
+    tz_name: str = quote(BaseRequestModel.model_fields["tz_name"].default, safe="")
+    # 首次实例化时才联网获取（进程内缓存），导入模块不再联网
+    msToken: str = Field(default_factory=TokenManager.cached_msToken)
     from_page: str = "live"
     room_ids: str
 

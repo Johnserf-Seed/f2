@@ -8,6 +8,7 @@ from typing import Any, Optional, Union
 
 from google.protobuf import json_format
 from google.protobuf.message import DecodeError as ProtoDecodeError
+from pydantic import BaseModel
 from websockets import (
     ConnectionClosedOK,
     WebSocketServer,
@@ -49,7 +50,7 @@ from f2.apps.tiktok.proto.tiktok_webcast_pb2 import (
     SocialMessage,
     UserFanTicket,
 )
-from f2.apps.tiktok.utils import ClientConfManager, XBogusManager
+from f2.apps.tiktok.utils import ClientConfManager, XBogusManager, XGnarlyManager
 from f2.crawlers.base_crawler import BaseCrawler
 from f2.crawlers.websocket_crawler import WebSocketCrawler
 from f2.i18n.translator import _
@@ -68,102 +69,72 @@ class TiktokCrawler(BaseCrawler):
         self.headers = kwargs.get("headers", {}) | {"Cookie": kwargs["cookie"]}
         super().__init__(kwargs=kwargs, proxies=proxies, crawler_headers=self.headers)
 
-    async def fetch_user_profile(self, params: UserProfile):
-        endpoint = XBogusManager.model_2_endpoint(
-            self.headers.get("User-Agent"),
-            tkendpoint.USER_DETAIL,
+    def _web_endpoint(self, base_endpoint: str, params: BaseModel) -> str:
+        """
+        www.tiktok.com 接口的请求地址：按网页 SDK 追加 X-Dynosaur、msToken、X-Bogus 与 X-Gnarly
+        (Build the signed URL of a www.tiktok.com API)
+
+        webcast.tiktok.com 的接口仍使用 X-Bogus 签名。
+        """
+        return XGnarlyManager.model_2_endpoint(
+            self.headers.get("User-Agent", ""),
+            base_endpoint,
             params.model_dump(),
+            self.headers.get("Cookie") or "",
         )
+
+    async def fetch_user_profile(self, params: UserProfile):
+        endpoint = self._web_endpoint(tkendpoint.USER_DETAIL, params)
         logger.debug(_("用户信息接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_user_post(self, params: UserPost):
-        endpoint = XBogusManager.model_2_endpoint(
-            self.headers.get("User-Agent"),
-            tkendpoint.USER_POST,
-            params.model_dump(),
-        )
+        endpoint = self._web_endpoint(tkendpoint.USER_POST, params)
         logger.debug(_("主页作品接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_user_like(self, params: UserLike):
-        endpoint = XBogusManager.model_2_endpoint(
-            self.headers.get("User-Agent"),
-            tkendpoint.USER_LIKE,
-            params.model_dump(),
-        )
+        endpoint = self._web_endpoint(tkendpoint.USER_LIKE, params)
         logger.debug(_("喜欢作品接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_user_collect(self, params: UserCollect):
-        endpoint = XBogusManager.model_2_endpoint(
-            self.headers.get("User-Agent"),
-            tkendpoint.USER_COLLECT,
-            params.model_dump(),
-        )
+        endpoint = self._web_endpoint(tkendpoint.USER_COLLECT, params)
         logger.debug(_("收藏作品接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_user_play_list(self, params: UserPlayList):
-        endpoint = XBogusManager.model_2_endpoint(
-            self.headers.get("User-Agent"),
-            tkendpoint.USER_PLAY_LIST,
-            params.model_dump(),
-        )
+        endpoint = self._web_endpoint(tkendpoint.USER_PLAY_LIST, params)
         logger.debug(_("合集列表接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_user_mix(self, params: UserMix):
-        endpoint = XBogusManager.model_2_endpoint(
-            self.headers.get("User-Agent"),
-            tkendpoint.USER_MIX,
-            params.model_dump(),
-        )
+        endpoint = self._web_endpoint(tkendpoint.USER_MIX, params)
         logger.debug(_("合集作品接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_post_detail(self, params: PostDetail):
-        endpoint = XBogusManager.model_2_endpoint(
-            self.headers.get("User-Agent"),
-            tkendpoint.AWEME_DETAIL,
-            params.model_dump(),
-        )
+        endpoint = self._web_endpoint(tkendpoint.AWEME_DETAIL, params)
         logger.debug(_("作品详情接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_post_comment(self, params: PostComment):
-        endpoint = XBogusManager.model_2_endpoint(
-            self.headers.get("User-Agent"),
-            tkendpoint.POST_COMMENT,
-            params.model_dump(),
-        )
+        endpoint = self._web_endpoint(tkendpoint.POST_COMMENT, params)
         logger.debug(_("作品评论接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_post_recommend(self, params: PostDetail):
-        endpoint = XBogusManager.model_2_endpoint(
-            self.headers.get("User-Agent"),
-            tkendpoint.HOME_RECOMMEND,
-            params.model_dump(),
-        )
+        endpoint = self._web_endpoint(tkendpoint.HOME_RECOMMEND, params)
         logger.debug(_("首页推荐接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_post_search(self, params: PostSearch):
-        endpoint = XBogusManager.model_2_endpoint(
-            self.headers.get("User-Agent"),
-            tkendpoint.POST_SEARCH,
-            params.model_dump(),
-        )
+        endpoint = self._web_endpoint(tkendpoint.POST_SEARCH, params)
         logger.debug(_("搜索作品接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 
     async def fetch_user_live(self, params: UserLive):
-        endpoint = XBogusManager.model_2_endpoint(
-            self.headers.get("User-Agent"),
-            tkendpoint.USER_LIVE,
-            params.model_dump(),
-        )
+        endpoint = self._web_endpoint(tkendpoint.USER_LIVE, params)
         logger.debug(_("用户直播接口地址：{0}").format(endpoint))
         return await self._fetch_get_json(endpoint)
 

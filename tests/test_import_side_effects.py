@@ -83,8 +83,15 @@ def test_mstoken_is_fetched_once_on_first_use(monkeypatch, app):
 
     # 定义模型不触发生成，实例化时才生成，且整个进程只生成一次
     assert calls == []
-    first = model.BaseRequestModel()
-    second = model.BaseRequestModel()
+    if app == "douyin":
+        first = model.BaseRequestModel()
+        second = model.BaseRequestModel()
+    else:
+        # www.tiktok.com 的模型不再携带 msToken（签名时从 cookie 读取），只有 webcast 模型仍会生成
+        assert "msToken" not in model.BaseRequestModel().model_dump()
+        assert calls == []
+        first = model.CheckLiveAlive(room_ids="1")
+        second = model.LiveImFetch(room_id="1")
     assert first.msToken == second.msToken == "tok-1"
     assert len(calls) == 1
 
