@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-26 06:36-0700\n"
+"POT-Creation-Date: 2026-09-26 06:43-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -1261,6 +1261,12 @@ msgstr "`fetch_user_info`请求失败，请更换cookie或稍后再试"
 #, python-brace-format
 msgid "用户：{0} 已添加到数据库"
 msgstr "用户：{0} 已添加到数据库"
+
+#: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
+#: f2/apps/twitter/handler.py f2/apps/weibo/handler.py
+#, python-brace-format
+msgid "用户：{0} 的新名称已更新到数据库"
+msgstr "用户：{0} 的新名称已更新到数据库"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
@@ -4204,8 +4210,8 @@ msgstr "{0} 算法私钥长度不正确：{1} 位，期望长度为 {2} 位。"
 
 #: f2/utils/file/path.py
 #, python-brace-format
-msgid "用户名称已变化，但新旧用户目录同时存在，不会自动合并：继续使用 {0}，旧目录 {1} 保持不变，可手动合并"
-msgstr "用户名称已变化，但新旧用户目录同时存在，不会自动合并：继续使用 {0}，旧目录 {1} 保持不变，可手动合并"
+msgid "用户名称已变化，但新旧用户目录同时存在，不会自动合并：继续使用 {0}，旧目录 {1} 保持不变，手动合并并删除旧目录后不再提示"
+msgstr "用户名称已变化，但新旧用户目录同时存在，不会自动合并：继续使用 {0}，旧目录 {1} 保持不变，手动合并并删除旧目录后不再提示"
 
 #: f2/utils/file/path.py
 #, python-brace-format

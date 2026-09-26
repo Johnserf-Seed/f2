@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-26 06:36-0700\n"
+"POT-Creation-Date: 2026-09-26 06:43-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -1364,6 +1364,12 @@ msgstr ""
 #, python-brace-format
 msgid "用户：{0} 已添加到数据库"
 msgstr "User: {0} added to database"
+
+#: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
+#: f2/apps/twitter/handler.py f2/apps/weibo/handler.py
+#, python-brace-format
+msgid "用户：{0} 的新名称已更新到数据库"
+msgstr "User: {0} new name updated in database"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
@@ -4453,11 +4459,12 @@ msgstr ""
 
 #: f2/utils/file/path.py
 #, python-brace-format
-msgid "用户名称已变化，但新旧用户目录同时存在，不会自动合并：继续使用 {0}，旧目录 {1} 保持不变，可手动合并"
+msgid "用户名称已变化，但新旧用户目录同时存在，不会自动合并：继续使用 {0}，旧目录 {1} 保持不变，手动合并并删除旧目录后不再提示"
 msgstr ""
 "The user's name has changed, but both the new and the old user folder "
 "exist and will not be merged automatically: {0} is used and the old "
-"folder {1} is left as is; merge them manually if needed"
+"folder {1} is left as is; merge them manually and delete the old folder "
+"to stop this message"
 
 #: f2/utils/file/path.py
 #, python-brace-format
