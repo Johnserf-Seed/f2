@@ -19,7 +19,7 @@ outline: deep
 | `-x`   | `--max-connections` | `INTEGER` | 网络请求并发连接数 |
 | `-t`   | `--max-tasks` | `INTEGER` | 异步的任务数 |
 | `-o`   | `--max-counts` | `INTEGER` | 最大作品下载数 |
-| `-s`   | `--page-counts` | `INTEGER` | 每页获取作品数 |
+| `-s`   | `--page-counts` | `INTEGER` | 每页获取数量（对微博不生效） |
 | `-P`   | `--proxies` | `TEXT...` | 代理服务器 |
 |        | `--insecure` | `FLAG` | 关闭 TLS 证书校验 |
 |        | `--update-config` | `BOOLEAN` | 更新配置文件 |
@@ -126,7 +126,7 @@ outline: deep
 
 ### `--page-counts`
 
-从接口每页可获取作品数，不建议超过 `20`。默认为 `20`。
+微博主页接口不支持指定每页数量，每页固定返回约 `20` 条微博，这个参数对微博不生效，保留它只是为了与其他应用的配置保持一致。需要限制下载数量时请使用 `--max-counts`。
 
 ### `--proxies`
 

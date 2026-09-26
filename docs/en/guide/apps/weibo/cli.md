@@ -19,7 +19,7 @@ outline: deep
 | `-x`   | `--max-connections` | `INTEGER` | Number of concurrent network connections |
 | `-t`   | `--max-tasks` | `INTEGER` | Number of asynchronous tasks |
 | `-o`   | `--max-counts` | `INTEGER` | Maximum number of posts to download |
-| `-s`   | `--page-counts` | `INTEGER` | Number of posts fetched per page |
+| `-s`   | `--page-counts` | `INTEGER` | Posts per page (no effect for Weibo) |
 | `-P`   | `--proxies` | `TEXT...` | Proxy servers |
 |        | `--insecure` | `FLAG` | Disable TLS certificate verification |
 |        | `--update-config` | `BOOLEAN` | Update configuration file |
@@ -127,7 +127,7 @@ Maximum number of posts to download. Set to `None` or `0` for unlimited. Default
 
 ### `--page-counts`
 
-Number of posts fetched per API request. It is not recommended to exceed `20`. Default is `20`.
+The Weibo profile API cannot set the page size and always returns about `20` posts per page, so this option has no effect for Weibo; it is kept only to match the configuration of other apps. Use `--max-counts` to limit how many posts are downloaded.
 
 ### `--proxies`
 
