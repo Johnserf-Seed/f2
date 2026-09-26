@@ -6,6 +6,8 @@
 
 ## [Unreleased]
 
+- 修复 TikTok 检查开播状态（`fetch_check_live_alive`）与直播弹幕初始化（`fetch_live_im`）一调用就报错“msToken 内容不符合要求”的问题：这两个请求模型不再联网生成 `msToken`，与 `www.tiktok.com` 的接口一样在签名时从 cookie 读取。实测 `webcast.tiktok.com` 的 `im/fetch` 现在只接受新版签名加浏览器指纹（只用 X-Bogus，或只换成 curl_cffi，都返回空内容），两个直播接口因此改用 `XGnarlyManager` 签名并由 curl_cffi 发送；检查开播、初始化与 WebSocket 接收弹幕的完整流程已实测可用。CLI 的直播下载模式（`-M live`）不经过这两个接口，此前不受影响。
+- `TokenManager.gen_real_msToken` 只检查 mssdk 是否下发了 `msToken`，不再要求 152 位：接口下发的 `msToken` 现在是 168 位，此前会误报“msToken 内容不符合要求”；没有下发时也不会再把字符串 `None` 当成 `msToken`。
 - 修复 TikTok 网页接口返回 200 空内容的问题（#384）：`www.tiktok.com` 的接口改用网页 SDK 的新版签名，在业务参数之后依次追加 `X-Dynosaur`、`msToken`、`X-Bogus`（固定为 `1`）与 `X-Gnarly`，签名前按 RFC 3986 编码参数值，与浏览器抓包一致；`msToken` 只从 cookie 读取，没有时留空，不再联网生成或伪造，`www.tiktok.com` 的请求模型不再携带 `msToken`。这些接口还会校验 TLS 与 HTTP/2 指纹，`httpx` 发出的请求即使签名正确也只会得到空内容，`TiktokCrawler` 现在通过新增的运行时依赖 `curl_cffi`（`>=0.16.3,<0.17`，MIT 协议）模拟 Chrome 发送 `www.tiktok.com` 的请求，`webcast.tiktok.com` 与文件下载仍使用 `httpx`；缺少 `curl_cffi` 时（例如使用 `--no-deps` 安装）回退 `httpx` 并在日志中提示。用户信息等接口需要登录后的 cookie，用户发布作品用游客 cookie 也能获取。新增纯 Python 实现的 `f2.utils.crypto.bytedance.xgnarly`、`XGnarlyManager` 与 `f2.utils.http.impersonate`，FAQ 新增对应条目。
 - TikTok 获取 `secUid`（`SecUserIdFetcher`）与设备 ID（`DeviceIdManager`）时不再生成 `msToken`：旧的 `msToken` 生成接口已失效，此前会在发出请求前就报错“msToken 内容不符合要求”；主页与首页的 HTML 不需要 `msToken`。
 - `getXBogus` 计算签名时纳入请求体：此前固定按空请求体计算，传入的 `body` 被忽略。F2 自身目前只给 GET 请求签名，签名不变；作为库给 POST 请求签名时才会受影响。
