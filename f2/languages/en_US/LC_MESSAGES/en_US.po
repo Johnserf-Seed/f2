@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-26 07:48-0700\n"
+"POT-Creation-Date: 2026-09-26 08:17-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -3392,11 +3392,11 @@ msgstr ""
 msgid "最大微博下载数。0 表示无限制"
 msgstr "Maximum number of microblog downloads. 0 means unlimited"
 
-#: f2/apps/weibo/cli.py
-msgid "从接口每页可获取微博数，不建议超过 20"
+#: f2/apps/weibo/cli.py f2/apps/weibo/help.py
+msgid "微博接口每页固定返回约 20 条微博，此参数不生效"
 msgstr ""
-"The number of tweets that can be fetched from the interface per page is "
-"not recommended to be more than 20"
+"The Weibo API always returns about 20 posts per page; this option has no "
+"effect"
 
 #: f2/apps/weibo/cli.py
 #, python-brace-format
@@ -3576,10 +3576,6 @@ msgstr "Global weibo file naming convention"
 #: f2/apps/weibo/help.py
 msgid "最大微博下载数 默认为 0，表示无限制"
 msgstr "Maximum number of weibo downloads Default is 0, which means unlimited"
-
-#: f2/apps/weibo/help.py
-msgid "每页微博数，默认为 20个微博/页"
-msgstr "Number of tweets per page, default is 20 tweets/page"
 
 #: f2/apps/weibo/utils.py
 #, python-brace-format
@@ -5013,4 +5009,14 @@ msgstr "Invalid timestamp string"
 #~ "provide a valid cookie parameter, or "
 #~ "get the `--auto-cookie edge` from "
 #~ "your browser automatically"
+
+#~ msgid "从接口每页可获取微博数，不建议超过 20"
+#~ msgstr ""
+#~ "The number of tweets that can be"
+#~ " fetched from the interface per page"
+#~ " is not recommended to be more "
+#~ "than 20"
+
+#~ msgid "每页微博数，默认为 20个微博/页"
+#~ msgstr "Number of tweets per page, default is 20 tweets/page"
 
