@@ -251,3 +251,14 @@ When fetching fails, `F2` leaves the config file unchanged and exits with code `
 **Reference Links:**
 - https://github.com/Johnserf-Seed/f2/issues/193
 - https://github.com/borisbabic/browser_cookie3/issues/210
+
+## Douyin Video Is Not the Highest Quality
+
+`F2` picks the variant with the highest resolution among all qualities returned by the API, and the one with the higher bitrate when resolutions are equal. Some works offer 2K or 4K in the app while the web API only returns up to 1080p; in that case only 1080p can be downloaded.
+
+::: tip :bulb: Tip
+The highest quality is sometimes only available in H.265 (HEVC), which older players may not play. Use a player that supports H.265, such as VLC or PotPlayer; the built-in Windows player needs the HEVC Video Extensions.
+:::
+
+**Reference Links:**
+- https://github.com/Johnserf-Seed/f2/issues/214

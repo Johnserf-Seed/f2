@@ -251,3 +251,14 @@ curl --proxy http://127.0.0.1:8080 https://httpbin.org/ip
 **参考链接：**
 - https://github.com/Johnserf-Seed/f2/issues/193
 - https://github.com/borisbabic/browser_cookie3/issues/210
+
+## 抖音下载的视频不是最高清晰度
+
+`F2` 会在接口返回的所有清晰度中选择分辨率最高的一项，分辨率相同时选择码率更高的一项。有些作品在 App 中可以选择 2K、4K，但网页接口只返回到 1080p，这时只能下载到 1080p。
+
+::: tip :bulb: 提示
+最高清晰度有时只有 H.265（HEVC）编码的版本，较旧的播放器可能无法播放。可以使用 VLC、PotPlayer 等支持 H.265 的播放器，Windows 自带的播放器需要安装 HEVC 视频扩展。
+:::
+
+**参考链接：**
+- https://github.com/Johnserf-Seed/f2/issues/214
