@@ -48,6 +48,7 @@ outline: [2,3]
 | Generate odin_tt      | `TokenManager`      | `gen_odin_tt`        |  🟢  |
 | Generate Xb params from URL | `XBogusManager` | `str_2_endpoint`    |  🟢  |
 | Generate Xb params from model | `XBogusManager` | `model_2_endpoint` |  🟢  |
+| Generate new signature params from model | `XGnarlyManager` | `model_2_endpoint` |  🟢  |
 | Extract single user ID | `SecUserIdFetcher` | `get_secuid`        |  🟢  |
 | Extract list of user IDs | `SecUserIdFetcher` | `get_all_secuid`   |  🟢  |
 | Extract single unique user ID | `SecUserIdFetcher` | `get_uniqueid` |  🟢  |
@@ -295,7 +296,7 @@ Class method to generate a real `msToken`. Returns a fake value in case of error
 
 ### Get Cached Real msToken 🟢
 
-Class method that returns the real `msToken` cached for the current process; it is only generated over the network on the first call. Request models use it as the default value of their `msToken` field when instantiated, so importing a module no longer makes network requests.
+Class method that returns the real `msToken` cached for the current process; it is only generated over the network on the first call. Request models of the live APIs on `webcast.tiktok.com` (`CheckLiveAlive`, `LiveImFetch`) use it as the default value of their `msToken` field when instantiated, so importing a module no longer makes network requests; request models of `www.tiktok.com` no longer carry `msToken`, which is read from the cookie when signing.
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
@@ -397,6 +398,30 @@ Data collection is also possible using a crawler engine with a filter.
 <<< @/snippets/tiktok/xbogus.py#model-2-endpoint-2-filter-snippet{22,24}
 
 For more advanced use cases, call `fetch_user_profile` from the `handler` interface.
+
+### Generate New Signature Parameters Using API Model 🟢
+
+Class method that generates the web SDK signature parameters for `www.tiktok.com` APIs, appending `X-Dynosaur`, `msToken`, `X-Bogus` (always `1`) and `X-Gnarly` after the business parameters, in that order. Live APIs on `webcast.tiktok.com` still use `XBogusManager`.
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| user_agent | str | User agent; must match the `User-Agent` header of the request |
+| base_endpoint | str | API endpoint |
+| params | dict | Request parameters |
+| cookie | str | User cookie; `msToken` is read from it |
+
+| Return | Type | Description |
+| :--- | :--- | :--- |
+| final_endpoint | str | The complete API URL with signature parameters |
+
+<<< @/snippets/tiktok/xgnarly.py#model-2-endpoint-snippet{14-16}
+
+::: warning :warning: Note
+- `msToken` only comes from the value already in the cookie and is left empty otherwise; a fake `msToken` makes the API return empty responses.
+- Parameter values are encoded per RFC 3986 before signing and the signature covers exactly these bytes, so the URL must not be re-encoded or reordered before sending.
+- `www.tiktok.com` APIs check the client's TLS and HTTP/2 fingerprints, so requests sent by `httpx` only get empty responses even when the signature is correct. With `curl_cffi` installed, `TiktokCrawler` automatically impersonates Chrome for these requests; when sending requests yourself, use a client that can impersonate a browser fingerprint as well.
+- APIs such as user profile (`/api/user/detail/`) require a logged-in cookie; a guest cookie only gets empty responses.
+:::
 
 ### Extract Single User ID 🟢
 

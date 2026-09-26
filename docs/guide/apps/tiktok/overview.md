@@ -48,6 +48,7 @@ outline: [2,3]
 | 生成odin_tt        | `TokenManager`      | `gen_odin_tt`        |  🟢  |
 | 使用接口地址生成Xb参数 | `XBogusManager`    | `str_2_endpoint`    |  🟢  |
 | 使用接口模型生成Xb参数 | `XBogusManager`    | `model_2_endpoint`   |  🟢  |
+| 使用接口模型生成新版签名参数 | `XGnarlyManager` | `model_2_endpoint` |  🟢  |
 | 提取单个用户id       | `SecUserIdFetcher` | `get_secuid`         |  🟢  |
 | 提取列表用户id       | `SecUserIdFetcher` | `get_all_secuid`     |  🟢  |
 | 提取单个用户唯一id    | `SecUserIdFetcher` | `get_uniqueid`        |  🟢  |
@@ -295,7 +296,7 @@ outline: [2,3]
 
 ### 获取缓存的真实msToken 🟢
 
-类方法，返回进程内缓存的真实 `msToken`，首次调用时才联网生成。请求模型的 `msToken` 字段默认通过它在实例化时获取，因此导入模块不会联网。
+类方法，返回进程内缓存的真实 `msToken`，首次调用时才联网生成。`webcast.tiktok.com` 直播接口的请求模型（`CheckLiveAlive`、`LiveImFetch`）的 `msToken` 字段默认通过它在实例化时获取，因此导入模块不会联网；`www.tiktok.com` 的请求模型不再携带 `msToken`，签名时从 cookie 中读取。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -397,6 +398,30 @@ outline: [2,3]
 <<< @/snippets/tiktok/xbogus.py#model-2-endpoint-2-filter-snippet{22,24}
 
 更加抽象的高级方法可以直接调用 `handler` 接口的 `fetch_user_profile`。
+
+### 使用接口模型生成新版签名参数 🟢
+
+类方法，为 `www.tiktok.com` 的接口生成网页 SDK 的签名参数，在业务参数之后依次追加 `X-Dynosaur`、`msToken`、`X-Bogus`（固定为 `1`）与 `X-Gnarly`。`webcast.tiktok.com` 的直播接口仍使用 `XBogusManager`。
+
+| 参数 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| user_agent | str | 用户代理，必须与发送请求时的 `User-Agent` 一致 |
+| base_endpoint | str | 接口端点 |
+| params | dict | 请求参数 |
+| cookie | str | 用户 cookie，`msToken` 从中读取 |
+
+| 返回 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| final_endpoint | str | 带签名参数的完整地址 |
+
+<<< @/snippets/tiktok/xgnarly.py#model-2-endpoint-snippet{14-16}
+
+::: warning :warning: 注意
+- `msToken` 只取 cookie 中已有的值，没有时留空；伪造的 `msToken` 会让接口返回空内容。
+- 参数值按 RFC 3986 编码后签名，签名覆盖的就是这串字节，发送前不能再重新编码或调整参数顺序。
+- `www.tiktok.com` 的接口会校验客户端的 TLS 与 HTTP/2 指纹，`httpx` 发出的请求即使签名正确也只会得到空内容。安装 `curl_cffi` 后 `TiktokCrawler` 会自动模拟 Chrome 发送这些请求，自行发送请求时也需要使用能模拟浏览器指纹的客户端。
+- 用户信息（`/api/user/detail/`）等接口需要登录后的 cookie，游客 cookie 只会得到空内容。
+:::
 
 ### 提取单个用户id 🟢
 

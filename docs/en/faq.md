@@ -135,6 +135,22 @@ Device IDs are tied to `cookies`, and a banned device ID results in invalid cook
 - https://github.com/Johnserf-Seed/f2/issues/79
 - https://github.com/Johnserf-Seed/f2/issues/154
 
+## tiktok Empty Response with Status Code 200
+
+When TikTok web APIs (`www.tiktok.com/api/...`) return `200` with an empty body and the log says the retry limit was reached, the request was blocked by risk control, and the response carries the header `tt_orcas_res: 1`. There are two common causes:
+
+1. Client fingerprint: these APIs check the TLS and HTTP/2 fingerprints, so requests sent by `httpx` are blocked even when the signature is correct. When `curl_cffi` is installed, `F2` automatically impersonates Chrome for these requests; otherwise a hint is logged.
+2. Guest cookie: APIs such as user profile only accept a logged-in `cookie`, while user posts can also be fetched with a guest `cookie`.
+
+::: details :link: Solution
+1. Install `curl_cffi` with `pip install curl_cffi`, then run the command again.
+2. Use a logged-in `cookie` in the config file; see "Empty Response on the nth Request" on this page for how to get it.
+3. `msToken` is read from the `cookie`. It does not need to be configured separately and must not be faked: a fake value also leads to empty responses.
+:::
+**Reference Links:**
+- https://f2.wiki/en/guide/apps/tiktok/overview#generate-new-signature-parameters-using-api-model-%F0%9F%9F%A2
+- https://github.com/Johnserf-Seed/f2/issues/384
+
 ## TypeError: object of type 'NoneType' has no len()
 
 You may see errors like this in the terminal:

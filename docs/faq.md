@@ -135,6 +135,22 @@ f2:
 - https://github.com/Johnserf-Seed/f2/issues/79
 - https://github.com/Johnserf-Seed/f2/issues/154
 
+## tiktok 响应内容为空，状态码 200
+
+`TikTok` 网页接口（`www.tiktok.com/api/...`）返回 `200` 但内容为空、日志提示重试次数达到上限时，说明请求被风控拦截了，响应头中会带有 `tt_orcas_res: 1`。常见原因有两个：
+
+1. 客户端指纹：这些接口会校验 TLS 与 HTTP/2 指纹，`httpx` 发出的请求即使签名正确也会被拦截。安装了 `curl_cffi` 时 `F2` 会自动模拟 Chrome 发送这些请求，未安装时日志中会有提示。
+2. 游客 cookie：用户信息等接口只接受登录后的 `cookie`；用户发布作品用游客 `cookie` 也能获取。
+
+::: details :link: 解决办法
+1. 安装 `curl_cffi`：`pip install curl_cffi`，然后重新运行。
+2. 在配置文件中使用登录后的 `cookie`，获取方法见本页“第 n 次请求响应内容为空”。
+3. `msToken` 会从 `cookie` 中读取，不需要单独配置，也不要手动伪造，伪造的值同样会得到空内容。
+:::
+**参考链接：**
+- https://f2.wiki/guide/apps/tiktok/overview#%E4%BD%BF%E7%94%A8%E6%8E%A5%E5%8F%A3%E6%A8%A1%E5%9E%8B%E7%94%9F%E6%88%90%E6%96%B0%E7%89%88%E7%AD%BE%E5%90%8D%E5%8F%82%E6%95%B0-%F0%9F%9F%A2
+- https://github.com/Johnserf-Seed/f2/issues/384
+
 ## TypeError: object of type 'NoneType' has no len()
 
 在终端，你会看到类似以下的错误日志：
