@@ -46,9 +46,9 @@ If you see `WARNING: No matching works were found`, check if you have configured
 
 ::: details :link: Solution
 1. Ensure `interval: all` is set if the `interval` parameter is missing.
-2. If `interval` is present, verify its value.
+2. If `interval` is present, make sure the range covers the publish time of the works you want (both days are included, in Beijing time). An invalid value makes `F2` exit with an error before any request, so this warning means the format is valid but no works fall within the range.
 3. The `-i` flag also sets the content filter. Set it to `-i all`.
-4. If you use `-i`, ensure it's configured correctly.
+4. If you use `-i`, likewise make sure the range covers the works you want.
 :::
 **Reference Links:**
 - https://github.com/Johnserf-Seed/f2/issues/42

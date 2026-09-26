@@ -118,7 +118,7 @@ In file names, captions and nicknames keep punctuation, spaces and all scripts a
 
 ### `--interval`
 
-Download works published within a date range, in the format: `Year-Month-Day|Year-Month-Day`. For example: `2022-01-01|2023-01-01`, set `all` to download all works.
+Download works published within a date range, in the format: `Year-Month-Day|Year-Month-Day`. For example: `2022-01-01|2023-01-01`, set `all` to download all works. Both days are included, and dates are in Beijing time (UTC+8). An invalid format, or an end date earlier than the start date, is reported as an error before any request is made.
 
 ### `--timeout`
 
