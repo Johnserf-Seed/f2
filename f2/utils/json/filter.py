@@ -64,6 +64,19 @@ class JSONModel:
             self._cache[jsonpath_expr] = parse(jsonpath_expr)
         return self._cache[jsonpath_expr]
 
+    @staticmethod
+    def _find(expr, data) -> list:
+        """
+        执行 JSONPath 查询 (Run a JSONPath query)
+
+        jsonpath_ng 遇到超出列表长度的负数下标（如只有 1 项时取 [-2]）会抛出 IndexError，
+        这里视为没有匹配，与其他缺失字段的处理一致。
+        """
+        try:
+            return expr.find(data)
+        except IndexError:
+            return []
+
     def _get_attr_value(self, jsonpath_expr: str) -> Optional[Any]:
         """
         根据 JSONPath 表达式获取单一属性值。
@@ -75,7 +88,7 @@ class JSONModel:
             Union[str, int, float, bool]: 属性值
         """
         expr = self._parse_expression(jsonpath_expr)
-        matches = expr.find(self._data)
+        matches = self._find(expr, self._data)
         if not matches:
             return None
         # 如果只有一个结果，直接返回值；多个结果返回列表
@@ -109,7 +122,7 @@ class JSONModel:
             child_expr_str = ""
 
         parent_expr = self._parse_expression(parent_expr_str)
-        parent_matches = parent_expr.find(self._data)
+        parent_matches = self._find(parent_expr, self._data)
 
         values = []
         if child_expr_str:
@@ -118,7 +131,7 @@ class JSONModel:
             for match in parent_matches:
                 parent_value = match.value
                 # 在当前父级元素中查找子属性
-                child_matches = child_expr.find(parent_value)
+                child_matches = self._find(child_expr, parent_value)
                 if child_matches:
                     # 假设每个父级元素中子属性只匹配一个值
                     values.append(child_matches[0].value)
