@@ -6,6 +6,7 @@
 
 ## [Unreleased]
 
+- 没有提供 cookie 时抛出 `ConfError`，只报一行错误：此前抖音、TikTok、twitter、微博的下载器抛出 `ValueError`（`kwargs` 里没有 `cookie` 时是 `KeyError`），会打印完整堆栈。只检查是否提供了 cookie，空字符串仍然允许，因为抖音直播等请求不需要用户的 cookie；通过 CLI 运行时，配置里空的 cookie 是空字符串，所以主要影响作为库使用的场景。微博的提示文字与其他应用统一。
 - 修复作者改名后另建文件夹、重新下载全部作品的问题：此前 `create_or_rename_user_folder` 先按新名称建目录，再把新目录「重命名」为它自己，旧目录从不搬动。现在名称变化时，把各下载模式下旧名称的目录一起重命名为新名称，已下载的作品随目录保留；某个模式下新名称的目录已存在时，该模式的两个目录都保持不变，不覆盖也不合并，并在日志中提示；重命名失败（例如目录中的文件正被占用）时当前模式本次继续使用旧目录。各模式的旧目录都改名后，数据库中的名称更新为新名称（此前从不更新），作者以后再改名也能继续跟随；还有冲突或改名失败的旧目录时保留旧名称，下次运行继续处理。抖音、推特、微博按昵称，TikTok 按用户名（`uniqueId`）；TikTok 单个作品与直播模式按新用户名查不到本地记录时改按 `secUid` 查找。#248 调整文件名规则后很多作者的文件夹名会变化，升级后旧文件夹会在下次下载时自动改为新名称，不再另建文件夹（文件名变化的作品仍会按新名称重新下载一次）。新增 `f2.utils.file.path.get_user_folder_path`、`migrate_user_folder`、`migrate_user_folders` 与 `is_user_folder_migrated`；微博 `AsyncUserDB` 新增拼写正确的 `update_user_info`（`updat_user_info` 仍可使用）。
 - 抖音、TikTok、twitter 的日期区间格式错误或结束日期早于开始日期时，在发起请求前以一行错误退出（退出码 `1`）。此前只记一条日志：主页等模式会翻完全部页面，却因筛选失败一个作品都不下载，并且每页重复报错。校验在创建下载器时进行，作为库使用时同样生效；主页作品的翻页游标改用 `parse_interval` 计算，结果不变。
 - 配置错误中的配置项名称不再被日志脱敏打码：`ConfError` 的标签由 `Key` 改为 `Setting`（此前 `Key: interval` 会被当成密钥显示为 `Key: ***`）；`cookie`、`key`、`token` 等敏感配置项的值在异常文本中直接打码，此前被打码的只是键名，`Value` 中的值反而原样输出。`InvalidConfError`、`InvalidEncodingError` 的配置项与值改由 `ConfError` 统一追加。
