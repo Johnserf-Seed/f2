@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-26 08:17-0700\n"
+"POT-Creation-Date: 2026-09-26 09:42-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -3008,6 +3008,11 @@ msgid "生成 ttwid：{0}"
 msgstr "Generate ttwid: {0}"
 
 #: f2/apps/tiktok/utils.py
+#, python-brace-format
+msgid "生成 X-Gnarly 失败：{0}"
+msgstr "Failed to generate X-Gnarly: {0}"
+
+#: f2/apps/tiktok/utils.py
 msgid "输入参数必须是字符串"
 msgstr "Input parameters must be strings"
 
@@ -4453,6 +4458,14 @@ msgstr ""
 "{0} Algorithm private key length is incorrect: {1} bits, expected length "
 "is {2} bits."
 
+#: f2/utils/crypto/bytedance/xgnarly.py
+msgid "不是有效的签名信封"
+msgstr "Not a valid signature envelope"
+
+#: f2/utils/crypto/bytedance/xgnarly.py
+msgid "找不到满足密钥关系的插入位置"
+msgstr "No insertion position satisfies the key relation"
+
 #: f2/utils/file/path.py
 #, python-brace-format
 msgid "用户名称已变化，但新旧用户目录同时存在，不会自动合并：继续使用 {0}，旧目录 {1} 保持不变，手动合并并删除旧目录后不再提示"
@@ -4500,6 +4513,15 @@ msgstr "Unsupported time unit: {0}"
 #: f2/utils/http/cookie.py
 msgid "cookie_str 参数应为字符串"
 msgstr "cookie_str parameter should be a string"
+
+#: f2/utils/http/impersonate.py
+msgid ""
+"未安装 curl_cffi，无法模拟浏览器的 TLS 指纹，TikTok 等网站的接口可能只返回空内容。请执行 pip install "
+"curl_cffi 后重试"
+msgstr ""
+"curl_cffi is not installed, so the browser's TLS fingerprint cannot be "
+"impersonated and APIs of sites such as TikTok may return empty responses."
+" Run pip install curl_cffi and try again"
 
 #: f2/utils/http/proxy.py
 #, fuzzy

@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-26 08:17-0700\n"
+"POT-Creation-Date: 2026-09-26 09:42-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -2850,6 +2850,11 @@ msgid "生成 ttwid：{0}"
 msgstr "生成 ttwid：{0}"
 
 #: f2/apps/tiktok/utils.py
+#, python-brace-format
+msgid "生成 X-Gnarly 失败：{0}"
+msgstr "生成 X-Gnarly 失败：{0}"
+
+#: f2/apps/tiktok/utils.py
 msgid "输入参数必须是字符串"
 msgstr "输入参数必须是字符串"
 
@@ -4206,6 +4211,14 @@ msgstr "填充方案必须为 'pkcs1' 或 'oaep'。"
 msgid "{0} 算法私钥长度不正确：{1} 位，期望长度为 {2} 位。"
 msgstr "{0} 算法私钥长度不正确：{1} 位，期望长度为 {2} 位。"
 
+#: f2/utils/crypto/bytedance/xgnarly.py
+msgid "不是有效的签名信封"
+msgstr "不是有效的签名信封"
+
+#: f2/utils/crypto/bytedance/xgnarly.py
+msgid "找不到满足密钥关系的插入位置"
+msgstr "找不到满足密钥关系的插入位置"
+
 #: f2/utils/file/path.py
 #, python-brace-format
 msgid "用户名称已变化，但新旧用户目录同时存在，不会自动合并：继续使用 {0}，旧目录 {1} 保持不变，手动合并并删除旧目录后不再提示"
@@ -4243,6 +4256,14 @@ msgstr "不支持的时间单位：{0}"
 #: f2/utils/http/cookie.py
 msgid "cookie_str 参数应为字符串"
 msgstr "cookie_str 参数应为字符串"
+
+#: f2/utils/http/impersonate.py
+msgid ""
+"未安装 curl_cffi，无法模拟浏览器的 TLS 指纹，TikTok 等网站的接口可能只返回空内容。请执行 pip install "
+"curl_cffi 后重试"
+msgstr ""
+"未安装 curl_cffi，无法模拟浏览器的 TLS 指纹，TikTok 等网站的接口可能只返回空内容。请执行 pip install "
+"curl_cffi 后重试"
 
 #: f2/utils/http/proxy.py
 #, fuzzy
