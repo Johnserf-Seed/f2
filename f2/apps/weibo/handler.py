@@ -42,6 +42,11 @@ rich_console = RichConsoleManager().rich_console
 rich_prompt = RichConsoleManager().rich_prompt
 
 
+def replace_weibo_list(response: dict, weibos: list) -> UserWeiboFilter:
+    """用筛选后的微博替换接口响应中的 data.list，其余字段保持不变"""
+    return UserWeiboFilter({**response, "data": {**response["data"], "list": weibos}})
+
+
 class WeiboHandler:
 
     # 需要忽略的字段
@@ -330,7 +335,9 @@ class WeiboHandler:
             user_path = await self.get_or_add_user_data(self.kwargs, uid, audb)
 
         # 获取用户微博数据
-        async for weibo_data in self.fetch_user_weibo(uid):
+        async for weibo_data in self.fetch_user_weibo(
+            uid, max_counts=self.kwargs.get("max_counts")
+        ):
             await self.downloader.create_download_tasks(
                 self.kwargs, weibo_data._to_list(), user_path
             )
@@ -359,6 +366,8 @@ class WeiboHandler:
 
         max_counts = max_counts or float("inf")
         weibos_collected = 0
+        # 接口返回的微博数，与 total 比较判断是否已经翻完
+        weibos_scanned = 0
         # 默认使用 uid：第一页就结束或没有微博时，nickname_raw 也有值（#401）
         nickname_raw = uid
 
@@ -375,21 +384,38 @@ class WeiboHandler:
                     since_id=since_id,
                 )
                 response = await crawler.fetch_user_weibo(params)
-                weibo_data = UserWeiboFilter(response)
-                yield weibo_data
+                page_data = UserWeiboFilter(response)
+
+            page_weibos = (response.get("data") or {}).get("list") or []
+            weibos = page_weibos
+            # 接口不支持指定每页数量，超出最大数量的部分在这里截掉
+            remaining = max_counts - weibos_collected
+            if len(weibos) > remaining:
+                weibos = weibos[: int(remaining)]
+
+            yield (
+                page_data
+                if len(weibos) == len(page_weibos)
+                else replace_weibo_list(response, weibos)
+            )
 
             # 只在本页有微博时更新昵称，最后一页可能不包含任何微博
-            if weibo_data.weibo_user_name_raw:
-                nickname_raw = weibo_data.weibo_user_name_raw[0]
+            if page_data.weibo_user_name_raw:
+                nickname_raw = page_data.weibo_user_name_raw[0]
 
             # 更新已经处理的微博数量
-            weibos_collected += len(weibo_data.weibo_id)
+            weibos_collected += len(weibos)
+            weibos_scanned += len(page_weibos)
             page += 1
 
-            if weibo_data.since_id == "" or weibos_collected == weibo_data.weibo_total:
+            if (
+                weibos_collected >= max_counts
+                or page_data.since_id == ""
+                or weibos_scanned == page_data.weibo_total
+            ):
                 break
             else:
-                since_id = str(weibo_data.since_id)
+                since_id = str(page_data.since_id)
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
