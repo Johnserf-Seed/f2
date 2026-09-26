@@ -27,12 +27,6 @@ async def test_gen_device_id_collects_every_set_cookie(monkeypatch):
         self._aclient = httpx.AsyncClient(transport=httpx.MockTransport(handler))
 
     monkeypatch.setattr(DeviceIdManager, "__init__", init)
-    # 请求头里的 msToken 会联网获取，测试中换成固定值
-    monkeypatch.setattr(
-        DeviceIdManager,
-        "_device_id_headers",
-        classmethod(lambda cls: {"User-Agent": "f2-test"}),
-    )
 
     result = await DeviceIdManager.gen_device_id()
 

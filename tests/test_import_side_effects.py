@@ -98,8 +98,8 @@ def test_mstoken_is_fetched_once_on_first_use(monkeypatch, app):
     if app == "douyin":
         assert model.LiveChatSend(room_id="1", content="hi").msToken == "tok-1"
     else:
-        headers = utils.DeviceIdManager._device_id_headers()
-        assert headers["Cookie"] == "msToken=tok-1"
+        # 获取设备 ID 的首页请求不需要 msToken，不会再触发生成
+        assert "Cookie" not in utils.DeviceIdManager._device_id_headers()
     assert len(calls) == 1
 
 

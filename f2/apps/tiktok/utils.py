@@ -646,10 +646,11 @@ class SecUserIdFetcher(BaseCrawler):
         instance = cls()
 
         try:
+            # 主页 HTML 不需要 msToken，不带 cookie 也能取到 sec_uid（2026-09-26 实测）；
+            # 旧的 msToken 生成接口已失效，带上它反而会在请求前就报错
             headers = {
                 "User-Agent": ClientConfManager.user_agent(),
                 "Referer": url,
-                "Cookie": f"msToken={TokenManager.cached_msToken()}",
             }
             response = await instance.aclient.get(
                 url, headers=headers, follow_redirects=True
@@ -1152,7 +1153,7 @@ class DeviceIdManager(BaseCrawler):
     类属性:
     - _DEVICE_ID_PARTTERN: 编译后的正则表达式，用于匹配设备 ID。
     - _DEVICE_ID_URL: 设备 ID 生成器的 URL。
-    - _device_id_headers: 类方法，构建设备 ID 生成器的请求头（首次调用时才获取 msToken）。
+    - _device_id_headers: 类方法，构建设备 ID 生成器的请求头。
     - proxies: 从 ClientConfManager 获取的代理配置。
 
     方法:
@@ -1203,11 +1204,8 @@ class DeviceIdManager(BaseCrawler):
 
     @classmethod
     def _device_id_headers(cls) -> dict:
-        """设备 ID 生成器的请求头，首次调用时才获取 msToken"""
-        return {
-            "User-Agent": ClientConfManager.user_agent(),
-            "Cookie": f"msToken={TokenManager.cached_msToken()}",
-        }
+        """设备 ID 生成器的请求头，首页 HTML 不需要 msToken (Headers for the device ID page)"""
+        return {"User-Agent": ClientConfManager.user_agent()}
 
     @classmethod
     async def gen_device_id(cls, full_cookie: bool = False) -> dict:
