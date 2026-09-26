@@ -4,7 +4,7 @@ import copy
 import os
 import shutil
 from pathlib import Path
-from typing import Any
+from typing import Any, Dict
 
 import click
 from ruamel.yaml import YAML  # type: ignore[import-untyped]
@@ -17,7 +17,26 @@ from f2.exceptions.file_exceptions import (
     FilePermissionError,
 )
 from f2.i18n.translator import _
+from f2.log.logger import logger
+from f2.utils.config.user_config import (
+    USER_CONFIG_ENV,
+    NotAMappingError,
+    deep_merge,
+    read_yaml_mapping,
+    user_config_paths,
+)
 from f2.utils.file.path import get_resource_path
+
+# 用户级 conf.yaml 的合并结果，按文件路径与修改时间缓存：同一进程只读取、只提示一次
+_USER_OVERRIDES_CACHE: Dict[tuple, Any] = {}
+
+
+def _file_signature(path: Path) -> tuple:
+    try:
+        stat = path.stat()
+        return (str(path.resolve()), stat.st_mtime_ns, stat.st_size)
+    except OSError:
+        return (str(path), None, None)
 
 
 def merge_missing_keys(target: dict, defaults: dict) -> int:
@@ -97,6 +116,10 @@ class ConfigManager:
         self.yaml.indent(mapping=2, sequence=4, offset=2)  # 设置缩进
 
         self.config = self.load_config()
+        # 只有 F2 配置文件（conf.yaml）支持用户级覆盖，应用配置请用 -c 指定自定义配置文件
+        self._overrides = (
+            self._load_user_overrides() if filepath == f2.F2_CONFIG_FILE_PATH else {}
+        )
 
     def _replace_none(self, data, default=""):
         """
@@ -147,7 +170,45 @@ class ConfigManager:
         Return:
             self.config.get 配置字典 (conf dict)
         """
-        return self.config.get(app_name, default)
+        value = self.config.get(app_name, default)
+        if app_name in self._overrides:
+            # 叠加用户级配置，只影响返回值，不修改 self.config
+            return deep_merge(value, self._overrides[app_name])
+        return value
+
+    def _load_user_overrides(self) -> dict:
+        """
+        读取用户级 conf.yaml（#377），多个文件按优先级依次叠加
+
+        只在 get_config 读取时合并，不写回 self.config，保存配置时也不会写进默认配置文件。
+        """
+        paths = user_config_paths(exclude=self.filepath)
+        key = tuple(_file_signature(path) for path in paths)
+        if key in _USER_OVERRIDES_CACHE:
+            return _USER_OVERRIDES_CACHE[key]
+
+        merged: Any = {}
+        for path in paths:
+            try:
+                merged = deep_merge(merged, read_yaml_mapping(path))
+            except FileNotFoundError:
+                raise ConfError(
+                    _("环境变量 {0} 指定的配置文件不存在").format(USER_CONFIG_ENV),
+                    filepath=path,
+                )
+            except PermissionError:
+                raise FilePermissionError(_("配置文件路径无读权限"), path)
+            except NotAMappingError:
+                raise ConfError(_("用户配置文件的顶层不是键值映射"), filepath=path)
+            except Exception as e:
+                raise ConfError(
+                    _("用户配置文件无效：{0}").format(e), filepath=path
+                ) from e
+            logger.info(_("已加载用户配置：{0}").format(path))
+
+        overrides = self._replace_none(merged)
+        _USER_OVERRIDES_CACHE[key] = overrides
+        return overrides
 
     def save_config(self, config: dict):
         """将配置保存到文件，保留原始格式和注释 (Save the conf to the file preserving original format and comments)
