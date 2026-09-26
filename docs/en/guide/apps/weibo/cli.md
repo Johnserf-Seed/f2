@@ -13,6 +13,7 @@ outline: deep
 | `-M`   | `--mode` | `ENUM` | Download mode |
 | `-n`   | `--naming` | `TEXT` | Global file naming format for posts |
 | `-k`   | `--cookie` | `TEXT` | Logged-in session cookie |
+| `-i`   | `--interval` | `TEXT` | Download date range |
 | `-e`   | `--timeout` | `INTEGER` | Network request timeout duration |
 | `-r`   | `--max_retries` | `INTEGER` | Number of retries for timed-out network requests |
 | `-x`   | `--max-connections` | `INTEGER` | Number of concurrent network connections |
@@ -85,6 +86,17 @@ Logged-in session `Cookie`. Most APIs require login, so a valid `Cookie` must be
 - Never share your `Cookie` in `Discussions`, `Issues`, `Discord`, or any public forum.
 - Anyone with your `Cookie` can log into your account.
 - If leaked, log out immediately and sign back in to invalidate it.
+:::
+
+### `--interval`
+
+Download weibos published within a date range, in the format `Year-Month-Day|Year-Month-Day`. Both days are included, and dates are in Beijing time (UTC+8). For example: `2024-01-01|2024-06-30`; set `all` to download all weibos. Only applies to `post` mode.
+
+::: tip :bulb: Tip
+- The Weibo profile API cannot query by date, so `F2` pages from the newest weibo, downloads only those within the range, and stops once it reaches weibos published before the start date. The earlier the range, the more pages it has to go through.
+- Pinned weibos are not in chronological order. They are still downloaded when they fall within the range, and they do not affect when paging stops.
+- An invalid date format, or an end date earlier than the start date, is reported as an error before any request is made.
+- When `--max-counts` is also set, it counts the weibos left after date filtering.
 :::
 
 ### `--timeout`

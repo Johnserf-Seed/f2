@@ -177,6 +177,7 @@ outline: [2,3]
 | feature | int | 微博类型 |
 | since_id | str | 起始微博ID |
 | max_counts | int | 最大微博数 |
+| interval | tuple | 发布时间区间，秒级时间戳 `(开始, 结束)`，包含首尾，默认不限制 |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |

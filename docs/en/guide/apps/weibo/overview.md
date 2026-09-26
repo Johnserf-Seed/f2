@@ -177,6 +177,7 @@ Asynchronous method to retrieve a user's Weibo posts.
 | feature | int | Weibo type |
 | since_id | str | Starting Weibo ID |
 | max_counts | int | Maximum number of Weibo posts |
+| interval | tuple | Publish time range as `(start, end)` UNIX timestamps in seconds, inclusive; unlimited by default |
 
 | Returns | Type | Description |
 | :--- | :--- | :--- |
