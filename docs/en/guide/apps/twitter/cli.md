@@ -65,6 +65,7 @@ Global file naming format for works. Defaults to `{create}_{desc}`. Supported va
 
 ::: tip :bulb: Tip
 - `custom_fields` allows developers to define custom field mappings. See: [Global Formatting for Filenames 🟢](/guide/apps/twitter/overview#global-formatting-filenames-🟢).
+- In file names, captions and nicknames keep only Chinese characters, Japanese kana, English letters, digits and `#`; other characters, including punctuation and spaces, are replaced with underscores. Long captions are shortened in the middle to fit the file system's byte limit.
 :::
 
 ### `--cookie`

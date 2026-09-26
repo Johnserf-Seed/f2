@@ -91,6 +91,10 @@ Global work file naming method. The default is `{create}_{desc}`, supported vari
 - `{desc}`: work copywriting
 - `{uid}`: Author ID
 
+::: tip :bulb: Tip
+In file names, captions and nicknames keep only Chinese characters, Japanese kana, English letters, digits and `#`; other characters, including punctuation and spaces, are replaced with underscores. Long captions are shortened in the middle to fit the file system's byte limit. Use `--desc` to save the complete original caption to a `_desc.txt` file.
+:::
+
 ### `--cookie`
 
 `Cookie` after login. Most interfaces require logging in to obtain data, so a `Cookie` after logging in is required.
