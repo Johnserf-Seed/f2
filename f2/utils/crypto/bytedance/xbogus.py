@@ -161,9 +161,8 @@ class XBogus:
             )
         )
 
-        array2 = self.md5_str_to_array(
-            self.md5(self.md5_str_to_array("d41d8cd98f00b204e9800998ecf8427e"))
-        )
+        # 请求体按与查询串相同的方式计算；此前固定使用空字符串的 md5，传入的 body 被忽略
+        array2 = self.md5_encrypt(body)
         url_params_array = self.md5_encrypt(url_params)
 
         timer = int(time.time())

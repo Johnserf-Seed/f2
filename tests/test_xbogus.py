@@ -78,3 +78,23 @@ def test_long_query_signature_unchanged(monkeypatch, query, expected):
 def test_md5_str_to_array_rejects_non_hex(digest):
     with pytest.raises(ValueError):
         XBogus().md5_str_to_array(digest)
+
+
+# ---------------- 请求体参与签名 ----------------
+
+
+def test_empty_body_keeps_signature(monkeypatch):
+    monkeypatch.setattr(xbogus_module.time, "time", lambda: FIXED_TIME)
+    query = "aid=1988&count=20&cursor=0&x=1234"
+    assert XBogus(UA).getXBogus(query, "")[1] == "DFSzswVYtfxANnTJtmWx-e9WX7rS"
+
+
+def test_body_is_part_of_signature(monkeypatch):
+    # 此前 getXBogus 忽略 body，POST 请求的签名与空请求体相同
+    monkeypatch.setattr(xbogus_module.time, "time", lambda: FIXED_TIME)
+    query = "aid=1988&count=20&cursor=0&x=1234"
+    empty = XBogus(UA).getXBogus(query)[1]
+    with_body = XBogus(UA).getXBogus(query, '{"aweme_id": "1"}')[1]
+    assert with_body != empty
+    assert with_body == XBogus(UA).getXBogus(query, '{"aweme_id": "1"}')[1]
+    assert len(with_body) == 28 and set(with_body) <= set(XBogus().character)
