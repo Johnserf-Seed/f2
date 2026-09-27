@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-26 09:42-0700\n"
+"POT-Creation-Date: 2026-09-27 14:10-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -2026,12 +2026,17 @@ msgstr "Please provide correct Room_ID"
 msgid "没有设置回调函数，默认使用所有回调函数"
 msgstr "No callback function set, default to using all callback functions"
 
-#: f2/apps/douyin/handler.py
+#: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
-msgid "直播间：{0} 已结束直播或断开了本地连接"
+msgid "本地 WebSocket 服务器没有客户端连接，已停止接收直播间：{0} 的弹幕，直播可能仍在进行"
 msgstr ""
-"Live room: {0} has ended live streaming or disconnected from the local "
-"connection"
+"No client is connected to the local WebSocket server, so receiving "
+"danmaku from live room {0} has stopped; the stream may still be live"
+
+#: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
+#, python-brace-format
+msgid "直播间：{0} 的弹幕连接已关闭，可能已结束直播"
+msgstr "Live Stream: {0} danmaku connection closed; the stream may have ended"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
@@ -2965,11 +2970,6 @@ msgstr "End live broadcast room information query"
 msgid "请提供正确的room_id"
 msgstr "Please provide the correct room_id"
 
-#: f2/apps/tiktok/handler.py
-#, python-brace-format
-msgid "直播间：{0} 已结束直播"
-msgstr "Live Stream: {0} Ended Live Streaming"
-
 #: f2/apps/tiktok/help.py
 msgid "是否保存视频原声。可选：'yes'、'no'"
 msgstr "Whether to save the original sound of the video. Optional: 'yes', 'no'"
@@ -3846,6 +3846,11 @@ msgstr ""
 #, python-brace-format
 msgid "[ReceiveMessages] [🔌 连接关闭] | [原因：{0}]"
 msgstr "[ReceiveMessages] [🔌 Connection closed] | [Reason: {0}]"
+
+#: f2/crawlers/websocket_crawler.py
+#, python-brace-format
+msgid "[ReceiveMessages] [✔️ 主动关闭] | [原因：{0}]"
+msgstr "[ReceiveMessages] [✔️ Closed by crawler] | [Reason: {0}]"
 
 #: f2/crawlers/websocket_crawler.py
 msgid "[ReceiveMessages] [✔️ 正常关闭] | [WebSocket 连接正常关闭]"
@@ -5041,4 +5046,10 @@ msgstr "Invalid timestamp string"
 
 #~ msgid "每页微博数，默认为 20个微博/页"
 #~ msgstr "Number of tweets per page, default is 20 tweets/page"
+
+#~ msgid "直播间：{0} 已结束直播或断开了本地连接"
+#~ msgstr ""
+#~ "Live room: {0} has ended live "
+#~ "streaming or disconnected from the local"
+#~ " connection"
 
