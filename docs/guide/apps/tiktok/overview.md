@@ -425,7 +425,7 @@ outline: [2,3]
 
 ### 提取单个用户id 🟢
 
-类方法，用于提取单个用户id。
+类方法，用于提取单个用户id。支持 `https://www.tiktok.com/@用户名` 形式的主页链接；`https://www.tiktok.com/user/<sec_uid>` 形式的链接会直接从地址中取出 `sec_uid`，不发请求。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |

@@ -425,7 +425,7 @@ Class method that generates the web SDK signature parameters for `www.tiktok.com
 
 ### Extract Single User ID 🟢
 
-Class method to extract a single user ID.
+Class method to extract a single user ID. Profile URLs in the form `https://www.tiktok.com/@username` are supported; for URLs in the form `https://www.tiktok.com/user/<sec_uid>`, the `sec_uid` is taken from the URL directly without a request.
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
