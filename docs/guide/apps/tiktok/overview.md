@@ -45,7 +45,7 @@ outline: [2,3]
 | 获取缓存的真实msToken | `TokenManager`  | `cached_msToken`     |  🟢  |
 | 生成虚假msToken     | `TokenManager`     | `gen_false_msToken`  |  🟢  |
 | 生成ttwid          | `TokenManager`     | `gen_ttwid`          |  🟢  |
-| 生成odin_tt        | `TokenManager`      | `gen_odin_tt`        |  🟢  |
+| 生成odin_tt        | `TokenManager`      | `gen_odin_tt`        |  🔴  |
 | 使用接口地址生成Xb参数 | `XBogusManager`    | `str_2_endpoint`    |  🟢  |
 | 使用接口模型生成Xb参数 | `XBogusManager`    | `model_2_endpoint`   |  🟢  |
 | 使用接口模型生成新版签名参数 | `XGnarlyManager` | `model_2_endpoint` |  🟢  |
@@ -328,7 +328,7 @@ outline: [2,3]
 
 ### 生成ttwid 🟢
 
-类方法，用于生成ttwid，部分请求必带。
+类方法，读取打开 TikTok 首页时服务器下发的 `ttwid`，部分请求必带。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -341,12 +341,12 @@ outline: [2,3]
 <<< @/snippets/tiktok/token-manager.py#ttwid-sinppest{4}
 
 ::: warning :warning: 注意
-配置文件中 `ttwid` 的 `cookie` 参数是一个新的 `ttwid` 值。失效后更换新的 `ttwid` 值即可。
+`ttwid/check` 接口已不再下发 `ttwid`，配置文件中 `ttwid` 的 `url`、`data` 与 `cookie` 已不再使用。
 :::
 
-### 生成odin_tt 🟢
+### 生成odin_tt 🔴
 
-类方法，用于生成odin_tt，部分请求必带。
+类方法，用于生成 `odin_tt`。TikTok 已不再向未登录用户下发 `odin_tt`（只有登录后的 cookie 中才有），此时会抛出 `APIResponseError`，需要时请从登录后的浏览器 cookie 中复制。
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |

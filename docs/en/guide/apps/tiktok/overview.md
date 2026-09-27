@@ -45,7 +45,7 @@ outline: [2,3]
 | Get cached real msToken | `TokenManager`   | `cached_msToken`     |  🟢  |
 | Generate fake msToken | `TokenManager`     | `gen_false_msToken`  |  🟢  |
 | Generate ttwid        | `TokenManager`     | `gen_ttwid`          |  🟢  |
-| Generate odin_tt      | `TokenManager`      | `gen_odin_tt`        |  🟢  |
+| Generate odin_tt      | `TokenManager`      | `gen_odin_tt`        |  🔴  |
 | Generate Xb params from URL | `XBogusManager` | `str_2_endpoint`    |  🟢  |
 | Generate Xb params from model | `XBogusManager` | `model_2_endpoint` |  🟢  |
 | Generate new signature params from model | `XGnarlyManager` | `model_2_endpoint` |  🟢  |
@@ -328,7 +328,7 @@ The default length is `126 characters`. You can also call `from from f2.utils.st
 
 ### Generate `ttwid` 🟢
 
-Class method to generate `ttwid`, which is required for certain requests.
+Class method that reads the `ttwid` issued when the TikTok homepage is opened; it is required for certain requests.
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
@@ -341,12 +341,12 @@ Class method to generate `ttwid`, which is required for certain requests.
 <<< @/snippets/tiktok/token-manager.py#ttwid-sinppest{4}
 
 ::: warning :warning: Warning
-The `ttwid` value in the configuration file is a new `ttwid` cookie. If it expires, replace it with a new `ttwid` value.
+The `ttwid/check` API no longer issues `ttwid`; the `url`, `data` and `cookie` of `ttwid` in the configuration file are no longer used.
 :::
 
-### Generate odin_tt 🟢
+### Generate odin_tt 🔴
 
-Class method for generating `odin_tt`, required for some requests.
+Class method for generating `odin_tt`. TikTok no longer issues `odin_tt` to logged-out users (it only appears in a logged-in cookie), in which case `APIResponseError` is raised; copy it from the cookie of a logged-in browser session if needed.
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
