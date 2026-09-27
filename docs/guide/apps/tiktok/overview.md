@@ -175,7 +175,7 @@ outline: [2,3]
 
 | 参数 | 类型 | 说明 |
 | :--- | :--- | :--- |
-| secUid| str | 合集ID |
+| secUid| str | 用户ID |
 | cursor| int | 页码，初始为 `0` |
 | page_counts| int | 页数，初始为 `20` |
 

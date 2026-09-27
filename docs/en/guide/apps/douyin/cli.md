@@ -42,7 +42,7 @@ If the file cannot be parsed, `F2` reports the line and column of the error; it 
 
 ### `--url`
 
-Links are provided according to the pattern. For example, fill in the homepage link for homepage, likes, and favorite works, fill in the link of the work for a single work, and the collection is the same as for the live broadcast.
+Provide the link for the selected mode. For example, use the profile link for profile posts, favorites and collection, and the post link for a single post; mixes and livestreams work the same way.
 
 ### `--music`
 
@@ -71,19 +71,19 @@ Whether to save the video to a separate folder. Defaults to `true`.
 ### `--mode`
 
 Download mode:
-- `one`: a single video
-- `post`: Homepage videos
-- `like`: Liked videos
-- `collection`: collection of works
-- `collects`: favorite works
-- `music`: collection of music
-- `mix`: collection
-- `live`: live broadcast
+- `one`: single post
+- `post`: profile posts
+- `like`: favorites (posts the user liked)
+- `collection`: collection (posts the user collected)
+- `collects`: collection folders
+- `music`: music collection
+- `mix`: mix
+- `live`: livestream
 
 ::: info :information_source: Tips
 - `collection` mode requires login.
 - `music` mode requires the `--lyric` parameter to specify whether to save original lyrics.
-- `mix` mode takes a collection link, a short drama link, or a link to a work in the collection or short drama as `--url`. Douyin treats short dramas as collections, so they are downloaded the same way.
+- `mix` mode takes a mix link, a short drama link, or a link to a post in the mix or short drama as `--url`. Douyin treats short dramas as mixes, so they are downloaded the same way.
 - `live` mode does not currently support special live broadcast rooms, such as `360°` live broadcast.
 :::
 

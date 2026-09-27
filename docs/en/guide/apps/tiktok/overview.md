@@ -14,8 +14,8 @@ outline: [2,3]
 | :---------------------- | :-------------------  |
 | Download a single video | `handle_one_video`    |
 | Download user posts     | `handle_user_post`    |
-| Download user likes     | `handle_user_like`    |
-| Download user favorites | `handle_user_collect` |
+| Download user favorites  | `handle_user_like`    |
+| Download user collection | `handle_user_collect` |
 | Download user playlist  | `handle_user_mix`     |
 | Download search videos  | `handle_search_video` |
 | Download user live stream | `handle_user_live` |
@@ -27,8 +27,8 @@ outline: [2,3]
 | Create video download record | `get_or_add_video_data` |     🟢      |
 | Fetch single video data     | `fetch_one_video`       |     🟢      |
 | Fetch user posts data       | `fetch_user_post_videos` |     🟢      |
-| Fetch user liked videos     | `fetch_user_like_videos` |     🟢      |
-| Fetch user favorites        | `fetch_user_collect_videos` |  🟢      |
+| Fetch user favorites        | `fetch_user_like_videos` |     🟢      |
+| Fetch user collection       | `fetch_user_collect_videos` |  🟢      |
 | Fetch user playlists        | `fetch_play_list`        |     🟢      |
 | Fetch user playlist videos  | `fetch_user_mix_videos`  |    🟢     |
 | Fetch search results        | `fetch_search_videos`    |     🟢      |
@@ -70,8 +70,8 @@ outline: [2,3]
 | :------------- | :------------- | :------------------ | :--: |
 | User profile API | `TiktokCrawler` | `fetch_user_profile` |  🟢  |
 | User posts API   | `TiktokCrawler` | `fetch_user_post`    |  🟢  |
-| User likes API   | `TiktokCrawler` | `fetch_user_like`    |  🟢  |
-| User favorites API | `TiktokCrawler` | `fetch_user_collect` |  🟢  |
+| User favorites API  | `TiktokCrawler` | `fetch_user_like`    |  🟢  |
+| User collection API | `TiktokCrawler` | `fetch_user_collect` |  🟢  |
 | User playlist API | `TiktokCrawler` | `fetch_user_play_list` |  🟢  |
 | Playlist videos API | `TiktokCrawler` | `fetch_user_mix` |  🟢  |
 | Video details API | `TiktokCrawler` | `fetch_post_detail` |  🟢  |
@@ -99,7 +99,7 @@ outline: [2,3]
 - All APIs with pagination use asynchronous generators, requiring iteration with `async for` for automatic pagination handling.
 - If `max_counts` is set to `None` or omitted, all available video data will be fetched.
 - These APIs can be easily integrated into backend frameworks like `FastAPI`, `Flask`, and `Django`.
-- Using a logged-in `cookie` allows bypassing privacy restrictions, such as private `videos`, `profile`, `likes`, and `favorites`.
+- Using a logged-in `cookie` allows bypassing privacy restrictions, such as private `videos`, `profile`, `favorites`, and `collection`.
 :::
 
 ## Handler Interface List
@@ -175,7 +175,7 @@ Asynchronous method to retrieve a list of videos from a specified user's playlis
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
-| secUid | str | Collection ID |
+| secUid | str | User ID |
 | cursor | int | Page number, default is `0` |
 | page_counts | int | Number of pages, default is `20` |
 

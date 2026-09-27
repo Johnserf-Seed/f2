@@ -43,7 +43,7 @@ If the file cannot be parsed, `F2` reports the line and column of the error; it 
 
 ### `--url`
 
-Links are provided according to the pattern. For example, fill in the homepage link for homepage, likes, and favorite works, fill in the link of the work for a single work, and the collection is the same as for the live broadcast.
+Provide the link for the selected mode. For example, use the profile link for profile posts, favorites and collection, and the post link for a single post; mixes and livestreams work the same way.
 
 ### `--music`
 
@@ -72,12 +72,12 @@ Whether to save the work to a separate folder. Defaults to `true`.
 ### `--mode`
 
 Download mode:
-- `one`：a single video
-- `post`：homepage videos
-- `like`：liked videos
-- `collect`：favorite video
-- `mix`：playlist
-- `search`：search videos
+- `one`: single post
+- `post`: profile posts
+- `like`: favorites (videos the user liked)
+- `collect`: collection (videos the user collected)
+- `mix`: playlist (mix)
+- `search`: search posts
 - `live`：live broadcast
 
 ### `--naming`
