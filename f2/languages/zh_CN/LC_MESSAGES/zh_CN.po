@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-27 14:28-0700\n"
+"POT-Creation-Date: 2026-09-27 15:02-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -2248,7 +2248,7 @@ msgstr "状态码错误"
 msgid "生成虚假的 msToken：{0}"
 msgstr "生成虚假的 msToken：{0}"
 
-#: f2/apps/douyin/utils.py f2/apps/tiktok/utils.py
+#: f2/apps/douyin/utils.py
 msgid "ttwid: 检查没有通过, 请更新配置文件中的 ttwid"
 msgstr "ttwid: 检查没有通过, 请更新配置文件中的 ttwid"
 
@@ -2833,8 +2833,17 @@ msgstr "{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信
 
 #: f2/apps/tiktok/utils.py
 #, python-brace-format
+msgid "{0} 生成失败"
+msgstr "{0} 生成失败"
+
+#: f2/apps/tiktok/utils.py
+#, python-brace-format
 msgid "生成 ttwid：{0}"
 msgstr "生成 ttwid：{0}"
+
+#: f2/apps/tiktok/utils.py
+msgid "TikTok 已不再向未登录用户下发 odin_tt，请从登录后的浏览器 cookie 中复制"
+msgstr "TikTok 已不再向未登录用户下发 odin_tt，请从登录后的浏览器 cookie 中复制"
 
 #: f2/apps/tiktok/utils.py
 #, python-brace-format
@@ -2872,11 +2881,6 @@ msgstr "获取 {0} 失败，{1}"
 #: f2/apps/tiktok/utils.py
 msgid "未能找到所需的设备 ID 信息"
 msgstr "未能找到所需的设备 ID 信息"
-
-#: f2/apps/tiktok/utils.py
-#, python-brace-format
-msgid "{0} 生成失败"
-msgstr "{0} 生成失败"
 
 #: f2/apps/tiktok/utils.py
 msgid "count 必须是整数"

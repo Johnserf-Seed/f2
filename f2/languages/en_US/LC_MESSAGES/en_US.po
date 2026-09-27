@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-27 14:28-0700\n"
+"POT-Creation-Date: 2026-09-27 15:02-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -2366,7 +2366,7 @@ msgstr "Status code error"
 msgid "生成虚假的 msToken：{0}"
 msgstr "Generated a fake msToken: {0}"
 
-#: f2/apps/douyin/utils.py f2/apps/tiktok/utils.py
+#: f2/apps/douyin/utils.py
 msgid "ttwid: 检查没有通过, 请更新配置文件中的 ttwid"
 msgstr "ttwid: check failed, please update the ttwid in the configuration file"
 
@@ -2977,8 +2977,19 @@ msgstr "{0}. Link: {1}, proxy: {2}, exception class: {3}, details: {4}"
 
 #: f2/apps/tiktok/utils.py
 #, python-brace-format
+msgid "{0} 生成失败"
+msgstr "Failed to generate {0}"
+
+#: f2/apps/tiktok/utils.py
+#, python-brace-format
 msgid "生成 ttwid：{0}"
 msgstr "Generated ttwid: {0}"
+
+#: f2/apps/tiktok/utils.py
+msgid "TikTok 已不再向未登录用户下发 odin_tt，请从登录后的浏览器 cookie 中复制"
+msgstr ""
+"TikTok no longer issues odin_tt to logged-out users; copy it from the "
+"cookie of a logged-in browser session"
 
 #: f2/apps/tiktok/utils.py
 #, python-brace-format
@@ -3018,11 +3029,6 @@ msgstr "Failed to get {0}, {1}"
 #: f2/apps/tiktok/utils.py
 msgid "未能找到所需的设备 ID 信息"
 msgstr "The required device ID was not found"
-
-#: f2/apps/tiktok/utils.py
-#, python-brace-format
-msgid "{0} 生成失败"
-msgstr "Failed to generate {0}"
 
 #: f2/apps/tiktok/utils.py
 msgid "count 必须是整数"
