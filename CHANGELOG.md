@@ -6,6 +6,7 @@
 
 ## [Unreleased]
 
+- TikTok 的 `https://www.tiktok.com/user/<sec_uid>` 链接直接从地址中取出 `sec_uid`，不再发请求（#366）：这类页面里没有用户数据，此前会报“未在响应中找到 __UNIVERSAL_DATA_FOR_REHYDRATION__”或“接口状态码异常”。直播模式需要用户名，请使用 `@用户名` 形式的主页链接。
 - 直播弹幕因本地 WebSocket 服务器没有客户端连接而停止时，不再提示“直播间已结束直播”：抖音与 TikTok 的本地转发服务在超时时间内没有客户端连接时会断开与弹幕服务器的连接，此前与直播结束一样返回 `closed`，现在返回 `no_client`，并提示“本地 WebSocket 服务器没有客户端连接，已停止接收直播间的弹幕，直播可能仍在进行”；因其他原因关闭时提示“弹幕连接已关闭，可能已结束直播”，不再断言直播已经结束。`WebSocketCrawler.close_websocket` 新增 `reason` 参数，爬虫主动关闭连接时 `receive_messages` 返回该原因。
 - 修复本地弹幕转发服务的端口被占用时抛出 `UnboundLocalError` 的问题：启动失败后 `finally` 仍会关闭尚未创建的服务器，这个异常要等弹幕接收结束才抛出并打断调用；现在只记录启动失败的原因，弹幕照常接收。
 - 修复 TikTok 检查开播状态（`fetch_check_live_alive`）与直播弹幕初始化（`fetch_live_im`）一调用就报错“msToken 内容不符合要求”的问题：这两个请求模型不再联网生成 `msToken`，与 `www.tiktok.com` 的接口一样在签名时从 cookie 读取。实测 `webcast.tiktok.com` 的 `im/fetch` 现在只接受新版签名加浏览器指纹（只用 X-Bogus，或只换成 curl_cffi，都返回空内容），两个直播接口因此改用 `XGnarlyManager` 签名并由 curl_cffi 发送；检查开播、初始化与 WebSocket 接收弹幕的完整流程已实测可用。CLI 的直播下载模式（`-M live`）不经过这两个接口，此前不受影响。
