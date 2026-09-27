@@ -5,7 +5,7 @@ import re
 import traceback
 from pathlib import Path
 from typing import Any, List, Optional, Union
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 import httpx
 
@@ -100,11 +100,40 @@ class UniqueIdFetcher(BaseCrawler):
     _UNIQUE_ID_PATTERN = re.compile(
         r"(?:https?://)?(?:www\.)?(twitter\.com|x\.com)/(?:@)?([a-zA-Z0-9_]+)"
     )
+    # x.com 的保留路径，不是用户名；未登录时访问用户页面会被跳转到 /i/flow/login
+    _RESERVED_PATHS = frozenset(
+        {
+            "i",
+            "home",
+            "explore",
+            "search",
+            "notifications",
+            "messages",
+            "settings",
+            "compose",
+            "intent",
+            "share",
+            "hashtag",
+            "login",
+            "logout",
+            "signup",
+            "tos",
+            "privacy",
+        }
+    )
 
     proxies = ClientConfManager.proxies()
 
     def __init__(self):
         super().__init__(proxies=self.proxies)
+
+    @classmethod
+    def _match_unique_id(cls, url: str) -> Optional[str]:
+        """从链接中取出用户名，x.com 的保留路径不算 (Extract the username from a URL)"""
+        match = cls._UNIQUE_ID_PATTERN.search(url)
+        if match and match.group(2).lower() not in cls._RESERVED_PATHS:
+            return match.group(2)
+        return None
 
     @classmethod
     async def get_unique_id(cls, url: str) -> str:
@@ -129,6 +158,12 @@ class UniqueIdFetcher(BaseCrawler):
             raise APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
         url = extracted_url
 
+        # 链接里已经带着用户名时直接取出。x.com 未登录时会把用户页面跳转到登录页
+        # （/i/flow/login），此前请求后再从地址里提取，拿到的是保留路径 i
+        unique_id = cls._match_unique_id(url)
+        if unique_id:
+            return unique_id
+
         # 创建一个实例以访问 aclient
         instance = cls()
 
@@ -141,9 +176,18 @@ class UniqueIdFetcher(BaseCrawler):
                 url, headers=headers, follow_redirects=True
             )
 
-            match = cls._UNIQUE_ID_PATTERN.search(str(response.url))
-            if match:
-                return match.group(2)
+            final_url = str(response.url)
+            # 被跳转到登录页时，原来的地址在 redirect_after_login 参数中
+            redirect = parse_qs(urlparse(final_url).query).get(
+                "redirect_after_login", [""]
+            )[0]
+            unique_id = cls._match_unique_id(final_url) or (
+                cls._match_unique_id(f"https://x.com{redirect}")
+                if redirect.startswith("/")
+                else None
+            )
+            if unique_id:
+                return unique_id
             else:
                 raise APIResponseError(
                     _(
