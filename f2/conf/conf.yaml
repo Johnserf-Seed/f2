@@ -168,6 +168,7 @@ f2:
       strData:
         3g+ZrAO5JQgfqCRzb689RAbiueodAexjAjn2plyPVBdOArbRM66UOTnZPoVTDDw8GZ8TL/CO13bWedlvWSA8kCODHA6mjO1Af5hgak+1NHbb8EvfuahWFDL8x8hruWn4t6qb79DhOy64REx1nsO6ub4SX4cKdgs+ZXTjUItB2WKddXo7CKikuywT8SJ0TcwZ+z/9hSsawqJXawopS5H8bOF0o3qPn+CwkoWkXBUu4iwkI5UzL9/k18Gwq1BxAiCbyl2kCHJaox7md1H+KfQ0lU9fBhfVBuXa3jNkT5GfyASaBNeJXdhHwuPfEGI6a+4FOaO0MEGzOWDzhu6joo89ooEPo1XV+UJE2KLC5tStxSBibUvn+wZSfGmcpPfYl0jB0H2vLqyaveYraOx8WRE/G/Y9DkbBLJvz7E8sDZ/v1fCUVs1JDDewE/yn2aqOHr3NxUjOnylKl5WWSCPeSR4ZTXRR1ZJhvpGKP7XYc3tkOjBSQ70cXnl53dAQ6aouUVMcztSlkXh4goI46tgJDjTiJJILHBr03dM/1KwVzqoEEO8f7JBhfQo4OR6Y48PXomshJmZhDiEmtkqLndpZY2I/B8q0EShuPlDCFRW7iob6kFahyqDfpOmK15kzCX2n7eu7zqDGgpJuHEtULF9803lR5QBt104ET49RbnDJ+ipbz1bFvS2FJQ2rfktNlwjqdBT8UzfFPHyZk6z4cSxYIfPRj1lB8fDwTwv3PUSRxUZSwkuGoZbc6j/6hxwZaY0xxIEbb9DlOmQZY4qyiqSziZ8HGWsQ9uD95dO4lX6GlZaeh7mKsjLSKSdUt13YeGAciqjTvSPyO/pZ5xc3+i+5hY4A290/JiTmIyFBOrRrlmIhPEQe9OEJn0DPXYgliYUO1nljEi6q/4HMFdXFmlw6nC8/kL9EeinisX7g6PbdHuRcKONXZpXxBevL8xD5Z8SvFKH/uQmYHrJlybiKHjDIMq7vc59NBw2VDQBmRqa8NTh2XLwIryjoBIHuNSBngSZwJE==
 
+    # ttwid/check 已不再下发 ttwid，gen_ttwid 改为读取打开首页时下发的 cookie，以下配置仅为兼容旧版本保留
     ttwid:
       url: https://www.tiktok.com/ttwid/check/
       data: '{"aid":1988,"service":"www.tiktok.com","union":false,"unionHost":"","needFid":false,"fid":"","migrate_priority":0}'

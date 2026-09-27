@@ -3,6 +3,7 @@ import os
 import pytest
 
 from f2.apps.tiktok.utils import TokenManager
+from f2.exceptions.api_exceptions import APIResponseError
 
 # 检查环境变量是否设置为跳过测试
 skip_in_ci = os.getenv("SKIP_IN_CI", "false").lower() == "true"
@@ -29,6 +30,11 @@ def test_gen_ttwid():
 
 
 @pytest.mark.skipif(skip_in_ci, reason="Skipping test in CI environment")
+@pytest.mark.xfail(
+    raises=APIResponseError,
+    reason="2026-09 起 TikTok 不再向未登录用户下发 odin_tt",
+    strict=False,
+)
 def test_gen_odin_tt():
     csrf_token = TokenManager.gen_odin_tt()
     assert csrf_token is not None, "gen_odin_tt() should return a valid csrf token"

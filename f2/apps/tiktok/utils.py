@@ -107,12 +107,15 @@ class TokenManager(BaseCrawler):
 
     类属性:
     - token_conf: 从 ClientConfManager 获取的 msToken 配置。
-    - ttwid_conf: 从 ClientConfManager 获取的 ttwid 配置。
+    - ttwid_conf: 从 ClientConfManager 获取的 ttwid 配置（ttwid/check 已不再下发 ttwid，gen_ttwid 不再使用）。
     - odin_tt_conf: 从 ClientConfManager 获取的 odin_tt 配置。
     - proxies: 从 ClientConfManager 获取的代理配置。
     - mstoken_headers: 生成 msToken 请求所需的 HTTP 头信息。
     - ttwid_headers: 生成 ttwid 请求所需的 HTTP 头信息。
     """
+
+    # 首次打开首页时服务器会下发 ttwid
+    _TTWID_URL = "https://www.tiktok.com/"
 
     token_conf = ClientConfManager.msToken()
     ttwid_conf = ClientConfManager.ttwid()
@@ -279,7 +282,7 @@ class TokenManager(BaseCrawler):
     @classmethod
     def gen_ttwid(cls) -> str:
         """
-        生成请求必带的 ttwid。
+        生成请求必带的 ttwid：读取打开 TikTok 首页时服务器下发的 cookie。
 
         Returns:
             ttwid: 生成的 ttwid
@@ -294,19 +297,18 @@ class TokenManager(BaseCrawler):
         instance = cls()
 
         try:
-            response = instance.client.post(
-                instance.ttwid_conf["url"],
-                content=instance.ttwid_conf["data"],
-                headers=instance.ttwid_headers,
+            # 2026-09 起 ttwid/check 只做校验、不再下发 ttwid，首次打开首页时才会下发
+            response = instance.client.get(
+                cls._TTWID_URL,
+                headers={"User-Agent": cls.user_agent},
+                follow_redirects=True,
             )
             response.raise_for_status()
 
             ttwid = httpx.Cookies(response.cookies).get("ttwid")
 
             if ttwid is None:
-                raise APIResponseError(
-                    _("ttwid: 检查没有通过, 请更新配置文件中的 ttwid")
-                )
+                raise APIResponseError(_("{0} 生成失败").format("ttwid"))
 
             logger.debug(_("生成 ttwid：{0}").format(str(ttwid)))
             return str(ttwid)
@@ -316,7 +318,7 @@ class TokenManager(BaseCrawler):
             raise APITimeoutError(
                 _("{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("请求端点超时"),
-                    instance.ttwid_conf["url"],
+                    cls._TTWID_URL,
                     cls.proxies,
                     cls.__name__,
                     exc,
@@ -328,7 +330,7 @@ class TokenManager(BaseCrawler):
             raise APIConnectionError(
                 _("{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("网络连接失败，请检查当前网络环境"),
-                    instance.ttwid_conf["url"],
+                    cls._TTWID_URL,
                     cls.proxies,
                     cls.__name__,
                     exc,
@@ -340,7 +342,7 @@ class TokenManager(BaseCrawler):
             raise APIUnauthorizedError(
                 _("{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("请求协议错误"),
-                    instance.ttwid_conf["url"],
+                    cls._TTWID_URL,
                     cls.proxies,
                     cls.__name__,
                     exc,
@@ -352,7 +354,7 @@ class TokenManager(BaseCrawler):
             raise APIConnectionError(
                 _("{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("请求代理错误"),
-                    instance.ttwid_conf["url"],
+                    cls._TTWID_URL,
                     cls.proxies,
                     cls.__name__,
                     exc,
@@ -364,7 +366,7 @@ class TokenManager(BaseCrawler):
             raise APIResponseError(
                 _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("状态码错误"),
-                    instance.ttwid_conf["url"],
+                    cls._TTWID_URL,
                     cls.proxies,
                     cls.__name__,
                     exc,
@@ -374,7 +376,7 @@ class TokenManager(BaseCrawler):
     @classmethod
     def gen_odin_tt(cls) -> str:
         """
-        生成请求必带的 odin_tt。
+        生成 odin_tt。TikTok 已不再向未登录用户下发 odin_tt，拿不到时抛出 APIResponseError。
 
         Returns:
             odin_tt: 生成的 odin_tt
@@ -392,13 +394,19 @@ class TokenManager(BaseCrawler):
             response = instance.client.get(
                 instance.odin_tt_conf["url"],
                 headers=instance.odin_tt_headers,
+                follow_redirects=True,
             )
             # response.raise_for_status()
 
             odin_tt = httpx.Cookies(response.cookies).get("odin_tt")
 
+            # 2026-09 实测游客 cookie 中已没有 odin_tt，只有登录后的 cookie 才有
             if odin_tt is None:
-                raise APIResponseError(_("{0} 内容不符合要求").format("odin_tt"))
+                raise APIResponseError(
+                    _(
+                        "TikTok 已不再向未登录用户下发 odin_tt，请从登录后的浏览器 cookie 中复制"
+                    )
+                )
 
             return odin_tt
 
