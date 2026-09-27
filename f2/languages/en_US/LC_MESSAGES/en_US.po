@@ -66,8 +66,8 @@ msgstr "douyin or dy"
 #: f2/helps.py
 msgid "- 单个作品，主页作品，点赞作品，收藏作品，合集作品，图文，文案，封面，直播，原声。"
 msgstr ""
-"- Single posts, profile posts, liked posts, favorite posts, mix posts, "
-"image posts, captions, covers, livestreams, original sounds."
+"- Single posts, profile posts, favorites, collection, mix posts, image "
+"posts, captions, covers, livestreams, original sounds."
 
 #: f2/helps.py
 msgid "✔"
@@ -80,8 +80,8 @@ msgstr "tiktok or tk"
 #: f2/helps.py
 msgid "- 单个作品，主页作品，点赞作品，收藏作品，播放列表（合集）作品，文案，封面，原声。"
 msgstr ""
-"- Single posts, profile posts, liked posts, favorite posts, playlist "
-"(mix) posts, captions, covers, original sounds."
+"- Single posts, profile posts, favorites, collection, playlist (mix) "
+"posts, captions, covers, original sounds."
 
 #: f2/helps.py
 msgid "instagram 或 ig"
@@ -582,8 +582,8 @@ msgstr "Configuration file path, lowest priority"
 #: f2/apps/tiktok/help.py
 msgid "根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合集与直播同上"
 msgstr ""
-"Link for the selected mode. For example, use the profile link for "
-"profile, liked and favorite posts, and the post link for a single post; "
+"Link for the selected mode. For example, use the profile link for profile"
+" posts, favorites and collection, and the post link for a single post; "
 "mixes and livestreams work the same way"
 
 #: f2/apps/douyin/cli.py f2/apps/douyin/help.py f2/apps/tiktok/cli.py
@@ -611,9 +611,9 @@ msgstr "Save each post in its own folder"
 #: f2/apps/douyin/cli.py
 msgid "下载模式：单个作品(one)，主页作品(post)，点赞作品(like)，收藏作品(collection)，收藏夹作品(collects)，收藏音乐(music)，合集(mix)，直播(live)"
 msgstr ""
-"Download mode: single post (one), profile posts (post), liked posts "
-"(like), favorite posts (collection), favorites folder posts (collects), "
-"favorite music (music), mix (mix), livestream (live)"
+"Download mode: single post (one), profile posts (post), favorites (like),"
+" collection (collection), collection folders (collects), music collection"
+" (music), mix (mix), livestream (live)"
 
 #: f2/apps/douyin/cli.py f2/apps/douyin/help.py f2/apps/tiktok/cli.py
 #: f2/apps/tiktok/help.py
@@ -713,12 +713,12 @@ msgstr "Profile posts API endpoint: {0}"
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "主页喜欢作品接口地址：{0}"
-msgstr "Liked posts API endpoint: {0}"
+msgstr "Favorites API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "主页收藏作品接口地址：{0}"
-msgstr "Favorite posts API endpoint: {0}"
+msgstr "Collection API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
@@ -728,17 +728,17 @@ msgstr "Profile post search API endpoint: {0}"
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "收藏夹接口地址：{0}"
-msgstr "Favorites folders API endpoint: {0}"
+msgstr "Collection folders API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "收藏夹作品接口地址：{0}"
-msgstr "Favorites folder posts API endpoint: {0}"
+msgstr "Collection folder posts API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "音乐收藏接口地址：{0}"
-msgstr "Favorite music API endpoint: {0}"
+msgstr "Music collection API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 #, python-brace-format
@@ -1426,7 +1426,7 @@ msgstr "No posts found on page {0}"
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "用户: {0} 所有作品采集完毕"
-msgstr "All posts of user: {0} have been collected"
+msgstr "All posts of user: {0} have been fetched"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -1462,21 +1462,21 @@ msgstr ""
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "处理用户：{0} 点赞的作品"
-msgstr "Processing posts liked by user: {0}"
+msgstr "Processing the favorites of user: {0}"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "用户：{0} 所有作品采集完毕"
-msgstr "All posts of user: {0} have been collected"
+msgstr "All posts of user: {0} have been fetched"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "结束处理用户点赞的作品，共处理 {0} 个作品"
-msgstr "Finished processing the user's liked posts, {0} posts processed in total"
+msgstr "Finished processing the user's favorites, {0} posts processed in total"
 
 #: f2/apps/douyin/handler.py
 msgid "[DouYin] 点赞作品下载"
-msgstr "[DouYin] Liked Posts Download"
+msgstr "[DouYin] Favorites Download"
 
 #: f2/apps/douyin/handler.py
 msgid "未知用户"
@@ -1484,11 +1484,11 @@ msgstr "Unknown user"
 
 #: f2/apps/douyin/handler.py
 msgid "处理用户收藏的音乐作品"
-msgstr "Processing the user's favorite music"
+msgstr "Processing the user's music collection"
 
 #: f2/apps/douyin/handler.py
 msgid "用户收藏的音乐作品采集完毕"
-msgstr "All of the user's favorite music has been collected"
+msgstr "All tracks in the user's music collection have been fetched"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -1499,12 +1499,12 @@ msgstr "Music ID: {0} Title: {1} Author: {2}"
 #, python-brace-format
 msgid "结束处理用户收藏音乐作品，共处理 {0} 个作品"
 msgstr ""
-"Finished processing the user's favorite music, {0} tracks processed in "
+"Finished processing the user's music collection, {0} tracks processed in "
 "total"
 
 #: f2/apps/douyin/handler.py
 msgid "[DouYin] 音乐收藏下载"
-msgstr "[DouYin] Favorite Music Download"
+msgstr "[DouYin] Music Collection Download"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -1517,7 +1517,7 @@ msgstr ""
 
 #: f2/apps/douyin/handler.py
 msgid "处理用户收藏的作品"
-msgstr "Processing the user's favorite posts"
+msgstr "Processing the user's collection"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
@@ -1526,7 +1526,7 @@ msgstr "Maximum: {0} Per request: {1}"
 
 #: f2/apps/douyin/handler.py
 msgid "用户收藏的作品采集完毕"
-msgstr "All of the user's favorite posts have been collected"
+msgstr "All posts in the user's collection have been fetched"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -1541,13 +1541,11 @@ msgstr "Post ID: {0} Caption: {1} Author: {2}"
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "结束处理用户收藏作品，共处理 {0} 个作品"
-msgstr ""
-"Finished processing the user's favorite posts, {0} posts processed in "
-"total"
+msgstr "Finished processing the user's collection, {0} posts processed in total"
 
 #: f2/apps/douyin/handler.py
 msgid "[DouYin] 收藏作品下载"
-msgstr "[DouYin] Favorite Posts Download"
+msgstr "[DouYin] Collection Download"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
@@ -1562,7 +1560,7 @@ msgstr ""
 #, python-brace-format
 msgid "结束处理用户收藏夹作品，共处理 {0} 个作品"
 msgstr ""
-"Finished processing the user's favorites folder posts, {0} posts "
+"Finished processing the user's collection folder posts, {0} posts "
 "processed in total"
 
 #: f2/apps/douyin/handler.py
@@ -1572,18 +1570,18 @@ msgstr "0: [bold]Download all[/bold]"
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "{0}：{1} (包含 {2} 个作品[以网页实际数量为准]，收藏夹ID {3})"
-msgstr "{0}: {1} ({2} posts, as counted on the web page; favorites folder ID {3})"
+msgstr "{0}: {1} ({2} posts, as counted on the web page; collection folder ID {3})"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "[bold yellow]请输入希望下载的收藏夹序号：[/bold yellow] [bold purple]{0}[/bold purple]"
 msgstr ""
-"[bold yellow]Enter the number of the favorites folder to download:[/bold "
-"yellow] [bold purple]{0}[/bold purple]"
+"[bold yellow]Enter the number of the collection folder to download:[/bold"
+" yellow] [bold purple]{0}[/bold purple]"
 
 #: f2/apps/douyin/handler.py
 msgid "处理用户收藏夹"
-msgstr "Processing the user's favorites folders"
+msgstr "Processing the user's collection folders"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -1593,19 +1591,19 @@ msgstr "max_cursor of the current request: {0}, max_counts: {1}"
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "收藏夹ID：{0} 收藏夹标题：{1}"
-msgstr "Favorites folder ID: {0} Title: {1}"
+msgstr "Collection folder ID: {0} Title: {1}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "结束处理用户收藏夹，共找到 {0} 个收藏夹"
 msgstr ""
-"Finished processing the user's favorites folders, {0} folders found in "
+"Finished processing the user's collection folders, {0} folders found in "
 "total"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "处理收藏夹：{0} 的作品"
-msgstr "Processing posts in favorites folder: {0}"
+msgstr "Processing posts in collection folder: {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -1621,12 +1619,12 @@ msgstr "No posts found on page {0}"
 #, python-brace-format
 msgid "收藏夹：{0} 所有作品采集完毕，共处理 {1} 个作品"
 msgstr ""
-"All posts in favorites folder: {0} have been collected, {1} posts "
+"All posts in collection folder: {0} have been fetched, {1} posts "
 "processed in total"
 
 #: f2/apps/douyin/handler.py
 msgid "[DouYin] 收藏夹作品下载"
-msgstr "[DouYin] Favorites Folder Posts Download"
+msgstr "[DouYin] Collection Folder Posts Download"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -1635,7 +1633,7 @@ msgid ""
 "作品数：{1}\n"
 "下载时间：{2}"
 msgstr ""
-"Favorites folder ID: {0}\n"
+"Collection folder ID: {0}\n"
 "Posts: {1}\n"
 "Download time: {2}"
 
@@ -1674,7 +1672,7 @@ msgstr "Processing posts in mix: {0}"
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "合集: {0} 所有作品采集完毕"
-msgstr "All posts in mix: {0} have been collected"
+msgstr "All posts in mix: {0} have been fetched"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
@@ -1803,7 +1801,7 @@ msgstr "Processing the first {0} related posts"
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "作品: {0} 的所有相关推荐采集完毕"
-msgstr "All related posts of post: {0} have been collected"
+msgstr "All related posts of post: {0} have been fetched"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -1830,7 +1828,7 @@ msgstr "Maximum: {0}"
 
 #: f2/apps/douyin/handler.py
 msgid "所有好友作品采集完毕"
-msgstr "All friends' posts have been collected"
+msgstr "All friends' posts have been fetched"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -1890,7 +1888,7 @@ msgstr "min_time of the current request: {0}"
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "用户：{0} 所有关注用户采集完毕"
-msgstr "All users followed by: {0} have been collected"
+msgstr "All users followed by: {0} have been fetched"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -1933,7 +1931,7 @@ msgstr "Processing followers of user: {0}"
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "用户：{0} 所有粉丝采集完毕"
-msgstr "All followers of user: {0} have been collected"
+msgstr "All followers of user: {0} have been fetched"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -2163,7 +2161,7 @@ msgstr "Processing comments of post: {0}"
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "作品: {0} 的所有评论采集完毕"
-msgstr "All comments of post: {0} have been collected"
+msgstr "All comments of post: {0} have been fetched"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -2196,7 +2194,7 @@ msgstr "Processing replies to comment: {1} of post: {0}"
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "评论: {0} 的所有回复采集完毕"
-msgstr "All replies to comment: {0} have been collected"
+msgstr "All replies to comment: {0} have been fetched"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -2234,7 +2232,7 @@ msgstr "Processing page {0}"
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "关键词: {0} 的所有作品采集完毕"
-msgstr "All posts for keyword: {0} have been collected"
+msgstr "All posts for keyword: {0} have been fetched"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -2292,9 +2290,9 @@ msgstr "Where to save posts; absolute and relative paths are supported."
 #: f2/apps/douyin/help.py
 msgid "下载模式：单个作品(one)，主页作品(post)，点赞作品(like)，收藏作品(collection)，收藏夹作品(collects)，合集(mix)，直播(live)"
 msgstr ""
-"Download mode: single post (one), profile posts (post), liked posts "
-"(like), favorite posts (collection), favorites folder posts (collects), "
-"mix (mix), livestream (live)"
+"Download mode: single post (one), profile posts (post), favorites (like),"
+" collection (collection), collection folders (collects), mix (mix), "
+"livestream (live)"
 
 #: f2/apps/douyin/help.py f2/apps/tiktok/cli.py f2/apps/tiktok/help.py
 msgid "登录后的[yellow]cookie[/yellow]，如果使用未登录的[yellow]cookie[/yellow]，则无法持久稳定下载作品"
@@ -2490,8 +2488,8 @@ msgstr "TikTok watermark-free downloader"
 #: f2/apps/tiktok/cli.py f2/apps/tiktok/help.py
 msgid "下载模式：单个作品(one)，主页作品(post), 点赞作品(like), 收藏作品(collect), 合集播放列表(mix)"
 msgstr ""
-"Download mode: single post (one), profile posts (post), liked posts "
-"(like), favorite posts (collect), mix playlist (mix)"
+"Download mode: single post (one), profile posts (post), favorites (like),"
+" collection (collect), mix playlist (mix)"
 
 #: f2/apps/tiktok/cli.py f2/apps/tiktok/help.py
 msgid "下载日期区间发布的作品，格式：2022-01-01|2023-01-01，'all' 为下载所有作品"
@@ -2537,12 +2535,12 @@ msgstr ""
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "喜欢作品接口地址：{0}"
-msgstr "Liked posts API endpoint: {0}"
+msgstr "Favorites API endpoint: {0}"
 
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "收藏作品接口地址：{0}"
-msgstr "Favorite posts API endpoint: {0}"
+msgstr "Collection API endpoint: {0}"
 
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
@@ -2780,16 +2778,16 @@ msgstr ""
 
 #: f2/apps/tiktok/handler.py
 msgid "[TikTok] 点赞作品下载"
-msgstr "[TikTok] Liked Posts Download"
+msgstr "[TikTok] Favorites Download"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "处理用户：{0} 收藏的作品"
-msgstr "Processing posts favorited by user: {0}"
+msgstr "Processing the collection of user: {0}"
 
 #: f2/apps/tiktok/handler.py
 msgid "[TikTok] 收藏作品下载"
-msgstr "[TikTok] Favorite Posts Download"
+msgstr "[TikTok] Collection Download"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
@@ -2855,7 +2853,7 @@ msgstr "No posts found at offset {0}"
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "关键词：{0} 所有作品采集完毕"
-msgstr "All posts for keyword: {0} have been collected"
+msgstr "All posts for keyword: {0} have been fetched"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
