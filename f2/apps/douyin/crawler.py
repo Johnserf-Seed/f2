@@ -608,6 +608,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         # wss_verify = wss_conf.get("verify")
         # 暂不支持wss本地证书验证
 
+        server: Optional[WebSocketServer] = None
         try:
             server = await serve(self.register_client, wss_domain, wss_port)
             logger.info(
@@ -625,9 +626,11 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
                 _("[StartServer] [❌ 服务器启动失败] | [错误：{0}]").format(exc)
             )
         finally:
-            server.close()
-            await server.wait_closed()
-            logger.info(_("[StartServer] [🔒 本地 WebSocket 服务器已关闭]"))
+            # 端口被占用等原因启动失败时 server 仍为 None，此前会在这里抛出 UnboundLocalError
+            if server is not None:
+                server.close()
+                await server.wait_closed()
+                logger.info(_("[StartServer] [🔒 本地 WebSocket 服务器已关闭]"))
 
     async def _timeout_check(self, server: WebSocketServer) -> None:
         """

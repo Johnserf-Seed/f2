@@ -7,6 +7,8 @@ import pytest
 from websockets.exceptions import ConnectionClosedOK
 from websockets.frames import Close
 
+import f2.apps.douyin.crawler as douyin_crawler_module
+import f2.apps.tiktok.crawler as tiktok_crawler_module
 from f2.apps.douyin import handler as douyin_handler
 from f2.apps.douyin.crawler import DouyinWebSocketCrawler
 from f2.apps.douyin.utils import TokenManager as DouyinTokenManager
@@ -81,6 +83,26 @@ async def test_timeout_check_closes_with_no_client_reason(crawler_class):
     await crawler._timeout_check(server)
     assert server.closed and crawler.websocket.closed
     assert crawler.close_reason == "no_client"
+
+
+@pytest.mark.parametrize(
+    ("module", "crawler_class"),
+    [
+        (douyin_crawler_module, DouyinWebSocketCrawler),
+        (tiktok_crawler_module, TiktokWebSocketCrawler),
+    ],
+)
+async def test_busy_port_does_not_raise(monkeypatch, module, crawler_class):
+    async def serve(*args, **kwargs):
+        raise OSError(48, "Address already in use")
+
+    monkeypatch.setattr(module, "serve", serve)
+    errors = []
+    monkeypatch.setattr(module.logger, "error", errors.append)
+
+    # 启动失败只记录错误，不再抛出 UnboundLocalError 打断弹幕接收
+    await crawler_class(KWARGS, callbacks={}).start_server()
+    assert len(errors) == 1 and "Address already in use" in errors[0]
 
 
 # ---------------- handler 的提示 ----------------
