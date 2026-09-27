@@ -49,3 +49,21 @@ async def test_get_secuid_does_not_send_mstoken(monkeypatch):
 def test_device_id_headers_do_not_carry_mstoken():
     headers = DeviceIdManager._device_id_headers()
     assert list(headers) == ["User-Agent"]
+
+
+@pytest.mark.parametrize("suffix", ["", "?lang=en", "/"])
+async def test_get_secuid_reads_user_links_without_request(monkeypatch, suffix):
+    # /user/<sec_uid> 的页面里没有用户数据（#366），sec_uid 直接从链接取出
+    def handler(request):
+        raise AssertionError("不应请求页面")
+
+    monkeypatch.setattr(
+        SecUserIdFetcher,
+        "_create_mount",
+        lambda self, async_mode=False: {"all://": httpx.MockTransport(handler)},
+    )
+    sec_uid = (
+        "MS4wLjABAAAAXg0GY1OJPtnjttAj1Ha1a4FSzynLSdpA70MMIMmU3H-GZl-r-cSRydyhsC-Eb4bI"
+    )
+    url = f"https://www.tiktok.com/user/{sec_uid}{suffix}"
+    assert await SecUserIdFetcher.get_secuid(url) == sec_uid

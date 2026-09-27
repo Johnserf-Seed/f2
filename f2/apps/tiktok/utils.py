@@ -566,6 +566,7 @@ class SecUserIdFetcher(BaseCrawler):
 
     类属性:
     - _TIKTOK_SECUID_PARREN: 编译后的正则表达式，用于匹配 sec_uid。
+    - _TIKTOK_SECUID_URL_PARREN: 编译后的正则表达式，用于从 /user/<sec_uid> 形式的链接中提取 sec_uid。
     - _TIKTOK_UNIQUEID_PARREN: 编译后的正则表达式，用于匹配 unique_id。
     - _TIKTOK_NOTFOUND_PARREN: 编译后的正则表达式，用于检查页面是否不存在。
     - proxies: 从 ClientConfManager 获取的代理配置。
@@ -605,6 +606,7 @@ class SecUserIdFetcher(BaseCrawler):
     _TIKTOK_SECUID_PARREN = re.compile(
         r"<script id=\"__UNIVERSAL_DATA_FOR_REHYDRATION__\" type=\"application/json\">(.*?)</script>"
     )
+    _TIKTOK_SECUID_URL_PARREN = re.compile(r"/user/(MS4wLjABAAAA[\w-]+)")
     _TIKTOK_UNIQUEID_PARREN = re.compile(r"/@([^/?]*)")
     _TIKTOK_NOTFOUND_PARREN = re.compile(r"notfound")
 
@@ -642,6 +644,11 @@ class SecUserIdFetcher(BaseCrawler):
         if extracted_url is None:
             raise APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
         url = extracted_url
+
+        # /user/<sec_uid> 形式的链接本身带着 sec_uid，而它的页面里没有用户数据（#366），直接从链接提取
+        url_match = cls._TIKTOK_SECUID_URL_PARREN.search(url)
+        if url_match:
+            return url_match.group(1)
 
         # 创建一个实例以访问 aclient
         instance = cls()
