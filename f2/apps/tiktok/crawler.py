@@ -407,7 +407,7 @@ class TiktokWebSocketCrawler(WebSocketCrawler):
                 break
         server.close()
         # await server.wait_closed()
-        await self.close_websocket()
+        await self.close_websocket(reason="no_client")
 
     async def register_client(self, websocket: WebSocketServerProtocol) -> None:
         """

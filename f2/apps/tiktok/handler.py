@@ -1243,8 +1243,16 @@ class TiktokHandler:
 
             result = await wss.fetch_live_danmaku(params)
 
-            if result == "closed":
-                logger.info(_("直播间：{0} 已结束直播").format(room_id))
+            if result == "no_client":
+                logger.info(
+                    _(
+                        "本地 WebSocket 服务器没有客户端连接，已停止接收直播间：{0} 的弹幕，直播可能仍在进行"
+                    ).format(room_id)
+                )
+            elif result == "closed":
+                logger.info(
+                    _("直播间：{0} 的弹幕连接已关闭，可能已结束直播").format(room_id)
+                )
             elif result == "error":
                 logger.error(_("直播间：{0} 弹幕连接异常").format(room_id))
 

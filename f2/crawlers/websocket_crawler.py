@@ -72,6 +72,8 @@ class WebSocketCrawler:
         self.proxy = websockets_proxy.Proxy.from_url(proxy) if proxy else None
         self.callbacks = callbacks or {}  # 存储回调函数
         self.timeout = timeout
+        # 爬虫主动关闭连接的原因（如本地服务器没有客户端时为 "no_client"），receive_messages 以此作为返回值
+        self.close_reason: Optional[str] = None
 
     async def connect_websocket(
         self,
@@ -122,6 +124,10 @@ class WebSocketCrawler:
     async def receive_messages(self):
         """
         接收 WebSocket 消息并处理
+
+        Returns:
+            str: 结束原因。连接关闭为 "closed"，处理出错为 "error"；
+                 爬虫通过 close_websocket(reason=...) 主动关闭时为该原因
         """
 
         logger.info(_("[ReceiveMessages] [📩 开始接收消息]"))
@@ -172,6 +178,8 @@ class WebSocketCrawler:
                     )
                     return "closed"
             except ConnectionClosedError as exc:
+                if self.close_reason:
+                    return self.close_reason
                 trace_logger.error(traceback.format_exc())
                 logger.warning(
                     _("[ReceiveMessages] [🔌 连接关闭] | [原因：{0}]").format(exc)
@@ -179,6 +187,14 @@ class WebSocketCrawler:
                 return "closed"
 
             except ConnectionClosedOK:
+                # 爬虫主动关闭时连接同样正常结束，返回关闭原因，调用方才能与直播结束区分
+                if self.close_reason:
+                    logger.debug(
+                        _("[ReceiveMessages] [✔️ 主动关闭] | [原因：{0}]").format(
+                            self.close_reason
+                        )
+                    )
+                    return self.close_reason
                 logger.info(
                     _("[ReceiveMessages] [✔️ 正常关闭] | [WebSocket 连接正常关闭]")
                 )
@@ -191,10 +207,15 @@ class WebSocketCrawler:
                 )
                 return "error"
 
-    async def close_websocket(self):
+    async def close_websocket(self, reason: Optional[str] = None):
         """
         关闭 WebSocket 连接
+
+        Args:
+            reason: 主动关闭的原因，receive_messages 会以它作为返回值
         """
+        if reason:
+            self.close_reason = reason
         if self.websocket:
             await self.websocket.close()
             logger.debug(_("[CloseWebSocket] [🔒 WebSocket 已关闭]"))
