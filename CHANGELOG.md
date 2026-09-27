@@ -6,6 +6,7 @@
 
 ## [Unreleased]
 
+- 润色英文翻译：逐条审阅全部 935 条英文文案，改写其中 650 条。统一术语（作品 post、主页 profile、直播 livestream、直播间 live room、弹幕 danmaku、合集 mix、收藏 favorites、收藏夹 favorites folder、接口地址 API endpoint、配置文件 configuration file），消息改为普通句式、不再逐词首字母大写，同一句中文只保留一种译法。修正误译：“配置文件的路径，最低优先”曾译为 highest priority，“配置文件路径无写权限”曾译为“配置文件不存在”，FAQ 提示的两句英文粘在一起，Bark 密钥长度把“位”（字符）译成了 bits；下载进度的状态与文件类型标签统一为 Done、Skipped、Video、Caption 等。收藏夹列表的提示不再用方括号，避免被 rich 当作样式标签。
 - 补齐英文翻译：此前有 217 条文案在英文界面下仍显示中文，其中 102 条从未翻译，115 条因原文修改被标记为待确认（编译时会被跳过），涉及代理设置、下载进度、断点续传、m3u8 直播流、数据库与抖音弹幕、评论等提示；现在全部有英文译文，原有 718 条译文不变。
 - TikTok 的 `https://www.tiktok.com/user/<sec_uid>` 链接直接从地址中取出 `sec_uid`，不再发请求（#366）：这类页面里没有用户数据，此前会报“未在响应中找到 __UNIVERSAL_DATA_FOR_REHYDRATION__”或“接口状态码异常”。直播模式需要用户名，请使用 `@用户名` 形式的主页链接。
 - 直播弹幕因本地 WebSocket 服务器没有客户端连接而停止时，不再提示“直播间已结束直播”：抖音与 TikTok 的本地转发服务在超时时间内没有客户端连接时会断开与弹幕服务器的连接，此前与直播结束一样返回 `closed`，现在返回 `no_client`，并提示“本地 WebSocket 服务器没有客户端连接，已停止接收直播间的弹幕，直播可能仍在进行”；因其他原因关闭时提示“弹幕连接已关闭，可能已结束直播”，不再断言直播已经结束。`WebSocketCrawler.close_websocket` 新增 `reason` 参数，爬虫主动关闭连接时 `receive_messages` 返回该原因。
