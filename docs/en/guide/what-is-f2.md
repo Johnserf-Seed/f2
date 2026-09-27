@@ -104,4 +104,4 @@ tiktok:
 > [!IMPORTANT] Important ❗❗❗
 > The `verify` under the `wss` section configures the certificate of the local danmaku forwarding service; the current version does not support enabling it, so keep it `false`. It is unrelated to the top-level `verify` in `conf.yaml`, which controls certificate verification for `HTTP` requests (enabled by default).
 > The default timeout for both local and remote connections is `10` seconds.
-> If the local connection does not connect to `WSS` within the timeout, `F2` will automatically disconnect to save resources.
+> If the local connection does not connect to `WSS` within the timeout, `F2` will automatically disconnect to save resources. The log then says that no client is connected to the local `WebSocket` server and receiving danmaku has stopped; it does not mean the stream has ended.
