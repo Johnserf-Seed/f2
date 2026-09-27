@@ -18,24 +18,26 @@ msgstr ""
 #: f2/helps.py
 #, python-brace-format
 msgid "[red]在 {0} 应用里没有找到帮助文件[/red]"
-msgstr "[red]Help file not found in {0} app[/red]"
+msgstr "[red]No help file found for the {0} app[/red]"
 
 #: f2/helps.py
 #, python-brace-format
 msgid "[red]没有找到 {0} 应用[/red]"
-msgstr "[red]No {0} apps found[/red]"
+msgstr "[red]App {0} not found[/red]"
 
 #: f2/helps.py
 msgid "例：f2 dy -h/--help 获取douyin的命令帮助"
-msgstr "Example: f2 dy -h/--help Get help for commands in douyin"
+msgstr "Example: f2 dy -h/--help shows help for the douyin commands"
 
 #: f2/helps.py
 msgid "例：f2 -d DEBUG dy 日志级别为调试运行"
-msgstr "Example: f2 -d DEBUG dy Log level is debug run"
+msgstr "Example: f2 -d DEBUG dy runs with the log level set to debug"
 
 #: f2/helps.py
 msgid "🧙‍♂️ 启动配置向导，交互式生成配置文件"
-msgstr "🧙‍♂️ Launch the setup wizard to generate a config file interactively"
+msgstr ""
+"🧙‍♂️ Launch the setup wizard to generate a configuration file "
+"interactively"
 
 #: f2/helps.py
 msgid "参数"
@@ -47,7 +49,7 @@ msgstr "Description"
 
 #: f2/helps.py
 msgid "状态"
-msgstr "State"
+msgstr "Status"
 
 #: f2/helps.py
 msgid "weibo 或 wb"
@@ -55,7 +57,7 @@ msgstr "weibo or wb"
 
 #: f2/helps.py
 msgid "- 获取微博"
-msgstr "- Get Weibo"
+msgstr "- Get Weibo posts"
 
 #: f2/helps.py
 msgid "douyin 或 dy"
@@ -64,8 +66,8 @@ msgstr "douyin or dy"
 #: f2/helps.py
 msgid "- 单个作品，主页作品，点赞作品，收藏作品，合集作品，图文，文案，封面，直播，原声。"
 msgstr ""
-"- one video, user post, liked post, collect post, mix post, note, desc, "
-"cover, live, original sound。"
+"- Single posts, profile posts, liked posts, favorite posts, mix posts, "
+"image posts, captions, covers, livestreams, original sounds."
 
 #: f2/helps.py
 msgid "✔"
@@ -78,8 +80,8 @@ msgstr "tiktok or tk"
 #: f2/helps.py
 msgid "- 单个作品，主页作品，点赞作品，收藏作品，播放列表（合集）作品，文案，封面，原声。"
 msgstr ""
-"- one video, user post, liked post, collect post, playlist(mix), desc, "
-"cover, original sound。"
+"- Single posts, profile posts, liked posts, favorite posts, playlist "
+"(mix) posts, captions, covers, original sounds."
 
 #: f2/helps.py
 msgid "instagram 或 ig"
@@ -87,7 +89,7 @@ msgstr "instagram or ig"
 
 #: f2/helps.py
 msgid "- 获取ig的作品"
-msgstr "- Get ig's works"
+msgstr "- Get Instagram posts"
 
 #: f2/helps.py
 msgid "twitch 或 tv"
@@ -95,7 +97,7 @@ msgstr "twitch or tv"
 
 #: f2/helps.py
 msgid "- 获取Twitch直播"
-msgstr "- Get Twitch Live Streaming"
+msgstr "- Get Twitch livestreams"
 
 #: f2/helps.py
 msgid "twitter 或 x"
@@ -103,7 +105,7 @@ msgstr "twitter or x"
 
 #: f2/helps.py
 msgid "- 获取Twitter作品"
-msgstr "- Get Twitter Video"
+msgstr "- Get tweets"
 
 #: f2/helps.py
 msgid "youtube 或 ytb"
@@ -111,7 +113,7 @@ msgstr "youtube or ytb"
 
 #: f2/helps.py
 msgid "- 获取YouTube的作品"
-msgstr "- Getting YouTube videos"
+msgstr "- Get YouTube videos"
 
 #: f2/helps.py
 msgid "bilibili 或 bili"
@@ -119,7 +121,7 @@ msgstr "bilibili or bili"
 
 #: f2/helps.py
 msgid "- 获取BiliBili的作品"
-msgstr "- Get BiliBili's videos"
+msgstr "- Get Bilibili videos"
 
 #: f2/helps.py
 msgid "⏳"
@@ -131,7 +133,7 @@ msgstr "neteasy_music or nem"
 
 #: f2/helps.py
 msgid "- 获取网易云音乐作品"
-msgstr "- Get music from NetEase Cloud Music"
+msgstr "- Get NetEase Cloud Music tracks"
 
 #: f2/helps.py
 msgid "little_red_book 或 lrb"
@@ -139,7 +141,7 @@ msgstr "little_red_book or lrb"
 
 #: f2/helps.py
 msgid "- 获取小红书的作品"
-msgstr "- Get the Little Red Book Notes"
+msgstr "- Get Xiaohongshu (RED) notes"
 
 #: f2/helps.py
 msgid "bark 或 bk"
@@ -147,7 +149,7 @@ msgstr "bark or bk"
 
 #: f2/helps.py
 msgid "- 发送Bark通知"
-msgstr "- Send Bark notification"
+msgstr "- Send Bark notifications"
 
 #: f2/helps.py
 msgid "f2 -d DEBUG"
@@ -156,9 +158,8 @@ msgstr "f2 -d DEBUG"
 #: f2/helps.py
 msgid "⚠  记录app的调试日志到[blue]/logs[/]下查看，如遇BUG提交Issue时请附带该文件并[red]删除个人敏感信息[/red] ⚠"
 msgstr ""
-"⚠ Record the debugging log of the app and check it under [blue]/logs[/]. "
-"If you encounter a bug and submit an issue, please attach the file and "
-"[red]delete personal sensitive information[/red] ⚠"
+"⚠  Writes the app debug log to [blue]/logs[/]. When reporting a bug in an"
+" issue, attach this file and [red]remove personal information[/red] ⚠"
 
 #: f2/cli/cli_commands.py f2/helps.py
 msgid "不写入日志文件，只在控制台输出，也不会创建 logs 目录"
@@ -175,7 +176,7 @@ msgid ""
 "[green]这里说不定有你需要的答案 [link=https://github.com/Johnserf-"
 "Seed/f2/issues]Click Here[/]"
 msgstr ""
-"[green]There may be the answers you need here [link=https://github.com"
+"[green]You may find the answer you need here [link=https://github.com"
 "/Johnserf-Seed/f2/issues]Click Here[/]"
 
 #: f2/helps.py
@@ -185,20 +186,20 @@ msgstr "Document📕"
 #: f2/helps.py
 msgid "[yellow]务必先去看文档哦 [link=https://f2.wiki/]Click Here[/]"
 msgstr ""
-"[yellow]Be sure to read the documentation first "
-"[link=https://f2.wiki/]Click Here[/]"
+"[yellow]Please read the documentation first [link=https://f2.wiki/]Click "
+"Here[/]"
 
 #: f2/helps.py
 msgid "欢迎提交PR适配更多应用"
-msgstr "Welcome to submit PR to adapt more applications"
+msgstr "Pull requests adding support for more apps are welcome"
 
 #: f2/apps/bark/cli.py
 msgid "API 密钥长度应该为22位"
-msgstr "The API key should be 22 bits long"
+msgstr "The API key should be 22 characters long"
 
 #: f2/apps/bark/cli.py
 msgid "设备密钥长度应该为64位"
-msgstr "The device key should be 64 bits long"
+msgstr "The device token should be 64 characters long"
 
 #: f2/apps/bark/cli.py f2/apps/douyin/cli.py f2/apps/tiktok/cli.py
 #: f2/apps/twitter/cli.py f2/apps/weibo/cli.py
@@ -217,90 +218,88 @@ msgstr "The proxy port must be a number"
 #: f2/apps/bark/cli.py f2/apps/douyin/cli.py f2/apps/tiktok/cli.py
 #: f2/apps/twitter/cli.py f2/apps/weibo/cli.py
 msgid "代理服务器不可用"
-msgstr "Proxy server not available"
+msgstr "The proxy server is unavailable"
 
 #: f2/apps/bark/cli.py
 msgid "Bark 是一个iOS端的通知推送工具"
-msgstr "Bark is a notification push tool for iOS"
+msgstr "Bark is a push notification app for iOS"
 
 #: f2/apps/bark/cli.py
 msgid "配置文件路径，最低优先"
-msgstr "Configuration file paths, lowest priority"
+msgstr "Configuration file path, lowest priority"
 
 #: f2/apps/bark/cli.py f2/apps/bark/help.py
 msgid "Bark 的 API Key"
-msgstr "Bark's API Key"
+msgstr "Bark API key"
 
 #: f2/apps/bark/cli.py f2/apps/bark/help.py
 msgid "Bark 的 Device Token"
-msgstr "Bark's Device Token"
+msgstr "Bark device token"
 
 #: f2/apps/bark/cli.py f2/apps/bark/help.py
 msgid "选择发送模式，get：使用 GET 请求发送通知，post：使用 POST 请求发送通知，cipher：加密发送通知，默认为 get"
 msgstr ""
-"Select the sending mode, get: use GET request to send notification, post:"
-" use POST request to send notification, cipher: encrypt to send "
-"notification, the default is get"
+"Sending mode. get: send the notification with a GET request; post: send "
+"it with a POST request; cipher: send an encrypted notification. Defaults "
+"to get"
 
 #: f2/apps/bark/cli.py f2/apps/bark/help.py
 msgid "推送的标题"
-msgstr "Title of the push"
+msgstr "Notification title"
 
 #: f2/apps/bark/cli.py f2/apps/bark/help.py
 msgid "推送的内容"
-msgstr "Content of the push"
+msgstr "Notification content"
 
 #: f2/apps/bark/cli.py f2/apps/bark/help.py
 msgid "是否持续响铃，默认关闭"
-msgstr "Whether to keep ringing, off by default"
+msgstr "Keep ringing; off by default"
 
 #: f2/apps/bark/cli.py f2/apps/bark/help.py
 msgid "推送级别。active：默认，timeSensitive：时效性通知，passive：被动通知，critical：紧急通知"
 msgstr ""
-"Push level. active: default, timeSensitive: time-sensitive notification, "
-"passive: passive notification, critical: emergency notification"
+"Notification level. active: default; timeSensitive: time-sensitive "
+"notification; passive: passive notification; critical: critical alert"
 
 #: f2/apps/bark/cli.py f2/apps/bark/help.py
 msgid "推送音量，范围 0-10"
-msgstr "Push volume, range 0-10"
+msgstr "Notification volume, 0-10"
 
 #: f2/apps/bark/cli.py f2/apps/bark/help.py
 msgid "推送的角标数量"
-msgstr "Number of corner marks pushed"
+msgstr "Badge number of the notification"
 
 #: f2/apps/bark/cli.py f2/apps/bark/help.py
 msgid "是否自动复制推送内容（iOS 14.5 及以上需手动长按复制）"
 msgstr ""
-"Whether to automatically copy push content (iOS 14.5 and above requires "
-"manual long-press to copy)"
+"Copy the notification content automatically (on iOS 14.5 and later, long-"
+"press to copy manually)"
 
 #: f2/apps/bark/cli.py f2/apps/bark/help.py
 msgid "指定要复制的内容，若未指定则复制整个推送内容"
-msgstr ""
-"Specify the content to be copied, if not specified the entire push is "
-"copied"
+msgstr "Content to copy; the whole notification is copied if not specified"
 
 #: f2/apps/bark/cli.py f2/apps/bark/help.py
 msgid "推送铃声，可选项请查看 APP 设置"
-msgstr "Push ringtones, please check APP settings for options"
+msgstr "Notification sound; see the app settings for available options"
 
 #: f2/apps/bark/cli.py f2/apps/bark/help.py
 msgid "推送图标 URL，相同的图标 URL 仅下载一次"
-msgstr "Push icon URL, the same icon URL is only downloaded once"
+msgstr "Notification icon URL; the same icon URL is downloaded only once"
 
 #: f2/apps/bark/cli.py f2/apps/bark/help.py
 msgid "推送分组，通知中心将按分组显示推送"
-msgstr "Push groups, the notification center will display push by group"
+msgstr "Notification group; Notification Center groups notifications by it"
 
 #: f2/apps/bark/cli.py f2/apps/bark/help.py
 msgid "是否保存推送，默认保存"
-msgstr "Whether to save the push, saved by default"
+msgstr "Save the notification; on by default"
 
 #: f2/apps/bark/cli.py f2/apps/bark/help.py
 msgid "点击推送时跳转的 URL，支持 URL Scheme 和 Universal Link"
 msgstr ""
-"The URL that jumps when you click push, supports URL Scheme and Universal"
-" Link"
+"URL to open when the notification is tapped; URL schemes and universal "
+"links are supported"
 
 #: f2/apps/bark/cli.py f2/apps/bark/help.py f2/apps/douyin/cli.py
 #: f2/apps/tiktok/cli.py f2/apps/twitter/cli.py f2/apps/weibo/cli.py
@@ -314,16 +313,16 @@ msgstr ""
 #: f2/apps/twitter/cli.py f2/apps/weibo/cli.py
 msgid "使用命令行选项更新配置文件。需要先使用'-c'选项提供一个配置文件路径"
 msgstr ""
-"Use the command line option to update the configuration file. You need to"
-" provide a configuration file path first with the '-c' option"
+"Update the configuration file with the command line options. A "
+"configuration file path must be given with '-c' first"
 
 #: f2/apps/bark/cli.py f2/apps/bark/help.py f2/apps/douyin/cli.py
 #: f2/apps/douyin/help.py f2/apps/tiktok/cli.py f2/apps/tiktok/help.py
 #: f2/apps/twitter/cli.py f2/apps/weibo/cli.py
 msgid "初始化配置文件。不能同时初始化和更新配置文件"
 msgstr ""
-"Initialize the configuration file. It is not possible to initialize and "
-"update the configuration file at the same time"
+"Initialize the configuration file. Cannot be used together with updating "
+"the configuration file"
 
 #: f2/apps/bark/cli.py f2/apps/bark/help.py f2/apps/douyin/cli.py
 #: f2/apps/douyin/help.py f2/apps/tiktok/cli.py f2/apps/tiktok/help.py
@@ -337,18 +336,18 @@ msgstr ""
 #: f2/apps/bark/cli.py f2/apps/bark/help.py f2/apps/douyin/cli.py
 #: f2/apps/tiktok/cli.py f2/apps/twitter/cli.py f2/apps/weibo/cli.py
 msgid "显示富文本帮助"
-msgstr "Show Rich Text Help"
+msgstr "Show rich help"
 
 #: f2/apps/bark/cli.py f2/apps/douyin/cli.py f2/apps/tiktok/cli.py
 #: f2/apps/twitter/cli.py f2/apps/weibo/cli.py
 msgid "不能同时初始化和更新配置文件"
-msgstr "Cannot initialize and update configuration files at the same time"
+msgstr "Cannot initialize and update the configuration file at the same time"
 
 #: f2/apps/bark/cli.py f2/apps/douyin/cli.py
 msgid "要更新配置，首先需要使用'-c'选项提供一个自定义配置文件路径"
 msgstr ""
-"To update the configuration, you first need to provide a custom "
-"configuration file path using the '-c' option"
+"To update the configuration, first provide a custom configuration file "
+"path with the '-c' option"
 
 #: f2/apps/bark/cli.py
 msgid "代理地址格式错误"
@@ -367,7 +366,7 @@ msgstr "The proxy server is unavailable, please check the proxy configuration"
 #: f2/apps/bark/cli.py f2/apps/douyin/cli.py f2/apps/tiktok/cli.py
 #: f2/apps/twitter/cli.py f2/apps/weibo/cli.py
 msgid "代理服务器验证成功"
-msgstr "Proxy server check succeeded"
+msgstr "Proxy server verified"
 
 #: f2/apps/bark/cli.py
 #, python-brace-format
@@ -401,7 +400,7 @@ msgstr "Main configuration parameters: {0}"
 #: f2/apps/twitter/cli.py f2/apps/weibo/cli.py
 #, python-brace-format
 msgid "自定义配置参数：{0}"
-msgstr "Customized configuration parameters: {0}"
+msgstr "Custom configuration parameters: {0}"
 
 #: f2/apps/bark/cli.py f2/apps/douyin/cli.py f2/apps/tiktok/cli.py
 #: f2/apps/twitter/cli.py f2/apps/weibo/cli.py
@@ -415,8 +414,8 @@ msgid ""
 "Bark CLI 缺乏必要参数：[cyan]{0}[/cyan]。详情请查看帮助，[yellow]f2 bark "
 "-h/--help[/yellow]"
 msgstr ""
-"Bark CLI is missing required parameters: [cyan]{0}[/cyan]. Please check "
-"the help for details, [yellow]f2 bark -h/--help[/yellow]"
+"Bark CLI is missing required parameters: [cyan]{0}[/cyan]. See the help "
+"for details: [yellow]f2 bark -h/--help[/yellow]"
 
 #: f2/apps/bark/crawler.py
 msgid "Bark API key 不能为空，请在配置中设置有效的 API key"
@@ -427,17 +426,17 @@ msgstr ""
 #: f2/apps/bark/crawler.py
 #, python-brace-format
 msgid "Bark 通知接口地址(GET)：{0}"
-msgstr "Bark notification interface address (GET): {0}"
+msgstr "Bark notification API endpoint (GET): {0}"
 
 #: f2/apps/bark/crawler.py
 #, python-brace-format
 msgid "Bark 通知接口地址(POST)：{0}"
-msgstr "Bark notification interface address (POST): {0}"
+msgstr "Bark notification API endpoint (POST): {0}"
 
 #: f2/apps/bark/crawler.py
 #, python-brace-format
 msgid "Bark 通知接口地址(Cipher)：{0}"
-msgstr "Bark notification interface address (Cipher): {0}"
+msgstr "Bark notification API endpoint (Cipher): {0}"
 
 #: f2/apps/bark/handler.py
 msgid "正在发送 Bark 通知"
@@ -455,19 +454,19 @@ msgstr "Invalid sending method: {0}"
 #: f2/apps/bark/handler.py
 #, python-brace-format
 msgid "Bark通知发送成功，时间：{0}"
-msgstr "Bark Notification Sent Successfully, Time: {0}"
+msgstr "Bark notification sent, time: {0}"
 
 #: f2/apps/bark/handler.py
 #, python-brace-format
 msgid "Bark通知内容：{0}"
-msgstr "Bark Notification Contents: {0}"
+msgstr "Bark notification content: {0}"
 
 #: f2/apps/bark/handler.py
 #, python-brace-format
 msgid "Bark 通知发送失败，请检查 key 和网络连接：{0}"
 msgstr ""
-"Bark notification failed to send, please check key and network "
-"connection: {0}"
+"Failed to send the Bark notification, please check the key and the "
+"network connection: {0}"
 
 #: f2/apps/bark/handler.py
 msgid "正在发送 Bark 加密通知"
@@ -475,26 +474,26 @@ msgstr "Sending Bark encrypted notification"
 
 #: f2/apps/bark/handler.py
 msgid "Bark 加密配置缺失"
-msgstr "Bark encryption configuration missing"
+msgstr "Bark encryption configuration is missing"
 
 #: f2/apps/bark/handler.py
 msgid "加密算法缺失"
-msgstr "Encryption algorithm missing"
+msgstr "Encryption algorithm is missing"
 
 #: f2/apps/bark/handler.py
 msgid "加密模式缺失"
-msgstr "Encryption mode missing"
+msgstr "Encryption mode is missing"
 
 #: f2/apps/bark/handler.py
 msgid "加密密钥缺失"
-msgstr "Encryption key missing"
+msgstr "Encryption key is missing"
 
 #: f2/apps/bark/handler.py
 msgid "Bark 推送加密正在使用 ECB 模式，相同的明文块会得到相同的密文，安全性较弱，建议在 Bark App 与配置文件中都改用 CBC 模式"
 msgstr ""
 "Bark push encryption is using ECB mode, where identical plaintext blocks "
-"produce identical ciphertext and security is weak. Switch both the Bark "
-"app and the config file to CBC mode"
+"produce identical ciphertext, which is weak. Switch to CBC mode in both "
+"the Bark app and the configuration file"
 
 #: f2/apps/bark/handler.py
 #, python-brace-format
@@ -504,7 +503,7 @@ msgstr "Invalid encryption mode: {0}"
 #: f2/apps/bark/handler.py
 #, python-brace-format
 msgid "Bark 加密通知发送成功，时间：{0}"
-msgstr "Bark Encrypted Notification Sent Successfully, Time: {0}"
+msgstr "Bark encrypted notification sent, time: {0}"
 
 #: f2/apps/bark/handler.py
 #, python-brace-format
@@ -513,11 +512,11 @@ msgstr "Bark encrypted notification content: {0}"
 
 #: f2/apps/bark/handler.py
 msgid "已设置加密密钥，使用加密通知"
-msgstr "Encryption key has been set, using encrypted notifications"
+msgstr "Encryption key set, sending an encrypted notification"
 
 #: f2/apps/bark/handler.py
 msgid "未设置加密密钥，改用普通通知"
-msgstr "Not set encryption key, using normal notification"
+msgstr "No encryption key set, sending a plain notification"
 
 #: f2/apps/bark/handler.py
 msgid "Bark 通知发送失败"
@@ -526,114 +525,112 @@ msgstr "Failed to send the Bark notification"
 #: f2/apps/bark/handler.py
 #, python-brace-format
 msgid "不存在该模式：{0}"
-msgstr "This mode does not exist: {0}"
+msgstr "Unknown mode: {0}"
 
 #: f2/apps/bark/help.py f2/apps/douyin/help.py f2/apps/tiktok/help.py
 #: f2/apps/twitter/help.py
 msgid "配置文件的路径，[red]最低优先[/red]"
-msgstr "Path to the configuration file, [red]lowest priority[/red]"
+msgstr "Configuration file path, [red]lowest priority[/red]"
 
 #: f2/apps/bark/help.py f2/apps/douyin/help.py f2/apps/tiktok/help.py
 msgid "显示经典帮助信息"
-msgstr "Displaying classic help messages"
+msgstr "Show classic help"
 
 #: f2/apps/bark/help.py f2/apps/douyin/help.py f2/apps/tiktok/help.py
 msgid ""
 "更加详细的参数说明请点击[link=https://f2.wiki/site-"
 "config][dark_violet]前往文档[/dark_violet][/]查看"
 msgstr ""
-"For more detailed parameter description, please click "
-"[link=https://f2.wiki/site-config][dark_violet] to go to the "
-"document[/dark_violet][/] to view"
+"For more details on the parameters, see [link=https://f2.wiki/site-"
+"config][dark_violet]the documentation[/dark_violet][/]"
 
 #: f2/apps/douyin/cli.py f2/apps/tiktok/cli.py f2/apps/twitter/cli.py
 #: f2/apps/weibo/cli.py
 #, python-brace-format
 msgid "无法从 {0} 浏览器中获取cookie"
-msgstr "Unable to get cookie from {0} browser"
+msgstr "Unable to get cookies from the {0} browser"
 
 #: f2/apps/douyin/cli.py f2/apps/tiktok/cli.py f2/apps/twitter/cli.py
 #: f2/apps/weibo/cli.py
 msgid "请结束所有浏览器相关的进程，并确保你有管理员的权限访问浏览器后重试！"
 msgstr ""
-"Please end all browser-related processes and make sure you have "
-"administrator rights to access the browser and try again!"
+"Close all browser processes, make sure you have administrator rights to "
+"access the browser, and try again!"
 
 #: f2/apps/douyin/cli.py f2/apps/tiktok/cli.py f2/apps/twitter/cli.py
 #: f2/apps/weibo/cli.py
 #, python-brace-format
 msgid "自动获取Cookie失败：{0}"
-msgstr "Failed to get cookie automatically: {0}"
+msgstr "Failed to get the cookie automatically: {0}"
 
 #: f2/apps/douyin/cli.py f2/apps/tiktok/cli.py f2/apps/twitter/cli.py
 #: f2/apps/weibo/cli.py
 #, python-brace-format
 msgid "`{0}` 中的 `{1}` 不符合命名模式"
-msgstr "`{1}` in `{0}` does not conform to naming patterns"
+msgstr "`{1}` in `{0}` does not match the naming pattern"
 
 #: f2/apps/douyin/cli.py
 msgid "抖音无水印解析"
-msgstr "Douyin de-watermark"
+msgstr "Douyin watermark-free downloader"
 
 #: f2/apps/douyin/cli.py f2/apps/tiktok/cli.py f2/apps/twitter/cli.py
 #: f2/apps/weibo/cli.py f2/apps/weibo/help.py
 msgid "配置文件的路径，最低优先"
-msgstr "Path to configuration file, highest priority"
+msgstr "Configuration file path, lowest priority"
 
 #: f2/apps/douyin/cli.py f2/apps/douyin/help.py f2/apps/tiktok/cli.py
 #: f2/apps/tiktok/help.py
 msgid "根据模式提供相应的链接。例如：主页、点赞、收藏作品填入主页链接，单作品填入作品链接，合集与直播同上"
 msgstr ""
-"Provide the appropriate link according to the mode. For example: "
-"homepage, likes and favorites fill in the homepage link, single works "
-"fill in the works link, compilations and live streams are the same as "
-"above"
+"Link for the selected mode. For example, use the profile link for "
+"profile, liked and favorite posts, and the post link for a single post; "
+"mixes and livestreams work the same way"
 
 #: f2/apps/douyin/cli.py f2/apps/douyin/help.py f2/apps/tiktok/cli.py
 msgid "是否保存视频原声"
-msgstr "Whether to save video soundtrack"
+msgstr "Save the original sound of the video"
 
 #: f2/apps/douyin/cli.py f2/apps/douyin/help.py f2/apps/tiktok/cli.py
 msgid "是否保存视频封面"
-msgstr "Whether to save the video cover"
+msgstr "Save the video cover"
 
 #: f2/apps/douyin/cli.py f2/apps/douyin/help.py f2/apps/tiktok/cli.py
 msgid "是否保存视频文案"
-msgstr "Whether to save video desc"
+msgstr "Save the video caption"
 
 #: f2/apps/douyin/cli.py f2/apps/tiktok/cli.py f2/apps/twitter/cli.py
 #: f2/apps/weibo/cli.py
 msgid "作品保存位置，支持绝对与相对路径"
-msgstr "Where to save your work, supports absolute and relative paths"
+msgstr "Where to save posts; absolute and relative paths are supported"
 
 #: f2/apps/douyin/cli.py f2/apps/douyin/help.py f2/apps/tiktok/cli.py
 #: f2/apps/twitter/cli.py f2/apps/weibo/cli.py
 msgid "是否将作品保存到单独的文件夹"
-msgstr "Whether to save your video in a separate folder"
+msgstr "Save each post in its own folder"
 
 #: f2/apps/douyin/cli.py
 msgid "下载模式：单个作品(one)，主页作品(post)，点赞作品(like)，收藏作品(collection)，收藏夹作品(collects)，收藏音乐(music)，合集(mix)，直播(live)"
 msgstr ""
-"Download mode: single work (one), home page work (post), like works "
-"(like), collection (collection), favorite works (collects), collection of"
-" music (music), compilation (mix), live (live)"
+"Download mode: single post (one), profile posts (post), liked posts "
+"(like), favorite posts (collection), favorites folder posts (collects), "
+"favorite music (music), mix (mix), livestream (live)"
 
 #: f2/apps/douyin/cli.py f2/apps/douyin/help.py f2/apps/tiktok/cli.py
 #: f2/apps/tiktok/help.py
 msgid "全局作品文件命名方式，前往文档查看更多帮助"
-msgstr "Global file naming convention, go to the documentation for more help"
+msgstr "File naming template for all posts; see the documentation for details"
 
 #: f2/apps/douyin/cli.py
 msgid "登录后的cookie，如果使用未登录的cookie，则无法持久稳定下载作品"
 msgstr ""
-"Logged in cookies, if you use a cookie that is not logged in, you will "
-"not be able to download the work in a persistent and stable manner"
+"Cookie of a logged-in account; with a logged-out cookie, downloads will "
+"not work reliably"
 
 #: f2/apps/douyin/cli.py f2/apps/douyin/help.py
 msgid "下载日期区间发布的作品，格式：YYYY-MM-DD|YYYY-MM-DD，'all' 为下载所有作品"
 msgstr ""
-"Download works published in the date range, format: YYYY-MM-DD|YYYY-MM-"
-"DD, 'all' means download all posts"
+"Download posts published in a date range, format: YYYY-MM-DD|YYYY-MM-DD; "
+"'all' downloads all posts"
 
 #: f2/apps/douyin/cli.py f2/apps/douyin/help.py f2/apps/twitter/cli.py
 #: f2/apps/weibo/cli.py
@@ -643,12 +640,12 @@ msgstr "Network request timeout"
 #: f2/apps/douyin/cli.py f2/apps/douyin/help.py f2/apps/twitter/cli.py
 #: f2/apps/weibo/cli.py
 msgid "网络请求超时重试数"
-msgstr "Number of network request timeout retries"
+msgstr "Number of retries after a network request times out"
 
 #: f2/apps/douyin/cli.py f2/apps/douyin/help.py f2/apps/twitter/cli.py
 #: f2/apps/weibo/cli.py
 msgid "网络请求并发连接数"
-msgstr "Number of concurrent connections for network requests"
+msgstr "Number of concurrent network connections"
 
 #: f2/apps/douyin/cli.py f2/apps/douyin/help.py f2/apps/twitter/cli.py
 #: f2/apps/weibo/cli.py
@@ -658,25 +655,25 @@ msgstr "Number of asynchronous tasks"
 #: f2/apps/douyin/cli.py f2/apps/douyin/help.py f2/apps/tiktok/cli.py
 #: f2/apps/tiktok/help.py
 msgid "最大作品下载数。0 表示无限制"
-msgstr "Maximum number of downloads. 0 means unlimited"
+msgstr "Maximum number of posts to download. 0 means unlimited"
 
 #: f2/apps/douyin/cli.py f2/apps/douyin/help.py f2/apps/tiktok/cli.py
 #: f2/apps/tiktok/help.py
 msgid "从接口每页可获取作品数，不建议超过 20"
 msgstr ""
-"The number of works that can be fetched from the interface per page is "
-"not recommended to be more than 20"
+"Number of posts fetched per page from the API; values above 20 are not "
+"recommended"
 
 #: f2/apps/douyin/cli.py
 msgid "是否保存原声歌词"
-msgstr "Whether to save the original lyrics"
+msgstr "Save the lyrics of the original sound"
 
 #: f2/apps/douyin/cli.py f2/apps/tiktok/cli.py f2/apps/twitter/cli.py
 #: f2/apps/weibo/cli.py
 msgid "自动从浏览器获取cookie，使用该命令前请确保关闭所选的浏览器"
 msgstr ""
-"Automatically get cookies from browsers, make sure to close the selected "
-"browser before using this command"
+"Get the cookie from a browser automatically; close the selected browser "
+"before using this option"
 
 #: f2/apps/douyin/cli.py f2/apps/tiktok/cli.py f2/apps/twitter/cli.py
 #: f2/apps/weibo/cli.py
@@ -690,13 +687,13 @@ msgid ""
 "DouYin CLI 缺乏必要参数：[cyan]{0}[/cyan]。详情请查看帮助，[yellow]f2 douyin "
 "-h/--help[/yellow]"
 msgstr ""
-"DouYin CLI lacks required parameters: [cyan]{0}[/cyan]. Please check the "
-"help for details, [yellow]f2 douyin -h/--help[/yellow]"
+"DouYin CLI is missing required parameters: [cyan]{0}[/cyan]. See the help"
+" for details: [yellow]f2 douyin -h/--help[/yellow]"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "用户信息接口地址：{0}"
-msgstr "User information interface address: {0}"
+msgstr "User info API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
@@ -711,122 +708,122 @@ msgstr "User short info API endpoint: {0}"
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "主页作品接口地址：{0}"
-msgstr "Home page work interface address: {0}"
+msgstr "Profile posts API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "主页喜欢作品接口地址：{0}"
-msgstr "HomeLike WorksInterface Address: {0}"
+msgstr "Liked posts API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "主页收藏作品接口地址：{0}"
-msgstr "Home Favorite Works Interface Address: {0}"
+msgstr "Favorite posts API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "主页作品搜索接口地址：{0}"
-msgstr "Profile work search API endpoint: {0}"
+msgstr "Profile post search API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "收藏夹接口地址：{0}"
-msgstr "Favorites interface address: {0}"
+msgstr "Favorites folders API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "收藏夹作品接口地址：{0}"
-msgstr "Favorite Works interface address: {0}"
+msgstr "Favorites folder posts API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "音乐收藏接口地址：{0}"
-msgstr "Music Collection interface address: {0}"
+msgstr "Favorite music API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "合集作品接口地址：{0}"
-msgstr "The interface address for the collection of works: {0}"
+msgstr "Mix posts API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "作品详情接口地址：{0}"
-msgstr "Work details interface address: {0}"
+msgstr "Post detail API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "作品评论接口地址：{0}"
-msgstr "Work comment interface address: {0}"
+msgstr "Post comments API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "作品评论回复接口地址：{0}"
-msgstr "Work comment reply API endpoint: {0}"
+msgstr "Post comment replies API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "首页推荐作品接口地址：{0}"
-msgstr "Home recommended works interface address: {0}"
+msgstr "Home feed recommended posts API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "关注作品接口地址：{0}"
-msgstr "Follow the work interface address: {0}"
+msgstr "Following feed posts API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "朋友作品接口地址：{0}"
-msgstr "Friend Works interface address: {0}"
+msgstr "Friends feed posts API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "相关推荐作品接口地址：{0}"
-msgstr "Related recommended works interface address: {0}"
+msgstr "Related posts API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "直播信息接口地址：{0}"
-msgstr "Live information interface address: {0}"
+msgstr "Livestream info API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "直播接口地址（room_id）：{0}"
-msgstr "Live streaming interface address (room_id): {0}"
+msgstr "Livestream API endpoint (room_id): {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "直播间观众排行榜接口地址：{0}"
-msgstr "Live room audience ranking API endpoint: {0}"
+msgstr "Live room viewer ranking API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "关注用户直播接口地址：{0}"
-msgstr "Follow user live interface address: {0}"
+msgstr "Followed users' livestreams API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "推荐搜索词接口地址：{0}"
-msgstr "Suggested search words API endpoint: {0}"
+msgstr "Search suggestions API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "定位上一次作品接口地址：{0}"
-msgstr "Locate the last work interface address: {0}"
+msgstr "Locate previous post API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "用户关注列表接口地址：{0}"
-msgstr "User Follow List interface address: {0}"
+msgstr "User following list API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "用户粉丝列表接口地址：{0}"
-msgstr "User fan list interface address: {0}"
+msgstr "User follower list API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "直播弹幕初始化接口地址：{0}"
-msgstr "Live popup initialisation interface address: {0}"
+msgstr "Live danmaku initialization API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
@@ -841,63 +838,59 @@ msgstr "User live status API endpoint: {0}"
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "查询用户接口地址：{0}"
-msgstr "Query user interface address: {0}"
+msgstr "User query API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "作品统计接口地址：{0}"
-msgstr "Work stats interface address: {0}"
+msgstr "Post statistics API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "作品弹幕列表接口地址：{0}"
-msgstr "Work danmaku list API endpoint: {0}"
+msgstr "Post danmaku list API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "作品时间弹幕接口地址：{0}"
-msgstr "Work timed danmaku API endpoint: {0}"
+msgstr "Post timed danmaku API endpoint: {0}"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[FetchLiveDanmaku] [🔗 直播弹幕接口地址] | [地址：{0}]"
-msgstr "[FetchLiveDanmaku] [🔗 Live barrage interface address] | [Address: {0}]"
+msgstr "[FetchLiveDanmaku] [🔗 Live danmaku API endpoint] | [URL: {0}]"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[WssPackage] [📦Wss包] | [{0}]"
-msgstr "[WssPackage] [📦Wss package] | [{0}]"
+msgstr "[WssPackage] [📦 WSS packet] | [{0}]"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[PayloadPackage] [📦Payload包] | [{0}]"
-msgstr "[PayloadPackage] [📦Payload package] | [{0}]"
+msgstr "[PayloadPackage] [📦 Payload packet] | [{0}]"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[HandleWssMessage] [❌未找到对应的回调函数] | [方法：{0}]"
-msgstr ""
-"[HandleWssMessage] [❌Corresponding callback function not found] | "
-"[Method: {0}]"
+msgstr "[HandleWssMessage] [❌ No matching callback] | [Method: {0}]"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[HandleWssMessage] [⚠️ 回调执行出错] | [方法：{0}] | [错误：{1}]"
-msgstr ""
-"[HandleWssMessage] [⚠️ Error in callback execution] | [Method: {0}] | "
-"[Error: {1}]"
+msgstr "[HandleWssMessage] [⚠️ Callback failed] | [Method: {0}] | [Error: {1}]"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[HandleWssMessage] [❌ 解析消息格式出错] | [错误：{0}] | [消息：{1}]"
 msgstr ""
-"[HandleWssMessage] [❌ Error parsing message format] | [Error: {0}] | "
+"[HandleWssMessage] [❌ Failed to parse the message] | [Error: {0}] | "
 "[Message: {1}]"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[HandleWssMessage] [⚠️ 处理消息出错] | [错误：{0}]"
-msgstr "[HandleWssMessage] [⚠️ Error processing message] | [Error: {0}]"
+msgstr "[HandleWssMessage] [⚠️ Failed to handle the message] | [Error: {0}]"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 msgid "[SendAck] [❌ 无法发送 ack 包] | [WebSocket 未连接]"
@@ -906,7 +899,7 @@ msgstr "[SendAck] [❌ Cannot send ack packet] | [WebSocket not connected]"
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[SendAck] [💓 发送 ack 包] | [日志ID：{0}]"
-msgstr "[SendAck] [💓 Send ack packet] | [Log ID: {0}]"
+msgstr "[SendAck] [💓 Sending ack packet] | [Log ID: {0}]"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 msgid "[SendPing] [❌ 无法发送 ping 包] | [WebSocket 未连接]"
@@ -914,259 +907,255 @@ msgstr "[SendPing] [❌ Cannot send ping packet] | [WebSocket not connected]"
 
 #: f2/apps/douyin/crawler.py
 msgid "[SendPing] [📤 发送 ping 包]"
-msgstr "[SendPing] [📤 Send ping packet]"
+msgstr "[SendPing] [📤 Sending ping packet]"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[StartServer] [🚀本地 WebSocket 服务器已启动] ｜ 连接地址：ws://{0}:{1}"
-msgstr ""
-"[StartServer] [🚀Local WebSocket server has started] | Connection address:"
-" ws://{0}:{1}"
+msgstr "[StartServer] [🚀 Local WebSocket server started] | Address: ws://{0}:{1}"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 msgid "[StartServer] [⚠️ 服务器任务被取消]"
-msgstr "[StartServer] [⚠️ Server task canceled]"
+msgstr "[StartServer] [⚠️ Server task cancelled]"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[StartServer] [❌ 服务器启动失败] | [错误：{0}]"
-msgstr "[StartServer] [❌ Server start failed] | [Error: {0}]"
+msgstr "[StartServer] [❌ Failed to start the server] | [Error: {0}]"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 msgid "[StartServer] [🔒 本地 WebSocket 服务器已关闭]"
-msgstr "[StartServer] [🔒 Local WebSocket server is down]"
+msgstr "[StartServer] [🔒 Local WebSocket server stopped]"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[TimeoutCheck] [⏳ 无客户端连接超时关闭] | [超时时间：{0} 秒]"
-msgstr ""
-"[TimeoutCheck] [⏳ No client connection timeout closed] | [Timeout: {0} "
-"seconds]"
+msgstr "[TimeoutCheck] [⏳ Closing: no client connected] | [Timeout: {0} seconds]"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[RegisterClient] [🔗 新的客户端连接] ｜ [Ip：{0} Port：{1}]"
-msgstr "[RegisterClient] [🔗 New client connection] | [Ip: {0} Port: {1}]"
+msgstr "[RegisterClient] [🔗 New client connected] | [IP: {0} Port: {1}]"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[RegisterClient] [⛓ 客户端断开连接] | [Ip：{0} Port：{1}]"
-msgstr "[RegisterClient] [⛓ Client disconnected] | [Ip: {0} Port: {1}]"
+msgstr "[RegisterClient] [⛓ Client disconnected] | [IP: {0} Port: {1}]"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[BroadcastMessage] [❌ 消息格式错误] | [错误：{0}]"
-msgstr "[BroadcastMessage] [❌ Message format error] | [Error: {0}]"
+msgstr "[BroadcastMessage] [❌ Invalid message format] | [Error: {0}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastRoomMessage] [🏠房间消息] | [房间信息：{0}]"
-msgstr "[WebcastRoomMessage] [🏠Room Message] | [Room Message: {0}]"
+msgstr "[WebcastRoomMessage] [🏠 Room message] | [Room info: {0}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastLikeMessage] [👍点赞消息] | [用户昵称：{0}] [当前用户点赞：{1}] [直播间总点赞：{2}]"
 msgstr ""
-"[WebcastLikeMessage] [👍Like message] | [User nickname: {0}] [Current user"
-" likes: {1}] [Total likes in the live broadcast room: {2}]"
+"[WebcastLikeMessage] [👍 Like message] | [Nickname: {0}] [Likes from this "
+"user: {1}] [Total likes in the live room: {2}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastMemberMessage] [🚺观众加入消息] | [UniqueID：{0}] [用户名：{1}]"
-msgstr "[WebcastMemberMessage] [🚺Viewer joined] | [UniqueID: {0}] [Username: {1}]"
+msgstr "[WebcastMemberMessage] [🚺 Viewer joined] | [UniqueID: {0}] [Username: {1}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastChatMessage] [💬聊天消息] | [内容：{0}]"
-msgstr "[WebcastChatMessage] [💬Chat Message] | [Content: {0}]"
+msgstr "[WebcastChatMessage] [💬 Chat message] | [Content: {0}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastGiftMessage] [🎁礼物消息] | [描述：{0}]"
-msgstr "[WebcastGiftMessage] [🎁Gift Message] | [Description: {0}]"
+msgstr "[WebcastGiftMessage] [🎁 Gift message] | [Description: {0}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastSocialMessage] [➕用户关注消息] | [用户ID：{0}]"
-msgstr "[WebcastSocialMessage] [➕User following messages] | [User ID: {0}]"
+msgstr "[WebcastSocialMessage] [➕ Follow message] | [User ID: {0}]"
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[WebcastRoomUserSeqMessage] [👥在线观众排行榜] | [{0}]"
-msgstr "[WebcastRoomUserSeqMessage] [👥Online Audience Ranking] | [{0}]"
+msgstr "[WebcastRoomUserSeqMessage] [👥 Online viewer ranking] | [{0}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastUpdateFanTicketMessage] [🎟️粉丝票更新消息] | [粉丝票数量：{0}]"
 msgstr ""
-"[WebcastUpdateFanTicketMessage] [🎟️Fan Ticket Update Message] | [Number "
-"of Fan Tickets: {0}]"
+"[WebcastUpdateFanTicketMessage] [🎟️ Fan ticket update] | [Fan tickets: "
+"{0}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastCommonTextMessage] [📝文本消息] | [内容：{0}]"
-msgstr "[WebcastCommonTextMessage] [📝Text Message] | [Content: {0}]"
+msgstr "[WebcastCommonTextMessage] [📝 Text message] | [Content: {0}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastMatchAgainstScoreMessage] [🏆对战积分消息] | [内容：{0}]"
-msgstr "[WebcastMatchAgainstScoreMessage] [🏆Match Score Message] | [Content: {0}]"
+msgstr ""
+"[WebcastMatchAgainstScoreMessage] [🏆 Battle score message] | [Content: "
+"{0}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastEcomFansClubMessage] [🛍️电商粉丝团消息] | [内容：{0}]"
 msgstr ""
-"[WebcastEcomFansClubMessage] [🛍️E-commerce fan club message] | [Content: "
-"{0}]"
+"[WebcastEcomFansClubMessage] [🛍️ E-commerce fan club message] | [Content:"
+" {0}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastStatsMessage] [📊统计消息] | [创建时间：{0}] | [在线观众数：{1}] [总计：{2}]"
 msgstr ""
-"[WebcastStatsMessage] [📊Statistics Message] | [Creation time: {0}] | "
-"[Number of online viewers: {1}] [Total: {2}]"
+"[WebcastStatsMessage] [📊 Statistics message] | [Created at: {0}] | "
+"[Online viewers: {1}] [Total: {2}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastLiveShoppingMessage] [🛒直播购物消息] | [消息类型：{0}] [促销ID：{1}]"
 msgstr ""
-"[WebcastLiveShoppingMessage] [🛒Live Shopping Message] | [Message Type: "
+"[WebcastLiveShoppingMessage] [🛒 Live shopping message] | [Message type: "
 "{0}] [Promotion ID: {1}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastRanklistHourEntranceMessage] [🕒小时榜入口消息] | [创建时间：{0}] | [榜单类型：{1}]"
 msgstr ""
-"[WebcastRanklistHourEntranceMessage] [🕒Hour Entrance Message] | [Creation"
-" Time: {0}] | [List Type: {1}]"
+"[WebcastRanklistHourEntranceMessage] [🕒 Hourly ranking entry message] | "
+"[Created at: {0}] | [Ranking type: {1}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastProductChangeMessage] [🔄商品变更消息] | [内容：{0}]"
-msgstr "[WebcastProductChangeMessage] [🔄Product change message] | [Content: {0}]"
+msgstr "[WebcastProductChangeMessage] [🔄 Product change message] | [Content: {0}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastNotifyEffectMessage] [📢通知效果消息] | [内容：{0}]"
 msgstr ""
-"[WebcastNotifyEffectMessage] [📢Notification Effect Message] | [Content: "
+"[WebcastNotifyEffectMessage] [📢 Notification effect message] | [Content: "
 "{0}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastLightGiftMessage] [💡轻礼物消息] | [礼物ID：{0}] [赠送给用户ID：{1}] [钻石数量：{2}]"
 msgstr ""
-"[WebcastLightGiftMessage] [💡Light Gift Message] | [Gift ID: {0}] [Gift to"
-" User ID: {1}] [Quantity of Diamonds: {2}]"
+"[WebcastLightGiftMessage] [💡 Light gift message] | [Gift ID: {0}] "
+"[Recipient user ID: {1}] [Diamonds: {2}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastProfitInteractionScoreMessage] [💰互动分数消息] | [互动分数状态：{0}]"
 msgstr ""
-"[WebcastProfitInteractionScoreMessage] [💰Interaction Score Message] | "
-"[Interaction Score Status: {0}]"
+"[WebcastProfitInteractionScoreMessage] [💰 Interaction score message] | "
+"[Interaction score status: {0}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastRoomRankMessage] [🏆房间排行榜消息] | [前三名用户ID：{0}]"
-msgstr ""
-"[WebcastRoomRankMessage] [🏆Room ranking message] | [Top three user IDs: "
-"{0}]"
+msgstr "[WebcastRoomRankMessage] [🏆 Room ranking message] | [Top 3 user IDs: {0}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastFansclubMessage] [🎉粉丝团消息] | [内容：{0}]"
-msgstr "[WebcastFansclubMessage] [🎉Fansclub Message] | [Content: {0}]"
+msgstr "[WebcastFansclubMessage] [🎉 Fan club message] | [Content: {0}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastHotRoomMessage] [🔥热门房间消息] | [内容：{0}]"
-msgstr "[WebcastHotRoomMessage] [🔥Hot Room Message] | [Content: {0}]"
+msgstr "[WebcastHotRoomMessage] [🔥 Hot room message] | [Content: {0}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastScreenChatMessage] [📺管理员全局聊天消息] | [内容：{0}]"
-msgstr "[WebcastScreenChatMessage] [📺Admin Global Chat Message] | [Content: {0}]"
+msgstr "[WebcastScreenChatMessage] [📺 Admin screen chat message] | [Content: {0}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastLinkerContributeMessage] [🔗连麦贡献消息] | [用户ID：{0}] [总贡献分数：{1}]"
 msgstr ""
-"[WebcastLinkerContributeMessage] [🔗 Linked microphone contribution news] "
-"| [User ID:{0}] [Total Contribution Score: {1}]"
+"[WebcastLinkerContributeMessage] [🔗 Co-host contribution message] | [User"
+" ID: {0}] [Total contribution score: {1}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastEmojiChatMessage] [😊表情聊天消息] | [内容：{0}]"
-msgstr "[WebcastEmojiChatMessage] [😊Emoji Chat Message] | [Content: {0}]"
+msgstr "[WebcastEmojiChatMessage] [😊 Emoji chat message] | [Content: {0}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastLinkMicMethod] [🎤连麦PK对战消息] | [消息类型：{0}] [频道ID：{1}]"
 msgstr ""
-"[WebcastLinkMicMethod] [🎤Lianmai PK battle message] | [Message type: {0}]"
-" [Channel ID: {1}]"
+"[WebcastLinkMicMethod] [🎤 Co-host PK battle message] | [Message type: "
+"{0}] [Channel ID: {1}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastLinkMessage] [🔗连麦消息] | [消息类型：{0}] [连麦ID：{1}]"
 msgstr ""
-"[WebcastLinkMessage] [🔗Lianmai Message] | [Message Type: {0}] [Lianmai "
-"ID: {1}]"
+"[WebcastLinkMessage] [🔗 Co-host message] | [Message type: {0}] [Link ID: "
+"{1}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastBattleTeamTaskMessage] [🎯战队任务消息] | [战斗ID：{0}] [战斗类型：{1}]"
 msgstr ""
-"[WebcastBattleTeamTaskMessage] [🎯Team Task Message] | [Battle ID: {0}] "
-"[Battle Type: {1}]"
+"[WebcastBattleTeamTaskMessage] [🎯 Team task message] | [Battle ID: {0}] "
+"[Battle type: {1}]"
 
 #: f2/apps/douyin/crawler.py
 #, python-brace-format
 msgid "[WebcastHotChatMessage] [🔥热聊消息] | [内容：{0}]"
-msgstr "[WebcastHotChatMessage] [🔥HotChatMessage] | [Content: {0}]"
+msgstr "[WebcastHotChatMessage] [🔥 Hot chat message] | [Content: {0}]"
 
 #: f2/apps/douyin/dl.py f2/apps/tiktok/dl.py f2/apps/twitter/dl.py
 #: f2/apps/weibo/dl.py
 msgid "cookie不能为空。请提供有效的 cookie 参数，或自动从浏览器获取。如 `--auto-cookie edge`"
 msgstr ""
-"the cookie cannot be empty. Please provide a valid cookie parameter, or "
-"get it automatically from the browser. For example, `--auto-cookie edge`"
+"The cookie cannot be empty. Provide a valid cookie, or get it from a "
+"browser automatically, for example with `--auto-cookie edge`"
 
 #: f2/apps/douyin/dl.py
 msgid "未提供日期区间参数，将处理所有作品"
-msgstr "No date range provided, all works will be processed"
+msgstr "No date range provided, all posts will be processed"
 
 #: f2/apps/douyin/dl.py
 #, python-brace-format
 msgid "开始按日期区间筛选作品：{0}"
-msgstr "Filtering works by date range: {0}"
+msgstr "Filtering posts by date range: {0}"
 
 #: f2/apps/douyin/dl.py f2/apps/tiktok/dl.py
 #, python-brace-format
 msgid "没有找到更多符合日期区间 '{0}' 的作品，请检查参数设置"
-msgstr "No more works found in the date range '{0}', please check the parameters"
+msgstr "No more posts found in the date range '{0}', please check the parameters"
 
 #: f2/apps/douyin/dl.py f2/apps/tiktok/dl.py
 msgid "没有可处理的作品数据"
-msgstr "No work data to process"
+msgstr "No post data to process"
 
 #: f2/apps/douyin/dl.py f2/apps/tiktok/dl.py f2/apps/twitter/dl.py
 #: f2/apps/weibo/dl.py
 msgid "当前任务处理完成"
-msgstr "Current task processing completed"
+msgstr "Current task finished"
 
 #: f2/apps/douyin/dl.py
 #, python-brace-format
 msgid "[{0}] 该作品已被屏蔽，无法下载"
-msgstr "[{0}] The work has been blocked and cannot be downloaded"
+msgstr "[{0}] This post has been blocked and cannot be downloaded"
 
 #: f2/apps/douyin/dl.py
 #, python-brace-format
 msgid "[{0}] 作品的可见状态 private_status={1} 不支持下载，已跳过"
 msgstr ""
-"[{0}] Posts with visibility status private_status={1} cannot be "
-"downloaded, skipped"
+"[{0}] Posts with visibility private_status={1} cannot be downloaded, "
+"skipped"
 
 #: f2/apps/douyin/dl.py
 #, python-brace-format
@@ -1175,7 +1164,7 @@ msgstr "[{0}] Post type {1} has no downloadable video or images"
 
 #: f2/apps/douyin/dl.py f2/apps/tiktok/dl.py
 msgid "原声"
-msgstr "Music"
+msgstr "Original sound"
 
 #: f2/apps/douyin/dl.py
 #, python-brace-format
@@ -1212,12 +1201,12 @@ msgstr "Static cover"
 #: f2/apps/douyin/dl.py
 #, python-brace-format
 msgid "[{0}] 该作品没有任何可用的封面"
-msgstr "[{0}] This work has no available cover"
+msgstr "[{0}] This post has no available cover"
 
 #: f2/apps/douyin/dl.py f2/apps/tiktok/dl.py f2/apps/twitter/dl.py
 #: f2/apps/weibo/dl.py
 msgid "文案"
-msgstr "Desc"
+msgstr "Caption"
 
 #: f2/apps/douyin/dl.py f2/apps/tiktok/dl.py f2/apps/twitter/dl.py
 #: f2/apps/weibo/dl.py
@@ -1227,12 +1216,12 @@ msgstr "Video"
 #: f2/apps/douyin/dl.py
 #, python-brace-format
 msgid "[{0}] 该作品没有视频链接，无法下载"
-msgstr "[{0}] This post does not have a video link and cannot be downloaded"
+msgstr "[{0}] This post has no video link and cannot be downloaded"
 
 #: f2/apps/douyin/dl.py
 #, python-brace-format
 msgid "[{0}] 非实况图集，跳过实况视频下载"
-msgstr "[{0}] Not a live photo gallery, skipping live photo videos"
+msgstr "[{0}] Not a live photo post, skipping live photo videos"
 
 #: f2/apps/douyin/dl.py
 #, python-brace-format
@@ -1257,12 +1246,12 @@ msgstr "Live photo {0}/{1}"
 #: f2/apps/douyin/dl.py
 #, python-brace-format
 msgid "[{0}] 未找到任何图片，请检查作品信息"
-msgstr "[{0}] No images found, please check the work data"
+msgstr "[{0}] No images found, please check the post data"
 
 #: f2/apps/douyin/dl.py
 #, python-brace-format
 msgid "[{0}] 开始下载图集，共 {1} 张图片"
-msgstr "[{0}] Downloading the gallery, {1} images in total"
+msgstr "[{0}] Downloading the image post, {1} images in total"
 
 #: f2/apps/douyin/dl.py
 #, python-brace-format
@@ -1272,15 +1261,15 @@ msgstr "[{0}] Image {1} has an invalid link, skipping"
 #: f2/apps/douyin/dl.py
 #, python-brace-format
 msgid "图集 {0}/{1}"
-msgstr "Gallery {0}/{1}"
+msgstr "Image {0}/{1}"
 
 #: f2/apps/douyin/dl.py
 msgid "音乐"
-msgstr "SONG"
+msgstr "Music"
 
 #: f2/apps/douyin/dl.py
 msgid "歌词"
-msgstr "LYRIC"
+msgstr "Lyrics"
 
 #: f2/apps/douyin/dl.py
 msgid "无法验证直播状态（缺少用户ID）"
@@ -1292,11 +1281,11 @@ msgstr "Not live"
 
 #: f2/apps/douyin/dl.py f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 msgid "已关播"
-msgstr "Off LIVE"
+msgstr "Ended"
 
 #: f2/apps/douyin/dl.py f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 msgid "直播中"
-msgstr "On LIVE"
+msgstr "Live"
 
 #: f2/apps/douyin/dl.py f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 msgid "未知状态"
@@ -1319,7 +1308,7 @@ msgstr "Cannot verify the live status (error: {0})"
 
 #: f2/apps/douyin/dl.py f2/apps/tiktok/dl.py
 msgid "直播"
-msgstr "LIVE"
+msgstr "Livestream"
 
 #: f2/apps/douyin/handler.py
 msgid "`sec_user_id`不能为空"
@@ -1333,8 +1322,8 @@ msgstr "Ad account detected, skipping download"
 #: f2/apps/twitter/handler.py
 msgid "`fetch_user_profile`请求失败，请更换cookie或稍后再试"
 msgstr ""
-"The `fetch_user_profile` request failed, please replace the cookie or try"
-" again later"
+"`fetch_user_profile` request failed, please replace the cookie or try "
+"again later"
 
 #: f2/apps/douyin/handler.py
 msgid "`sec_user_ids`不能为空"
@@ -1356,43 +1345,43 @@ msgstr ""
 #: f2/apps/twitter/handler.py f2/apps/weibo/handler.py
 #, python-brace-format
 msgid "用户：{0} 已添加到数据库"
-msgstr "User: {0} added to database"
+msgstr "User {0} added to the database"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #: f2/apps/twitter/handler.py f2/apps/weibo/handler.py
 #, python-brace-format
 msgid "用户：{0} 的新名称已更新到数据库"
-msgstr "User: {0} new name updated in database"
+msgstr "User {0}'s new name has been saved to the database"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "单个作品数据：{0}"
-msgstr "Individual work data: {0}"
+msgstr "Post data: {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "处理作品: {0} 数据"
-msgstr "Works processed: {0} data"
+msgstr "Processing data of post: {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "作品 {0} 无法获取：{1}"
-msgstr "Work {0} is unavailable: {1}"
+msgstr "Post {0} is unavailable: {1}"
 
 #: f2/apps/douyin/handler.py
 msgid "`fetch_one_video`请求失败。如果是动图作品，则接口正在维护中，请稍后再试。"
 msgstr ""
-"The 'fetch_one_video' request failed. If it is a LIVE note, the interface"
-" is under maintenance, please try again later."
+"`fetch_one_video` request failed. If this is an animated image post, the "
+"API is under maintenance, please try again later."
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "作品ID：{0} 作品文案：{1} 作者：{2}"
-msgstr "Work ID: {0} Work Text: {1} Author: {2}"
+msgstr "Post ID: {0} Caption: {1} Author: {2}"
 
 #: f2/apps/douyin/handler.py
 msgid "[DouYin] 单个作品下载"
-msgstr "[DouYin] Single Video download"
+msgstr "[DouYin] Single Post Download"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -1403,61 +1392,61 @@ msgid ""
 "作者：{3}\n"
 "下载时间：{4}"
 msgstr ""
-"Aweme ID: {0}\n"
+"Post ID: {0}\n"
 "Type: {1}\n"
-"Desc: {2}\n"
+"Caption: {2}\n"
 "Author: {3}\n"
 "Download time: {4}"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "处理用户：{0} 发布的作品"
-msgstr "Work with users: {0} published posts"
+msgstr "Processing posts by user: {0}"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #: f2/apps/twitter/handler.py
 #, python-brace-format
 msgid "最大数量：{0} 每次请求数量：{1}"
-msgstr "Maximum number: {0} Number per request: {1}"
+msgstr "Maximum: {0} Per request: {1}"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "处理第 {0} 页 ({1})"
-msgstr "Process page {0} ({1})"
+msgstr "Processing page {0} ({1})"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 msgid "已经处理到指定时间范围内的作品"
-msgstr "Processed to the specified time range of works"
+msgstr "Reached the posts within the specified time range"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "第 {0} 页没有找到作品"
-msgstr "Page {0} No work found"
+msgstr "No posts found on page {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "用户: {0} 所有作品采集完毕"
-msgstr "User: {0} All works have been captured"
+msgstr "All posts of user: {0} have been collected"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "当前请求的max_cursor：{0}"
-msgstr "Max_cursor of the current request: {0}"
+msgstr "max_cursor of the current request: {0}"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #: f2/apps/twitter/handler.py f2/apps/weibo/handler.py
 #, python-brace-format
 msgid "等待 {0} 秒后继续"
-msgstr "Wait {0} seconds and continue"
+msgstr "Waiting {0} seconds before continuing"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "结束处理用户发布的作品，共处理 {0} 个作品"
-msgstr "Ended processing of works posted by users, processed {0} works in total"
+msgstr "Finished processing the user's posts, {0} posts processed in total"
 
 #: f2/apps/douyin/handler.py
 msgid "[DouYin] 主页作品下载"
-msgstr "[Douyin] Home Posts Download"
+msgstr "[DouYin] Profile Posts Download"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
@@ -1473,21 +1462,21 @@ msgstr ""
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "处理用户：{0} 点赞的作品"
-msgstr "Handle user: {0}'s liked posts"
+msgstr "Processing posts liked by user: {0}"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "用户：{0} 所有作品采集完毕"
-msgstr "User: {0} All works are captured"
+msgstr "All posts of user: {0} have been collected"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "结束处理用户点赞的作品，共处理 {0} 个作品"
-msgstr "End processing of users' liked works, a total of {0} works processed"
+msgstr "Finished processing the user's liked posts, {0} posts processed in total"
 
 #: f2/apps/douyin/handler.py
 msgid "[DouYin] 点赞作品下载"
-msgstr "[DouYin] Like Posts Download"
+msgstr "[DouYin] Liked Posts Download"
 
 #: f2/apps/douyin/handler.py
 msgid "未知用户"
@@ -1495,25 +1484,27 @@ msgstr "Unknown user"
 
 #: f2/apps/douyin/handler.py
 msgid "处理用户收藏的音乐作品"
-msgstr "Handle user favorite music works"
+msgstr "Processing the user's favorite music"
 
 #: f2/apps/douyin/handler.py
 msgid "用户收藏的音乐作品采集完毕"
-msgstr "The user's collection of music pieces is captured"
+msgstr "All of the user's favorite music has been collected"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "音乐ID：{0} 音乐标题：{1} 作者：{2}"
-msgstr "Music ID: {0} Music Title: {1} Author: {2}"
+msgstr "Music ID: {0} Title: {1} Author: {2}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "结束处理用户收藏音乐作品，共处理 {0} 个作品"
-msgstr "End processing user's favorite music works, a total of {0} works processed"
+msgstr ""
+"Finished processing the user's favorite music, {0} tracks processed in "
+"total"
 
 #: f2/apps/douyin/handler.py
 msgid "[DouYin] 音乐收藏下载"
-msgstr "[DouYin] Music Collection Download"
+msgstr "[DouYin] Favorite Music Download"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -1521,21 +1512,21 @@ msgid ""
 "音乐数：{0}\n"
 "下载时间：{1}"
 msgstr ""
-"Musics: {0}\n"
+"Tracks: {0}\n"
 "Download time: {1}"
 
 #: f2/apps/douyin/handler.py
 msgid "处理用户收藏的作品"
-msgstr "Handle user's favorite works"
+msgstr "Processing the user's favorite posts"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "最大数量: {0} 每次请求数量: {1}"
-msgstr "Maximum number: {0} Number per request: {1}"
+msgstr "Maximum: {0} Per request: {1}"
 
 #: f2/apps/douyin/handler.py
 msgid "用户收藏的作品采集完毕"
-msgstr "The collection of the user's favorite works is finished"
+msgstr "All of the user's favorite posts have been collected"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -1545,16 +1536,18 @@ msgstr "max_cursor of the current request: {0}"
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "作品ID: {0} 作品文案: {1} 作者: {2}"
-msgstr "Work ID: {0} Work Text: {1} Author: {2}"
+msgstr "Post ID: {0} Caption: {1} Author: {2}"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "结束处理用户收藏作品，共处理 {0} 个作品"
-msgstr "Finished processing user collection works, processed {0} works in total"
+msgstr ""
+"Finished processing the user's favorite posts, {0} posts processed in "
+"total"
 
 #: f2/apps/douyin/handler.py
 msgid "[DouYin] 收藏作品下载"
-msgstr "[DouYin] Collection Posts Download"
+msgstr "[DouYin] Favorite Posts Download"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
@@ -1562,35 +1555,35 @@ msgid ""
 "作品数：{0}\n"
 "下载时间：{1}"
 msgstr ""
-"Posts：{0}\n"
-"Download time：{1}"
+"Posts: {0}\n"
+"Download time: {1}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "结束处理用户收藏夹作品，共处理 {0} 个作品"
-msgstr "Finished processing user favorite works, processed {0} works in total"
+msgstr ""
+"Finished processing the user's favorites folder posts, {0} posts "
+"processed in total"
 
 #: f2/apps/douyin/handler.py
 msgid "0: [bold]全部下载[/bold]"
-msgstr "0: [bold]All downloads[/bold]"
+msgstr "0: [bold]Download all[/bold]"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "{0}：{1} (包含 {2} 个作品[以网页实际数量为准]，收藏夹ID {3})"
-msgstr ""
-"{0}:{1} (contains {2} entries [based on actual number of pages], Favorite"
-" ID {3})"
+msgstr "{0}: {1} ({2} posts, as counted on the web page; favorites folder ID {3})"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "[bold yellow]请输入希望下载的收藏夹序号：[/bold yellow] [bold purple]{0}[/bold purple]"
 msgstr ""
-"[bold yellow]Please enter the collects number you wish to download:[/bold"
-" yellow] [bold purple]{0}[/bold purple]"
+"[bold yellow]Enter the number of the favorites folder to download:[/bold "
+"yellow] [bold purple]{0}[/bold purple]"
 
 #: f2/apps/douyin/handler.py
 msgid "处理用户收藏夹"
-msgstr "Handle user favorites"
+msgstr "Processing the user's favorites folders"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -1600,36 +1593,40 @@ msgstr "max_cursor of the current request: {0}, max_counts: {1}"
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "收藏夹ID：{0} 收藏夹标题：{1}"
-msgstr "Favorite ID: {0} Favorite Title: {1}"
+msgstr "Favorites folder ID: {0} Title: {1}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "结束处理用户收藏夹，共找到 {0} 个收藏夹"
-msgstr "Finished processing user favorites, found {0} favorites in total"
+msgstr ""
+"Finished processing the user's favorites folders, {0} folders found in "
+"total"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "处理收藏夹：{0} 的作品"
-msgstr "Process favorites: {0}'s works"
+msgstr "Processing posts in favorites folder: {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "视频ID：{0} 视频文案：{1} 作者：{2}"
-msgstr "Video ID: {0} Video Copy: {1} Author: {2}"
+msgstr "Video ID: {0} Caption: {1} Author: {2}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "{0} 页没有找到作品"
-msgstr "{0} Page not found"
+msgstr "No posts found on page {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "收藏夹：{0} 所有作品采集完毕，共处理 {1} 个作品"
-msgstr "Favorites: {0} All works collected, a total of {1} works processed"
+msgstr ""
+"All posts in favorites folder: {0} have been collected, {1} posts "
+"processed in total"
 
 #: f2/apps/douyin/handler.py
 msgid "[DouYin] 收藏夹作品下载"
-msgstr "[DouYin] Collects Posts Download"
+msgstr "[DouYin] Favorites Folder Posts Download"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -1638,53 +1635,51 @@ msgid ""
 "作品数：{1}\n"
 "下载时间：{2}"
 msgstr ""
-"Collects ID: {0}\n"
+"Favorites folder ID: {0}\n"
 "Posts: {1}\n"
 "Download time: {2}"
 
 #: f2/apps/douyin/handler.py
 msgid "正在从合集链接获取合集ID"
-msgstr "The collection ID is being obtained from the collection link"
+msgstr "Getting the mix ID from the mix link"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "获取合集ID失败，尝试从合集作品链接中解析：{0}"
-msgstr ""
-"Failed to get the collection ID, trying to parse it from a collection "
-"post link: {0}"
+msgstr "Failed to get the mix ID, trying to parse it from a mix post link: {0}"
 
 #: f2/apps/douyin/handler.py
 msgid "正在从合集作品链接获取合集ID"
-msgstr "Retrieving collection ID from collection item link"
+msgstr "Getting the mix ID from the mix post link"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "作品 {0} 不属于任何合集"
-msgstr "Post {0} does not belong to any collection"
+msgstr "Post {0} does not belong to any mix"
 
 #: f2/apps/douyin/handler.py
 msgid "正在从合集作品里获取sec_user_id"
-msgstr "Obtaining sec_user_id from collection works"
+msgstr "Getting sec_user_id from the mix posts"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "合集 {0} 中没有作品"
-msgstr "Collection {0} has no posts"
+msgstr "Mix {0} has no posts"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "处理合集: {0} 的作品"
-msgstr "Process collection: {0} posts"
+msgstr "Processing posts in mix: {0}"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "合集: {0} 所有作品采集完毕"
-msgstr "Mix: {0} All works have been collected"
+msgstr "All posts in mix: {0} have been collected"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "结束处理用户合集作品，共处理 {0} 个作品"
-msgstr "End processing user collection posts, a total of {0} posts processed"
+msgstr "Finished processing mix posts, {0} posts processed in total"
 
 #: f2/apps/douyin/handler.py
 msgid "[DouYin] 合集作品下载"
@@ -1704,20 +1699,19 @@ msgstr ""
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "直播：{0} 已结束"
-msgstr "Live broadcast: {0} has ended"
+msgstr "Livestream {0} has ended"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "处理直播: {0} 的数据"
-msgstr "Process live broadcast: {0} data"
+msgstr "Processing data of livestream: {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "直播ID：{0} 长度大于12位，如果使用的是APP分享链接，请使用`fetch_user_live_videos_by_room_id`接口"
 msgstr ""
-"Live broadcast ID: {0} The length is greater than 12 digits. If you are "
-"using APP to share the link, please use the "
-"`fetch_user_live_videos_by_room_id` interface"
+"Livestream ID {0} is longer than 12 digits. If you are using a link "
+"shared from the app, use the `fetch_user_live_videos_by_room_id` API"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -1740,30 +1734,30 @@ msgstr "Unknown"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 msgid "结束直播信息处理"
-msgstr "End live broadcast information processing"
+msgstr "Finished processing the livestream info"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "处理房间号: {0} 的直播数据"
-msgstr "Process the live broadcast data of room number: {0}"
+msgstr "Processing livestream data of room: {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "直播ID：{0}，用户：{1}，直播间：{2}，状态：{3}，观看人数：{4}"
-msgstr "Live ID: {0}, User: {1}, Live Room: {2}, Status: {3}, Viewers: {4}"
+msgstr "Livestream ID: {0}, user: {1}, live room: {2}, status: {3}, viewers: {4}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "开播时间：{0} 直播流清晰度：{1}"
-msgstr "Broadcast start time: {0} Live stream clarity: {1}"
+msgstr "Started at: {0} Stream quality: {1}"
 
 #: f2/apps/douyin/handler.py
 msgid "结束直播数据处理"
-msgstr "End live broadcast data processing"
+msgstr "Finished processing the livestream data"
 
 #: f2/apps/douyin/handler.py
 msgid "[DouYin] 直播下载-2"
-msgstr "[Douyin] Live Download - 2"
+msgstr "[DouYin] Livestream Download - 2"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -1775,9 +1769,9 @@ msgid ""
 "观看人数：{4}\n"
 "下载时间：{5}"
 msgstr ""
-"Live ID: {0}\n"
+"Livestream ID: {0}\n"
 "User: {1}\n"
-"Live broadcast room: {2}\n"
+"Live room: {2}\n"
 "Status: {3}\n"
 "Viewers: {4}\n"
 "Download time: {5}"
@@ -1785,43 +1779,41 @@ msgstr ""
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "处理用户: {0} feed的作品"
-msgstr "Processing user: {0} feed's works"
+msgstr "Processing feed posts of user: {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "结束处理用户首页推荐作品，共处理 {0} 个作品"
-msgstr ""
-"Finished processing recommended works on user homepage, processed {0} "
-"works in total"
+msgstr "Finished processing home feed posts, {0} posts processed in total"
 
 #: f2/apps/douyin/handler.py
 msgid "[DouYin] 推荐作品下载"
-msgstr "[Douyin] Feed Posts Download"
+msgstr "[DouYin] Feed Posts Download"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "处理作品: {0} 的相关推荐"
-msgstr "Posts processed: Recommendations related to {0}"
+msgstr "Processing related posts of post: {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "处理前 {0} 个相关推荐"
-msgstr "Processing the first {0} related recommendations"
+msgstr "Processing the first {0} related posts"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "作品: {0} 的所有相关推荐采集完毕"
-msgstr "Works: {0} All related recommendations have been collected"
+msgstr "All related posts of post: {0} have been collected"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "当前请求的相关推荐数量: {0}"
-msgstr "Number of relevant recommendations for the current request: {0}"
+msgstr "Related posts in the current request: {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "结束处理作品相似推荐，共处理 {0} 个作品"
-msgstr "End processing similar recommendation, a total of {0} posts processed"
+msgstr "Finished processing related posts, {0} posts processed in total"
 
 #: f2/apps/douyin/handler.py
 msgid "[DouYin] 相似推荐作品下载"
@@ -1829,35 +1821,35 @@ msgstr "[DouYin] Related Posts Download"
 
 #: f2/apps/douyin/handler.py
 msgid "处理好友作品"
-msgstr "Handle friend's post"
+msgstr "Processing friends' posts"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "最大数量：{0} 个"
-msgstr "Maximum number: {0}"
+msgstr "Maximum: {0}"
 
 #: f2/apps/douyin/handler.py
 msgid "所有好友作品采集完毕"
-msgstr "All friends' works have been collected"
+msgstr "All friends' posts have been collected"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "请求失败，错误码：{0} 错误信息：{1}"
-msgstr "Request failed, error code: {0} Error message: {1}"
+msgstr "Request failed, error code: {0}, error message: {1}"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "当前请求的cursor: {0}"
-msgstr "Currently requested cursor: {0}"
+msgstr "cursor of the current request: {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "结束处理好友作品，共处理 {0} 个作品"
-msgstr "Finished processing friend's posts, processed {0} posts in total"
+msgstr "Finished processing friends' posts, {0} posts processed in total"
 
 #: f2/apps/douyin/handler.py
 msgid "[DouYin] 好友作品下载"
-msgstr "[DouYin] Friend Posts Download"
+msgstr "[DouYin] Friends' Posts Download"
 
 #: f2/apps/douyin/handler.py
 msgid "至少提供 user_id 或 sec_user_id 中的一个参数"
@@ -1865,64 +1857,64 @@ msgstr "Provide at least one of user_id or sec_user_id"
 
 #: f2/apps/douyin/handler.py
 msgid "按最近关注排序"
-msgstr "Sort by recent followers"
+msgstr "Sort by most recently followed"
 
 #: f2/apps/douyin/handler.py
 msgid "按最早关注排序"
-msgstr "Sort by earliest concern"
+msgstr "Sort by earliest followed"
 
 #: f2/apps/douyin/handler.py
 msgid "按综合排序"
-msgstr "Sort by General"
+msgstr "Sort by overall ranking"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "处理用户：{0} 的关注用户"
-msgstr "Handling users: {0}'s following users"
+msgstr "Processing users followed by: {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "当前排序类型：{0}"
-msgstr "Current sorting type: {0}"
+msgstr "Current sort order: {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "当前请求的 max_time：{0}"
-msgstr "Current requested max_time: {0}"
+msgstr "max_time of the current request: {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "当前请求的 min_time：{0}"
-msgstr "Min_time of current request: {0}"
+msgstr "min_time of the current request: {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "用户：{0} 所有关注用户采集完毕"
-msgstr "Users: {0} All concerned users captured"
+msgstr "All users followed by: {0} have been collected"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "当前请求的 offset：{0}"
-msgstr "Current requested offset: {0}"
+msgstr "offset of the current request: {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "处理了 {0} 个关注用户"
-msgstr "Processed {0} following users"
+msgstr "Processed {0} followed users"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "用户ID：{0} 用户昵称：{1} 用户作品数：{2} 额外内容：{3}"
-msgstr "User ID: {0} User Nickname: {1} Number of User Works: {2} Extras: {3}"
+msgstr "User ID: {0} Nickname: {1} Posts: {2} Extra: {3}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "结束处理关注用户，共处理 {0} 个用户"
-msgstr "Ended processing of followed users, for a total of {0} users"
+msgstr "Finished processing followed users, {0} users processed in total"
 
 #: f2/apps/douyin/handler.py
 msgid "[DouYin] 关注用户采集"
-msgstr "[DouYin] Followers User"
+msgstr "[DouYin] Following List"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -1930,42 +1922,42 @@ msgid ""
 "关注数：{0}\n"
 "下载时间：{1}"
 msgstr ""
-"Followers:{0}\n"
+"Following: {0}\n"
 "Download time: {1}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "处理用户：{0} 的粉丝用户"
-msgstr "Processing user: fan user of {0}"
+msgstr "Processing followers of user: {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "用户：{0} 所有粉丝采集完毕"
-msgstr "User: {0} All fans captured"
+msgstr "All followers of user: {0} have been collected"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "当前请求的offset：{0} max_time：{1}"
-msgstr "Offset of current request: {0} max_time: {1}"
+msgstr "offset of the current request: {0} max_time: {1}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "处理了 {0} 个粉丝用户"
-msgstr "Processed {0} fan users"
+msgstr "Processed {0} followers"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "用户ID：{0} 用户昵称：{1} 用户作品数：{2}"
-msgstr "User ID: {0} User Nickname: {1} Number of User Works: {2}"
+msgstr "User ID: {0} Nickname: {1} Posts: {2}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "结束处理粉丝用户，共处理 {0} 个用户"
-msgstr "Ended processing fan users, processed {0} users in total"
+msgstr "Finished processing followers, {0} users processed in total"
 
 #: f2/apps/douyin/handler.py
 msgid "[DouYin] 粉丝用户采集"
-msgstr "[DouYin] Fans User"
+msgstr "[DouYin] Follower List"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -1973,21 +1965,21 @@ msgid ""
 "粉丝数：{0}\n"
 "下载时间：{1}"
 msgstr ""
-"Fans:{0}\n"
+"Followers: {0}\n"
 "Download time: {1}"
 
 #: f2/apps/douyin/handler.py
 msgid "查询用户基本信息"
-msgstr "Query user basic information"
+msgstr "Querying basic user info"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "用户UniqueID：{0} 用户ID：{1} 用户创建时间：{2}"
-msgstr "User UniqueID: {0} User ID: {1} User Creation Time: {2}"
+msgstr "UniqueID: {0} User ID: {1} Created at: {2}"
 
 #: f2/apps/douyin/handler.py
 msgid "结束查询用户基本信息"
-msgstr "End querying user basic information"
+msgstr "Finished querying basic user info"
 
 #: f2/apps/douyin/handler.py
 msgid "请提供正确的ttwid"
@@ -1995,49 +1987,49 @@ msgstr "Please provide the correct ttwid"
 
 #: f2/apps/douyin/handler.py
 msgid "查询作品统计信息"
-msgstr "Query work stats"
+msgstr "Querying post statistics"
 
 #: f2/apps/douyin/handler.py
 msgid "播放量已增加"
-msgstr "View count has increased"
+msgstr "View count increased"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 msgid "查询直播间信息"
-msgstr "Query live broadcast room information"
+msgstr "Querying live room info"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "直播间Room_ID：{0} 弹幕cursor：{1}"
-msgstr "Room_ID: {0} Cursor: {1}"
+msgstr "Room_ID: {0} Danmaku cursor: {1}"
 
 #: f2/apps/douyin/handler.py
 msgid "结束查询直播间信息"
-msgstr "End querying live broadcast room information"
+msgstr "Finished querying live room info"
 
 #: f2/apps/douyin/handler.py
 msgid "请提供正确的Room_ID"
-msgstr "Please provide correct Room_ID"
+msgstr "Please provide a valid Room_ID"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 msgid "没有设置回调函数，默认使用所有回调函数"
-msgstr "No callback function set, default to using all callback functions"
+msgstr "No callbacks set, using all callbacks by default"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "本地 WebSocket 服务器没有客户端连接，已停止接收直播间：{0} 的弹幕，直播可能仍在进行"
 msgstr ""
 "No client is connected to the local WebSocket server, so receiving "
-"danmaku from live room {0} has stopped; the stream may still be live"
+"danmaku from live room {0} has stopped; the livestream may still be on"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "直播间：{0} 的弹幕连接已关闭，可能已结束直播"
-msgstr "Live Stream: {0} danmaku connection closed; the stream may have ended"
+msgstr "Danmaku connection of live room {0} closed; the livestream may have ended"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "直播间：{0} 弹幕连接异常"
-msgstr "Live Stream: {0} Abnormal pop-up link"
+msgstr "Danmaku connection error in live room {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -2055,7 +2047,7 @@ msgstr "Failed to send the message"
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "处理作品：{0} 的弹幕"
-msgstr "Processing danmaku of work: {0}"
+msgstr "Processing danmaku of post: {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -2074,7 +2066,7 @@ msgstr "All danmaku fetched"
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "当前请求的offset：{0}"
-msgstr "Current request offset: {0}"
+msgstr "offset of the current request: {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -2084,11 +2076,11 @@ msgstr "Danmaku ID: {0} Content: {1} User ID: {2}"
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "结束处理作品弹幕，共处理 {0} 条弹幕"
-msgstr "Finished processing work danmaku, {0} danmaku processed in total"
+msgstr "Finished processing post danmaku, {0} danmaku processed in total"
 
 #: f2/apps/douyin/handler.py
 msgid "[DouYin] 作品弹幕下载"
-msgstr "[DouYin] Work Danmaku Download"
+msgstr "[DouYin] Post Danmaku Download"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -2097,35 +2089,35 @@ msgid ""
 "弹幕数：{1}\n"
 "下载时间：{2}"
 msgstr ""
-"Work ID: {0}\n"
+"Post ID: {0}\n"
 "Danmaku: {1}\n"
 "Download time: {2}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "处理作品：{0} 的弹幕，时间范围：{1}ms - {2}ms"
-msgstr "Processing danmaku of work: {0}, time range: {1}ms - {2}ms"
+msgstr "Processing danmaku of post: {0}, time range: {1}ms - {2}ms"
 
 #: f2/apps/douyin/handler.py
 msgid "[DouYin] 作品时间段弹幕下载"
-msgstr "[DouYin] Work Timed Danmaku Download"
+msgstr "[DouYin] Post Timed Danmaku Download"
 
 #: f2/apps/douyin/handler.py
 msgid "查询关注用户直播间信息"
-msgstr "Query the live broadcast room information of following users"
+msgstr "Querying followed users' live rooms"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "直播间Room_ID：{0} 直播间标题：{1} 直播间人数：{2}"
-msgstr "Live Room Room_ID: {0} Live Room Title: {1} Live Room Count: {2}"
+msgstr "Room_ID: {0} Title: {1} Viewers: {2}"
 
 #: f2/apps/douyin/handler.py
 msgid "结束查询关注用户直播间信息"
-msgstr "End query of user live broadcast information"
+msgstr "Finished querying followed users' live rooms"
 
 #: f2/apps/douyin/handler.py
 msgid "[DouYin] 关注用户直播采集"
-msgstr "[DouYin] Follow User Live"
+msgstr "[DouYin] Followed Users' Livestreams"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -2135,7 +2127,7 @@ msgid ""
 "观看人数：{2}\n"
 "下载时间：{3}"
 msgstr ""
-"Room ID:{0}\n"
+"Room ID: {0}\n"
 "Live room: {1}\n"
 "Viewers: {2}\n"
 "Download time: {3}"
@@ -2143,7 +2135,7 @@ msgstr ""
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "获取关注用户直播间信息失败：{0}"
-msgstr "Failed to get information about following user's live room: {0}"
+msgstr "Failed to get followed users' live rooms: {0}"
 
 #: f2/apps/douyin/handler.py
 msgid "查询用户直播状态"
@@ -2166,12 +2158,12 @@ msgstr "Finished querying user live status"
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "处理作品: {0} 的评论"
-msgstr "Processing comments of work: {0}"
+msgstr "Processing comments of post: {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "作品: {0} 的所有评论采集完毕"
-msgstr "All comments of work: {0} have been collected"
+msgstr "All comments of post: {0} have been collected"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -2181,11 +2173,11 @@ msgstr "Comment ID: {0} Content: {1} User: {2}"
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "结束处理作品评论，共处理 {0} 条评论"
-msgstr "Finished processing work comments, {0} comments processed in total"
+msgstr "Finished processing post comments, {0} comments processed in total"
 
 #: f2/apps/douyin/handler.py
 msgid "[DouYin] 作品评论下载"
-msgstr "[DouYin] Work Comments Download"
+msgstr "[DouYin] Post Comments Download"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -2199,7 +2191,7 @@ msgstr ""
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "处理作品: {0} 评论: {1} 的回复"
-msgstr "Processing replies to comment: {1} of work: {0}"
+msgstr "Processing replies to comment: {1} of post: {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -2232,31 +2224,31 @@ msgstr ""
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "搜索用户: {0} 的关键词: {1} 的作品"
-msgstr "Searching works of user: {0} for keyword: {1}"
+msgstr "Searching posts of user: {0} for keyword: {1}"
 
 #: f2/apps/douyin/handler.py f2/apps/weibo/handler.py
 #, python-brace-format
 msgid "处理第 {0} 页"
-msgstr "Process page {0}"
+msgstr "Processing page {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "关键词: {0} 的所有作品采集完毕"
-msgstr "All works for keyword: {0} have been collected"
+msgstr "All posts for keyword: {0} have been collected"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "当前请求的offset: {0}"
-msgstr "Current request offset: {0}"
+msgstr "offset of the current request: {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "结束处理主页搜索作品，共处理 {0} 个作品"
-msgstr "Finished processing profile search works, {0} works processed in total"
+msgstr "Finished processing profile search posts, {0} posts processed in total"
 
 #: f2/apps/douyin/handler.py
 msgid "[DouYin] 主页搜索作品下载"
-msgstr "[DouYin] Profile Search Works Download"
+msgstr "[DouYin] Profile Search Posts Download"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -2265,7 +2257,7 @@ msgid ""
 "下载时间：{1}\n"
 " {2}"
 msgstr ""
-"Works: {0}\n"
+"Posts: {0}\n"
 "Download time: {1}\n"
 " {2}"
 
@@ -2291,22 +2283,24 @@ msgstr "Finished fetching search suggestions"
 #: f2/apps/twitter/handler.py f2/apps/weibo/handler.py
 #, python-brace-format
 msgid "不存在该模式: {0}"
-msgstr "This mode does not exist: {0}"
+msgstr "Unknown mode: {0}"
 
 #: f2/apps/douyin/help.py f2/apps/tiktok/help.py
 msgid "作品保存位置，支持绝对与相对路径。"
-msgstr "Work save location, support absolute and relative path。"
+msgstr "Where to save posts; absolute and relative paths are supported."
 
 #: f2/apps/douyin/help.py
 msgid "下载模式：单个作品(one)，主页作品(post)，点赞作品(like)，收藏作品(collection)，收藏夹作品(collects)，合集(mix)，直播(live)"
-msgstr "Download Mode: One, Post, Like, Collection, Favorites, Mix, Live"
+msgstr ""
+"Download mode: single post (one), profile posts (post), liked posts "
+"(like), favorite posts (collection), favorites folder posts (collects), "
+"mix (mix), livestream (live)"
 
 #: f2/apps/douyin/help.py f2/apps/tiktok/cli.py f2/apps/tiktok/help.py
 msgid "登录后的[yellow]cookie[/yellow]，如果使用未登录的[yellow]cookie[/yellow]，则无法持久稳定下载作品"
 msgstr ""
-"Logged in [yellow]cookie[/yellow], if you use a non-logged in "
-"[yellow]cookie[/yellow], you will not be able to download the work in a "
-"persistent and stable manner"
+"[yellow]Cookie[/yellow] of a logged-in account; with a logged-out "
+"[yellow]cookie[/yellow], downloads will not work reliably"
 
 #: f2/apps/douyin/help.py f2/apps/tiktok/help.py f2/apps/twitter/help.py
 #: f2/apps/weibo/help.py
@@ -2320,39 +2314,37 @@ msgstr ""
 
 #: f2/apps/douyin/help.py
 msgid "是否保存视频歌词"
-msgstr "Whether to save video lyrics"
+msgstr "Save the lyrics of the video"
 
 #: f2/apps/douyin/help.py f2/apps/tiktok/help.py f2/apps/twitter/help.py
 #: f2/apps/weibo/help.py
 msgid "自动从浏览器获取[yellow]cookie[/yellow]，使用该命令前请确保关闭所选的浏览器"
 msgstr ""
-"Automatically get [yellow]cookies[/yellow] from browsers, make sure to "
-"close the selected browser before using this command"
+"Get the [yellow]cookie[/yellow] from a browser automatically; close the "
+"selected browser before using this option"
 
 #: f2/apps/douyin/utils.py f2/apps/tiktok/utils.py
 #, python-brace-format
 msgid "{0} 内容不符合要求"
-msgstr "{0} Content does not meet requirements"
+msgstr "{0} does not meet the requirements"
 
 #: f2/apps/douyin/utils.py
 msgid "生成真实的msToken"
-msgstr "Generate real msToken"
+msgstr "Generating a real msToken"
 
 #: f2/apps/douyin/utils.py f2/apps/tiktok/utils.py f2/apps/twitter/utils.py
 #: f2/crawlers/base_crawler.py
 #, python-brace-format
 msgid "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-msgstr ""
-"{0} Link: {1}, Agent: {2}, Exception Class Name: {3}, Exception Details: "
-"{4}"
+msgstr "{0}. Link: {1}, proxy: {2}, exception class: {3}, details: {4}"
 
 #: f2/apps/douyin/utils.py f2/apps/tiktok/utils.py f2/crawlers/base_crawler.py
 msgid "请求端点超时"
-msgstr "Request Endpoint Timeout"
+msgstr "Request to the endpoint timed out"
 
 #: f2/apps/douyin/utils.py f2/apps/tiktok/utils.py f2/crawlers/base_crawler.py
 msgid "网络连接失败，请检查当前网络环境"
-msgstr "Network connection failed, please check the current network environment"
+msgstr "Network connection failed, please check your network"
 
 #: f2/apps/douyin/utils.py f2/apps/tiktok/utils.py f2/crawlers/base_crawler.py
 msgid "请求协议错误"
@@ -2360,36 +2352,34 @@ msgstr "Request protocol error"
 
 #: f2/apps/douyin/utils.py f2/apps/tiktok/utils.py f2/crawlers/base_crawler.py
 msgid "请求代理错误"
-msgstr "Request Proxy Error"
+msgstr "Proxy error"
 
 #: f2/apps/douyin/utils.py f2/apps/tiktok/utils.py
 #, python-brace-format
 msgid "{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}"
-msgstr ""
-"{0} Link: {1} Proxy: {2}, Exception Class Name: {3}, Exception Details: "
-"{4}"
+msgstr "{0}. Link: {1}, proxy: {2}, exception class: {3}, details: {4}"
 
 #: f2/apps/douyin/utils.py f2/apps/tiktok/utils.py
 msgid "状态码错误"
-msgstr "Status Code Errors"
+msgstr "Status code error"
 
 #: f2/apps/douyin/utils.py f2/apps/tiktok/utils.py
 #, python-brace-format
 msgid "生成虚假的 msToken：{0}"
-msgstr "Generate false msToken: {0}"
+msgstr "Generated a fake msToken: {0}"
 
 #: f2/apps/douyin/utils.py f2/apps/tiktok/utils.py
 msgid "ttwid: 检查没有通过, 请更新配置文件中的 ttwid"
-msgstr "ttwid: check failed, update ttwid in config file"
+msgstr "ttwid: check failed, please update the ttwid in the configuration file"
 
 #: f2/apps/douyin/utils.py f2/apps/tiktok/utils.py
 #, python-brace-format
 msgid "生成X-Bogus失败: {0})"
-msgstr "Generating X-Bogus failed: {0})"
+msgstr "Failed to generate X-Bogus: {0})"
 
 #: f2/apps/douyin/utils.py f2/apps/tiktok/utils.py f2/apps/twitter/utils.py
 msgid "参数必须是字典类型"
-msgstr "Arguments must be of dictionary type"
+msgstr "Parameters must be a dictionary"
 
 #: f2/apps/douyin/utils.py
 #, python-brace-format
@@ -2398,25 +2388,25 @@ msgstr "Failed to generate A-Bogus: {0})"
 
 #: f2/apps/douyin/utils.py f2/apps/twitter/utils.py f2/apps/weibo/utils.py
 msgid "参数必须是字符串类型"
-msgstr "Arguments must be of string type"
+msgstr "Parameters must be a string"
 
 #: f2/apps/douyin/utils.py f2/apps/tiktok/utils.py f2/apps/twitter/utils.py
 #: f2/apps/weibo/utils.py
 #, python-brace-format
 msgid "输入的URL不合法。类名：{0}"
-msgstr "The input URL is not legal. Class name: {0}"
+msgstr "Invalid URL. Class name: {0}"
 
 #: f2/apps/douyin/utils.py f2/apps/twitter/utils.py
 #, python-brace-format
 msgid "无法解析URL的主机部分。类名：{0}"
-msgstr "The host portion of the URL could not be resolved. Class Name: {0}"
+msgstr "Unable to parse the host of the URL. Class name: {0}"
 
 #: f2/apps/douyin/utils.py
 #, python-brace-format
 msgid "未在响应的地址中找到sec_user_id，检查链接是否为用户主页类名：{0}"
 msgstr ""
-"Not found sec_user_id in the address of the response, check if the link "
-"is to the user's homepage class name: {0}"
+"sec_user_id was not found in the response URL; check that the link is a "
+"user profile. Class name: {0}"
 
 #: f2/apps/douyin/utils.py
 msgid "获取sec_user_id失败，未知错误"
@@ -2425,39 +2415,38 @@ msgstr "Failed to get sec_user_id: unknown error"
 #: f2/apps/douyin/utils.py f2/apps/tiktok/utils.py f2/apps/twitter/utils.py
 #: f2/apps/weibo/utils.py
 msgid "参数必须是列表类型"
-msgstr "Arguments must be of type list"
+msgstr "Parameters must be a list"
 
 #: f2/apps/douyin/utils.py f2/apps/tiktok/utils.py f2/apps/twitter/utils.py
 #: f2/apps/weibo/utils.py
 #, python-brace-format
 msgid "输入的URL List不合法。类名：{0}"
-msgstr "The input URL List is not legal. Class name: {0}"
+msgstr "Invalid URL list. Class name: {0}"
 
 #: f2/apps/douyin/utils.py
 #, python-brace-format
 msgid "未在响应的地址中找到aweme_id，当前链接暂时不支持或作品已失效。类名：{0} 链接：{1}"
 msgstr ""
 "aweme_id was not found in the response URL; the link is not supported yet"
-" or the work is no longer available. Class name: {0} Link: {1}"
+" or the post is no longer available. Class name: {0} Link: {1}"
 
 #: f2/apps/douyin/utils.py
 msgid "未在响应的地址中找到mix_id，检查链接是否为合集或短剧页"
 msgstr ""
-"mix_id not found in the response URL; check that the link is a collection"
-" or short drama page"
+"mix_id was not found in the response URL; check that the link is a mix or"
+" short drama page"
 
 #: f2/apps/douyin/utils.py
 msgid "该链接返回的是room_id，请使用`fetch_user_live_videos_by_room_id`接口处理APP端分享链接。"
 msgstr ""
-"This link returns room_id. Please use the "
-"`fetch_user_live_videos_by_room_id` interface to process the APP-side "
-"sharing link."
+"This link returns a room_id. Use the `fetch_user_live_videos_by_room_id` "
+"API for links shared from the app."
 
 #: f2/apps/douyin/utils.py
 msgid "未在响应的地址中找到webcast_id，检查链接是否为直播页"
 msgstr ""
-"Webcast_id not found in the address of the response, check if the link is"
-" a live page"
+"webcast_id was not found in the response URL; check that the link is a "
+"livestream page"
 
 #: f2/apps/douyin/utils.py
 msgid "提取webcast_id失败，检查链接格式"
@@ -2466,14 +2455,14 @@ msgstr "Failed to extract webcast_id, please check the link format"
 #: f2/apps/douyin/utils.py
 msgid "未在响应的地址中找到room_id，检查链接是否为直播页"
 msgstr ""
-"Not found room_id in the responsive address, check if the link is a live "
-"page"
+"room_id was not found in the response URL; check that the link is a "
+"livestream page"
 
 #: f2/apps/douyin/utils.py f2/apps/tiktok/utils.py f2/apps/twitter/utils.py
 #: f2/apps/weibo/utils.py
 #, python-brace-format
 msgid "文件名模板字段 {0} 不存在，请检查"
-msgstr "The filename template field {0} does not exist, check the"
+msgstr "File name template field {0} does not exist, please check it"
 
 #: f2/apps/douyin/utils.py
 msgid "歌词数据项必须是字典类型"
@@ -2487,7 +2476,7 @@ msgstr "Lyrics data field error: {0}"
 #: f2/apps/douyin/utils.py
 #, python-brace-format
 msgid "生成歌词文件失败：{0}，请检查歌词 `data` 内容"
-msgstr "Failed to generate lyrics file: {0}, please check lyrics `data` content"
+msgstr "Failed to generate the lyrics file: {0}, please check the lyrics `data`"
 
 #: f2/apps/douyin/utils.py
 #, python-brace-format
@@ -2496,43 +2485,45 @@ msgstr "Lyrics data type error: {0}"
 
 #: f2/apps/tiktok/cli.py
 msgid "TikTok无水印解析"
-msgstr "TikTok de-watermark"
+msgstr "TikTok watermark-free downloader"
 
 #: f2/apps/tiktok/cli.py f2/apps/tiktok/help.py
 msgid "下载模式：单个作品(one)，主页作品(post), 点赞作品(like), 收藏作品(collect), 合集播放列表(mix)"
-msgstr "Download modes: one, post, like, collect, mix"
+msgstr ""
+"Download mode: single post (one), profile posts (post), liked posts "
+"(like), favorite posts (collect), mix playlist (mix)"
 
 #: f2/apps/tiktok/cli.py f2/apps/tiktok/help.py
 msgid "下载日期区间发布的作品，格式：2022-01-01|2023-01-01，'all' 为下载所有作品"
 msgstr ""
-"Download works released in the date range, format: 2022-01-01|2023-01-01,"
-" 'all' is to download all works"
+"Download posts published in a date range, format: 2022-01-01|2023-01-01; "
+"'all' downloads all posts"
 
 #: f2/apps/tiktok/cli.py
 msgid "搜索关键字，用于搜索作品"
-msgstr "Search keywords for searching works"
+msgstr "Keyword for searching posts"
 
 #: f2/apps/tiktok/cli.py f2/apps/tiktok/help.py
 msgid "网络请求超时时间。"
-msgstr "Network request timeout time。"
+msgstr "Network request timeout."
 
 #: f2/apps/tiktok/cli.py f2/apps/tiktok/help.py
 msgid "网络请求超时重试数。"
-msgstr "The number of network request timeout retries。"
+msgstr "Number of retries after a network request times out."
 
 #: f2/apps/tiktok/cli.py f2/apps/tiktok/help.py
 msgid "网络请求并发连接数。"
-msgstr "The number of concurrent connections for network requests。"
+msgstr "Number of concurrent network connections."
 
 #: f2/apps/tiktok/cli.py f2/apps/tiktok/help.py
 msgid "异步的任务数。"
-msgstr "The number of asynchronous tasks。"
+msgstr "Number of asynchronous tasks."
 
 #: f2/apps/tiktok/cli.py f2/apps/twitter/cli.py f2/apps/weibo/cli.py
 msgid "要更新配置, 首先需要使用'-c'选项提供一个自定义配置文件路径"
 msgstr ""
-"To update the configuration, you first need to provide a custom "
-"configuration file path using the '-c' option"
+"To update the configuration, first provide a custom configuration file "
+"path with the '-c' option"
 
 #: f2/apps/tiktok/cli.py
 #, python-brace-format
@@ -2540,48 +2531,48 @@ msgid ""
 "TikTok CLI 缺乏必要参数：[cyan]{0}[/cyan]。详情请查看帮助，[yellow]f2 tiktok "
 "-h/--help[/yellow]"
 msgstr ""
-"TikTok CLI is missing required parameters: [cyan]{0}[/cyan]. Please check"
-" the help for details, [yellow]f2 tiktok -h/--help[/yellow]"
+"TikTok CLI is missing required parameters: [cyan]{0}[/cyan]. See the help"
+" for details: [yellow]f2 tiktok -h/--help[/yellow]"
 
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "喜欢作品接口地址：{0}"
-msgstr "Favorite works interface address: {0}"
+msgstr "Liked posts API endpoint: {0}"
 
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "收藏作品接口地址：{0}"
-msgstr "Favorite Works Interface Address: {0}"
+msgstr "Favorite posts API endpoint: {0}"
 
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "合集列表接口地址：{0}"
-msgstr "Compilation list interface address: {0}"
+msgstr "Mix list API endpoint: {0}"
 
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "首页推荐接口地址：{0}"
-msgstr "Home Recommended Interface Address: {0}"
+msgstr "Home feed API endpoint: {0}"
 
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "搜索作品接口地址：{0}"
-msgstr "Search work interface address: {0}"
+msgstr "Post search API endpoint: {0}"
 
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "用户直播接口地址：{0}"
-msgstr "User live interface address: {0}"
+msgstr "User livestream API endpoint: {0}"
 
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "检查开播状态接口地址：{0}"
-msgstr "Check open broadcast status interface address: {0}"
+msgstr "Live status check API endpoint: {0}"
 
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "直播弹幕接口地址：{0}"
-msgstr "Live pop-up interface address: {0}"
+msgstr "Live danmaku API endpoint: {0}"
 
 #: f2/apps/tiktok/crawler.py
 msgid "解压缩数据时出错，数据不是 gzip 格式，无法解压缩"
@@ -2589,23 +2580,23 @@ msgstr "Failed to decompress the data: it is not in gzip format"
 
 #: f2/apps/tiktok/crawler.py
 msgid "[SendPing] [📤发送ping包]"
-msgstr "[SendPing] [📤Send ping packet]"
+msgstr "[SendPing] [📤 Sending ping packet]"
 
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[WebcastChatMessage] [💬直播间消息] [用户：{0} 说：{1}]"
-msgstr "[WebcastChatMessage] [💬Live broadcast room message] [User: {0} said: {1}]"
+msgstr "[WebcastChatMessage] [💬 Live room message] [User: {0} said: {1}]"
 
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[WebcastMemberMessage] [👥直播间成员消息] [用户：{0} 加入了直播间]"
 msgstr ""
-"[WebcastMemberMessage] [👥Live broadcast room member message] [User: {0} "
-"joined the live broadcast room]"
+"[WebcastMemberMessage] [👥 Live room member message] [User: {0} joined the"
+" live room]"
 
 #: f2/apps/tiktok/crawler.py
 msgid "[WebcastRoomUserSeqMessage] [👥在线观众排行榜] | [无数据]"
-msgstr "[WebcastRoomUserSeqMessage] [👥Online Audience Ranking] | [No data]"
+msgstr "[WebcastRoomUserSeqMessage] [👥 Online viewer ranking] | [No data]"
 
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
@@ -2616,111 +2607,107 @@ msgstr "User ID: {0}"
 #, python-brace-format
 msgid "[WebcastGiftMessage] [🎁直播间礼物] [用户：{0} 送出了 {1} 价值 {2} 钻石]"
 msgstr ""
-"[WebcastGiftMessage] [🎁Live broadcast room gift] [User: {0} sent {1} "
-"diamonds worth {2}]"
+"[WebcastGiftMessage] [🎁 Live room gift] [User: {0} sent {1} worth {2} "
+"diamonds]"
 
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[WebcastSocialMessage] [➕观众关注] [用户：{0} 关注了主播]"
-msgstr "[WebcastSocialMessage] [➕Audience Follow] [User: {0} followed the anchor]"
+msgstr ""
+"[WebcastSocialMessage] [➕ Viewer followed] [User: {0} followed the "
+"streamer]"
 
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[WebcastLikeMessage] [❤️观众点赞] [用户：{0} 点赞了直播间]"
-msgstr ""
-"[WebcastLikeMessage] [❤️Audience Likes] [User: {0} liked the live "
-"broadcast room]"
+msgstr "[WebcastLikeMessage] [❤️ Viewer liked] [User: {0} liked the live room]"
 
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[WebcastLinkMicFanTicketMethod] [🎟️连麦粉丝票] {0}"
-msgstr "[WebcastLinkMicFanTicketMethod] [🎟️Lianmai Fan Ticket] {0}"
+msgstr "[WebcastLinkMicFanTicketMethod] [🎟️ Co-host fan tickets] {0}"
 
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[WebcastLinkMicMethod] [🎤连麦消息] {0}"
-msgstr "[WebcastLinkMicMethod] [🎤 LinkMicroMethodMessage] {0}"
+msgstr "[WebcastLinkMicMethod] [🎤 Co-host message] {0}"
 
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[WebcastUserFanTicket] [🎟️用户粉丝团] {0}"
-msgstr "[WebcastUserFanTicket] [🎟️User Fan Group] {0}"
+msgstr "[WebcastUserFanTicket] [🎟️ User fan club] {0}"
 
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[WebcastLinkMessage] [🎤连麦消息] {0}"
-msgstr "[WebcastLinkMessage] [🎤 LinkMicroMessage] {0}"
+msgstr "[WebcastLinkMessage] [🎤 Co-host message] {0}"
 
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[WebcastLinkMicBattle] [🎤连麦对决] {0}"
-msgstr "[WebcastLinkMicBattle] [🎤MicBattle] {0}"
+msgstr "[WebcastLinkMicBattle] [🎤 Co-host battle] {0}"
 
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[WebcastLinkLayerMessage] [🎤连麦层信息] {0}"
-msgstr "[WebcastLinkLayerMessage] [🎤LinkLayerMessage] {0}"
+msgstr "[WebcastLinkLayerMessage] [🎤 Co-host layer message] {0}"
 
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[WebcastRoomMessage] [📜直播间消息] {0}"
-msgstr "[WebcastRoomMessage] [📜Live broadcast room message] {0}"
+msgstr "[WebcastRoomMessage] [📜 Live room message] {0}"
 
 #: f2/apps/tiktok/crawler.py
 #, python-brace-format
 msgid "[WebcastOecLiveShoppingMessage] [🛍️直播间购物消息] {0}"
-msgstr "[WebcastOecLiveShoppingMessage] [🛍️Live shopping message] {0}"
+msgstr "[WebcastOecLiveShoppingMessage] [🛍️ Live shopping message] {0}"
 
 #: f2/apps/tiktok/dl.py f2/apps/weibo/handler.py
 #, python-brace-format
 msgid "筛选日期区间：{0} 至 {1}"
-msgstr "Filter Date Range: {0} to {1}"
+msgstr "Filtering by date range: {0} to {1}"
 
 #: f2/apps/tiktok/dl.py f2/utils/time/filter.py f2/utils/time/timestamp.py
 msgid "日期区间参数格式错误，请查阅文档后重试"
-msgstr ""
-"The date range parameter is formatted incorrectly, please consult the "
-"documentation and try again"
+msgstr "Invalid date range format, please check the documentation and try again"
 
 #: f2/apps/tiktok/dl.py
 msgid "作品发布时间为空"
-msgstr "The work has no publish time"
+msgstr "The post has no publish time"
 
 #: f2/apps/tiktok/dl.py
 #, python-brace-format
 msgid "无法解析作品发布时间：{0}"
-msgstr "Unable to parse work Published: {0}"
+msgstr "Unable to parse the publish time of the post: {0}"
 
 #: f2/apps/tiktok/dl.py
 #, python-brace-format
 msgid "作品发布时间在指定区间内：作品id {0} 发布时间 {1}"
-msgstr ""
-"The posting time of the work is within the specified interval: work id "
-"{0} posting time {1}"
+msgstr "Post published within the date range: post ID {0}, published at {1}"
 
 #: f2/apps/tiktok/dl.py
 #, python-brace-format
 msgid "作品发布时间不在指定区间内：{0}"
-msgstr "The work is not published within the specified interval: {0}"
+msgstr "Post published outside the date range: {0}"
 
 #: f2/apps/tiktok/dl.py f2/apps/twitter/dl.py
 msgid "未提供日期区间参数"
-msgstr "No date range parameter provided"
+msgstr "No date range provided"
 
 #: f2/apps/tiktok/dl.py
 #, python-brace-format
 msgid "该 {0} 作品已被屏蔽，无法下载"
-msgstr "The {0} work has been blocked from download"
+msgstr "Post {0} has been blocked and cannot be downloaded"
 
 #: f2/apps/tiktok/dl.py
 #, python-brace-format
 msgid "{0} 该作品没有视频链接，无法下载"
-msgstr "{0} There is no video link for this work to download"
+msgstr "{0} This post has no video link and cannot be downloaded"
 
 #: f2/apps/tiktok/dl.py
 #, python-brace-format
 msgid "{0} 该原声已被屏蔽，无法下载"
-msgstr "{0} The soundtrack has been blocked from download"
+msgstr "{0} The original sound has been blocked and cannot be downloaded"
 
 #: f2/apps/tiktok/dl.py
 msgid "封面"
@@ -2729,20 +2716,20 @@ msgstr "Cover"
 #: f2/apps/tiktok/dl.py
 #, python-brace-format
 msgid "{0} 该作品没有动态封面"
-msgstr "{0} There is no dynamic cover for this work"
+msgstr "{0} This post has no dynamic cover"
 
 #: f2/apps/tiktok/dl.py
 #, python-brace-format
 msgid "{0} 该作品没有封面"
-msgstr "{0} There is no cover for this work"
+msgstr "{0} This post has no cover"
 
 #: f2/apps/tiktok/dl.py
 msgid "直播流URL无效，无法下载"
-msgstr "Invalid live stream URL, cannot download"
+msgstr "Invalid livestream URL, cannot download"
 
 #: f2/apps/tiktok/handler.py
 msgid "至少提供 secUid 或 uniqueId 中的一个参数"
-msgstr "Provide at least one of secUid or uniqueId as a parameter"
+msgstr "Provide at least one of secUid or uniqueId"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
@@ -2752,11 +2739,11 @@ msgstr "Invalid aweme_id: {0}"
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "处理作品：{0}"
-msgstr "Process work: {0}"
+msgstr "Processing post: {0}"
 
 #: f2/apps/tiktok/handler.py
 msgid "[TikTok] 单个作品下载"
-msgstr "[TikTok] Single Video Download"
+msgstr "[TikTok] Single Post Download"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
@@ -2766,19 +2753,19 @@ msgid ""
 "作者：{2}\n"
 "下载时间：{3}"
 msgstr ""
-"Aweme ID:{0}\n"
-"Desc: {1}\n"
-"Author:{2}\n"
+"Post ID: {0}\n"
+"Caption: {1}\n"
+"Author: {2}\n"
 "Download time: {3}"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "当前请求的cursor：{0}"
-msgstr "Currently requested cursor: {0}"
+msgstr "cursor of the current request: {0}"
 
 #: f2/apps/tiktok/handler.py
 msgid "[TikTok] 主页作品下载"
-msgstr "[TikTok] Home Posts Download"
+msgstr "[TikTok] Profile Posts Download"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
@@ -2793,47 +2780,47 @@ msgstr ""
 
 #: f2/apps/tiktok/handler.py
 msgid "[TikTok] 点赞作品下载"
-msgstr "[TikTok] Like Posts Download"
+msgstr "[TikTok] Liked Posts Download"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "处理用户：{0} 收藏的作品"
-msgstr "Processing works collected by user: {0}"
+msgstr "Processing posts favorited by user: {0}"
 
 #: f2/apps/tiktok/handler.py
 msgid "[TikTok] 收藏作品下载"
-msgstr "[TikTok] Collects Posts Download"
+msgstr "[TikTok] Favorite Posts Download"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "处理用户：{0} 的作品合集列表"
-msgstr "Processing the collection list of user: {0}"
+msgstr "Processing the mix list of user: {0}"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "用户：{0} 没有作品合集"
-msgstr "Users: {0} No collection of works"
+msgstr "User {0} has no mixes"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "作品合集ID：{0} 作品合集标题：{1}"
-msgstr "Collection ID: {0} Collection Title: {1}"
+msgstr "Mix ID: {0} Title: {1}"
 
 #: f2/apps/tiktok/handler.py
 msgid "用户没有作品合集"
-msgstr "Users do not have a collection of works"
+msgstr "The user has no mixes"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "{0}: {1} (包含 {2} 个作品，收藏夹ID {3})"
-msgstr "{0}: {1} (contains {2} entries, Favorite ID {3})"
+msgstr "{0}: {1} ({2} posts, ID {3})"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "[bold yellow]请输入希望下载的合集序号：[/bold yellow] [bold purple]{0}[/bold purple]"
 msgstr ""
-"[bold yellow] Please enter the serial number of the PlayList you wish to "
-"download:[/bold yellow] [bold purple]{0}[/bold purple]"
+"[bold yellow]Enter the number of the mix to download:[/bold yellow] [bold"
+" purple]{0}[/bold purple]"
 
 #: f2/apps/tiktok/handler.py
 msgid "[TikTok] 播放列表作品下载"
@@ -2846,39 +2833,39 @@ msgid ""
 "作品数：{1}\n"
 "下载时间：{2}"
 msgstr ""
-"Collection:{0}\n"
+"Mix: {0}\n"
 "Posts: {1}\n"
 "Download time: {2}"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "搜索关键词：{0} 的作品，最大作品数量 {1} "
-msgstr "Search keywords: works of {0}, maximum number of works {1} "
+msgstr "Searching posts for keyword: {0}, maximum posts: {1} "
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "搜索第 {0} 个作品，每次请求数量：{1}"
-msgstr "Search for item {0}, number of requests per request: {1}"
+msgstr "Searching from post {0}, per request: {1}"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "第 {0} 个offset没有找到作品"
-msgstr "The {0}th offset is not found"
+msgstr "No posts found at offset {0}"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "关键词：{0} 所有作品采集完毕"
-msgstr "Keywords: {0} All works captured"
+msgstr "All posts for keyword: {0} have been collected"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "关键词：{0} 已达到最大下载数量 {1} 个"
-msgstr "Keywords: {0} Maximum downloads reached {1}"
+msgstr "Keyword: {0} reached the maximum of {1} downloads"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "结束搜索，共搜索到 {0} 个作品"
-msgstr "Ended search, found {0} works in total"
+msgstr "Search finished, {0} posts found in total"
 
 #: f2/apps/tiktok/handler.py
 msgid "[TikTok] 搜索作品下载"
@@ -2891,33 +2878,33 @@ msgid ""
 "作品数：{1}\n"
 "下载时间：{2}"
 msgstr ""
-"Keywords: {0}\n"
+"Keyword: {0}\n"
 "Posts: {1}\n"
 "Download time: {2}"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "用户：{0} 未直播"
-msgstr "User: {0} not live broadcast"
+msgstr "User {0} is not live"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "直播: {0} 已结束"
-msgstr "Live broadcast: {0} has ended"
+msgstr "Livestream {0} has ended"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "处理用户：{0} 的直播"
-msgstr "Handle the live stream of the user: {0}"
+msgstr "Processing the livestream of user: {0}"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "房间ID：{0}，直播间：{1}，状态：{2}，观看人数：{3}"
-msgstr "Room ID: {0}, Live Room: {1}, Status: {2}, Viewers: {3}"
+msgstr "Room ID: {0}, live room: {1}, status: {2}, viewers: {3}"
 
 #: f2/apps/tiktok/handler.py
 msgid "[TikTok] 直播下载"
-msgstr "[TikTok] Live Download"
+msgstr "[TikTok] Livestream Download"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
@@ -2928,7 +2915,7 @@ msgid ""
 "观看人数：{3}\n"
 "下载时间：{4}"
 msgstr ""
-"Room ID:{0}\n"
+"Room ID: {0}\n"
 "Live room: {1}\n"
 "Status: {2}\n"
 "Viewers: {3}\n"
@@ -2936,66 +2923,64 @@ msgstr ""
 
 #: f2/apps/tiktok/handler.py
 msgid "检查直播间在线状态"
-msgstr "Check the live broadcast online status"
+msgstr "Checking live room status"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "直播间：{0}，在线状态：{1}"
-msgstr "Live Stream: {0}, Online Status: {1}"
+msgstr "Live room: {0}, online: {1}"
 
 #: f2/apps/tiktok/handler.py
 msgid "结束直播间在线状态检查"
-msgstr "End live broadcast online status check"
+msgstr "Finished checking live room status"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "直播间room_id：{0} 弹幕cursor：{1}"
-msgstr "Live room room_id: {0} IM cursor: {1}"
+msgstr "room_id: {0} Danmaku cursor: {1}"
 
 #: f2/apps/tiktok/handler.py
 msgid "结束直播间信息查询"
-msgstr "End live broadcast room information query"
+msgstr "Finished querying live room info"
 
 #: f2/apps/tiktok/handler.py
 msgid "请提供正确的room_id"
-msgstr "Please provide the correct room_id"
+msgstr "Please provide a valid room_id"
 
 #: f2/apps/tiktok/help.py
 msgid "是否保存视频原声。可选：'yes'、'no'"
-msgstr "Whether to save the original sound of the video. Optional: 'yes', 'no'"
+msgstr "Save the original sound of the video. Options: 'yes', 'no'"
 
 #: f2/apps/tiktok/help.py
 msgid "是否保存视频封面。可选：'yes'、'no'"
-msgstr "Whether to save the video cover. Optional: 'yes', 'no'"
+msgstr "Save the video cover. Options: 'yes', 'no'"
 
 #: f2/apps/tiktok/help.py
 msgid "是否保存视频文案。可选：'yes'、'no'"
-msgstr "Whether to save the video text. Optional: 'yes', 'no'"
+msgstr "Save the video caption. Options: 'yes', 'no'"
 
 #: f2/apps/tiktok/help.py
 msgid "是否将作品保存到单独的文件夹。可选：'yes'、'no'"
-msgstr "Whether to save the work to a separate folder. Optional: 'yes', 'no'"
+msgstr "Save each post in its own folder. Options: 'yes', 'no'"
 
 #: f2/apps/tiktok/help.py
 msgid "搜索关键词，用于搜索作品。"
-msgstr "Search keywords for searching for works."
+msgstr "Keyword for searching posts."
 
 #: f2/apps/tiktok/utils.py
 #, python-brace-format
 msgid "生成真实的 msToken：{0}"
-msgstr "Generate real msToken: {0}"
+msgstr "Generated a real msToken: {0}"
 
 #: f2/apps/tiktok/utils.py
 #, python-brace-format
 msgid "{0}。链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-msgstr ""
-"{0} Link: {1}, Proxy: {2}, Exception Class Name: {3}, Exception Details: "
-"{4}"
+msgstr "{0}. Link: {1}, proxy: {2}, exception class: {3}, details: {4}"
 
 #: f2/apps/tiktok/utils.py
 #, python-brace-format
 msgid "生成 ttwid：{0}"
-msgstr "Generate ttwid: {0}"
+msgstr "Generated ttwid: {0}"
 
 #: f2/apps/tiktok/utils.py
 #, python-brace-format
@@ -3004,42 +2989,42 @@ msgstr "Failed to generate X-Gnarly: {0}"
 
 #: f2/apps/tiktok/utils.py
 msgid "输入参数必须是字符串"
-msgstr "Input parameters must be strings"
+msgstr "The input must be a string"
 
 #: f2/apps/tiktok/utils.py
 #, python-brace-format
 msgid "页面不可用，可能是由于区域限制（代理）造成的。类名：{0}"
 msgstr ""
-"The page is unavailable, possibly due to regional restrictions (proxies)."
-" Class Name: {0}"
+"The page is unavailable, possibly because of regional restrictions "
+"(proxy). Class name: {0}"
 
 #: f2/apps/tiktok/utils.py
 #, python-brace-format
 msgid "未在响应中找到 {0}，请检查链接。类名：{1}"
-msgstr "Did not find {0} in the response, check the link. Class name: {1}"
+msgstr "{0} was not found in the response, please check the link. Class name: {1}"
 
 #: f2/apps/tiktok/utils.py
 #, python-brace-format
 msgid "获取 {0} 失败"
-msgstr "Get {0} failed"
+msgstr "Failed to get {0}"
 
 #: f2/apps/tiktok/utils.py
 msgid "接口状态码异常，请检查重试"
-msgstr "Interface status code error, please check and retry"
+msgstr "Unexpected API status code, please check and try again"
 
 #: f2/apps/tiktok/utils.py
 #, python-brace-format
 msgid "获取 {0} 失败，{1}"
-msgstr "Get {0} Failed, {1}"
+msgstr "Failed to get {0}, {1}"
 
 #: f2/apps/tiktok/utils.py
 msgid "未能找到所需的设备 ID 信息"
-msgstr "Failed to find the required device ID information"
+msgstr "The required device ID was not found"
 
 #: f2/apps/tiktok/utils.py
 #, python-brace-format
 msgid "{0} 生成失败"
-msgstr "{0} generation failed"
+msgstr "Failed to generate {0}"
 
 #: f2/apps/tiktok/utils.py
 msgid "count 必须是整数"
@@ -3047,11 +3032,11 @@ msgstr "count must be an integer"
 
 #: f2/apps/tiktok/utils.py
 msgid "full_cookie 必须是布尔值"
-msgstr "full_cookie must be boolean"
+msgstr "full_cookie must be a boolean"
 
 #: f2/apps/tiktok/utils.py
 msgid "count 参数必须大于 0"
-msgstr "count parameter must be greater than 0"
+msgstr "count must be greater than 0"
 
 #: f2/apps/tiktok/utils.py
 msgid "生成设备 ID 数量过多，可能会导致请求失败。"
@@ -3063,25 +3048,25 @@ msgstr "Video data is missing, cannot format the file name"
 
 #: f2/apps/twitter/cli.py
 msgid "推文下载器"
-msgstr "Tweets Downloader"
+msgstr "Tweet downloader"
 
 #: f2/apps/twitter/cli.py f2/apps/weibo/cli.py
 msgid "根据模式提供相应的链接"
-msgstr "Provide links according to the model"
+msgstr "Link for the selected mode"
 
 #: f2/apps/twitter/cli.py
 msgid "下载模式：单个推文[one]、用户推文[post]、喜欢推文[like]、用户收藏[bookmark]"
 msgstr ""
-"Download mode: single tweet [one], user tweet [post], like tweet [like], "
-"user collection [bookmark]"
+"Download mode: single tweet [one], user tweets [post], liked tweets "
+"[like], bookmarks [bookmark]"
 
 #: f2/apps/twitter/cli.py
 msgid "全局推文文件命名方式，前往文档查看更多帮助"
-msgstr "Global tweet file naming convention, go to documentation for more help"
+msgstr "File naming template for all tweets; see the documentation for details"
 
 #: f2/apps/twitter/cli.py f2/apps/weibo/cli.py
 msgid "登录后的[yellow]cookie[/yellow]"
-msgstr "[yellow]cookie[/yellow] after login"
+msgstr "[yellow]Cookie[/yellow] of a logged-in account"
 
 #: f2/apps/twitter/cli.py
 msgid "最大推文下载数。0 表示无限制"
@@ -3090,8 +3075,8 @@ msgstr "Maximum number of tweets to download. 0 means unlimited"
 #: f2/apps/twitter/cli.py
 msgid "从接口每页可获取推文数，不建议超过 20"
 msgstr ""
-"The number of tweets that can be fetched from the interface per page is "
-"not recommended to exceed 20"
+"Number of tweets fetched per page from the API; values above 20 are not "
+"recommended"
 
 #: f2/apps/twitter/cli.py
 #, python-brace-format
@@ -3099,43 +3084,41 @@ msgid ""
 "Twitter CLI 缺乏必要参数：[cyan]{0}[/cyan]。详情请查看帮助，[yellow]f2 twitter "
 "-h/--help[/yellow]"
 msgstr ""
-"Twitter CLI is missing a required parameter: [cyan]{0}[/cyan]. Please "
-"check the help for details, [yellow]f2 twitter -h/--help[/yellow]"
+"Twitter CLI is missing required parameters: [cyan]{0}[/cyan]. See the "
+"help for details: [yellow]f2 twitter -h/--help[/yellow]"
 
 #: f2/apps/twitter/crawler.py
 #, python-brace-format
 msgid "推文详情接口地址: {0}"
-msgstr "Tweets details interface address: {0}"
+msgstr "Tweet detail API endpoint: {0}"
 
 #: f2/apps/twitter/crawler.py
 #, python-brace-format
 msgid "用户信息接口地址: {0}"
-msgstr "Address of user information interface: {0}"
+msgstr "User info API endpoint: {0}"
 
 #: f2/apps/twitter/crawler.py
 #, python-brace-format
 msgid "主页推文接口地址: {0}"
-msgstr "Homepage Tweet Interface Address: {0}"
+msgstr "Profile tweets API endpoint: {0}"
 
 #: f2/apps/twitter/crawler.py
 #, python-brace-format
 msgid "喜欢推文接口地址: {0}"
-msgstr "Like tweet interface address: {0}"
+msgstr "Liked tweets API endpoint: {0}"
 
 #: f2/apps/twitter/crawler.py
 #, python-brace-format
 msgid "书签(收藏)推文接口地址: {0}"
-msgstr "Bookmark (favorite) tweet interface address: {0}"
+msgstr "Bookmarked tweets API endpoint: {0}"
 
 #: f2/apps/twitter/dl.py
 msgid "没有找到符合条件的推文，请检查`interval`参数是否正确"
-msgstr ""
-"No matching tweets found, please check if the `interval` parameter is "
-"correct"
+msgstr "No matching tweets found, please check the `interval` parameter"
 
 #: f2/apps/twitter/dl.py
 msgid "跳过下载用户推荐或广告推文"
-msgstr "Skip downloading user recommendations or ad tweets"
+msgstr "Skipping recommended or promoted tweets"
 
 #: f2/apps/twitter/dl.py
 #, python-brace-format
@@ -3145,21 +3128,21 @@ msgstr "{0} : The video link is empty"
 #: f2/apps/twitter/dl.py
 #, python-brace-format
 msgid "{0} : {1} 该推文没有图片链接"
-msgstr "{0} : {1} This tweet does not have an image link"
+msgstr "{0} : {1} This tweet has no image link"
 
 #: f2/apps/twitter/dl.py f2/apps/weibo/dl.py
 msgid "图片"
-msgstr "pictures"
+msgstr "Image"
 
 #: f2/apps/twitter/handler.py
 #, python-brace-format
 msgid "开始爬取推文：{0}"
-msgstr "Start crawling tweets: {0}"
+msgstr "Fetching tweet: {0}"
 
 #: f2/apps/twitter/handler.py
 #, python-brace-format
 msgid "推文ID：{0} 文案：{1} 作者：{2} 阅读量：{3}"
-msgstr "Tweet ID: {0} Desc: {1} Author: {2} Views: {3}"
+msgstr "Tweet ID: {0} Text: {1} Author: {2} Views: {3}"
 
 #: f2/apps/twitter/handler.py
 msgid "[Twitter] 单个推文下载"
@@ -3175,25 +3158,25 @@ msgid ""
 "下载时间：{4}"
 msgstr ""
 "Tweet ID: {0}\n"
-"Desc: {1}\n"
-"Author:{2}\n"
+"Text: {1}\n"
+"Author: {2}\n"
 "Views: {3}\n"
 "Download time: {4}"
 
 #: f2/apps/twitter/handler.py
 #, python-brace-format
 msgid "开始爬取用户：{0} 发布的推文"
-msgstr "Start crawling tweets posted by user:{0}"
+msgstr "Fetching tweets posted by user: {0}"
 
 #: f2/apps/twitter/handler.py
 #, python-brace-format
 msgid "开始爬取第 {0} 页"
-msgstr "Start crawling page {0}"
+msgstr "Fetching page {0}"
 
 #: f2/apps/twitter/handler.py
 #, python-brace-format
 msgid "推文ID：{0} 文案：{1} 作者：{2}"
-msgstr "Tweet ID: {0} Desc: {1} Author: {2}"
+msgstr "Tweet ID: {0} Text: {1} Author: {2}"
 
 #: f2/apps/twitter/handler.py
 msgid "已处理完所有发布的推文"
@@ -3202,11 +3185,11 @@ msgstr "All posted tweets have been processed"
 #: f2/apps/twitter/handler.py
 #, python-brace-format
 msgid "爬取结束，共爬取 {0} 个推文"
-msgstr "Crawl ended, crawled {0} tweets in total"
+msgstr "Finished, {0} tweets fetched in total"
 
 #: f2/apps/twitter/handler.py
 msgid "[Twitter] 主页推文下载"
-msgstr "[Twitter] Home Tweet Download"
+msgstr "[Twitter] Profile Tweets Download"
 
 #: f2/apps/twitter/handler.py
 #, python-brace-format
@@ -3222,12 +3205,12 @@ msgstr ""
 #: f2/apps/twitter/handler.py
 #, python-brace-format
 msgid "开始爬取用户：{0} 喜欢的推文"
-msgstr "Start crawling users: {0} liked tweets"
+msgstr "Fetching tweets liked by user: {0}"
 
 #: f2/apps/twitter/handler.py
 #, python-brace-format
 msgid "推文ID：{0} 推文文案：{1} 作者：{2}"
-msgstr "Tweets ID: {0} Tweets Copy: {1} Author: {2}"
+msgstr "Tweet ID: {0} Text: {1} Author: {2}"
 
 #: f2/apps/twitter/handler.py
 msgid "该用户没有公开喜欢的推文"
@@ -3235,11 +3218,11 @@ msgstr "This user has not publicly liked any tweets"
 
 #: f2/apps/twitter/handler.py
 msgid "已处理完所有喜欢的推文"
-msgstr "All like tweets have been processed"
+msgstr "All liked tweets have been processed"
 
 #: f2/apps/twitter/handler.py
 msgid "[Twitter] 喜欢推文下载"
-msgstr "[Twitter] Like Tweet Download"
+msgstr "[Twitter] Liked Tweets Download"
 
 #: f2/apps/twitter/handler.py
 #, python-brace-format
@@ -3254,19 +3237,19 @@ msgstr ""
 
 #: f2/apps/twitter/handler.py
 msgid "开始爬取收藏的推文"
-msgstr "Start crawling bookmark tweets"
+msgstr "Fetching bookmarked tweets"
 
 #: f2/apps/twitter/handler.py
 msgid "该用户没有收藏的推文"
-msgstr "This user has no bookmark tweets"
+msgstr "This user has no bookmarked tweets"
 
 #: f2/apps/twitter/handler.py
 msgid "已处理完所有收藏的推文"
-msgstr "All bookmark tweets have been processed"
+msgstr "All bookmarked tweets have been processed"
 
 #: f2/apps/twitter/handler.py
 msgid "[Twitter] 收藏推文下载"
-msgstr "[Twitter] Bookmark Tweet Download"
+msgstr "[Twitter] Bookmarked Tweets Download"
 
 #: f2/apps/twitter/handler.py
 #, python-brace-format
@@ -3279,113 +3262,111 @@ msgstr ""
 
 #: f2/apps/twitter/help.py
 msgid "除了单个推文外，其他URL都需要用户主页URL"
-msgstr "All URLs except individual tweets require a user homepage URL"
+msgstr "All modes except single tweets need a user profile URL"
 
 #: f2/apps/twitter/help.py
 msgid "推文保存位置，默认为 'Download'"
-msgstr "Where to save tweets, default is 'Download'"
+msgstr "Where to save tweets, defaults to 'Download'"
 
 #: f2/apps/twitter/help.py
 msgid "是否将推文保存到单独的文件夹，默认为 'yes'"
-msgstr "Whether or not to save tweets to a separate folder, default is 'yes'"
+msgstr "Save each tweet in its own folder, defaults to 'yes'"
 
 #: f2/apps/twitter/help.py
 msgid "下载模式：单个推文(one)、用户推文(post)、喜欢推文(like)、用户收藏(bookmark)"
 msgstr ""
-"Download mode: single tweet (one), user tweet (post), liked tweet (like),"
-" user bookmark (bookmark)"
+"Download mode: single tweet (one), user tweets (post), liked tweets "
+"(like), bookmarks (bookmark)"
 
 #: f2/apps/twitter/help.py
 msgid "全局推文文件命名方式"
-msgstr "Global tweet file naming style"
+msgstr "File naming template for all tweets"
 
 #: f2/apps/twitter/help.py f2/apps/weibo/help.py
 msgid "登录后的cookie"
-msgstr "Cookies after login"
+msgstr "Cookie of a logged-in account"
 
 #: f2/apps/twitter/help.py f2/apps/weibo/help.py
 msgid "网络请求超时时间，默认为 10"
-msgstr "Network request timeout, default is 10"
+msgstr "Network request timeout, defaults to 10"
 
 #: f2/apps/twitter/help.py f2/apps/weibo/help.py
 msgid "网络请求超时重试数，默认为 5"
-msgstr "Network request timeout retry number, default is 5"
+msgstr "Number of retries after a network request times out, defaults to 5"
 
 #: f2/apps/twitter/help.py f2/apps/weibo/help.py
 msgid "网络请求并发连接数，默认为 5"
-msgstr "The number of concurrent connections for network requests, default is 5"
+msgstr "Number of concurrent network connections, defaults to 5"
 
 #: f2/apps/twitter/help.py f2/apps/weibo/help.py
 msgid "异步的任务数，默认为 10"
-msgstr "Number of asynchronous tasks, default 10"
+msgstr "Number of asynchronous tasks, defaults to 10"
 
 #: f2/apps/twitter/help.py
 msgid "最大推文下载数 默认为 0，表示无限制"
-msgstr "Maximum number of tweets to download Defaults to 0 for unlimited"
+msgstr "Maximum number of tweets to download, defaults to 0 (unlimited)"
 
 #: f2/apps/twitter/help.py
 msgid "每页推文数，默认为 20个推文/页"
-msgstr "Tweets per page, default 20 tweets/page"
+msgstr "Tweets per page, defaults to 20"
 
 #: f2/apps/twitter/help.py f2/apps/weibo/help.py
 msgid "使用命令行选项更新配置文件"
-msgstr "Use the command line option to update the configuration file"
+msgstr "Update the configuration file with the command line options"
 
 #: f2/apps/twitter/help.py f2/apps/weibo/help.py
 msgid "初始化配置文件"
-msgstr "Initialising the configuration file"
+msgstr "Initialize the configuration file"
 
 #: f2/apps/twitter/utils.py
 #, python-brace-format
 msgid "未在响应的地址中找到unique_id，检查链接是否为用户链接。类名：{0}"
 msgstr ""
-"unique_id not found in the address of the response, check if the link is "
-"a user link. Class Name: {0}"
+"unique_id was not found in the response URL; check that the link is a "
+"user link. Class name: {0}"
 
 #: f2/apps/twitter/utils.py
 #, python-brace-format
 msgid "未在响应的地址中找到tweet_id，检查链接是否为推文链接。类名：{0}"
 msgstr ""
-"Did not find tweet_id in the address of the response, check if the link "
-"is a tweet link. Class name: {0}"
+"tweet_id was not found in the response URL; check that the link is a "
+"tweet link. Class name: {0}"
 
 #: f2/apps/twitter/utils.py
 #, python-brace-format
 msgid "未找到推文，请检查推文链接是否正确。类名：{0}"
-msgstr ""
-"Tweets not found, please check if the tweet link is correct. Class name: "
-"{0}"
+msgstr "Tweet not found, please check the tweet link. Class name: {0}"
 
 #: f2/apps/twitter/utils.py f2/apps/weibo/utils.py
 #, python-brace-format
 msgid "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
 msgstr ""
-"Request for endpoint failed, please check current network environment. "
-"Link: {0}, Agent: {1}, Exception Class Name: {2}, Exception Details: {3}"
+"Request to the endpoint failed, please check your network. Link: {0}, "
+"proxy: {1}, exception class: {2}, details: {3}"
 
 #: f2/apps/weibo/cli.py
 msgid "微博下载器"
-msgstr "Weibo Downloader"
+msgstr "Weibo downloader"
 
 #: f2/apps/weibo/cli.py f2/apps/weibo/help.py
 msgid "下载模式：单个微博(one)，主页微博(post)"
-msgstr "Download mode: single microblog (one), home microblog (post)"
+msgstr "Download mode: single Weibo post (one), profile Weibo posts (post)"
 
 #: f2/apps/weibo/cli.py
 msgid "全局微博文件命名方式，前往文档查看更多帮助"
 msgstr ""
-"Global microblogging file naming convention, go to the documentation for "
-"more help"
+"File naming template for all Weibo posts; see the documentation for "
+"details"
 
 #: f2/apps/weibo/cli.py f2/apps/weibo/help.py
 msgid "下载日期区间内发布的微博，格式：YYYY-MM-DD|YYYY-MM-DD，'all' 为下载所有微博"
 msgstr ""
-"Download weibos published within the date range, format: YYYY-MM-DD|YYYY-"
-"MM-DD, 'all' downloads all weibos"
+"Download Weibo posts published in a date range, format: YYYY-MM-DD|YYYY-"
+"MM-DD; 'all' downloads all Weibo posts"
 
 #: f2/apps/weibo/cli.py
 msgid "最大微博下载数。0 表示无限制"
-msgstr "Maximum number of microblog downloads. 0 means unlimited"
+msgstr "Maximum number of Weibo posts to download. 0 means unlimited"
 
 #: f2/apps/weibo/cli.py f2/apps/weibo/help.py
 msgid "微博接口每页固定返回约 20 条微博，此参数不生效"
@@ -3399,56 +3380,54 @@ msgid ""
 "WeiBo CLI 缺乏必要参数：[cyan]{0}[/cyan]。详情请查看帮助，[yellow]f2 weibo "
 "-h/--help[/yellow]"
 msgstr ""
-"The WeiBo CLI lacks the required parameters: [cyan]{0}[/cyan]. For more "
-"information, please refer to Help,[yellow]f2 weibo -h/--help[/yellow]"
+"WeiBo CLI is missing required parameters: [cyan]{0}[/cyan]. See the help "
+"for details: [yellow]f2 weibo -h/--help[/yellow]"
 
 #: f2/apps/weibo/crawler.py
 msgid "用户信息接口地址:"
-msgstr "User information interface address:"
+msgstr "User info API endpoint:"
 
 #: f2/apps/weibo/crawler.py
 msgid "用户详情接口地址:"
-msgstr "User details interface address:"
+msgstr "User detail API endpoint:"
 
 #: f2/apps/weibo/crawler.py
 msgid "用户微博接口地址:"
-msgstr "User Twitter interface address:"
+msgstr "User Weibo posts API endpoint:"
 
 #: f2/apps/weibo/crawler.py
 msgid "单条微博接口地址:"
-msgstr "Single tweet interface address:"
+msgstr "Single Weibo post API endpoint:"
 
 #: f2/apps/weibo/dl.py
 #, python-brace-format
 msgid "微博：{0} 无查看权限"
-msgstr "Weibo: {0} No viewing permissions"
+msgstr "No permission to view Weibo post: {0}"
 
 #: f2/apps/weibo/dl.py
 #, python-brace-format
 msgid "开始下载微博：{0}"
-msgstr "Start downloading Weibo: {0}"
+msgstr "Downloading Weibo post: {0}"
 
 #: f2/apps/weibo/dl.py
 #, python-brace-format
 msgid "{0} 该微博无法下载，视频走丢了"
-msgstr "{0} This Weibo cannot be downloaded and the video is lost"
+msgstr "{0} This Weibo post cannot be downloaded: the video is missing"
 
 #: f2/apps/weibo/dl.py
 #, python-brace-format
 msgid "清晰度列表：{0}，码率列表：{1}"
-msgstr "Clarity List: {0}, Bitrate List: {1}"
+msgstr "Quality list: {0}, bitrate list: {1}"
 
 #: f2/apps/weibo/dl.py
 #, python-brace-format
 msgid "{0} 该微博无法下载，需要在微博客户端查看"
-msgstr ""
-"{0} This Weibo cannot be downloaded and needs to be viewed on the Weibo "
-"APP"
+msgstr "{0} This Weibo post cannot be downloaded; view it in the Weibo app"
 
 #: f2/apps/weibo/dl.py
 #, python-brace-format
 msgid "{0} 该微博没有图片链接，无法下载"
-msgstr "{0} This tweet does not have a link to an image and cannot be downloaded"
+msgstr "{0} This Weibo post has no image link and cannot be downloaded"
 
 #: f2/apps/weibo/handler.py
 msgid "`uid`不能为空"
@@ -3457,13 +3436,13 @@ msgstr "`uid` cannot be empty"
 #: f2/apps/weibo/handler.py
 msgid "`fetch_user_info`请求失败，请更换cookie或稍后再试"
 msgstr ""
-"The `fetch_user_info` request failed, please replace the cookie or try "
-"again later"
+"`fetch_user_info` request failed, please replace the cookie or try again "
+"later"
 
 #: f2/apps/weibo/handler.py
 #, python-brace-format
 msgid "用户昵称: [yellow]{0}[/yellow]  微博数: {1}"
-msgstr "User nickname: [yellow]{0}[/yellow]  Number of Weibo posts: {1}"
+msgstr "Nickname: [yellow]{0}[/yellow]  Weibo posts: {1}"
 
 #: f2/apps/weibo/handler.py
 msgid "`screen_name`不能为空"
@@ -3472,23 +3451,23 @@ msgstr "`screen_name` cannot be empty"
 #: f2/apps/weibo/handler.py
 msgid "`fetch_user_info_by_screen_name`请求失败，请更换cookie或稍后再试"
 msgstr ""
-"The 'fetch_user_info_by_screen_name' request failed, please change the "
+"`fetch_user_info_by_screen_name` request failed, please replace the "
 "cookie or try again later"
 
 #: f2/apps/weibo/handler.py
 msgid "`fetch_user_detail`请求失败，请更换cookie或稍后再试"
 msgstr ""
-"The `fetch_user_detail` request failed, please replace the cookie or try "
+"`fetch_user_detail` request failed, please replace the cookie or try "
 "again later"
 
 #: f2/apps/weibo/handler.py
 msgid "链接错误，请检查链接是否正确"
-msgstr "Link error, please check if the link is correct"
+msgstr "Invalid link, please check it"
 
 #: f2/apps/weibo/handler.py
 #, python-brace-format
 msgid "微博 {0} 无查看权限，请配置Cookie"
-msgstr "Weibo {0} No view permission, please configure cookies"
+msgstr "No permission to view Weibo post {0}, please configure a cookie"
 
 #: f2/apps/weibo/handler.py
 msgid "`weibo_id`不能为空"
@@ -3497,11 +3476,11 @@ msgstr "`weibo_id` cannot be empty"
 #: f2/apps/weibo/handler.py
 #, python-brace-format
 msgid "开始爬取微博: {0}"
-msgstr "Start crawling weibos: {0}"
+msgstr "Fetching Weibo post: {0}"
 
 #: f2/apps/weibo/handler.py
 msgid "[Weibo] 单一微博下载"
-msgstr "[Weibo] Single Weibo Download"
+msgstr "[Weibo] Single Weibo Post Download"
 
 #: f2/apps/weibo/handler.py
 #, python-brace-format
@@ -3511,35 +3490,33 @@ msgid ""
 "文案：{2}\n"
 "下载时间：{3}\n"
 msgstr ""
-"Weibo ID: {0}\n"
+"Weibo post ID: {0}\n"
 "Author: {1}\n"
-"Desc: {2}\n"
+"Text: {2}\n"
 "Download time: {3}\n"
 
 #: f2/apps/weibo/handler.py
 #, python-brace-format
 msgid "处理用户：{0} 发布的微博"
-msgstr "Handle users: {0} Weibo posts"
+msgstr "Processing Weibo posts by user: {0}"
 
 #: f2/apps/weibo/handler.py
 #, python-brace-format
 msgid "本页 {0} 条微博中有 {1} 条在日期区间内"
-msgstr "{1} of {0} weibos on this page are within the date range"
+msgstr "{1} of the {0} Weibo posts on this page are within the date range"
 
 #: f2/apps/weibo/handler.py
 msgid "已获取到日期区间开始之前的微博，停止翻页"
-msgstr ""
-"Reached weibos published before the start of the date range, stopped "
-"paging"
+msgstr "Reached Weibo posts published before the date range, stopping"
 
 #: f2/apps/weibo/handler.py
 #, python-brace-format
 msgid "已爬取完所有微博，共处理 {0} 个微博"
-msgstr "All Weibo posts have been crawled, a total of {0} posts processed"
+msgstr "All Weibo posts have been fetched, {0} posts processed in total"
 
 #: f2/apps/weibo/handler.py
 msgid "[Weibo] 用户微博下载"
-msgstr "[Weibo] User Weibo Download"
+msgstr "[Weibo] User Weibo Posts Download"
 
 #: f2/apps/weibo/handler.py
 #, python-brace-format
@@ -3554,35 +3531,35 @@ msgstr ""
 
 #: f2/apps/weibo/help.py
 msgid "除了单个微博外，其他URL都需要用户主页URL"
-msgstr "All URLs except individual weibo require a user homepage URL"
+msgstr "All modes except single Weibo posts need a user profile URL"
 
 #: f2/apps/weibo/help.py
 msgid "微博保存位置，默认为 'Download'"
-msgstr "Weibo save location, default is 'Download'"
+msgstr "Where to save Weibo posts, defaults to 'Download'"
 
 #: f2/apps/weibo/help.py
 msgid "是否将微博保存到单独的文件夹，默认为 'yes'"
-msgstr "Whether to save tweets to a separate folder, default is 'yes'"
+msgstr "Save each Weibo post in its own folder, defaults to 'yes'"
 
 #: f2/apps/weibo/help.py
 msgid "全局微博文件命名方式"
-msgstr "Global weibo file naming convention"
+msgstr "File naming template for all Weibo posts"
 
 #: f2/apps/weibo/help.py
 msgid "最大微博下载数 默认为 0，表示无限制"
-msgstr "Maximum number of weibo downloads Default is 0, which means unlimited"
+msgstr "Maximum number of Weibo posts to download, defaults to 0 (unlimited)"
 
 #: f2/apps/weibo/utils.py
 #, python-brace-format
 msgid "参数验证失败，请更新 F2 配置文件中的 {0}，以匹配 {1} 新规则"
 msgstr ""
-"Parameter validation failed, update {0} in the F2 configuration file to "
-"match {1} new rule"
+"Parameter validation failed, please update {0} in the F2 configuration "
+"file to match the new {1} rules"
 
 #: f2/apps/weibo/utils.py
 #, python-brace-format
 msgid "{0} 无法找到API端点"
-msgstr "{0} Unable to find API endpoint"
+msgstr "{0} API endpoint not found"
 
 #: f2/apps/weibo/utils.py
 #, python-brace-format
@@ -3591,46 +3568,46 @@ msgstr "Link: {0}, status code {1}: {2} "
 
 #: f2/apps/weibo/utils.py
 msgid "微博链接不能为空"
-msgstr "Weibo link can't be empty"
+msgstr "The Weibo link cannot be empty"
 
 #: f2/apps/weibo/utils.py
 #, python-brace-format
 msgid "未在响应的地址中找到weibo_id，检查链接是否为微博链接。类名：{0}"
 msgstr ""
-"Did not find a weibo_id in the address of the response, check if the link"
-" is a microblog link. Class name: {0}"
+"weibo_id was not found in the response URL; check that the link is a "
+"Weibo post link. Class name: {0}"
 
 #: f2/apps/weibo/utils.py
 msgid "微博主页链接不能为空"
-msgstr "Weibo homepage link can't be empty"
+msgstr "The Weibo profile link cannot be empty"
 
 #: f2/apps/weibo/utils.py
 #, python-brace-format
 msgid "未在响应的地址中找到weibo_uid，检查链接是否为微博主页链接。类名：{0}"
 msgstr ""
-"Did not find a weibo_uid in the response address, check if the link is a "
-"link to the microblogging homepage. Class name: {0}"
+"weibo_uid was not found in the response URL; check that the link is a "
+"Weibo profile link. Class name: {0}"
 
 #: f2/apps/weibo/utils.py
 msgid "微博链接列表不能为空"
-msgstr "Weibo link list cannot be empty"
+msgstr "The Weibo link list cannot be empty"
 
 #: f2/apps/weibo/utils.py
 #, python-brace-format
 msgid "未在响应的地址中找到screen_name，检查链接是否为微博昵称链接。类名：{0}"
 msgstr ""
-"Screen_name was not found in the response address. Check whether the link"
-" is a Weibo nickname link. Class name: {0}"
+"screen_name was not found in the response URL; check that the link is a "
+"Weibo nickname link. Class name: {0}"
 
 #: f2/apps/weibo/utils.py
 #, python-brace-format
 msgid "无法解析微博 {0} 的发布时间：{1}，已跳过"
-msgstr "Unable to parse the publish time of weibo {0}: {1}, skipped"
+msgstr "Unable to parse the publish time of Weibo post {0}: {1}, skipped"
 
 #: f2/cli/cli_commands.py
 #, python-brace-format
 msgid "调试模式：{0}"
-msgstr "Debug Mode: {0}"
+msgstr "Debug mode: {0}"
 
 #: f2/cli/cli_commands.py
 #, python-brace-format
@@ -3639,14 +3616,12 @@ msgstr "Run aborted: {0}"
 
 #: f2/cli/cli_commands.py
 msgid "请前往QA文档 https://f2.wiki/faq 查看相关帮助"
-msgstr ""
-"See https://f2.wiki/faq for helpPlease go to the QA documentation "
-"https://f2.wiki/faq to view related help"
+msgstr "See the FAQ at https://f2.wiki/faq for help"
 
 #: f2/cli/cli_commands.py
 #, python-brace-format
 msgid "没有找到 {0} 应用"
-msgstr "No {0} applications found"
+msgstr "App {0} not found"
 
 #: f2/cli/cli_commands.py
 #, python-brace-format
@@ -3656,12 +3631,12 @@ msgstr "App: {0}"
 #: f2/cli/cli_commands.py
 msgid "显示语言。默认为 'zh_CN'，可选：'zh_CN'、'en_US'，不支持配置文件修改"
 msgstr ""
-"Display language. Default is 'zh_CN', optional: 'zh_CN', 'en_US', does "
-"not support configuration file modification"
+"Display language. Defaults to 'zh_CN'; options: 'zh_CN', 'en_US'. Cannot "
+"be set in the configuration file"
 
 #: f2/cli/cli_commands.py
 msgid "检查F2版本"
-msgstr "Check F2 version"
+msgstr "Check the F2 version"
 
 #: f2/cli/cli_commands.py
 #, python-brace-format
@@ -3680,7 +3655,7 @@ msgstr "and {0} more file(s)"
 
 #: f2/cli/wizard_command.py f2/conf/config_wizard.py
 msgid "输出配置文件路径"
-msgstr "Output config file path"
+msgstr "Output configuration file path"
 
 #: f2/cli/wizard_command.py
 msgid "指定要配置的应用（可选）"
@@ -3694,7 +3669,7 @@ msgstr ""
 
 #: f2/crawlers/base_crawler.py
 msgid "无效的Json响应"
-msgstr "Invalid Json response"
+msgstr "Invalid JSON response"
 
 #: f2/crawlers/base_crawler.py
 #, python-brace-format
@@ -3704,36 +3679,36 @@ msgstr "Failed to get data. Status code: {0}"
 #: f2/crawlers/base_crawler.py
 #, python-brace-format
 msgid "解析 {0} 接口 JSON 失败：{1}"
-msgstr "Parsing {0} interface JSON failed: {1}"
+msgstr "Failed to parse the JSON of API {0}: {1}"
 
 #: f2/crawlers/base_crawler.py
 #, python-brace-format
 msgid "接口 {0} JSON 解码错误：{1}"
-msgstr "Interface {0} JSON decoding error: {1}"
+msgstr "JSON decode error in API {0}: {1}"
 
 #: f2/crawlers/base_crawler.py
 #, python-brace-format
 msgid "第 {0} 次请求响应内容为空, 状态码: {1}, URL:{2}"
-msgstr "The {0} request response is empty, status code: {1}, URL: {2}"
+msgstr "Empty response on request {0}, status code: {1}, URL: {2}"
 
 #: f2/crawlers/base_crawler.py
 #, python-brace-format
 msgid "获取端点数据失败，重试次数达到上限。代理：{0}，异常类名：{1}"
 msgstr ""
-"Failed to get endpoint data, and the maximum number of retries was "
-"reached. Agent: {0}, Exception Class Name: {1}"
+"Failed to get endpoint data after the maximum number of retries. Proxy: "
+"{0}, exception class: {1}"
 
 #: f2/crawlers/base_crawler.py
 #, python-brace-format
 msgid "响应状态码: {0}"
-msgstr "Status code: {0}"
+msgstr "Response status code: {0}"
 
 #: f2/crawlers/base_crawler.py
 #, python-brace-format
 msgid "连接端点失败，检查网络环境或代理：{0} 代理：{1} 类名：{2} 异常详细信息：{3}"
 msgstr ""
-"Failed to connect to endpoint, check network environment or proxy: {0} "
-"proxy: {1} class name: {2} exception details: {3}"
+"Failed to connect to the endpoint, please check your network or proxy: "
+"{0} proxy: {1} class name: {2} details: {3}"
 
 #: f2/crawlers/base_crawler.py
 msgid "无法获取GET数据，请检查网络连接和参数"
@@ -3754,12 +3729,12 @@ msgstr ""
 #: f2/crawlers/base_crawler.py
 #, python-brace-format
 msgid "HTTP状态错误：{0}, URL：{1}, 尝试次数：{2}"
-msgstr "HTTP Status Error: {0}, URL: {1}, Attempts: {2}"
+msgstr "HTTP status error: {0}, URL: {1}, attempts: {2}"
 
 #: f2/crawlers/base_crawler.py
 #, python-brace-format
 msgid "处理HTTP错误时遇到意外情况：{0}"
-msgstr "Unexpected conditions encountered while handling HTTP errors: {0}"
+msgstr "Unexpected error while handling an HTTP error: {0}"
 
 #: f2/crawlers/base_crawler.py
 #, python-brace-format
@@ -3784,7 +3759,7 @@ msgstr "Unknown HTTP status code error: {0}"
 #: f2/crawlers/websocket_crawler.py
 #, python-brace-format
 msgid "[ConnectWebsocket] [🌐 已连接 WebSocket] | [服务器：{0}]"
-msgstr "[ConnectWebsocket] [🌐 Connected WebSocket] | [Server: {0}]"
+msgstr "[ConnectWebsocket] [🌐 WebSocket connected] | [Server: {0}]"
 
 #: f2/crawlers/websocket_crawler.py
 #, python-brace-format
@@ -3798,12 +3773,12 @@ msgstr "[ConnectWebSocket] [⚠️ Invalid status code] | [Status code: {0}]"
 
 #: f2/crawlers/websocket_crawler.py
 msgid "[ReceiveMessages] [📩 开始接收消息]"
-msgstr "[ReceiveMessages] [📩Start receiving messages]"
+msgstr "[ReceiveMessages] [📩 Receiving messages]"
 
 #: f2/crawlers/websocket_crawler.py
 #, python-brace-format
 msgid "[ReceiveMessages] [⏱ 消息等待超时：{0} 秒]"
-msgstr "[ReceiveMessages] [⏱Message wait timeout: {0} seconds]"
+msgstr "[ReceiveMessages] [⏱ Message wait timeout: {0} seconds]"
 
 #: f2/crawlers/websocket_crawler.py
 msgid "[ReceiveMessages] [❌ WebSocket未连接]"
@@ -3812,12 +3787,12 @@ msgstr "[ReceiveMessages] [❌ WebSocket not connected]"
 #: f2/crawlers/websocket_crawler.py
 #, python-brace-format
 msgid "[ReceiveMessages] | [⏳ 接收消息 {0}]"
-msgstr "[ReceiveMessages] | [⏳ Receive messages {0}]"
+msgstr "[ReceiveMessages] | [⏳ Message received {0}]"
 
 #: f2/crawlers/websocket_crawler.py
 #, python-brace-format
 msgid "[ReceiveMessages] [⚠️ 超时] | [超时次数：{0} / 3]"
-msgstr "[ReceiveMessages] [⚠️ Timeout] | [Number of timeouts: {0} / 3]"
+msgstr "[ReceiveMessages] [⚠️ Timeout] | [Timeouts: {0} / 3]"
 
 #: f2/crawlers/websocket_crawler.py
 #, python-brace-format
@@ -3828,9 +3803,7 @@ msgstr ""
 
 #: f2/crawlers/websocket_crawler.py
 msgid "[ReceiveMessages] [🔒 远程服务器关闭] | [WebSocket 连接结束]"
-msgstr ""
-"[ReceiveMessages] [🔒 Remote server shut down] | [WebSocket connection "
-"ended]"
+msgstr "[ReceiveMessages] [🔒 Remote server closed] | [WebSocket connection ended]"
 
 #: f2/crawlers/websocket_crawler.py
 #, python-brace-format
@@ -3845,7 +3818,7 @@ msgstr "[ReceiveMessages] [✔️ Closed by crawler] | [Reason: {0}]"
 #: f2/crawlers/websocket_crawler.py
 msgid "[ReceiveMessages] [✔️ 正常关闭] | [WebSocket 连接正常关闭]"
 msgstr ""
-"[ReceiveMessages] [✔️ Close normally] | [WebSocket connection close "
+"[ReceiveMessages] [✔️ Closed normally] | [WebSocket connection closed "
 "normally]"
 
 #: f2/crawlers/websocket_crawler.py
@@ -3855,7 +3828,7 @@ msgstr "[ReceiveMessages] [⚠️ Message processing error] | [Error: {0}]"
 
 #: f2/crawlers/websocket_crawler.py
 msgid "[CloseWebSocket] [🔒 WebSocket 已关闭]"
-msgstr "[CloseWebSocket] [🔒 WebSocket is closed]"
+msgstr "[CloseWebSocket] [🔒 WebSocket closed]"
 
 #: f2/crawlers/websocket_crawler.py
 #, python-brace-format
@@ -3870,11 +3843,11 @@ msgstr "[OnError] [⚠️ Error] | [Content: {0}]"
 #: f2/crawlers/websocket_crawler.py
 #, python-brace-format
 msgid "[OnClose] [🔒 连接关闭] | [关闭原因：{0}]"
-msgstr "[OnClose] [🔒 Connection closed] | [Close reason: {0}]"
+msgstr "[OnClose] [🔒 Connection closed] | [Reason: {0}]"
 
 #: f2/crawlers/websocket_crawler.py
 msgid "[OnOpen] [🌐 连接已打开] | [WebSocket 连接成功]"
-msgstr "[OnOpen] [🌐 Connection Opened] | [WebSocket Connection Successful]"
+msgstr "[OnOpen] [🌐 Connection opened] | [WebSocket connected]"
 
 #: f2/db/base_db.py
 #, python-brace-format
@@ -3928,32 +3901,32 @@ msgstr "[red][  Failed  ]: [/red]"
 #: f2/dl/base_downloader.py
 #, python-brace-format
 msgid "文件区块超时：{0}"
-msgstr "File block timeout: {0}"
+msgstr "File chunk timed out: {0}"
 
 #: f2/dl/base_downloader.py
 #, python-brace-format
 msgid "文件区块网络错误：{0}"
-msgstr "File block network error: {0}"
+msgstr "File chunk network error: {0}"
 
 #: f2/dl/base_downloader.py
 #, python-brace-format
 msgid "文件区块HTTP错误：{0}"
-msgstr "File block HTTP error: {0}"
+msgstr "File chunk HTTP error: {0}"
 
 #: f2/dl/base_downloader.py
 #, python-brace-format
 msgid "文件区块代理错误：{0}"
-msgstr "File block proxy error: {0}"
+msgstr "File chunk proxy error: {0}"
 
 #: f2/dl/base_downloader.py
 #, python-brace-format
 msgid "文件区块协议错误：{0}"
-msgstr "File block protocol error: {0}"
+msgstr "File chunk protocol error: {0}"
 
 #: f2/dl/base_downloader.py
 #, python-brace-format
 msgid "文件区块流错误：{0}"
-msgstr "File block stream error: {0}"
+msgstr "File chunk stream error: {0}"
 
 #: f2/dl/base_downloader.py
 #, python-brace-format
@@ -3963,7 +3936,7 @@ msgstr "File chunk violates the HTTP protocol: {0}"
 #: f2/dl/base_downloader.py
 #, python-brace-format
 msgid "文件区块下载失败：{0} Exception：{1}"
-msgstr "File block download failed: {0} Exception: {1}"
+msgstr "File chunk download failed: {0} Exception: {1}"
 
 #: f2/dl/base_downloader.py
 #, python-brace-format
@@ -3996,7 +3969,9 @@ msgstr "[yellow][  Interrupted  ]: [/yellow]"
 #: f2/dl/base_downloader.py
 #, python-brace-format
 msgid "下载超时，{0} 秒后从 {1} 字节继续重试 ({2}/{3}): {4}"
-msgstr "Download timed out, resuming from byte {1} in {0} s (retry {2}/{3}): {4}"
+msgstr ""
+"Download timed out, resuming from byte {1} in {0} seconds (retry "
+"{2}/{3}): {4}"
 
 #: f2/dl/base_downloader.py
 msgid "下载超时重试次数已达上限"
@@ -4056,7 +4031,7 @@ msgstr "File already exists and is complete, skipping download: {0}"
 
 #: f2/dl/base_downloader.py f2/dl/m3u8.py
 msgid "[green][  完成  ]：[/green]"
-msgstr "[green][  Complete  ]: [/green]"
+msgstr "[green][  Done  ]: [/green]"
 
 #: f2/dl/base_downloader.py
 msgid "[green][  恢复  ]：从临时文件恢复完整文件[/green]"
@@ -4080,7 +4055,7 @@ msgstr "[yellow][  Retry  ]: [/yellow]"
 #: f2/dl/base_downloader.py f2/dl/m3u8.py
 #, python-brace-format
 msgid "[green][  完成  ]：{0}[/green]"
-msgstr "[green][  Complete  ]: {0}[/green]"
+msgstr "[green][  Done  ]: {0}[/green]"
 
 #: f2/dl/base_downloader.py
 msgid "文件完整性验证失败，尝试下一个链接"
@@ -4106,7 +4081,7 @@ msgstr "None of the links could be downloaded"
 
 #: f2/dl/base_downloader.py
 msgid "[red][  丢失  ]：[/red]"
-msgstr "[red][  Lost  ]: [/red]"
+msgstr "[red][  Missing  ]: [/red]"
 
 #: f2/dl/base_downloader.py
 #, python-brace-format
@@ -4116,11 +4091,11 @@ msgstr "File saved to: {0}"
 #: f2/dl/base_downloader.py
 #, python-brace-format
 msgid "[cyan][  跳过  ]: {0}[/cyan]"
-msgstr "[cyan][  Skip  ]: {0}[/cyan]"
+msgstr "[cyan][  Skipped  ]: {0}[/cyan]"
 
 #: f2/dl/base_downloader.py
 msgid "[cyan][  跳过  ]:[/cyan]"
-msgstr "[cyan][  Skip  ]:[/cyan]"
+msgstr "[cyan][  Skipped  ]:[/cyan]"
 
 #: f2/dl/base_downloader.py
 #, python-brace-format
@@ -4130,11 +4105,11 @@ msgstr "[  {0}  ]:"
 #: f2/dl/base_downloader.py
 #, python-brace-format
 msgid "开始执行下载任务，本次共有 {0} 个任务"
-msgstr "Started the download task, there are {0} tasks this time"
+msgstr "Starting downloads, {0} tasks in total"
 
 #: f2/dl/m3u8.py
 msgid "m3u8片段为空，直播流已结束"
-msgstr "The m3u8 segment list is empty, the live stream has ended"
+msgstr "The m3u8 segment list is empty, the livestream has ended"
 
 #: f2/dl/m3u8.py
 msgid "正在验证直播状态..."
@@ -4153,8 +4128,8 @@ msgstr "Error while verifying the live status: {0}"
 #: f2/dl/m3u8.py
 msgid "无法读取该TS文件字节长度，将使用默认400kb块大小处理数据"
 msgstr ""
-"Unable to read this TS file byte length, will use default 400kb block "
-"size to process data"
+"Unable to read the size of this TS file, using the default 400 KB chunk "
+"size"
 
 #: f2/dl/m3u8.py
 msgid "下载超时：跳过该 TS 文件片段"
@@ -4164,8 +4139,8 @@ msgstr "Download timed out: skipping this TS segment"
 #, python-brace-format
 msgid "服务器返回的块大小未严格遵守 HTTP 规范，跳过该片段。错误信息：{0}"
 msgstr ""
-"The chunk size returned by the server does not strictly adhere to the "
-"HTTP specification, skipping this fragment. Error message: {0}"
+"The chunk size returned by the server does not follow the HTTP "
+"specification, skipping this segment. Error: {0}"
 
 #: f2/dl/m3u8.py
 #, python-brace-format
@@ -4179,16 +4154,16 @@ msgstr "HTTP error detected (status code: {0}), verifying the live status..."
 
 #: f2/dl/m3u8.py
 msgid "m3u8文件或ts文件未找到（404），当前直播已结束"
-msgstr "m3u8 or ts file not found (404), the live stream has ended"
+msgstr "m3u8 or ts file not found (404), the livestream has ended"
 
 #: f2/dl/m3u8.py
 msgid "[red]网关超时（504），无法下载直播流[/red]"
-msgstr "[red]Gateway timeout (504), cannot download the live stream[/red]"
+msgstr "[red]Gateway timeout (504), cannot download the livestream[/red]"
 
 #: f2/dl/m3u8.py
 #, python-brace-format
 msgid "[yellow]服务器错误（{0}），直播可能已结束[/yellow]"
-msgstr "[yellow]Server error ({0}), the live stream may have ended[/yellow]"
+msgstr "[yellow]Server error ({0}), the livestream may have ended[/yellow]"
 
 #: f2/dl/m3u8.py
 #, python-brace-format
@@ -4197,12 +4172,12 @@ msgstr "HTTP error: {0}"
 
 #: f2/dl/m3u8.py
 msgid "[red]m3u8文件下载失败，但文件已保存[/red]"
-msgstr "[red]The m3u8 file download failed, but the file has been saved[/red]"
+msgstr "[red]The m3u8 download failed, but the file has been saved[/red]"
 
 #: f2/dl/m3u8.py
 #, python-brace-format
 msgid "直播流文件已保存到：{0}"
-msgstr "Live stream file saved to: {0}"
+msgstr "Livestream file saved to: {0}"
 
 #: f2/dl/m3u8.py
 #, python-brace-format
@@ -4219,22 +4194,22 @@ msgstr ""
 #, python-brace-format
 msgid "请检查配置文件格式是否正确: {key} 不能为空，使用默认配置"
 msgstr ""
-"Please check that the config file format is correct: {key} cannot be "
-"empty, using the default configuration"
+"Please check the configuration file format: {key} cannot be empty, using "
+"the default configuration"
 
 #: f2/exceptions/conf_exceptions.py
 msgid "请检查配置文件格式是否正确，使用默认配置"
 msgstr ""
-"Please check whether the config file format is correct, using the default"
-" config"
+"Please check the configuration file format, using the default "
+"configuration"
 
 #: f2/exceptions/conf_exceptions.py
 msgid "请检查配置文件路径是否正确"
-msgstr "Please check that the config file path is correct"
+msgstr "Please check the configuration file path"
 
 #: f2/utils/version.py
 msgid "取消检查更新"
-msgstr "Unchecked update"
+msgstr "Update check cancelled"
 
 #: f2/utils/version.py
 #, python-brace-format
@@ -4245,17 +4220,16 @@ msgstr "Unable to compare versions: {0} and {1}"
 #, python-brace-format
 msgid "您当前使用的版本 {0} 可能已过时，请考虑及时升级到最新版本 {1}，使用 pip install -U f2 更新"
 msgstr ""
-"The version {0} you are currently using may be out of date. Please "
-"consider upgrading to the latest version {1} in time and use pip install "
-"-U f2 to update"
+"The version you are using ({0}) may be outdated. Consider upgrading to "
+"the latest version {1} with pip install -U f2"
 
 #: f2/utils/version.py
 msgid "F2 低版本警告"
-msgstr "F2 low version warning"
+msgstr "F2 is out of date"
 
 #: f2/utils/version.py
 msgid "请及时更新"
-msgstr "Please update promptly"
+msgstr "Please update"
 
 #: f2/utils/version.py
 #, python-brace-format
@@ -4264,7 +4238,7 @@ msgstr "You are currently using the latest version: {0}"
 
 #: f2/utils/version.py
 msgid "F2 版本检查"
-msgstr "F2 Version Check"
+msgstr "F2 version check"
 
 #: f2/utils/version.py
 msgid "无法获取最新版本信息"
@@ -4272,12 +4246,12 @@ msgstr "Unable to get the latest version information"
 
 #: f2/utils/version.py
 msgid "F2 版本检查网络超时"
-msgstr "F2 version checks for network timeout"
+msgstr "F2 version check timed out"
 
 #: f2/utils/version.py
 #, python-brace-format
 msgid "当前 Python 版本：{0} 不满足最低要求：{1}"
-msgstr "Current Python version: {0} Not meeting minimum requirements: {1}"
+msgstr "Current Python version {0} does not meet the minimum requirement: {1}"
 
 #: f2/utils/version.py
 msgid "[bold red]Python 版本错误[/bold red]"
@@ -4298,61 +4272,61 @@ msgstr "Configuration file does not exist"
 
 #: f2/utils/config/conf_manager.py
 msgid "配置文件路径无读权限"
-msgstr "Configuration file path has no read permission"
+msgstr "No read permission for the configuration file path"
 
 #: f2/utils/config/conf_manager.py
 #, python-brace-format
 msgid "配置文件解析错误: {0}"
-msgstr "Config file parsing error: {0}"
+msgstr "Configuration file parsing error: {0}"
 
 #: f2/utils/config/conf_manager.py
 msgid "配置文件的顶层不是键值映射"
-msgstr "The top level of the config file is not a key-value mapping"
+msgstr "The top level of the configuration file is not a key-value mapping"
 
 #: f2/utils/config/conf_manager.py
 #, python-brace-format
 msgid "配置文件中没有 {0} 应用的配置，可以用 --init-config 向该文件补充默认配置"
 msgstr ""
-"The config file has no settings for the {0} app, use --init-config to add"
-" the default settings to it"
+"The configuration file has no settings for the {0} app, use --init-config"
+" to add the default settings to it"
 
 #: f2/utils/config/conf_manager.py
 #, python-brace-format
 msgid "配置文件中 {0} 应用的配置不是键值映射"
-msgstr "The {0} settings in the config file are not a key-value mapping"
+msgstr "The {0} settings in the configuration file are not a key-value mapping"
 
 #: f2/utils/config/conf_manager.py
 #, python-brace-format
 msgid "环境变量 {0} 指定的配置文件不存在"
-msgstr "The config file set by the {0} environment variable does not exist"
+msgstr "The configuration file set by the {0} environment variable does not exist"
 
 #: f2/utils/config/conf_manager.py
 msgid "用户配置文件的顶层不是键值映射"
-msgstr "The top level of the user config file is not a key-value mapping"
+msgstr "The top level of the user configuration file is not a key-value mapping"
 
 #: f2/utils/config/conf_manager.py
 #, python-brace-format
 msgid "用户配置文件无效：{0}"
-msgstr "Invalid user config file: {0}"
+msgstr "Invalid user configuration file: {0}"
 
 #: f2/utils/config/conf_manager.py
 #, python-brace-format
 msgid "已加载用户配置：{0}"
-msgstr "Loaded user config: {0}"
+msgstr "Loaded user configuration: {0}"
 
 #: f2/utils/config/conf_manager.py
 msgid "配置文件路径无写权限"
-msgstr "Configuration file does not exist"
+msgstr "No write permission for the configuration file path"
 
 #: f2/utils/config/conf_manager.py
 #, python-brace-format
 msgid "{0} 应用配置未找到"
-msgstr "{0} Application configuration not found"
+msgstr "Configuration of the {0} app not found"
 
 #: f2/utils/config/conf_manager.py
 #, python-brace-format
 msgid "{0} 应用配置文件生成成功，保存至 {1}"
-msgstr "{0} Application configuration file generated successfully, saved to {1}"
+msgstr "Configuration file for the {0} app generated and saved to {1}"
 
 #: f2/utils/config/conf_manager.py
 #, python-brace-format
@@ -4376,27 +4350,25 @@ msgstr ""
 #: f2/utils/config/conf_manager.py
 #, python-brace-format
 msgid "无法解析配置文件，未做任何修改：{0}"
-msgstr "Unable to parse the config file; nothing was changed: {0}"
+msgstr "Unable to parse the configuration file; nothing was changed: {0}"
 
 #: f2/utils/config/conf_manager.py
 msgid "配置文件的顶层不是键值映射，未做任何修改"
 msgstr ""
-"The top level of the config file is not a key-value mapping; nothing was "
-"changed"
+"The top level of the configuration file is not a key-value mapping; "
+"nothing was changed"
 
 #: f2/utils/config/conf_manager.py
 msgid "是否要使用命令行的参数更新配置文件？"
-msgstr ""
-"Should I update the configuration file using parameters from the command "
-"line？"
+msgstr "Update the configuration file with the command line parameters?"
 
 #: f2/utils/config/conf_manager.py
 msgid "配置文件已更新!"
-msgstr "Configuration files have been updated!"
+msgstr "Configuration file updated!"
 
 #: f2/utils/config/conf_manager.py
 msgid "已取消更新配置文件!"
-msgstr "Updating profiles has been canceled!"
+msgstr "Configuration file update cancelled!"
 
 #: f2/utils/crypto/aes.py
 msgid "算法必须为 'AES128', 'AES192' 或 'AES256'。"
@@ -4409,9 +4381,7 @@ msgstr "The mode must be 'GCM', 'CBC', or 'ECB'."
 #: f2/utils/crypto/aes.py
 #, python-brace-format
 msgid "{0} 算法密钥长度不正确：{1} 字节，期望长度为 {2} 字节。"
-msgstr ""
-"{0} Incorrect algorithm key length: {1} bytes, expected length was {2} "
-"bytes."
+msgstr "Incorrect {0} key length: {1} bytes, expected {2} bytes."
 
 #: f2/utils/crypto/aes.py
 #, python-brace-format
@@ -4446,9 +4416,7 @@ msgstr "The padding scheme must be 'pkcs1' or 'oaep'."
 #: f2/utils/crypto/rsa.py
 #, python-brace-format
 msgid "{0} 算法私钥长度不正确：{1} 位，期望长度为 {2} 位。"
-msgstr ""
-"{0} Algorithm private key length is incorrect: {1} bits, expected length "
-"is {2} bits."
+msgstr "Incorrect {0} private key length: {1} bits, expected {2} bits."
 
 #: f2/utils/crypto/bytedance/xgnarly.py
 msgid "不是有效的签名信封"
@@ -4504,7 +4472,7 @@ msgstr "Unsupported browser: {0}"
 
 #: f2/utils/http/cookie.py
 msgid "cookie_str 参数应为字符串"
-msgstr "cookie_str parameter should be a string"
+msgstr "cookie_str must be a string"
 
 #: f2/utils/http/impersonate.py
 msgid ""
@@ -4525,7 +4493,7 @@ msgstr "Unsupported proxy configuration format"
 
 #: f2/utils/http/proxy.py
 msgid "正在测试代理服务器是否可用🚀"
-msgstr "Testing proxy servers for availability 🚀"
+msgstr "Testing whether the proxy server is available 🚀"
 
 #: f2/utils/http/proxy.py
 #, python-brace-format
@@ -4553,7 +4521,7 @@ msgstr "The proxy request succeeded, but the response format is unexpected: {0}"
 
 #: f2/utils/http/proxy.py
 msgid "代理请求成功，但内容不符合预期"
-msgstr "Proxy request successful, but content not as expected"
+msgstr "The proxy request succeeded, but the content is unexpected"
 
 #: f2/utils/http/proxy.py
 #, python-brace-format
@@ -4712,7 +4680,7 @@ msgstr ""
 #: f2/utils/http/utils.py
 msgid "m3u8文件中既无segments也无嵌套playlists，可能直播结束或格式不支持"
 msgstr ""
-"The m3u8 file has neither segments nor nested playlists; the live stream "
+"The m3u8 file has neither segments nor nested playlists; the livestream "
 "may have ended or the format is not supported"
 
 #: f2/utils/http/utils.py
@@ -4728,74 +4696,74 @@ msgstr "Failed to get the nested m3u8 URL: {0}"
 #: f2/utils/http/utils.py
 msgid "未找到嵌套m3u8文件的segments, 可能直播结束或该直播非m3u8格式"
 msgstr ""
-"No segments found in the nested m3u8 file; the live stream may have ended"
-" or it is not in m3u8 format"
+"No segments found in the nested m3u8 file; the livestream may have ended "
+"or it is not in m3u8 format"
 
 #: f2/utils/json/filter.py
 #, python-brace-format
 msgid "字段 {0} 出错: {1}"
-msgstr "Field {0} Error: {1}"
+msgstr "Error in field {0}: {1}"
 
 #: f2/utils/json/filter.py
 #, python-brace-format
 msgid "字段 {0} 出现未预料的错误: {1}"
-msgstr "Field {0} Unexpected error: {1}"
+msgstr "Unexpected error in field {0}: {1}"
 
 #: f2/utils/json/filter.py
 msgid "由于接口更新，部分字段处理失败:\n"
-msgstr "Due to an interface update, some fields failed to be processed:\n"
+msgstr "Some fields could not be processed because the API has changed:\n"
 
 #: f2/utils/time/filter.py
 #, python-brace-format
 msgid "作品缺少创建时间字段 '{0}'，可用字段：{1}"
-msgstr "The work is missing the creation time field '{0}', available fields: {1}"
+msgstr "The post is missing the creation time field '{0}', available fields: {1}"
 
 #: f2/utils/time/filter.py
 #, python-brace-format
 msgid "无法解析作品的创建时间：{0}"
-msgstr "Unable to resolve when the work was created: {0}"
+msgstr "Unable to parse the creation time of the post: {0}"
 
 #: f2/utils/time/filter.py
 msgid "作品或日期区间为空"
-msgstr "Entry or date range is empty"
+msgstr "The post or the date range is empty"
 
 #: f2/utils/time/filter.py
 msgid "传入的数据似乎是API响应格式，而不是作品数据。请检查数据处理流程。"
 msgstr ""
-"The data looks like an API response rather than work data. Please check "
+"The data looks like an API response rather than post data. Please check "
 "the data processing flow."
 
 #: f2/utils/time/filter.py
 #, python-brace-format
 msgid "找到可能的作品数据字段：{0}"
-msgstr "Possible work data fields found: {0}"
+msgstr "Possible post data fields found: {0}"
 
 #: f2/utils/time/filter.py
 msgid "日期区间设置为'all'，返回所有作品"
-msgstr "Date range is set to 'all', returning all works"
+msgstr "Date range is set to 'all', returning all posts"
 
 #: f2/utils/time/filter.py f2/utils/time/timestamp.py
 msgid "结束日期早于开始日期，请检查日期区间"
-msgstr "The end date is earlier than the start date, check the date range"
+msgstr "The end date is earlier than the start date, please check the date range"
 
 #: f2/utils/time/filter.py
 #, python-brace-format
 msgid "单个作品符合筛选条件：{0}"
-msgstr "The work matches the filter: {0}"
+msgstr "The post matches the filter: {0}"
 
 #: f2/utils/time/filter.py
 #, python-brace-format
 msgid "单个作品不在筛选日期区间内：{0}"
-msgstr "The work is outside the filter date range: {0}"
+msgstr "The post is outside the filter date range: {0}"
 
 #: f2/utils/time/filter.py
 #, python-brace-format
 msgid "在该页 {0} 条作品中有 {1} 条作品符合筛选日期条件：{2}"
-msgstr "{1} of the {0} works on this page match the filter date range: {2}"
+msgstr "{1} of the {0} posts on this page match the filter date range: {2}"
 
 #: f2/utils/time/filter.py
 msgid "没有找到符合条件的作品"
-msgstr "No eligible entries found"
+msgstr "No matching posts found"
 
 #: f2/utils/time/timestamp.py
 #, python-brace-format
@@ -4818,7 +4786,7 @@ msgstr "Unsupported timestamp type: {0}"
 
 #: f2/utils/time/timestamp.py
 msgid "日期区间为空，无法转换为时间戳"
-msgstr "Date range is empty, cannot be converted to timestamp"
+msgstr "The date range is empty and cannot be converted to a timestamp"
 
 #: f2/utils/time/timestamp.py
 #, python-brace-format
