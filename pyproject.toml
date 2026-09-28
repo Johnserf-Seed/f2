@@ -98,7 +98,7 @@ dev = [
     "pre-commit==4.2.0",
     "black==26.5.1",
     "isort==6.0.1",
-    "ruff==0.16.6",
+    "ruff==0.16.9",
     "pytest==9.1.1",
     "pytest-asyncio==1.4.0",
     "types-aiofiles",
