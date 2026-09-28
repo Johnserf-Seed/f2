@@ -94,7 +94,7 @@ dependencies = [
 dev = [
     "babel>=2.14.0,<3",
     "mypy-protobuf>=3.6.0,<6",
-    "mypy==1.16.0",
+    "mypy==2.3.1",
     "pre-commit==4.2.0",
     "black==26.5.1",
     "isort==6.0.1",
