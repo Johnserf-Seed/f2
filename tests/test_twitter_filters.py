@@ -8,6 +8,7 @@ from f2.apps.twitter.filter import (
     LikeTweetFilter,
     PostTweetFilter,
     TweetDetailFilter,
+    UserProfileFilter,
 )
 from f2.apps.twitter.utils import (
     best_mp4_url,
@@ -191,3 +192,35 @@ def test_bookmark_uid_naming():
     }
     item = BookmarkTweetFilter(data)._to_list()[0]
     assert format_file_name("{uid}", item) == "bob"
+
+
+# ---------------- 主页 profile 的新结构（legacy 中已移除的字段） ----------------
+
+
+def user_profile(**result_extra):
+    result = {
+        "rest_id": "123",
+        "core": {"screen_name": "alice", "name": "Alice"},
+        "pinned_items": {"tweet_ids_str": ["999"]},
+        "action_counts": {"favorites_count": 42},
+    }
+    result.update(result_extra)
+    return {"data": {"user": {"result": result}}}
+
+
+def test_user_profile_reads_new_structure_fields():
+    profile = UserProfileFilter(user_profile())
+    assert profile.user_pined_tweet_id == "999"
+    assert profile.favourites_count == 42
+
+
+def test_user_profile_has_custom_timelines_returns_none():
+    # 新结构已移除该字段，属性保留并返回 None
+    assert UserProfileFilter(user_profile()).has_custom_timelines is None
+
+
+def test_user_profile_missing_fields_do_not_raise():
+    # 字段缺失时按缺失处理，不抛异常
+    profile = UserProfileFilter({"data": {"user": {"result": {"rest_id": "123"}}}})
+    assert profile.user_pined_tweet_id is None
+    assert profile.favourites_count is None

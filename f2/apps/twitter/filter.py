@@ -360,7 +360,7 @@ class UserProfileFilter(JSONModel):
     # 置顶推文ID
     @property
     def user_pined_tweet_id(self):
-        return self._get_attr_value("$.data.user.result.legacy.pinned_tweet_ids_str[0]")
+        return self._get_attr_value("$.data.user.result.pinned_items.tweet_ids_str[0]")
 
     # 主页背景图片
     @property
@@ -390,11 +390,12 @@ class UserProfileFilter(JSONModel):
     # 喜欢数
     @property
     def favourites_count(self):
-        return self._get_attr_value("$.data.user.result.legacy.favourites_count")
+        return self._get_attr_value("$.data.user.result.action_counts.favorites_count")
 
+    # 新 profile 结构已移除 has_custom_timelines 字段，保留属性并返回 None
     @property
     def has_custom_timelines(self):
-        return self._get_attr_value("$.data.user.result.legacy.has_custom_timelines")
+        return None
 
     @property
     def location(self):
