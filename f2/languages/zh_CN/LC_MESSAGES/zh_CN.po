@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-27 14:28-0700\n"
+"POT-Creation-Date: 2026-09-30 23:12+0800\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -2518,7 +2518,7 @@ msgstr "[WebcastRoomMessage] [📜直播间消息] {0}"
 msgid "[WebcastOecLiveShoppingMessage] [🛍️直播间购物消息] {0}"
 msgstr "[WebcastOecLiveShoppingMessage] [🛍️直播间购物消息] {0}"
 
-#: f2/apps/tiktok/dl.py f2/apps/weibo/handler.py
+#: f2/apps/tiktok/dl.py f2/apps/twitter/handler.py f2/apps/weibo/handler.py
 #, python-brace-format
 msgid "筛选日期区间：{0} 至 {1}"
 msgstr "筛选日期区间：{0} 至 {1}"
@@ -2919,6 +2919,10 @@ msgid "登录后的[yellow]cookie[/yellow]"
 msgstr "登录后的[yellow]cookie[/yellow]"
 
 #: f2/apps/twitter/cli.py
+msgid "下载日期区间内发布的推文，格式：YYYY-MM-DD|YYYY-MM-DD，'all' 为下载所有推文"
+msgstr "下载日期区间内发布的推文，格式：YYYY-MM-DD|YYYY-MM-DD，'all' 为下载所有推文"
+
+#: f2/apps/twitter/cli.py
 msgid "最大推文下载数。0 表示无限制"
 msgstr "最大推文下载数。0 表示无限制"
 
@@ -3031,6 +3035,10 @@ msgid "已处理完所有发布的推文"
 msgstr "已处理完所有发布的推文"
 
 #: f2/apps/twitter/handler.py
+msgid "已获取到日期区间开始之前的推文，停止翻页"
+msgstr "已获取到日期区间开始之前的推文，停止翻页"
+
+#: f2/apps/twitter/handler.py
 #, python-brace-format
 msgid "爬取结束，共爬取 {0} 个推文"
 msgstr "爬取结束，共爬取 {0} 个推文"
@@ -3131,6 +3139,10 @@ msgstr "全局推文文件命名方式"
 #: f2/apps/twitter/help.py f2/apps/weibo/help.py
 msgid "登录后的cookie"
 msgstr "登录后的cookie"
+
+#: f2/apps/twitter/help.py
+msgid "下载日期区间内发布的推文，格式：YYYY-MM-DD|YYYY-MM-DD"
+msgstr "下载日期区间内发布的推文，格式：YYYY-MM-DD|YYYY-MM-DD"
 
 #: f2/apps/twitter/help.py f2/apps/weibo/help.py
 msgid "网络请求超时时间，默认为 10"

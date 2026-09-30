@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-27 14:28-0700\n"
+"POT-Creation-Date: 2026-09-30 23:12+0800\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -2660,7 +2660,7 @@ msgstr "[WebcastRoomMessage] [📜 Live room message] {0}"
 msgid "[WebcastOecLiveShoppingMessage] [🛍️直播间购物消息] {0}"
 msgstr "[WebcastOecLiveShoppingMessage] [🛍️ Live shopping message] {0}"
 
-#: f2/apps/tiktok/dl.py f2/apps/weibo/handler.py
+#: f2/apps/tiktok/dl.py f2/apps/twitter/handler.py f2/apps/weibo/handler.py
 #, python-brace-format
 msgid "筛选日期区间：{0} 至 {1}"
 msgstr "Filtering by date range: {0} to {1}"
@@ -3067,6 +3067,12 @@ msgid "登录后的[yellow]cookie[/yellow]"
 msgstr "[yellow]Cookie[/yellow] of a logged-in account"
 
 #: f2/apps/twitter/cli.py
+msgid "下载日期区间内发布的推文，格式：YYYY-MM-DD|YYYY-MM-DD，'all' 为下载所有推文"
+msgstr ""
+"Download tweets published in a date range, format: YYYY-MM-DD|YYYY-MM-DD; "
+"'all' downloads all tweets"
+
+#: f2/apps/twitter/cli.py
 msgid "最大推文下载数。0 表示无限制"
 msgstr "Maximum number of tweets to download. 0 means unlimited"
 
@@ -3181,6 +3187,10 @@ msgid "已处理完所有发布的推文"
 msgstr "All posted tweets have been processed"
 
 #: f2/apps/twitter/handler.py
+msgid "已获取到日期区间开始之前的推文，停止翻页"
+msgstr "Reached tweets published before the date range, stopping"
+
+#: f2/apps/twitter/handler.py
 #, python-brace-format
 msgid "爬取结束，共爬取 {0} 个推文"
 msgstr "Finished, {0} tweets fetched in total"
@@ -3283,6 +3293,11 @@ msgstr "File naming template for all tweets"
 #: f2/apps/twitter/help.py f2/apps/weibo/help.py
 msgid "登录后的cookie"
 msgstr "Cookie of a logged-in account"
+
+#: f2/apps/twitter/help.py
+msgid "下载日期区间内发布的推文，格式：YYYY-MM-DD|YYYY-MM-DD"
+msgstr ""
+"Download tweets published in a date range, format: YYYY-MM-DD|YYYY-MM-DD"
 
 #: f2/apps/twitter/help.py f2/apps/weibo/help.py
 msgid "网络请求超时时间，默认为 10"
