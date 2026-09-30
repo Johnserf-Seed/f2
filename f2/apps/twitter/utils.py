@@ -25,6 +25,7 @@ from f2.utils.config.conf_manager import ConfigManager
 from f2.utils.file.name import split_filename
 from f2.utils.file.path import get_user_folder_path, migrate_user_folders
 from f2.utils.string.formatter import extract_valid_urls
+from f2.utils.time.timestamp import str_2_timestamp
 
 
 class ClientConfManager:
@@ -540,3 +541,51 @@ def extract_desc(text):
         if cutoff_index != -1:
             return text[:cutoff_index].strip()  # 返回截断后的部分
     return text.strip()  # 如果没有 "https"，返回去掉两端空格后的内容
+
+
+def tweet_created_at_to_timestamp(created_at: Any) -> Optional[int]:
+    """
+    把推文发布时间转成秒级时间戳。
+
+    时间线过滤器给出的 `tweet_created_at` 是东八区的 "%Y-%m-%d %H-%M-%S"
+    字符串（`timestamp_2_str` 的默认格式），发布时间缺失时是 "Invalid timestamp"。
+
+    Args:
+        created_at (Any): 推文发布时间字符串
+
+    Returns:
+        Optional[int]: 秒级时间戳，无法解析时返回 None
+    """
+
+    if not isinstance(created_at, str) or not created_at:
+        return None
+    try:
+        return str_2_timestamp(created_at, unit="sec")
+    except (TypeError, ValueError):
+        return None
+
+
+def newest_tweet_timestamp(created_at: Any) -> Optional[int]:
+    """
+    取一页推文中最新的发布时间，用于判断是否已翻过日期区间。
+
+    主页推文按发布时间倒序，本页最新的一条早于区间开始时间时，之后的页面
+    都在区间之前，不需要继续翻页。取最新而不是最早，是为了不受置顶推文
+    影响：置顶推文排在主页最前面，可能是很久以前发布的，按最早判断会误
+    以为已经翻过区间而漏掉本页区间内的推文。
+
+    Args:
+        created_at (Any): 一条推文的发布时间，或一页推文的发布时间列表
+
+    Returns:
+        Optional[int]: 秒级时间戳，全部无法解析时返回 None
+    """
+
+    if not isinstance(created_at, list):
+        created_at = [created_at]
+    timestamps = [
+        timestamp
+        for timestamp in (tweet_created_at_to_timestamp(item) for item in created_at)
+        if timestamp is not None
+    ]
+    return max(timestamps) if timestamps else None

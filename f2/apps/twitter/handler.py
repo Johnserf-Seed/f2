@@ -2,7 +2,7 @@
 
 import asyncio
 from pathlib import Path
-from typing import Any, AsyncGenerator, Optional, Union
+from typing import Any, AsyncGenerator, Optional, Tuple, Union
 
 from f2.apps.bark.handler import BarkHandler
 from f2.apps.bark.utils import ClientConfManager as BarkClientConfManager
@@ -27,6 +27,7 @@ from f2.apps.twitter.utils import (
     TweetIdFetcher,
     UniqueIdFetcher,
     create_or_rename_user_folder,
+    newest_tweet_timestamp,
 )
 from f2.cli.cli_console import RichConsoleManager
 from f2.exceptions.api_exceptions import APIResponseError
@@ -35,7 +36,7 @@ from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.core.decorators import get_mode_handlers, mode_handler
 from f2.utils.file.path import is_user_folder_migrated
-from f2.utils.time.timestamp import get_timestamp, timestamp_2_str
+from f2.utils.time.timestamp import get_timestamp, parse_interval, timestamp_2_str
 
 rich_console = RichConsoleManager().rich_console
 rich_prompt = RichConsoleManager().rich_prompt
@@ -250,6 +251,16 @@ class TwitterHandler:
         page_counts = self.kwargs.get("page_counts", 20)
         max_counts = self.kwargs.get("max_counts")
 
+        # 先校验日期区间，格式错误时不发起任何请求
+        interval = parse_interval(self.kwargs.get("interval"))
+        if interval:
+            logger.info(
+                _("筛选日期区间：{0} 至 {1}").format(
+                    timestamp_2_str(interval[0], "%Y-%m-%d %H:%M:%S"),
+                    timestamp_2_str(interval[1], "%Y-%m-%d %H:%M:%S"),
+                )
+            )
+
         uniqueID = await UniqueIdFetcher.get_unique_id(str(self.kwargs.get("url")))
         user = await self.fetch_user_profile(uniqueID)
 
@@ -257,7 +268,7 @@ class TwitterHandler:
             user_path = await self.get_or_add_user_data(self.kwargs, uniqueID, udb)
 
         async for tweet_list in self.fetch_post_tweet(
-            user.user_rest_id, page_counts, max_cursor, max_counts
+            user.user_rest_id, page_counts, max_cursor, max_counts, interval
         ):
             # 创建下载任务
             await self.downloader.create_download_tasks(
@@ -270,6 +281,7 @@ class TwitterHandler:
         page_counts: int = 20,
         max_cursor: str = "",
         max_counts: Optional[Union[int, float]] = None,
+        interval: Optional[Tuple[int, int]] = None,
     ) -> AsyncGenerator[PostTweetFilter, Any]:
         """
         用于获取用户发布的推文。
@@ -279,6 +291,7 @@ class TwitterHandler:
             page_counts: int: 每次请求的推文数量
             max_cursor: str: 游标
             max_counts: int: 最大请求次数
+            interval: Tuple[int, int]: 发布时间区间，秒级时间戳（开始, 结束），为 None 时不限制
 
         Return:
             tweet: PostTweetFilter: 用户发布的推文数据过滤器
@@ -330,6 +343,14 @@ class TwitterHandler:
             # 更新已经处理的推文数量 (Update the number of videos processed)
             tweets_collected += len(list(filter(None, tweet.tweet_id)))
             max_cursor = tweet.max_cursor
+
+            # 主页推文按发布时间倒序，本页最新的一条早于区间开始时间时，之后
+            # 的页面都在区间之前；区间内的推文在下载阶段筛选
+            if interval:
+                newest = newest_tweet_timestamp(tweet.tweet_created_at)
+                if newest is not None and newest < interval[0]:
+                    logger.info(_("已获取到日期区间开始之前的推文，停止翻页"))
+                    break
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))

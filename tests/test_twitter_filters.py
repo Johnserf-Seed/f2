@@ -2,6 +2,7 @@
 
 import pytest
 
+from f2.apps.twitter import handler as twitter_handler
 from f2.apps.twitter.crawler import TwitterCrawler
 from f2.apps.twitter.filter import (
     BookmarkTweetFilter,
@@ -10,12 +11,17 @@ from f2.apps.twitter.filter import (
     TweetDetailFilter,
     UserProfileFilter,
 )
+from f2.apps.twitter.handler import TwitterHandler
 from f2.apps.twitter.utils import (
     best_mp4_url,
     extract_desc,
     format_file_name,
+    newest_tweet_timestamp,
     sort_mp4_urls,
+    tweet_created_at_to_timestamp,
 )
+from f2.utils.time.filter import filter_by_date_interval
+from f2.utils.time.timestamp import parse_interval
 
 # 接口返回的变体顺序不固定，m3u8 是播放列表而不是视频文件
 VARIANTS = [
@@ -30,11 +36,11 @@ CURSORS = [
 ]
 
 
-def tweet_result(tweet_id, text, screen_name, variants=None):
+def tweet_result(tweet_id, text, screen_name, variants=None, created_at=None):
     legacy = {
         "id_str": tweet_id,
         "full_text": text,
-        "created_at": "Wed Oct 10 20:19:24 +0000 2018",
+        "created_at": created_at or "Wed Oct 10 20:19:24 +0000 2018",
     }
     if variants is not None:
         media = [{"type": "video", "video_info": {"variants": variants}}]
@@ -224,3 +230,157 @@ def test_user_profile_missing_fields_do_not_raise():
     profile = UserProfileFilter({"data": {"user": {"result": {"rest_id": "123"}}}})
     assert profile.user_pined_tweet_id is None
     assert profile.favourites_count is None
+
+
+# ---------------- 日期区间 --interval ----------------
+
+# 2024-01-01 00:00:00（东八区），与 tests/test_parse_interval.py 的 START_2024 一致
+START_2024 = 1704038400
+
+
+def test_tweet_created_at_to_timestamp():
+    assert tweet_created_at_to_timestamp("2024-01-01 00-00-00") == START_2024
+    # 发布时间缺失时时间线过滤器给出的是 "Invalid timestamp"
+    assert tweet_created_at_to_timestamp("Invalid timestamp") is None
+    assert tweet_created_at_to_timestamp(None) is None
+    assert tweet_created_at_to_timestamp("") is None
+
+
+def test_newest_tweet_timestamp_ignores_older_pinned_tweet():
+    # 置顶推文排在主页最前面、可能很久以前发布，取最新的一条才不会误判已翻过区间
+    assert (
+        newest_tweet_timestamp(["2019-01-01 00-00-00", "2024-01-01 00-00-00"])
+        == START_2024
+    )
+    assert (
+        newest_tweet_timestamp(["Invalid timestamp", "2024-01-01 00-00-00"])
+        == START_2024
+    )
+    # 单条推文、以及一条都解析不出来时
+    assert newest_tweet_timestamp("2024-01-01 00-00-00") == START_2024
+    assert newest_tweet_timestamp([]) is None
+    assert newest_tweet_timestamp(["Invalid timestamp"]) is None
+
+
+async def test_interval_filter_matches_tweet_created_at_field():
+    # 下载器按 "tweet_created_at" 筛选推文，字段名不一致会把整批推文都过滤掉
+    items = PostTweetFilter(post_timeline([("1", "alice", None)]))._to_list()
+    assert items[0]["tweet_created_at"] == "2018-10-10 20-19-24"
+
+    kept = await filter_by_date_interval(
+        items, "2018-01-01|2018-12-31", "tweet_created_at"
+    )
+    assert [item["tweet_created_at"] for item in kept] == ["2018-10-10 20-19-24"]
+
+    # 区间外的推文、以及不带发布时间的光标条目都被过滤掉
+    assert (
+        await filter_by_date_interval(
+            items, "2019-01-01|2019-12-31", "tweet_created_at"
+        )
+        == []
+    )
+
+
+def interval_page(tweets, cursor):
+    """构造一页主页推文响应；只有一条推文加一个光标时，条目数为 2，触发翻完的结束条件"""
+    entries = [
+        entry(tweet_id, tweet_result(tweet_id, "t", "alice", created_at=created_at))
+        for tweet_id, created_at in tweets
+    ]
+    entries.append(
+        {
+            "entryId": "cursor-bottom-1",
+            "content": {"cursorType": "Bottom", "value": cursor},
+        }
+    )
+    return {
+        "data": {
+            "user": {
+                "result": {
+                    "timeline_v2": {
+                        "timeline": {"instructions": [{"entries": entries}]}
+                    }
+                }
+            }
+        }
+    }
+
+
+def interval_pages():
+    return [
+        # 第一页在区间内
+        interval_page(
+            [
+                ("1", "Sat Jun 01 12:00:00 +0000 2024"),
+                ("2", "Wed May 01 12:00:00 +0000 2024"),
+            ],
+            "cursor-1",
+        ),
+        # 第二页最新的一条早于区间开始时间
+        interval_page(
+            [
+                ("3", "Fri Dec 01 12:00:00 +0000 2023"),
+                ("4", "Wed Nov 01 12:00:00 +0000 2023"),
+            ],
+            "cursor-2",
+        ),
+        # 最后一页，接口给出 Bottom 光标，正常结束翻页
+        interval_page([("5", "Wed Nov 01 12:00:00 +0000 2023")], "cursor-3"),
+    ]
+
+
+def post_handler(monkeypatch, pages):
+    requested = []
+
+    class DummyCrawler:
+        def __init__(self, kwargs):
+            pass
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *exc):
+            return False
+
+        async def fetch_post_tweet(self, params):
+            requested.append(params.cursor)
+            return pages[min(len(requested) - 1, len(pages) - 1)]
+
+    monkeypatch.setattr(twitter_handler, "TwitterCrawler", DummyCrawler)
+
+    handler = TwitterHandler(
+        {
+            "cookie": "a=b",
+            "headers": {"User-Agent": "f2-test"},
+            "proxies": {"http://": None, "https://": None},
+            "timeout": 0,
+        }
+    )
+    return handler, requested
+
+
+async def test_post_stops_paging_when_page_is_before_interval_start(monkeypatch):
+    handler, requested = post_handler(monkeypatch, interval_pages())
+
+    pages_yielded = 0
+    async for _ in handler.fetch_post_tweet(
+        "u1", 20, "", None, parse_interval("2024-01-01|2024-12-31")
+    ):
+        pages_yielded += 1
+
+    # 第二页仍有区间内的推文，这一页照常产出，但不再请求下一页
+    assert len(requested) == 2
+    assert requested == ["", "cursor-1"]
+    assert pages_yielded == 2
+
+
+async def test_post_keeps_paging_without_interval(monkeypatch):
+    handler, requested = post_handler(monkeypatch, interval_pages())
+
+    pages_yielded = 0
+    async for _ in handler.fetch_post_tweet("u1", 20, "", None, None):
+        pages_yielded += 1
+
+    # 没有日期区间时一直翻到接口给出 Bottom 光标，这一页在产出前就结束
+    assert len(requested) == 3
+    assert pages_yielded == 2
