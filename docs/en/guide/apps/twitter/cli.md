@@ -13,6 +13,7 @@ outline: deep
 | `-M`   | `--mode` | `ENUM` | Download mode |
 | `-n`   | `--naming` | `TEXT` | Global file naming format for works |
 | `-k`   | `--cookie` | `TEXT` | Login cookie |
+| `-i`   | `--interval` | `TEXT` | Download tweets published within a date range |
 | `-e`   | `--timeout` | `INTEGER` | Network request timeout |
 | `-r`   | `--max_retries` | `INTEGER` | Maximum retry attempts for network timeout |
 | `-x`   | `--max-connections` | `INTEGER` | Number of concurrent network connections |
@@ -92,6 +93,17 @@ Login `Cookie`. Most APIs require login to access data, so a logged-in `Cookie` 
 - **Never share your `Cookie` in public spaces like Discussions, Issues, or Discord. Remove sensitive information.**
 - **Anyone with access to your `Cookie` can log into your account.**
 - **If leaked, log out and re-login immediately.**
+:::
+
+### `--interval`
+
+Download tweets published within a date range, in the format `Year-Month-Day|Year-Month-Day`. Both days are included, and dates are in Beijing time (UTC+8). For example: `2024-01-01|2024-06-30`; set `all` to download all tweets.
+
+::: tip :bulb: Tip
+- Profile tweets are ordered newest first, so `post` mode pages from the newest tweet and stops once it reaches tweets published before the start date. The earlier the range, the more pages it has to go through.
+- Pinned tweets are not in chronological order. They are still downloaded when they fall within the range, and they do not affect when paging stops.
+- The likes and bookmarks timelines are ordered by when you liked or bookmarked, not by publish time, so paging cannot stop early for them; every page is still fetched and only tweets within the range are downloaded.
+- An invalid date format, or an end date earlier than the start date, is reported as an error before any request is made.
 :::
 
 ### `--timeout`
