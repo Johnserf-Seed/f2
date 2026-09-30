@@ -161,7 +161,9 @@ def create_impersonate_transport(
         _warn_missing_once()
         return None
 
-    session = AsyncSession(
+    # AsyncSession 来自条件导入的 curl_cffi，mypy 推断不出类型，显式标注；
+    # 与 ImpersonateTransport 的入参类型一致
+    session: Any = AsyncSession(
         impersonate=impersonate,
         proxy=proxy,
         # 运行时也接受 CA 证书文件路径（设置为 CAINFO），curl_cffi 的类型标注只写了 bool
