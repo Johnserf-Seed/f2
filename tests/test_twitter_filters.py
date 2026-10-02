@@ -15,6 +15,7 @@ from f2.apps.twitter.utils import (
     format_file_name,
     sort_mp4_urls,
 )
+from f2.utils.time.filter import filter_by_date_interval
 
 # 接口返回的变体顺序不固定，m3u8 是播放列表而不是视频文件
 VARIANTS = [
@@ -191,3 +192,25 @@ def test_bookmark_uid_naming():
     }
     item = BookmarkTweetFilter(data)._to_list()[0]
     assert format_file_name("{uid}", item) == "bob"
+
+
+# ---------------- 日期区间 --interval ----------------
+
+
+async def test_interval_filter_matches_tweet_created_at_field():
+    # 下载器按 "tweet_created_at" 筛选推文，字段名不一致会把整批推文都过滤掉
+    items = PostTweetFilter(post_timeline([("1", "alice", None)]))._to_list()
+    assert items[0]["tweet_created_at"] == "2018-10-10 20-19-24"
+
+    kept = await filter_by_date_interval(
+        items, "2018-01-01|2018-12-31", "tweet_created_at"
+    )
+    assert [item["tweet_created_at"] for item in kept] == ["2018-10-10 20-19-24"]
+
+    # 区间外的推文、以及不带发布时间的光标条目都被过滤掉
+    assert (
+        await filter_by_date_interval(
+            items, "2019-01-01|2019-12-31", "tweet_created_at"
+        )
+        == []
+    )
