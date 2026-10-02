@@ -6,6 +6,7 @@
 
 ## [Unreleased]
 
+- twitter 支持 `-i/--interval` 日期区间，与其他平台一致：此前 twitter 没有该选项，且下载器的日期筛选取错了字段名（按 `createTime` 取值，而推文过滤器暴露的是 `tweet_created_at`），设置日期区间后每条推文都被判为缺少创建时间，结果一条都不下载。现在格式为 `YYYY-MM-DD|YYYY-MM-DD`，首尾两天都包含（北京时间），`all` 为不限制，只有发布时间在区间内的推文会被下载；格式错误或结束日期早于开始日期时在请求前报错退出。
 - 润色英文翻译：逐条审阅全部 935 条英文文案，改写其中 650 条。统一术语（作品 post、主页 profile、直播 livestream、直播间 live room、弹幕 danmaku、接口地址 API endpoint、配置文件 configuration file；抖音与 TikTok 按平台接口的命名，点赞（喜欢）为 favorites、收藏为 collection、收藏夹为 collection folder、合集为 mix，Twitter 仍用 likes 与 bookmarks），消息改为普通句式、不再逐词首字母大写，同一句中文只保留一种译法。修正误译：“配置文件的路径，最低优先”曾译为 highest priority，“配置文件路径无写权限”曾译为“配置文件不存在”，FAQ 提示的两句英文粘在一起，Bark 密钥长度把“位”（字符）译成了 bits；下载进度的状态与文件类型标签统一为 Done、Skipped、Video、Caption 等。收藏夹列表的提示不再用方括号，避免被 rich 当作样式标签。横幅的英文简介改为 “An asynchronous, multi-platform downloader”；英文文档中抖音、TikTok 的模式说明与 CLI 帮助统一叫法，TikTok 播放列表接口的 `secUid` 说明由“合集ID”更正为“用户ID”。
 - 补齐英文翻译：此前有 217 条文案在英文界面下仍显示中文，其中 102 条从未翻译，115 条因原文修改被标记为待确认（编译时会被跳过），涉及代理设置、下载进度、断点续传、m3u8 直播流、数据库与抖音弹幕、评论等提示；现在全部有英文译文，原有 718 条译文不变。
 - TikTok 的 `https://www.tiktok.com/user/<sec_uid>` 链接直接从地址中取出 `sec_uid`，不再发请求（#366）：这类页面里没有用户数据，此前会报“未在响应中找到 __UNIVERSAL_DATA_FOR_REHYDRATION__”或“接口状态码异常”。直播模式需要用户名，请使用 `@用户名` 形式的主页链接。
