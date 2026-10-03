@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-03 14:23-0700\n"
+"POT-Creation-Date: 2026-10-03 15:28-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -2953,6 +2953,10 @@ msgstr "全局推文文件命名方式，前往文档查看更多帮助"
 msgid "登录后的[yellow]cookie[/yellow]"
 msgstr "登录后的[yellow]cookie[/yellow]"
 
+#: f2/apps/twitter/cli.py f2/apps/twitter/help.py
+msgid "下载日期区间内发布的推文，格式：YYYY-MM-DD|YYYY-MM-DD，'all' 为下载所有推文"
+msgstr "下载日期区间内发布的推文，格式：YYYY-MM-DD|YYYY-MM-DD，'all' 为下载所有推文"
+
 #: f2/apps/twitter/cli.py
 msgid "最大推文下载数。0 表示无限制"
 msgstr "最大推文下载数。0 表示无限制"
@@ -2969,6 +2973,30 @@ msgid ""
 msgstr ""
 "Twitter CLI 缺乏必要参数：[cyan]{0}[/cyan]。详情请查看帮助，[yellow]f2 twitter "
 "-h/--help[/yellow]"
+
+#: f2/apps/twitter/crawler.py
+msgid "x.com 页面中没有找到 main.js，cookie 可能已失效"
+msgstr "x.com 页面中没有找到 main.js，cookie 可能已失效"
+
+#: f2/apps/twitter/crawler.py
+#, python-brace-format
+msgid "在脚本中查找查询 {0}：{1}"
+msgstr "在脚本中查找查询 {0}：{1}"
+
+#: f2/apps/twitter/crawler.py
+#, python-brace-format
+msgid "推特接口 {0} 的 queryId 已失效，正在从 X 网页的脚本中获取新的值"
+msgstr "推特接口 {0} 的 queryId 已失效，正在从 X 网页的脚本中获取新的值"
+
+#: f2/apps/twitter/crawler.py
+#, python-brace-format
+msgid "没有在 X 网页的脚本中找到接口 {0}，请更新 F2 后再试"
+msgstr "没有在 X 网页的脚本中找到接口 {0}，请更新 F2 后再试"
+
+#: f2/apps/twitter/crawler.py
+#, python-brace-format
+msgid "接口 {0} 改用新的 queryId：{1}"
+msgstr "接口 {0} 改用新的 queryId：{1}"
 
 #: f2/apps/twitter/crawler.py
 #, python-brace-format
@@ -3019,6 +3047,11 @@ msgstr "图片"
 
 #: f2/apps/twitter/handler.py
 #, python-brace-format
+msgid "本页 {0} 条推文中有 {1} 条在日期区间内"
+msgstr "本页 {0} 条推文中有 {1} 条在日期区间内"
+
+#: f2/apps/twitter/handler.py
+#, python-brace-format
 msgid "开始爬取推文：{0}"
 msgstr "开始爬取推文：{0}"
 
@@ -3064,6 +3097,10 @@ msgstr "推文ID：{0} 文案：{1} 作者：{2}"
 #: f2/apps/twitter/handler.py
 msgid "已处理完所有发布的推文"
 msgstr "已处理完所有发布的推文"
+
+#: f2/apps/twitter/handler.py
+msgid "已获取到日期区间开始之前的推文，停止翻页"
+msgstr "已获取到日期区间开始之前的推文，停止翻页"
 
 #: f2/apps/twitter/handler.py
 #, python-brace-format

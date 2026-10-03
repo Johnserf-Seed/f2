@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-03 14:23-0700\n"
+"POT-Creation-Date: 2026-10-03 15:28-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -3110,6 +3110,12 @@ msgstr "File naming template for all tweets; see the documentation for details"
 msgid "登录后的[yellow]cookie[/yellow]"
 msgstr "[yellow]Cookie[/yellow] of a logged-in account"
 
+#: f2/apps/twitter/cli.py f2/apps/twitter/help.py
+msgid "下载日期区间内发布的推文，格式：YYYY-MM-DD|YYYY-MM-DD，'all' 为下载所有推文"
+msgstr ""
+"Download tweets published in a date range, format: YYYY-MM-DD|YYYY-MM-DD;"
+" 'all' downloads all tweets"
+
 #: f2/apps/twitter/cli.py
 msgid "最大推文下载数。0 表示无限制"
 msgstr "Maximum number of tweets to download. 0 means unlimited"
@@ -3128,6 +3134,32 @@ msgid ""
 msgstr ""
 "Twitter CLI is missing required parameters: [cyan]{0}[/cyan]. See the "
 "help for details: [yellow]f2 twitter -h/--help[/yellow]"
+
+#: f2/apps/twitter/crawler.py
+msgid "x.com 页面中没有找到 main.js，cookie 可能已失效"
+msgstr "main.js was not found on the x.com page; the cookie may have expired"
+
+#: f2/apps/twitter/crawler.py
+#, python-brace-format
+msgid "在脚本中查找查询 {0}：{1}"
+msgstr "Looking for the {0} operation in script: {1}"
+
+#: f2/apps/twitter/crawler.py
+#, python-brace-format
+msgid "推特接口 {0} 的 queryId 已失效，正在从 X 网页的脚本中获取新的值"
+msgstr ""
+"The queryId of Twitter API {0} has expired; reading the new value from "
+"the X web scripts"
+
+#: f2/apps/twitter/crawler.py
+#, python-brace-format
+msgid "没有在 X 网页的脚本中找到接口 {0}，请更新 F2 后再试"
+msgstr "API {0} was not found in the X web scripts, please update F2 and try again"
+
+#: f2/apps/twitter/crawler.py
+#, python-brace-format
+msgid "接口 {0} 改用新的 queryId：{1}"
+msgstr "API {0} now uses the new queryId: {1}"
 
 #: f2/apps/twitter/crawler.py
 #, python-brace-format
@@ -3178,6 +3210,11 @@ msgstr "Image"
 
 #: f2/apps/twitter/handler.py
 #, python-brace-format
+msgid "本页 {0} 条推文中有 {1} 条在日期区间内"
+msgstr "{1} of the {0} tweets on this page are within the date range"
+
+#: f2/apps/twitter/handler.py
+#, python-brace-format
 msgid "开始爬取推文：{0}"
 msgstr "Fetching tweet: {0}"
 
@@ -3223,6 +3260,10 @@ msgstr "Tweet ID: {0} Text: {1} Author: {2}"
 #: f2/apps/twitter/handler.py
 msgid "已处理完所有发布的推文"
 msgstr "All posted tweets have been processed"
+
+#: f2/apps/twitter/handler.py
+msgid "已获取到日期区间开始之前的推文，停止翻页"
+msgstr "Reached tweets published before the date range, stopping"
 
 #: f2/apps/twitter/handler.py
 #, python-brace-format
