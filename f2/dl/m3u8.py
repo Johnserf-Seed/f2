@@ -4,7 +4,7 @@ import asyncio
 import traceback
 from abc import abstractmethod
 from pathlib import Path
-from typing import Any, Set, Union
+from typing import Any, Callable, Set, Union
 
 import aiofiles  # type: ignore
 import httpx
@@ -33,6 +33,8 @@ class M3U8DownloadMixin:
     _verify: Union[bool, str]
     aclient: httpx.AsyncClient
     progress: Any
+    # 由 BaseCrawler 提供，这里只声明类型，定义方法会在 MRO 中覆盖它
+    _create_mount: Callable[..., dict]
 
     @abstractmethod
     def _ensure_path(self, path: Union[str, Path]) -> Path: ...
@@ -126,6 +128,7 @@ class M3U8DownloadMixin:
                                     self.headers,
                                     self.proxies,
                                     verify=self._verify,
+                                    mounts=self._create_mount(async_mode=True),
                                 )
                                 if ts_content_length == 0:
                                     ts_content_length = default_chunks

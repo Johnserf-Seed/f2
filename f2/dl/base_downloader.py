@@ -532,8 +532,13 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
             for link_index, link in enumerate(urls):
                 try:
                     # 获取文件内容大小
+                    # 与下载请求使用相同的传输层，代理设置（包括系统代理）保持一致
                     content_length = await get_content_length(
-                        link, self.headers, self.proxies, verify=self._verify
+                        link,
+                        self.headers,
+                        self.proxies,
+                        verify=self._verify,
+                        mounts=self._create_mount(async_mode=True),
                     )
 
                     if content_length == 0:

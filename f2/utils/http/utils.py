@@ -21,6 +21,7 @@ async def get_content_length(
     proxies: Optional[dict] = None,
     max_retries: int = 3,
     verify: Union[bool, str] = True,
+    mounts: Optional[dict] = None,
 ) -> int:
     """
     获取给定URL的Content-Length，使用HEAD请求重试，失败后退避到GET请求
@@ -31,17 +32,25 @@ async def get_content_length(
         proxies (Optional[dict], optional): 代理配置
         max_retries (int, optional): 最大重试次数，默认为3
         verify (Union[bool, str], optional): TLS 证书校验，True / False / CA 证书路径，默认为 True
+        mounts (Optional[dict], optional): 下载器客户端的传输层挂载（BaseCrawler._create_mount），
+            传入时与下载请求使用相同的代理设置，不再读取 proxies
 
     Returns:
         int: 文件的Content-Length，单位为字节
     """
 
-    if proxies is None:
-        proxies = {"all://": None}
-
-    proxy_url = (
-        proxies.get("http://") or proxies.get("https://") or proxies.get("all://")
-    )
+    # 只在配置了代理时指定传输层：指定后 httpx 不再读取环境变量与系统代理，
+    # 只靠系统代理上网时 HEAD 请求会直连超时，文件被当成 0 字节跳过（移植自 #462）
+    transport = None
+    if mounts is None:
+        proxies = proxies or {}
+        proxy_url = (
+            proxies.get("http://") or proxies.get("https://") or proxies.get("all://")
+        )
+        if proxy_url:
+            transport = httpx.AsyncHTTPTransport(
+                retries=2, proxy=proxy_url, verify=verify
+            )
 
     timeout_config = httpx.Timeout(
         connect=10.0,  # 连接超时
@@ -63,10 +72,8 @@ async def get_content_length(
 
     async with httpx.AsyncClient(
         timeout=timeout_config,
-        transport=httpx.AsyncHTTPTransport(
-            retries=2,
-            proxy=proxy_url,
-        ),
+        transport=transport,
+        mounts=mounts,
         verify=verify,
         follow_redirects=True,
         limits=httpx.Limits(max_connections=10, max_keepalive_connections=5),
