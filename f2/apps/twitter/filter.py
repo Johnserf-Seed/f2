@@ -2,7 +2,12 @@
 
 from typing import Any, List, Optional, Tuple
 
-from f2.apps.twitter.utils import best_mp4_url, extract_desc, sort_mp4_urls
+from f2.apps.twitter.utils import (
+    best_mp4_url,
+    extract_desc,
+    sort_mp4_urls,
+    tweet_created_at_to_timestamp,
+)
 from f2.utils.json.filter import JSONModel, filter_to_list
 from f2.utils.string.formatter import replaceT
 from f2.utils.time.timestamp import timestamp_2_str
@@ -266,6 +271,13 @@ class TweetDetailFilter(_GraphQLFilter):
         if created_at is None:
             return ""
         return timestamp_2_str(created_at)
+
+    # 发布时间的秒级时间戳，按日期区间筛选时使用（tweet_created_at 按 UTC 时间格式化）
+    @property
+    def tweet_timestamp(self):
+        return tweet_created_at_to_timestamp(
+            self._get_attr_value(f"{self._result_path}.legacy.created_at")
+        )
 
     # 推文内容
     @property
@@ -616,6 +628,28 @@ class PostTweetFilter(_GraphQLFilter):
             else timestamp_2_str(str(create_times))
         )
 
+    # 发布时间的秒级时间戳，按日期区间筛选时使用（tweet_created_at 按 UTC 时间格式化）
+    @property
+    def tweet_timestamp(self):
+        return [
+            tweet_created_at_to_timestamp(created_at)
+            for created_at in self._get_list_attr_value(
+                "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.created_at"
+            )
+            or []
+        ]
+
+    # 置顶推文排在最前面，不受发布时间倒序的限制
+    @property
+    def tweet_pinned(self):
+        return [
+            context == "Pin"
+            for context in self._get_list_attr_value(
+                "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.socialContext.contextType"
+            )
+            or []
+        ]
+
     @property
     def tweet_favorite_count(self):
         return self._get_list_attr_value(
@@ -932,6 +966,17 @@ class BookmarkTweetFilter(_GraphQLFilter):
             if isinstance(create_times, list)
             else timestamp_2_str(str(create_times))
         )
+
+    # 发布时间的秒级时间戳，按日期区间筛选时使用（tweet_created_at 按 UTC 时间格式化）
+    @property
+    def tweet_timestamp(self):
+        return [
+            tweet_created_at_to_timestamp(created_at)
+            for created_at in self._get_list_attr_value(
+                "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.created_at"
+            )
+            or []
+        ]
 
     @property
     def tweet_favorite_count(self):

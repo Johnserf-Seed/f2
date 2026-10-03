@@ -3,6 +3,7 @@
 import asyncio
 import re
 import traceback
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, NamedTuple, Optional, Tuple, Union
 from urllib.parse import parse_qs, urlparse
@@ -558,6 +559,27 @@ def best_mp4_url(variants: Any) -> Optional[str]:
     """返回码率最高的 MP4 链接，没有 MP4 时返回 None"""
     urls = sort_mp4_urls(variants)
     return urls[-1] if urls else None
+
+
+def tweet_created_at_to_timestamp(created_at: Any) -> Optional[int]:
+    """
+    将推文的发布时间转换为秒级时间戳
+    (Convert the publish time of a tweet to a UNIX timestamp in seconds)
+
+    Args:
+        created_at (Any): 发布时间，如 "Wed Oct 01 16:36:07 +0000 2026"
+
+    Returns:
+        Optional[int]: 秒级时间戳，无法解析时返回 None
+    """
+    if not isinstance(created_at, str):
+        return None
+    try:
+        return int(
+            datetime.strptime(created_at.strip(), "%a %b %d %H:%M:%S %z %Y").timestamp()
+        )
+    except ValueError:
+        return None
 
 
 def extract_desc(text):

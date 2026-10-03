@@ -12,7 +12,6 @@ from f2.dl.base_downloader import BaseDownloader
 from f2.exceptions.conf_exceptions import ConfError
 from f2.i18n.translator import _
 from f2.log.logger import logger
-from f2.utils.time.filter import filter_by_date_interval
 from f2.utils.time.timestamp import parse_interval
 
 
@@ -59,20 +58,21 @@ class TwitterDownloader(BaseDownloader):
             [tweet_datas] if isinstance(tweet_datas, dict) else tweet_datas
         )
 
-        # 筛选指定日期区间内的推文
+        # 筛选指定日期区间内的推文。此前按推文数据中不存在的 createTime 字段筛选，
+        # 设置区间后一条推文都不下载（移植自 #461）；tweet_created_at 是按 UTC 时间
+        # 格式化的命名字段，这里改用发布时间戳，与其他平台一样按北京时间计算区间
         if kwargs.get("interval") is None:
             logger.warning(_("未提供日期区间参数"))
-        elif kwargs.get("interval") != "all":
-            filtered_data = await filter_by_date_interval(
-                tweet_datas_list, str(kwargs.get("interval")), "createTime"
-            )
-            # 处理返回结果确保类型一致
-            if filtered_data is None:
-                tweet_datas_list = []
-            elif isinstance(filtered_data, dict):
-                tweet_datas_list = [filtered_data]
-            else:
-                tweet_datas_list = filtered_data
+        else:
+            interval = parse_interval(kwargs.get("interval"))
+            if interval:
+                start, end = interval
+                tweet_datas_list = [
+                    tweet
+                    for tweet in tweet_datas_list
+                    if isinstance(tweet.get("tweet_timestamp"), int)
+                    and start <= tweet["tweet_timestamp"] <= end
+                ]
 
         # 检查是否有符合条件的推文
         if not tweet_datas_list:
