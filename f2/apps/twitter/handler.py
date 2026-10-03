@@ -2,7 +2,7 @@
 
 import asyncio
 from pathlib import Path
-from typing import Any, AsyncGenerator, Optional, Union
+from typing import Any, AsyncGenerator, Optional, Tuple, Union
 
 from f2.apps.bark.handler import BarkHandler
 from f2.apps.bark.utils import ClientConfManager as BarkClientConfManager
@@ -35,10 +35,61 @@ from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.core.decorators import get_mode_handlers, mode_handler
 from f2.utils.file.path import is_user_folder_migrated
-from f2.utils.time.timestamp import get_timestamp, timestamp_2_str
+from f2.utils.time.timestamp import get_timestamp, parse_interval, timestamp_2_str
 
 rich_console = RichConsoleManager().rich_console
 rich_prompt = RichConsoleManager().rich_prompt
+
+
+def _select_tweets(
+    page: Any,
+    remaining: Union[int, float],
+    interval: Optional[Tuple[int, int]] = None,
+) -> Tuple[Any, int, bool]:
+    """
+    按日期区间与剩余数量截取一页推文
+    (Cut a page of tweets to the date range and the remaining count)
+
+    接口不按 count 返回，一页的推文数可能超过剩余数量。主页推文按发布时间倒序排列
+    （置顶推文除外），本页最后一条非置顶推文早于区间开始时，之后的页面都在区间之前；
+    喜欢与收藏按点赞、收藏的时间排列，调用方不应据此停止翻页。
+
+    Args:
+        page (Any): 一页推文的过滤器 (Filter of a page)
+        remaining (Union[int, float]): 还可以保留的推文数 (Tweets still allowed)
+        interval (Optional[Tuple[int, int]]): 发布时间区间，秒级时间戳，包含首尾
+
+    Returns:
+        Tuple[Any, int, bool]: (截取后的页面, 保留的推文数, 是否已经翻过区间开始)
+    """
+    tweet_ids = page.tweet_id or []
+    timestamps = page.tweet_timestamp or []
+    pinned = getattr(page, "tweet_pinned", None) or [False] * len(tweet_ids)
+
+    kept, total, last_regular = [], 0, None
+    for tweet_id, timestamp, is_pinned in zip(tweet_ids, timestamps, pinned):
+        if not tweet_id:
+            continue
+        total += 1
+        if interval is None or (
+            timestamp is not None and interval[0] <= timestamp <= interval[1]
+        ):
+            kept.append(tweet_id)
+        if timestamp is not None and not is_pinned:
+            last_regular = timestamp
+
+    if interval:
+        logger.info(
+            _("本页 {0} 条推文中有 {1} 条在日期区间内").format(total, len(kept))
+        )
+    if len(kept) > remaining:
+        kept = kept[: int(remaining)]
+    reached_start = (
+        interval is not None and last_regular is not None and last_regular < interval[0]
+    )
+    if len(kept) == total:
+        return page, total, reached_start
+    return page._keep_tweets(kept), len(kept), reached_start
 
 
 class TwitterHandler:
@@ -257,7 +308,11 @@ class TwitterHandler:
             user_path = await self.get_or_add_user_data(self.kwargs, uniqueID, udb)
 
         async for tweet_list in self.fetch_post_tweet(
-            user.user_rest_id, page_counts, max_cursor, max_counts
+            user.user_rest_id,
+            page_counts,
+            max_cursor,
+            max_counts,
+            interval=parse_interval(self.kwargs.get("interval")),
         ):
             # 创建下载任务
             await self.downloader.create_download_tasks(
@@ -270,6 +325,7 @@ class TwitterHandler:
         page_counts: int = 20,
         max_cursor: str = "",
         max_counts: Optional[Union[int, float]] = None,
+        interval: Optional[Tuple[int, int]] = None,
     ) -> AsyncGenerator[PostTweetFilter, Any]:
         """
         用于获取用户发布的推文。
@@ -278,7 +334,9 @@ class TwitterHandler:
             userId: str: 用户ID
             page_counts: int: 每次请求的推文数量
             max_cursor: str: 游标
-            max_counts: int: 最大请求次数
+            max_counts: int: 最大推文数
+            interval: Tuple[int, int]: 发布时间区间，秒级时间戳（开始, 结束），包含首尾，
+                为 None 时不限制；翻到区间开始之前的推文时停止翻页
 
         Return:
             tweet: PostTweetFilter: 用户发布的推文数据过滤器
@@ -321,15 +379,22 @@ class TwitterHandler:
                 logger.info(_("已处理完所有发布的推文"))
                 break
 
-            yield tweet
+            page, kept, reached_start = _select_tweets(
+                tweet, max_counts - tweets_collected, interval
+            )
+            yield page
 
             # 只在本页有推文时更新昵称，最后一页可能不包含任何推文
             if tweet.nickname_raw:
                 nickname_raw = tweet.nickname_raw[0]
 
             # 更新已经处理的推文数量 (Update the number of videos processed)
-            tweets_collected += len(list(filter(None, tweet.tweet_id)))
+            tweets_collected += kept
             max_cursor = tweet.max_cursor
+
+            if reached_start:
+                logger.info(_("已获取到日期区间开始之前的推文，停止翻页"))
+                break
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -368,7 +433,11 @@ class TwitterHandler:
             user_path = await self.get_or_add_user_data(self.kwargs, uniqueID, udb)
 
         async for tweet_list in self.fetch_like_tweet(
-            user.user_rest_id, page_counts, max_cursor, max_counts
+            user.user_rest_id,
+            page_counts,
+            max_cursor,
+            max_counts,
+            interval=parse_interval(self.kwargs.get("interval")),
         ):
             # 创建下载任务
             await self.downloader.create_download_tasks(
@@ -381,6 +450,7 @@ class TwitterHandler:
         page_counts: int = 20,
         max_cursor: str = "",
         max_counts: Optional[Union[int, float]] = None,
+        interval: Optional[Tuple[int, int]] = None,
     ) -> AsyncGenerator[LikeTweetFilter, Any]:
         """
         用于获取用户喜欢的推文。
@@ -389,7 +459,9 @@ class TwitterHandler:
             userId: str: 用户ID
             page_counts: int: 每次请求的推文数量
             max_cursor: str: 游标
-            max_counts: int: 最大请求次数
+            max_counts: int: 最大推文数
+            interval: Tuple[int, int]: 发布时间区间，秒级时间戳（开始, 结束），包含首尾，
+                为 None 时不限制；喜欢按点赞时间排列，会翻完全部页面
 
         Return:
             like: LikeTweetFilter: 用户喜欢的推文数据过滤器
@@ -433,10 +505,13 @@ class TwitterHandler:
                 logger.info(_("已处理完所有喜欢的推文"))
                 break
 
-            yield like
+            page, kept, _reached_start = _select_tweets(
+                like, max_counts - tweets_collected, interval
+            )
+            yield page
 
             # 更新已经处理的推文数量 (Update the number of videos processed)
-            tweets_collected += len(list(filter(None, like.tweet_id)))
+            tweets_collected += kept
             max_cursor = like.max_cursor
 
             # 避免请求过于频繁
@@ -475,7 +550,10 @@ class TwitterHandler:
             user_path = await self.get_or_add_user_data(self.kwargs, uniqueID, udb)
 
         async for tweet_list in self.fetch_bookmark_tweet(
-            page_counts, max_cursor, max_counts
+            page_counts,
+            max_cursor,
+            max_counts,
+            interval=parse_interval(self.kwargs.get("interval")),
         ):
             # 创建下载任务
             await self.downloader.create_download_tasks(
@@ -487,6 +565,7 @@ class TwitterHandler:
         page_counts: int = 20,
         max_cursor: str = "",
         max_counts: Optional[Union[int, float]] = None,
+        interval: Optional[Tuple[int, int]] = None,
     ) -> AsyncGenerator[BookmarkTweetFilter, Any]:
         """
         用于获取用户收藏的推文。
@@ -494,7 +573,9 @@ class TwitterHandler:
         Args:
             page_counts: int: 每次请求的推文数量
             max_cursor: str: 游标
-            max_counts: int: 最大请求次数
+            max_counts: int: 最大推文数
+            interval: Tuple[int, int]: 发布时间区间，秒级时间戳（开始, 结束），包含首尾，
+                为 None 时不限制；收藏按收藏时间排列，会翻完全部页面
 
         Return:
             bookmark: BookmarkTweetFilter: 用户收藏的推文数据过滤器
@@ -542,10 +623,13 @@ class TwitterHandler:
                 logger.info(_("已处理完所有收藏的推文"))
                 break
 
-            yield bookmark
+            page, kept, _reached_start = _select_tweets(
+                bookmark, max_counts - tweets_collected, interval
+            )
+            yield page
 
             # 更新已经处理的推文数量 (Update the number of videos processed)
-            tweets_collected += len(list(filter(None, bookmark.tweet_id)))
+            tweets_collected += kept
             max_cursor = bookmark.max_cursor
 
             # 避免请求过于频繁

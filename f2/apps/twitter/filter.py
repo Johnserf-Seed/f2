@@ -1,6 +1,6 @@
 # path: f2/apps/twitter/filter.py
 
-from typing import Any, List, Optional, Tuple
+from typing import Any, Collection, List, Optional, Tuple
 
 from f2.apps.twitter.utils import (
     best_mp4_url,
@@ -166,6 +166,46 @@ class _GraphQLFilter(JSONModel):
 
     def _to_raw(self) -> dict:
         return self._raw
+
+
+def _entry_tweet_id(entry: Any) -> Optional[str]:
+    """条目中推文的 ID，游标、推荐关注等不是推文的条目返回 None"""
+    if not isinstance(entry, dict):
+        return None
+    item_content = (entry.get("content") or {}).get("itemContent") or {}
+    result = (item_content.get("tweet_results") or {}).get("result") or {}
+    legacy = result.get("legacy") if isinstance(result, dict) else None
+    return legacy.get("id_str") if isinstance(legacy, dict) else None
+
+
+class _TimelineFilter(_GraphQLFilter):
+    """主页、喜欢与收藏等时间线过滤器的基类 (Base class of timeline filters)"""
+
+    # 包含 instructions 的时间线所在的 JSONPath
+    _TIMELINE = ""
+
+    def __init__(self, data: Any):
+        super().__init__(data)
+        merge_timeline_entries(self._get_attr_value(self._TIMELINE))
+
+    def _keep_tweets(self, tweet_ids: Collection[str]) -> Any:
+        """
+        返回只保留指定推文的新过滤器，游标等不是推文的条目保留
+        (Return a new filter keeping only the given tweets; other entries are kept)
+
+        接口不按 count 返回，日期区间与最大数量需要在一页之内截取。
+        """
+        page = type(self)(self._raw)
+        timeline = page._get_attr_value(self._TIMELINE)
+        if not isinstance(timeline, dict) or not timeline.get("instructions"):
+            return page
+        last = timeline["instructions"][-1]
+        last["entries"] = [
+            entry
+            for entry in last["entries"]
+            if _entry_tweet_id(entry) is None or _entry_tweet_id(entry) in tweet_ids
+        ]
+        return page
 
 
 # Filter
@@ -577,12 +617,8 @@ class UserProfileFilter(_GraphQLFilter):
         }
 
 
-class PostTweetFilter(_GraphQLFilter):
-    def __init__(self, data: Any):
-        super().__init__(data)
-        merge_timeline_entries(
-            self._get_attr_value("$.data.user.result.timeline_v2.timeline")
-        )
+class PostTweetFilter(_TimelineFilter):
+    _TIMELINE = "$.data.user.result.timeline_v2.timeline"
 
     @property
     def cursorType(self):
@@ -912,16 +948,11 @@ class PostTweetFilter(_GraphQLFilter):
 
 
 class LikeTweetFilter(PostTweetFilter):
-    def __init__(self, data):
-        super().__init__(data)
+    pass
 
 
-class BookmarkTweetFilter(_GraphQLFilter):
-    def __init__(self, data: Any):
-        super().__init__(data)
-        merge_timeline_entries(
-            self._get_attr_value("$.data.bookmark_timeline_v2.timeline")
-        )
+class BookmarkTweetFilter(_TimelineFilter):
+    _TIMELINE = "$.data.bookmark_timeline_v2.timeline"
 
     @property
     def cursorType(self):
