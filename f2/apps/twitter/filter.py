@@ -7,10 +7,93 @@ from f2.utils.json.filter import JSONModel, filter_to_list
 from f2.utils.string.formatter import replaceT
 from f2.utils.time.timestamp import timestamp_2_str
 
+# 网页端新版 GraphQL 接口（2026-10 实测）的用户对象不再有 legacy，字段拆到了 core、
+# profile_bio 等处。键为 legacy 中的旧字段名，值为新结构中的位置
+_USER_LEGACY_FIELDS = {
+    "name": ("core", "name"),
+    "screen_name": ("core", "screen_name"),
+    "created_at": ("core", "created_at"),
+    "description": ("profile_bio", "description"),
+    "location": ("location", "location"),
+    "url": ("website", "url"),
+    "profile_banner_url": ("banner", "image_url"),
+    "profile_image_url_https": ("avatar", "image_url"),
+    "followers_count": ("relationship_counts", "followers"),
+    "friends_count": ("relationship_counts", "following"),
+    "statuses_count": ("tweet_counts", "tweets"),
+    "media_count": ("tweet_counts", "media_tweets"),
+    "favourites_count": ("action_counts", "favorites_count"),
+    "pinned_tweet_ids_str": ("pinned_items", "tweet_ids_str"),
+    "protected": ("privacy", "protected"),
+    "verified": ("verification", "verified"),
+}
+
+
+def _backfill_user_legacy(user: dict) -> None:
+    """按旧字段名把新版用户对象的字段补进 legacy，已有的字段不覆盖"""
+    values = {
+        field: user[group][key]
+        for field, (group, key) in _USER_LEGACY_FIELDS.items()
+        if isinstance(user.get(group), dict) and key in user[group]
+    }
+    if not values:
+        return
+    legacy = user.get("legacy")
+    if not isinstance(legacy, dict):
+        legacy = user["legacy"] = {}
+    for field, value in values.items():
+        legacy.setdefault(field, value)
+
+
+def normalize_graphql_response(data: Any) -> Any:
+    """
+    把网页端 GraphQL 接口的响应整理成过滤器读取的结构，返回副本，不修改原数据
+    (Normalize a GraphQL response into the structure the filters read)
+
+    queryId 随 X 发版更换后，新的查询返回的结构也会变化，旧 queryId 仍返回旧结构：
+
+    - 用户对象的字段从 legacy 移到了 core、profile_bio 等处：按旧字段名补回 legacy
+    - 主页与喜欢的时间线由 timeline_v2 改名为 timeline：补上 timeline_v2
+    - 受限推文包在 TweetWithVisibilityResults 里：直接取出其中的 tweet，
+      此前时间线中的这类推文没有作者信息，被当成广告跳过
+
+    Args:
+        data (Any): 接口响应 (API response)
+
+    Returns:
+        Any: 整理后的响应 (Normalized response)
+    """
+    if isinstance(data, list):
+        return [normalize_graphql_response(item) for item in data]
+    if not isinstance(data, dict):
+        return data
+
+    node = {key: normalize_graphql_response(value) for key, value in data.items()}
+    typename = node.get("__typename")
+    if typename == "TweetWithVisibilityResults" and isinstance(node.get("tweet"), dict):
+        return node["tweet"]
+    if typename == "User":
+        _backfill_user_legacy(node)
+        if "timeline" in node and "timeline_v2" not in node:
+            node["timeline_v2"] = node["timeline"]
+    return node
+
+
+class _GraphQLFilter(JSONModel):
+    """网页端 GraphQL 接口过滤器的基类：先整理响应结构再读取，_to_raw 仍返回原始响应"""
+
+    def __init__(self, data: Any):
+        super().__init__(normalize_graphql_response(data))
+        self._raw = data
+
+    def _to_raw(self) -> dict:
+        return self._raw
+
+
 # Filter
 
 
-class TweetDetailFilter(JSONModel):
+class TweetDetailFilter(_GraphQLFilter):
     _INSTRUCTIONS = "$.data.threaded_conversation_with_injections_v2.instructions"
 
     def __init__(self, data: Any, tweet_id: Optional[str] = None):
@@ -242,64 +325,61 @@ class TweetDetailFilter(JSONModel):
     @property
     def user_profile_banner_url(self):
         return self._get_attr_value(
-            f"{self._result_path}.core.user_results.result.profile_banner_url"
+            f"{self._result_path}.core.user_results.result.legacy.profile_banner_url"
         )
 
     # 关注者
     @property
     def followers_count(self):
         return self._get_attr_value(
-            f"{self._result_path}.core.user_results.result.followers_count"
+            f"{self._result_path}.core.user_results.result.legacy.followers_count"
         )
 
     # 正在关注
     @property
     def friends_count(self):
         return self._get_attr_value(
-            f"{self._result_path}.core.user_results.result.friends_count"
+            f"{self._result_path}.core.user_results.result.legacy.friends_count"
         )
 
     # 帖子数（推文数&回复 maybe？）
     @property
     def statuses_count(self):
         return self._get_attr_value(
-            f"{self._result_path}.core.user_results.result.statuses_count"
+            f"{self._result_path}.core.user_results.result.legacy.statuses_count"
         )
 
     # 媒体数（图片数&视频数）
     @property
     def media_count(self):
         return self._get_attr_value(
-            f"{self._result_path}.core.user_results.result.media_count"
+            f"{self._result_path}.core.user_results.result.legacy.media_count"
         )
 
     # 喜欢数
     @property
     def favourites_count(self):
         return self._get_attr_value(
-            f"{self._result_path}.core.user_results.result.favourites_count"
+            f"{self._result_path}.core.user_results.result.legacy.favourites_count"
         )
 
     @property
     def has_custom_timelines(self):
         return self._get_attr_value(
-            f"{self._result_path}.core.user_results.result.has_custom_timelines"
+            f"{self._result_path}.core.user_results.result.legacy.has_custom_timelines"
         )
 
     @property
     def location(self):
         return self._get_attr_value(
-            f"{self._result_path}.core.user_results.result.location"
+            f"{self._result_path}.core.user_results.result.legacy.location"
         )
 
     @property
     def can_dm(self):
         return self._get_attr_value(
-            f"{self._result_path}.core.user_results.result.can_dm"
+            f"{self._result_path}.core.user_results.result.legacy.can_dm"
         )
-
-    def _to_raw(self) -> dict:
-        return self._data
 
     def _to_dict(self) -> dict:
         return {
@@ -309,7 +389,7 @@ class TweetDetailFilter(JSONModel):
         }
 
 
-class UserProfileFilter(JSONModel):
+class UserProfileFilter(_GraphQLFilter):
     # User
     # 蓝V认证
     @property
@@ -404,9 +484,6 @@ class UserProfileFilter(JSONModel):
     def can_dm(self):
         return self._get_attr_value("$.data.user.result.legacy.can_dm")
 
-    def _to_raw(self) -> dict:
-        return self._data
-
     def _to_dict(self) -> dict:
         return {
             prop_name: getattr(self, prop_name)
@@ -415,7 +492,7 @@ class UserProfileFilter(JSONModel):
         }
 
 
-class PostTweetFilter(JSONModel):
+class PostTweetFilter(_GraphQLFilter):
     # 用户发布的推文__typename是TweetWithVisibilityResults
     @property
     def cursorType(self):
@@ -691,9 +768,6 @@ class PostTweetFilter(JSONModel):
             "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.profile_banner_url"
         )
 
-    def _to_raw(self) -> dict:
-        return self._data
-
     def _to_dict(self) -> dict:
         return {
             prop_name: getattr(self, prop_name)
@@ -728,7 +802,7 @@ class LikeTweetFilter(PostTweetFilter):
         super().__init__(data)
 
 
-class BookmarkTweetFilter(JSONModel):
+class BookmarkTweetFilter(_GraphQLFilter):
     # 用户发布的推文__typename是TweetWithVisibilityResults
     @property
     def cursorType(self):
@@ -1003,9 +1077,6 @@ class BookmarkTweetFilter(JSONModel):
         return self._get_list_attr_value(
             "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.profile_banner_url"
         )
-
-    def _to_raw(self) -> dict:
-        return self._data
 
     def _to_dict(self) -> dict:
         return {
