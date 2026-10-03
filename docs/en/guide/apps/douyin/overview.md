@@ -405,6 +405,7 @@ Asynchronous method to fetch a specified user's livestream.
 ::: tip :bulb: Tip
 - `webcast_id` and `room_id` are two separate parameters parsed by different APIs.
 - Example: In `https://webcast.amemv.com/douyin/webcast/reflow/7444223303348144935?xxx=xxx...`, `7444223303348144935` is the livestream Room ID (`room_id`).
+- This API is requested without a cookie, because a logged-in cookie makes it return empty data (#367). `APIResponseError` is raised when no live room data is returned.
 :::
 
 ### User Homepage Recommended Posts 🟢

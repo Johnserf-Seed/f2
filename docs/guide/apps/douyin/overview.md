@@ -409,6 +409,7 @@ outline: [2,3]
 ::: tip :bulb: 提示
 - `webcast_id` 与 `room_id` 为2个独立参数，由不同接口解析。
 - 例如：`https://webcast.amemv.com/douyin/webcast/reflow/7444223303348144935?xxx=xxx...` 中 `7444223303348144935` 为直播间ID(`room_id`)。
+- 该接口请求时不带 cookie：带登录 cookie 时接口返回空数据（#367）。接口没有返回直播间数据时抛出 `APIResponseError`。
 :::
 
 ### 用户首页推荐作品数据 🟢

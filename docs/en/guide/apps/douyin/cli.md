@@ -82,6 +82,8 @@ Download mode:
 
 ::: info :information_source: Tips
 - `collection` mode requires login.
+- `like` mode only works for users whose favorites are public; otherwise only the user's own logged-in cookie can download them, and the API keeps returning empty content until an error is reported.
+- `collects` mode lists all collection folders of the account the cookie belongs to for you to choose from, and `--max-counts` applies to each folder separately; it ends right away when there are no folders.
 - `music` mode requires the `--lyric` parameter to specify whether to save original lyrics.
 - `mix` mode takes a mix link, a short drama link, or a link to a post in the mix or short drama as `--url`. Douyin treats short dramas as mixes, so they are downloaded the same way.
 - `live` mode does not currently support special live broadcast rooms, such as `360°` live broadcast.
