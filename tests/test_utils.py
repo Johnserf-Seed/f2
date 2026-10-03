@@ -24,6 +24,10 @@ def test_gen_random_str():
         )
 
 
+# utcnow() 自 Python 3.12 起弃用，改用带时区的时间
+EPOCH = datetime.datetime(1970, 1, 1, tzinfo=datetime.timezone.utc)
+
+
 def test_get_timestamp():
     # Assuming your system's clock is accurate, this is a simple way to verify
     # the value is close to expected since it could vary slightly between function
@@ -34,9 +38,7 @@ def test_get_timestamp():
         abs(
             get_timestamp("milli")
             - int(
-                (
-                    datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)
-                ).total_seconds()
+                (datetime.datetime.now(datetime.timezone.utc) - EPOCH).total_seconds()
                 * 1000
             )
         )
@@ -48,9 +50,7 @@ def test_get_timestamp():
         abs(
             get_timestamp("sec")
             - int(
-                (
-                    datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)
-                ).total_seconds()
+                (datetime.datetime.now(datetime.timezone.utc) - EPOCH).total_seconds()
             )
         )
         <= 1
@@ -61,9 +61,7 @@ def test_get_timestamp():
         abs(
             get_timestamp("min")
             - int(
-                (
-                    datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)
-                ).total_seconds()
+                (datetime.datetime.now(datetime.timezone.utc) - EPOCH).total_seconds()
                 / 60
             )
         )
