@@ -79,6 +79,79 @@ def normalize_graphql_response(data: Any) -> Any:
     return node
 
 
+def _tweet_items(entry: dict) -> List[dict]:
+    """取出模块条目（如主页的串推）中的推文，按普通条目的结构返回"""
+    tweets = []
+    for item in (entry.get("content") or {}).get("items") or []:
+        if not isinstance(item, dict):
+            continue
+        item_content = (item.get("item") or {}).get("itemContent") or {}
+        if item_content.get("tweet_results"):
+            tweets.append(
+                {
+                    "entryId": item.get("entryId"),
+                    "content": {
+                        "entryType": "TimelineTimelineItem",
+                        "itemContent": item_content,
+                    },
+                }
+            )
+    return tweets
+
+
+def merge_timeline_entries(timeline: Any) -> None:
+    """
+    把时间线中分散的推文条目合并到最后一条指令的 entries 中（原地修改）
+    (Merge the scattered tweet entries of a timeline into the entries of the last instruction)
+
+    过滤器只读取最后一条指令的 entries，以下推文此前都不会下载：
+
+    - 置顶推文单独放在 TimelinePinEntry 指令里，不在推文列表中
+    - 主页中的串推（自己回复自己）放在 profile-conversation 模块的 items 里
+
+    合并时推文在前、游标在后，同一推文只保留一次；不含推文的模块（如推荐关注）保持原样。
+
+    Args:
+        timeline (Any): 时间线，即包含 instructions 的字典 (The timeline holding instructions)
+    """
+    if not isinstance(timeline, dict) or not isinstance(
+        timeline.get("instructions"), list
+    ):
+        return
+
+    instructions = [i for i in timeline["instructions"] if isinstance(i, dict)]
+    pinned = [i["entry"] for i in instructions if isinstance(i.get("entry"), dict)]
+    listed = [
+        e
+        for i in instructions
+        if isinstance(i.get("entries"), list)
+        for e in i["entries"]
+        if isinstance(e, dict)
+    ]
+    if not pinned and not any(_tweet_items(e) for e in listed):
+        return
+
+    entries, cursors, seen = [], [], set()
+    for entry in pinned + listed:
+        content = entry.get("content") or {}
+        if content.get("cursorType"):
+            cursors.append(entry)
+            continue
+        for tweet in _tweet_items(entry) or [entry]:
+            item_content = tweet["content"].get("itemContent") or {}
+            result = (item_content.get("tweet_results") or {}).get("result") or {}
+            tweet_id = result.get("rest_id") if isinstance(result, dict) else None
+            if tweet_id in seen:
+                continue
+            if tweet_id:
+                seen.add(tweet_id)
+            entries.append(tweet)
+
+    timeline["instructions"] = [
+        i for i in instructions if "entries" not in i and "entry" not in i
+    ] + [{"type": "TimelineAddEntries", "entries": entries + cursors}]
+
+
 class _GraphQLFilter(JSONModel):
     """网页端 GraphQL 接口过滤器的基类：先整理响应结构再读取，_to_raw 仍返回原始响应"""
 
@@ -493,7 +566,12 @@ class UserProfileFilter(_GraphQLFilter):
 
 
 class PostTweetFilter(_GraphQLFilter):
-    # 用户发布的推文__typename是TweetWithVisibilityResults
+    def __init__(self, data: Any):
+        super().__init__(data)
+        merge_timeline_entries(
+            self._get_attr_value("$.data.user.result.timeline_v2.timeline")
+        )
+
     @property
     def cursorType(self):
         return self._get_attr_value(
@@ -805,7 +883,12 @@ class LikeTweetFilter(PostTweetFilter):
 
 
 class BookmarkTweetFilter(_GraphQLFilter):
-    # 用户发布的推文__typename是TweetWithVisibilityResults
+    def __init__(self, data: Any):
+        super().__init__(data)
+        merge_timeline_entries(
+            self._get_attr_value("$.data.bookmark_timeline_v2.timeline")
+        )
+
     @property
     def cursorType(self):
         return self._get_attr_value(

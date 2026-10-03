@@ -179,3 +179,86 @@ def test_existing_legacy_fields_are_kept():
 
     assert normalized["legacy"]["name"] == "旧名字"
     assert normalized["legacy"]["screen_name"] == "NASA"
+
+
+# ---------------- 置顶推文与主页串推 ----------------
+
+
+def module(entry_id, items):
+    return {
+        "entryId": entry_id,
+        "content": {"entryType": "TimelineTimelineModule", "items": items},
+    }
+
+
+def module_tweet(tweet_id, user):
+    item = {
+        "itemType": "TimelineTweet",
+        "tweet_results": {"result": tweet(tweet_id, user)},
+    }
+    return {"entryId": f"m-tweet-{tweet_id}", "item": {"itemContent": item}}
+
+
+def test_pinned_tweet_and_self_thread_are_downloaded():
+    # 置顶推文在 TimelinePinEntry 里，串推在 profile-conversation 模块里，此前都不会下载
+    user = new_user("nasa", "NASA")
+    recommend = {
+        "entryId": "u-1",
+        "item": {"itemContent": {"itemType": "TimelineUser"}},
+    }
+    data = user_timeline(
+        [
+            entry("10", tweet("10", user)),
+            module("who-to-follow-1", [recommend]),
+            module(
+                "profile-conversation-1",
+                [module_tweet("11", user), module_tweet("12", user)],
+            ),
+        ]
+    )
+    instructions = data["data"]["user"]["result"]["timeline"]["timeline"][
+        "instructions"
+    ]
+    instructions[:0] = [
+        {"type": "TimelineClearCache"},
+        {"type": "TimelinePinEntry", "entry": entry("9", tweet("9", user))},
+    ]
+
+    page = PostTweetFilter(data)
+    items = page._to_list()
+
+    assert [item["tweet_id"] for item in items] == [
+        "9",
+        "10",
+        None,
+        "11",
+        "12",
+        None,
+        None,
+    ]
+    assert page.max_cursor == "BOT"
+    assert page.min_cursor == "TOP"
+    assert page.cursorType == "Bottom"
+
+
+def test_pinned_tweet_listed_again_is_kept_once():
+    user = new_user("nasa", "NASA")
+    data = user_timeline([entry("9", tweet("9", user)), entry("10", tweet("10", user))])
+    instructions = data["data"]["user"]["result"]["timeline"]["timeline"][
+        "instructions"
+    ]
+    instructions.insert(
+        0, {"type": "TimelinePinEntry", "entry": entry("9", tweet("9", user))}
+    )
+
+    items = PostTweetFilter(data)._to_list()
+
+    assert [item["tweet_id"] for item in items] == ["9", "10", None, None]
+
+
+def test_last_page_still_ends_paging():
+    # 到底时只剩两个游标，handler 据此结束翻页
+    page = LikeTweetFilter(user_timeline([]))
+
+    assert page.cursorType == "Bottom"
+    assert len(page.entryId) == 2
