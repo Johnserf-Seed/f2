@@ -1,8 +1,12 @@
 # path: conftest.py
 
+import socket
 from pathlib import Path
 
 import pytest
+
+# 离线用例允许解析的主机：本地服务器
+_LOCAL_HOSTS = frozenset({"localhost", "127.0.0.1", "::1", "0.0.0.0"})
 
 
 def pytest_collection_modifyitems(config: pytest.Config, items: list) -> None:
@@ -13,3 +17,25 @@ def pytest_collection_modifyitems(config: pytest.Config, items: list) -> None:
         rel = Path(item.path).resolve().relative_to(root).as_posix()
         if rel.startswith("f2/apps/") and "/test/" in rel:
             item.add_marker(pytest.mark.network)
+
+
+@pytest.fixture(autouse=True)
+def _offline_guard(request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch):
+    """
+    没有 network 标记的用例不访问真实网络：解析外部主机时直接报错
+
+    此前抖音弹幕的离线用例会在构造爬虫时请求 ttwid.bytedance.com，
+    断网时变慢或失败，CI 上也在请求真实平台。
+    """
+    if request.node.get_closest_marker("network"):
+        return
+
+    resolve = socket.getaddrinfo
+
+    def offline_getaddrinfo(host, *args, **kwargs):
+        name = host.decode() if isinstance(host, bytes) else str(host or "")
+        if name and name not in _LOCAL_HOSTS and not name.startswith("127."):
+            raise OSError(f"离线用例不应访问网络：{name}")
+        return resolve(host, *args, **kwargs)
+
+    monkeypatch.setattr(socket, "getaddrinfo", offline_getaddrinfo)

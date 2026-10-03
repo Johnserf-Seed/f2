@@ -23,6 +23,14 @@ KWARGS = {
 }
 
 
+@pytest.fixture(autouse=True)
+def no_ttwid_request(monkeypatch):
+    # 抖音弹幕爬虫构造时会请求 ttwid.bytedance.com 生成 ttwid
+    monkeypatch.setattr(
+        DouyinTokenManager, "gen_ttwid", classmethod(lambda cls: "fake-ttwid")
+    )
+
+
 class FakeWebSocket:
     """recv 会一直等待到连接关闭；remote=True 表示服务器已经关闭了连接"""
 
