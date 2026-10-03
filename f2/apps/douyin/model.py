@@ -338,7 +338,7 @@ class LiveWebcast(BaseWebCastModel):
     user_unique_id: str
     cursor: str
     internal_ext: str
-    signature: str  # 暂时调用execjs，纯算还在扣
+    signature: str  # 由 DouyinWebcastSignature 纯算生成
 
 
 class LiveImFetch(BaseWebCastModel):
