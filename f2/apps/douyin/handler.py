@@ -1007,41 +1007,53 @@ class DouyinHandler:
         async with AsyncUserDB("douyin_users.db") as db:
             user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, db)
 
-        async for collects in self.fetch_user_collects(
-            max_cursor, page_counts, max_counts
-        ):
-            choose_collects_id = await self.select_user_collects(collects)
+        # 如果是广告用户，优雅地退出
+        if self._check_ad_user_and_exit(user_path):
+            return
 
-            if isinstance(choose_collects_id, str):
-                choose_collects_id = [choose_collects_id]
+        # 先取出全部收藏夹再选择一次。max_counts 是每个收藏夹的作品数上限，
+        # 不用来限制收藏夹数量（此前第一页就达到 max_counts 时只会列出这一页）
+        collects_list: List[Dict] = []
+        async for page in self.fetch_user_collects(max_cursor, page_counts):
+            collects_list.extend(page._to_raw().get("collects_list") or [])
 
-            for collects_id in choose_collects_id:
-                # 由于收藏夹作品包含在用户名下且存在收藏夹名，因此将额外创建收藏夹名的文件夹
-                # 将会根据是否设置了 --folderize 参数来决定是否创建收藏夹名的文件夹
-                # 例如: 用户名/收藏夹名/作品名.mp4
-                if self.kwargs.get("folderize"):
-                    tmp_user_path = user_path
-                    tmp_user_path = (
-                        tmp_user_path
-                        / collects.collects_name[
-                            collects.collects_id.index(int(collects_id))
-                        ]
-                    )
-                else:
-                    tmp_user_path = user_path
-
-                async for aweme_data_list in self.fetch_user_collects_videos(
-                    collects_id, max_cursor, page_counts, max_counts
-                ):
-                    await self.downloader.create_download_tasks(
-                        self.kwargs, aweme_data_list._to_list(), tmp_user_path
-                    )
-
-            logger.info(
-                _("结束处理用户收藏夹作品，共处理 {0} 个作品").format(
-                    len(choose_collects_id)
-                )
+        if not collects_list:
+            logger.warning(
+                _("没有找到收藏夹，收藏夹列表只包含 cookie 所属账号的收藏夹")
             )
+            return
+
+        collects = UserCollectsFilter({"collects_list": collects_list})
+        choose_collects_id = await self.select_user_collects(collects)
+
+        if isinstance(choose_collects_id, str):
+            choose_collects_id = [choose_collects_id]
+
+        for collects_id in choose_collects_id:
+            # 由于收藏夹作品包含在用户名下且存在收藏夹名，因此将额外创建收藏夹名的文件夹
+            # 将会根据是否设置了 --folderize 参数来决定是否创建收藏夹名的文件夹
+            # 例如: 用户名/收藏夹名/作品名.mp4
+            if self.kwargs.get("folderize"):
+                tmp_user_path = user_path
+                tmp_user_path = (
+                    tmp_user_path
+                    / collects.collects_name[
+                        collects.collects_id.index(int(collects_id))
+                    ]
+                )
+            else:
+                tmp_user_path = user_path
+
+            async for aweme_data_list in self.fetch_user_collects_videos(
+                collects_id, max_cursor, page_counts, max_counts
+            ):
+                await self.downloader.create_download_tasks(
+                    self.kwargs, aweme_data_list._to_list(), tmp_user_path
+                )
+
+        logger.info(
+            _("结束处理用户收藏夹，共处理 {0} 个收藏夹").format(len(choose_collects_id))
+        )
 
     async def select_user_collects(
         self, collects: UserCollectsFilter
