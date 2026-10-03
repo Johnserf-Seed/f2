@@ -905,7 +905,7 @@ outline: [2,3]
 | :--- | :--- | :--- |
 | signature | str | 直播signature |
 
-<<< @/snippets/douyin/webcast-signature.py#webcast-signature-snippet{5-10}
+<<< @/snippets/douyin/webcast-signature.py#webcast-signature-snippet{5-8}
 
 ### 使用接口地址生成Xb参数 🟢
 

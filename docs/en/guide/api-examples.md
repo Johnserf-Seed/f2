@@ -111,7 +111,7 @@ For complete API examples, refer to the [`Douyin Developer API`](apps/douyin/ove
 
 > **Generate Danmaku Signature Parameters**
 
-<<< @/snippets/douyin/webcast-signature.py#webcast-signature-snippet{7-10}
+<<< @/snippets/douyin/webcast-signature.py#webcast-signature-snippet{7-8}
 
 > **msToken Related**
 

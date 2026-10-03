@@ -859,7 +859,7 @@ Generates the `signature` required for requesting live chat WebSocket. It is com
 | :--- | :--- | :--- |
 | signature | str | The livestream `signature` |
 
-<<< @/snippets/douyin/webcast-signature.py#webcast-signature-snippet{5-10}
+<<< @/snippets/douyin/webcast-signature.py#webcast-signature-snippet{5-8}
 
 ### Generate Xb Parameter from Endpoint 🟢
 

@@ -111,7 +111,7 @@ outline: deep
 
 > **生成弹幕signature参数**
 
-<<< @/snippets/douyin/webcast-signature.py#webcast-signature-snippet{7-10}
+<<< @/snippets/douyin/webcast-signature.py#webcast-signature-snippet{7-8}
 
 > **msToken相关**
 
