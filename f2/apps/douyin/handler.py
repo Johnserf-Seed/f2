@@ -87,7 +87,7 @@ from f2.apps.douyin.utils import (  # VerifyFpManager,
     limit_page_items,
 )
 from f2.cli.cli_console import RichConsoleManager
-from f2.exceptions.api_exceptions import APIResponseError
+from f2.exceptions.api_exceptions import APIResponseError, APIRetryExhaustedError
 from f2.exceptions.base import F2Error
 from f2.i18n.translator import _
 from f2.log.logger import logger
@@ -688,7 +688,15 @@ class DouyinHandler:
                     count=int(current_request_size),
                     sec_user_id=sec_user_id,
                 )
-                response = await crawler.fetch_user_like(params)
+                try:
+                    response = await crawler.fetch_user_like(params)
+                except APIRetryExhaustedError as e:
+                    # 点赞列表不公开或 cookie 未登录时，接口一直返回空内容，重试用尽才报错
+                    raise APIRetryExhaustedError(
+                        _(
+                            "获取用户：{0} 点赞的作品失败，接口多次返回空内容：对方可能没有公开点赞列表，或 cookie 没有登录"
+                        ).format(sec_user_id)
+                    ) from e
                 response = limit_page_items(
                     response, "aweme_list", max_counts - videos_collected
                 )
