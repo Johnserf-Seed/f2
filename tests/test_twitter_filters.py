@@ -84,6 +84,9 @@ def test_detail_skips_clear_cache_instruction():
     # 详情过滤器的 join_time 原样返回接口值（与上游行为一致）
     assert tweet.join_time == "Wed Oct 10 20:19:24 +0000 2018"
     assert tweet.followers_count == 100
+    # 新详情结构不再返回 can_dm 与 has_custom_timelines，固定为 None
+    assert tweet.can_dm is None
+    assert tweet.has_custom_timelines is None
 
 
 def test_detail_picks_reply_instead_of_parent():
@@ -261,8 +264,10 @@ def test_user_profile_reads_new_structure_fields():
     assert profile.is_blue_verified is True
     assert profile.user_unique_id == "alice"
     assert profile.nickname == "Alice"
+    assert profile.nickname_raw == "Alice"
     assert profile.join_time == "2018-10-10 20-19-24"
     assert profile.user_description == "hello"
+    assert profile.user_description_raw == "hello"
     assert profile.user_profile_banner_url == "https://pbs.twimg.com/alice/banner"
     assert profile.followers_count == 100
     assert profile.friends_count == 10
