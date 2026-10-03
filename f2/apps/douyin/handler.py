@@ -588,7 +588,16 @@ class DouyinHandler:
 
             # 最后一页之后不再请求；游标没有前进时再请求只会得到同一页（此前空页面会不间断地重复请求）
             if not video.has_more:
-                logger.info(_("用户: {0} 所有作品采集完毕").format(sec_user_id))
+                # 登录状态下每页都带有 has_more（到底时为 0），游客 cookie 请求第一页之后的页面
+                # 只返回状态码，并不是真的没有作品了（#435）
+                if response.get("has_more") is None:
+                    logger.warning(
+                        _(
+                            "接口没有返回翻页信息：游客 cookie 只能获取主页第一页的作品，需要更多作品请配置登录后的 cookie"
+                        )
+                    )
+                else:
+                    logger.info(_("用户: {0} 所有作品采集完毕").format(sec_user_id))
                 break
             if not _cursor_advanced(video.max_cursor, max_cursor):
                 logger.warning(_("接口返回的游标没有变化，停止翻页"))
@@ -1748,7 +1757,16 @@ class DouyinHandler:
 
             # 最后一页之后不再请求；游标没有前进时再请求只会得到同一页（此前空页面会不间断地重复请求）
             if not feed.has_more:
-                logger.info(_("用户: {0} 所有作品采集完毕").format(sec_user_id))
+                # 登录状态下每页都带有 has_more（到底时为 0），游客 cookie 请求第一页之后的页面
+                # 只返回状态码，并不是真的没有作品了（#435）
+                if response.get("has_more") is None:
+                    logger.warning(
+                        _(
+                            "接口没有返回翻页信息：游客 cookie 只能获取主页第一页的作品，需要更多作品请配置登录后的 cookie"
+                        )
+                    )
+                else:
+                    logger.info(_("用户: {0} 所有作品采集完毕").format(sec_user_id))
                 break
             if not _cursor_advanced(feed.max_cursor, max_cursor):
                 logger.warning(_("接口返回的游标没有变化，停止翻页"))
