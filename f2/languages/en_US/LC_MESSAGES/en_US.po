@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-03 13:04-0700\n"
+"POT-Creation-Date: 2026-10-03 13:20-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -1423,6 +1423,11 @@ msgstr "Processing page {0} ({1})"
 msgid "已经处理到指定时间范围内的作品"
 msgstr "Reached the posts within the specified time range"
 
+#: f2/apps/douyin/handler.py
+#, python-brace-format
+msgid "当前请求的max_cursor：{0}"
+msgstr "max_cursor of the current request: {0}"
+
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "第 {0} 页没有找到作品"
@@ -1433,10 +1438,9 @@ msgstr "No posts found on page {0}"
 msgid "用户: {0} 所有作品采集完毕"
 msgstr "All posts of user: {0} have been fetched"
 
-#: f2/apps/douyin/handler.py
-#, python-brace-format
-msgid "当前请求的max_cursor：{0}"
-msgstr "max_cursor of the current request: {0}"
+#: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
+msgid "接口返回的游标没有变化，停止翻页"
+msgstr "The API returned the same cursor, stopped paging"
 
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #: f2/apps/twitter/handler.py f2/apps/weibo/handler.py
