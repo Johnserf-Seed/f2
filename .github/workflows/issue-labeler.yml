@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Add platform label
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const body = context.payload.issue.body || "";
