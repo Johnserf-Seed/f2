@@ -5,6 +5,7 @@ from typing import Any, Collection, List, Optional, Tuple
 from f2.apps.twitter.utils import (
     best_mp4_url,
     extract_desc,
+    media_items,
     sort_mp4_urls,
     tweet_created_at_to_timestamp,
 )
@@ -367,6 +368,14 @@ class TweetDetailFilter(_GraphQLFilter):
             self._get_attr_value(
                 f"{self._result_path}.legacy.extended_entities.media[*].video_info.variants[*]"
             )
+        )
+
+    # 每个媒体的类型与下载链接：图文混合、多个视频的推文需要逐个下载
+    @property
+    def tweet_media(self):
+        return media_items(
+            self._get_attr_value(f"{self._result_path}.legacy.extended_entities.media")
+            or self._get_attr_value(f"{self._result_path}.legacy.entities.media")
         )
 
     # 视频时长
@@ -805,6 +814,20 @@ class PostTweetFilter(_TimelineFilter):
             for video_url_list in video_url_lists
         ]
 
+    # 每个媒体的类型与下载链接：图文混合、多个视频的推文需要逐个下载
+    @property
+    def tweet_media(self):
+        extended = self._get_list_attr_value(
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.extended_entities.media"
+        )
+        basic = self._get_list_attr_value(
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.entities.media"
+        )
+        return [
+            media_items(media or fallback)
+            for media, fallback in zip(extended or [], basic or [])
+        ]
+
     # user
     @property
     def user_id(self):
@@ -1126,6 +1149,20 @@ class BookmarkTweetFilter(_TimelineFilter):
                 else None
             )
             for video_url_list in video_url_lists
+        ]
+
+    # 每个媒体的类型与下载链接：图文混合、多个视频的推文需要逐个下载
+    @property
+    def tweet_media(self):
+        extended = self._get_list_attr_value(
+            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.extended_entities.media"
+        )
+        basic = self._get_list_attr_value(
+            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.entities.media"
+        )
+        return [
+            media_items(media or fallback)
+            for media, fallback in zip(extended or [], basic or [])
         ]
 
     # user

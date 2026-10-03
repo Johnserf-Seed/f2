@@ -561,6 +561,37 @@ def best_mp4_url(variants: Any) -> Optional[str]:
     return urls[-1] if urls else None
 
 
+# 视频与动图的媒体类型，动图（GIF）在接口中也是 MP4 视频
+VIDEO_MEDIA_TYPES = ("video", "animated_gif")
+
+
+def media_items(media_list: Any) -> List[dict]:
+    """
+    取出推文中每个媒体的类型与下载链接
+    (Get the type and download link of each media in a tweet)
+
+    图片取 media_url_https，视频与动图取码率最高的 MP4。一条推文可以同时包含图片与视频，
+    也可以有多个视频，需要逐个下载。
+
+    Args:
+        media_list (Any): extended_entities.media 或 entities.media
+
+    Returns:
+        List[dict]: [{"type": 媒体类型, "url": 下载链接}]，没有可用链接时 url 为 None
+    """
+    items = []
+    for media in media_list if isinstance(media_list, list) else []:
+        if not isinstance(media, dict):
+            continue
+        media_type = media.get("type")
+        if media_type in VIDEO_MEDIA_TYPES:
+            url = best_mp4_url((media.get("video_info") or {}).get("variants"))
+        else:
+            url = media.get("media_url_https")
+        items.append({"type": media_type, "url": url})
+    return items
+
+
 def tweet_created_at_to_timestamp(created_at: Any) -> Optional[int]:
     """
     将推文的发布时间转换为秒级时间戳
