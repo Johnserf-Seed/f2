@@ -107,6 +107,16 @@ DY_LIVE_STATUS_MAPPING = {
 }
 
 
+def _cursor_advanced(next_cursor: Any, current: Any) -> bool:
+    """
+    接口给出的下一页游标有效且与本次请求不同 (The next cursor is valid and moved on)
+
+    游标没有变化时再请求只会得到同一页，翻页循环应当结束。
+    """
+
+    return next_cursor not in (None, "") and str(next_cursor) != str(current)
+
+
 class DouyinHandler:
 
     # 需要忽略的字段（需过滤掉有时效性的字段）
@@ -559,28 +569,30 @@ class DouyinHandler:
                 logger.info(_("已经处理到指定时间范围内的作品"))
                 break
 
-            if not video.has_aweme:
-                logger.info(_("第 {0} 页没有找到作品").format(max_cursor))
-                if not video.has_more:
-                    logger.info(_("用户: {0} 所有作品采集完毕").format(sec_user_id))
-                    break
+            if video.has_aweme:
+                # 防止最后一页不包含任何作品导致无法获取nickname_raw
+                if video.nickname_raw and len(video.nickname_raw) > 0:
+                    nickname_raw = video.nickname_raw[0]
 
-                max_cursor = video.max_cursor
-                continue
-
-            # 防止最后一页不包含任何作品导致无法获取nickname_raw
-            if video.nickname_raw and len(video.nickname_raw) > 0:
-                nickname_raw = video.nickname_raw[0]
-
-            logger.debug(_("当前请求的max_cursor：{0}").format(max_cursor))
-            logger.debug(
-                _("作品ID：{0} 作品文案：{1} 作者：{2}").format(
-                    video.aweme_id, video.desc, video.nickname
+                logger.debug(_("当前请求的max_cursor：{0}").format(max_cursor))
+                logger.debug(
+                    _("作品ID：{0} 作品文案：{1} 作者：{2}").format(
+                        video.aweme_id, video.desc, video.nickname
+                    )
                 )
-            )
 
-            # 更新已经处理的作品数量 (Update the number of videos processed)
-            videos_collected += len(video.aweme_id)
+                # 更新已经处理的作品数量 (Update the number of videos processed)
+                videos_collected += len(video.aweme_id)
+            else:
+                logger.info(_("第 {0} 页没有找到作品").format(max_cursor))
+
+            # 最后一页之后不再请求；游标没有前进时再请求只会得到同一页（此前空页面会不间断地重复请求）
+            if not video.has_more:
+                logger.info(_("用户: {0} 所有作品采集完毕").format(sec_user_id))
+                break
+            if not _cursor_advanced(video.max_cursor, max_cursor):
+                logger.warning(_("接口返回的游标没有变化，停止翻页"))
+                break
             max_cursor = video.max_cursor
 
             # 避免请求过于频繁
@@ -703,24 +715,26 @@ class DouyinHandler:
                 like = UserPostFilter(response)
                 yield like
 
-            if not like.has_aweme:
-                logger.info(_("第 {0} 页没有找到作品").format(max_cursor))
-                if not like.has_more:
-                    logger.info(_("用户：{0} 所有作品采集完毕").format(sec_user_id))
-                    break
-
-                max_cursor = like.max_cursor
-                continue
-
-            logger.debug(_("当前请求的max_cursor：{0}").format(max_cursor))
-            logger.debug(
-                _("作品ID：{0} 作品文案：{1} 作者：{2}").format(
-                    like.aweme_id, like.desc, like.nickname
+            if like.has_aweme:
+                logger.debug(_("当前请求的max_cursor：{0}").format(max_cursor))
+                logger.debug(
+                    _("作品ID：{0} 作品文案：{1} 作者：{2}").format(
+                        like.aweme_id, like.desc, like.nickname
+                    )
                 )
-            )
 
-            # 更新已经处理的作品数量 (Update the number of videos processed)
-            videos_collected += len(like.aweme_id)
+                # 更新已经处理的作品数量 (Update the number of videos processed)
+                videos_collected += len(like.aweme_id)
+            else:
+                logger.info(_("第 {0} 页没有找到作品").format(max_cursor))
+
+            # 最后一页之后不再请求；游标没有前进时再请求只会得到同一页（此前空页面会不间断地重复请求）
+            if not like.has_more:
+                logger.info(_("用户：{0} 所有作品采集完毕").format(sec_user_id))
+                break
+            if not _cursor_advanced(like.max_cursor, max_cursor):
+                logger.warning(_("接口返回的游标没有变化，停止翻页"))
+                break
             max_cursor = like.max_cursor
 
             # 避免请求过于频繁
@@ -1704,24 +1718,26 @@ class DouyinHandler:
                 feed = UserPostFilter(response)
                 yield feed
 
-            if not feed.has_aweme:
-                logger.info(_("第 {0} 页没有找到作品").format(max_cursor))
-                if not feed.has_more:
-                    logger.info(_("用户: {0} 所有作品采集完毕").format(sec_user_id))
-                    break
-
-                max_cursor = feed.max_cursor
-                continue
-
-            logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
-            logger.debug(
-                _("作品ID：{0} 作品文案：{1} 作者：{2}").format(
-                    feed.aweme_id, feed.desc, feed.nickname
+            if feed.has_aweme:
+                logger.debug(_("当前请求的max_cursor: {0}").format(max_cursor))
+                logger.debug(
+                    _("作品ID：{0} 作品文案：{1} 作者：{2}").format(
+                        feed.aweme_id, feed.desc, feed.nickname
+                    )
                 )
-            )
 
-            # 更新已经处理的作品数量 (Update the number of videos processed)
-            videos_collected += len(feed.aweme_id)
+                # 更新已经处理的作品数量 (Update the number of videos processed)
+                videos_collected += len(feed.aweme_id)
+            else:
+                logger.info(_("第 {0} 页没有找到作品").format(max_cursor))
+
+            # 最后一页之后不再请求；游标没有前进时再请求只会得到同一页（此前空页面会不间断地重复请求）
+            if not feed.has_more:
+                logger.info(_("用户: {0} 所有作品采集完毕").format(sec_user_id))
+                break
+            if not _cursor_advanced(feed.max_cursor, max_cursor):
+                logger.warning(_("接口返回的游标没有变化，停止翻页"))
+                break
             max_cursor = feed.max_cursor
 
             # 避免请求过于频繁
