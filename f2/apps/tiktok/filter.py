@@ -415,16 +415,21 @@ class UserPlayListFilter(JSONModel):
         return bool(self._get_attr_value("$.hasMore"))
 
     @property
+    def cursor(self):
+        return self._get_attr_value("$.cursor")
+
+    # 按列表读取：_get_attr_value 只匹配到一个值时返回该值本身，只有一个合集时会变成字符串
+    @property
     def mixId(self):
-        return self._get_attr_value("$.playList[*].mixId")
+        return self._get_list_attr_value("$.playList[*].mixId")
 
     @property
     def mixName(self):
-        return self._get_attr_value("$.playList[*].mixName")
+        return self._get_list_attr_value("$.playList[*].mixName")
 
     @property
     def videoCount(self):
-        return self._get_attr_value("$.playList[*].videoCount")
+        return self._get_list_attr_value("$.playList[*].videoCount")
 
     def _to_raw(self) -> dict:
         return self._data

@@ -730,6 +730,10 @@ class TiktokHandler:
         playlist = await self.fetch_play_list(secUid, cursor, page_counts)
         mixId = await self.select_playlist(playlist)
 
+        # 没有合集时 select_playlist 已经提示过，不再创建用户目录
+        if not mixId:
+            return
+
         async with AsyncUserDB("tiktok_users.db") as audb:
             user_path = await self.get_or_add_user_data(
                 secUid=secUid, uniqueId="", db=audb
@@ -768,10 +772,22 @@ class TiktokHandler:
 
         logger.debug(_("处理用户：{0} 的作品合集列表").format(secUid))
 
-        async with TiktokCrawler(self.kwargs) as crawler:
-            params = UserPlayList(secUid=secUid, cursor=cursor, count=page_counts)
-            response = await crawler.fetch_user_play_list(params)
-            playlist = UserPlayListFilter(response)
+        # 接口按 page_counts 分页（游标是偏移量），此前只取第一页，合集多的用户只能看到前几个
+        playlists: List[dict] = []
+        while True:
+            async with TiktokCrawler(self.kwargs) as crawler:
+                params = UserPlayList(secUid=secUid, cursor=cursor, count=page_counts)
+                response = await crawler.fetch_user_play_list(params)
+            page = UserPlayListFilter(response)
+            playlists.extend(response.get("playList") or [])
+
+            next_cursor = _next_cursor(page, cursor)
+            if next_cursor is None:
+                break
+            cursor = next_cursor
+            await asyncio.sleep(self.kwargs.get("timeout", 5))
+
+        playlist = UserPlayListFilter({**response, "playList": playlists})
 
         if not playlist.hasPlayList:
             logger.info(_("用户：{0} 没有作品合集").format(secUid))
@@ -804,12 +820,12 @@ class TiktokHandler:
             logger.warning(_("用户没有作品合集"))
             return []  # 返回空列表而不是None
 
-        rich_console.print("[bold]请选择要下载的合集：[/bold]")
-        rich_console.print("0: [bold]全部下载[/bold]")
+        rich_console.print(_("[bold]请选择要下载的合集：[/bold]"))
+        rich_console.print(_("0: [bold]全部下载[/bold]"))
 
         for i in range(len(playlists.mixId)):
             rich_console.print(
-                _("{0}: {1} (包含 {2} 个作品，收藏夹ID {3})").format(
+                _("{0}: {1} (包含 {2} 个作品，合集ID {3})").format(
                     i + 1,
                     playlists.mixName[i],
                     playlists.videoCount[i],
