@@ -1934,10 +1934,6 @@ class DouyinHandler:
                 )
                 friend = FriendFeedFilter(response)
 
-            if not friend.has_more:
-                logger.info(_("所有好友作品采集完毕"))
-                break
-
             if friend.status_code != 0:
                 logger.warning(
                     _("请求失败，错误码：{0} 错误信息：{1}").format(
@@ -1945,23 +1941,30 @@ class DouyinHandler:
                     )
                 )
                 break
-            else:
-                # 因为没有好友作品第一页也会返回has_more为False，所以需要访问下一页判断是否有作品
-                if not friend.has_aweme:
-                    logger.info(_("第 {0} 页没有找到作品").format(cursor))
-                    continue
 
-            logger.debug(_("当前请求的cursor: {0}").format(cursor))
-            logger.debug(
-                _("作品ID: {0} 作品文案: {1} 作者: {2}").format(
-                    friend.aweme_id, friend.desc, friend.nickname
+            # 先交出本页作品再判断是否还有下一页：最后一页的 has_more 为假，此前这一页会被丢掉
+            if friend.has_aweme:
+                logger.debug(_("当前请求的cursor: {0}").format(cursor))
+                logger.debug(
+                    _("作品ID: {0} 作品文案: {1} 作者: {2}").format(
+                        friend.aweme_id, friend.desc, friend.nickname
+                    )
                 )
-            )
 
-            yield friend
+                yield friend
 
-            # 更新已经处理的作品数量 (Update the number of videos processed)
-            videos_collected += len(friend.aweme_id)
+                # 更新已经处理的作品数量 (Update the number of videos processed)
+                videos_collected += len(friend.aweme_id)
+            else:
+                logger.info(_("第 {0} 页没有找到作品").format(cursor))
+
+            # 本页没有作品时也翻到下一页；游标没有前进时视为结束，避免反复请求同一页
+            if not friend.has_more or (
+                friend.cursor == cursor and friend.level == level
+            ):
+                logger.info(_("所有好友作品采集完毕"))
+                break
+
             # 更新下一页的cursor (Update the cursor of the next page)
             cursor = friend.cursor
             # 更新其他参数 (Update other parameters)
