@@ -519,10 +519,12 @@ class PostTweetFilter(_GraphQLFilter):
         )
 
     # tweet
+    # 推文自身的 ID。conversation_id_str 是所在会话根推文的 ID，喜欢或收藏的是回复时
+    # 会取成别人的推文，同一会话的多条回复还会因此同名，后面的被当成已下载跳过
     @property
     def tweet_id(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.conversation_id_str"
+            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.id_str"
         )
 
     @property
@@ -829,10 +831,12 @@ class BookmarkTweetFilter(_GraphQLFilter):
         )
 
     # tweet
+    # 推文自身的 ID。conversation_id_str 是所在会话根推文的 ID，喜欢或收藏的是回复时
+    # 会取成别人的推文，同一会话的多条回复还会因此同名，后面的被当成已下载跳过
     @property
     def tweet_id(self):
         return self._get_list_attr_value(
-            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.conversation_id_str"
+            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.id_str"
         )
 
     @property

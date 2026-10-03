@@ -191,3 +191,38 @@ def test_bookmark_uid_naming():
     }
     item = BookmarkTweetFilter(data)._to_list()[0]
     assert format_file_name("{uid}", item) == "bob"
+
+
+# ---------------- 时间线推文 ID 取推文自身的 id_str ----------------
+
+
+def replies_in_one_conversation(*tweet_ids):
+    entries = []
+    for tid in tweet_ids:
+        result = tweet_result(tid, "回复", "alice")
+        result["legacy"]["conversation_id_str"] = "100"
+        entries.append(entry(tid, result))
+    return entries + CURSORS
+
+
+@pytest.mark.parametrize("filter_cls", [PostTweetFilter, LikeTweetFilter])
+def test_timeline_reply_uses_its_own_id(filter_cls):
+    # 此前取 conversation_id_str，喜欢的回复会得到根推文的 ID，同一会话的回复同名
+    timeline = {
+        "instructions": [{"entries": replies_in_one_conversation("201", "202")}]
+    }
+    data = {"data": {"user": {"result": {"timeline_v2": {"timeline": timeline}}}}}
+
+    items = filter_cls(data)._to_list()
+
+    assert [item["tweet_id"] for item in items[:2]] == ["201", "202"]
+    assert format_file_name("{tweet_id}", items[0]) != format_file_name(
+        "{tweet_id}", items[1]
+    )
+
+
+def test_bookmark_reply_uses_its_own_id():
+    timeline = {"instructions": [{"entries": replies_in_one_conversation("301")}]}
+    data = {"data": {"bookmark_timeline_v2": {"timeline": timeline}}}
+
+    assert BookmarkTweetFilter(data)._to_list()[0]["tweet_id"] == "301"
