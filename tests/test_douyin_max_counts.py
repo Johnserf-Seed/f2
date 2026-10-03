@@ -56,13 +56,13 @@ class WholePageCrawler:
     fetch_friend_feed = _next
 
 
-def aweme_page(count):
+def aweme_page(count, cursor=1):
     return {
         "status_code": 0,
         "aweme_list": [{"aweme_id": str(i)} for i in range(count)],
         "has_more": 1,
-        "max_cursor": 1,
-        "cursor": 1,
+        "max_cursor": cursor,
+        "cursor": cursor,
     }
 
 
@@ -194,7 +194,7 @@ async def test_whole_page_is_cut_to_max_counts(
 
 async def test_like_videos_keep_counting_across_pages(handler, monkeypatch):
     # 第一页不足上限时继续翻页，第二页只取剩下的数量
-    crawler = use_pages(monkeypatch, [aweme_page(3), aweme_page(5)])
+    crawler = use_pages(monkeypatch, [aweme_page(3), aweme_page(5, cursor=2)])
 
     pages = [page async for page in handler.fetch_user_like_videos("sec-uid", 0, 3, 4)]
 
