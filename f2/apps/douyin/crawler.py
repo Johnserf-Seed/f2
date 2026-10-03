@@ -291,10 +291,11 @@ class DouyinCrawler(BaseCrawler):
         return await self._fetch_get_json(endpoint)
 
     async def fetch_live_room_id(self, params: UserLive2):
-        original_headers = self.aclient.headers.copy()
+        # 带登录状态的 cookie 时接口返回 status_code 101 与空数据（#367），这个接口用空 cookie 请求。
+        # 每次请求都会带上 crawler_headers，只改客户端的默认请求头不起作用
+        original_headers = self.crawler_headers
+        self.crawler_headers = {**original_headers, "Cookie": ""}
         try:
-            # 避免invalid session
-            self.aclient.headers.update({"Cookie": ""})
             endpoint = self.bogus_manager.model_2_endpoint(
                 self.headers.get("User-Agent"),
                 dyendpoint.LIVE_INFO_ROOM_ID,
@@ -303,7 +304,7 @@ class DouyinCrawler(BaseCrawler):
             logger.debug(_("直播接口地址（room_id）：{0}").format(endpoint))
             return await self._fetch_get_json(endpoint)
         finally:
-            self.aclient.headers = original_headers
+            self.crawler_headers = original_headers
 
     async def fetch_live_user_rank(self, params: UserLiveRank):
         endpoint = self.bogus_manager.model_2_endpoint(

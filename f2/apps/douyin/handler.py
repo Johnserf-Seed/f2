@@ -1527,6 +1527,14 @@ class DouyinHandler:
             response = await crawler.fetch_live_room_id(params)
             live = UserLive2Filter(response)
 
+        # 接口没有返回直播间数据时（例如状态码 101），此前会在处理标题时崩溃（#367）
+        if live.room_id is None:
+            raise APIResponseError(
+                _("没有获取到房间号 {0} 的直播数据，接口状态码：{1}").format(
+                    room_id, live.api_status_code
+                )
+            )
+
         logger.info(
             _("直播ID：{0}，用户：{1}，直播间：{2}，状态：{3}，观看人数：{4}").format(
                 live.web_rid,
