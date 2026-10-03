@@ -156,12 +156,13 @@ def create_impersonate_transport(
         Optional[ImpersonateTransport]: 传输层，未安装 curl_cffi 时为 None
     """
     try:
-        from curl_cffi.requests import AsyncSession
+        from curl_cffi.requests import AsyncSession, Response
     except ImportError:
         _warn_missing_once()
         return None
 
-    session = AsyncSession(
+    # curl_cffi 只在 Python 3.13+ 给响应类型参数设了默认值，低版本下需要显式标注
+    session: AsyncSession[Response] = AsyncSession(
         impersonate=impersonate,
         proxy=proxy,
         # 运行时也接受 CA 证书文件路径（设置为 CAINFO），curl_cffi 的类型标注只写了 bool
