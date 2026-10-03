@@ -1017,9 +1017,18 @@ class TiktokHandler:
                 if not search.has_more and str(search.api_status_code) == "0":
                     logger.info(_("关键词：{0} 所有作品采集完毕").format(keyword))
                     break
-                else:
-                    offset = search.cursor
-                    continue
+                # 接口出错时 cursor 可能为空，游标没有前进时再请求只会得到同一页，
+                # 此前会不间断地重复请求
+                next_offset = normalize_cursor(search.cursor)
+                if next_offset is None or next_offset == offset:
+                    logger.warning(_("接口返回的游标没有变化，停止翻页"))
+                    break
+                offset = next_offset
+                logger.info(
+                    _("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5))
+                )
+                await asyncio.sleep(self.kwargs.get("timeout", 5))
+                continue
 
             logger.debug(_("当前请求的offset：{0}").format(offset))
             logger.debug(
