@@ -56,7 +56,7 @@ Determines whether works should be saved in separate folders. Default is `true`.
 
 Download modes:
 - `one`: Single work
-- `post`: Homepage works
+- `post`: Homepage works, including the pinned tweet and threads (replies to their own tweets)
 - `like`: Liked works
 - `bookmark`: Bookmarked (saved) works
 

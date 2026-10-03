@@ -41,6 +41,7 @@ outline: [2,3]
 |  重命名用户目录      | -                 | `rename_user_folder`          |  🟢  |
 |  创建或重命名用户目录 | -                 | `create_or_rename_user_folder` |  🟢  |
 |  提取推文文案       | -                    | `extract_desc`              |  🟢  |
+|  读取网页脚本中的查询 | -                  | `parse_graphql_operations`  |  🟢  |
 :::
 
 ::: details crawler接口列表
@@ -52,6 +53,7 @@ outline: [2,3]
 | 主页推文接口   | `TwitterCrawler` | `fetch_post_tweet`    |  🟢  |
 | 喜欢推文接口   | `TwitterCrawler` | `fetch_like_tweet`    |  🟢  |
 | 收藏推文接口   | `TwitterCrawler` | `fetch_bookmark_tweet`|  🟢  |
+| 从网页脚本读取查询 | `TwitterCrawler` | `fetch_graphql_operation` |  🟢  |
 :::
 
 ::: details dl接口列表
@@ -134,6 +136,7 @@ outline: [2,3]
 | page_counts | int | 页数，初始为 `20` |
 | max_cursor | str | 翻页参数，初始为空 |
 | max_counts | int | 最大获取数量, 初始为 `None` |
+| interval | Tuple[int, int] | 发布时间区间，秒级时间戳（开始, 结束），可用 `parse_interval` 生成，初始为 `None` |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -151,6 +154,7 @@ outline: [2,3]
 | page_counts | int | 页数，初始为 `20` |
 | max_cursor | str | 翻页参数，初始为空 |
 | max_counts | int | 最大获取数量, 初始为 `None` |
+| interval | Tuple[int, int] | 发布时间区间，秒级时间戳（开始, 结束），可用 `parse_interval` 生成，初始为 `None` |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -167,6 +171,7 @@ outline: [2,3]
 | page_counts | int | 页数，初始为 `20` |
 | max_cursor | str | 翻页参数，初始为空 |
 | max_counts | int | 最大获取数量, 初始为 `None` |
+| interval | Tuple[int, int] | 发布时间区间，秒级时间戳（开始, 结束），可用 `parse_interval` 生成，初始为 `None` |
 
 | 返回 | 类型 | 说明 |
 | :--- | :--- | :--- |
@@ -357,6 +362,10 @@ outline: [2,3]
 
 ## crawler接口列表
 
+::: tip :bulb: 提示
+`X` 每次发版都可能更换 `GraphQL` 接口地址中的 `queryId`。`F2` 优先使用内置的值，接口返回 `404`（`Query not found`）时，会用 `cookie` 打开 `x.com`，从网页加载的脚本中读取新的 `queryId` 并重试，同一进程内之后的请求都使用新值，不需要等 `F2` 发布新版。需要有效的登录 `cookie`。
+:::
+
 ### 推文详情接口 🟢
 
 用于获取推文详情数据。
@@ -430,5 +439,9 @@ outline: [2,3]
 
 ### 下载视频 🟢
 
+逐个下载推文中的视频与动图（`GIF`），只有一个时文件名以 `_video` 结尾，多个时依次为 `_video_1`、`_video_2`。
+
 
 ### 下载图集 🟢
+
+逐个下载推文中的图片，文件名以 `_image_1`、`_image_2` 结尾。图文混合的推文图片与视频都会下载。

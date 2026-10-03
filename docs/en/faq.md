@@ -197,6 +197,18 @@ A `403 Forbidden` error when downloading Twitter posts is usually caused by an e
 `F2` automatically uses the `ct0` value in the `cookie` as the `X-Csrf-Token`, so you usually do not need to configure it separately. The `X-Csrf-Token` in the `F2 config file (conf.yaml)` is only used when the `cookie` has no `ct0`. The cookie is in the app's main or custom config files.
 :::
 
+## twitter 404 / Query not found
+
+`X` may change the `queryId` in its `GraphQL` API endpoints with every release. Once an old value expires, the API returns `404` (`Query not found`).
+
+::: details :link: Solution
+`F2` handles this automatically: it opens `x.com` with your `cookie`, reads the new `queryId` from the scripts the page loads and retries. The log shows that the queryId has expired and that `F2` is reading the new value from the X web scripts. Later requests in the same run use the new value directly, so you do not have to wait for a new `F2` release.
+
+If it still fails:
+1. Check that the `cookie` is valid. With an expired `cookie`, `x.com` returns the logged-out page, which does not load the scripts `F2` needs.
+2. If the structure of the web scripts has changed, `F2` may not find the new value. Update `F2` and try again, or open an `issue`.
+:::
+
 ## Installing build dependencies error
 
 When installing dependencies, you may encounter an error like this:

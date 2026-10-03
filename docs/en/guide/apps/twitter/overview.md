@@ -41,6 +41,7 @@ outline: [2,3]
 |  Rename user directory | -                 | `rename_user_folder`          |  🟢  |
 |  Create or rename user directory | -                 | `create_or_rename_user_folder` |  🟢  |
 |  Extract tweet text | -                    | `extract_desc`              |  🟢  |
+|  Read the operations in a web script | -    | `parse_graphql_operations`  |  🟢  |
 :::
 
 ::: details crawler Interface List
@@ -52,6 +53,7 @@ outline: [2,3]
 | Home tweets API   | `TwitterCrawler` | `fetch_post_tweet`    |  🟢  |
 | Liked tweets API   | `TwitterCrawler` | `fetch_like_tweet`    |  🟢  |
 | Bookmarked tweets API | `TwitterCrawler` | `fetch_bookmark_tweet`|  🟢  |
+| Read an operation from the web scripts | `TwitterCrawler` | `fetch_graphql_operation` |  🟢  |
 :::
 
 ::: details dl Interface List
@@ -134,6 +136,7 @@ Asynchronous method to fetch data for home tweets.
 | page_counts | int | Number of pages (default: `20`) |
 | max_cursor | str | Pagination parameter (default: empty) |
 | max_counts | int | Maximum fetch limit (default: `None`) |
+| interval | Tuple[int, int] | Publish time range as second timestamps (start, end), which `parse_interval` can build (default: `None`) |
 
 | Returns | Type | Description |
 | :--- | :--- | :--- |
@@ -151,6 +154,7 @@ Asynchronous method to fetch liked tweets data.
 | page_counts | int | Number of pages (default: `20`) |
 | max_cursor | str | Pagination parameter (default: empty) |
 | max_counts | int | Maximum fetch limit (default: `None`) |
+| interval | Tuple[int, int] | Publish time range as second timestamps (start, end), which `parse_interval` can build (default: `None`) |
 
 | Returns | Type | Description |
 | :--- | :--- | :--- |
@@ -167,6 +171,7 @@ Asynchronous method to fetch bookmarked tweets.
 | page_counts | int | Number of pages (default: `20`) |
 | max_cursor | str | Pagination parameter (default: empty) |
 | max_counts | int | Maximum fetch limit (default: `None`) |
+| interval | Tuple[int, int] | Publish time range as second timestamps (start, end), which `parse_interval` can build (default: `None`) |
 
 | Returns | Type | Description |
 | :--- | :--- | :--- |
@@ -356,6 +361,10 @@ Used to extract Weibo text, excluding the final link.
 
 ## Crawler API List
 
+::: tip :bulb: Tip
+`X` may change the `queryId` in its `GraphQL` API endpoints with every release. `F2` uses its built-in values first. When an API returns `404` (`Query not found`), `F2` opens `x.com` with your `cookie`, reads the new `queryId` from the scripts the page loads and retries; later requests in the same process use the new value, so you do not have to wait for a new `F2` release. A valid logged-in `cookie` is required.
+:::
+
 ### Tweet Detail API 🟢
 
 Used to fetch tweet detail data.
@@ -430,5 +439,9 @@ Used to fetch bookmarked tweets.
 
 ### Download Video 🟢
 
+Downloads each video and animated `GIF` in a tweet. A single one is saved with the `_video` suffix; several are saved as `_video_1`, `_video_2` and so on.
+
 
 ### Download Image Gallery 🟢
+
+Downloads each image in a tweet, with the suffixes `_image_1`, `_image_2` and so on. Tweets that mix images and videos get both.
