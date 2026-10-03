@@ -1791,6 +1791,28 @@ def get_video_play_urls(video: Any) -> Optional[List[str]]:
     return (video.get("play_addr") or {}).get("url_list") or None
 
 
+def limit_page_items(response: dict, key: str, limit: Union[int, float]) -> dict:
+    """
+    一页数据最多保留 limit 个条目 (Keep at most limit items of a page)
+
+    部分列表接口不按请求的 count 返回，整页交给下载会超出 max_counts（#443）。
+
+    Args:
+        response (dict): 接口返回的一页数据 (One page returned by the API)
+        key (str): 条目列表所在的字段，如 aweme_list (Field holding the items, e.g. aweme_list)
+        limit (Union[int, float]): 最多保留的条目数 (Maximum number of items to keep)
+
+    Returns:
+        dict: 条目不超过 limit 个的数据，没有超出时原样返回
+        (The page with at most limit items, returned unchanged when within the limit)
+    """
+
+    items = response.get(key) if isinstance(response, dict) else None
+    if not isinstance(items, list) or len(items) <= limit:
+        return response
+    return {**response, key: items[: max(int(limit), 0)]}
+
+
 def json_2_lrc(data: Union[str, list, dict]) -> str:
     """
     从抖音原声json格式歌词生成lrc格式歌词

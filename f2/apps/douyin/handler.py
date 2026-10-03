@@ -84,6 +84,7 @@ from f2.apps.douyin.utils import (  # VerifyFpManager,
     TokenManager,
     WebCastIdFetcher,
     create_or_rename_user_folder,
+    limit_page_items,
 )
 from f2.cli.cli_console import RichConsoleManager
 from f2.exceptions.api_exceptions import APIResponseError
@@ -548,6 +549,9 @@ class DouyinHandler:
                     sec_user_id=sec_user_id,
                 )
                 response = await crawler.fetch_user_post(params)
+                response = limit_page_items(
+                    response, "aweme_list", max_counts - videos_collected
+                )
                 video = UserPostFilter(response)
                 yield video
 
@@ -685,6 +689,9 @@ class DouyinHandler:
                     sec_user_id=sec_user_id,
                 )
                 response = await crawler.fetch_user_like(params)
+                response = limit_page_items(
+                    response, "aweme_list", max_counts - videos_collected
+                )
                 like = UserPostFilter(response)
                 yield like
 
@@ -815,6 +822,9 @@ class DouyinHandler:
                     cursor=max_cursor, count=int(current_request_size)
                 )
                 response = await crawler.fetch_user_music_collection(params)
+                response = limit_page_items(
+                    response, "mc_list", max_counts - music_collected
+                )
                 music = UserMusicCollectionFilter(response)
                 yield music
 
@@ -935,6 +945,9 @@ class DouyinHandler:
                     cursor=max_cursor, count=int(current_request_size)
                 )
                 response = await crawler.fetch_user_collection(params)
+                response = limit_page_items(
+                    response, "aweme_list", max_counts - videos_collected
+                )
                 collection = UserCollectionFilter(response)
                 yield collection
 
@@ -1192,6 +1205,9 @@ class DouyinHandler:
                     collects_id=str(collects_id),
                 )
                 response = await crawler.fetch_user_collects_video(params)
+                response = limit_page_items(
+                    response, "aweme_list", max_counts - videos_collected
+                )
                 video = UserCollectionFilter(response)
 
                 # 更新已处理视频数量
@@ -1341,6 +1357,9 @@ class DouyinHandler:
                     cursor=max_cursor, count=int(current_request_size), mix_id=mix_id
                 )
                 response = await crawler.fetch_user_mix(params)
+                response = limit_page_items(
+                    response, "aweme_list", max_counts - videos_collected
+                )
                 mix = UserMixFilter(response)
                 yield mix
 
@@ -1651,6 +1670,9 @@ class DouyinHandler:
                     sec_user_id=sec_user_id,
                 )
                 response = await crawler.fetch_user_post(params)
+                response = limit_page_items(
+                    response, "aweme_list", max_counts - videos_collected
+                )
                 feed = UserPostFilter(response)
                 yield feed
 
@@ -1774,6 +1796,9 @@ class DouyinHandler:
                     filterGids=quote(filterGids),
                 )
                 response = await crawler.fetch_post_related(params)
+                response = limit_page_items(
+                    response, "aweme_list", max_counts - videos_collected
+                )
                 related = PostRelatedFilter(response)
                 yield related
 
@@ -1876,6 +1901,9 @@ class DouyinHandler:
                     refresh_type=pull_type,
                 )
                 response = await crawler.fetch_friend_feed(params)
+                response = limit_page_items(
+                    response, "data", max_counts - videos_collected
+                )
                 friend = FriendFeedFilter(response)
 
             if not friend.has_more:
