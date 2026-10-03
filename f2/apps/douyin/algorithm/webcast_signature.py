@@ -99,9 +99,6 @@ class DouyinWebcastSignature:
     - 其余 10 个字节：用该密钥做 RC4 加密的数据块，依次是签名计数、环境码、
       md5(md5("")) 与 md5(X-MS-STUB 的字节) 各自的最后两个字节、1 个随机字节和前 9 个字节的异或校验
 
-    类属性:
-    - user_agent (str): 为兼容旧接口保留，签名计算不使用 UA。
-
     类方法:
     - get_signature: 根据直播间 ID 和用户唯一 ID 生成签名。
     - frontier_sign: 按 SDK 的 frontierSign 对 X-MS-STUB（或 X-MS-PAYLOAD）签名。
@@ -119,20 +116,16 @@ class DouyinWebcastSignature:
     ```
 
     备注:
+    - 签名计算不使用 UA，构造时不需要也不接受 user_agent。
     - 签名含 3 个随机成分，同样的输入每次结果都不同，这与网页端一致。
     - 签名计数（bogusIndex）在同一个实例内从 1 开始递增，与网页端 SDK 一致。
     """
 
-    def __init__(
-        self,
-        user_agent: Optional[str] = None,
-        rng: Optional[RandomSource] = None,
-    ):
-        self.user_agent = (
-            user_agent
-            if user_agent is not None and user_agent != ""
-            else "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0"
-        )  # 为兼容旧接口保留，签名计算不使用 UA
+    def __init__(self, *, rng: Optional[RandomSource] = None):
+        """
+        Args:
+            rng: (RandomSource) 随机数来源，默认使用 random.SystemRandom()；测试时可传入固定序列
+        """
         self._rng: RandomSource = rng or random.SystemRandom()
         self._bogus_index = count(1)
 
@@ -205,9 +198,7 @@ class DouyinWebcastSignature:
 
 
 if __name__ == "__main__":
-    signature_handler = DouyinWebcastSignature(
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0"
-    )
+    signature_handler = DouyinWebcastSignature()
     signature = signature_handler.get_signature(
         "7382517534467115826", "7382524529011246630"
     )

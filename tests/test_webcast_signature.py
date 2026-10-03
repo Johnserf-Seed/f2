@@ -101,11 +101,10 @@ def test_random_parts_change_between_calls():
     assert len({signer.frontier_sign("0" * 32) for _ in range(20)}) > 1
 
 
-def test_user_agent_does_not_affect_signature():
-    stub, _, randoms, expected = SDK_VECTORS[0]
-    first = DouyinWebcastSignature("UA-1", rng=FixedRandom(randoms))
-    second = DouyinWebcastSignature("UA-2", rng=FixedRandom(randoms))
-    assert first.frontier_sign(stub) == second.frontier_sign(stub) == expected
+def test_user_agent_is_not_accepted():
+    # 签名计算从未用到 UA，构造时不再接受该参数，按位置传入会直接报错而不是被当成随机数来源
+    with pytest.raises(TypeError):
+        DouyinWebcastSignature("Mozilla/5.0")  # type: ignore[misc]
 
 
 @pytest.mark.parametrize(

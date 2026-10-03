@@ -119,7 +119,7 @@ async def run_danmaku(monkeypatch, app, result):
         monkeypatch.setattr(
             douyin_handler,
             "DouyinWebcastSignature",
-            lambda user_agent: SimpleNamespace(get_signature=lambda *args: "sig"),
+            lambda: SimpleNamespace(get_signature=lambda *args: "sig"),
         )
         monkeypatch.setattr(
             DouyinWebSocketCrawler, "fetch_live_danmaku", fetch_live_danmaku

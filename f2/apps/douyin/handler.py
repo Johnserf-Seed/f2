@@ -79,7 +79,6 @@ from f2.apps.douyin.model import (
 )
 from f2.apps.douyin.utils import (  # VerifyFpManager,
     AwemeIdFetcher,
-    ClientConfManager,
     MixIdFetcher,
     SecUserIdFetcher,
     TokenManager,
@@ -2287,9 +2286,7 @@ class DouyinHandler:
             }
 
         async with DouyinWebSocketCrawler(self.kwargs, callbacks=wss_callbacks) as wss:
-            signature = DouyinWebcastSignature(
-                ClientConfManager.user_agent()
-            ).get_signature(room_id, user_unique_id)
+            signature = DouyinWebcastSignature().get_signature(room_id, user_unique_id)
 
             params = LiveWebcast(
                 room_id=room_id,
