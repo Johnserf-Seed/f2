@@ -229,3 +229,50 @@ async def test_cursor_lists_follow_the_next_cursor(
     assert len(pages) == 2
     assert [params.cursor for params in crawler.calls] == [0, 100]
     assert f2_warnings(caplog) == []
+
+
+# 主页作品与首页推荐都使用主页作品接口
+POST_API_GENERATORS = [GENERATORS[0], GENERATORS[2]]
+
+
+@pytest.mark.parametrize(
+    "name, args", POST_API_GENERATORS, ids=[g[0] for g in POST_API_GENERATORS]
+)
+async def test_guest_cookie_page_without_paging_info_is_reported(
+    douyin, monkeypatch, caplog, name, args
+):
+    # 实测（2026-10）：游客 cookie 请求第一页之后的页面只返回 {"status_code": 0}，
+    # 没有作品也没有 has_more；此前提示“所有作品采集完毕”，像是已经下完了
+    crawler = use_pages(
+        monkeypatch,
+        douyin_handler,
+        "DouyinCrawler",
+        [page([1, 2], 1, 100), {"status_code": 0}],
+    )
+
+    with caplog.at_level(logging.INFO):
+        assert await collect(getattr(douyin, name)(*args)) == [["1", "2"], []]
+
+    assert len(crawler.calls) == 2
+    assert len(f2_warnings(caplog)) == 1
+
+
+@pytest.mark.parametrize(
+    "name, args", POST_API_GENERATORS, ids=[g[0] for g in POST_API_GENERATORS]
+)
+async def test_logged_in_end_of_list_is_not_a_warning(
+    douyin, monkeypatch, caplog, name, args
+):
+    # 实测：登录状态下游标越过全部作品时返回空列表，但仍带有 has_more=0 与 max_cursor=0
+    crawler = use_pages(
+        monkeypatch,
+        douyin_handler,
+        "DouyinCrawler",
+        [page([1], 1, 100), page([], 0, 0)],
+    )
+
+    with caplog.at_level(logging.INFO):
+        assert await collect(getattr(douyin, name)(*args)) == [["1"], []]
+
+    assert len(crawler.calls) == 2
+    assert f2_warnings(caplog) == []
