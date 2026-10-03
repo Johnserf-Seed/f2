@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-03 13:20-0700\n"
+"POT-Creation-Date: 2026-10-03 13:41-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -1432,6 +1432,12 @@ msgstr "max_cursor of the current request: {0}"
 #, python-brace-format
 msgid "第 {0} 页没有找到作品"
 msgstr "No posts found on page {0}"
+
+#: f2/apps/douyin/handler.py
+msgid "接口没有返回翻页信息：游客 cookie 只能获取主页第一页的作品，需要更多作品请配置登录后的 cookie"
+msgstr ""
+"The API returned no paging info: a guest cookie can only fetch the first "
+"page of a profile's posts; configure a logged-in cookie to get more posts"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
