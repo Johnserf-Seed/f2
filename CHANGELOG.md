@@ -6,6 +6,9 @@
 
 ## [Unreleased]
 
+- 适配 X 前端更新带来的 GraphQL 接口变化：刷新 5 个 queryId，UserTweets 与点赞时间线改用新的 `timeline` 包装，用户资料与推文作者信息改用 `core`、`profile_bio`、`relationship_counts` 等新分组，修复此前主页、点赞、书签、单推文下载取不到数据的问题。
+- 新增 `tools/update_twitter_queryid.py`：从 X 前端脚本提取各接口的最新 queryId，并可一键回写 `f2/apps/twitter/api.py`。当 X 再次轮换导致请求报 `Could not find query` 时，运行 `python tools/update_twitter_queryid.py --patch` 即可自行更新。
+- 修复仅通过环境变量或系统代理（如系统设置里的本地代理端口）配置代理时，下载媒体全部连接超时、报「响应大小为 0 字节」的问题：`get_content_length` 此前无条件传入自定义传输层，会让 httpx 跳过环境与系统代理；现在仅在显式配置了代理时才传入，与下载流的取值方式保持一致。
 - 润色英文翻译：逐条审阅全部 935 条英文文案，改写其中 650 条。统一术语（作品 post、主页 profile、直播 livestream、直播间 live room、弹幕 danmaku、接口地址 API endpoint、配置文件 configuration file；抖音与 TikTok 按平台接口的命名，点赞（喜欢）为 favorites、收藏为 collection、收藏夹为 collection folder、合集为 mix，Twitter 仍用 likes 与 bookmarks），消息改为普通句式、不再逐词首字母大写，同一句中文只保留一种译法。修正误译：“配置文件的路径，最低优先”曾译为 highest priority，“配置文件路径无写权限”曾译为“配置文件不存在”，FAQ 提示的两句英文粘在一起，Bark 密钥长度把“位”（字符）译成了 bits；下载进度的状态与文件类型标签统一为 Done、Skipped、Video、Caption 等。收藏夹列表的提示不再用方括号，避免被 rich 当作样式标签。横幅的英文简介改为 “An asynchronous, multi-platform downloader”；英文文档中抖音、TikTok 的模式说明与 CLI 帮助统一叫法，TikTok 播放列表接口的 `secUid` 说明由“合集ID”更正为“用户ID”。
 - 补齐英文翻译：此前有 217 条文案在英文界面下仍显示中文，其中 102 条从未翻译，115 条因原文修改被标记为待确认（编译时会被跳过），涉及代理设置、下载进度、断点续传、m3u8 直播流、数据库与抖音弹幕、评论等提示；现在全部有英文译文，原有 718 条译文不变。
 - TikTok 的 `https://www.tiktok.com/user/<sec_uid>` 链接直接从地址中取出 `sec_uid`，不再发请求（#366）：这类页面里没有用户数据，此前会报“未在响应中找到 __UNIVERSAL_DATA_FOR_REHYDRATION__”或“接口状态码异常”。直播模式需要用户名，请使用 `@用户名` 形式的主页链接。
