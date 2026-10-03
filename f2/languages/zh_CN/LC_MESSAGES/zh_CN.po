@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-03 13:41-0700\n"
+"POT-Creation-Date: 2026-10-03 14:23-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -1485,7 +1485,7 @@ msgstr "没有找到收藏夹，收藏夹列表只包含 cookie 所属账号的�
 msgid "结束处理用户收藏夹，共处理 {0} 个收藏夹"
 msgstr "结束处理用户收藏夹，共处理 {0} 个收藏夹"
 
-#: f2/apps/douyin/handler.py
+#: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 msgid "0: [bold]全部下载[/bold]"
 msgstr "0: [bold]全部下载[/bold]"
 
@@ -2694,9 +2694,13 @@ msgid "用户没有作品合集"
 msgstr "用户没有作品合集"
 
 #: f2/apps/tiktok/handler.py
+msgid "[bold]请选择要下载的合集：[/bold]"
+msgstr "[bold]请选择要下载的合集：[/bold]"
+
+#: f2/apps/tiktok/handler.py
 #, python-brace-format
-msgid "{0}: {1} (包含 {2} 个作品，收藏夹ID {3})"
-msgstr "{0}: {1} (包含 {2} 个作品，收藏夹ID {3})"
+msgid "{0}: {1} (包含 {2} 个作品，合集ID {3})"
+msgstr "{0}: {1} (包含 {2} 个作品，合集ID {3})"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
@@ -4172,6 +4176,11 @@ msgstr "配置文件已更新!"
 #: f2/utils/config/conf_manager.py
 msgid "已取消更新配置文件!"
 msgstr "已取消更新配置文件!"
+
+#: f2/utils/config/merge.py
+#, python-brace-format
+msgid "配置项 {0} 只能是 true/false 或 yes/no"
+msgstr "配置项 {0} 只能是 true/false 或 yes/no"
 
 #: f2/utils/crypto/aes.py
 msgid "算法必须为 'AES128', 'AES192' 或 'AES256'。"
