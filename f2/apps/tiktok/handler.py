@@ -49,6 +49,7 @@ from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.core.decorators import get_mode_handlers, mode_handler
 from f2.utils.file.path import is_user_folder_migrated
+from f2.utils.json.filter import limit_page_items
 from f2.utils.time.timestamp import get_timestamp, parse_interval, timestamp_2_str
 
 rich_console = RichConsoleManager().rich_console
@@ -404,6 +405,9 @@ class TiktokHandler:
                     count=page_counts,
                 )
                 response = await crawler.fetch_user_post(params)
+                response = limit_page_items(
+                    response, "itemList", max_counts - videos_collected
+                )
                 video = UserPostFilter(response)
 
             if not video.has_aweme:
@@ -530,6 +534,9 @@ class TiktokHandler:
             async with TiktokCrawler(self.kwargs) as crawler:
                 params = UserLike(secUid=secUid, cursor=cursor, count=page_counts)
                 response = await crawler.fetch_user_like(params)
+                response = limit_page_items(
+                    response, "itemList", max_counts - videos_collected
+                )
                 like = UserPostFilter(response)
 
             if like.has_aweme:
@@ -652,6 +659,9 @@ class TiktokHandler:
             async with TiktokCrawler(self.kwargs) as crawler:
                 params = UserCollect(secUid=secUid, cursor=cursor, count=page_counts)
                 response = await crawler.fetch_user_collect(params)
+                response = limit_page_items(
+                    response, "itemList", max_counts - videos_collected
+                )
                 collect = UserPostFilter(response)
 
             if collect.has_aweme:
@@ -868,6 +878,9 @@ class TiktokHandler:
             async with TiktokCrawler(self.kwargs) as crawler:
                 params = UserMix(mixId=str(mixId), cursor=cursor, count=page_counts)
                 response = await crawler.fetch_user_mix(params)
+                response = limit_page_items(
+                    response, "itemList", max_counts - videos_collected
+                )
                 mix = UserMixFilter(response)
 
             if mix.has_aweme:
@@ -994,6 +1007,9 @@ class TiktokHandler:
                     search_id=search_id,
                 )
                 response = await crawler.fetch_post_search(params)
+                response = limit_page_items(
+                    response, "item_list", max_counts - videos_collected
+                )
                 search = PostSearchFilter(response)
 
             if not search.has_aweme:
