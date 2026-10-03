@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-27 15:02-0700\n"
+"POT-Creation-Date: 2026-10-03 13:04-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -889,6 +889,11 @@ msgstr ""
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 #, python-brace-format
+msgid "[HandleWssMessage] [🔒 连接已关闭，不再发送 ack] | [原因：{0}]"
+msgstr "[HandleWssMessage] [🔒 Connection closed, ack not sent] | [Reason: {0}]"
+
+#: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
+#, python-brace-format
 msgid "[HandleWssMessage] [⚠️ 处理消息出错] | [错误：{0}]"
 msgstr "[HandleWssMessage] [⚠️ Failed to handle the message] | [Error: {0}]"
 
@@ -1464,6 +1469,14 @@ msgstr ""
 msgid "处理用户：{0} 点赞的作品"
 msgstr "Processing the favorites of user: {0}"
 
+#: f2/apps/douyin/handler.py
+#, python-brace-format
+msgid "获取用户：{0} 点赞的作品失败，接口多次返回空内容：对方可能没有公开点赞列表，或 cookie 没有登录"
+msgstr ""
+"Failed to fetch the favorites of user: {0}, the API kept returning empty "
+"content: the user may not have made their favorites public, or the cookie"
+" is not logged in"
+
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "用户：{0} 所有作品采集完毕"
@@ -1557,11 +1570,17 @@ msgstr ""
 "Download time: {1}"
 
 #: f2/apps/douyin/handler.py
-#, python-brace-format
-msgid "结束处理用户收藏夹作品，共处理 {0} 个作品"
+msgid "没有找到收藏夹，收藏夹列表只包含 cookie 所属账号的收藏夹"
 msgstr ""
-"Finished processing the user's collection folder posts, {0} posts "
-"processed in total"
+"No collection folders found; the list only includes the collection "
+"folders of the account the cookie belongs to"
+
+#: f2/apps/douyin/handler.py
+#, python-brace-format
+msgid "结束处理用户收藏夹，共处理 {0} 个收藏夹"
+msgstr ""
+"Finished processing the user's collection folders, {0} folders processed "
+"in total"
 
 #: f2/apps/douyin/handler.py
 msgid "0: [bold]全部下载[/bold]"
@@ -1741,6 +1760,11 @@ msgstr "Processing livestream data of room: {0}"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
+msgid "没有获取到房间号 {0} 的直播数据，接口状态码：{1}"
+msgstr "No livestream data was returned for room: {0}, API status code: {1}"
+
+#: f2/apps/douyin/handler.py
+#, python-brace-format
 msgid "直播ID：{0}，用户：{1}，直播间：{2}，状态：{3}，观看人数：{4}"
 msgstr "Livestream ID: {0}, user: {1}, live room: {2}, status: {3}, viewers: {4}"
 
@@ -1827,10 +1851,6 @@ msgid "最大数量：{0} 个"
 msgstr "Maximum: {0}"
 
 #: f2/apps/douyin/handler.py
-msgid "所有好友作品采集完毕"
-msgstr "All friends' posts have been fetched"
-
-#: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "请求失败，错误码：{0} 错误信息：{1}"
 msgstr "Request failed, error code: {0}, error message: {1}"
@@ -1839,6 +1859,10 @@ msgstr "Request failed, error code: {0}, error message: {1}"
 #, python-brace-format
 msgid "当前请求的cursor: {0}"
 msgstr "cursor of the current request: {0}"
+
+#: f2/apps/douyin/handler.py
+msgid "所有好友作品采集完毕"
+msgstr "All friends' posts have been fetched"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -5031,4 +5055,10 @@ msgstr "Invalid timestamp string"
 #~ "Live room: {0} has ended live "
 #~ "streaming or disconnected from the local"
 #~ " connection"
+
+#~ msgid "结束处理用户收藏夹作品，共处理 {0} 个作品"
+#~ msgstr ""
+#~ "Finished processing the user's collection "
+#~ "folder posts, {0} posts processed in "
+#~ "total"
 

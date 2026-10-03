@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-09-27 15:02-0700\n"
+"POT-Creation-Date: 2026-10-03 13:04-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -833,6 +833,11 @@ msgstr "[HandleWssMessage] [❌ 解析消息格式出错] | [错误：{0}] | [�
 
 #: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
 #, python-brace-format
+msgid "[HandleWssMessage] [🔒 连接已关闭，不再发送 ack] | [原因：{0}]"
+msgstr "[HandleWssMessage] [🔒 连接已关闭，不再发送 ack] | [原因：{0}]"
+
+#: f2/apps/douyin/crawler.py f2/apps/tiktok/crawler.py
+#, python-brace-format
 msgid "[HandleWssMessage] [⚠️ 处理消息出错] | [错误：{0}]"
 msgstr "[HandleWssMessage] [⚠️ 处理消息出错] | [错误：{0}]"
 
@@ -1368,6 +1373,11 @@ msgstr ""
 msgid "处理用户：{0} 点赞的作品"
 msgstr "处理用户：{0} 点赞的作品"
 
+#: f2/apps/douyin/handler.py
+#, python-brace-format
+msgid "获取用户：{0} 点赞的作品失败，接口多次返回空内容：对方可能没有公开点赞列表，或 cookie 没有登录"
+msgstr "获取用户：{0} 点赞的作品失败，接口多次返回空内容：对方可能没有公开点赞列表，或 cookie 没有登录"
+
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 #, python-brace-format
 msgid "用户：{0} 所有作品采集完毕"
@@ -1459,9 +1469,13 @@ msgstr ""
 "下载时间：{1}"
 
 #: f2/apps/douyin/handler.py
+msgid "没有找到收藏夹，收藏夹列表只包含 cookie 所属账号的收藏夹"
+msgstr "没有找到收藏夹，收藏夹列表只包含 cookie 所属账号的收藏夹"
+
+#: f2/apps/douyin/handler.py
 #, python-brace-format
-msgid "结束处理用户收藏夹作品，共处理 {0} 个作品"
-msgstr "结束处理用户收藏夹作品，共处理 {0} 个作品"
+msgid "结束处理用户收藏夹，共处理 {0} 个收藏夹"
+msgstr "结束处理用户收藏夹，共处理 {0} 个收藏夹"
 
 #: f2/apps/douyin/handler.py
 msgid "0: [bold]全部下载[/bold]"
@@ -1633,6 +1647,11 @@ msgstr "处理房间号: {0} 的直播数据"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
+msgid "没有获取到房间号 {0} 的直播数据，接口状态码：{1}"
+msgstr "没有获取到房间号 {0} 的直播数据，接口状态码：{1}"
+
+#: f2/apps/douyin/handler.py
+#, python-brace-format
 msgid "直播ID：{0}，用户：{1}，直播间：{2}，状态：{3}，观看人数：{4}"
 msgstr "直播ID：{0}，用户：{1}，直播间：{2}，状态：{3}，观看人数：{4}"
 
@@ -1719,10 +1738,6 @@ msgid "最大数量：{0} 个"
 msgstr "最大数量：{0} 个"
 
 #: f2/apps/douyin/handler.py
-msgid "所有好友作品采集完毕"
-msgstr "所有好友作品采集完毕"
-
-#: f2/apps/douyin/handler.py
 #, python-brace-format
 msgid "请求失败，错误码：{0} 错误信息：{1}"
 msgstr "请求失败，错误码：{0} 错误信息：{1}"
@@ -1731,6 +1746,10 @@ msgstr "请求失败，错误码：{0} 错误信息：{1}"
 #, python-brace-format
 msgid "当前请求的cursor: {0}"
 msgstr "当前请求的cursor: {0}"
+
+#: f2/apps/douyin/handler.py
+msgid "所有好友作品采集完毕"
+msgstr "所有好友作品采集完毕"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -4719,4 +4738,7 @@ msgstr "无效的时间戳字符串"
 
 #~ msgid "直播间：{0} 已结束直播或断开了本地连接"
 #~ msgstr "直播间：{0} 已结束直播或断开了本地连接"
+
+#~ msgid "结束处理用户收藏夹作品，共处理 {0} 个作品"
+#~ msgstr "结束处理用户收藏夹作品，共处理 {0} 个作品"
 
