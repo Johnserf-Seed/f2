@@ -54,6 +54,17 @@
 - https://github.com/Johnserf-Seed/f2/issues/42
 - https://github.com/Johnserf-Seed/TikTokDownload/issues/660
 
+## 抖音只下载了主页第一页的十几个作品
+
+使用游客 `cookie`（没有登录的 `cookie`）时，抖音主页作品接口只返回第一页（约 10～13 个作品，含置顶作品），之后的页面只返回状态码，既没有作品也没有翻页信息。`F2` 会提示 `WARNING  接口没有返回翻页信息：游客 cookie 只能获取主页第一页的作品，需要更多作品请配置登录后的 cookie` 并结束。
+
+::: details :link: 解决办法
+1. 在配置文件中填入登录后的 `cookie`，或者用 `--auto-cookie` 从已经登录的浏览器读取。
+2. 设置了 `--interval` 时，第一次请求就从区间的结束时间开始翻页，游客 `cookie` 连一页也拿不到，同样需要登录后的 `cookie`。
+:::
+**参考链接：**
+- https://github.com/Johnserf-Seed/f2/issues/435
+
 ## EOF occurred in violation of protocol (_ssl.c:992)
 
 出现 `EOF occurred in violation of protocol (_ssl.c:992)` 说明SSL握手失败。

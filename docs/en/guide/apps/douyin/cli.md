@@ -113,6 +113,7 @@ In file names, captions and nicknames keep punctuation, spaces and all scripts a
 
 ::: tip :bulb: Tips
 - Please update `Cookie` in time when collection or risk control cannot be performed.
+- A guest (logged-out) `cookie` can only fetch the first page of a profile (about 10 to 13 posts); downloading a whole profile or using `--interval` requires a logged-in `Cookie`.
 - Characters other than `ascii` are not allowed. Please check carefully before updating the configuration.
 :::
 
@@ -124,7 +125,7 @@ In file names, captions and nicknames keep punctuation, spaces and all scripts a
 
 ### `--interval`
 
-Download works published within a date range, in the format: `Year-Month-Day|Year-Month-Day`. For example: `2022-01-01|2023-01-01`, set `all` to download all works. Both days are included, and dates are in Beijing time (UTC+8). An invalid format, or an end date earlier than the start date, is reported as an error before any request is made.
+Download works published within a date range, in the format: `Year-Month-Day|Year-Month-Day`. For example: `2022-01-01|2023-01-01`, set `all` to download all works. Both days are included, and dates are in Beijing time (UTC+8). An invalid format, or an end date earlier than the start date, is reported as an error before any request is made. A logged-in `Cookie` is required: paging starts from the end of the range, and a guest `cookie` cannot get those pages.
 
 ### `--timeout`
 

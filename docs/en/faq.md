@@ -54,6 +54,17 @@ If you see `WARNING: No matching works were found`, check if you have configured
 - https://github.com/Johnserf-Seed/f2/issues/42
 - https://github.com/Johnserf-Seed/TikTokDownload/issues/660
 
+## Only the first dozen or so posts of a Douyin profile are downloaded
+
+With a guest (logged-out) `cookie`, the Douyin profile API only returns the first page (about 10 to 13 posts, including pinned posts); later pages return only a status code, with no posts and no paging info. `F2` then shows `WARNING  The API returned no paging info: a guest cookie can only fetch the first page of a profile's posts; configure a logged-in cookie to get more posts` and stops.
+
+::: details :link: Solution
+1. Put a logged-in `cookie` in the configuration file, or use `--auto-cookie` to read it from a browser where you are logged in.
+2. With `--interval`, paging starts from the end of the interval on the first request, so a guest `cookie` cannot get even one page; a logged-in `cookie` is required as well.
+:::
+**Reference Links:**
+- https://github.com/Johnserf-Seed/f2/issues/435
+
 ## EOF occurred in violation of protocol (_ssl.c:992)
 
 This indicates an SSL handshake failure.
