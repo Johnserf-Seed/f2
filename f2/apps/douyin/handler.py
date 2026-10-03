@@ -863,6 +863,10 @@ class DouyinHandler:
 
             # 更新已经处理的音乐数量 (Update the number of music processed)
             music_collected += len(music.music_id)
+            # 游标没有前进时再请求只会得到同一页
+            if not _cursor_advanced(music.max_cursor, max_cursor):
+                logger.warning(_("接口返回的游标没有变化，停止翻页"))
+                break
             max_cursor = music.max_cursor
 
             # 避免请求过于频繁
@@ -986,6 +990,10 @@ class DouyinHandler:
 
             # 更新已经处理的作品数量 (Update the number of videos processed)
             videos_collected += len(collection.aweme_id)
+            # 游标没有前进时再请求只会得到同一页
+            if not _cursor_advanced(collection.max_cursor, max_cursor):
+                logger.warning(_("接口返回的游标没有变化，停止翻页"))
+                break
             max_cursor = collection.max_cursor
 
             # 避免请求过于频繁
@@ -1260,13 +1268,16 @@ class DouyinHandler:
                     )
 
                     yield video
-                    max_cursor = video.max_cursor
                 else:
                     logger.info(_("{0} 页没有找到作品").format(max_cursor))
 
                     if not video.has_more:
                         break
 
+            # 游标没有前进时再请求只会得到同一页
+            if not _cursor_advanced(video.max_cursor, max_cursor):
+                logger.warning(_("接口返回的游标没有变化，停止翻页"))
+                break
             max_cursor = video.max_cursor
 
             # 避免请求过于频繁
@@ -1410,6 +1421,10 @@ class DouyinHandler:
 
             # 更新已经处理的作品数量 (Update the number of videos processed)
             videos_collected += len(mix.aweme_id)
+            # 游标没有前进时再请求只会得到同一页
+            if not _cursor_advanced(mix.max_cursor, max_cursor):
+                logger.warning(_("接口返回的游标没有变化，停止翻页"))
+                break
             max_cursor = mix.max_cursor
 
             # 避免请求过于频繁
