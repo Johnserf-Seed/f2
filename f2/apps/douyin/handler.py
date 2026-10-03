@@ -2186,7 +2186,8 @@ class DouyinHandler:
             response = await crawler.fetch_query_user(params)
             user = QueryUserFilter(response)
 
-        if user.status_code is None:
+        # 接口成功时 status_code 为 0，旧版接口不返回这个字段
+        if not user.status_code:
             logger.info(
                 _("用户UniqueID：{0} 用户ID：{1} 用户创建时间：{2}").format(
                     user.user_unique_id, user.user_uid, user.create_time
