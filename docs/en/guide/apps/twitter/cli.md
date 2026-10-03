@@ -13,6 +13,7 @@ outline: deep
 | `-M`   | `--mode` | `ENUM` | Download mode |
 | `-n`   | `--naming` | `TEXT` | Global file naming format for works |
 | `-k`   | `--cookie` | `TEXT` | Login cookie |
+| `-i`   | `--interval` | `TEXT` | Download date range |
 | `-e`   | `--timeout` | `INTEGER` | Network request timeout |
 | `-r`   | `--max_retries` | `INTEGER` | Maximum retry attempts for network timeout |
 | `-x`   | `--max-connections` | `INTEGER` | Number of concurrent network connections |
@@ -92,6 +93,18 @@ Login `Cookie`. Most APIs require login to access data, so a logged-in `Cookie` 
 - **Never share your `Cookie` in public spaces like Discussions, Issues, or Discord. Remove sensitive information.**
 - **Anyone with access to your `Cookie` can log into your account.**
 - **If leaked, log out and re-login immediately.**
+:::
+
+### `--interval`
+
+Download tweets published within a date range, in the format `Year-Month-Day|Year-Month-Day`. Both days are included, and dates are in Beijing time (UTC+8). For example: `2024-01-01|2024-06-30`; set `all` to download all tweets.
+
+::: tip :bulb: Tip
+- Tweets are filtered by their publish time, in every mode.
+- In `post` mode, `F2` pages from the newest tweet and stops once it reaches tweets published before the start date. The earlier the range, the more pages it has to go through. Pinned tweets are not in chronological order: they are still downloaded when they fall within the range, and they do not affect when paging stops.
+- `like` and `bookmark` are ordered by when a tweet was liked or bookmarked, not by when it was published, so `F2` goes through all pages and then filters them by the range.
+- An invalid date format, or an end date earlier than the start date, is reported as an error before any request is made.
+- When `--max-counts` is also set, it counts the tweets left after date filtering.
 :::
 
 ### `--timeout`

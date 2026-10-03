@@ -228,6 +228,14 @@ def validate_proxies(
     help=_("登录后的[yellow]cookie[/yellow]"),
 )
 @click.option(
+    "--interval",
+    "-i",
+    type=str,
+    help=_(
+        "下载日期区间内发布的推文，格式：YYYY-MM-DD|YYYY-MM-DD，'all' 为下载所有推文"
+    ),
+)
+@click.option(
     "--timeout",
     "-e",
     type=int,

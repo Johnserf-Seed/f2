@@ -154,7 +154,11 @@ def run_cli(tmp_path, *args):
 
 @pytest.mark.parametrize(
     "app, url",
-    [("dy", "https://www.douyin.com/user/x"), ("tk", "https://www.tiktok.com/@x")],
+    [
+        ("dy", "https://www.douyin.com/user/x"),
+        ("tk", "https://www.tiktok.com/@x"),
+        ("x", "https://x.com/NASA"),
+    ],
 )
 def test_cli_reports_invalid_interval_before_requests(tmp_path, app, url):
     code, output = run_cli(
