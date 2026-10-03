@@ -6,6 +6,15 @@
 
 ## [Unreleased]
 
+- 推特适配 X 新版接口：queryId 与 features 更新为 2026-10 网页端使用的值。新的 queryId 返回新版结构：用户对象不再有 `legacy`（名称等字段移到 `core`、`profile_bio` 等处），主页与喜欢列表的 `timeline_v2` 改名为 `timeline`，只换 queryId 会取不到昵称与推文；过滤器现在先把响应整理成原来的结构再读取（`f2.apps.twitter.filter.normalize_graphql_response`），新旧 queryId 返回的数据都能解析。时间线中包在 `TweetWithVisibilityResults` 里的受限推文此前没有作者信息，被当成广告跳过；推文详情中作者的粉丝数、所在地等字段少了 `legacy` 一级，此前始终为空。
+- 推特接口的 queryId 失效时自动从 X 网页脚本中获取新的值：内置值返回 404（`Query not found`）时，用 cookie 打开 x.com，从页面加载的 `main.js`（收藏等查询在按需加载的脚本里，按名称查找）读取新的 queryId 并重试，同一进程内之后的请求都使用新值，不需要等 F2 发布新版；新查询需要的 features 开关缺失时补上 `false`。内置值仍然优先使用：它对应的响应结构经过测试，实测 2023 年的旧 queryId 至今仍可用，只在失效时才切换。新增 `TwitterCrawler.fetch_graphql_operation` 与 `f2.apps.twitter.utils.parse_graphql_operations`，FAQ 新增“twitter 404 / Query not found”。
+- 修复推特主页模式漏下载置顶推文与串推：置顶推文在 `TimelinePinEntry` 指令里，串推（自己回复自己）在 `profile-conversation` 模块里，此前都不会下载，实测 NASA 主页第一页 18 条推文只下载了 9 条。串推在相邻两页重复出现时也不再重复计数。
+- 修复推特喜欢、收藏的推文是回复时取成了根推文的 ID：此前取 `conversation_id_str`，文件名中的 `{tweet_id}` 是别人的推文，同一会话的多条回复同名，后面的被当成已下载跳过。
+- 修复推特图文混合、多个视频的推文下载不全：下载器此前只按第一个媒体的类型处理，图片在前时视频只得到缩略图，推文详情中有多个视频时一个都不下载。现在逐个下载，图片仍为 `_image_序号`，只有一个视频时仍为 `_video`，多个视频时为 `_video_1`、`_video_2`；过滤器新增 `tweet_media`。
+- 修复推特设置日期区间后一条推文都不下载（移植自 #461）：下载器按推文数据中不存在的 `createTime` 字段筛选。现在按发布时间戳筛选，与其他平台一样按北京时间计算区间；新增 `-i/--interval` 选项（移植自 #461）。`post` 模式翻到区间开始之前的推文即停止翻页，不再翻完整个主页；`like` 与 `bookmark` 按点赞、收藏的时间排列，仍然翻完全部页面。
+- 修复推特各模式的 `--max-counts` 不按整页截取：接口不按 `count` 返回，一页的推文数可能超过剩余数量，此前整页都会下载。设置日期区间时按区间内的推文计数。
+- 修复只靠系统代理上网时获取文件大小失败，媒体被当成 0 字节跳过（移植自 #462）：获取文件大小的 HEAD 请求此前总是指定传输层，httpx 因此不再读取环境变量与系统代理；没有在 F2 中配置代理、只靠系统代理（如 Clash 的系统代理模式）上网时，接口请求正常，下载却全部跳过。下载器现在把自己的传输层传给 `get_content_length`，代理设置与下载请求完全一致，新格式的 SOCKS 代理此前在这一步也被忽略。
+- 支持 Python 3.14：CI 测试矩阵加入 3.14，Lint 改用 3.14 并按最低支持的 3.10 再运行一次 mypy（依赖库的类型标注会按 Python 版本区分，此前 3.12 及以下的 mypy 报 `impersonate.py` 缺少类型标注）；Python 3.14 上要求 `pydantic>=2.12`。工作流中的 Action 升级到支持 Node 24 的版本；离线测试不再访问真实网络（抖音弹幕的用例此前会请求 `ttwid.bytedance.com`），没有 `network` 标记的用例解析外部主机时直接报错。
 - 修复配置文件里写成 `no` 的开关反而被打开：`ruamel.yaml` 按 YAML 1.2 解析，`yes`/`no`/`on`/`off` 会被读成字符串，而字符串 `"no"` 为真，配置 `folderize: no`、`cover: no` 时功能照样开启（登录态实测封面、文案、音乐都下载了），`enable_bark: no` 会打开 Bark 通知，`check_update`、`verify` 同理。现在这些开关接受 `true`/`false`、`yes`/`no`、`on`/`off`、`1`/`0`，应用的开关写成其他内容时报错退出；新增 `f2.utils.config.merge.parse_bool` 与 `coerce_bool_options`，配置文档补充了开关的写法。
 - 修复 TikTok 合集模式只列出前几个合集、只有一个合集时选择出错：合集列表此前只取第一页（`--page-counts` 默认 5），现在翻完全部页面；只有一个合集时合集 ID 被当成字符串，选择列表会把 ID 的每个字符当成一个合集。没有合集时直接结束，不再创建用户目录；选择提示中误写的“收藏夹ID”改为“合集ID”。
 - 修复抖音直播间排行榜只有一位观众时 `_to_list` 报“由于接口更新，部分字段处理失败”，以及缺少签名等字段时后面观众的值错位；抖音作品的 `caption`（命名模板 `{caption}`）同样会错位，只有一个作品时只取到第一个字；TikTok 作品详情的话题在只有一个时是字符串。这些带 `[*]` 的字段现在都按列表读取。
