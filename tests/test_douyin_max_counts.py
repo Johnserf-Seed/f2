@@ -5,7 +5,7 @@ import types
 import pytest
 
 from f2.apps.douyin import handler as douyin_handler
-from f2.apps.douyin.utils import limit_page_items
+from f2.utils.json.filter import limit_page_items
 
 KWARGS = {
     "headers": {"User-Agent": "f2-test", "Referer": "https://example.com/"},

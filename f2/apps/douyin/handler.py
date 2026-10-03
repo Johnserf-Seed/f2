@@ -84,7 +84,6 @@ from f2.apps.douyin.utils import (  # VerifyFpManager,
     TokenManager,
     WebCastIdFetcher,
     create_or_rename_user_folder,
-    limit_page_items,
 )
 from f2.cli.cli_console import RichConsoleManager
 from f2.exceptions.api_exceptions import APIResponseError, APIRetryExhaustedError
@@ -93,6 +92,7 @@ from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.core.decorators import get_mode_handlers, mode_handler
 from f2.utils.file.path import is_user_folder_migrated
+from f2.utils.json.filter import limit_page_items
 from f2.utils.time.timestamp import get_timestamp, parse_interval, timestamp_2_str
 
 rich_console = RichConsoleManager().rich_console
