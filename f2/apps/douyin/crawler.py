@@ -10,6 +10,7 @@ from urllib.parse import urlencode
 from google.protobuf import json_format
 from google.protobuf.message import DecodeError as ProtoDecodeError
 from websockets import (
+    ConnectionClosed,
     ConnectionClosedOK,
     WebSocketServer,
     WebSocketServerProtocol,
@@ -548,6 +549,15 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
                 _(
                     "[HandleWssMessage] [❌ 解析消息格式出错] | [错误：{0}] | [消息：{1}]"
                 ).format(e, message)
+            )
+
+        except ConnectionClosed as e:
+            # 处理消息期间连接已关闭（例如本地服务没有客户端时主动关闭），ack 不必再发，
+            # 连接结束由 receive_messages 处理
+            logger.debug(
+                _(
+                    "[HandleWssMessage] [🔒 连接已关闭，不再发送 ack] | [原因：{0}]"
+                ).format(e)
             )
 
         except Exception:
