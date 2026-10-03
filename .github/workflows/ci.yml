@@ -25,7 +25,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
-          python-version: "3.12"
+          python-version: "3.14"
           cache: pip
           cache-dependency-path: pyproject.toml
 
@@ -44,6 +44,11 @@ jobs:
       - name: mypy
         run: mypy f2/
 
+      # 依赖库的类型标注可能按 Python 版本区分（如 curl_cffi 只在 3.13+ 给类型参数设默认值），
+      # 再按最低支持的版本检查一次
+      - name: mypy (Python 3.10)
+        run: mypy --python-version 3.10 f2/
+
   test:
     name: Test (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
@@ -51,7 +56,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
     steps:
       - name: Checkout
         uses: actions/checkout@v7

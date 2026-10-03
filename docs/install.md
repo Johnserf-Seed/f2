@@ -7,7 +7,7 @@ outline: [2,3]
 ## 必备条件
 
 ### **开发语言**
-   - [Python](https://www.python.org/) ≥ `3.10`，推荐版本 `3.11.1`，用来运行 `F2`。
+   - [Python](https://www.python.org/) ≥ `3.10`（已在 `3.10` 至 `3.14` 上测试），推荐使用 `3.14`，用来运行 `F2`。
    - [Nvm](https://github.com/nvm-sh/nvm) ≥ `1.1.12`，用来管理 `Node.js` 版本，只在本地构建文档站点时需要，运行 `F2` 不需要。
 ### **终端**
    - [Windows Terminal](https://aka.ms/terminal) ≥ `1.21.3231.0`，使用命令行界面（`CLI`）所需。

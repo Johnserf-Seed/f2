@@ -7,7 +7,7 @@ outline: [2,3]
 ## Prerequisites
 
 ### **Programming Languages**
-   - [Python](https://www.python.org/) ≥ `3.10`, recommended version `3.11.1`, required to run `F2`.
+   - [Python](https://www.python.org/) ≥ `3.10` (tested on `3.10` to `3.14`), `3.14` recommended, required to run `F2`.
    - [Nvm](https://github.com/nvm-sh/nvm) ≥ `1.1.12`, used to manage `Node.js` versions. It is only needed to build the documentation site locally, not to run `F2`.
 ### **Terminal**
    - [Windows Terminal](https://aka.ms/terminal) ≥ `1.21.3231.0`, required for command line interface (`CLI`).
