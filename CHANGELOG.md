@@ -6,6 +6,13 @@
 
 ## [Unreleased]
 
+- 修复抖音喜欢、收藏等模式的 `--max-counts` 不生效（#443）：这些接口不按请求的数量返回，整页作品都会下载（复测中 `max_counts` 为 2 时喜欢模式处理了 18 个作品）。主页、喜欢、音乐收藏、收藏、收藏夹、合集、feed、相关推荐、好友作品九个列表在交给下载前截到剩余数量；新增 `f2.apps.douyin.utils.limit_page_items`。
+- 修复抖音收藏夹模式只列出第一页收藏夹（#443）：此前把作品数上限 `--max-counts` 也用来限制收藏夹数量，第一页就达到上限时只会列出这一页（复测中共 12 个收藏夹只列出 5 个）。现在先取出全部收藏夹再选择一次（此前分多页时每页各弹一次选择），`--max-counts` 按每个收藏夹分别计算；没有收藏夹时提示后结束，不再弹出只有“全部下载”的选择。
+- 修复抖音 `fetch_user_live_videos_by_room_id` 使用登录 cookie 时报 `object of type 'NoneType' has no len()`（#367）：`fetch_live_room_id` 只清空了客户端默认请求头里的 Cookie，每次请求仍会带上登录 cookie，接口返回状态码 101 与空数据。现在这个接口用空 cookie 请求；没有返回直播间数据时抛出带状态码的 `APIResponseError`。
+- 修复抖音点赞模式在对方没有公开点赞列表或 cookie 没有登录时只提示“重试次数达到上限”：现在说明可能的原因。
+- 修复抖音好友作品模式丢掉最后一页：此前在交出作品之前就判断没有下一页而结束；本页没有作品时也不会再用同一个游标不停地重复请求。
+- 修复抖音 `fetch_query_user` 在查询成功时误报“请提供正确的ttwid”：接口成功时现在返回状态码 `0`，此前只把没有状态码当作成功。
+- 直播弹幕连接关闭后，正在处理的消息发送 ack 失败不再以错误级别打印完整堆栈（抖音与 TikTok）。
 - 抖音直播弹幕的 `signature` 改为纯 Python 计算，不再通过 `PyExecJS` 调用 `Node.js`：`DouyinWebcastSignature` 实现了网页端 SDK（webmssdk 1.0.0.53）的 `frontierSign`，在相同随机数下与原来的 JavaScript 结果逐字节一致，并在真实直播间验证可以正常接收弹幕。移除 `PyExecJS` 依赖与 350 KB 的 `webcast_signature.js`，获取直播弹幕不再需要安装 `Node.js`。`DouyinWebcastSignature` 不再接受 `user_agent` 参数：原实现只是把 UA 写进 JavaScript 运行环境，换用不同的 UA 签名结果完全相同，现在直接调用 `DouyinWebcastSignature().get_signature(room_id, user_unique_id)`；新增 `frontier_sign` 方法，可用关键字参数 `rng` 指定随机数来源。
 - TikTok 的 `TokenManager.gen_ttwid` 改为读取打开首页时服务器下发的 `ttwid`：`ttwid/check` 接口现在只做校验、不再下发 `ttwid`，此前总是报“ttwid 检查没有通过”；配置文件中 TikTok 的 `ttwid` 配置不再使用。`gen_odin_tt` 请求时跟随跳转，拿不到时明确提示 TikTok 已不再向未登录用户下发 `odin_tt`（只有登录后的 cookie 中才有），文档中标为将会弃用。这两个方法只供作为库调用，F2 自身的下载流程不受影响。
 - 修复 Twitter 用户链接解析出的用户名为 `i` 的问题：`UniqueIdFetcher` 此前总是请求链接后再从最终地址提取用户名，x.com 在未登录时会把 `https://x.com/用户名/followers` 等页面跳转到登录页 `/i/flow/login`，于是得到保留路径 `i`。现在链接里带着用户名时直接取出、不发请求；t.co 短链等仍需请求时跳过 x.com 的保留路径，并从登录页的 `redirect_after_login` 参数取回原地址。
