@@ -177,3 +177,20 @@ async def test_max_counts_counts_tweets_inside_interval(handler, monkeypatch):
 
     assert tweet_ids(pages) == [["3"], ["4"]]
     assert len(crawler.calls) == 2
+
+
+async def test_tweet_repeated_on_next_page_is_kept_once(handler, monkeypatch):
+    # 串推可能在相邻两页各出现一次，此前会重复计数并占用 --max-counts 的名额
+    crawler = use_pages(
+        monkeypatch,
+        [
+            user_page(entry("1"), entry("2")),
+            user_page(entry("2"), entry("3")),
+            user_page(),
+        ],
+    )
+
+    pages = [page async for page in handler.fetch_post_tweet("user-1", 20, "", 3)]
+
+    assert tweet_ids(pages) == [["1", "2"], ["3"]]
+    assert len(crawler.calls) == 2

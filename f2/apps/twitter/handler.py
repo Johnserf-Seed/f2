@@ -2,7 +2,7 @@
 
 import asyncio
 from pathlib import Path
-from typing import Any, AsyncGenerator, Optional, Tuple, Union
+from typing import Any, AsyncGenerator, Optional, Set, Tuple, Union
 
 from f2.apps.bark.handler import BarkHandler
 from f2.apps.bark.utils import ClientConfManager as BarkClientConfManager
@@ -45,6 +45,7 @@ def _select_tweets(
     page: Any,
     remaining: Union[int, float],
     interval: Optional[Tuple[int, int]] = None,
+    seen: Optional[Set[str]] = None,
 ) -> Tuple[Any, int, bool]:
     """
     按日期区间与剩余数量截取一页推文
@@ -52,12 +53,14 @@ def _select_tweets(
 
     接口不按 count 返回，一页的推文数可能超过剩余数量。主页推文按发布时间倒序排列
     （置顶推文除外），本页最后一条非置顶推文早于区间开始时，之后的页面都在区间之前；
-    喜欢与收藏按点赞、收藏的时间排列，调用方不应据此停止翻页。
+    喜欢与收藏按点赞、收藏的时间排列，调用方不应据此停止翻页。主页的串推可能在相邻
+    两页各出现一次，已经交出的推文不再保留。
 
     Args:
         page (Any): 一页推文的过滤器 (Filter of a page)
         remaining (Union[int, float]): 还可以保留的推文数 (Tweets still allowed)
         interval (Optional[Tuple[int, int]]): 发布时间区间，秒级时间戳，包含首尾
+        seen (Optional[Set[str]]): 之前各页已经交出的推文 ID，保留的推文会加入其中
 
     Returns:
         Tuple[Any, int, bool]: (截取后的页面, 保留的推文数, 是否已经翻过区间开始)
@@ -65,14 +68,16 @@ def _select_tweets(
     tweet_ids = page.tweet_id or []
     timestamps = page.tweet_timestamp or []
     pinned = getattr(page, "tweet_pinned", None) or [False] * len(tweet_ids)
+    seen = set() if seen is None else seen
 
     kept, total, last_regular = [], 0, None
     for tweet_id, timestamp, is_pinned in zip(tweet_ids, timestamps, pinned):
         if not tweet_id:
             continue
         total += 1
-        if interval is None or (
-            timestamp is not None and interval[0] <= timestamp <= interval[1]
+        if tweet_id not in seen and (
+            interval is None
+            or (timestamp is not None and interval[0] <= timestamp <= interval[1])
         ):
             kept.append(tweet_id)
         if timestamp is not None and not is_pinned:
@@ -84,6 +89,7 @@ def _select_tweets(
         )
     if len(kept) > remaining:
         kept = kept[: int(remaining)]
+    seen.update(kept)
     reached_start = (
         interval is not None and last_regular is not None and last_regular < interval[0]
     )
@@ -344,6 +350,8 @@ class TwitterHandler:
 
         max_counts = max_counts or float("inf")
         tweets_collected = 0
+        # 已经交出的推文，串推可能在相邻两页各出现一次
+        seen: Set[str] = set()
         # 默认使用 userId：第一页就结束时，nickname_raw 也有值（#401）
         nickname_raw = userId
 
@@ -380,7 +388,7 @@ class TwitterHandler:
                 break
 
             page, kept, reached_start = _select_tweets(
-                tweet, max_counts - tweets_collected, interval
+                tweet, max_counts - tweets_collected, interval, seen
             )
             yield page
 
@@ -469,6 +477,8 @@ class TwitterHandler:
 
         max_counts = max_counts or float("inf")
         tweets_collected = 0
+        # 已经交出的推文，串推可能在相邻两页各出现一次
+        seen: Set[str] = set()
 
         logger.info(_("开始爬取用户：{0} 喜欢的推文").format(userId))
 
@@ -506,7 +516,7 @@ class TwitterHandler:
                 break
 
             page, kept, _reached_start = _select_tweets(
-                like, max_counts - tweets_collected, interval
+                like, max_counts - tweets_collected, interval, seen
             )
             yield page
 
@@ -586,6 +596,8 @@ class TwitterHandler:
 
         max_counts = max_counts or float("inf")
         tweets_collected = 0
+        # 已经交出的推文，串推可能在相邻两页各出现一次
+        seen: Set[str] = set()
 
         logger.info(_("开始爬取收藏的推文"))
 
@@ -624,7 +636,7 @@ class TwitterHandler:
                 break
 
             page, kept, _reached_start = _select_tweets(
-                bookmark, max_counts - tweets_collected, interval
+                bookmark, max_counts - tweets_collected, interval, seen
             )
             yield page
 
