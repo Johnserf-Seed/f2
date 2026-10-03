@@ -14,6 +14,7 @@ import f2
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.config.conf_manager import ConfigManager
+from f2.utils.config.merge import parse_bool
 
 
 async def get_latest_version(package_name: str) -> Optional[str]:
@@ -72,10 +73,12 @@ async def check_f2_version(force_check: bool = False) -> None:
     # 如果不是强制检查，则读取配置文件中的check_update设置
     if not force_check:
         config_manager = ConfigManager()
-        check_update = config_manager.config.get("f2", {}).get("check_update", False)
+        check_update = parse_bool(
+            config_manager.config.get("f2", {}).get("check_update", False)
+        )
 
         # 如果配置文件中设置为不显示更新，则直接返回
-        if not check_update:
+        if check_update is not True:
             return
 
     latest_version = await get_latest_version("f2")

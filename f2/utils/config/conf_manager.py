@@ -18,6 +18,7 @@ from f2.exceptions.file_exceptions import (
 )
 from f2.i18n.translator import _
 from f2.log.logger import logger
+from f2.utils.config.merge import parse_bool
 from f2.utils.config.user_config import (
     USER_CONFIG_ENV,
     NotAMappingError,
@@ -453,8 +454,9 @@ def get_f2_setting(key: str, default: Any = None) -> Any:
     Returns:
         Any: 配置值，缺失时返回 default
     """
-    return (ConfigManager(f2.F2_CONFIG_FILE_PATH).get_config("f2") or {}).get(
-        key, default
+    # yes/no 等写法转换为布尔值，其他值（如 verify 的 CA 证书路径）原样返回
+    return parse_bool(
+        (ConfigManager(f2.F2_CONFIG_FILE_PATH).get_config("f2") or {}).get(key, default)
     )
 
 

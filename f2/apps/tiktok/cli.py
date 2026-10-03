@@ -14,7 +14,7 @@ from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
 from f2.log.redact import redact_config
 from f2.utils.config.conf_manager import ConfigManager, get_f2_setting
-from f2.utils.config.merge import merge_config
+from f2.utils.config.merge import coerce_bool_options, merge_config
 from f2.utils.core.adapters import adapt_validation_call
 from f2.utils.file.path import get_resource_path
 from f2.utils.http.browser import get_cookie_from_browser
@@ -448,6 +448,8 @@ def tiktok(
 
     # 从低频配置开始到高频配置再到cli参数，逐级覆盖，如果键值不存在使用父级的键值
     kwargs = merge_config(main_conf, custom_conf, **kwargs)
+    # 配置文件中的 yes/no 会被读成字符串，按命令行布尔选项转换
+    kwargs = coerce_bool_options(ctx.command.params, kwargs)
 
     # 添加代理验证逻辑
     proxy_config = kwargs.get("proxies", {})

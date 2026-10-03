@@ -1,5 +1,16 @@
 # path: f2/utils/config/merge.py
 
+from typing import Any, Dict, Iterable
+
+import click
+
+from f2.exceptions.conf_exceptions import ConfError
+from f2.i18n.translator import _
+
+# 与 click.BOOL 接受的写法一致
+_TRUE_WORDS = frozenset({"1", "true", "t", "yes", "y", "on"})
+_FALSE_WORDS = frozenset({"0", "false", "f", "no", "n", "off"})
+
 
 def merge_config(
     main_conf: dict,
@@ -41,3 +52,61 @@ def merge_config(
             merged_conf[key] = value  # CLI 参数会覆盖自定义配置和主配置中的同名参数
 
     return merged_conf
+
+
+def parse_bool(value: Any) -> Any:
+    """
+    把配置中表示开关的字符串转换为布尔值 (Convert switch-like strings in config files to booleans)
+
+    ruamel.yaml 按 YAML 1.2 解析，yes/no/on/off 会被读成字符串，而非空字符串在 Python 中都为真，
+    写成 no 的开关反而会被打开。无法识别的值原样返回（例如 verify 也可以是 CA 证书路径）。
+
+    Args:
+        value (Any): 配置值 (Config value)
+
+    Returns:
+        Any: 能识别时返回布尔值，否则原样返回 (A bool when recognized, otherwise the value unchanged)
+    """
+    if isinstance(value, str):
+        word = value.strip().lower()
+        if word in _TRUE_WORDS:
+            return True
+        if word in _FALSE_WORDS:
+            return False
+    return value
+
+
+def coerce_bool_options(
+    params: Iterable[click.Parameter], conf: Dict[str, Any]
+) -> Dict[str, Any]:
+    """
+    把命令行布尔选项对应的配置值转换为布尔值 (Convert config values of boolean CLI options to booleans)
+
+    命令行传入的值已由 click 转换，这里处理来自配置文件的字符串（如 yes/no）。
+
+    Args:
+        params (Iterable[click.Parameter]): 命令的参数定义 (Parameters of the command)
+        conf (Dict[str, Any]): 合并后的配置 (Merged configuration)
+
+    Returns:
+        Dict[str, Any]: 转换后的配置 (The configuration with booleans converted)
+
+    Raises:
+        ConfError: 配置值无法识别为开关时 (When a value cannot be read as a switch)
+    """
+    for param in params:
+        name = param.name
+        if not name or not isinstance(param.type, click.types.BoolParamType):
+            continue
+        value = conf.get(name)
+        if not isinstance(value, str):
+            continue
+        converted = parse_bool(value)
+        if isinstance(converted, str):
+            raise ConfError(
+                _("配置项 {0} 只能是 true/false 或 yes/no").format(name),
+                key=name,
+                value=value,
+            )
+        conf[name] = converted
+    return conf

@@ -5,7 +5,7 @@ import string
 
 import f2
 from f2.utils.config.conf_manager import ConfigManager
-from f2.utils.config.merge import merge_config
+from f2.utils.config.merge import merge_config, parse_bool
 
 
 class ClientConfManager:
@@ -19,7 +19,8 @@ class ClientConfManager:
 
     @classmethod
     def enable_bark(cls) -> bool:
-        return cls.client_conf.get("enable_bark", False)
+        # 写成 no 等字符串时也要按关闭处理
+        return parse_bool(cls.client_conf.get("enable_bark", False)) is True
 
     @classmethod
     def client(cls) -> dict:
