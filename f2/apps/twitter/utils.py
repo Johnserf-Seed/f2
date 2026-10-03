@@ -4,7 +4,7 @@ import asyncio
 import re
 import traceback
 from pathlib import Path
-from typing import Any, List, Optional, Union
+from typing import Any, Dict, Iterable, List, NamedTuple, Optional, Tuple, Union
 from urllib.parse import parse_qs, urlparse
 
 import httpx
@@ -584,3 +584,96 @@ def extract_desc(text):
         if cutoff_index != -1:
             return text[:cutoff_index].strip()  # 返回截断后的部分
     return text.strip()  # 如果没有 "https"，返回去掉两端空格后的内容
+
+
+class GraphQLOperation(NamedTuple):
+    """网页脚本中定义的 GraphQL 查询 (A GraphQL operation defined in X's web scripts)"""
+
+    query_id: str
+    features: Tuple[str, ...] = ()
+
+
+# 网页脚本中的查询定义，例如：
+# {queryId:"KybxDj9RrADIITXlGG8kpw",operationName:"UserByScreenName",
+#  operationType:"query",metadata:{featureSwitches:["..."],fieldToggles:["..."]}}
+_OPERATION_PATTERN = re.compile(
+    r'queryId:"(?P<query_id>[\w-]+)",operationName:"(?P<name>\w+)",'
+    r'operationType:"\w+"(?:,metadata:\{featureSwitches:\[(?P<features>[^\]]*)\])?'
+)
+# 已登录页面加载的入口脚本
+_MAIN_SCRIPT_PATTERN = re.compile(
+    r"https://abs\.twimg\.com/responsive-web/client-web[\w-]*/main\.\w+\.js"
+)
+# webpack 运行时中按需加载的脚本：编号到名称、编号到哈希的两张表，例如
+# (({34778:"shared~bundle.BookmarkFolders~bundle.Bookmarks"})[e]||e)+"."
+# +({34778:"0b251bfed83c436a"})[e]+"a.js"
+_CHUNK_MAP_PATTERN = re.compile(
+    r'\(\{(?P<names>[^{}]*)\}\)\[\w+\]\|\|\w+\)\+"\."\+'
+    r'\(\{(?P<hashes>[^{}]*)\}\)\[\w+\]\+"(?P<suffix>[\w.]*\.js)"'
+)
+_CHUNK_ENTRY_PATTERN = re.compile(r'(\w+):"([^"]+)"')
+
+
+def parse_graphql_operations(script: str) -> Dict[str, GraphQLOperation]:
+    """
+    从网页脚本中读取 GraphQL 查询的 queryId 与所需的功能开关
+    (Read queryIds and feature switches of GraphQL operations from a web script)
+
+    Args:
+        script (str): 脚本内容 (Script content)
+
+    Returns:
+        Dict[str, GraphQLOperation]: 以查询名为键 (Keyed by operation name)
+    """
+    return {
+        match["name"]: GraphQLOperation(
+            match["query_id"],
+            tuple(re.findall(r'"([^"]+)"', match["features"] or "")),
+        )
+        for match in _OPERATION_PATTERN.finditer(script or "")
+    }
+
+
+def find_main_script(html: str) -> Optional[str]:
+    """从 x.com 已登录的页面中找到入口脚本 main.js 的地址"""
+    match = _MAIN_SCRIPT_PATTERN.search(html or "")
+    return match.group(0) if match else None
+
+
+def find_chunk_scripts(
+    html: str, main_script: str, keywords: Iterable[str]
+) -> List[str]:
+    """
+    找到名称包含关键字的按需加载脚本，按名称从短到长排列
+    (Find on-demand scripts whose names contain any keyword, shortest name first)
+
+    收藏等接口的查询不在 main.js 中，而在 shared~bundle.BookmarkFolders~bundle.Bookmarks
+    这样按需加载的脚本里。
+
+    Args:
+        html (str): x.com 已登录的页面 (Logged-in x.com page)
+        main_script (str): 入口脚本地址，按需加载的脚本与它在同一目录 (URL of main.js)
+        keywords (Iterable[str]): 名称中的关键字，如查询名 (Keywords such as the operation name)
+
+    Returns:
+        List[str]: 脚本地址 (Script URLs)
+    """
+    match = _CHUNK_MAP_PATTERN.search(html or "")
+    if not match:
+        return []
+    names = dict(_CHUNK_ENTRY_PATTERN.findall(match["names"]))
+    hashes = dict(_CHUNK_ENTRY_PATTERN.findall(match["hashes"]))
+    base = main_script.rsplit("/", 1)[0]
+    keywords = [keyword for keyword in keywords if keyword]
+    chunks = sorted(
+        (
+            (name, chunk_id)
+            for chunk_id, name in names.items()
+            if chunk_id in hashes and any(keyword in name for keyword in keywords)
+        ),
+        key=lambda chunk: (len(chunk[0]), chunk[0]),
+    )
+    return [
+        f"{base}/{name}.{hashes[chunk_id]}{match['suffix']}"
+        for name, chunk_id in chunks
+    ]
