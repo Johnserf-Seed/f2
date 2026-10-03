@@ -848,7 +848,7 @@ Class method that builds the headers required by Douyin's API gateway from a `co
 
 ### Generate Livestream Signature 🟢
 
-Generates the `signature` required for requesting live chat WebSocket.
+Generates the `signature` required for requesting live chat WebSocket. It is computed in pure Python and does not need `Node.js`. The signature contains random parts, so the same arguments give a different result each time.
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |

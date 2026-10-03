@@ -830,7 +830,6 @@
   | | | |___utils.py
   | | |___douyin
   | | | |___algorithm
-  | | | | |___webcast_signature.js
   | | | | |___webcast_signature.py
   | | | |___api.py
   | | | |___cli.py
@@ -1060,7 +1059,6 @@
 - [websockets](https://github.com/python-websockets/websockets)
 - [websockets_proxy](https://github.com/racinette/websockets_proxy)
 - [protobuf](https://github.com/protocolbuffers/protobuf)
-- [PyExecJS](https://github.com/doloopwhile/PyExecJS)
 - [gmssl](https://github.com/duanhongyi/gmssl)
 - [cryptography](https://github.com/pyca/cryptography)
 

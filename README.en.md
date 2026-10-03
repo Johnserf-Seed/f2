@@ -830,7 +830,6 @@ For the complete list of features, please refer to the [API Documentation](https
   | | | |___utils.py
   | | |___douyin
   | | | |___algorithm
-  | | | | |___webcast_signature.js
   | | | | |___webcast_signature.py
   | | | |___api.py
   | | | |___cli.py
@@ -1059,7 +1058,6 @@ If you're interested in contributing code to `F2`, please refer to the [contribu
 - [websockets](https://github.com/python-websockets/websockets)
 - [websockets_proxy](https://github.com/racinette/websockets_proxy)
 - [protobuf](https://github.com/protocolbuffers/protobuf)
-- [PyExecJS](https://github.com/doloopwhile/PyExecJS)
 - [gmssl](https://github.com/duanhongyi/gmssl)
 - [cryptography](https://github.com/pyca/cryptography)
 
