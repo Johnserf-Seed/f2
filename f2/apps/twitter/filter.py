@@ -180,7 +180,7 @@ class TweetDetailFilter(JSONModel):
     @property
     def join_time(self):
         return self._get_attr_value(
-            f"{self._result_path}.core.user_results.result.legacy.created_at"
+            f"{self._result_path}.core.user_results.result.core.created_at"
         )
 
     # 蓝V认证
@@ -199,7 +199,7 @@ class TweetDetailFilter(JSONModel):
     @property
     def user_unique_id(self):
         return self._get_attr_value(
-            f"{self._result_path}.core.user_results.result.legacy.screen_name"
+            f"{self._result_path}.core.user_results.result.core.screen_name"
         )
 
     # 昵称 example: 核酸酱
@@ -207,96 +207,94 @@ class TweetDetailFilter(JSONModel):
     def nickname(self):
         return replaceT(
             self._get_attr_value(
-                f"{self._result_path}.core.user_results.result.legacy.name"
+                f"{self._result_path}.core.user_results.result.core.name"
             )
         )
 
     @property
     def nickname_raw(self):
         return self._get_attr_value(
-            f"{self._result_path}.core.user_results.result.legacy.name"
+            f"{self._result_path}.core.user_results.result.core.name"
         )
 
     @property
     def user_description(self):
         return replaceT(
             self._get_attr_value(
-                f"{self._result_path}.core.user_results.result.legacy.description"
+                f"{self._result_path}.core.user_results.result.profile_bio.description"
             )
         )
 
     @property
     def user_description_raw(self):
         return self._get_attr_value(
-            f"{self._result_path}.core.user_results.result.legacy.description"
+            f"{self._result_path}.core.user_results.result.profile_bio.description"
         )
 
     # 置顶推文ID
     @property
     def user_pined_tweet_id(self):
         return self._get_attr_value(
-            f"{self._result_path}.core.user_results.result.legacy.pinned_tweet_ids_str[0]"
+            f"{self._result_path}.core.user_results.result.pinned_items.tweet_ids_str[0]"
         )
 
     # 主页背景图片
     @property
     def user_profile_banner_url(self):
         return self._get_attr_value(
-            f"{self._result_path}.core.user_results.result.profile_banner_url"
+            f"{self._result_path}.core.user_results.result.banner.image_url"
         )
 
     # 关注者
     @property
     def followers_count(self):
         return self._get_attr_value(
-            f"{self._result_path}.core.user_results.result.followers_count"
+            f"{self._result_path}.core.user_results.result.relationship_counts.followers"
         )
 
     # 正在关注
     @property
     def friends_count(self):
         return self._get_attr_value(
-            f"{self._result_path}.core.user_results.result.friends_count"
+            f"{self._result_path}.core.user_results.result.relationship_counts.following"
         )
 
     # 帖子数（推文数&回复 maybe？）
     @property
     def statuses_count(self):
         return self._get_attr_value(
-            f"{self._result_path}.core.user_results.result.statuses_count"
+            f"{self._result_path}.core.user_results.result.tweet_counts.tweets"
         )
 
     # 媒体数（图片数&视频数）
     @property
     def media_count(self):
         return self._get_attr_value(
-            f"{self._result_path}.core.user_results.result.media_count"
+            f"{self._result_path}.core.user_results.result.tweet_counts.media_tweets"
         )
 
     # 喜欢数
     @property
     def favourites_count(self):
         return self._get_attr_value(
-            f"{self._result_path}.core.user_results.result.favourites_count"
+            f"{self._result_path}.core.user_results.result.action_counts.favorites_count"
         )
 
+    # 新 tweet 详情结构已不再返回 has_custom_timelines 字段，保留属性并返回 None
     @property
     def has_custom_timelines(self):
-        return self._get_attr_value(
-            f"{self._result_path}.core.user_results.result.has_custom_timelines"
-        )
+        return None
 
     @property
     def location(self):
         return self._get_attr_value(
-            f"{self._result_path}.core.user_results.result.location"
+            f"{self._result_path}.core.user_results.result.location.location"
         )
 
+    # 新 tweet 详情结构已不再返回 can_dm 字段，保留属性并返回 None
     @property
     def can_dm(self):
-        return self._get_attr_value(
-            f"{self._result_path}.core.user_results.result.can_dm"
-        )
+        return None
 
     def _to_raw(self) -> dict:
         return self._data
@@ -329,12 +327,12 @@ class UserProfileFilter(JSONModel):
     # 用户唯一ID（推特ID） example: Asai_chan_
     @property
     def user_unique_id(self):
-        return self._get_attr_value("$.data.user.result.legacy.screen_name")
+        return self._get_attr_value("$.data.user.result.core.screen_name")
 
     # 注册时间
     @property
     def join_time(self):
-        created_at = self._get_attr_value("$.data.user.result.legacy.created_at")
+        created_at = self._get_attr_value("$.data.user.result.core.created_at")
         # 添加空值检查
         if created_at is None:
             return ""
@@ -343,66 +341,70 @@ class UserProfileFilter(JSONModel):
     # 昵称 example: 核酸酱
     @property
     def nickname(self):
-        return replaceT(self._get_attr_value("$.data.user.result.legacy.name"))
+        return replaceT(self._get_attr_value("$.data.user.result.core.name"))
 
     @property
     def nickname_raw(self):
-        return self._get_attr_value("$.data.user.result.legacy.name")
+        return self._get_attr_value("$.data.user.result.core.name")
 
     @property
     def user_description(self):
-        return replaceT(self._get_attr_value("$.data.user.result.legacy.description"))
+        return replaceT(
+            self._get_attr_value("$.data.user.result.profile_bio.description")
+        )
 
     @property
     def user_description_raw(self):
-        return self._get_attr_value("$.data.user.result.legacy.description")
+        return self._get_attr_value("$.data.user.result.profile_bio.description")
 
     # 置顶推文ID
     @property
     def user_pined_tweet_id(self):
-        return self._get_attr_value("$.data.user.result.legacy.pinned_tweet_ids_str[0]")
+        return self._get_attr_value("$.data.user.result.pinned_items.tweet_ids_str[0]")
 
     # 主页背景图片
     @property
     def user_profile_banner_url(self):
-        return self._get_attr_value("$.data.user.result.legacy.profile_banner_url")
+        return self._get_attr_value("$.data.user.result.banner.image_url")
 
     # 关注者
     @property
     def followers_count(self):
-        return self._get_attr_value("$.data.user.result.legacy.followers_count")
+        return self._get_attr_value("$.data.user.result.relationship_counts.followers")
 
     # 正在关注
     @property
     def friends_count(self):
-        return self._get_attr_value("$.data.user.result.legacy.friends_count")
+        return self._get_attr_value("$.data.user.result.relationship_counts.following")
 
     # 帖子数（推文数&回复 maybe？）
     @property
     def statuses_count(self):
-        return self._get_attr_value("$.data.user.result.legacy.statuses_count")
+        return self._get_attr_value("$.data.user.result.tweet_counts.tweets")
 
     # 媒体数（图片数&视频数）
     @property
     def media_count(self):
-        return self._get_attr_value("$.data.user.result.legacy.media_count")
+        return self._get_attr_value("$.data.user.result.tweet_counts.media_tweets")
 
     # 喜欢数
     @property
     def favourites_count(self):
-        return self._get_attr_value("$.data.user.result.legacy.favourites_count")
+        return self._get_attr_value("$.data.user.result.action_counts.favorites_count")
 
+    # 新 profile 结构已移除 has_custom_timelines 字段，保留属性并返回 None
     @property
     def has_custom_timelines(self):
-        return self._get_attr_value("$.data.user.result.legacy.has_custom_timelines")
+        return None
 
     @property
     def location(self):
-        return self._get_attr_value("$.data.user.result.legacy.location")
+        return self._get_attr_value("$.data.user.result.location.location")
 
+    # 新 profile 结构不再返回 dm_permissions 字段，保留属性并返回 None
     @property
     def can_dm(self):
-        return self._get_attr_value("$.data.user.result.legacy.can_dm")
+        return None
 
     def _to_raw(self) -> dict:
         return self._data
@@ -420,38 +422,38 @@ class PostTweetFilter(JSONModel):
     @property
     def cursorType(self):
         return self._get_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[-1].content.cursorType"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[-1].content.cursorType"
         )
 
     @property
     def min_cursor(self):
         return self._get_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[-2].content.value"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[-2].content.value"
         )
 
     @property
     def max_cursor(self):
         return self._get_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[-1].content.value"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[-1].content.value"
         )
 
     @property
     def entryId(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].entryId"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].entryId"
         )
 
     # tweet
     @property
     def tweet_id(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.conversation_id_str"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.conversation_id_str"
         )
 
     @property
     def tweet_created_at(self):
         create_times = self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.created_at"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.created_at"
         )
         return (
             [timestamp_2_str(str(ct)) for ct in create_times]
@@ -462,37 +464,37 @@ class PostTweetFilter(JSONModel):
     @property
     def tweet_favorite_count(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.favorite_count"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.favorite_count"
         )
 
     @property
     def tweet_reply_count(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.reply_count"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.reply_count"
         )
 
     @property
     def tweet_retweet_count(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.retweet_count"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.retweet_count"
         )
 
     @property
     def tweet_quote_count(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.quote_count"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.quote_count"
         )
 
     @property
     def tweet_views_count(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.views.count"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.views.count"
         )
 
     @property
     def tweet_desc(self):
         text_list = self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.full_text"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.full_text"
         )
 
         if text_list is None:
@@ -508,7 +510,7 @@ class PostTweetFilter(JSONModel):
     @property
     def tweet_desc_raw(self):
         text_list = self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.full_text"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.full_text"
         )
 
         if text_list is None:
@@ -521,19 +523,19 @@ class PostTweetFilter(JSONModel):
     @property
     def tweet_media_status(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.entities.media[*].ext_media_availability.status"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.entities.media[*].ext_media_availability.status"
         )
 
     @property
     def tweet_media_type(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.entities.media[0].type"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.entities.media[0].type"
         )
 
     @property
     def tweet_media_url(self):
         media_lists = self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.entities.media"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.entities.media"
         )
 
         if not media_lists:
@@ -555,7 +557,7 @@ class PostTweetFilter(JSONModel):
     @property
     def tweet_video_url(self):
         video_url_lists = self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.entities.media"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.entities.media"
         )
 
         if not video_url_lists:
@@ -582,19 +584,19 @@ class PostTweetFilter(JSONModel):
     @property
     def user_id(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.id"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.id"
         )
 
     @property
     def is_blue_verified(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.is_blue_verified"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.is_blue_verified"
         )
 
     @property
     def user_created_at(self):
         create_times = self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.created_at"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.core.created_at"
         )
         return (
             [timestamp_2_str(str(ct)) for ct in create_times]
@@ -606,64 +608,64 @@ class PostTweetFilter(JSONModel):
     def user_description(self):
         return replaceT(
             self._get_list_attr_value(
-                "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.description"
+                "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.profile_bio.description"
             )
         )
 
     @property
     def user_description_raw(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.description"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.profile_bio.description"
         )
 
     @property
     def user_location(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.location"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.location.location"
         )
 
     @property
     def user_friends_count(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.friends_count"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.relationship_counts.following"
         )
 
     @property
     def user_followers_count(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.followers_count"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.relationship_counts.followers"
         )
 
     @property
     def user_favourites_count(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.favourites_count"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.action_counts.favorites_count"
         )
 
     @property
     def user_media_count(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.media_count"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.tweet_counts.media_tweets"
         )
 
     @property
     def user_statuses_count(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.statuses_count"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.tweet_counts.tweets"
         )
 
     @property
     def nickname(self):
         return replaceT(
             self._get_list_attr_value(
-                "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.name"
+                "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.core.name"
             )
         )
 
     @property
     def nickname_raw(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.name"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.core.name"
         )
 
     # 用户唯一ID（推特ID），命名模板的 {uid} 读取这个字段（移植自 #442）
@@ -675,20 +677,20 @@ class PostTweetFilter(JSONModel):
     def user_screen_name(self):
         return replaceT(
             self._get_list_attr_value(
-                "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.screen_name"
+                "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.core.screen_name"
             )
         )
 
     @property
     def user_screen_name_raw(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.screen_name"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.core.screen_name"
         )
 
     @property
     def user_profile_banner_url(self):
         return self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.profile_banner_url"
+            "$.data.user.result.timeline.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.banner.image_url"
         )
 
     def _to_raw(self) -> dict:
@@ -715,7 +717,7 @@ class PostTweetFilter(JSONModel):
 
         list_dicts = filter_to_list(
             self,
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries",
+            "$.data.user.result.timeline.timeline.instructions[-1].entries",
             exclude_fields,
             extra_fields,
         )
@@ -907,7 +909,7 @@ class BookmarkTweetFilter(JSONModel):
     @property
     def user_created_at(self):
         create_times = self._get_list_attr_value(
-            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.created_at"
+            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.core.created_at"
         )
         return (
             [timestamp_2_str(str(ct)) for ct in create_times]
@@ -919,64 +921,64 @@ class BookmarkTweetFilter(JSONModel):
     def user_description(self):
         return replaceT(
             self._get_list_attr_value(
-                "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.description"
+                "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.profile_bio.description"
             )
         )
 
     @property
     def user_description_raw(self):
         return self._get_list_attr_value(
-            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.description"
+            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.profile_bio.description"
         )
 
     @property
     def user_location(self):
         return self._get_list_attr_value(
-            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.location"
+            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.location.location"
         )
 
     @property
     def user_friends_count(self):
         return self._get_list_attr_value(
-            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.friends_count"
+            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.relationship_counts.following"
         )
 
     @property
     def user_followers_count(self):
         return self._get_list_attr_value(
-            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.followers_count"
+            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.relationship_counts.followers"
         )
 
     @property
     def user_favourites_count(self):
         return self._get_list_attr_value(
-            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.favourites_count"
+            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.action_counts.favorites_count"
         )
 
     @property
     def user_media_count(self):
         return self._get_list_attr_value(
-            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.media_count"
+            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.tweet_counts.media_tweets"
         )
 
     @property
     def user_statuses_count(self):
         return self._get_list_attr_value(
-            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.statuses_count"
+            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.tweet_counts.tweets"
         )
 
     @property
     def nickname(self):
         return replaceT(
             self._get_list_attr_value(
-                "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.name"
+                "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.core.name"
             )
         )
 
     @property
     def nickname_raw(self):
         return self._get_list_attr_value(
-            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.name"
+            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.core.name"
         )
 
     # 用户唯一ID（推特ID），命名模板的 {uid} 读取这个字段（移植自 #442）
@@ -988,20 +990,20 @@ class BookmarkTweetFilter(JSONModel):
     def user_screen_name(self):
         return replaceT(
             self._get_list_attr_value(
-                "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.screen_name"
+                "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.core.screen_name"
             )
         )
 
     @property
     def user_screen_name_raw(self):
         return self._get_list_attr_value(
-            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.screen_name"
+            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.core.screen_name"
         )
 
     @property
     def user_profile_banner_url(self):
         return self._get_list_attr_value(
-            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.legacy.profile_banner_url"
+            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.core.user_results.result.banner.image_url"
         )
 
     def _to_raw(self) -> dict:

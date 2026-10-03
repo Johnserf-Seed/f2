@@ -38,7 +38,7 @@ def test_bookmark_page_with_one_entry():
 
 
 def test_post_page_with_one_entry():
-    data = {"data": {"user": {"result": {"timeline_v2": timeline(ONLY_CURSOR)}}}}
+    data = {"data": {"user": {"result": {"timeline": timeline(ONLY_CURSOR)}}}}
     tweets = PostTweetFilter(data)
     assert tweets.min_cursor is None
     assert tweets.max_cursor == "cursor-bottom"
