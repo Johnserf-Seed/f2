@@ -211,11 +211,11 @@ class UserPostFilter(JSONModel):
 
     @property
     def caption(self):
-        return replaceT(self._get_attr_value("$.aweme_list[*].caption"))
+        return replaceT(self._get_list_attr_value("$.aweme_list[*].caption"))
 
     @property
     def caption_raw(self):
-        return self._get_attr_value("$.aweme_list[*].caption")
+        return self._get_list_attr_value("$.aweme_list[*].caption")
 
     @property
     def desc(self):
@@ -1915,52 +1915,52 @@ class UserLiveRankingFilter(JSONModel):
 
     @property
     def is_hidden(self):
-        return self._get_attr_value("$.data.ranks.[*].is_hidden")
+        return self._get_list_attr_value("$.data.ranks.[*].is_hidden")
 
     @property
     def rank(self):
-        return self._get_attr_value("$.data.ranks.[*].rank")
+        return self._get_list_attr_value("$.data.ranks.[*].rank")
 
     @property
     def score(self):
-        return self._get_attr_value("$.data.ranks.[*].score")
+        return self._get_list_attr_value("$.data.ranks.[*].score")
 
     # user
     @property
     def gender(self):
-        return self._get_attr_value("$.data.ranks.[*].user.gender")
+        return self._get_list_attr_value("$.data.ranks.[*].user.gender")
 
     @property
     def uid(self):
-        return self._get_attr_value("$.data.ranks.[*].user.id")
+        return self._get_list_attr_value("$.data.ranks.[*].user.id")
 
     @property
     def nickname(self):
-        return replaceT(self._get_attr_value("$.data.ranks.[*].user.nickname"))
+        return replaceT(self._get_list_attr_value("$.data.ranks.[*].user.nickname"))
 
     @property
     def nickname_raw(self):
-        return self._get_attr_value("$.data.ranks.[*].user.nickname")
+        return self._get_list_attr_value("$.data.ranks.[*].user.nickname")
 
     @property
     def signature(self):
-        return replaceT(self._get_attr_value("$.data.ranks.[*].user.signature"))
+        return replaceT(self._get_list_attr_value("$.data.ranks.[*].user.signature"))
 
     @property
     def signature_raw(self):
-        return self._get_attr_value("$.data.ranks.[*].user.signature")
+        return self._get_list_attr_value("$.data.ranks.[*].user.signature")
 
     @property
     def sec_uid(self):
-        return self._get_attr_value("$.data.ranks.[*].user.sec_uid")
+        return self._get_list_attr_value("$.data.ranks.[*].user.sec_uid")
 
     @property
     def unique_id(self):
-        return self._get_attr_value("$.data.ranks.[*].user.display_id")
+        return self._get_list_attr_value("$.data.ranks.[*].user.display_id")
 
     @property
     def webcast_uid(self):
-        return self._get_attr_value("$.data.ranks.[*].user.webcast_uid")
+        return self._get_list_attr_value("$.data.ranks.[*].user.webcast_uid")
 
     def _to_raw(self) -> Dict:
         return self._data

@@ -503,11 +503,11 @@ class PostDetailFilter(JSONModel):
     # challenges
     @property
     def challenges_title(self):
-        return self._get_attr_value("$.itemInfo.itemStruct.challenges[*].title")
+        return self._get_list_attr_value("$.itemInfo.itemStruct.challenges[*].title")
 
     @property
     def challenges_desc(self):
-        return self._get_attr_value("$.itemInfo.itemStruct.challenges[*].desc")
+        return self._get_list_attr_value("$.itemInfo.itemStruct.challenges[*].desc")
 
     # aweme
     @property
