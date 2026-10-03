@@ -37,6 +37,10 @@ class PagedCrawler:
 
     fetch_user_post = _next
     fetch_user_like = _next
+    fetch_user_music_collection = _next
+    fetch_user_collection = _next
+    fetch_user_collects_video = _next
+    fetch_user_mix = _next
     fetch_post_search = _next
 
 
@@ -60,7 +64,14 @@ GENERATORS = [
 @pytest.fixture
 def douyin(monkeypatch):
     # 请求参数模型构造时会联网获取 msToken，换成普通对象
-    for name in ("UserPost", "UserLike"):
+    for name in (
+        "UserPost",
+        "UserLike",
+        "UserMusicCollection",
+        "UserCollection",
+        "UserCollectsVideo",
+        "UserMix",
+    ):
         monkeypatch.setattr(douyin_handler, name, types.SimpleNamespace)
     handler = douyin_handler.DouyinHandler(dict(KWARGS))
 
@@ -161,3 +172,60 @@ async def test_tiktok_search_stops_when_the_offset_does_not_move(monkeypatch, ca
     assert pages == []
     assert len(crawler.calls) == 1
     assert len(f2_warnings(caplog)) == 1
+
+
+def cursor_page(key, ids, has_more, cursor):
+    return {
+        "status_code": 0,
+        key: [{"aweme_id": str(i), "id": str(i)} for i in ids],
+        "has_more": has_more,
+        "cursor": cursor,
+    }
+
+
+# 用 cursor 字段翻页的列表：(生成器名, 调用参数, 条目列表所在的字段)
+CURSOR_GENERATORS = [
+    ("fetch_user_music_collection", (0, 20, None), "mc_list"),
+    ("fetch_user_collection_videos", (0, 20, None), "aweme_list"),
+    ("fetch_user_collects_videos", ("collects-id", 0, 20, None), "aweme_list"),
+    ("fetch_user_mix_videos", ("mix-id", 0, 20, None), "aweme_list"),
+]
+
+
+@pytest.mark.parametrize(
+    "name, args, key", CURSOR_GENERATORS, ids=[g[0] for g in CURSOR_GENERATORS]
+)
+async def test_cursor_lists_stop_when_the_cursor_does_not_move(
+    douyin, monkeypatch, caplog, name, args, key
+):
+    crawler = use_pages(
+        monkeypatch, douyin_handler, "DouyinCrawler", [cursor_page(key, [1], 1, 0)]
+    )
+
+    with caplog.at_level(logging.INFO):
+        pages = [page async for page in getattr(douyin, name)(*args)]
+
+    assert len(pages) == 1
+    assert len(crawler.calls) == 1
+    assert len(f2_warnings(caplog)) == 1
+
+
+@pytest.mark.parametrize(
+    "name, args, key", CURSOR_GENERATORS, ids=[g[0] for g in CURSOR_GENERATORS]
+)
+async def test_cursor_lists_follow_the_next_cursor(
+    douyin, monkeypatch, caplog, name, args, key
+):
+    crawler = use_pages(
+        monkeypatch,
+        douyin_handler,
+        "DouyinCrawler",
+        [cursor_page(key, [1], 1, 100), cursor_page(key, [2], 0, 200)],
+    )
+
+    with caplog.at_level(logging.INFO):
+        pages = [page async for page in getattr(douyin, name)(*args)]
+
+    assert len(pages) == 2
+    assert [params.cursor for params in crawler.calls] == [0, 100]
+    assert f2_warnings(caplog) == []
