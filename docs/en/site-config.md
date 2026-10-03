@@ -19,6 +19,10 @@ Read this chapter carefully to understand how `F2` configuration files work and 
 Presents the data serialization format file in an outline-like indentation manner, [what is yaml?](https://zh.wikipedia.org/wiki/YAML).
 :::
 
+::: tip :bulb: Writing switches
+Switches such as `folderize`, `cover`, `desc`, `music`, `lyric`, `check_update` and `enable_bark` accept `true`/`false` or `yes`/`no` (also `on`/`off` and `1`/`0`). Any other value makes an app switch report an error and exit, while `check_update` and `enable_bark` are treated as off; `verify` can also be the path of a CA certificate file.
+:::
+
 **App low-frequency/main configuration file (app.yaml)**: used to save all app configurations that do not change frequently, such as `cookie`, `file name template`, `download path`, `connection timeout`, `Number of timeout retries`, etc.
 
 **F2 configuration file (conf.yaml)**: used to save the configuration of `F2`, such as `computation parameters` and `agent` of different apps.

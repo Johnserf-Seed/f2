@@ -19,6 +19,10 @@
 用类似大纲的缩进方式呈现数据序列化的格式文件，[what is yaml?](https://zh.wikipedia.org/wiki/YAML)。
 :::
 
+::: tip :bulb: 开关的写法
+`folderize`、`cover`、`desc`、`music`、`lyric`、`check_update`、`enable_bark` 等开关可以写 `true`/`false` 或 `yes`/`no`（也接受 `on`/`off`、`1`/`0`）。写成其他内容时，应用的开关会报错退出，`check_update` 与 `enable_bark` 按关闭处理；`verify` 还可以填写 CA 证书文件路径。
+:::
+
 **应用低频/主配置文件(app.yaml)**：用来保存所有应用不常变动的配置，例如的 `cookie`、`文件名模板`、`下载路径`、`连接超时时间`、`超时重试次数`等。
 
 **F2配置文件(conf.yaml)**：用来保存 `F2` 的配置，例如不同应用的 `计算参数` 和 `代理`。
