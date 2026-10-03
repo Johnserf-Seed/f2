@@ -112,11 +112,15 @@ Number of asynchronous tasks. Default is `5`.
 
 ### `--max-counts`
 
-Maximum number of works to download. `None` or `0` means unlimited. Default is `0`.
+The maximum number of tweets to download in this run, counted across all pages; paging stops once it is reached. `None` or `0` means no limit. Default is `0`.
 
 ### `--page-counts`
 
-Number of works retrieved per page from the API. Not recommended to exceed `20`. Default is `20`.
+The number of tweets requested from the API at a time. It only decides how many requests (pages) are made and does not limit how many tweets are downloaded in total. Not recommended to exceed `20`. Default is `20`.
+
+::: tip :bulb: Tip
+`--page-counts` is how many to ask for per page and `--max-counts` is how many to download in total; one does not replace the other. For example, `-s 5 -o 2` requests 5 tweets at a time and downloads at most 2. To limit the number of downloads, set `--max-counts`.
+:::
 
 ### `--proxies`
 

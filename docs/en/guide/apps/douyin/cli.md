@@ -144,11 +144,15 @@ The number of asynchronous tasks. Default is `5`.
 
 ### `--max-counts`
 
-Maximum number of work downloads. Set to `None` or `0` for no limit. Default is `0`.
+The maximum number of posts to download in this run, counted across all pages; paging stops once it is reached, and when a page returns more posts than remain, the extra posts are not downloaded. In `collects` mode it applies to each collection folder separately. `None` or `0` means no limit. Default is `0`.
 
 ### `--page-counts`
 
-The number of works that can be obtained from each page of the interface is not recommended to exceed `20`. Default is `20`.
+The number of posts requested from the API at a time. It only decides how many requests (pages) are made and does not limit how many posts are downloaded in total; some APIs (such as favorites and collection) ignore it and return a full page of their own size. Not recommended to exceed `20`. Default is `20`.
+
+::: tip :bulb: Tip
+`--page-counts` is how many to ask for per page and `--max-counts` is how many to download in total; one does not replace the other. For example, `-s 5 -o 2` requests 5 posts at a time and downloads at most 2. To limit the number of downloads, set `--max-counts`.
+:::
 
 ### `--proxies`
 

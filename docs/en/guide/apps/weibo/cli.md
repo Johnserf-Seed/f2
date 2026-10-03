@@ -123,7 +123,7 @@ Number of asynchronous tasks. Default is `5`.
 
 ### `--max-counts`
 
-Maximum number of posts to download. Set to `None` or `0` for unlimited. Default is `0`.
+The maximum number of posts to download in this run, counted across all pages; paging stops once it is reached. The Weibo API always returns about `20` posts per page, and posts beyond the remaining number are not downloaded. `None` or `0` means no limit. Default is `0`.
 
 ### `--page-counts`
 
