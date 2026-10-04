@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-03 15:28-0700\n"
+"POT-Creation-Date: 2026-10-04 10:21-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -3000,6 +3000,11 @@ msgstr "接口 {0} 改用新的 queryId：{1}"
 
 #: f2/apps/twitter/crawler.py
 #, python-brace-format
+msgid "新的 queryId 已缓存到 {0}，内置值不变时之后的运行直接使用"
+msgstr "新的 queryId 已缓存到 {0}，内置值不变时之后的运行直接使用"
+
+#: f2/apps/twitter/crawler.py
+#, python-brace-format
 msgid "推文详情接口地址: {0}"
 msgstr "推文详情接口地址: {0}"
 
@@ -3133,8 +3138,8 @@ msgid "推文ID：{0} 推文文案：{1} 作者：{2}"
 msgstr "推文ID：{0} 推文文案：{1} 作者：{2}"
 
 #: f2/apps/twitter/handler.py
-msgid "该用户没有公开喜欢的推文"
-msgstr "该用户没有公开喜欢的推文"
+msgid "没有获取到喜欢的推文：X 的喜欢列表只对本人可见，只能下载 cookie 所属账号自己喜欢的推文"
+msgstr "没有获取到喜欢的推文：X 的喜欢列表只对本人可见，只能下载 cookie 所属账号自己喜欢的推文"
 
 #: f2/apps/twitter/handler.py
 msgid "已处理完所有喜欢的推文"
@@ -3255,6 +3260,16 @@ msgstr "未找到推文，请检查推文链接是否正确。类名：{0}"
 #, python-brace-format
 msgid "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
 msgstr "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
+
+#: f2/apps/twitter/utils.py
+#, python-brace-format
+msgid "无法读取推特接口的 queryId 缓存 {0}：{1}"
+msgstr "无法读取推特接口的 queryId 缓存 {0}：{1}"
+
+#: f2/apps/twitter/utils.py
+#, python-brace-format
+msgid "无法保存推特接口的 queryId 缓存 {0}：{1}"
+msgstr "无法保存推特接口的 queryId 缓存 {0}：{1}"
 
 #: f2/apps/weibo/cli.py
 msgid "微博下载器"
@@ -4398,6 +4413,11 @@ msgstr "代理请求失败：{0} - {1}"
 
 #: f2/utils/http/utils.py
 #, python-brace-format
+msgid "{0} 拒绝了当前网络出口的访问（Access Denied），与 cookie 无关，请更换代理节点（地区）后重试"
+msgstr "{0} 拒绝了当前网络出口的访问（Access Denied），与 cookie 无关，请更换代理节点（地区）后重试"
+
+#: f2/utils/http/utils.py
+#, python-brace-format
 msgid "HEAD请求成功获取Content-Length: {0}"
 msgstr "HEAD请求成功获取Content-Length: {0}"
 
@@ -4795,4 +4815,7 @@ msgstr "无效的时间戳字符串"
 
 #~ msgid "结束处理用户收藏夹作品，共处理 {0} 个作品"
 #~ msgstr "结束处理用户收藏夹作品，共处理 {0} 个作品"
+
+#~ msgid "该用户没有公开喜欢的推文"
+#~ msgstr "该用户没有公开喜欢的推文"
 
