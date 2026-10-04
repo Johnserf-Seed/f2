@@ -4,6 +4,7 @@ import traceback
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Dict, Optional, Union
+from urllib.parse import quote, unquote
 
 import httpx
 from httpx_socks import SyncProxyTransport
@@ -20,6 +21,26 @@ class ProxyType(Enum):
     SOCKS5 = "socks5"
 
 
+def _encode_credential(value: Any) -> str:
+    # 先解码再编码：此前密码含特殊字符时只能自己按 URL 编码后填写，这样的配置结果不变
+    return quote(unquote(str(value)), safe="")
+
+
+def _proxy_auth(username: Any, password: Any) -> str:
+    """
+    代理地址中的用户名与密码 (Credentials part of a proxy URL)
+
+    按 URL 编码，此前密码中有 @、:、/ 等字符时拼出的地址无法解析，httpx 与
+    python-socks 会报端口无效，代理连接直接失败。
+
+    Returns:
+        str: "用户名:密码@"，没有用户名或密码时为空字符串
+    """
+    if not username or not password:
+        return ""
+    return f"{_encode_credential(username)}:{_encode_credential(password)}@"
+
+
 @dataclass
 class ProxyConfig:
     type: ProxyType
@@ -31,11 +52,7 @@ class ProxyConfig:
 
     def get_url(self) -> str:
         """获取代理URL格式"""
-        auth = (
-            f"{self.username}:{self.password}@"
-            if self.username and self.password
-            else ""
-        )
+        auth = _proxy_auth(self.username, self.password)
         return f"{self.type.value}://{auth}{self.host}:{self.port}"
 
     def to_dict(self) -> Dict[str, Any]:
@@ -74,8 +91,7 @@ def proxy_url_from_config(proxies: Any) -> Optional[str]:
         proxies.get("port"),
     )
     if proxy_type and host and port:
-        username, password = proxies.get("username"), proxies.get("password")
-        auth = f"{username}:{password}@" if username and password else ""
+        auth = _proxy_auth(proxies.get("username"), proxies.get("password"))
         return f"{proxy_type}://{auth}{host}:{port}"
 
     return proxies.get("http://") or None
@@ -124,8 +140,7 @@ def check_proxy_avail(
             logger.error(_("代理地址或端口为空"))
             return False
 
-        auth = f"{username}:{password}@" if username and password else ""
-        proxy_url = f"{proxy_type}://{auth}{host}:{port}"
+        proxy_url = f"{proxy_type}://{_proxy_auth(username, password)}{host}:{port}"
     elif isinstance(proxy_config, ProxyConfig):
         proxy_url = proxy_config.get_url()
     else:

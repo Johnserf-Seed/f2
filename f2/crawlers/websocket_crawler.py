@@ -1,10 +1,13 @@
 # path: f2/crawlers/websocket_crawler.py
 
 import asyncio
+import re
 import time
 import traceback
 from typing import Optional
+from urllib.parse import unquote, urlsplit
 
+from websockets import __version__ as websockets_version
 from websockets.asyncio.client import ClientConnection, connect
 from websockets.exceptions import (
     ConnectionClosedError,
@@ -17,6 +20,29 @@ from f2.exceptions.api_exceptions import APIConnectionError
 from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
 from f2.utils.time.timestamp import timestamp_2_str
+
+# websockets 17.2 起才解码代理地址中按 URL 编码的用户名与密码，之前的版本原样用于认证
+_DECODES_PROXY_AUTH = tuple(
+    int(part) for part in re.findall(r"\d+", websockets_version)[:2]
+) >= (17, 2)
+
+
+def _websockets_proxy(proxy: Optional[str]) -> Optional[str]:
+    """
+    交给 websockets 的代理地址 (Proxy URL for websockets)
+
+    F2 的代理地址中用户名与密码按 URL 编码（见 proxy_url_from_config），websockets 17.2
+    之前的版本不会解码，编码后的值会被当成密码发给代理，这里还原为原文。原文中有 /、?、#
+    时这些版本无法解析代理地址，需要升级 websockets。
+    """
+    if not proxy or _DECODES_PROXY_AUTH:
+        return proxy or None
+    parts = urlsplit(proxy)
+    if parts.username is None or parts.password is None:
+        return proxy
+    host = parts.netloc.rpartition("@")[2]
+    auth = f"{unquote(parts.username)}:{unquote(parts.password)}"
+    return f"{parts.scheme}://{auth}@{host}"
 
 
 class WebSocketCrawler:
@@ -77,7 +103,7 @@ class WebSocketCrawler:
         """
         self.websocket: Optional[ClientConnection] = None
         self.wss_headers = wss_headers
-        self.proxy = proxy or None
+        self.proxy = _websockets_proxy(proxy)
         self.callbacks = callbacks or {}  # 存储回调函数
         self.timeout = timeout
         # 爬虫主动关闭连接的原因（如本地服务器没有客户端时为 "no_client"），receive_messages 以此作为返回值
