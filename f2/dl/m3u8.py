@@ -141,6 +141,9 @@ class M3U8DownloadMixin:
                                     )
 
                                 ts_response = None
+                                # 片段完整下载后才写入文件：此前边下载边写，片段中途超时或出错时
+                                # 已写入的部分留在文件里，下一轮重新下载该片段会再追加一遍
+                                segment_data = bytearray()
                                 try:
                                     ts_request = self._build_segment_request(ts_url)
                                     ts_response = await self.aclient.send(
@@ -155,7 +158,7 @@ class M3U8DownloadMixin:
                                         if SignalManager.is_shutdown_signaled():
                                             break
 
-                                        await file.write(chunk)
+                                        segment_data.extend(chunk)
                                         total_downloaded += len(chunk)
                                         await self.progress.update(
                                             task_id,
@@ -163,6 +166,8 @@ class M3U8DownloadMixin:
                                             total=total_downloaded,
                                         )
 
+                                    # 收到停止信号时同样写入已下载的部分，之后不会再重试该片段
+                                    await file.write(bytes(segment_data))
                                     downloaded_segments.add(segment.absolute_uri)
 
                                 except httpx.ReadTimeout:
