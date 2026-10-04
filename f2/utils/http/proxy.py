@@ -53,6 +53,34 @@ class ProxyConfig:
         return result
 
 
+def proxy_url_from_config(proxies: Any) -> Optional[str]:
+    """
+    F2 代理配置对应的代理地址 (Proxy URL of an F2 proxy configuration)
+
+    支持新格式 type、host、port（可带 username、password）与旧格式的 http:// 键。
+
+    Args:
+        proxies (Any): 配置中的 proxies (The proxies setting)
+
+    Returns:
+        Optional[str]: 代理地址，没有配置时为 None (Proxy URL, None when not configured)
+    """
+    if not isinstance(proxies, dict):
+        return None
+
+    proxy_type, host, port = (
+        proxies.get("type"),
+        proxies.get("host"),
+        proxies.get("port"),
+    )
+    if proxy_type and host and port:
+        username, password = proxies.get("username"), proxies.get("password")
+        auth = f"{username}:{password}@" if username and password else ""
+        return f"{proxy_type}://{auth}{host}:{port}"
+
+    return proxies.get("http://") or None
+
+
 def check_proxy_avail(
     proxy_config: Union[Dict[str, str], ProxyConfig, str],
     test_url: str = "https://httpbin.org/ip",

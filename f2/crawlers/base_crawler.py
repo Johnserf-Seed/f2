@@ -22,6 +22,7 @@ from f2.exceptions.api_exceptions import (
 from f2.exceptions.conf_exceptions import InvalidEncodingError
 from f2.i18n.translator import _
 from f2.log.logger import logger
+from f2.utils.http.proxy import proxy_url_from_config
 
 
 @functools.lru_cache(maxsize=None)
@@ -135,25 +136,7 @@ class BaseCrawler:
         Returns:
             Optional[str]: 代理URL或None
         """
-        if not isinstance(self.proxies, dict):
-            return None
-
-        # 新格式：支持多种代理类型
-        proxy_type = self.proxies.get("type")
-        host = self.proxies.get("host")
-        port = self.proxies.get("port")
-        username = self.proxies.get("username")
-        password = self.proxies.get("password")
-
-        if proxy_type and host and port:
-            auth = f"{username}:{password}@" if username and password else ""
-            return f"{proxy_type}://{auth}{host}:{port}"
-
-        # 兼容旧格式
-        if self.http_proxy:
-            return self.http_proxy
-
-        return None
+        return proxy_url_from_config(self.proxies)
 
     def _trust_env(self) -> bool:
         """
