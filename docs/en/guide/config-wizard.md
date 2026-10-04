@@ -28,14 +28,14 @@ f2 config-wizard
 ### Specify Output File
 
 ```bash
-# Specify configuration file save path
+# Specify the configuration file save path; the wizard no longer asks for it
 f2 config-wizard -o my_custom_config.yaml
 ```
 
 ### Specify Application
 
 ```bash
-# Configure only specific application (feature in development)
+# Configure only the given application (douyin, tiktok, weibo or twitter) and skip choosing platforms
 f2 config-wizard -a douyin
 ```
 

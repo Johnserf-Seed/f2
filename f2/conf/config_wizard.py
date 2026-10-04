@@ -1,6 +1,7 @@
 # path: f2/conf/config_wizard.py
 
 import datetime
+import sys
 import traceback
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -23,6 +24,36 @@ class ConfigWizard:
     """
     配置向导类，提供交互式配置文件生成功能
     """
+
+    # 各平台的命名模板选项，字段需与对应应用 format_file_name 支持的字段一致
+    NAMING_TEMPLATES: Dict[str, List[tuple]] = {
+        "douyin": [
+            ("{create}_{desc}", "创建时间_作品文案"),
+            ("{nickname}_{create}_{desc}", "用户昵称_创建时间_作品文案"),
+            ("{aweme_id}_{desc}", "作品ID_作品文案"),
+            ("{create}_{aweme_id}", "创建时间_作品ID"),
+            ("custom", "自定义模板"),
+        ],
+        "tiktok": [
+            ("{create}_{desc}", "创建时间_作品文案"),
+            ("{nickname}_{create}", "用户昵称_创建时间"),
+            ("{aweme_id}_{nickname}", "作品ID_用户昵称"),
+            ("{create}_{aweme_id}", "创建时间_作品ID"),
+            ("custom", "自定义模板"),
+        ],
+        "weibo": [
+            ("{create}_{desc}", "创建时间_微博文案"),
+            ("{nickname}_{create}", "用户名_创建时间"),
+            ("{weibo_id}_{desc}", "微博ID_微博文案"),
+            ("custom", "自定义模板"),
+        ],
+        "twitter": [
+            ("{create}_{desc}", "创建时间_推文文案"),
+            ("{nickname}_{create}", "用户昵称_创建时间"),
+            ("{tweet_id}_{desc}", "推文ID_推文文案"),
+            ("custom", "自定义模板"),
+        ],
+    }
 
     def __init__(self):
         self.console = Console()
@@ -50,6 +81,7 @@ class ConfigWizard:
                     "live",
                     "related",
                     "friend",
+                    "feed",
                 ],
                 "required_fields": ["url", "mode", "cookie"],
                 "optional_fields": [
@@ -58,6 +90,7 @@ class ConfigWizard:
                     "folderize",
                     "timeout",
                     "max_retries",
+                    "max_counts",
                     "interval",
                 ],
             },
@@ -80,6 +113,7 @@ class ConfigWizard:
                     "folderize",
                     "timeout",
                     "max_retries",
+                    "max_counts",
                     "interval",
                 ],
             },
@@ -97,6 +131,7 @@ class ConfigWizard:
                     "folderize",
                     "timeout",
                     "max_retries",
+                    "max_counts",
                     "interval",
                 ],
             },
@@ -116,6 +151,7 @@ class ConfigWizard:
                     "folderize",
                     "timeout",
                     "max_retries",
+                    "max_counts",
                     "interval",
                 ],
             },
@@ -265,7 +301,7 @@ class ConfigWizard:
                 else:
                     self.console.print("❌ 请至少选择一个平台")
 
-            except KeyboardInterrupt:
+            except (KeyboardInterrupt, EOFError):
                 # 重新抛出中断信号
                 raise
             except ValueError:
@@ -346,7 +382,7 @@ class ConfigWizard:
                     f"     {prompt_text}", default=str(default) if default else ""
                 )
                 return result if result else None
-        except KeyboardInterrupt:
+        except (KeyboardInterrupt, EOFError):
             # 重新抛出中断信号
             raise
         except Exception as e:
@@ -370,12 +406,12 @@ class ConfigWizard:
                         return modes[choice - 1]
                     else:
                         self.console.print(f"     ❌ 请输入 1-{len(modes)} 之间的数字")
-                except KeyboardInterrupt:
+                except (KeyboardInterrupt, EOFError):
                     # 重新抛出中断信号
                     raise
                 except Exception:
                     self.console.print("     ❌ 请输入有效的数字")
-        except KeyboardInterrupt:
+        except (KeyboardInterrupt, EOFError):
             # 重新抛出中断信号
             raise
         except Exception as e:
@@ -430,7 +466,7 @@ class ConfigWizard:
                     return Prompt.ask(f"     {prompt_text} (示例: {example})")
                 else:
                     return Prompt.ask(f"     {prompt_text}")
-        except KeyboardInterrupt:
+        except (KeyboardInterrupt, EOFError):
             # 重新抛出中断信号
             raise
         except Exception as e:
@@ -445,37 +481,9 @@ class ConfigWizard:
         """配置文件命名模板"""
         self.console.print("     可用命名模板:")
 
-        # 根据不同平台提供不同的命名模板选项
-        templates = {
-            "douyin": [
-                ("{create}_{desc}", "创建时间_作品文案"),
-                ("{nickname}_{create}_{desc}", "用户昵称_创建时间_作品文案"),
-                ("{aweme_id}_{desc}", "作品ID_作品文案"),
-                ("{create}_{aweme_id}", "创建时间_作品ID"),
-                ("custom", "自定义模板"),
-            ],
-            "tiktok": [
-                ("{create}_{desc}", "创建时间_作品文案"),
-                ("{nickname}_{create}", "用户昵称_创建时间"),
-                ("{aweme_id}_{nickname}", "作品ID_用户昵称"),
-                ("{create}_{aweme_id}", "创建时间_作品ID"),
-                ("custom", "自定义模板"),
-            ],
-            "weibo": [
-                ("{create}_{desc}", "创建时间_微博文案"),
-                ("{nickname}_{create}", "用户名_创建时间"),
-                ("{weibo_id}_{desc}", "微博ID_微博文案"),
-                ("custom", "自定义模板"),
-            ],
-            "twitter": [
-                ("{create}_{desc}", "创建时间_推文文案"),
-                ("{user_name}_{create}", "用户名_创建时间"),
-                ("{tweet_id}_{desc}", "推文ID_推文文案"),
-                ("custom", "自定义模板"),
-            ],
-        }
-
-        app_templates = templates.get(app_name, templates["douyin"])
+        app_templates = self.NAMING_TEMPLATES.get(
+            app_name, self.NAMING_TEMPLATES["douyin"]
+        )
 
         for i, (template, desc) in enumerate(app_templates, 1):
             self.console.print(f"       {i}. {template} - {desc}")
@@ -503,6 +511,9 @@ class ConfigWizard:
                     self.console.print(
                         f"     ❌ 请输入 1-{len(app_templates)} 之间的数字"
                     )
+            except EOFError:
+                # 输入已结束（例如在管道中运行）时交给 run 处理，此前这里会无限重试
+                raise
             except Exception:
                 self.console.print("     ❌ 请输入有效的数字")
 
@@ -515,9 +526,10 @@ class ConfigWizard:
             ("Download", "Download文件夹"),
             (f"Download/{app_name.title()}", f"Download/{app_name.title()}文件夹"),
             ("~/Downloads", "用户下载文件夹"),
-            ("D:/Downloads", "D盘下载文件夹"),
-            ("custom", "自定义路径"),
         ]
+        if sys.platform == "win32":
+            common_paths.append(("D:/Downloads", "D盘下载文件夹"))
+        common_paths.append(("custom", "自定义路径"))
 
         for i, (path, desc) in enumerate(common_paths, 1):
             self.console.print(f"       {i}. {path} - {desc}")
@@ -542,6 +554,9 @@ class ConfigWizard:
                     self.console.print(
                         f"     ❌ 请输入 1-{len(common_paths)} 之间的数字"
                     )
+            except EOFError:
+                # 输入已结束（例如在管道中运行）时交给 run 处理，此前这里会无限重试
+                raise
             except Exception:
                 self.console.print("     ❌ 请输入有效的数字")
 
@@ -590,6 +605,9 @@ class ConfigWizard:
                         continue
                 else:
                     self.console.print("     ❌ 请输入 1-3 之间的数字")
+            except EOFError:
+                # 输入已结束（例如在管道中运行）时交给 run 处理，此前这里会无限重试
+                raise
             except Exception:
                 self.console.print("     ❌ 请输入有效的数字")
 
@@ -622,6 +640,9 @@ class ConfigWizard:
                     self.console.print(
                         f"     ❌ 请输入 1-{len(count_options)} 之间的数字"
                     )
+            except EOFError:
+                # 输入已结束（例如在管道中运行）时交给 run 处理，此前这里会无限重试
+                raise
             except Exception:
                 self.console.print("     ❌ 请输入有效的数字")
 
@@ -655,6 +676,9 @@ class ConfigWizard:
                     self.console.print(
                         f"     ❌ 请输入 1-{len(timeout_options)} 之间的数字"
                     )
+            except EOFError:
+                # 输入已结束（例如在管道中运行）时交给 run 处理，此前这里会无限重试
+                raise
             except Exception:
                 self.console.print("     ❌ 请输入有效的数字")
 
@@ -735,6 +759,9 @@ class ConfigWizard:
                     self.console.print(
                         f"     ❌ 请输入 1-{len(interval_options)} 之间的数字"
                     )
+            except EOFError:
+                # 输入已结束（例如在管道中运行）时交给 run 处理，此前这里会无限重试
+                raise
             except Exception:
                 self.console.print("     ❌ 请输入有效的数字")
 
@@ -765,7 +792,7 @@ class ConfigWizard:
     def save_config(self, config_data: Dict[str, Dict], output_path: str):
         """保存配置文件"""
         try:
-            output_path_obj = Path(output_path)
+            output_path_obj = Path(output_path).expanduser()
 
             # 确保输出目录存在
             output_path_obj.parent.mkdir(parents=True, exist_ok=True)
@@ -806,14 +833,22 @@ class ConfigWizard:
         # 后续可以扩展添加inline注释的功能
         return config_data
 
-    def run(self) -> bool:
-        """运行配置向导"""
+    def run(
+        self, output: Optional[str] = None, apps: Optional[List[str]] = None
+    ) -> bool:
+        """
+        运行配置向导
+
+        Args:
+            output: 配置文件的保存路径，为空时询问
+            apps: 要配置的应用，为空时让用户选择
+        """
         try:
             # 显示欢迎界面
             self.show_welcome()
 
-            # 选择应用
-            selected_apps = self.select_apps()
+            # 选择应用（命令行用 -a 指定时不再询问）
+            selected_apps = apps or self.select_apps()
 
             # 配置每个应用
             config_data = {}
@@ -824,15 +859,19 @@ class ConfigWizard:
             # 预览配置
             if not self.preview_config(config_data):
                 if Confirm.ask("是否重新配置？"):
-                    return self.run()  # 递归重新开始
+                    return self.run(output, apps)  # 递归重新开始
                 else:
                     self.console.print("❌ 配置已取消")
                     return False
 
-            # 询问保存路径
-            self.console.print()
-            default_filename = f"f2_config_{len(selected_apps)}apps.yaml"
-            output_path = Prompt.ask("请输入配置文件保存路径", default=default_filename)
+            # 询问保存路径（命令行用 -o 指定时不再询问；此前 -o 只被打印出来）
+            output_path = output
+            if not output_path:
+                self.console.print()
+                default_filename = f"f2_config_{len(selected_apps)}apps.yaml"
+                output_path = Prompt.ask(
+                    "请输入配置文件保存路径", default=default_filename
+                )
 
             # 保存配置
             return self.save_config(config_data, output_path)
@@ -869,7 +908,7 @@ def config_wizard(output: Optional[str]):
             # 如果指定了输出路径，直接使用
             print(f"📁 配置文件将保存至: {output}")
 
-        success = wizard.run()
+        success = wizard.run(output)
 
         if success:
             print()

@@ -28,14 +28,14 @@ f2 config-wizard
 ### 指定输出文件
 
 ```bash
-# 指定配置文件保存路径
+# 指定配置文件保存路径，向导不再询问
 f2 config-wizard -o my_custom_config.yaml
 ```
 
 ### 指定应用
 
 ```bash
-# 只配置特定应用（功能开发中）
+# 只配置指定的应用（douyin、tiktok、weibo、twitter），跳过选择平台
 f2 config-wizard -a douyin
 ```
 

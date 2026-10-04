@@ -10,7 +10,12 @@ from f2.i18n.translator import _
 
 @click.command("config-wizard")
 @click.option("--output", "-o", help=_("输出配置文件路径"), metavar="PATH")
-@click.option("--app", "-a", help=_("指定要配置的应用（可选）"), metavar="APP_NAME")
+@click.option(
+    "--app",
+    "-a",
+    type=click.Choice(["douyin", "tiktok", "weibo", "twitter"]),
+    help=_("指定要配置的应用（可选）"),
+)
 def config_wizard_command(output: Optional[str], app: Optional[str]) -> None:
     """
     🧙‍♂️ 配置向导 - 交互式生成F2配置文件
@@ -35,9 +40,9 @@ def config_wizard_command(output: Optional[str], app: Optional[str]) -> None:
 
         if app:
             print(f"🎯 将配置应用: {app}")
-            # 这里可以预设应用选择
 
-        success = wizard.run()
+        # 此前 -o 与 -a 只被打印出来，向导仍然询问保存路径与要配置的应用
+        success = wizard.run(output, [app] if app else None)
 
         if success:
             print()
