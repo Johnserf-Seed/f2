@@ -206,3 +206,18 @@ async def test_other_users_likes_explain_the_privacy_rule(handler, monkeypatch, 
     assert pages == []
     assert len(crawler.calls) == 1
     assert "只对本人可见" in caplog.text
+
+
+@pytest.mark.parametrize(
+    "name, args, make_page", GENERATORS, ids=[g[0] for g in GENERATORS]
+)
+async def test_no_wait_after_reaching_max_counts(
+    handler, monkeypatch, record_waits, name, args, make_page
+):
+    # 达到最大数量后直接结束，此前还会再等待 timeout 秒
+    use_pages(monkeypatch, [make_page(*(entry(str(i)) for i in range(5)))])
+    waits = record_waits(twitter_handler)
+
+    [page async for page in getattr(handler, name)(*args, 2)]
+
+    assert waits == []

@@ -606,6 +606,10 @@ class DouyinHandler:
                 break
             max_cursor = video.max_cursor
 
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if videos_collected >= max_counts:
+                break
+
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
@@ -748,6 +752,10 @@ class DouyinHandler:
                 break
             max_cursor = like.max_cursor
 
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if videos_collected >= max_counts:
+                break
+
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
@@ -880,6 +888,10 @@ class DouyinHandler:
                 break
             max_cursor = music.max_cursor
 
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if music_collected >= max_counts:
+                break
+
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
@@ -1006,6 +1018,10 @@ class DouyinHandler:
                 logger.warning(_("接口返回的游标没有变化，停止翻页"))
                 break
             max_cursor = collection.max_cursor
+
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if videos_collected >= max_counts:
+                break
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -1203,6 +1219,10 @@ class DouyinHandler:
 
             max_cursor = collects.max_cursor
 
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if collected >= max_counts:
+                break
+
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
@@ -1290,6 +1310,10 @@ class DouyinHandler:
                 logger.warning(_("接口返回的游标没有变化，停止翻页"))
                 break
             max_cursor = video.max_cursor
+
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if videos_collected >= max_counts:
+                break
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -1441,6 +1465,10 @@ class DouyinHandler:
                 logger.warning(_("接口返回的游标没有变化，停止翻页"))
                 break
             max_cursor = mix.max_cursor
+
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if videos_collected >= max_counts:
+                break
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -1781,6 +1809,10 @@ class DouyinHandler:
                 break
             max_cursor = feed.max_cursor
 
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if videos_collected >= max_counts:
+                break
+
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
@@ -1906,6 +1938,10 @@ class DouyinHandler:
             # 更新过滤的作品ID (Update the filtered video ID)
             filterGids = ",".join([str(aweme_id) for aweme_id in related.aweme_id])
 
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if videos_collected >= max_counts:
+                break
+
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
@@ -2030,6 +2066,10 @@ class DouyinHandler:
             level = friend.level
             pull_type = friend.level
 
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if videos_collected >= max_counts:
+                break
+
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
@@ -2134,6 +2174,10 @@ class DouyinHandler:
             }
             offset, max_time, min_time = logicmap.get(source_type, (0, 0, 0))
 
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if users_collected >= max_counts:
+                break
+
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
@@ -2226,6 +2270,10 @@ class DouyinHandler:
 
             # 更新最大(最早)时间戳，避免重复返回相同的用户
             max_time = follower.min_time
+
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if users_collected >= max_counts:
+                break
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -2534,6 +2582,10 @@ class DouyinHandler:
             danmaku_collected += len(danmaku.danmaku_id)
             offset += danmaku_collected
 
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if danmaku_collected >= max_counts:
+                break
+
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
@@ -2743,6 +2795,10 @@ class DouyinHandler:
             comments_collected += len(comment.comment_id)
             cursor = comment.cursor
 
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if comments_collected >= max_counts:
+                break
+
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
@@ -2822,6 +2878,10 @@ class DouyinHandler:
             # 更新已经处理的回复数量 (Update the number of replies processed)
             reply_collected += len(reply.reply_id)
             cursor = reply.cursor
+
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if reply_collected >= max_counts:
+                break
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -2905,6 +2965,10 @@ class DouyinHandler:
             posts_collected += len(search.aweme_id)
             offset = search.cursor
             search_id = search.search_id
+
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if posts_collected >= max_counts:
+                break
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))

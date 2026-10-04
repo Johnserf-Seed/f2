@@ -118,6 +118,16 @@ async def test_fetch_user_weibo_truncates_to_max_counts(monkeypatch):
     assert requested == [1, 2]
 
 
+async def test_fetch_user_weibo_no_wait_after_max_counts(monkeypatch, record_waits):
+    # 达到最大数量后直接结束，此前还会再等待 timeout 秒
+    use_pages(monkeypatch, [page([weibo("1"), weibo("2")]), page([weibo("3")])])
+    waits = record_waits(weibo_handler)
+
+    await collect_ids(make_handler(), max_counts=2)
+
+    assert waits == []
+
+
 async def test_post_mode_passes_max_counts(monkeypatch, tmp_path):
     captured = {}
 

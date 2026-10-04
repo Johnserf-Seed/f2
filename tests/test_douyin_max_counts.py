@@ -200,3 +200,20 @@ async def test_like_videos_keep_counting_across_pages(handler, monkeypatch):
 
     assert [len(page.aweme_id) for page in pages] == [3, 1]
     assert len(crawler.calls) == 2
+
+
+@pytest.mark.parametrize(
+    "name, args, make_page, key, field",
+    GENERATORS,
+    ids=[g[0] for g in GENERATORS],
+)
+async def test_no_wait_after_reaching_max_counts(
+    handler, monkeypatch, record_waits, name, args, make_page, key, field
+):
+    # 达到最大数量后直接结束，此前还会再等待 timeout 秒
+    use_pages(monkeypatch, [make_page(5)])
+    waits = record_waits(douyin_handler)
+
+    [page async for page in getattr(handler, name)(*args)]
+
+    assert waits == []

@@ -408,6 +408,10 @@ class TwitterHandler:
                 logger.info(_("已获取到日期区间开始之前的推文，停止翻页"))
                 break
 
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if tweets_collected >= max_counts:
+                break
+
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
@@ -536,6 +540,10 @@ class TwitterHandler:
             tweets_collected += kept
             max_cursor = like.max_cursor
 
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if tweets_collected >= max_counts:
+                break
+
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
@@ -657,6 +665,10 @@ class TwitterHandler:
             # 更新已经处理的推文数量 (Update the number of videos processed)
             tweets_collected += kept
             max_cursor = bookmark.max_cursor
+
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if tweets_collected >= max_counts:
+                break
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))

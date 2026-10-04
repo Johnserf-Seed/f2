@@ -111,3 +111,20 @@ async def test_whole_page_is_cut_to_max_counts(
     assert [len(page.aweme_id) for page in pages] == [2]
     assert len(pages[0]._to_raw()[key]) == 2
     assert len(crawler.calls) == 1
+
+
+@pytest.mark.parametrize(
+    "name, args, make_page, key",
+    GENERATORS,
+    ids=[g[0] for g in GENERATORS],
+)
+async def test_no_wait_after_reaching_max_counts(
+    handler, monkeypatch, record_waits, name, args, make_page, key
+):
+    # 达到最大数量后直接结束，此前还会再等待 timeout 秒
+    use_pages(monkeypatch, [make_page(30)])
+    waits = record_waits(tiktok_handler)
+
+    [page async for page in getattr(handler, name)(*args)]
+
+    assert waits == []

@@ -1,5 +1,6 @@
 # path: conftest.py
 
+import asyncio
 import socket
 from pathlib import Path
 
@@ -48,3 +49,22 @@ def _isolated_user_dir(tmp_path_factory: pytest.TempPathFactory, monkeypatch):
 
     home = tmp_path_factory.mktemp("home") / ".f2"
     monkeypatch.setattr(user_config, "user_config_dir", lambda: home)
+
+
+@pytest.fixture
+def record_waits(monkeypatch: pytest.MonkeyPatch):
+    """把模块中的 asyncio.sleep 换成只记录时长的替身，返回记录列表；不影响全局的 asyncio"""
+    waits: list = []
+
+    class _Asyncio:
+        def __getattr__(self, name):
+            return getattr(asyncio, name)
+
+        async def sleep(self, delay, *args, **kwargs):
+            waits.append(delay)
+
+    def patch(module):
+        monkeypatch.setattr(module, "asyncio", _Asyncio())
+        return waits
+
+    return patch

@@ -450,6 +450,10 @@ class TiktokHandler:
                 break
             cursor = next_cursor
 
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if videos_collected >= max_counts:
+                break
+
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
@@ -574,6 +578,10 @@ class TiktokHandler:
                 logger.debug(_("用户：{0} 所有作品采集完毕").format(secUid))
                 break
             cursor = next_cursor
+
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if videos_collected >= max_counts:
+                break
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -702,6 +710,10 @@ class TiktokHandler:
                 logger.debug(_("用户：{0} 所有作品采集完毕").format(secUid))
                 break
             cursor = next_cursor
+
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if videos_collected >= max_counts:
+                break
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
@@ -939,6 +951,10 @@ class TiktokHandler:
                 break
             cursor = next_cursor
 
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if videos_collected >= max_counts:
+                break
+
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
             await asyncio.sleep(self.kwargs.get("timeout", 5))
@@ -1079,6 +1095,10 @@ class TiktokHandler:
             videos_collected += len(search.aweme_id)
             offset = search.cursor
             search_id = search.search_id
+
+            # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
+            if videos_collected >= max_counts:
+                break
 
             # 避免请求过于频繁
             logger.info(_("等待 {0} 秒后继续").format(self.kwargs.get("timeout", 5)))
