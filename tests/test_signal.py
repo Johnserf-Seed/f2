@@ -93,24 +93,38 @@ async def test_signal_manager_shutdown_event():
     assert not signal_manager.shutdown_event.is_set()
 
 
+# 事件循环运行中收到信号，与事件循环启动前（如读取配置时）收到信号
+RUNNING = (
+    "async def main():\n"
+    "    print('ready', flush=True)\n"
+    "    await asyncio.sleep(30)\n"
+    "asyncio.run(main())\n"
+)
+NO_LOOP = "print('ready', flush=True)\ntime.sleep(30)\n"
+
+
 @pytest.mark.skipif(sys.platform == "win32", reason="Windows 不能向子进程发送 SIGINT")
+@pytest.mark.parametrize("body", [RUNNING, NO_LOOP], ids=["loop", "no-loop"])
 @pytest.mark.parametrize(
     "signum", [signal.SIGINT, signal.SIGTERM], ids=["SIGINT", "SIGTERM"]
 )
-def test_interrupted_run_exits_with_128_plus_signal(signum):
-    # 此前判断是否在测试环境的条件写反了，正常运行时被中断也以 0 退出
+def test_interrupted_run_exits_with_128_plus_signal(signum, body):
+    # 此前判断是否在测试环境的条件写反了，正常运行时被中断也以 0 退出；
+    # 没有正在运行的事件循环时则抛出 RuntimeError、以 1 退出
     code = (
-        "import asyncio\n"
+        "import asyncio, time\n"
         "from f2.utils.core.signal import SignalManager\n"
-        "SignalManager().register_shutdown_signal()\n"
-        "print('ready', flush=True)\n"
-        "asyncio.run(asyncio.sleep(30))\n"
+        "SignalManager().register_shutdown_signal()\n" + body
     )
     process = subprocess.Popen(
-        [sys.executable, "-c", code], stdout=subprocess.PIPE, text=True
+        [sys.executable, "-c", code],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
     )
     assert process.stdout.readline().strip() == "ready"
 
     process.send_signal(signum)
 
     assert process.wait(timeout=10) == 128 + signum
+    assert "Traceback" not in process.stderr.read()

@@ -5,6 +5,7 @@ import signal
 import sys
 from asyncio import CancelledError
 from types import FrameType
+from typing import Optional
 
 from f2.cli.cli_console import RichConsoleManager
 from f2.utils.core.singleton import Singleton
@@ -56,11 +57,16 @@ class SignalManager(metaclass=Singleton):
         """内部处理接收到的信号"""
         self._shutdown_event.set()
 
-        # 取消所有运行中的asyncio任务
-        loop = asyncio.get_running_loop()  # 避免DeprecationWarning
+        # 信号可能在事件循环启动前或结束后到达（如启动阶段读取配置、结束时输出汇总），
+        # 此时没有正在运行的循环；此前直接调用 get_running_loop 会抛出 RuntimeError
+        try:
+            loop: Optional[asyncio.AbstractEventLoop] = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = None
 
         try:
-            if loop.is_running():
+            # 取消所有运行中的asyncio任务
+            if loop is not None and loop.is_running():
                 for task in asyncio.all_tasks(loop):
                     task.cancel()
                 # 等待所有任务被取消并处理异常
