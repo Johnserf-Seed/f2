@@ -141,6 +141,10 @@ f2:
 3. 将新的 `cookie` 里的值替换到配置文件的 `cookie` 中（增量非覆盖）。
 4. 重新运行下载命令。
 :::
+
+::: tip :bulb: 视频返回 403 Access Denied
+如果报错的是视频地址（如 `v16-webapp-prime.us.tiktok.com`），响应头 `Server` 为 `AkamaiGHost`、内容是 `Access Denied`，`F2` 会提示“拒绝了当前网络出口的访问”。这是 `TikTok` 视频 CDN 按网络出口拒绝访问，与 `cookie`、设备 id 无关（2026-10 实测换用接口下发的 `cookie`、请求头或模拟浏览器都无效），请更换代理节点的地区后重试。
+:::
 **参考链接：**
 - https://f2.wiki/guide/apps/tiktok/overview#%E7%94%9F%E6%88%90deviceid-%F0%9F%9F%A2
 - https://github.com/Johnserf-Seed/f2/issues/79

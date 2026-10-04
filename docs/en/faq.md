@@ -141,6 +141,10 @@ Device IDs are tied to `cookies`, and a banned device ID results in invalid cook
 3. Incrementally update the `cookie` values in the config file, rather than overwriting them.
 4. Retry the download command.
 :::
+
+::: tip :bulb: Video returns 403 Access Denied
+If the error comes from a video URL (such as `v16-webapp-prime.us.tiktok.com`), with the response header `Server` set to `AkamaiGHost` and the body `Access Denied`, `F2` reports that access from the current network egress was denied. The `TikTok` video CDN is refusing your network egress, which has nothing to do with the `cookie` or the device ID (tested in 2026-10: the cookies set by the API, other request headers and browser impersonation all made no difference). Switch your proxy to a node in another region and try again.
+:::
 **Reference Links:**
 - https://f2.wiki/guide/apps/tiktok/overview#%E7%94%9F%E6%88%90deviceid-%F0%9F%9F%A2
 - https://github.com/Johnserf-Seed/f2/issues/79
