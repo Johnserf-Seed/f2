@@ -2,6 +2,7 @@
 
 import asyncio
 import contextlib
+import html
 import json
 import os
 import re
@@ -616,6 +617,59 @@ def tweet_created_at_to_timestamp(created_at: Any) -> Optional[int]:
         )
     except ValueError:
         return None
+
+
+def tweet_full_text(result: Any) -> str:
+    """
+    推文的完整文案，用于保存 desc.txt
+    (The complete text of a tweet, saved to desc.txt)
+
+    - 长推文（超过 280 字）的 legacy.full_text 只有前 279 个字，完整内容在 note_tweet 中
+    - 转推取原推文的完整内容，保留 "RT @用户名: " 前缀
+    - t.co 短链接换成原始链接；指向推文媒体本身的短链接去掉，媒体会单独下载
+    - 还原 &amp; 等 HTML 转义
+
+    文件名中的 {desc} 仍由 extract_desc 生成，取第一个链接之前的内容，不受影响。
+
+    Args:
+        result (Any): 推文数据，即 tweet_results.result (Tweet result)
+
+    Returns:
+        str: 完整文案，不是推文时为空字符串 (Complete text, empty when not a tweet)
+    """
+    if not isinstance(result, dict):
+        return ""
+    legacy = result.get("legacy") or {}
+
+    retweeted = (legacy.get("retweeted_status_result") or {}).get("result")
+    if isinstance(retweeted, dict) and retweeted.get("legacy"):
+        author = (retweeted.get("core") or {}).get("user_results") or {}
+        screen_name = ((author.get("result") or {}).get("legacy") or {}).get(
+            "screen_name"
+        )
+        text = tweet_full_text(retweeted)
+        return f"RT @{screen_name}: {text}" if screen_name else text
+
+    note = ((result.get("note_tweet") or {}).get("note_tweet_results") or {}).get(
+        "result"
+    ) or {}
+    if isinstance(note, dict) and note.get("text"):
+        text = note["text"]
+        urls = (note.get("entity_set") or {}).get("urls") or []
+    else:
+        text = legacy.get("full_text") or ""
+        urls = (legacy.get("entities") or {}).get("urls") or []
+
+    for url in urls:
+        if isinstance(url, dict) and url.get("url") and url.get("expanded_url"):
+            text = text.replace(url["url"], url["expanded_url"])
+    media = (legacy.get("extended_entities") or legacy.get("entities") or {}).get(
+        "media"
+    ) or []
+    for item in media:
+        if isinstance(item, dict) and item.get("url"):
+            text = text.replace(item["url"], "")
+    return html.unescape(text).strip()
 
 
 def extract_desc(text):

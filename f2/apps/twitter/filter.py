@@ -8,6 +8,7 @@ from f2.apps.twitter.utils import (
     media_items,
     sort_mp4_urls,
     tweet_created_at_to_timestamp,
+    tweet_full_text,
 )
 from f2.utils.json.filter import JSONModel, filter_to_list
 from f2.utils.string.formatter import replaceT
@@ -329,9 +330,8 @@ class TweetDetailFilter(_GraphQLFilter):
 
     @property
     def tweet_desc_raw(self):
-        return extract_desc(
-            self._get_attr_value(f"{self._result_path}.legacy.full_text")
-        )
+        # 完整文案（长推文、链接之后的内容都保留），用于 desc.txt
+        return tweet_full_text(self._get_attr_value(self._result_path))
 
     # 媒体状态
     @property
@@ -743,15 +743,14 @@ class PostTweetFilter(_TimelineFilter):
 
     @property
     def tweet_desc_raw(self):
-        text_list = self._get_list_attr_value(
-            "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.full_text"
-        )
-
-        if text_list is None:
-            return []
-
+        # 完整文案，用于 desc.txt。此前跳过没有文案的条目，列表变短，_to_list 按下标对齐时
+        # 后面的推文都拿到了别的推文的文案
         return [
-            extract_desc(text) for text in text_list if text and isinstance(text, str)
+            tweet_full_text(result)
+            for result in self._get_list_attr_value(
+                "$.data.user.result.timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result"
+            )
+            or []
         ]
 
     @property
@@ -1080,15 +1079,14 @@ class BookmarkTweetFilter(_TimelineFilter):
 
     @property
     def tweet_desc_raw(self):
-        text_list = self._get_list_attr_value(
-            "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result.legacy.full_text"
-        )
-
-        if text_list is None:
-            return []
-
+        # 完整文案，用于 desc.txt。此前跳过没有文案的条目，列表变短，_to_list 按下标对齐时
+        # 后面的推文都拿到了别的推文的文案
         return [
-            extract_desc(text) for text in text_list if text and isinstance(text, str)
+            tweet_full_text(result)
+            for result in self._get_list_attr_value(
+                "$.data.bookmark_timeline_v2.timeline.instructions[-1].entries[*].content.itemContent.tweet_results.result"
+            )
+            or []
         ]
 
     @property
