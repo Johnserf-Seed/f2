@@ -10,6 +10,18 @@ import pytest
 from f2.utils.core.signal import SignalManager
 
 
+@pytest.fixture(autouse=True)
+def restore_signal_state():
+    """用例注册的信号处理函数与设置的关闭标记不影响之后的用例"""
+    handlers = {
+        signum: signal.getsignal(signum) for signum in (signal.SIGINT, signal.SIGTERM)
+    }
+    yield
+    for signum, handler in handlers.items():
+        signal.signal(signum, handler)
+    SignalManager().shutdown_event.clear()
+
+
 # 模拟长时间运行的任务
 @pytest.mark.asyncio
 async def test_long_running_task_without_shutdown():
