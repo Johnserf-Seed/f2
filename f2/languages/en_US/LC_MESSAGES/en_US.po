@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-04 16:01-0700\n"
+"POT-Creation-Date: 2026-10-04 16:12-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -3729,10 +3729,10 @@ msgid "应用：{0}"
 msgstr "App: {0}"
 
 #: f2/cli/cli_commands.py
-msgid "显示语言。默认为 'zh_CN'，可选：'zh_CN'、'en_US'，不支持配置文件修改"
+msgid "显示语言，只对本次运行生效。默认为 'zh_CN'，可选：'zh_CN'、'en_US'"
 msgstr ""
-"Display language. Defaults to 'zh_CN'; options: 'zh_CN', 'en_US'. Cannot "
-"be set in the configuration file"
+"Display language for the current run only. Defaults to 'zh_CN'; options: "
+"'zh_CN', 'en_US'"
 
 #: f2/cli/cli_commands.py
 msgid "检查F2版本"

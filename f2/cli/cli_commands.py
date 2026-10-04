@@ -302,7 +302,7 @@ class DynamicGroup(click.Group):
     type=click.Choice(["zh_CN", "en_US"]),
     is_eager=True,
     expose_value=False,
-    help=_("显示语言。默认为 'zh_CN'，可选：'zh_CN'、'en_US'，不支持配置文件修改"),
+    help=_("显示语言，只对本次运行生效。默认为 'zh_CN'，可选：'zh_CN'、'en_US'"),
     callback=handler_language,
 )
 @click.option(

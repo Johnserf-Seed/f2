@@ -2,35 +2,42 @@
 
 from pathlib import Path
 
-from ruamel.yaml import YAML  # type: ignore[import-untyped]
+import pytest
+from click.testing import CliRunner
 
 import f2
+from f2.cli.cli_commands import main
 from f2.i18n.translator import TranslationManager, _
 
 REAL_CONF = Path(f2.__file__).parent / f2.F2_CONFIG_FILE_PATH
+ORIGINAL = REAL_CONF.read_bytes()
 
 
-def saved_language(path):
-    return YAML(typ="safe").load(path.read_text(encoding="utf-8"))["f2"]["i18n"][
-        "language"
-    ]
+@pytest.fixture
+def manager():
+    manager = TranslationManager.get_instance()
+    previous = manager.lang
+    yield manager
+    manager.set_language(previous)
+    # -l 只对本次运行生效，此前会把语言写回包内的 conf.yaml
+    assert REAL_CONF.read_bytes() == ORIGINAL
 
 
-# 使用 Pytest 测试装饰器标记测试函数
-def test_translation(monkeypatch, tmp_path):
-    # set_language 会把语言写回配置文件，这里让它写副本，不改动包内的 conf.yaml
-    conf = tmp_path / "conf.yaml"
-    original = REAL_CONF.read_bytes()
-    conf.write_bytes(original)
-    monkeypatch.setattr(f2, "F2_CONFIG_FILE_PATH", str(conf))
-
-    # 设置语言为英文
-    TranslationManager.get_instance().set_language("en_US")
+def test_translation(manager):
+    manager.set_language("en_US")
     assert _("Hello, World!") == "Hello, World!"
-    assert saved_language(conf) == "en_US"
 
-    # 设置语言为中文
-    TranslationManager.get_instance().set_language("zh_CN")
+    manager.set_language("zh_CN")
     assert _("Hello, World!") == "你好，世界！"
-    assert saved_language(conf) == "zh_CN"
-    assert REAL_CONF.read_bytes() == original
+
+
+def test_cli_language_option_applies_to_this_run(manager):
+    result = CliRunner().invoke(main, ["-l", "en_US", "--version"])
+
+    assert result.exit_code == 0, result.output
+    assert manager.lang == "en_US"
+
+
+def test_unsupported_language_is_rejected(manager):
+    with pytest.raises(ValueError):
+        manager.set_language("fr_FR")

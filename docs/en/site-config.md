@@ -262,7 +262,7 @@ f2:
 ::: tip :bulb: Tip
 - When a user configuration file is read, `F2` logs `Loaded user config: <path>` so you can confirm it took effect.
 - User configuration only affects what `F2` reads; it is never written back to the `conf.yaml` in `site-packages`.
-- The interface language is still set with `-l`; `i18n` in user configuration files is ignored.
+- The interface language is still set with `-l`, which applies to the current run only; `i18n` in user configuration files is ignored.
 - If a file cannot be parsed, its top level is not a mapping, or the file set by `F2_CONFIG` does not exist, `F2` reports an error and exits with code `1`.
 - For app configuration (`app.yaml`), use `-c` to pass a custom configuration file.
 :::

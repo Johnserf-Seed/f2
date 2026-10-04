@@ -8,8 +8,6 @@ from typing import Any, Callable, Dict, Optional
 
 from ruamel.yaml import YAML  # type: ignore[import-untyped]
 
-import f2
-
 
 class TranslationManager:
     """
@@ -32,7 +30,7 @@ class TranslationManager:
     - _detect_system_language: 检测系统语言，优先从环境变量获取，然后尝试匹配支持的语言。
     - _determine_language: 确定要使用的语言，优先使用配置中的设置，其次自动检测。
     - load_translations: 加载指定语言的翻译文件。如果语言未加载或不支持，尝试使用fallback语言。
-    - set_language: 设置当前语言并加载该语言的翻译文件，同时更新配置文件，保留原始格式和注释。
+    - set_language: 设置本次运行的语言并加载该语言的翻译文件，不写回配置文件。
     - gettext: 获取指定消息的翻译文本。如果翻译不存在，则返回原始消息。
 
     配置功能:
@@ -46,14 +44,13 @@ class TranslationManager:
     - 该类在加载翻译文件时，如果文件未找到，会尝试使用fallback语言
     - 如果fallback语言也失败，会将翻译函数设为原样返回
     - 配置文件读取失败时使用默认值
-    - 语言设置保存失败只在内存中更新
 
     使用示例:
     ```python
         # 获取翻译管理器的单例实例
         translation_manager = TranslationManager.get_instance()
 
-        # 设置语言为英语(会保存到配置文件)
+        # 设置本次运行的语言为英语
         translation_manager.set_language('en_US')
 
         # 获取翻译文本
@@ -205,41 +202,20 @@ class TranslationManager:
         return self.translations[lang]
 
     def set_language(self, lang: str) -> None:
-        """设置语言并使用ruamel.yaml保存到配置文件，保留原始格式和注释"""
+        """
+        设置本次运行的语言 (Set the language of the current run)
+
+        只在内存中生效。此前会把语言写回安装目录里的 conf.yaml：之后不加 -l 也沿用上次的
+        语言，与 -l 帮助中“默认为 zh_CN”的说法不一致，回写还会改动文件的格式。
+        """
         # 验证语言是否被支持
         supported_languages = self.config.get("supported_languages", ["zh_CN", "en_US"])
         if lang not in supported_languages:
             raise ValueError(f"不支持的语言: {lang}")
 
-        # 更新当前实例的语言
         self.lang = lang
         self.load_translations(lang)
-
-        # 同时更新内存中的配置
         self.config["language"] = lang
-
-        # 保存到配置文件
-        try:
-            conf_path = pathlib.Path(__file__).parents[1] / f2.F2_CONFIG_FILE_PATH
-
-            if conf_path.exists():
-                # 使用ruamel.yaml读取配置，保留所有格式和注释
-                with open(conf_path, "r", encoding="utf-8") as file:
-                    config = self.yaml.load(file)
-
-                # 更新语言设置
-                if config and "f2" in config:
-                    if "i18n" not in config["f2"]:
-                        config["f2"]["i18n"] = {}
-
-                    config["f2"]["i18n"]["language"] = lang
-
-                    # 使用ruamel.yaml写回配置
-                    with open(conf_path, "w", encoding="utf-8") as file:
-                        self.yaml.dump(config, file)
-        except Exception:
-            # 如果保存失败，仅在内存中更新
-            pass
 
     def gettext(self, message: str) -> str:
         """获取翻译文本"""
