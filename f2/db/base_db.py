@@ -119,8 +119,10 @@ class BaseDB(MigrationMixin):
         await self.commit()
 
     async def get_version(self) -> int:
+        # 用参数而不是双引号：双引号在 SQLite 中表示标识符，按官方推荐关闭 DQS 编译的
+        # SQLite 会报 no such column: version
         result = await self.fetch_one(
-            'SELECT value FROM _metadata WHERE name="version"'
+            "SELECT value FROM _metadata WHERE name = ?", ("version",)
         )
         return int(result[0]) if result else 0
 
