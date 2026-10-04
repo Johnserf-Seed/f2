@@ -83,8 +83,8 @@ dependencies = [
     # pydantic 2.12 起才支持 Python 3.14（pydantic-core 的 3.14 wheel 与延迟求值的注解）
     "pydantic>=2.9,<3; python_version < '3.14'",
     "pydantic>=2.12,<3; python_version >= '3.14'",
-    "websockets<13.0",
-    "websockets_proxy>=0.1.2,<0.2",
+    # 15 起新版 asyncio 接口原生支持 HTTP 与 SOCKS 代理；16.1 是最后一个支持 Python 3.10 的版本
+    "websockets>=15.0.1,<18",
     # *_pb2.py 由 protoc 5.29.3 生成，运行时版本不能低于它；6.x、7.x 实测可以直接使用
     "protobuf>=5.29.6,<8",
     "gmssl>=3.2.2,<4",

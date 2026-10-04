@@ -5,10 +5,13 @@ import time
 import traceback
 from typing import Optional
 
-import websockets
-import websockets_proxy  # type: ignore[import-untyped]
-from websockets.client import WebSocketClientProtocol
-from websockets.exceptions import ConnectionClosedError, ConnectionClosedOK
+from websockets.asyncio.client import ClientConnection, connect
+from websockets.exceptions import (
+    ConnectionClosedError,
+    ConnectionClosedOK,
+    InvalidStatus,
+)
+from websockets.protocol import State
 
 from f2.exceptions.api_exceptions import APIConnectionError
 from f2.i18n.translator import _
@@ -23,9 +26,9 @@ class WebSocketCrawler:
     该类提供了一个 WebSocket 客户端，可以通过 WebSocket 协议连接到服务器，接收和发送消息。它支持代理、超时控制、连接和消息的处理等功能。
 
     类属性:
-    - websocket (websockets.WebSocketClientProtocol): WebSocket 客户端实例。
+    - websocket (websockets.asyncio.client.ClientConnection): WebSocket 客户端连接。
     - wss_headers (dict): 自定义 WebSocket 请求头信息。
-    - proxy (websockets_proxy.Proxy): 代理设置，用于 WebSocket 连接。
+    - proxy (str): 代理地址，未配置时使用环境变量与系统设置中的代理。
     - callbacks (dict): 存储 WebSocket 回调函数的字典。
     - timeout (int): WebSocket 接收消息的超时时间。
 
@@ -52,6 +55,9 @@ class WebSocketCrawler:
     ```
     """
 
+    # 服务器拒绝握手后再次连接前等待的秒数
+    retry_delay: float = 2
+
     def __init__(
         self,
         wss_headers: dict,
@@ -66,60 +72,66 @@ class WebSocketCrawler:
             wss_headers: WebSocket 连接头信息
             callbacks: WebSocket 回调函数
             timeout: WebSocket 超时时间
+            proxy: 代理地址（http、https、socks4、socks5），为空时与其他请求一样
+                使用环境变量与系统设置中的代理
         """
-        self.websocket: Optional[WebSocketClientProtocol] = None
+        self.websocket: Optional[ClientConnection] = None
         self.wss_headers = wss_headers
-        self.proxy = websockets_proxy.Proxy.from_url(proxy) if proxy else None
+        self.proxy = proxy or None
         self.callbacks = callbacks or {}  # 存储回调函数
         self.timeout = timeout
         # 爬虫主动关闭连接的原因（如本地服务器没有客户端时为 "no_client"），receive_messages 以此作为返回值
         self.close_reason: Optional[str] = None
 
-    async def connect_websocket(
-        self,
-        websocket_uri: str,
-    ):
+    async def connect_websocket(self, websocket_uri: str, attempts: int = 3):
         """
         连接 WebSocket
 
+        websockets 15 起原生支持 HTTP 与 SOCKS 代理（SOCKS 由 python-socks 提供），
+        不再需要 websockets_proxy；配置了代理时使用它，否则使用环境变量与系统设置中的代理。
+
         Args:
             websocket_uri: WebSocket URI (ws:// or wss://)
+            attempts: 服务器拒绝握手（返回非 101 状态码）时最多尝试的次数
+
+        Raises:
+            APIConnectionError: 连接被拒绝，或多次握手都被服务器拒绝
         """
-        try:
-            # https://websockets.readthedocs.io/en/stable/reference/features.html#client websockets库暂不支持代理
-            # https://github.com/racinette/websockets_proxy 使用websockets_proxy库进行代理
-            if self.proxy:
-                self.websocket = await websockets_proxy.proxy_connect(
+        for attempt in range(1, attempts + 1):
+            try:
+                self.websocket = await connect(
                     websocket_uri,
-                    extra_headers=self.wss_headers,
-                    proxy=self.proxy,
+                    additional_headers=self.wss_headers,
+                    proxy=self.proxy or True,
                     ping_interval=10,
                     ping_timeout=None,
                 )
-            else:
-                self.websocket = await websockets.connect(
-                    websocket_uri, extra_headers=self.wss_headers
+                logger.debug(
+                    _(
+                        "[ConnectWebsocket] [🌐 已连接 WebSocket] | [服务器：{0}]"
+                    ).format(websocket_uri)
                 )
-            logger.debug(
-                _("[ConnectWebsocket] [🌐 已连接 WebSocket] | [服务器：{0}]").format(
-                    websocket_uri
+                return
+            except ConnectionRefusedError as exc:
+                trace_logger.error(traceback.format_exc())
+                raise APIConnectionError(
+                    _(
+                        "[ConnectWebSocket] [🚫 WebSocket 连接被拒绝] | [错误：{0}]"
+                    ).format(exc)
+                ) from exc
+            except InvalidStatus as exc:
+                trace_logger.error(traceback.format_exc())
+                logger.error(
+                    _("[ConnectWebSocket] [⚠️ 无效状态码] | [状态码：{0}]").format(exc)
                 )
-            )
-        except ConnectionRefusedError as exc:
-            trace_logger.error(traceback.format_exc())
-            raise APIConnectionError(
-                _("[ConnectWebSocket] [🚫 WebSocket 连接被拒绝] | [错误：{0}]").format(
-                    exc
-                )
-            ) from exc
-
-        except websockets.InvalidStatusCode as exc:
-            trace_logger.error(traceback.format_exc())
-            logger.error(
-                _("[ConnectWebSocket] [⚠️ 无效状态码] | [状态码：{0}]").format(exc)
-            )
-            await asyncio.sleep(2)
-            await self.connect_websocket(websocket_uri)
+                # 此前一直递归重试，服务器持续拒绝时程序不会结束
+                if attempt == attempts:
+                    raise APIConnectionError(
+                        _(
+                            "[ConnectWebSocket] [🚫 WebSocket 连接被拒绝] | [错误：{0}]"
+                        ).format(exc)
+                    ) from exc
+                await asyncio.sleep(self.retry_delay)
 
     async def receive_messages(self):
         """
@@ -170,7 +182,7 @@ class WebSocketCrawler:
                         ).format(timeout_count)
                     )
                     return "closed"
-                if self.websocket is None or self.websocket.closed:
+                if self.websocket is None or self.websocket.state is State.CLOSED:
                     logger.warning(
                         _(
                             "[ReceiveMessages] [🔒 远程服务器关闭] | [WebSocket 连接结束]"

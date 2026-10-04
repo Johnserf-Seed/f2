@@ -9,13 +9,8 @@ from urllib.parse import urlencode
 
 from google.protobuf import json_format
 from google.protobuf.message import DecodeError as ProtoDecodeError
-from websockets import (
-    ConnectionClosed,
-    ConnectionClosedOK,
-    WebSocketServer,
-    WebSocketServerProtocol,
-    serve,
-)
+from websockets.asyncio.server import Server, ServerConnection, serve
+from websockets.exceptions import ConnectionClosed
 
 from f2.apps.douyin.api import DouyinAPIEndpoints as dyendpoint
 from f2.apps.douyin.model import (
@@ -97,6 +92,7 @@ from f2.crawlers.websocket_crawler import WebSocketCrawler
 from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
 from f2.utils.http.endpoint import BaseEndpointManager
+from f2.utils.http.proxy import proxy_url_from_config
 
 
 class DouyinCrawler(BaseCrawler):
@@ -445,14 +441,14 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         }
         self.callbacks = callbacks or {}
         self.timeout = kwargs.get("timeout", 10)
-        self.connected_clients: set[WebSocketServerProtocol] = set()  # 管理连接的客户端
+        self.connected_clients: set[ServerConnection] = set()  # 管理连接的客户端
         super().__init__(
             wss_headers=self.headers,
             callbacks=self.callbacks,
             timeout=self.timeout,
-            proxy=kwargs.get("proxies", {"http://": None, "https://": None}).get(
-                "http://"
-            ),
+            # 与其他请求一样支持新格式（type、host、port）与旧格式的代理配置，
+            # 此前只读取旧格式的 http:// 键
+            proxy=proxy_url_from_config(kwargs.get("proxies")),
         )
 
     @classmethod
@@ -619,7 +615,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         # wss_verify = wss_conf.get("verify")
         # 暂不支持wss本地证书验证
 
-        server: Optional[WebSocketServer] = None
+        server: Optional[Server] = None
         try:
             server = await serve(self.register_client, wss_domain, wss_port)
             logger.info(
@@ -643,12 +639,12 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
                 await server.wait_closed()
                 logger.info(_("[StartServer] [🔒 本地 WebSocket 服务器已关闭]"))
 
-    async def _timeout_check(self, server: WebSocketServer) -> None:
+    async def _timeout_check(self, server: Server) -> None:
         """
         检查本地服务器是否超时无连接
 
         Args:
-            server: WebSocketServer 对象
+            server: 本地 WebSocket 服务器
         """
 
         while True:
@@ -664,32 +660,35 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
         # await server.wait_closed()
         await self.close_websocket(reason="no_client")
 
-    async def register_client(self, websocket: WebSocketServerProtocol) -> None:
+    async def register_client(self, websocket: ServerConnection) -> None:
         """
         注册新的客户端连接
 
         Args:
-            websocket: WebSocketServerProtocol 实例
+            websocket: 本地服务器上的客户端连接
         """
 
+        address = websocket.remote_address[:2]
         self.connected_clients.add(websocket)
         logger.info(
             _("[RegisterClient] [🔗 新的客户端连接] ｜ [Ip：{0} Port：{1}]").format(
-                *websocket.remote_address
+                *address
             )
         )
         try:
+            # 客户端正常断开时循环结束，异常断开时抛出 ConnectionClosedError
             async for message in websocket:
                 # TODO: 处理客户端消息或鉴权
                 pass
-        except ConnectionClosedOK:
+        except ConnectionClosed:
+            pass
+        finally:
+            self.connected_clients.discard(websocket)
             logger.info(
                 _("[RegisterClient] [⛓ 客户端断开连接] | [Ip：{0} Port：{1}]").format(
-                    *websocket.remote_address
+                    *address
                 )
             )
-        finally:
-            self.connected_clients.remove(websocket)
 
     async def broadcast_message(self, message: Union[str, dict, list, Any]) -> None:
         """

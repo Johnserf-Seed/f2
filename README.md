@@ -1057,7 +1057,6 @@
 - [pydantic](https://github.com/samuelcolvin/pydantic)
 - [vitepress](https://github.com/vuejs/vitepress)
 - [websockets](https://github.com/python-websockets/websockets)
-- [websockets_proxy](https://github.com/racinette/websockets_proxy)
 - [protobuf](https://github.com/protocolbuffers/protobuf)
 - [gmssl](https://github.com/duanhongyi/gmssl)
 - [cryptography](https://github.com/pyca/cryptography)

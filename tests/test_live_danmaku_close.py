@@ -6,6 +6,7 @@ from types import SimpleNamespace
 import pytest
 from websockets.exceptions import ConnectionClosedOK
 from websockets.frames import Close
+from websockets.protocol import State
 
 import f2.apps.douyin.crawler as douyin_crawler_module
 import f2.apps.tiktok.crawler as tiktok_crawler_module
@@ -40,9 +41,13 @@ class FakeWebSocket:
         if remote:
             self._closing.set()
 
+    @property
+    def state(self):
+        return State.CLOSED if self.closed else State.OPEN
+
     async def recv(self):
         await self._closing.wait()
-        raise ConnectionClosedOK(Close(1000, ""), Close(1000, ""))
+        raise ConnectionClosedOK(Close(1000, ""), Close(1000, ""), True)
 
     async def close(self):
         self.closed = True

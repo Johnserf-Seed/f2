@@ -9,13 +9,8 @@ from typing import Any, Optional, Union
 from google.protobuf import json_format
 from google.protobuf.message import DecodeError as ProtoDecodeError
 from pydantic import BaseModel
-from websockets import (
-    ConnectionClosed,
-    ConnectionClosedOK,
-    WebSocketServer,
-    WebSocketServerProtocol,
-    serve,
-)
+from websockets.asyncio.server import Server, ServerConnection, serve
+from websockets.exceptions import ConnectionClosed
 
 from f2.apps.tiktok.api import TiktokAPIEndpoints as tkendpoint
 from f2.apps.tiktok.model import (
@@ -61,6 +56,7 @@ from f2.utils.http.impersonate import (
     create_impersonate_transport,
     environment_proxy,
 )
+from f2.utils.http.proxy import proxy_url_from_config
 
 
 class TiktokCrawler(BaseCrawler):
@@ -198,14 +194,14 @@ class TiktokWebSocketCrawler(WebSocketCrawler):
         self.headers = kwargs.get("headers", {}) | {"Cookie": kwargs.get("cookie", {})}
         self.callbacks = callbacks or {}
         self.timeout = kwargs.get("timeout", 10)
-        self.connected_clients: set[WebSocketServerProtocol] = set()  # 管理连接的客户端
+        self.connected_clients: set[ServerConnection] = set()  # 管理连接的客户端
         super().__init__(
             wss_headers=self.headers,
             callbacks=self.callbacks,
             timeout=self.timeout,
-            proxy=kwargs.get("proxies", {"http://": None, "https://": None}).get(
-                "http://"
-            ),
+            # 与其他请求一样支持新格式（type、host、port）与旧格式的代理配置，
+            # 此前只读取旧格式的 http:// 键
+            proxy=proxy_url_from_config(kwargs.get("proxies")),
         )
 
     @classmethod
@@ -382,7 +378,7 @@ class TiktokWebSocketCrawler(WebSocketCrawler):
         # wss_verify = wss_conf.get("verify")
         # 暂不支持wss本地证书验证
 
-        server: Optional[WebSocketServer] = None
+        server: Optional[Server] = None
         try:
             server = await serve(self.register_client, wss_domain, wss_port)
             logger.info(
@@ -406,12 +402,12 @@ class TiktokWebSocketCrawler(WebSocketCrawler):
                 await server.wait_closed()
                 logger.info(_("[StartServer] [🔒 本地 WebSocket 服务器已关闭]"))
 
-    async def _timeout_check(self, server: WebSocketServer) -> None:
+    async def _timeout_check(self, server: Server) -> None:
         """
         检查本地服务器是否超时无连接
 
         Args:
-            server: WebSocketServer 对象
+            server: 本地 WebSocket 服务器
         """
 
         while True:
@@ -427,32 +423,35 @@ class TiktokWebSocketCrawler(WebSocketCrawler):
         # await server.wait_closed()
         await self.close_websocket(reason="no_client")
 
-    async def register_client(self, websocket: WebSocketServerProtocol) -> None:
+    async def register_client(self, websocket: ServerConnection) -> None:
         """
         注册新的客户端连接
 
         Args:
-            websocket: WebSocketServerProtocol 实例
+            websocket: 本地服务器上的客户端连接
         """
 
+        address = websocket.remote_address[:2]
         self.connected_clients.add(websocket)
         logger.info(
             _("[RegisterClient] [🔗 新的客户端连接] ｜ [Ip：{0} Port：{1}]").format(
-                *websocket.remote_address
+                *address
             )
         )
         try:
+            # 客户端正常断开时循环结束，异常断开时抛出 ConnectionClosedError
             async for message in websocket:
                 # TODO: 处理客户端消息或鉴权
                 pass
-        except ConnectionClosedOK:
+        except ConnectionClosed:
+            pass
+        finally:
+            self.connected_clients.discard(websocket)
             logger.info(
                 _("[RegisterClient] [⛓ 客户端断开连接] | [Ip：{0} Port：{1}]").format(
-                    *websocket.remote_address
+                    *address
                 )
             )
-        finally:
-            self.connected_clients.remove(websocket)
 
     async def broadcast_message(self, message: Union[str, dict, list, Any]) -> None:
         """
