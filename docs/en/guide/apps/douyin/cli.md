@@ -58,7 +58,7 @@ Whether to save the video copy. Defaults to `true`. Keep the original desc infor
 
 ### `--path`
 
-The location where the video is saved. Defaults to `Download` in the current directory. Supports **absolute paths** and **relative paths**.
+The location where the video is saved. Defaults to `Download` in the current directory. Supports **absolute paths**, **relative paths** and paths starting with `~` for the home directory (such as `~/Downloads`).
 
 ::: tip :bulb: Tip
 Works are saved in `<path>/douyin/<mode>/<author nickname>`. When an author changes their nickname, the next download of that author (in any mode) renames the folders of the old nickname in every download mode to the new one, so the downloaded works stay with them and works whose file names have not changed are not downloaded again; later changes are followed as well. If a folder with the new nickname already exists in a mode, both folders of that mode are left as they are and a message is logged until you merge them and delete the old folder.
