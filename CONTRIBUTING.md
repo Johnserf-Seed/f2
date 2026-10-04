@@ -173,7 +173,7 @@ $ pnpm docs:build
 每个 `PR` 和推送都会触发 `.github/workflows/ci.yml`：
 
 1. **Lint**：`ruff check .`、`black --check .`、`isort --check-only .`、`mypy f2/`，与本地 `pre-commit` 钩子一致。
-2. **Test**：在 Python 3.10–3.13 上运行 `pytest -m "not network"`，并上传覆盖率到 Codecov。
+2. **Test**：在 Python 3.11–3.14 上运行 `pytest -m "not network"`，并上传覆盖率到 Codecov。
 3. **Build**：构建 `sdist`/`wheel`，`twine check` 校验元数据，并在干净环境安装 `wheel` 做冒烟测试。
 
 `security.yml` 另外运行 `gitleaks` 泄露扫描、`wheel` 内容检查与 `pip-audit` 依赖漏洞扫描（每周一也会定时扫一次）。

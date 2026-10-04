@@ -174,7 +174,7 @@ You need to update the following files:
 Every `PR` and push triggers `.github/workflows/ci.yml`:
 
 1. **Lint**: `ruff check .`, `black --check .`, `isort --check-only .` and `mypy f2/`, matching the local `pre-commit` hooks.
-2. **Test**: `pytest -m "not network"` on Python 3.10–3.13, with coverage uploaded to Codecov.
+2. **Test**: `pytest -m "not network"` on Python 3.11–3.14, with coverage uploaded to Codecov.
 3. **Build**: builds the `sdist`/`wheel`, validates metadata with `twine check`, and installs the `wheel` in a clean environment as a smoke test.
 
 `security.yml` additionally runs the `gitleaks` secret scan, the `wheel` content check and a `pip-audit` dependency vulnerability scan (also scheduled weekly on Mondays).

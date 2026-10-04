@@ -9,7 +9,7 @@ description = "🚀Asynchronous based full-platform download tool"
 readme = "README.md"
 license = "Apache-2.0"
 repository = "https://github.com/Johnserf-Seed/f2"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 authors = [
     { name = "Johnserf-Seed", email = "support@f2.wiki" },
 ]
@@ -17,7 +17,6 @@ authors = [
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -83,7 +82,7 @@ dependencies = [
     # pydantic 2.12 起才支持 Python 3.14（pydantic-core 的 3.14 wheel 与延迟求值的注解）
     "pydantic>=2.9,<3; python_version < '3.14'",
     "pydantic>=2.12,<3; python_version >= '3.14'",
-    # 15 起新版 asyncio 接口原生支持 HTTP 与 SOCKS 代理；16.1 是最后一个支持 Python 3.10 的版本
+    # 15 起新版 asyncio 接口原生支持 HTTP 与 SOCKS 代理
     "websockets>=15.0.1,<18",
     # *_pb2.py 由 protoc 5.29.3 生成，运行时版本不能低于它；6.x、7.x 实测可以直接使用
     "protobuf>=5.29.6,<8",
@@ -158,7 +157,7 @@ markers = [
 
 [tool.ruff]
 line-length = 88
-target-version = "py310"
+target-version = "py311"
 extend-exclude = [
     "f2/apps/*/proto/*_pb2.py",
     "f2/apps/*/proto/*_pb2.pyi",

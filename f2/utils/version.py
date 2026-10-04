@@ -133,12 +133,12 @@ async def check_f2_version(force_check: bool = False) -> None:
         )
 
 
-def check_python_version(min_version: tuple = (3, 10)) -> None:
+def check_python_version(min_version: tuple = (3, 11)) -> None:
     """
     检查当前 Python 版本是否满足最低要求
 
     Args:
-        min_version (tuple, optional): 最低 Python 版本要求，默认为 (3, 10)
+        min_version (tuple, optional): 最低 Python 版本要求，默认为 (3, 11)
 
     Raises:
         SystemExit: 当 Python 版本不满足最低要求时，退出程序

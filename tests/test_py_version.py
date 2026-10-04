@@ -9,33 +9,42 @@ from f2.utils.version import check_python_version
 
 # 测试 Python 版本满足最低要求时不会退出程序
 def test_version_meets_requirement():
-    with patch("sys.version_info", (3, 10, 0)):
+    with patch("sys.version_info", (3, 11, 0)):
         try:
-            check_python_version((3, 10))
+            check_python_version((3, 11))
         except SystemExit:
             pytest.fail("check_python_version raised SystemExit unexpectedly!")
 
 
 # 测试 Python 版本低于最低要求时触发 SystemExit
 def test_version_below_requirement():
-    with patch("sys.version_info", (3, 9, 0)):
+    with patch("sys.version_info", (3, 10, 0)):
         with pytest.raises(SystemExit):
-            check_python_version((3, 10))
+            check_python_version((3, 11))
 
 
 # 测试 Python 版本高于最低要求时不会退出程序
 def test_version_above_requirement():
-    with patch("sys.version_info", (3, 11, 0)):
+    with patch("sys.version_info", (3, 12, 0)):
         try:
-            check_python_version((3, 10))
+            check_python_version((3, 11))
         except SystemExit:
             pytest.fail("check_python_version raised SystemExit unexpectedly!")
 
 
 # 测试 Python 版本精确匹配最低要求时不会退出程序
 def test_version_exact_match():
-    with patch("sys.version_info", (3, 10, 5)):
+    with patch("sys.version_info", (3, 11, 5)):
         try:
-            check_python_version((3, 10))
+            check_python_version((3, 11))
         except SystemExit:
             pytest.fail("check_python_version raised SystemExit unexpectedly!")
+
+
+# 不再支持 Python 3.10（2026-10 已结束官方支持），默认的最低版本为 3.11
+def test_default_minimum_is_3_11():
+    with patch("sys.version_info", (3, 10, 18)):
+        with pytest.raises(SystemExit):
+            check_python_version()
+    with patch("sys.version_info", (3, 11, 0)):
+        check_python_version()

@@ -143,7 +143,7 @@ The project uses VitePress for documentation hosted at https://f2.wiki/:
 
 ## Python Requirements
 
-- Python >=3.10
+- Python >=3.11
 - Async/await support required
 - Type hints mandatory (mypy checked)
 - All dependencies listed in pyproject.toml
