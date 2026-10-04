@@ -1,6 +1,9 @@
 # path: tests/test_signal.py
 
 import asyncio
+import signal
+import subprocess
+import sys
 
 import pytest
 
@@ -76,3 +79,26 @@ async def test_signal_manager_shutdown_event():
 
     # 确认事件开始时未被设置
     assert not signal_manager.shutdown_event.is_set()
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="Windows 不能向子进程发送 SIGINT")
+@pytest.mark.parametrize(
+    "signum", [signal.SIGINT, signal.SIGTERM], ids=["SIGINT", "SIGTERM"]
+)
+def test_interrupted_run_exits_with_128_plus_signal(signum):
+    # 此前判断是否在测试环境的条件写反了，正常运行时被中断也以 0 退出
+    code = (
+        "import asyncio\n"
+        "from f2.utils.core.signal import SignalManager\n"
+        "SignalManager().register_shutdown_signal()\n"
+        "print('ready', flush=True)\n"
+        "asyncio.run(asyncio.sleep(30))\n"
+    )
+    process = subprocess.Popen(
+        [sys.executable, "-c", code], stdout=subprocess.PIPE, text=True
+    )
+    assert process.stdout.readline().strip() == "ready"
+
+    process.send_signal(signum)
+
+    assert process.wait(timeout=10) == 128 + signum

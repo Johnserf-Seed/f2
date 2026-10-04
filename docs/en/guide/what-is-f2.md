@@ -69,6 +69,7 @@ When an API request fails, for example because of an HTTP error status, exhauste
 | `0` | Everything completed |
 | `1` | Aborted by an `F2Error` (a single error line plus the FAQ link is printed and the full traceback goes to the `f2-trace` log; errors raised while preparing the run, such as reading the configuration, are reported the same way), or at least one file still failed after all of its links were tried; the failed files are listed at the end |
 | `2` | Invalid command line usage, reported by `click` |
+| `130` | Interrupted with Ctrl+C (`143` for `SIGTERM`) |
 
 ## WSS Configuration <Badge type="warning" text="Experimental" />
 

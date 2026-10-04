@@ -41,8 +41,7 @@ class SignalManager(metaclass=Singleton):
     ```
 
     异常处理:
-    - 如果在测试环境中运行，则不会退出程序，而是返回 0。
-    - 如果在非测试环境中运行，则会退出程序，并返回接收到的信号。
+    - 收到信号后退出程序，退出码为 128 + 信号编号（SIGINT 为 130，SIGTERM 为 143）。
     """
 
     def __init__(self):
@@ -83,11 +82,9 @@ class SignalManager(metaclass=Singleton):
             RichConsoleManager().rich_console.print(
                 "\n[bold yellow]exiting f2...[/bold yellow]"
             )
-            # 退出程序
-            if self.is_test():
-                sys.exit(0)
-
-            sys.exit(received_signal)
+            # 按 shell 的惯例以 128 + 信号编号退出（Ctrl+C 为 130），脚本可以判断运行被中断；
+            # 此前 is_test 的判断写反了，正常运行时总是以 0 退出
+            sys.exit(128 + received_signal)
 
     def register_shutdown_signal(self):
         """注册一个处理程序来捕获关闭信号"""
@@ -100,8 +97,3 @@ class SignalManager(metaclass=Singleton):
         """检查是否接收到了关闭信号"""
         instance = cls()  # 获取单例实例
         return instance.shutdown_event.is_set()
-
-    def is_test(self):
-        """判断是否在测试环境中运行"""
-        # 在测试环境中有 trace，所以需要额外判断
-        return hasattr(sys, "gettrace") and sys.gettrace() is None
