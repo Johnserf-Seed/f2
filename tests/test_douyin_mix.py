@@ -29,6 +29,7 @@ def mock_redirect(monkeypatch, location):
         return httpx.Response(200, text="ok")
 
     def init(self, proxies=None):
+        self._client = None
         self._aclient = httpx.AsyncClient(transport=httpx.MockTransport(handler))
 
     monkeypatch.setattr(MixIdFetcher, "__init__", init)

@@ -2959,6 +2959,12 @@ async def main(kwargs):
     mode = kwargs.get("mode")
     handlers = get_mode_handlers(__name__)
     if mode in handlers:
-        await handlers[mode](DouyinHandler(kwargs))
+        handler = DouyinHandler(kwargs)
+        try:
+            await handlers[mode](handler)
+        finally:
+            # 此前下载器的客户端没有关闭，连接要等事件循环关闭后才被回收，
+            # Windows 上退出时会报 Event loop is closed
+            await handler.downloader.close()
     else:
         raise F2Error(_("不存在该模式: {0}").format(mode))

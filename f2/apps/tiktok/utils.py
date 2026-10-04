@@ -244,6 +244,8 @@ class TokenManager(BaseCrawler):
                     exc,
                 )
             )
+        finally:
+            instance.client.close()
 
     @classmethod
     def cached_msToken(cls) -> str:
@@ -373,6 +375,8 @@ class TokenManager(BaseCrawler):
                     exc,
                 )
             )
+        finally:
+            instance.client.close()
 
     @classmethod
     def gen_odin_tt(cls) -> str:
@@ -470,6 +474,8 @@ class TokenManager(BaseCrawler):
                     exc,
                 )
             )
+        finally:
+            instance.client.close()
 
 
 class XBogusManager:
@@ -758,6 +764,8 @@ class SecUserIdFetcher(BaseCrawler):
                     "状态码错误", url, instance.proxies, cls.__name__, exc
                 )
             )
+        finally:
+            await instance.close()
 
     @classmethod
     async def get_all_secuid(cls, urls: list, proxies: Optional[dict] = None) -> list:
@@ -927,6 +935,8 @@ class SecUserIdFetcher(BaseCrawler):
                     exc,
                 )
             )
+        finally:
+            await instance.close()
 
     @classmethod
     async def get_all_uniqueid(cls, urls: list, proxies: Optional[dict] = None) -> list:
@@ -1134,6 +1144,8 @@ class AwemeIdFetcher(BaseCrawler):
                     exc,
                 )
             )
+        finally:
+            await instance.close()
 
     @classmethod
     async def get_all_aweme_id(cls, urls: list, proxies: Optional[dict] = None) -> list:
@@ -1337,6 +1349,8 @@ class DeviceIdManager(BaseCrawler):
                     exc,
                 )
             )
+        finally:
+            await instance.close()
 
     @classmethod
     async def gen_device_ids(cls, count: int, full_cookie: bool = False) -> dict:

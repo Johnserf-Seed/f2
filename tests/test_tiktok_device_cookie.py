@@ -24,6 +24,7 @@ async def test_gen_device_id_collects_every_set_cookie(monkeypatch):
         )
 
     def init(self):
+        self._client = None
         self._aclient = httpx.AsyncClient(transport=httpx.MockTransport(handler))
 
     monkeypatch.setattr(DeviceIdManager, "__init__", init)

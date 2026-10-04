@@ -19,6 +19,7 @@ async def test_gen_visitor_collects_every_set_cookie(monkeypatch):
         return httpx.Response(200, headers=[("set-cookie", c) for c in SET_COOKIES])
 
     def init(self):
+        self._client = None
         self._aclient = httpx.AsyncClient(transport=httpx.MockTransport(handler))
 
     monkeypatch.setattr(VisitorManager, "__init__", init)

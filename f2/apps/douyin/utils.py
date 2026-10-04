@@ -299,6 +299,8 @@ class TokenManager(BaseCrawler):
                     exc,
                 )
             )
+        finally:
+            instance.client.close()
 
     @classmethod
     def cached_msToken(cls) -> str:
@@ -431,6 +433,8 @@ class TokenManager(BaseCrawler):
                     exc,
                 )
             )
+        finally:
+            instance.client.close()
 
     @classmethod
     def gen_secsdk_uid(cls) -> str:
@@ -571,6 +575,8 @@ class TokenManager(BaseCrawler):
                     exc,
                 )
             )
+        finally:
+            instance.client.close()
 
 
 class VerifyFpManager:
@@ -924,6 +930,8 @@ class SecUserIdFetcher(BaseCrawler):
                     _("状态码错误"), url, instance.proxies, cls.__name__, exc
                 )
             )
+        finally:
+            await instance.close()
 
     @classmethod
     async def get_all_sec_user_id(
@@ -1102,6 +1110,8 @@ class AwemeIdFetcher(BaseCrawler):
                     _("状态码错误"), url, instance.proxies, cls.__name__, exc
                 )
             )
+        finally:
+            await instance.close()
 
     @classmethod
     async def get_all_aweme_id(cls, urls: list, proxies: Optional[dict] = None) -> list:
@@ -1267,6 +1277,8 @@ class MixIdFetcher(BaseCrawler):
                     _("状态码错误"), url, instance.proxies, cls.__name__, exc
                 )
             )
+        finally:
+            await instance.close()
 
     @classmethod
     async def get_all_mix_id(cls, urls: list, proxies: Optional[dict] = None) -> list:
@@ -1457,6 +1469,8 @@ class WebCastIdFetcher(BaseCrawler):
                     _("状态码错误"), url, instance.proxies, cls.__name__, exc
                 )
             )
+        finally:
+            await instance.close()
 
     @classmethod
     async def get_all_webcast_id(
@@ -1577,6 +1591,8 @@ class WebCastIdFetcher(BaseCrawler):
                     _("状态码错误"), url, instance.proxies, cls.__name__, exc
                 )
             )
+        finally:
+            await instance.close()
 
     @classmethod
     async def get_all_room_id(cls, urls: list, proxies: Optional[dict] = None) -> list:

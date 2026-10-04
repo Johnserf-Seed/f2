@@ -939,10 +939,8 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
 
     async def close(self) -> None:
         """关闭下载器 (Close the downloader)"""
-        if self.client:
-            self.client.close()
-        if self.aclient:
-            await self.aclient.aclose()
+        # 只关闭已经创建的客户端；此前访问 client、aclient 属性会先新建客户端再关闭
+        await super().close()
 
     async def __aenter__(self) -> "BaseDownloader":
         """进入上下文管理器 (Enter the context manager)"""

@@ -260,6 +260,8 @@ class UniqueIdFetcher(BaseCrawler):
                     exc,
                 )
             )
+        finally:
+            await instance.close()
 
     @classmethod
     async def get_all_unique_ids(
@@ -371,6 +373,8 @@ class TweetIdFetcher(BaseCrawler):
                     "请求端点失败，请检查当前网络环境。 链接：{0}，代理：{1}，异常类名：{2}，异常详细信息：{3}"
                 ).format(url, ClientConfManager.proxies(), cls.__name__, exc)
             )
+        finally:
+            await instance.close()
 
     @classmethod
     async def get_all_tweet_ids(

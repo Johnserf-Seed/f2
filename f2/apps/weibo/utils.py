@@ -161,6 +161,8 @@ class VisitorManager(BaseCrawler):
                         str(e.response.url), e.response.status_code, e.response.text
                     )
                 )
+        finally:
+            await instance.close()
 
 
 class WeiboIdFetcher:
