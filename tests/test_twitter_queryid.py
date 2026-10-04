@@ -6,6 +6,7 @@ from urllib.parse import parse_qs, unquote, urlparse
 import httpx
 import pytest
 
+from f2.apps.twitter.api import QUERY_IDS
 from f2.apps.twitter.api import TwitterAPIEndpoints as xendpoints
 from f2.apps.twitter.crawler import TwitterCrawler
 from f2.apps.twitter.model import BookmarkTweetEncode, UserProfileEncode
@@ -13,6 +14,8 @@ from f2.apps.twitter.utils import (
     GraphQLOperation,
     find_chunk_scripts,
     find_main_script,
+    graphql_cache_path,
+    load_graphql_cache,
     parse_graphql_operations,
 )
 from f2.crawlers.base_crawler import BaseCrawler
@@ -73,9 +76,10 @@ def test_find_scripts_in_page():
 class FakeX:
     """模拟 x.com：内置的收藏 queryId 已失效，新的定义在按需加载的脚本里"""
 
-    def __init__(self, page=PAGE, chunk=CHUNK_JS):
+    def __init__(self, page=PAGE, chunk=CHUNK_JS, valid="New-Bookmarks_Id"):
         self.page = page
         self.chunk = chunk
+        self.valid = valid  # 有效的收藏 queryId，其他的都返回 404
         self.requests = []
 
     def __call__(self, request: httpx.Request) -> httpx.Response:
@@ -92,7 +96,7 @@ class FakeX:
             return httpx.Response(200, text=self.chunk)
         if request.url.host == "abs.twimg.com":
             return httpx.Response(200, text="e.exports={}")
-        if request.url.path == "/i/api/graphql/New-Bookmarks_Id/Bookmarks":
+        if request.url.path == f"/i/api/graphql/{self.valid}/Bookmarks":
             return httpx.Response(200, json={"data": {"bookmark_timeline_v2": {}}})
         return httpx.Response(404, text='{"message":"Query not found"}')
 
@@ -100,9 +104,16 @@ class FakeX:
         return [r.url.path for r in self.requests if r.url.path.startswith("/i/api")]
 
 
+def new_run(monkeypatch):
+    """模拟重新运行 F2：清空进程内获取的查询，下次请求时重新读入缓存文件"""
+    monkeypatch.setattr(TwitterCrawler, "_operations", {})
+    monkeypatch.setattr(TwitterCrawler, "_refreshed", set())
+    monkeypatch.setattr(TwitterCrawler, "_cache_loaded", False)
+
+
 @pytest.fixture
 def fake_x(monkeypatch):
-    monkeypatch.setattr(TwitterCrawler, "_operations", {})
+    new_run(monkeypatch)
 
     def use(server):
         monkeypatch.setattr(
@@ -179,3 +190,77 @@ async def test_valid_builtin_query_id_needs_no_scripts(fake_x):
 
     assert len(server.urls) == 1
     assert urlparse(server.urls[0]).path == urlparse(xendpoints.USER_PROFILE).path
+
+
+# ---------------- 获取的 queryId 缓存到本地，直到下次更新 ----------------
+
+BUILTIN = QUERY_IDS["Bookmarks"]
+
+
+def write_cache(query_id, replaces, text=None):
+    path = graphql_cache_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    entry = {"query_id": query_id, "replaces": replaces, "features": []}
+    path.write_text(text or json.dumps({"operations": {"Bookmarks": entry}}))
+    return path
+
+
+async def test_new_query_id_is_cached_for_later_runs(fake_x, monkeypatch):
+    server = fake_x(FakeX())
+    await fetch_bookmarks()
+
+    cached = load_graphql_cache()["Bookmarks"]
+    assert (cached.query_id, cached.replaces) == ("New-Bookmarks_Id", BUILTIN)
+    assert "brand_new_switch" in cached.features
+
+    # 再次运行时直接使用缓存的值，不再先请求失效的地址，也不用再下载网页脚本
+    new_run(monkeypatch)
+    server.requests.clear()
+    await fetch_bookmarks()
+
+    assert all(r.url.path.startswith("/i/api") for r in server.requests)
+    assert server.api_paths() == ["/i/api/graphql/New-Bookmarks_Id/Bookmarks"]
+
+
+async def test_cache_is_ignored_after_builtin_update(fake_x):
+    # 缓存的值替换的是旧版 F2 的内置值；F2 更新内置值后仍然内置优先
+    write_cache("Cached_Id", "Old-Builtin_Id")
+    server = fake_x(FakeX(valid=BUILTIN))
+
+    await fetch_bookmarks()
+
+    assert server.api_paths() == [f"/i/api/graphql/{BUILTIN}/Bookmarks"]
+
+
+async def test_expired_cached_query_id_is_refreshed(fake_x):
+    # X 再次更换 queryId 后，缓存的值也返回 404：重新获取并更新缓存
+    write_cache("Stale_Id", BUILTIN)
+    server = fake_x(FakeX())
+
+    await fetch_bookmarks()
+
+    assert server.api_paths() == [
+        "/i/api/graphql/Stale_Id/Bookmarks",
+        "/i/api/graphql/New-Bookmarks_Id/Bookmarks",
+    ]
+    assert load_graphql_cache()["Bookmarks"].query_id == "New-Bookmarks_Id"
+
+
+async def test_unreadable_cache_is_ignored(fake_x):
+    write_cache("", "", text="{not json")
+    server = fake_x(FakeX(valid=BUILTIN))
+
+    await fetch_bookmarks()
+
+    assert server.api_paths() == [f"/i/api/graphql/{BUILTIN}/Bookmarks"]
+
+
+async def test_unwritable_cache_does_not_break_requests(fake_x):
+    # 缓存目录的位置被文件占住，无法写入时只记录警告，本次请求照常完成
+    blocker = graphql_cache_path().parent
+    blocker.parent.mkdir(parents=True, exist_ok=True)
+    blocker.write_text("x")
+    fake_x(FakeX())
+
+    assert await fetch_bookmarks() == {"data": {"bookmark_timeline_v2": {}}}
+    assert load_graphql_cache() == {}

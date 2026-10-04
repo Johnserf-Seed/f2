@@ -1,7 +1,11 @@
 # path: f2/apps/twitter/utils.py
 
 import asyncio
+import contextlib
+import json
+import os
 import re
+import time
 import traceback
 from datetime import datetime
 from pathlib import Path
@@ -21,7 +25,8 @@ from f2.exceptions.api_exceptions import (
 )
 from f2.exceptions.conf_exceptions import InvalidConfError
 from f2.i18n.translator import _
-from f2.log.logger import trace_logger
+from f2.log.logger import logger, trace_logger
+from f2.utils.config import user_config
 from f2.utils.config.conf_manager import ConfigManager
 from f2.utils.file.name import split_filename
 from f2.utils.file.path import get_user_folder_path, migrate_user_folders
@@ -644,6 +649,8 @@ class GraphQLOperation(NamedTuple):
 
     query_id: str
     features: Tuple[str, ...] = ()
+    # 被替换的内置 queryId：F2 更新内置值后，替换旧值的缓存记录不再使用
+    replaces: str = ""
 
 
 # 网页脚本中的查询定义，例如：
@@ -665,6 +672,85 @@ _CHUNK_MAP_PATTERN = re.compile(
     r'\(\{(?P<hashes>[^{}]*)\}\)\[\w+\]\+"(?P<suffix>[\w.]*\.js)"'
 )
 _CHUNK_ENTRY_PATTERN = re.compile(r'(\w+):"([^"]+)"')
+
+
+def graphql_cache_path() -> Path:
+    """从网页脚本中获取的 queryId 的缓存文件 (~/.f2/cache/twitter_graphql.json)"""
+    return user_config.user_config_dir() / "cache" / "twitter_graphql.json"
+
+
+def load_graphql_cache() -> Dict[str, GraphQLOperation]:
+    """
+    读取缓存的查询，文件不存在或无法解析时返回空字典
+    (Load cached operations; an empty dict when the file is missing or invalid)
+
+    Returns:
+        Dict[str, GraphQLOperation]: 以查询名为键 (Keyed by operation name)
+    """
+    path = graphql_cache_path()
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        return {}
+    except (OSError, ValueError) as e:
+        logger.debug(_("无法读取推特接口的 queryId 缓存 {0}：{1}").format(path, e))
+        return {}
+
+    entries = data.get("operations") if isinstance(data, dict) else None
+    operations: Dict[str, GraphQLOperation] = {}
+    for name, entry in entries.items() if isinstance(entries, dict) else []:
+        if not isinstance(entry, dict):
+            continue
+        query_id, replaces = entry.get("query_id"), entry.get("replaces")
+        if isinstance(query_id, str) and isinstance(replaces, str):
+            features = entry.get("features")
+            operations[name] = GraphQLOperation(
+                query_id,
+                (
+                    tuple(f for f in features if isinstance(f, str))
+                    if isinstance(features, list)
+                    else ()
+                ),
+                replaces,
+            )
+    return operations
+
+
+def save_graphql_cache(operations: Dict[str, GraphQLOperation]) -> Optional[Path]:
+    """
+    把查询写入缓存文件，先写临时文件再替换，多个进程同时写入时不会写出半个文件
+    (Write operations to the cache file atomically)
+
+    缓存只是为了省去内置值失效后每次运行的重复获取，写入失败时只记录警告。
+
+    Returns:
+        Optional[Path]: 缓存文件路径，写入失败时为 None
+    """
+    path = graphql_cache_path()
+    data = {
+        "updated_at": int(time.time()),
+        "operations": {
+            name: {
+                "query_id": operation.query_id,
+                "replaces": operation.replaces,
+                "features": list(operation.features),
+            }
+            for name, operation in sorted(operations.items())
+        },
+    }
+    temp = path.with_name(f"{path.name}.{os.getpid()}.tmp")
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temp.write_text(
+            json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+        os.replace(temp, path)
+    except OSError as e:
+        logger.warning(_("无法保存推特接口的 queryId 缓存 {0}：{1}").format(path, e))
+        with contextlib.suppress(OSError):
+            temp.unlink(missing_ok=True)
+        return None
+    return path
 
 
 def parse_graphql_operations(script: str) -> Dict[str, GraphQLOperation]:

@@ -39,3 +39,12 @@ def _offline_guard(request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPat
         return resolve(host, *args, **kwargs)
 
     monkeypatch.setattr(socket, "getaddrinfo", offline_getaddrinfo)
+
+
+@pytest.fixture(autouse=True)
+def _isolated_user_dir(tmp_path_factory: pytest.TempPathFactory, monkeypatch):
+    """测试不读写真实的 ~/.f2（用户级配置与推特 queryId 缓存）"""
+    from f2.utils.config import user_config
+
+    home = tmp_path_factory.mktemp("home") / ".f2"
+    monkeypatch.setattr(user_config, "user_config_dir", lambda: home)
