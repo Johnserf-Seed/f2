@@ -202,11 +202,12 @@ f2:
 `X` 每次发版都可能更换 `GraphQL` 接口地址中的 `queryId`，旧的值失效后接口返回 `404`（`Query not found`）。
 
 ::: details :link: 解决办法
-`F2` 遇到这种情况会自动处理：用 `cookie` 打开 `x.com`，从网页加载的脚本中读取新的 `queryId` 并重试，日志中会提示“queryId 已失效，正在从 X 网页的脚本中获取新的值”。同一次运行中之后的请求都直接使用新值，不需要等 `F2` 发布新版。
+`F2` 遇到这种情况会自动处理：用 `cookie` 打开 `x.com`，从网页加载的脚本中读取新的 `queryId` 并重试，日志中会提示“queryId 已失效，正在从 X 网页的脚本中获取新的值”。获取到的值会缓存到 `~/.f2/cache/twitter_graphql.json`，之后的运行直接使用，直到 `X` 再次更换（届时重新获取）或 `F2` 更新了内置值（缓存的旧记录不再使用），不需要等 `F2` 发布新版。
 
 如果仍然报错：
 1. 检查 `cookie` 是否有效。`cookie` 失效时 `x.com` 返回未登录的页面，其中没有需要的脚本。
 2. 网页脚本的结构变化时可能找不到新的值，请更新 `F2` 后再试，或提交 `issue`。
+3. 怀疑缓存的值有问题时，删除 `~/.f2/cache/twitter_graphql.json` 即可恢复使用内置值。
 :::
 
 ## Installing build dependencies error

@@ -362,7 +362,7 @@ Used to extract Weibo text, excluding the final link.
 ## Crawler API List
 
 ::: tip :bulb: Tip
-`X` may change the `queryId` in its `GraphQL` API endpoints with every release. `F2` uses its built-in values first. When an API returns `404` (`Query not found`), `F2` opens `x.com` with your `cookie`, reads the new `queryId` from the scripts the page loads and retries; later requests in the same process use the new value, so you do not have to wait for a new `F2` release. A valid logged-in `cookie` is required.
+`X` may change the `queryId` in its `GraphQL` API endpoints with every release. `F2` uses its built-in values first. When an API returns `404` (`Query not found`), `F2` opens `x.com` with your `cookie`, reads the new `queryId` from the scripts the page loads and retries. The new value is cached in `~/.f2/cache/twitter_graphql.json` and later runs use it directly until `X` changes it again or a new `F2` release updates the built-in value, so you do not have to wait for a new `F2` release. A valid logged-in `cookie` is required.
 :::
 
 ### Tweet Detail API 🟢

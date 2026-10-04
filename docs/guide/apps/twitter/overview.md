@@ -363,7 +363,7 @@ outline: [2,3]
 ## crawler接口列表
 
 ::: tip :bulb: 提示
-`X` 每次发版都可能更换 `GraphQL` 接口地址中的 `queryId`。`F2` 优先使用内置的值，接口返回 `404`（`Query not found`）时，会用 `cookie` 打开 `x.com`，从网页加载的脚本中读取新的 `queryId` 并重试，同一进程内之后的请求都使用新值，不需要等 `F2` 发布新版。需要有效的登录 `cookie`。
+`X` 每次发版都可能更换 `GraphQL` 接口地址中的 `queryId`。`F2` 优先使用内置的值，接口返回 `404`（`Query not found`）时，会用 `cookie` 打开 `x.com`，从网页加载的脚本中读取新的 `queryId` 并重试。新值缓存在 `~/.f2/cache/twitter_graphql.json`，之后的运行直接使用，直到 `X` 再次更换或 `F2` 更新了内置值，不需要等 `F2` 发布新版。需要有效的登录 `cookie`。
 :::
 
 ### 推文详情接口 🟢
