@@ -194,3 +194,15 @@ async def test_tweet_repeated_on_next_page_is_kept_once(handler, monkeypatch):
 
     assert tweet_ids(pages) == [["1", "2"], ["3"]]
     assert len(crawler.calls) == 2
+
+
+async def test_other_users_likes_explain_the_privacy_rule(handler, monkeypatch, caplog):
+    # X 不再公开喜欢列表，请求别人的喜欢时返回空数据，此前提示“该用户没有公开喜欢的推文”
+    crawler = use_pages(monkeypatch, [{"data": {"user": {"result": {"timeline": {}}}}}])
+
+    with caplog.at_level("ERROR"):
+        pages = [page async for page in handler.fetch_like_tweet("user-1", 20, "")]
+
+    assert pages == []
+    assert len(crawler.calls) == 1
+    assert "只对本人可见" in caplog.text

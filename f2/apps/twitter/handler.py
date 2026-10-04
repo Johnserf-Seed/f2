@@ -506,8 +506,14 @@ class TwitterHandler:
                     like.tweet_id, like.tweet_desc, like.nickname
                 )
             )
+            # X 从 2024 年 6 月起不再公开喜欢列表，请求别人的喜欢时返回空数据
             if like.max_cursor is None:
-                logger.error(_("该用户没有公开喜欢的推文"))
+                logger.error(
+                    _(
+                        "没有获取到喜欢的推文：X 的喜欢列表只对本人可见，"
+                        "只能下载 cookie 所属账号自己喜欢的推文"
+                    )
+                )
                 break
 
             # 当cursorType值为Bottom且entryId长度为2时，表示已经爬取完所有的推文
