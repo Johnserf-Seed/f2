@@ -16,7 +16,7 @@ PLAYLET_URL = (
 )
 
 
-def forbid_request(self):
+def forbid_request(self, proxies=None):
     raise AssertionError("地址里已经带有合集ID，不应发起请求")
 
 
@@ -28,7 +28,7 @@ def mock_redirect(monkeypatch, location):
             return httpx.Response(302, headers={"Location": location})
         return httpx.Response(200, text="ok")
 
-    def init(self):
+    def init(self, proxies=None):
         self._aclient = httpx.AsyncClient(transport=httpx.MockTransport(handler))
 
     monkeypatch.setattr(MixIdFetcher, "__init__", init)
@@ -81,12 +81,12 @@ def make_handler():
     )
 
 
-async def raise_not_mix(url):
+async def raise_not_mix(url, proxies=None):
     raise APIResponseError("未在响应的地址中找到mix_id")
 
 
 async def test_mix_mode_reports_video_outside_any_mix(monkeypatch):
-    async def get_aweme_id(url):
+    async def get_aweme_id(url, proxies=None):
         return "7686072587252833777"
 
     async def fetch_one_video(self, aweme_id):
@@ -103,7 +103,7 @@ async def test_mix_mode_reports_video_outside_any_mix(monkeypatch):
 
 
 async def test_mix_mode_reports_empty_mix(monkeypatch):
-    async def get_mix_id(url):
+    async def get_mix_id(url, proxies=None):
         return PLAYLET_ID
 
     async def fetch_user_mix_videos(self, mix_id, *args, **kwargs):
@@ -120,10 +120,10 @@ async def test_mix_mode_reports_empty_mix(monkeypatch):
 
 
 async def test_mix_mode_does_not_fall_back_on_network_errors(monkeypatch):
-    async def get_mix_id(url):
+    async def get_mix_id(url, proxies=None):
         raise APIConnectionError("网络连接失败")
 
-    async def get_aweme_id(url):
+    async def get_aweme_id(url, proxies=None):
         raise AssertionError("网络错误不应改用作品链接解析")
 
     monkeypatch.setattr(douyin_handler.MixIdFetcher, "get_mix_id", get_mix_id)

@@ -98,7 +98,7 @@ async def test_no_playlist_ends_without_creating_the_user_folder(
     monkeypatch.chdir(tmp_path)  # 万一打开用户数据库，也只写到临时目录
     use_pages(monkeypatch, [playlist_page([], False, "0")])
 
-    async def get_secuid(url):
+    async def get_secuid(url, proxies=None):
         return "sec-uid"
 
     async def forbid(*args, **kwargs):

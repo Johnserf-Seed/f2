@@ -32,6 +32,7 @@ from f2.utils.crypto.bytedance.xbogus import XBogus as XB
 from f2.utils.file.name import split_filename
 from f2.utils.file.path import get_user_folder_path, migrate_user_folders
 from f2.utils.http.cookie import parse_cookie_str
+from f2.utils.http.proxy import prefer_proxies
 from f2.utils.string.formatter import extract_valid_urls
 from f2.utils.string.generator import gen_random_str
 from f2.utils.time.timestamp import get_timestamp
@@ -816,16 +817,18 @@ class SecUserIdFetcher(BaseCrawler):
     _REDIRECT_URL_PATTERN = re.compile(r"sec_uid=([^&]*)")
     proxies = ClientConfManager.proxies()
 
-    def __init__(self):
-        super().__init__(proxies=self.proxies)
+    def __init__(self, proxies: Optional[dict] = None):
+        # 应用配置或 --proxies 中的代理优先，没有配置时使用客户端配置中的代理
+        super().__init__(proxies=prefer_proxies(proxies, self.proxies))
 
     @classmethod
-    async def get_sec_user_id(cls, url: str) -> str:
+    async def get_sec_user_id(cls, url: str, proxies: Optional[dict] = None) -> str:
         """
         从单个url中获取sec_user_id (Get sec_user_id from a single url)
 
         Args:
             url (str): 输入的url (Input url)
+            proxies (dict): 调用方的代理配置，没有配置代理时使用客户端配置中的代理 (Proxies of the caller)
 
         Returns:
             str: 匹配到的sec_user_id (Matched sec_user_id)。
@@ -864,7 +867,7 @@ class SecUserIdFetcher(BaseCrawler):
             else cls._DOUYIN_URL_PATTERN
         )
         # 创建一个实例以访问 aclient
-        instance = cls()
+        instance = cls(proxies)
 
         try:
             response = await instance.aclient.get(url, follow_redirects=True)
@@ -885,7 +888,7 @@ class SecUserIdFetcher(BaseCrawler):
             raise APITimeoutError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format(_("请求端点超时"), url, cls.proxies, cls.__name__, exc)
+                ).format(_("请求端点超时"), url, instance.proxies, cls.__name__, exc)
             )
 
         except httpx.NetworkError as exc:
@@ -895,7 +898,7 @@ class SecUserIdFetcher(BaseCrawler):
                 ).format(
                     _("网络连接失败，请检查当前网络环境"),
                     url,
-                    cls.proxies,
+                    instance.proxies,
                     cls.__name__,
                     exc,
                 )
@@ -905,30 +908,33 @@ class SecUserIdFetcher(BaseCrawler):
             raise APIUnauthorizedError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format(_("请求协议错误"), url, cls.proxies, cls.__name__, exc)
+                ).format(_("请求协议错误"), url, instance.proxies, cls.__name__, exc)
             )
 
         except httpx.ProxyError as exc:
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format(_("请求代理错误"), url, cls.proxies, cls.__name__, exc)
+                ).format(_("请求代理错误"), url, instance.proxies, cls.__name__, exc)
             )
 
         except httpx.HTTPStatusError as exc:
             raise APIResponseError(
                 _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
-                    _("状态码错误"), url, cls.proxies, cls.__name__, exc
+                    _("状态码错误"), url, instance.proxies, cls.__name__, exc
                 )
             )
 
     @classmethod
-    async def get_all_sec_user_id(cls, urls: list) -> list:
+    async def get_all_sec_user_id(
+        cls, urls: list, proxies: Optional[dict] = None
+    ) -> list:
         """
         获取列表sec_user_id列表 (Get list sec_user_id list)
 
         Args:
             urls (list): 用户url列表 (User url list)
+            proxies (dict): 调用方的代理配置，没有配置代理时使用客户端配置中的代理 (Proxies of the caller)
 
         Returns:
             list: 用户sec_user_id列表 (User sec_user_id list)
@@ -949,7 +955,7 @@ class SecUserIdFetcher(BaseCrawler):
                 _("输入的URL List不合法。类名：{0}").format(cls.__name__)
             )
 
-        sec_user_ids = [cls.get_sec_user_id(url) for url in urls]
+        sec_user_ids = [cls.get_sec_user_id(url, proxies) for url in urls]
         return await asyncio.gather(*sec_user_ids)
 
 
@@ -993,16 +999,18 @@ class AwemeIdFetcher(BaseCrawler):
     _DOUYIN_INVAILID_URL_PATTERN = re.compile(r"vid=([^/?]*)")
     proxies = ClientConfManager.proxies()
 
-    def __init__(self):
-        super().__init__(proxies=self.proxies)
+    def __init__(self, proxies: Optional[dict] = None):
+        # 应用配置或 --proxies 中的代理优先，没有配置时使用客户端配置中的代理
+        super().__init__(proxies=prefer_proxies(proxies, self.proxies))
 
     @classmethod
-    async def get_aweme_id(cls, url: str) -> str:
+    async def get_aweme_id(cls, url: str, proxies: Optional[dict] = None) -> str:
         """
         从单个url中获取aweme_id (Get aweme_id from a single url)
 
         Args:
             url (str): 输入的url (Input url)
+            proxies (dict): 调用方的代理配置，没有配置代理时使用客户端配置中的代理 (Proxies of the caller)
 
         Returns:
             str: 匹配到的aweme_id (Matched aweme_id)。
@@ -1027,7 +1035,7 @@ class AwemeIdFetcher(BaseCrawler):
         url = extracted_url
 
         # 创建一个实例以访问 aclient
-        instance = cls()
+        instance = cls(proxies)
 
         try:
             response = await instance.aclient.get(url, follow_redirects=True)
@@ -1058,7 +1066,7 @@ class AwemeIdFetcher(BaseCrawler):
             raise APITimeoutError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format(_("请求端点超时"), url, cls.proxies, cls.__name__, exc)
+                ).format(_("请求端点超时"), url, instance.proxies, cls.__name__, exc)
             )
 
         except httpx.NetworkError as exc:
@@ -1068,7 +1076,7 @@ class AwemeIdFetcher(BaseCrawler):
                 ).format(
                     _("网络连接失败，请检查当前网络环境"),
                     url,
-                    cls.proxies,
+                    instance.proxies,
                     cls.__name__,
                     exc,
                 )
@@ -1078,30 +1086,31 @@ class AwemeIdFetcher(BaseCrawler):
             raise APIUnauthorizedError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format(_("请求协议错误"), url, cls.proxies, cls.__name__, exc)
+                ).format(_("请求协议错误"), url, instance.proxies, cls.__name__, exc)
             )
 
         except httpx.ProxyError as exc:
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format(_("请求代理错误"), url, cls.proxies, cls.__name__, exc)
+                ).format(_("请求代理错误"), url, instance.proxies, cls.__name__, exc)
             )
 
         except httpx.HTTPStatusError as exc:
             raise APIResponseError(
                 _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
-                    _("状态码错误"), url, cls.proxies, cls.__name__, exc
+                    _("状态码错误"), url, instance.proxies, cls.__name__, exc
                 )
             )
 
     @classmethod
-    async def get_all_aweme_id(cls, urls: list) -> list:
+    async def get_all_aweme_id(cls, urls: list, proxies: Optional[dict] = None) -> list:
         """
         获取视频aweme_id,传入列表url都可以解析出aweme_id (Get video aweme_id, pass in the list url can parse out aweme_id)
 
         Args:
             urls (list): 列表url (list url)
+            proxies (dict): 调用方的代理配置，没有配置代理时使用客户端配置中的代理 (Proxies of the caller)
 
         Returns:
             list: 视频的唯一标识，返回列表 (The unique identifier of the video, return list)
@@ -1122,7 +1131,7 @@ class AwemeIdFetcher(BaseCrawler):
                 _("输入的URL List不合法。类名：{0}").format(cls.__name__)
             )
 
-        aweme_ids = [cls.get_aweme_id(url) for url in urls]
+        aweme_ids = [cls.get_aweme_id(url, proxies) for url in urls]
         return await asyncio.gather(*aweme_ids)
 
 
@@ -1164,16 +1173,18 @@ class MixIdFetcher(BaseCrawler):
     )
     proxies = ClientConfManager.proxies()
 
-    def __init__(self):
-        super().__init__(proxies=self.proxies)
+    def __init__(self, proxies: Optional[dict] = None):
+        # 应用配置或 --proxies 中的代理优先，没有配置时使用客户端配置中的代理
+        super().__init__(proxies=prefer_proxies(proxies, self.proxies))
 
     @classmethod
-    async def get_mix_id(cls, url: str) -> str:
+    async def get_mix_id(cls, url: str, proxies: Optional[dict] = None) -> str:
         """
         从单个url中获取mix_id (Get mix_id from a single url)
 
         Args:
             url (str): 输入的url (Input url)
+            proxies (dict): 调用方的代理配置，没有配置代理时使用客户端配置中的代理 (Proxies of the caller)
 
         Returns:
             str: 匹配到的mix_id (Matched mix_id)。
@@ -1201,7 +1212,7 @@ class MixIdFetcher(BaseCrawler):
         if match := cls._DOUYIN_MIX_URL_PATTERN.search(url):
             return match.group(1)
 
-        instance = cls()
+        instance = cls(proxies)
 
         try:
             response = await instance.aclient.get(url, follow_redirects=True)
@@ -1220,7 +1231,7 @@ class MixIdFetcher(BaseCrawler):
             raise APITimeoutError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format(_("请求端点超时"), url, cls.proxies, cls.__name__, exc)
+                ).format(_("请求端点超时"), url, instance.proxies, cls.__name__, exc)
             )
 
         except httpx.NetworkError as exc:
@@ -1230,7 +1241,7 @@ class MixIdFetcher(BaseCrawler):
                 ).format(
                     _("网络连接失败，请检查当前网络环境"),
                     url,
-                    cls.proxies,
+                    instance.proxies,
                     cls.__name__,
                     exc,
                 )
@@ -1240,30 +1251,31 @@ class MixIdFetcher(BaseCrawler):
             raise APIUnauthorizedError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format(_("请求协议错误"), url, cls.proxies, cls.__name__, exc)
+                ).format(_("请求协议错误"), url, instance.proxies, cls.__name__, exc)
             )
 
         except httpx.ProxyError as exc:
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format(_("请求代理错误"), url, cls.proxies, cls.__name__, exc)
+                ).format(_("请求代理错误"), url, instance.proxies, cls.__name__, exc)
             )
 
         except httpx.HTTPStatusError as exc:
             raise APIResponseError(
                 _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
-                    _("状态码错误"), url, cls.proxies, cls.__name__, exc
+                    _("状态码错误"), url, instance.proxies, cls.__name__, exc
                 )
             )
 
     @classmethod
-    async def get_all_mix_id(cls, urls: list) -> list:
+    async def get_all_mix_id(cls, urls: list, proxies: Optional[dict] = None) -> list:
         """
         获取合集mix_id,传入列表url都可以解析出mix_id (Get video mix_id, pass in the list url can parse out aweme_id)
 
         Args:
             urls (list): 列表url (list url)
+            proxies (dict): 调用方的代理配置，没有配置代理时使用客户端配置中的代理 (Proxies of the caller)
 
         Returns:
             list: 视频的唯一标识，返回列表 (The unique identifier of the video, return list)
@@ -1283,7 +1295,7 @@ class MixIdFetcher(BaseCrawler):
                 _("输入的URL List不合法。类名：{0}").format(cls.__name__)
             )
 
-        mix_ids = [cls.get_mix_id(url) for url in urls]
+        mix_ids = [cls.get_mix_id(url, proxies) for url in urls]
         return await asyncio.gather(*mix_ids)
 
 
@@ -1339,16 +1351,18 @@ class WebCastIdFetcher(BaseCrawler):
     _DOUYIN_ROOM_URL_PATTERN = re.compile(r"reflow/([^/?]*)")
     proxies = ClientConfManager.proxies()
 
-    def __init__(self):
-        super().__init__(proxies=self.proxies)
+    def __init__(self, proxies: Optional[dict] = None):
+        # 应用配置或 --proxies 中的代理优先，没有配置时使用客户端配置中的代理
+        super().__init__(proxies=prefer_proxies(proxies, self.proxies))
 
     @classmethod
-    async def get_webcast_id(cls, url: str) -> str:
+    async def get_webcast_id(cls, url: str, proxies: Optional[dict] = None) -> str:
         """
         从单个url中获取webcast_id (Get webcast_id from a single url)
 
         Args:
             url (str): 输入的url (Input url)
+            proxies (dict): 调用方的代理配置，没有配置代理时使用客户端配置中的代理 (Proxies of the caller)
 
         Returns:
             str: 匹配到的webcast_id (Matched webcast_id)。
@@ -1372,7 +1386,7 @@ class WebCastIdFetcher(BaseCrawler):
             raise APINotFoundError(_("输入的URL不合法。类名：{0}").format(cls.__name__))
         url = extracted_url
 
-        instance = cls()
+        instance = cls(proxies)
 
         try:
             response = await instance.aclient.get(url, follow_redirects=True)
@@ -1409,7 +1423,7 @@ class WebCastIdFetcher(BaseCrawler):
             raise APITimeoutError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format(_("请求端点超时"), url, cls.proxies, cls.__name__, exc)
+                ).format(_("请求端点超时"), url, instance.proxies, cls.__name__, exc)
             )
         except httpx.NetworkError as exc:
             raise APIConnectionError(
@@ -1418,7 +1432,7 @@ class WebCastIdFetcher(BaseCrawler):
                 ).format(
                     _("网络连接失败，请检查当前网络环境"),
                     url,
-                    cls.proxies,
+                    instance.proxies,
                     cls.__name__,
                     exc,
                 )
@@ -1427,30 +1441,33 @@ class WebCastIdFetcher(BaseCrawler):
             raise APIUnauthorizedError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format(_("请求协议错误"), url, cls.proxies, cls.__name__, exc)
+                ).format(_("请求协议错误"), url, instance.proxies, cls.__name__, exc)
             )
 
         except httpx.ProxyError as exc:
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format(_("请求代理错误"), url, cls.proxies, cls.__name__, exc)
+                ).format(_("请求代理错误"), url, instance.proxies, cls.__name__, exc)
             )
 
         except httpx.HTTPStatusError as exc:
             raise APIResponseError(
                 _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
-                    _("状态码错误"), url, cls.proxies, cls.__name__, exc
+                    _("状态码错误"), url, instance.proxies, cls.__name__, exc
                 )
             )
 
     @classmethod
-    async def get_all_webcast_id(cls, urls: list) -> list:
+    async def get_all_webcast_id(
+        cls, urls: list, proxies: Optional[dict] = None
+    ) -> list:
         """
         获取直播webcast_id,传入列表url都可以解析出webcast_id (Get live webcast_id, pass in the list url can parse out webcast_id)
 
         Args:
             urls (list): 列表url (list url)
+            proxies (dict): 调用方的代理配置，没有配置代理时使用客户端配置中的代理 (Proxies of the caller)
 
         Returns:
             list: 直播的唯一标识，返回列表 (The unique identifier of the live, return list)
@@ -1471,16 +1488,17 @@ class WebCastIdFetcher(BaseCrawler):
                 _("输入的URL List不合法。类名：{0}").format(cls.__name__)
             )
 
-        webcast_ids = [cls.get_webcast_id(url) for url in urls]
+        webcast_ids = [cls.get_webcast_id(url, proxies) for url in urls]
         return await asyncio.gather(*webcast_ids)
 
     @classmethod
-    async def get_room_id(cls, url: str) -> str:
+    async def get_room_id(cls, url: str, proxies: Optional[dict] = None) -> str:
         """
         从单个url中获取room_id (Get room_id from a single url)
 
         Args:
             url (str): 输入的url (Input url)
+            proxies (dict): 调用方的代理配置，没有配置代理时使用客户端配置中的代理 (Proxies of the caller)
 
         Returns:
             str: 匹配到的room_id (Matched room_id)。
@@ -1505,7 +1523,7 @@ class WebCastIdFetcher(BaseCrawler):
 
         url = extracted_url
 
-        instance = cls()
+        instance = cls(proxies)
 
         try:
             response = await instance.aclient.get(url, follow_redirects=True)
@@ -1525,7 +1543,7 @@ class WebCastIdFetcher(BaseCrawler):
             raise APITimeoutError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format(_("请求端点超时"), url, cls.proxies, cls.__name__, exc)
+                ).format(_("请求端点超时"), url, instance.proxies, cls.__name__, exc)
             )
         except httpx.NetworkError as exc:
             raise APIConnectionError(
@@ -1534,7 +1552,7 @@ class WebCastIdFetcher(BaseCrawler):
                 ).format(
                     _("网络连接失败，请检查当前网络环境"),
                     url,
-                    cls.proxies,
+                    instance.proxies,
                     cls.__name__,
                     exc,
                 )
@@ -1543,30 +1561,31 @@ class WebCastIdFetcher(BaseCrawler):
             raise APIUnauthorizedError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format(_("请求协议错误"), url, cls.proxies, cls.__name__, exc)
+                ).format(_("请求协议错误"), url, instance.proxies, cls.__name__, exc)
             )
 
         except httpx.ProxyError as exc:
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format(_("请求代理错误"), url, cls.proxies, cls.__name__, exc)
+                ).format(_("请求代理错误"), url, instance.proxies, cls.__name__, exc)
             )
 
         except httpx.HTTPStatusError as exc:
             raise APIResponseError(
                 _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
-                    _("状态码错误"), url, cls.proxies, cls.__name__, exc
+                    _("状态码错误"), url, instance.proxies, cls.__name__, exc
                 )
             )
 
     @classmethod
-    async def get_all_room_id(cls, urls: list) -> list:
+    async def get_all_room_id(cls, urls: list, proxies: Optional[dict] = None) -> list:
         """
         获取直播room_id,传入列表url都可以解析出room_id (Get live room_id, pass in the list url can parse out room_id)
 
         Args:
             urls (list): 列表url (list url)
+            proxies (dict): 调用方的代理配置，没有配置代理时使用客户端配置中的代理 (Proxies of the caller)
 
         Returns:
             list: 直播的唯一标识，返回列表 (The unique identifier of the live, return list)
@@ -1587,7 +1606,7 @@ class WebCastIdFetcher(BaseCrawler):
                 _("输入的URL List不合法。类名：{0}").format(cls.__name__)
             )
 
-        room_ids = [cls.get_room_id(url) for url in urls]
+        room_ids = [cls.get_room_id(url, proxies) for url in urls]
         return await asyncio.gather(*room_ids)
 
 

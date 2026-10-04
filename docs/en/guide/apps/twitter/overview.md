@@ -202,6 +202,7 @@ Class method to extract a single user ID.
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | url | str | User profile URL |
+| proxies| dict| Proxy settings (optional) in the same format as `proxies` in the app configuration; the client configuration is used when no proxy is configured |
 
 | Returns | Type | Description |
 | :--- | :--- | :--- |
@@ -216,6 +217,7 @@ Class method for extracting user IDs from a list.
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | urls | str | List of user profile URLs |
+| proxies| dict| Proxy settings (optional) in the same format as `proxies` in the app configuration; the client configuration is used when no proxy is configured |
 
 | Return | Type | Description |
 | :--- | :--- | :--- |
@@ -230,6 +232,7 @@ Class method for extracting a single tweet ID.
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | url | str | Tweet URL |
+| proxies| dict| Proxy settings (optional) in the same format as `proxies` in the app configuration; the client configuration is used when no proxy is configured |
 
 | Return | Type | Description |
 | :--- | :--- | :--- |
@@ -244,6 +247,7 @@ Class method for extracting multiple tweet IDs.
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | urls | str | List of tweet URLs |
+| proxies| dict| Proxy settings (optional) in the same format as `proxies` in the app configuration; the client configuration is used when no proxy is configured |
 
 | Return | Type | Description |
 | :--- | :--- | :--- |

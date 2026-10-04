@@ -430,6 +430,7 @@ Class method to extract a single user ID. Profile URLs in the form `https://www.
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | url | str | User profile URL |
+| proxies| dict| Proxy settings (optional) in the same format as `proxies` in the app configuration; the client configuration is used when no proxy is configured |
 
 | Return | Type | Description |
 | :--- | :--- | :--- |
@@ -444,6 +445,7 @@ Class method to extract multiple user IDs.
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | urls | list | List of user profile URLs |
+| proxies| dict | Proxy settings (optional) in the same format as `proxies` in the app configuration; the client configuration is used when no proxy is configured |
 
 | Return | Type | Description |
 | :--- | :--- | :--- |
@@ -458,6 +460,7 @@ Class method to extract a single unique user ID.
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | url | str | User profile URL |
+| proxies| dict| Proxy settings (optional) in the same format as `proxies` in the app configuration; the client configuration is used when no proxy is configured |
 
 | Return | Type | Description |
 | :--- | :--- | :--- |
@@ -472,6 +475,7 @@ Class method to extract multiple unique user IDs.
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | urls | list | List of user profile URLs |
+| proxies| dict | Proxy settings (optional) in the same format as `proxies` in the app configuration; the client configuration is used when no proxy is configured |
 
 | Return | Type | Description |
 | :--- | :--- | :--- |
@@ -486,6 +490,7 @@ Class method to extract a single video ID.
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | url | str | Video URL |
+| proxies| dict| Proxy settings (optional) in the same format as `proxies` in the app configuration; the client configuration is used when no proxy is configured |
 
 | Return | Type | Description |
 | :--- | :--- | :--- |
@@ -500,6 +505,7 @@ Class method to extract multiple video IDs.
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | urls | list | List of video URLs |
+| proxies| dict | Proxy settings (optional) in the same format as `proxies` in the app configuration; the client configuration is used when no proxy is configured |
 
 | Return | Type | Description |
 | :--- | :--- | :--- |

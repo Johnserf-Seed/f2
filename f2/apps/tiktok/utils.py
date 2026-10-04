@@ -28,6 +28,7 @@ from f2.utils.crypto.bytedance.xgnarly import XGnarly
 from f2.utils.file.name import split_filename
 from f2.utils.file.path import get_user_folder_path, migrate_user_folders
 from f2.utils.http.cookie import join_set_cookie_headers, parse_cookie_str
+from f2.utils.http.proxy import prefer_proxies
 from f2.utils.string.formatter import extract_valid_urls
 from f2.utils.string.generator import gen_random_str
 from f2.utils.time.timestamp import get_timestamp
@@ -620,16 +621,18 @@ class SecUserIdFetcher(BaseCrawler):
 
     proxies = ClientConfManager.proxies()
 
-    def __init__(self):
-        super().__init__(proxies=self.proxies)
+    def __init__(self, proxies: Optional[dict] = None):
+        # 应用配置或 --proxies 中的代理优先，没有配置时使用客户端配置中的代理
+        super().__init__(proxies=prefer_proxies(proxies, self.proxies))
 
     @classmethod
-    async def get_secuid(cls, url: str) -> str:
+    async def get_secuid(cls, url: str, proxies: Optional[dict] = None) -> str:
         """
         获取TikTok用户sec_uid。
 
         Args:
             url: 用户主页链接
+            proxies (dict): 调用方的代理配置，没有配置代理时使用客户端配置中的代理 (Proxies of the caller)
 
         Returns:
             sec_uid: 用户唯一标识
@@ -659,7 +662,7 @@ class SecUserIdFetcher(BaseCrawler):
             return url_match.group(1)
 
         # 创建一个实例以访问 aclient
-        instance = cls()
+        instance = cls(proxies)
 
         try:
             # 主页 HTML 不需要 msToken，不带 cookie 也能取到 sec_uid（2026-09-26 实测）；
@@ -715,7 +718,7 @@ class SecUserIdFetcher(BaseCrawler):
             raise APITimeoutError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format("请求端点超时", url, cls.proxies, cls.__name__, exc)
+                ).format("请求端点超时", url, instance.proxies, cls.__name__, exc)
             )
 
         except httpx.NetworkError as exc:
@@ -726,7 +729,7 @@ class SecUserIdFetcher(BaseCrawler):
                 ).format(
                     "网络连接失败，请检查当前网络环境",
                     url,
-                    cls.proxies,
+                    instance.proxies,
                     cls.__name__,
                     exc,
                 )
@@ -737,7 +740,7 @@ class SecUserIdFetcher(BaseCrawler):
             raise APIUnauthorizedError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format("请求协议错误", url, cls.proxies, cls.__name__, exc)
+                ).format("请求协议错误", url, instance.proxies, cls.__name__, exc)
             )
 
         except httpx.ProxyError as exc:
@@ -745,24 +748,25 @@ class SecUserIdFetcher(BaseCrawler):
             raise APIConnectionError(
                 _(
                     "{0}。 链接：{1}，代理：{2}，异常类名：{3}，异常详细信息：{4}"
-                ).format("请求代理错误", url, cls.proxies, cls.__name__, exc)
+                ).format("请求代理错误", url, instance.proxies, cls.__name__, exc)
             )
 
         except httpx.HTTPStatusError as exc:
             trace_logger.error(traceback.format_exc())
             raise APIResponseError(
                 _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
-                    "状态码错误", url, cls.proxies, cls.__name__, exc
+                    "状态码错误", url, instance.proxies, cls.__name__, exc
                 )
             )
 
     @classmethod
-    async def get_all_secuid(cls, urls: list) -> list:
+    async def get_all_secuid(cls, urls: list, proxies: Optional[dict] = None) -> list:
         """
         获取多个TikTok用户的sec_uid。
 
         Args:
             urls: 用户主页链接列表
+            proxies (dict): 调用方的代理配置，没有配置代理时使用客户端配置中的代理 (Proxies of the caller)
 
         Returns:
             secuids: 用户sec_uid列表
@@ -782,16 +786,17 @@ class SecUserIdFetcher(BaseCrawler):
                 _("输入的URL List不合法。类名：{0}").format(cls.__name__)
             )
 
-        secuids = [cls.get_secuid(url) for url in urls]
+        secuids = [cls.get_secuid(url, proxies) for url in urls]
         return await asyncio.gather(*secuids)
 
     @classmethod
-    async def get_uniqueid(cls, url: str) -> str:
+    async def get_uniqueid(cls, url: str, proxies: Optional[dict] = None) -> str:
         """
         获取TikTok用户unique_id。
 
         Args:
             url: 用户主页链接
+            proxies (dict): 调用方的代理配置，没有配置代理时使用客户端配置中的代理 (Proxies of the caller)
 
         Returns:
             unique_id: 用户唯一标识
@@ -816,7 +821,7 @@ class SecUserIdFetcher(BaseCrawler):
         url = extracted_url
 
         # 创建一个实例以访问 aclient
-        instance = cls()
+        instance = cls(proxies)
 
         try:
             headers = {
@@ -863,7 +868,7 @@ class SecUserIdFetcher(BaseCrawler):
                 ).format(
                     "请求端点超时",
                     url,
-                    cls.proxies,
+                    instance.proxies,
                     cls.__name__,
                     exc,
                 )
@@ -877,7 +882,7 @@ class SecUserIdFetcher(BaseCrawler):
                 ).format(
                     "网络连接失败，请检查当前网络环境",
                     url,
-                    cls.proxies,
+                    instance.proxies,
                     cls.__name__,
                     exc,
                 )
@@ -891,7 +896,7 @@ class SecUserIdFetcher(BaseCrawler):
                 ).format(
                     "请求协议错误",
                     url,
-                    cls.proxies,
+                    instance.proxies,
                     cls.__name__,
                     exc,
                 )
@@ -905,7 +910,7 @@ class SecUserIdFetcher(BaseCrawler):
                 ).format(
                     "请求代理错误",
                     url,
-                    cls.proxies,
+                    instance.proxies,
                     cls.__name__,
                     exc,
                 )
@@ -917,19 +922,20 @@ class SecUserIdFetcher(BaseCrawler):
                 _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     "状态码错误",
                     url,
-                    cls.proxies,
+                    instance.proxies,
                     cls.__name__,
                     exc,
                 )
             )
 
     @classmethod
-    async def get_all_uniqueid(cls, urls: list) -> list:
+    async def get_all_uniqueid(cls, urls: list, proxies: Optional[dict] = None) -> list:
         """
         获取多个TikTok用户的unique_id。
 
         Args:
             urls: 用户主页链接列表
+            proxies (dict): 调用方的代理配置，没有配置代理时使用客户端配置中的代理 (Proxies of the caller)
 
         Returns:
             unique_ids: 用户unique_id列表
@@ -949,7 +955,7 @@ class SecUserIdFetcher(BaseCrawler):
                 _("输入的URL List不合法。类名：{0}").format(cls.__name__)
             )
 
-        unique_ids = [cls.get_uniqueid(url) for url in urls]
+        unique_ids = [cls.get_uniqueid(url, proxies) for url in urls]
         return await asyncio.gather(*unique_ids)
 
 
@@ -994,16 +1000,18 @@ class AwemeIdFetcher(BaseCrawler):
 
     proxies = ClientConfManager.proxies()
 
-    def __init__(self):
-        super().__init__(proxies=self.proxies)
+    def __init__(self, proxies: Optional[dict] = None):
+        # 应用配置或 --proxies 中的代理优先，没有配置时使用客户端配置中的代理
+        super().__init__(proxies=prefer_proxies(proxies, self.proxies))
 
     @classmethod
-    async def get_aweme_id(cls, url: str) -> str:
+    async def get_aweme_id(cls, url: str, proxies: Optional[dict] = None) -> str:
         """
         获取TikTok作品aweme_id。
 
         Args:
             url: 作品链接
+            proxies (dict): 调用方的代理配置，没有配置代理时使用客户端配置中的代理 (Proxies of the caller)
 
         Returns:
             aweme_id: 作品唯一标识
@@ -1028,7 +1036,7 @@ class AwemeIdFetcher(BaseCrawler):
         url = extracted_url
 
         # 创建一个实例以访问 aclient
-        instance = cls()
+        instance = cls(proxies)
 
         try:
             response = await instance.aclient.get(url, follow_redirects=True)
@@ -1067,7 +1075,7 @@ class AwemeIdFetcher(BaseCrawler):
                 ).format(
                     _("请求端点超时"),
                     url,
-                    cls.proxies,
+                    instance.proxies,
                     cls.__name__,
                     exc,
                 )
@@ -1081,7 +1089,7 @@ class AwemeIdFetcher(BaseCrawler):
                 ).format(
                     _("网络连接失败，请检查当前网络环境"),
                     url,
-                    cls.proxies,
+                    instance.proxies,
                     cls.__name__,
                     exc,
                 )
@@ -1095,7 +1103,7 @@ class AwemeIdFetcher(BaseCrawler):
                 ).format(
                     _("请求协议错误"),
                     url,
-                    cls.proxies,
+                    instance.proxies,
                     cls.__name__,
                     exc,
                 )
@@ -1109,7 +1117,7 @@ class AwemeIdFetcher(BaseCrawler):
                 ).format(
                     _("请求代理错误"),
                     url,
-                    cls.proxies,
+                    instance.proxies,
                     cls.__name__,
                     exc,
                 )
@@ -1121,19 +1129,20 @@ class AwemeIdFetcher(BaseCrawler):
                 _("{0}。链接：{1} 代理：{2}，异常类名：{3}，异常详细信息：{4}").format(
                     _("状态码错误"),
                     url,
-                    cls.proxies,
+                    instance.proxies,
                     cls.__name__,
                     exc,
                 )
             )
 
     @classmethod
-    async def get_all_aweme_id(cls, urls: list) -> list:
+    async def get_all_aweme_id(cls, urls: list, proxies: Optional[dict] = None) -> list:
         """
         获取多个TikTok视频的aweme_id。
 
         Args:
             urls: 视频链接列表
+            proxies (dict): 调用方的代理配置，没有配置代理时使用客户端配置中的代理 (Proxies of the caller)
 
         Returns:
             aweme_ids: 视频的唯一标识列表
@@ -1153,7 +1162,7 @@ class AwemeIdFetcher(BaseCrawler):
                 _("输入的URL List不合法。类名：{0}").format(cls.__name__)
             )
 
-        aweme_ids = [cls.get_aweme_id(url) for url in urls]
+        aweme_ids = [cls.get_aweme_id(url, proxies) for url in urls]
         return await asyncio.gather(*aweme_ids)
 
 

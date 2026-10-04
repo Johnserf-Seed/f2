@@ -372,7 +372,9 @@ class DouyinHandler:
             kwargs: Dict: 参数字典 (Parameter dictionary)
         """
 
-        aweme_id = await AwemeIdFetcher.get_aweme_id(str(self.kwargs.get("url")))
+        aweme_id = await AwemeIdFetcher.get_aweme_id(
+            str(self.kwargs.get("url")), proxies=self.kwargs.get("proxies")
+        )
         # 接口异常直接向上抛出，由 CLI 记录并以非零退出码结束
         aweme_data = await self.fetch_one_video(aweme_id)
 
@@ -488,7 +490,7 @@ class DouyinHandler:
 
         # 获取用户数据并返回创建用户目录
         sec_user_id = await SecUserIdFetcher.get_sec_user_id(
-            str(self.kwargs.get("url"))
+            str(self.kwargs.get("url")), proxies=self.kwargs.get("proxies")
         )
         async with AsyncUserDB("douyin_users.db") as udb:
             user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, udb)
@@ -637,7 +639,7 @@ class DouyinHandler:
 
         # 获取用户数据并返回创建用户目录
         sec_user_id = await SecUserIdFetcher.get_sec_user_id(
-            str(self.kwargs.get("url"))
+            str(self.kwargs.get("url")), proxies=self.kwargs.get("proxies")
         )
         async with AsyncUserDB("douyin_users.db") as db:
             user_path = await self.get_or_add_user_data(self.kwargs, sec_user_id, db)
@@ -791,7 +793,7 @@ class DouyinHandler:
         # 此外，音乐收藏作品的文件夹将根据所配置的URL主页用户名来确定。
         # 为避免将文件下载到其他人的文件夹下，请务必确保填写的URL是你自己的主页URL。
         sec_user_id = await SecUserIdFetcher.get_sec_user_id(
-            str(self.kwargs.get("url"))
+            str(self.kwargs.get("url")), proxies=self.kwargs.get("proxies")
         )
 
         async with AsyncUserDB("douyin_users.db") as db:
@@ -912,7 +914,7 @@ class DouyinHandler:
         # 此外，收藏作品的文件夹将根据所配置的URL主页用户名来确定。
         # 为避免将文件下载到其他人的文件夹下，请务必确保填写的URL是你自己的主页URL。
         sec_user_id = await SecUserIdFetcher.get_sec_user_id(
-            str(self.kwargs.get("url"))
+            str(self.kwargs.get("url")), proxies=self.kwargs.get("proxies")
         )
 
         async with AsyncUserDB("douyin_users.db") as db:
@@ -1040,7 +1042,7 @@ class DouyinHandler:
         # 此外，收藏夹作品的文件夹将根据所配置的URL主页用户名来确定。
         # 为避免将文件下载到其他人的文件夹下，请务必确保填写的URL是你自己的主页URL。
         sec_user_id = await SecUserIdFetcher.get_sec_user_id(
-            str(self.kwargs.get("url"))
+            str(self.kwargs.get("url")), proxies=self.kwargs.get("proxies")
         )
 
         async with AsyncUserDB("douyin_users.db") as db:
@@ -1327,13 +1329,17 @@ class DouyinHandler:
         sec_user_id = None
         try:
             logger.info(_("正在从合集链接获取合集ID"))
-            mix_id = await MixIdFetcher.get_mix_id(url)
+            mix_id = await MixIdFetcher.get_mix_id(
+                url, proxies=self.kwargs.get("proxies")
+            )
         except APIResponseError as exc:
             logger.warning(
                 _("获取合集ID失败，尝试从合集作品链接中解析：{0}").format(exc)
             )
             logger.info(_("正在从合集作品链接获取合集ID"))
-            aweme_id = await AwemeIdFetcher.get_aweme_id(url)
+            aweme_id = await AwemeIdFetcher.get_aweme_id(
+                url, proxies=self.kwargs.get("proxies")
+            )
             one_video_data = await self.fetch_one_video(aweme_id)
             # 从 one_video_data 获取 sec_user_id 和 mix_id
             sec_user_id = one_video_data.sec_user_id
@@ -1464,7 +1470,9 @@ class DouyinHandler:
         """
 
         # 获取直播相关信息与主播信息
-        webcast_id = await WebCastIdFetcher.get_webcast_id(str(self.kwargs.get("url")))
+        webcast_id = await WebCastIdFetcher.get_webcast_id(
+            str(self.kwargs.get("url")), proxies=self.kwargs.get("proxies")
+        )
 
         # 然后下载直播推流
         webcast_data = await self.fetch_user_live_videos(webcast_id)
@@ -1674,7 +1682,7 @@ class DouyinHandler:
         max_counts = self.kwargs.get("max_counts")
 
         sec_user_id = await SecUserIdFetcher.get_sec_user_id(
-            str(self.kwargs.get("url"))
+            str(self.kwargs.get("url")), proxies=self.kwargs.get("proxies")
         )
 
         async with AsyncUserDB("douyin_users.db") as db:
@@ -1802,7 +1810,9 @@ class DouyinHandler:
         page_counts = self.kwargs.get("page_counts", 20)
         max_counts = self.kwargs.get("max_counts")
 
-        aweme_id = await AwemeIdFetcher.get_aweme_id(str(self.kwargs.get("url")))
+        aweme_id = await AwemeIdFetcher.get_aweme_id(
+            str(self.kwargs.get("url")), proxies=self.kwargs.get("proxies")
+        )
         aweme_data = await self.fetch_one_video(aweme_id)
 
         async with AsyncUserDB("douyin_users.db") as udb:
@@ -1924,7 +1934,7 @@ class DouyinHandler:
 
         max_counts = self.kwargs.get("max_counts")
         sec_user_id = await SecUserIdFetcher.get_sec_user_id(
-            str(self.kwargs.get("url"))
+            str(self.kwargs.get("url")), proxies=self.kwargs.get("proxies")
         )
 
         async with AsyncUserDB("douyin_users.db") as db:

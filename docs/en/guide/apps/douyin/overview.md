@@ -953,6 +953,7 @@ Class method used to extract a single user ID.
 | Parameter | Type | Description |
 | :-------- | :--- | :---------- |
 | url       | str  | User profile URL |
+| proxies   | dict | Proxy settings (optional) in the same format as `proxies` in the app configuration; the client configuration is used when no proxy is configured |
 
 | Return      | Type | Description |
 | :--------- | :--- | :---------- |
@@ -967,6 +968,7 @@ Class method used to extract a list of user IDs.
 | Parameter | Type  | Description          |
 | :-------- | :---- | :------------------- |
 | urls      | list  | List of user profile URLs |
+| proxies   | dict  | Proxy settings (optional) in the same format as `proxies` in the app configuration; the client configuration is used when no proxy is configured |
 
 | Return       | Type  | Description  |
 | :---------- | :---- | :----------- |
@@ -981,6 +983,7 @@ Class method used to extract a single post ID.
 | Parameter | Type | Description |
 | :-------- | :--- | :---------- |
 | url       | str  | Post URL    |
+| proxies   | dict | Proxy settings (optional) in the same format as `proxies` in the app configuration; the client configuration is used when no proxy is configured |
 
 | Return    | Type | Description |
 | :-------- | :--- | :---------- |
@@ -995,6 +998,7 @@ Class method used to extract a list of post IDs.
 | Parameter | Type  | Description  |
 | :-------- | :---- | :----------- |
 | urls      | list  | List of post URLs |
+| proxies   | dict  | Proxy settings (optional) in the same format as `proxies` in the app configuration; the client configuration is used when no proxy is configured |
 
 | Return     | Type  | Description  |
 | :--------- | :---- | :----------- |
@@ -1009,6 +1013,7 @@ Class method used to extract a collection ID from a collection or short drama UR
 | Parameter | Type | Description |
 | :-------- | :--- | :---------- |
 | url       | str  | Collection URL |
+| proxies   | dict | Proxy settings (optional) in the same format as `proxies` in the app configuration; the client configuration is used when no proxy is configured |
 
 | Return   | Type | Description |
 | :------- | :--- | :---------- |
@@ -1023,6 +1028,7 @@ Class method used to extract collection IDs from a list of collection or short d
 | Parameter | Type  | Description  |
 | :-------- | :---- | :----------- |
 | urls      | list  | List of collection URLs |
+| proxies   | dict  | Proxy settings (optional) in the same format as `proxies` in the app configuration; the client configuration is used when no proxy is configured |
 
 | Return   | Type  | Description  |
 | :------- | :---- | :----------- |
@@ -1037,6 +1043,7 @@ Class method used to extract a single livestream room ID.
 | Parameter | Type | Description |
 | :-------- | :--- | :---------- |
 | url       | str  | Livestream URL |
+| proxies   | dict | Proxy settings (optional) in the same format as `proxies` in the app configuration; the client configuration is used when no proxy is configured |
 
 | Return      | Type | Description  |
 | :---------- | :--- | :----------- |
@@ -1051,6 +1058,7 @@ Class method used to extract a list of livestream room IDs.
 | Parameter | Type  | Description  |
 | :-------- | :---- | :----------- |
 | urls      | list  | List of livestream URLs |
+| proxies   | dict  | Proxy settings (optional) in the same format as `proxies` in the app configuration; the client configuration is used when no proxy is configured |
 
 | Return      | Type  | Description  |
 | :---------- | :---- | :----------- |

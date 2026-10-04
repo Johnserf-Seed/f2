@@ -97,6 +97,16 @@ def proxy_url_from_config(proxies: Any) -> Optional[str]:
     return proxies.get("http://") or None
 
 
+def prefer_proxies(proxies: Any, default: Any) -> Any:
+    """
+    调用方配置了代理时使用它，否则使用默认的代理配置 (The caller's proxies when configured)
+
+    应用配置与命令行 --proxies 中的代理优先；它们没有配置代理时（例如只有空的
+    http://、https://），使用客户端配置中的代理，与此前一致。
+    """
+    return proxies if proxy_url_from_config(proxies) else default
+
+
 def parse_proxy_address(proxy_type: str, address: str) -> Dict[str, Any]:
     """
     命令行中的代理地址转换为代理配置 (Proxy configuration from a command line address)

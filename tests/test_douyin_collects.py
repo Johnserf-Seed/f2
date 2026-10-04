@@ -67,7 +67,7 @@ def handler(monkeypatch, tmp_path):
     monkeypatch.setattr(douyin_handler, "UserCollects", types.SimpleNamespace)
     monkeypatch.setattr(douyin_handler, "AsyncUserDB", NoUserDB)
 
-    async def get_sec_user_id(url):
+    async def get_sec_user_id(url, proxies=None):
         return "sec-uid"
 
     monkeypatch.setattr(

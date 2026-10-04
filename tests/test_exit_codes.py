@@ -152,7 +152,7 @@ def test_cli_exits_0_when_run_succeeds(monkeypatch):
 
 
 async def test_douyin_one_mode_propagates_api_errors(monkeypatch):
-    async def fake_aweme_id(url):
+    async def fake_aweme_id(url, proxies=None):
         return "123"
 
     async def failing_fetch(self, aweme_id):

@@ -31,6 +31,7 @@ from f2.utils.config import user_config
 from f2.utils.config.conf_manager import ConfigManager
 from f2.utils.file.name import split_filename
 from f2.utils.file.path import get_user_folder_path, migrate_user_folders
+from f2.utils.http.proxy import prefer_proxies
 from f2.utils.string.formatter import extract_valid_urls
 
 
@@ -131,8 +132,9 @@ class UniqueIdFetcher(BaseCrawler):
 
     proxies = ClientConfManager.proxies()
 
-    def __init__(self):
-        super().__init__(proxies=self.proxies)
+    def __init__(self, proxies: Optional[dict] = None):
+        # 应用配置或 --proxies 中的代理优先，没有配置时使用客户端配置中的代理
+        super().__init__(proxies=prefer_proxies(proxies, self.proxies))
 
     @classmethod
     def _match_unique_id(cls, url: str) -> Optional[str]:
@@ -143,13 +145,14 @@ class UniqueIdFetcher(BaseCrawler):
         return None
 
     @classmethod
-    async def get_unique_id(cls, url: str) -> str:
+    async def get_unique_id(cls, url: str, proxies: Optional[dict] = None) -> str:
         """
         从用户URL中提取用户ID
         (Extract user ID from user URL)
 
         Args:
             url (str): 用户URL (User URL)
+            proxies (dict): 调用方的代理配置，没有配置代理时使用客户端配置中的代理 (Proxies of the caller)
 
         Returns:
             str: 用户唯一ID (User Unique Id)
@@ -172,7 +175,7 @@ class UniqueIdFetcher(BaseCrawler):
             return unique_id
 
         # 创建一个实例以访问 aclient
-        instance = cls()
+        instance = cls(proxies)
 
         try:
             headers = {
@@ -210,7 +213,7 @@ class UniqueIdFetcher(BaseCrawler):
                 ).format(
                     "请求端点超时",
                     url,
-                    cls.proxies,
+                    instance.proxies,
                     cls.__name__,
                     exc,
                 )
@@ -224,7 +227,7 @@ class UniqueIdFetcher(BaseCrawler):
                 ).format(
                     "网络连接失败，请检查当前网络环境",
                     url,
-                    cls.proxies,
+                    instance.proxies,
                     cls.__name__,
                     exc,
                 )
@@ -238,7 +241,7 @@ class UniqueIdFetcher(BaseCrawler):
                 ).format(
                     "请求协议错误",
                     url,
-                    cls.proxies,
+                    instance.proxies,
                     cls.__name__,
                     exc,
                 )
@@ -252,20 +255,23 @@ class UniqueIdFetcher(BaseCrawler):
                 ).format(
                     "请求代理错误",
                     url,
-                    cls.proxies,
+                    instance.proxies,
                     cls.__name__,
                     exc,
                 )
             )
 
     @classmethod
-    async def get_all_unique_ids(cls, urls: list) -> list:
+    async def get_all_unique_ids(
+        cls, urls: list, proxies: Optional[dict] = None
+    ) -> list:
         """
         从用户URL列表中提取所有用户唯一ID
         (Extract all unique ids from the list of user URLs)
 
         Args:
             urls (list): 用户URL列表 (List of user URLs)
+            proxies (dict): 调用方的代理配置，没有配置代理时使用客户端配置中的代理 (Proxies of the caller)
 
         Returns:
             list: 用户唯一ID列表 (List of unique ids)
@@ -285,7 +291,7 @@ class UniqueIdFetcher(BaseCrawler):
                 )
             )
 
-        unique_ids = [cls.get_unique_id(url) for url in urls]
+        unique_ids = [cls.get_unique_id(url, proxies) for url in urls]
         return await asyncio.gather(*unique_ids)
 
 
@@ -297,17 +303,19 @@ class TweetIdFetcher(BaseCrawler):
 
     proxies = ClientConfManager.proxies()
 
-    def __init__(self):
-        super().__init__(proxies=self.proxies)
+    def __init__(self, proxies: Optional[dict] = None):
+        # 应用配置或 --proxies 中的代理优先，没有配置时使用客户端配置中的代理
+        super().__init__(proxies=prefer_proxies(proxies, self.proxies))
 
     @classmethod
-    async def get_tweet_id(cls, url: str) -> str:
+    async def get_tweet_id(cls, url: str, proxies: Optional[dict] = None) -> str:
         """
         从推文URL中提取推文ID
         (Extract tweet ID from tweet URL)
 
         Args:
             url (str): 推文URL (Tweet URL)
+            proxies (dict): 调用方的代理配置，没有配置代理时使用客户端配置中的代理 (Proxies of the caller)
 
         Returns:
             str: 推文ID (Tweet ID)
@@ -324,7 +332,7 @@ class TweetIdFetcher(BaseCrawler):
         url = extracted_url
 
         # 创建一个实例以访问 aclient
-        instance = cls()
+        instance = cls(proxies)
 
         # 解析URL并检查主机
         parsed_url = urlparse(url)
@@ -365,13 +373,16 @@ class TweetIdFetcher(BaseCrawler):
             )
 
     @classmethod
-    async def get_all_tweet_ids(cls, urls: list) -> list:
+    async def get_all_tweet_ids(
+        cls, urls: list, proxies: Optional[dict] = None
+    ) -> list:
         """
         从推文URL列表中提取所有推文ID
         (Extract all tweet IDs from the list of tweet URLs)
 
         Args:
             urls (list): 推文URL列表 (List of tweet URLs)
+            proxies (dict): 调用方的代理配置，没有配置代理时使用客户端配置中的代理 (Proxies of the caller)
 
         Returns:
             list: 推文ID列表 (List of tweet IDs)
@@ -391,7 +402,7 @@ class TweetIdFetcher(BaseCrawler):
                 )
             )
 
-        tweet_ids = [cls.get_tweet_id(url) for url in urls]
+        tweet_ids = [cls.get_tweet_id(url, proxies) for url in urls]
         return await asyncio.gather(*tweet_ids)
 
 

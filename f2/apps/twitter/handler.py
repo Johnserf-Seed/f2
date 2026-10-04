@@ -222,7 +222,9 @@ class TwitterHandler:
             kwargs: dict: 参数字典 (Parameter dictionary)
         """
 
-        tweet_id = await TweetIdFetcher.get_tweet_id(str(self.kwargs.get("url")))
+        tweet_id = await TweetIdFetcher.get_tweet_id(
+            str(self.kwargs.get("url")), proxies=self.kwargs.get("proxies")
+        )
         tweet_data = await self.fetch_one_tweet(tweet_id)
 
         async with AsyncUserDB("twitter_users.db") as db:
@@ -307,7 +309,9 @@ class TwitterHandler:
         page_counts = self.kwargs.get("page_counts", 20)
         max_counts = self.kwargs.get("max_counts")
 
-        uniqueID = await UniqueIdFetcher.get_unique_id(str(self.kwargs.get("url")))
+        uniqueID = await UniqueIdFetcher.get_unique_id(
+            str(self.kwargs.get("url")), proxies=self.kwargs.get("proxies")
+        )
         user = await self.fetch_user_profile(uniqueID)
 
         async with AsyncUserDB("twitter_users.db") as udb:
@@ -434,7 +438,9 @@ class TwitterHandler:
         page_counts = self.kwargs.get("page_counts", 20)
         max_counts = self.kwargs.get("max_counts")
 
-        uniqueID = await UniqueIdFetcher.get_unique_id(str(self.kwargs.get("url")))
+        uniqueID = await UniqueIdFetcher.get_unique_id(
+            str(self.kwargs.get("url")), proxies=self.kwargs.get("proxies")
+        )
         user = await self.fetch_user_profile(uniqueID)
 
         async with AsyncUserDB("twitter_users.db") as udb:
@@ -560,7 +566,9 @@ class TwitterHandler:
         page_counts = self.kwargs.get("page_counts", 20)
         max_counts = self.kwargs.get("max_counts")
 
-        uniqueID = await UniqueIdFetcher.get_unique_id(str(self.kwargs.get("url")))
+        uniqueID = await UniqueIdFetcher.get_unique_id(
+            str(self.kwargs.get("url")), proxies=self.kwargs.get("proxies")
+        )
 
         async with AsyncUserDB("twitter_users.db") as udb:
             user_path = await self.get_or_add_user_data(self.kwargs, uniqueID, udb)

@@ -79,7 +79,7 @@ def expected_cursors():
 async def test_douyin_post_cursors_from_interval(monkeypatch, tmp_path):
     captured = {}
 
-    async def get_sec_user_id(url):
+    async def get_sec_user_id(url, proxies=None):
         return "MS4wLjABAAAA"
 
     async def get_or_add_user_data(self, kwargs, sec_user_id, db):
@@ -109,7 +109,7 @@ async def test_douyin_post_cursors_from_interval(monkeypatch, tmp_path):
 async def test_tiktok_post_cursors_from_interval(monkeypatch, tmp_path):
     captured = {}
 
-    async def get_secuid(url):
+    async def get_secuid(url, proxies=None):
         return "MS4wLjABAAAA"
 
     async def get_or_add_user_data(self, secUid, uniqueId, db):

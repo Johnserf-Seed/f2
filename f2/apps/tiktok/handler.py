@@ -254,7 +254,9 @@ class TiktokHandler:
             kwargs: dict: 参数字典 (Parameter dictionary)
         """
 
-        aweme_id = await AwemeIdFetcher.get_aweme_id(str(self.kwargs.get("url")))
+        aweme_id = await AwemeIdFetcher.get_aweme_id(
+            str(self.kwargs.get("url")), proxies=self.kwargs.get("proxies")
+        )
 
         aweme_data = await self.fetch_one_video(aweme_id)
 
@@ -339,7 +341,9 @@ class TiktokHandler:
         if time_range:
             min_cursor, cursor = time_range
 
-        secUid = await SecUserIdFetcher.get_secuid(str(self.kwargs.get("url")))
+        secUid = await SecUserIdFetcher.get_secuid(
+            str(self.kwargs.get("url")), proxies=self.kwargs.get("proxies")
+        )
 
         async with AsyncUserDB("tiktok_users.db") as udb:
             user_path = await self.get_or_add_user_data(
@@ -478,7 +482,9 @@ class TiktokHandler:
         page_counts = self.kwargs.get("page_counts", 30)
         max_counts = self.kwargs.get("max_counts")
 
-        secUid = await SecUserIdFetcher.get_secuid(str(self.kwargs.get("url")))
+        secUid = await SecUserIdFetcher.get_secuid(
+            str(self.kwargs.get("url")), proxies=self.kwargs.get("proxies")
+        )
 
         async with AsyncUserDB("tiktok_users.db") as udb:
             user_path = await self.get_or_add_user_data(
@@ -603,7 +609,9 @@ class TiktokHandler:
         page_counts = self.kwargs.get("page_counts", 30)
         max_counts = self.kwargs.get("max_counts")
 
-        secUid = await SecUserIdFetcher.get_secuid(str(self.kwargs.get("url")))
+        secUid = await SecUserIdFetcher.get_secuid(
+            str(self.kwargs.get("url")), proxies=self.kwargs.get("proxies")
+        )
 
         async with AsyncUserDB("tiktok_users.db") as udb:
             user_path = await self.get_or_add_user_data(
@@ -726,7 +734,9 @@ class TiktokHandler:
         page_counts = self.kwargs.get("page_counts", 30)
         max_counts = self.kwargs.get("max_counts")
 
-        secUid = await SecUserIdFetcher.get_secuid(str(self.kwargs.get("url")))
+        secUid = await SecUserIdFetcher.get_secuid(
+            str(self.kwargs.get("url")), proxies=self.kwargs.get("proxies")
+        )
         playlist = await self.fetch_play_list(secUid, cursor, page_counts)
         mixId = await self.select_playlist(playlist)
 
@@ -962,7 +972,9 @@ class TiktokHandler:
         max_counts = self.kwargs.get("max_counts", float("inf"))
         keyword = self.kwargs.get("keyword", "")
 
-        secUid = await SecUserIdFetcher.get_secuid(str(self.kwargs.get("url")))
+        secUid = await SecUserIdFetcher.get_secuid(
+            str(self.kwargs.get("url")), proxies=self.kwargs.get("proxies")
+        )
 
         async with AsyncUserDB("tiktok_users.db") as udb:
             user_path = await self.get_or_add_user_data(
@@ -1094,7 +1106,9 @@ class TiktokHandler:
             kwargs: dict: 参数字典 (Parameter dictionary)
         """
 
-        uniqueId = await SecUserIdFetcher.get_uniqueid(str(self.kwargs.get("url")))
+        uniqueId = await SecUserIdFetcher.get_uniqueid(
+            str(self.kwargs.get("url")), proxies=self.kwargs.get("proxies")
+        )
 
         webcast_data = await self.fetch_user_live_videos(uniqueId)
 
