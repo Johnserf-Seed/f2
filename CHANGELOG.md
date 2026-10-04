@@ -6,6 +6,12 @@
 
 ## [Unreleased]
 
+- 推特从网页脚本获取的 queryId 缓存到本地，直到下次更新：内置 queryId 失效后，此前每次运行都要先请求一次失效的地址，再下载约 1.6 MB 的网页脚本。现在获取到的值写入 `~/.f2/cache/twitter_graphql.json` 并记录它替换的内置值，内置值不变时之后的运行直接使用；X 再次更换时重新获取；F2 更新内置值后旧记录不再使用，仍然内置优先。内置 queryId 集中到 `f2.apps.twitter.api.QUERY_IDS`，接口地址由它生成。
+- 修复环境变量或系统设置中的代理覆盖了 F2 中配置的代理：httpx 默认读取环境与系统代理并挂在 `http://`、`https://` 上，比 F2 挂在 `all://` 上的配置更具体，接口与下载请求都改走环境或系统代理，配置的 HTTP 与 SOCKS 代理不生效。现在配置了代理时不再读取环境与系统代理。
+- 修复只开系统代理时 TikTok 接口请求不走代理：TikTok 接口由 curl_cffi 发送，libcurl 不读取 macOS、Windows 系统设置中的代理，没有在 F2 中配置代理时这部分请求直连。现在与 httpx 一样使用环境变量与系统设置中的代理。
+- 修复推特 `desc.txt` 的文案与推文错位：主页、喜欢与收藏的 `tweet_desc_raw` 跳过了没有文案的条目，推荐关注等模块之后的推文都拿到了下一条推文的文案。`desc.txt` 现在保存完整文案：超过 280 字的长推文取 `note_tweet`，转推取原推文并保留 `RT @用户名:` 前缀，短链接换成原始链接，不再只保存第一个链接之前的文字；文件名中的 `{desc}` 不变。
+- TikTok 视频 CDN（Akamai）返回 403 Access Denied 时提示更换代理节点：实测与 cookie、请求头、TLS 指纹都无关，取决于网络出口所在地区；FAQ 已说明。
+- 推特喜欢模式请求别人的喜欢时，说明 X 的喜欢列表只对本人可见（此前提示“该用户没有公开喜欢的推文”）。
 - 推特适配 X 新版接口：queryId 与 features 更新为 2026-10 网页端使用的值。新的 queryId 返回新版结构：用户对象不再有 `legacy`（名称等字段移到 `core`、`profile_bio` 等处），主页与喜欢列表的 `timeline_v2` 改名为 `timeline`，只换 queryId 会取不到昵称与推文；过滤器现在先把响应整理成原来的结构再读取（`f2.apps.twitter.filter.normalize_graphql_response`），新旧 queryId 返回的数据都能解析。时间线中包在 `TweetWithVisibilityResults` 里的受限推文此前没有作者信息，被当成广告跳过；推文详情中作者的粉丝数、所在地等字段少了 `legacy` 一级，此前始终为空。
 - 推特接口的 queryId 失效时自动从 X 网页脚本中获取新的值：内置值返回 404（`Query not found`）时，用 cookie 打开 x.com，从页面加载的 `main.js`（收藏等查询在按需加载的脚本里，按名称查找）读取新的 queryId 并重试，同一进程内之后的请求都使用新值，不需要等 F2 发布新版；新查询需要的 features 开关缺失时补上 `false`。内置值仍然优先使用：它对应的响应结构经过测试，实测 2023 年的旧 queryId 至今仍可用，只在失效时才切换。新增 `TwitterCrawler.fetch_graphql_operation` 与 `f2.apps.twitter.utils.parse_graphql_operations`，FAQ 新增“twitter 404 / Query not found”。
 - 修复推特主页模式漏下载置顶推文与串推：置顶推文在 `TimelinePinEntry` 指令里，串推（自己回复自己）在 `profile-conversation` 模块里，此前都不会下载，实测 NASA 主页第一页 18 条推文只下载了 9 条。串推在相邻两页重复出现时也不再重复计数。
