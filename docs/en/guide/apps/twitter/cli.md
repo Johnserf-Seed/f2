@@ -57,7 +57,7 @@ Determines whether works should be saved in separate folders. Default is `true`.
 Download modes:
 - `one`: Single work
 - `post`: Homepage works, including the pinned tweet and threads (replies to their own tweets)
-- `like`: Liked works
+- `like`: Liked works. Likes on X are only visible to their owner, so the link must be the profile of the account the `cookie` belongs to
 - `bookmark`: Bookmarked (saved) works
 
 ### `--naming`
