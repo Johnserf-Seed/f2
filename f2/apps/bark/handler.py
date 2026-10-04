@@ -185,8 +185,9 @@ class BarkHandler:
 
         self.kwargs.update({"title": title, "body": body, **kwargs})
 
-        # 获取加密配置
-        encryption = kwargs.get("encryption") or {}
+        # 加密配置来自客户端配置（conf.yaml 的 f2.bark.encryption），也可以随本次调用传入；
+        # 此前只看调用时传入的参数，各应用下载完成后的通知从不加密
+        encryption = self.kwargs.get("encryption") or {}
 
         # 检查是否启用加密通知并设置了加密密钥
         if ClientConfManager.enable_encryption() and encryption.get("key"):

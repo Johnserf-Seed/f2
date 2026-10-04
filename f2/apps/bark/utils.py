@@ -56,7 +56,8 @@ class ClientConfManager:
 
     @classmethod
     def enable_encryption(cls) -> bool:
-        return cls.encryption().get("enable", False)
+        # 写成 no 等字符串时也要按关闭处理
+        return parse_bool(cls.encryption().get("enable", False)) is True
 
     @classmethod
     def headers(cls) -> dict:

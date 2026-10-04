@@ -113,3 +113,50 @@ async def test_cipher_notification_warns_on_ecb(fake_crawler, caplog):
     warnings = f2_warnings(caplog)
     assert len(warnings) == 1
     assert "ECB" in warnings[0].getMessage()
+
+
+# ---------------- 各应用下载完成后的通知 ----------------
+
+
+class RecordingHandler(bark_handler.BarkHandler):
+    """记录走了加密还是普通通知"""
+
+    async def cipher_bark_notification(self):
+        self.sent = "cipher"
+
+    async def _send_bark_notification(self, send_method):
+        self.sent = "plain"
+
+
+@pytest.mark.parametrize(
+    "enable, key, expected",
+    [(True, KEY, "cipher"), (True, "", "plain"), ("no", KEY, "plain")],
+)
+async def test_quick_notification_uses_configured_encryption(
+    monkeypatch, enable, key, expected
+):
+    # 此前只看调用时传入的 encryption，各应用（只传 group）下载完成后的通知从不加密
+    monkeypatch.setattr(
+        bark_handler.ClientConfManager,
+        "encryption",
+        classmethod(lambda cls: {"enable": enable}),
+    )
+    handler = RecordingHandler({"key": "device-key", "encryption": {"key": key}})
+
+    await handler.send_quick_notification("F2", "下载完成", group="DouYin")
+
+    assert handler.sent == expected
+
+
+@pytest.mark.parametrize(
+    "enable, expected", [(True, True), ("yes", True), ("no", False), (False, False)]
+)
+def test_enable_encryption_reads_switch_words(monkeypatch, enable, expected):
+    # 此前直接返回配置值，写成 no 的字符串为真，加密被当成已开启
+    monkeypatch.setattr(
+        bark_handler.ClientConfManager,
+        "encryption",
+        classmethod(lambda cls: {"enable": enable}),
+    )
+
+    assert bark_handler.ClientConfManager.enable_encryption() is expected
