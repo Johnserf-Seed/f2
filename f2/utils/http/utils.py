@@ -15,6 +15,28 @@ from f2.log.logger import logger, trace_logger
 from f2.utils.file.path import ensure_path
 
 
+def _hint_cdn_denied(error: Exception) -> None:
+    """
+    CDN 按网络出口拒绝访问时给出提示 (Hint when a CDN denies access by network egress)
+
+    2026-10 实测 TikTok 的视频 CDN（Akamai）返回 403 Access Denied（TCP_DENIED）时，
+    换用接口下发的 cookie、请求头或模拟浏览器的 TLS 指纹都无效，取决于代理节点所在地区。
+    """
+    if not isinstance(error, httpx.HTTPStatusError):
+        return
+    response = error.response
+    if (
+        response.status_code == 403
+        and "akamai" in response.headers.get("server", "").lower()
+    ):
+        logger.warning(
+            _(
+                "{0} 拒绝了当前网络出口的访问（Access Denied），与 cookie 无关，"
+                "请更换代理节点（地区）后重试"
+            ).format(response.url.host)
+        )
+
+
 async def get_content_length(
     url: str,
     headers: Optional[dict] = None,
@@ -199,6 +221,7 @@ async def get_content_length(
         except Exception as e:
             logger.error(_("GET Stream请求也失败：{0}，错误：{1}").format(url, str(e)))
             trace_logger.error(traceback.format_exc())
+            _hint_cdn_denied(e)
             return 0
 
         # 策略3：退避到GET请求获取Content-Length

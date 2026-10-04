@@ -103,3 +103,26 @@ async def test_downloader_reuses_its_transport(
     assert isinstance(received[0]["mounts"]["all://"], transport_type)
     # 配置了代理时与下载请求一样不再读取环境与系统代理
     assert received[0]["trust_env"] is (proxies is NONE)
+
+
+async def test_cdn_access_denied_gives_a_hint(monkeypatch, caplog):
+    # TikTok 视频 CDN（Akamai）按网络出口拒绝访问时，此前只显示 403 与“响应大小为 0 字节”
+    def handler(request):
+        return httpx.Response(
+            403, headers={"Server": "AkamaiGHost"}, text="Access Denied"
+        )
+
+    real_client = httpx.AsyncClient
+
+    def mocked_client(**kwargs):
+        kwargs.pop("transport", None)
+        kwargs.pop("mounts", None)
+        return real_client(transport=httpx.MockTransport(handler), **kwargs)
+
+    monkeypatch.setattr("f2.utils.http.utils.httpx.AsyncClient", mocked_client)
+
+    with caplog.at_level("WARNING"):
+        assert await get_content_length("https://v16-webapp-prime.us.tiktok.com/v") == 0
+
+    assert "v16-webapp-prime.us.tiktok.com" in caplog.text
+    assert "Access Denied" in caplog.text
