@@ -8,7 +8,7 @@ from f2.conf.config_wizard import ConfigWizard
 from f2.i18n.translator import _
 
 
-@click.command("config-wizard")
+@click.command("config-wizard", help=_("交互式生成 F2 配置文件"))
 @click.option("--output", "-o", help=_("输出配置文件路径"), metavar="PATH")
 @click.option(
     "--app",
@@ -36,28 +36,28 @@ def config_wizard_command(output: Optional[str], app: Optional[str]) -> None:
         wizard = ConfigWizard()
 
         if output:
-            print(f"📁 配置文件将保存至: {output}")
+            print(_("📁 配置文件将保存至: {0}").format(output))
 
         if app:
-            print(f"🎯 将配置应用: {app}")
+            print(_("🎯 将配置应用: {0}").format(app))
 
         # 此前 -o 与 -a 只被打印出来，向导仍然询问保存路径与要配置的应用
         success = wizard.run(output, [app] if app else None)
 
         if success:
             print()
-            print("🎉 配置完成！享受使用 F2 吧！")
+            print(_("🎉 配置完成！享受使用 F2 吧！"))
         else:
             # 配置未完成，静默退出
             raise click.Abort()
 
     except KeyboardInterrupt:
-        print("\n❌ 配置已取消")
+        print("\n" + _("❌ 配置已取消"))
         raise click.Abort()
     except click.Abort:
         # 重新抛出 Abort 异常，让 Click 处理
         raise
     except Exception:
         # 简化错误信息
-        print("❌ 配置向导出现错误，请重试")
+        print(_("❌ 配置向导出现错误，请重试"))
         raise click.Abort()

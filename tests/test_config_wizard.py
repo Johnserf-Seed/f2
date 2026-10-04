@@ -5,6 +5,7 @@ import importlib
 import pytest
 from click.testing import CliRunner
 
+import f2
 import f2.conf.config_wizard as wizard_module
 from f2.cli.wizard_command import config_wizard_command
 from f2.conf.config_wizard import ConfigWizard
@@ -36,19 +37,19 @@ def home(monkeypatch, tmp_path):
 
 
 @pytest.mark.parametrize("app", APPS)
-def test_wizard_offers_every_registered_mode(app):
-    handler = importlib.import_module(f"f2.apps.{app}.handler")
+def test_wizard_offers_the_cli_modes(app):
+    modes = ConfigWizard().app_info[app]["modes"]
 
-    assert sorted(ConfigWizard().app_info[app]["modes"]) == sorted(
-        handler.get_mode_handlers(handler.__name__)
-    )
+    assert modes == getattr(f2, f"{app.upper()}_MODE_LIST")
+    # 每个模式都有说明，此前 related、search 只显示模式名
+    assert all(ConfigWizard()._get_mode_description(mode) != mode for mode in modes)
 
 
 @pytest.mark.parametrize(
     "app, template",
     [
         (app, template)
-        for app, templates in ConfigWizard.NAMING_TEMPLATES.items()
+        for app, templates in ConfigWizard.naming_templates().items()
         for template, _ in templates
         if template != "custom"
     ],

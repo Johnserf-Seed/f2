@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-04 12:11-0700\n"
+"POT-Creation-Date: 2026-10-04 16:01-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -41,7 +41,7 @@ msgstr "🧙‍♂️ 启动配置向导，交互式生成配置文件"
 msgid "参数"
 msgstr "参数"
 
-#: f2/helps.py
+#: f2/conf/config_wizard.py f2/helps.py
 msgid "描述"
 msgstr "描述"
 
@@ -558,7 +558,7 @@ msgid "作品保存位置，支持绝对与相对路径"
 msgstr "作品保存位置，支持绝对与相对路径"
 
 #: f2/apps/douyin/cli.py f2/apps/douyin/help.py f2/apps/tiktok/cli.py
-#: f2/apps/twitter/cli.py f2/apps/weibo/cli.py
+#: f2/apps/twitter/cli.py f2/apps/weibo/cli.py f2/conf/config_wizard.py
 msgid "是否将作品保存到单独的文件夹"
 msgstr "是否将作品保存到单独的文件夹"
 
@@ -3556,12 +3556,720 @@ msgid "以及另外 {0} 个文件"
 msgstr "以及另外 {0} 个文件"
 
 #: f2/cli/wizard_command.py f2/conf/config_wizard.py
+msgid "交互式生成 F2 配置文件"
+msgstr "交互式生成 F2 配置文件"
+
+#: f2/cli/wizard_command.py f2/conf/config_wizard.py
 msgid "输出配置文件路径"
 msgstr "输出配置文件路径"
 
 #: f2/cli/wizard_command.py
 msgid "指定要配置的应用（可选）"
 msgstr "指定要配置的应用（可选）"
+
+#: f2/cli/wizard_command.py f2/conf/config_wizard.py
+#, python-brace-format
+msgid "📁 配置文件将保存至: {0}"
+msgstr "📁 配置文件将保存至: {0}"
+
+#: f2/cli/wizard_command.py
+#, python-brace-format
+msgid "🎯 将配置应用: {0}"
+msgstr "🎯 将配置应用: {0}"
+
+#: f2/cli/wizard_command.py f2/conf/config_wizard.py
+msgid "🎉 配置完成！享受使用 F2 吧！"
+msgstr "🎉 配置完成！享受使用 F2 吧！"
+
+#: f2/cli/wizard_command.py f2/conf/config_wizard.py
+msgid "❌ 配置已取消"
+msgstr "❌ 配置已取消"
+
+#: f2/cli/wizard_command.py f2/conf/config_wizard.py
+msgid "❌ 配置向导出现错误，请重试"
+msgstr "❌ 配置向导出现错误，请重试"
+
+#: f2/conf/config_wizard.py
+msgid "创建时间_作品文案"
+msgstr "创建时间_作品文案"
+
+#: f2/conf/config_wizard.py
+msgid "用户昵称_创建时间_作品文案"
+msgstr "用户昵称_创建时间_作品文案"
+
+#: f2/conf/config_wizard.py
+msgid "作品ID_作品文案"
+msgstr "作品ID_作品文案"
+
+#: f2/conf/config_wizard.py
+msgid "创建时间_作品ID"
+msgstr "创建时间_作品ID"
+
+#: f2/conf/config_wizard.py
+msgid "自定义模板"
+msgstr "自定义模板"
+
+#: f2/conf/config_wizard.py
+msgid "用户昵称_创建时间"
+msgstr "用户昵称_创建时间"
+
+#: f2/conf/config_wizard.py
+msgid "作品ID_用户昵称"
+msgstr "作品ID_用户昵称"
+
+#: f2/conf/config_wizard.py
+msgid "创建时间_微博文案"
+msgstr "创建时间_微博文案"
+
+#: f2/conf/config_wizard.py
+msgid "用户名_创建时间"
+msgstr "用户名_创建时间"
+
+#: f2/conf/config_wizard.py
+msgid "微博ID_微博文案"
+msgstr "微博ID_微博文案"
+
+#: f2/conf/config_wizard.py
+msgid "创建时间_推文文案"
+msgstr "创建时间_推文文案"
+
+#: f2/conf/config_wizard.py
+msgid "推文ID_推文文案"
+msgstr "推文ID_推文文案"
+
+#: f2/conf/config_wizard.py
+msgid "抖音 (DouYin)"
+msgstr "抖音 (DouYin)"
+
+#: f2/conf/config_wizard.py
+msgid "抖音短视频平台下载工具"
+msgstr "抖音短视频平台下载工具"
+
+#: f2/conf/config_wizard.py
+msgid "TikTok国际版短视频平台下载工具"
+msgstr "TikTok国际版短视频平台下载工具"
+
+#: f2/conf/config_wizard.py
+msgid "微博 (Weibo)"
+msgstr "微博 (Weibo)"
+
+#: f2/conf/config_wizard.py
+msgid "新浪微博社交平台下载工具"
+msgstr "新浪微博社交平台下载工具"
+
+#: f2/conf/config_wizard.py
+msgid "Twitter社交平台下载工具"
+msgstr "Twitter社交平台下载工具"
+
+#: f2/conf/config_wizard.py
+msgid "目标链接"
+msgstr "目标链接"
+
+#: f2/conf/config_wizard.py
+msgid "请输入要下载的链接"
+msgstr "请输入要下载的链接"
+
+#: f2/conf/config_wizard.py
+msgid "下载模式"
+msgstr "下载模式"
+
+#: f2/conf/config_wizard.py
+msgid "选择下载模式"
+msgstr "选择下载模式"
+
+#: f2/conf/config_wizard.py
+msgid "用户身份验证Cookie"
+msgstr "用户身份验证Cookie"
+
+#: f2/conf/config_wizard.py
+msgid "请输入Cookie（可留空后续配置）"
+msgstr "请输入Cookie（可留空后续配置）"
+
+#: f2/conf/config_wizard.py
+msgid "下载保存路径"
+msgstr "下载保存路径"
+
+#: f2/conf/config_wizard.py
+msgid "请输入下载保存路径"
+msgstr "请输入下载保存路径"
+
+#: f2/conf/config_wizard.py
+msgid "文件命名模板"
+msgstr "文件命名模板"
+
+#: f2/conf/config_wizard.py
+msgid "请输入文件命名模板"
+msgstr "请输入文件命名模板"
+
+#: f2/conf/config_wizard.py
+msgid "请求超时时间（秒）"
+msgstr "请求超时时间（秒）"
+
+#: f2/conf/config_wizard.py
+msgid "请输入请求超时时间"
+msgstr "请输入请求超时时间"
+
+#: f2/conf/config_wizard.py
+msgid "最大重试次数"
+msgstr "最大重试次数"
+
+#: f2/conf/config_wizard.py
+msgid "请输入最大重试次数"
+msgstr "请输入最大重试次数"
+
+#: f2/conf/config_wizard.py
+msgid "最大并发连接数"
+msgstr "最大并发连接数"
+
+#: f2/conf/config_wizard.py
+msgid "请输入最大并发连接数"
+msgstr "请输入最大并发连接数"
+
+#: f2/conf/config_wizard.py
+msgid "最大下载数量"
+msgstr "最大下载数量"
+
+#: f2/conf/config_wizard.py
+msgid "请输入最大下载数量（0表示不限制）"
+msgstr "请输入最大下载数量（0表示不限制）"
+
+#: f2/conf/config_wizard.py
+msgid "下载日期区间"
+msgstr "下载日期区间"
+
+#: f2/conf/config_wizard.py
+msgid "请输入下载日期区间"
+msgstr "请输入下载日期区间"
+
+#: f2/conf/config_wizard.py
+msgid "🎉 F2 配置向导"
+msgstr "🎉 F2 配置向导"
+
+#: f2/conf/config_wizard.py
+msgid "欢迎使用"
+msgstr "欢迎使用"
+
+#: f2/conf/config_wizard.py
+msgid "让配置变得简单"
+msgstr "让配置变得简单"
+
+#: f2/conf/config_wizard.py
+msgid ""
+"👋 欢迎使用 F2 配置向导！\n"
+"\n"
+"本向导将帮助您：\n"
+"• 选择要配置的应用平台\n"
+"• 交互式设置各项参数\n"
+"• 生成自定义配置文件\n"
+"• 快速开始使用 F2\n"
+"\n"
+"让我们开始吧！"
+msgstr ""
+"👋 欢迎使用 F2 配置向导！\n"
+"\n"
+"本向导将帮助您：\n"
+"• 选择要配置的应用平台\n"
+"• 交互式设置各项参数\n"
+"• 生成自定义配置文件\n"
+"• 快速开始使用 F2\n"
+"\n"
+"让我们开始吧！"
+
+#: f2/conf/config_wizard.py
+msgid "📱 [bold cyan]选择要配置的应用平台[/bold cyan]"
+msgstr "📱 [bold cyan]选择要配置的应用平台[/bold cyan]"
+
+#: f2/conf/config_wizard.py
+msgid "可用平台"
+msgstr "可用平台"
+
+#: f2/conf/config_wizard.py
+msgid "序号"
+msgstr "序号"
+
+#: f2/conf/config_wizard.py
+msgid "平台"
+msgstr "平台"
+
+#: f2/conf/config_wizard.py
+msgid "请输入要配置的平台序号（多个平台用逗号分隔，如: 1,2）"
+msgstr "请输入要配置的平台序号（多个平台用逗号分隔，如: 1,2）"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "❌ 无效选择: {0}"
+msgstr "❌ 无效选择: {0}"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "确认配置以下平台: {0}？"
+msgstr "确认配置以下平台: {0}？"
+
+#: f2/conf/config_wizard.py
+msgid "❌ 请至少选择一个平台"
+msgstr "❌ 请至少选择一个平台"
+
+#: f2/conf/config_wizard.py
+msgid "❌ 输入格式错误，请输入数字序号"
+msgstr "❌ 输入格式错误，请输入数字序号"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "选择应用时出错: {0}"
+msgstr "选择应用时出错: {0}"
+
+#: f2/conf/config_wizard.py
+msgid "❌ 选择出错，请重试"
+msgstr "❌ 选择出错，请重试"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "⚙️  [bold cyan]配置 {0}[/bold cyan]"
+msgstr "⚙️  [bold cyan]配置 {0}[/bold cyan]"
+
+#: f2/conf/config_wizard.py
+msgid "📋 [yellow]必需配置项[/yellow]"
+msgstr "📋 [yellow]必需配置项[/yellow]"
+
+#: f2/conf/config_wizard.py
+msgid "是否配置可选项（推荐）？"
+msgstr "是否配置可选项（推荐）？"
+
+#: f2/conf/config_wizard.py
+msgid "📋 [yellow]可选配置项[/yellow]"
+msgstr "📋 [yellow]可选配置项[/yellow]"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "配置 {0} ({1})?"
+msgstr "配置 {0} ({1})?"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "请输入 {0}"
+msgstr "请输入 {0}"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "示例: [dim]{0}[/dim]"
+msgstr "示例: [dim]{0}[/dim]"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "配置字段 {0} 时出错: {1}"
+msgstr "配置字段 {0} 时出错: {1}"
+
+#: f2/conf/config_wizard.py
+msgid "可用模式:"
+msgstr "可用模式:"
+
+#: f2/conf/config_wizard.py
+msgid "请选择模式序号"
+msgstr "请选择模式序号"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "❌ 请输入 1-{0} 之间的数字"
+msgstr "❌ 请输入 1-{0} 之间的数字"
+
+#: f2/conf/config_wizard.py
+msgid "❌ 请输入有效的数字"
+msgstr "❌ 请输入有效的数字"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "配置模式时出错: {0}"
+msgstr "配置模式时出错: {0}"
+
+#: f2/conf/config_wizard.py
+msgid "用户主页作品"
+msgstr "用户主页作品"
+
+#: f2/conf/config_wizard.py
+msgid "用户点赞作品"
+msgstr "用户点赞作品"
+
+#: f2/conf/config_wizard.py
+msgid "直播相关"
+msgstr "直播相关"
+
+#: f2/conf/config_wizard.py
+msgid "用户收藏音乐"
+msgstr "用户收藏音乐"
+
+#: f2/conf/config_wizard.py
+msgid "单个作品详情"
+msgstr "单个作品详情"
+
+#: f2/conf/config_wizard.py
+msgid "推荐内容"
+msgstr "推荐内容"
+
+#: f2/conf/config_wizard.py
+msgid "好友作品"
+msgstr "好友作品"
+
+#: f2/conf/config_wizard.py
+msgid "收藏作品"
+msgstr "收藏作品"
+
+#: f2/conf/config_wizard.py
+msgid "收藏夹作品"
+msgstr "收藏夹作品"
+
+#: f2/conf/config_wizard.py
+msgid "合集列表作品"
+msgstr "合集列表作品"
+
+#: f2/conf/config_wizard.py
+msgid "相关推荐作品"
+msgstr "相关推荐作品"
+
+#: f2/conf/config_wizard.py
+msgid "搜索作品"
+msgstr "搜索作品"
+
+#: f2/conf/config_wizard.py
+msgid "用户书签推文"
+msgstr "用户书签推文"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "{0} (示例: {1})"
+msgstr "{0} (示例: {1})"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "配置选择字段 {0} 时出错: {1}"
+msgstr "配置选择字段 {0} 时出错: {1}"
+
+#: f2/conf/config_wizard.py
+msgid "可用命名模板:"
+msgstr "可用命名模板:"
+
+#: f2/conf/config_wizard.py
+msgid "请选择命名模板序号"
+msgstr "请选择命名模板序号"
+
+#: f2/conf/config_wizard.py
+msgid "请输入自定义命名模板"
+msgstr "请输入自定义命名模板"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "💡 提示: 使用默认模板 '{0}'"
+msgstr "💡 提示: 使用默认模板 '{0}'"
+
+#: f2/conf/config_wizard.py
+msgid "常用路径选项:"
+msgstr "常用路径选项:"
+
+#: f2/conf/config_wizard.py
+msgid "当前目录"
+msgstr "当前目录"
+
+#: f2/conf/config_wizard.py
+msgid "Download文件夹"
+msgstr "Download文件夹"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "Download/{0}文件夹"
+msgstr "Download/{0}文件夹"
+
+#: f2/conf/config_wizard.py
+msgid "用户下载文件夹"
+msgstr "用户下载文件夹"
+
+#: f2/conf/config_wizard.py
+msgid "D盘下载文件夹"
+msgstr "D盘下载文件夹"
+
+#: f2/conf/config_wizard.py
+msgid "自定义路径"
+msgstr "自定义路径"
+
+#: f2/conf/config_wizard.py
+msgid "请选择路径选项"
+msgstr "请选择路径选项"
+
+#: f2/conf/config_wizard.py
+msgid "请输入自定义路径"
+msgstr "请输入自定义路径"
+
+#: f2/conf/config_wizard.py
+msgid "💡 提示: 使用默认路径 'Download'"
+msgstr "💡 提示: 使用默认路径 'Download'"
+
+#: f2/conf/config_wizard.py
+msgid "Cookie配置选项:"
+msgstr "Cookie配置选项:"
+
+#: f2/conf/config_wizard.py
+msgid "1. 暂时跳过（后续手动配置）"
+msgstr "1. 暂时跳过（后续手动配置）"
+
+#: f2/conf/config_wizard.py
+msgid "2. 从浏览器复制Cookie"
+msgstr "2. 从浏览器复制Cookie"
+
+#: f2/conf/config_wizard.py
+msgid "3. 从文件读取Cookie"
+msgstr "3. 从文件读取Cookie"
+
+#: f2/conf/config_wizard.py
+msgid "请选择Cookie配置方式"
+msgstr "请选择Cookie配置方式"
+
+#: f2/conf/config_wizard.py
+msgid "💡 提示: 可在配置文件中手动添加Cookie"
+msgstr "💡 提示: 可在配置文件中手动添加Cookie"
+
+#: f2/conf/config_wizard.py
+msgid "📋 请从浏览器开发者工具中复制Cookie:"
+msgstr "📋 请从浏览器开发者工具中复制Cookie:"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "1. 打开 {0} 网页"
+msgstr "1. 打开 {0} 网页"
+
+#: f2/conf/config_wizard.py
+msgid "2. 按F12打开开发者工具"
+msgstr "2. 按F12打开开发者工具"
+
+#: f2/conf/config_wizard.py
+msgid "3. 在Network标签中找到请求"
+msgstr "3. 在Network标签中找到请求"
+
+#: f2/conf/config_wizard.py
+msgid "4. 复制Cookie字段的值"
+msgstr "4. 复制Cookie字段的值"
+
+#: f2/conf/config_wizard.py
+msgid "请粘贴Cookie"
+msgstr "请粘贴Cookie"
+
+#: f2/conf/config_wizard.py
+msgid "请输入Cookie文件路径"
+msgstr "请输入Cookie文件路径"
+
+#: f2/conf/config_wizard.py
+msgid "💡 提示: 已跳过Cookie配置"
+msgstr "💡 提示: 已跳过Cookie配置"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "✅ 已读取Cookie文件: {0} 字符"
+msgstr "✅ 已读取Cookie文件: {0} 字符"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "❌ 文件不存在: {0}"
+msgstr "❌ 文件不存在: {0}"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "❌ 没有权限读取文件: {0}"
+msgstr "❌ 没有权限读取文件: {0}"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "❌ 读取文件失败: {0}"
+msgstr "❌ 读取文件失败: {0}"
+
+#: f2/conf/config_wizard.py
+msgid "❌ 请输入 1-3 之间的数字"
+msgstr "❌ 请输入 1-3 之间的数字"
+
+#: f2/conf/config_wizard.py
+msgid "下载数量选项:"
+msgstr "下载数量选项:"
+
+#: f2/conf/config_wizard.py
+msgid "不限制数量"
+msgstr "不限制数量"
+
+#: f2/conf/config_wizard.py
+msgid "10个作品"
+msgstr "10个作品"
+
+#: f2/conf/config_wizard.py
+msgid "50个作品"
+msgstr "50个作品"
+
+#: f2/conf/config_wizard.py
+msgid "100个作品"
+msgstr "100个作品"
+
+#: f2/conf/config_wizard.py
+msgid "500个作品"
+msgstr "500个作品"
+
+#: f2/conf/config_wizard.py
+msgid "自定义数量"
+msgstr "自定义数量"
+
+#: f2/conf/config_wizard.py
+msgid "请选择下载数量"
+msgstr "请选择下载数量"
+
+#: f2/conf/config_wizard.py
+msgid "请输入自定义数量"
+msgstr "请输入自定义数量"
+
+#: f2/conf/config_wizard.py
+msgid "超时时间选项:"
+msgstr "超时时间选项:"
+
+#: f2/conf/config_wizard.py
+msgid "5秒 (较快网络)"
+msgstr "5秒 (较快网络)"
+
+#: f2/conf/config_wizard.py
+msgid "10秒 (推荐)"
+msgstr "10秒 (推荐)"
+
+#: f2/conf/config_wizard.py
+msgid "30秒 (慢速网络)"
+msgstr "30秒 (慢速网络)"
+
+#: f2/conf/config_wizard.py
+msgid "60秒 (很慢网络)"
+msgstr "60秒 (很慢网络)"
+
+#: f2/conf/config_wizard.py
+msgid "自定义时间"
+msgstr "自定义时间"
+
+#: f2/conf/config_wizard.py
+msgid "请选择超时时间"
+msgstr "请选择超时时间"
+
+#: f2/conf/config_wizard.py
+msgid "请输入自定义超时时间(秒)"
+msgstr "请输入自定义超时时间(秒)"
+
+#: f2/conf/config_wizard.py
+msgid "日期区间选项:"
+msgstr "日期区间选项:"
+
+#: f2/conf/config_wizard.py
+msgid "下载所有作品"
+msgstr "下载所有作品"
+
+#: f2/conf/config_wizard.py
+msgid "2025年全年"
+msgstr "2025年全年"
+
+#: f2/conf/config_wizard.py
+msgid "2024年全年"
+msgstr "2024年全年"
+
+#: f2/conf/config_wizard.py
+msgid "最近一个月"
+msgstr "最近一个月"
+
+#: f2/conf/config_wizard.py
+msgid "最近一周"
+msgstr "最近一周"
+
+#: f2/conf/config_wizard.py
+msgid "自定义日期区间"
+msgstr "自定义日期区间"
+
+#: f2/conf/config_wizard.py
+msgid "请选择日期区间"
+msgstr "请选择日期区间"
+
+#: f2/conf/config_wizard.py
+msgid "请输入日期区间格式: YYYY-MM-DD|YYYY-MM-DD"
+msgstr "请输入日期区间格式: YYYY-MM-DD|YYYY-MM-DD"
+
+#: f2/conf/config_wizard.py
+msgid "示例: 2025-01-01|2025-12-31"
+msgstr "示例: 2025-01-01|2025-12-31"
+
+#: f2/conf/config_wizard.py
+msgid "请输入自定义日期区间"
+msgstr "请输入自定义日期区间"
+
+#: f2/conf/config_wizard.py
+msgid "💡 提示: 使用默认值 'all' (下载所有作品)"
+msgstr "💡 提示: 使用默认值 'all' (下载所有作品)"
+
+#: f2/conf/config_wizard.py
+msgid "❌ 日期格式错误，请使用 YYYY-MM-DD 格式"
+msgstr "❌ 日期格式错误，请使用 YYYY-MM-DD 格式"
+
+#: f2/conf/config_wizard.py
+msgid "❌ 格式错误，请使用 开始日期|结束日期 格式"
+msgstr "❌ 格式错误，请使用 开始日期|结束日期 格式"
+
+#: f2/conf/config_wizard.py
+msgid "📋 [bold cyan]配置预览[/bold cyan]"
+msgstr "📋 [bold cyan]配置预览[/bold cyan]"
+
+#: f2/conf/config_wizard.py
+msgid "确认以上配置？"
+msgstr "确认以上配置？"
+
+#: f2/conf/config_wizard.py
+msgid "F2 配置文件"
+msgstr "F2 配置文件"
+
+#: f2/conf/config_wizard.py
+msgid "由配置向导生成"
+msgstr "由配置向导生成"
+
+#: f2/conf/config_wizard.py
+msgid "更多信息请访问: https://f2.wiki/"
+msgstr "更多信息请访问: https://f2.wiki/"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "✅ [bold green]配置文件已保存至: {0}[/bold green]"
+msgstr "✅ [bold green]配置文件已保存至: {0}[/bold green]"
+
+#: f2/conf/config_wizard.py
+msgid "🚀 [bold cyan]使用方法[/bold cyan]"
+msgstr "🚀 [bold cyan]使用方法[/bold cyan]"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "❌ [bold red]保存配置文件失败: {0}[/bold red]"
+msgstr "❌ [bold red]保存配置文件失败: {0}[/bold red]"
+
+#: f2/conf/config_wizard.py
+msgid "是否重新配置？"
+msgstr "是否重新配置？"
+
+#: f2/conf/config_wizard.py
+msgid "请输入配置文件保存路径"
+msgstr "请输入配置文件保存路径"
+
+#: f2/conf/config_wizard.py
+msgid "❌ 配置已中断"
+msgstr "❌ 配置已中断"
+
+#: f2/conf/config_wizard.py
+msgid "❌ 配置向导出现错误"
+msgstr "❌ 配置向导出现错误"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "配置向导异常详情: {0}"
+msgstr "配置向导异常详情: {0}"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "配置向导异常: {0}"
+msgstr "配置向导异常: {0}"
+
+#: f2/conf/config_wizard.py
+#, python-brace-format
+msgid "配置向导出现异常: {0}"
+msgstr "配置向导出现异常: {0}"
 
 #: f2/crawlers/base_crawler.py
 msgid "已关闭 TLS 证书校验，请仅在受信任的调试代理环境中使用"

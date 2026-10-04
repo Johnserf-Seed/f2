@@ -4,7 +4,7 @@ import datetime
 import sys
 import traceback
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import click
 from rich.console import Console
@@ -25,35 +25,37 @@ class ConfigWizard:
     配置向导类，提供交互式配置文件生成功能
     """
 
-    # 各平台的命名模板选项，字段需与对应应用 format_file_name 支持的字段一致
-    NAMING_TEMPLATES: Dict[str, List[tuple]] = {
-        "douyin": [
-            ("{create}_{desc}", "创建时间_作品文案"),
-            ("{nickname}_{create}_{desc}", "用户昵称_创建时间_作品文案"),
-            ("{aweme_id}_{desc}", "作品ID_作品文案"),
-            ("{create}_{aweme_id}", "创建时间_作品ID"),
-            ("custom", "自定义模板"),
-        ],
-        "tiktok": [
-            ("{create}_{desc}", "创建时间_作品文案"),
-            ("{nickname}_{create}", "用户昵称_创建时间"),
-            ("{aweme_id}_{nickname}", "作品ID_用户昵称"),
-            ("{create}_{aweme_id}", "创建时间_作品ID"),
-            ("custom", "自定义模板"),
-        ],
-        "weibo": [
-            ("{create}_{desc}", "创建时间_微博文案"),
-            ("{nickname}_{create}", "用户名_创建时间"),
-            ("{weibo_id}_{desc}", "微博ID_微博文案"),
-            ("custom", "自定义模板"),
-        ],
-        "twitter": [
-            ("{create}_{desc}", "创建时间_推文文案"),
-            ("{nickname}_{create}", "用户昵称_创建时间"),
-            ("{tweet_id}_{desc}", "推文ID_推文文案"),
-            ("custom", "自定义模板"),
-        ],
-    }
+    @staticmethod
+    def naming_templates() -> Dict[str, List[Tuple[str, str]]]:
+        """各平台的命名模板选项，字段需与对应应用 format_file_name 支持的字段一致"""
+        return {
+            "douyin": [
+                ("{create}_{desc}", _("创建时间_作品文案")),
+                ("{nickname}_{create}_{desc}", _("用户昵称_创建时间_作品文案")),
+                ("{aweme_id}_{desc}", _("作品ID_作品文案")),
+                ("{create}_{aweme_id}", _("创建时间_作品ID")),
+                ("custom", _("自定义模板")),
+            ],
+            "tiktok": [
+                ("{create}_{desc}", _("创建时间_作品文案")),
+                ("{nickname}_{create}", _("用户昵称_创建时间")),
+                ("{aweme_id}_{nickname}", _("作品ID_用户昵称")),
+                ("{create}_{aweme_id}", _("创建时间_作品ID")),
+                ("custom", _("自定义模板")),
+            ],
+            "weibo": [
+                ("{create}_{desc}", _("创建时间_微博文案")),
+                ("{nickname}_{create}", _("用户名_创建时间")),
+                ("{weibo_id}_{desc}", _("微博ID_微博文案")),
+                ("custom", _("自定义模板")),
+            ],
+            "twitter": [
+                ("{create}_{desc}", _("创建时间_推文文案")),
+                ("{nickname}_{create}", _("用户昵称_创建时间")),
+                ("{tweet_id}_{desc}", _("推文ID_推文文案")),
+                ("custom", _("自定义模板")),
+            ],
+        }
 
     def __init__(self):
         self.console = Console()
@@ -68,8 +70,8 @@ class ConfigWizard:
         # 应用信息配置
         self.app_info = {
             "douyin": {
-                "display_name": "抖音 (DouYin)",
-                "description": "抖音短视频平台下载工具",
+                "display_name": _("抖音 (DouYin)"),
+                "description": _("抖音短视频平台下载工具"),
                 "modes": [
                     "one",
                     "post",
@@ -81,7 +83,6 @@ class ConfigWizard:
                     "live",
                     "related",
                     "friend",
-                    "feed",
                 ],
                 "required_fields": ["url", "mode", "cookie"],
                 "optional_fields": [
@@ -96,7 +97,7 @@ class ConfigWizard:
             },
             "tiktok": {
                 "display_name": "TikTok",
-                "description": "TikTok国际版短视频平台下载工具",
+                "description": _("TikTok国际版短视频平台下载工具"),
                 "modes": [
                     "one",
                     "post",
@@ -118,8 +119,8 @@ class ConfigWizard:
                 ],
             },
             "weibo": {
-                "display_name": "微博 (Weibo)",
-                "description": "新浪微博社交平台下载工具",
+                "display_name": _("微博 (Weibo)"),
+                "description": _("新浪微博社交平台下载工具"),
                 "modes": [
                     "one",
                     "post",
@@ -137,7 +138,7 @@ class ConfigWizard:
             },
             "twitter": {
                 "display_name": "Twitter (X)",
-                "description": "Twitter社交平台下载工具",
+                "description": _("Twitter社交平台下载工具"),
                 "modes": [
                     "one",
                     "post",
@@ -160,69 +161,69 @@ class ConfigWizard:
         # 配置项详细说明
         self.field_descriptions: Dict[str, Dict[str, Any]] = {
             "url": {
-                "description": "目标链接",
-                "prompt": "请输入要下载的链接",
+                "description": _("目标链接"),
+                "prompt": _("请输入要下载的链接"),
                 "example": "https://v.douyin.com/...",
                 "type": "str",
             },
             "mode": {
-                "description": "下载模式",
-                "prompt": "选择下载模式",
+                "description": _("下载模式"),
+                "prompt": _("选择下载模式"),
                 "type": "choice",
             },
             "cookie": {
-                "description": "用户身份验证Cookie",
-                "prompt": "请输入Cookie（可留空后续配置）",
+                "description": _("用户身份验证Cookie"),
+                "prompt": _("请输入Cookie（可留空后续配置）"),
                 "example": "sessionid=...; csrftoken=...",
                 "type": "choice",
                 "required": False,
             },
             "path": {
-                "description": "下载保存路径",
-                "prompt": "请输入下载保存路径",
+                "description": _("下载保存路径"),
+                "prompt": _("请输入下载保存路径"),
                 "example": "Download",
                 "default": "Download",
                 "type": "choice",
             },
             "naming": {
-                "description": "文件命名模板",
-                "prompt": "请输入文件命名模板",
+                "description": _("文件命名模板"),
+                "prompt": _("请输入文件命名模板"),
                 "example": "{create}_{desc}",
                 "type": "choice",
             },
             "folderize": {
-                "description": "是否按用户创建文件夹",
-                "prompt": "是否按用户创建文件夹",
+                "description": _("是否将作品保存到单独的文件夹"),
+                "prompt": _("是否将作品保存到单独的文件夹"),
                 "default": True,
                 "type": "bool",
             },
             "timeout": {
-                "description": "请求超时时间（秒）",
-                "prompt": "请输入请求超时时间",
+                "description": _("请求超时时间（秒）"),
+                "prompt": _("请输入请求超时时间"),
                 "default": 10,
                 "type": "choice",
             },
             "max_retries": {
-                "description": "最大重试次数",
-                "prompt": "请输入最大重试次数",
+                "description": _("最大重试次数"),
+                "prompt": _("请输入最大重试次数"),
                 "default": 3,
                 "type": "int",
             },
             "max_connections": {
-                "description": "最大并发连接数",
-                "prompt": "请输入最大并发连接数",
+                "description": _("最大并发连接数"),
+                "prompt": _("请输入最大并发连接数"),
                 "default": 5,
                 "type": "int",
             },
             "max_counts": {
-                "description": "最大下载数量",
-                "prompt": "请输入最大下载数量（0表示不限制）",
+                "description": _("最大下载数量"),
+                "prompt": _("请输入最大下载数量（0表示不限制）"),
                 "default": 0,
                 "type": "choice",
             },
             "interval": {
-                "description": "下载日期区间",
-                "prompt": "请输入下载日期区间",
+                "description": _("下载日期区间"),
+                "prompt": _("请输入下载日期区间"),
                 "example": "2025-01-01|2025-12-31",
                 "default": "all",
                 "type": "choice",
@@ -231,40 +232,32 @@ class ConfigWizard:
 
     def show_welcome(self):
         """显示欢迎界面"""
-        welcome_text = Text("🎉 F2 配置向导", style="bold magenta")
+        welcome_text = Text(_("🎉 F2 配置向导"), style="bold magenta")
         welcome_panel = Panel(
             welcome_text,
-            title="欢迎使用",
-            subtitle="让配置变得简单",
+            title=_("欢迎使用"),
+            subtitle=_("让配置变得简单"),
             border_style="magenta",
         )
         self.console.print(welcome_panel)
         self.console.print()
 
-        intro_text = """
-👋 欢迎使用 F2 配置向导！
-
-本向导将帮助您：
-• 选择要配置的应用平台
-• 交互式设置各项参数
-• 生成自定义配置文件
-• 快速开始使用 F2
-
-让我们开始吧！
-        """
-        self.console.print(intro_text.strip())
+        intro_text = _(
+            "👋 欢迎使用 F2 配置向导！\n\n本向导将帮助您：\n• 选择要配置的应用平台\n• 交互式设置各项参数\n• 生成自定义配置文件\n• 快速开始使用 F2\n\n让我们开始吧！"
+        )
+        self.console.print(intro_text)
         self.console.print()
 
     def select_apps(self) -> List[str]:
         """选择要配置的应用"""
-        self.console.print("📱 [bold cyan]选择要配置的应用平台[/bold cyan]")
+        self.console.print(_("📱 [bold cyan]选择要配置的应用平台[/bold cyan]"))
         self.console.print()
 
         # 显示可用应用列表
-        table = Table(title="可用平台")
-        table.add_column("序号", style="cyan")
-        table.add_column("平台", style="magenta")
-        table.add_column("描述", style="green")
+        table = Table(title=_("可用平台"))
+        table.add_column(_("序号"), style="cyan")
+        table.add_column(_("平台"), style="magenta")
+        table.add_column(_("描述"), style="green")
 
         apps = list(self.app_info.keys())
         for i, app in enumerate(apps, 1):
@@ -278,7 +271,8 @@ class ConfigWizard:
         while True:
             try:
                 choice = Prompt.ask(
-                    "请输入要配置的平台序号（多个平台用逗号分隔，如: 1,2）", default="1"
+                    _("请输入要配置的平台序号（多个平台用逗号分隔，如: 1,2）"),
+                    default="1",
                 )
 
                 selected_indices = [int(x.strip()) for x in choice.split(",")]
@@ -288,7 +282,7 @@ class ConfigWizard:
                     if 1 <= idx <= len(apps):
                         selected_apps.append(apps[idx - 1])
                     else:
-                        self.console.print(f"❌ 无效选择: {idx}")
+                        self.console.print(_("❌ 无效选择: {0}").format(idx))
                         continue
 
                 if selected_apps:
@@ -296,26 +290,28 @@ class ConfigWizard:
                     selected_names: List[str] = [
                         str(self.app_info[app]["display_name"]) for app in selected_apps
                     ]
-                    if Confirm.ask(f"确认配置以下平台: {', '.join(selected_names)}？"):
+                    if Confirm.ask(
+                        _("确认配置以下平台: {0}？").format(", ".join(selected_names))
+                    ):
                         return selected_apps
                 else:
-                    self.console.print("❌ 请至少选择一个平台")
+                    self.console.print(_("❌ 请至少选择一个平台"))
 
             except (KeyboardInterrupt, EOFError):
                 # 重新抛出中断信号
                 raise
             except ValueError:
-                self.console.print("❌ 输入格式错误，请输入数字序号")
+                self.console.print(_("❌ 输入格式错误，请输入数字序号"))
             except Exception as e:
-                logger.debug(f"选择应用时出错: {e}")
-                self.console.print("❌ 选择出错，请重试")
+                logger.debug(_("选择应用时出错: {0}").format(e))
+                self.console.print(_("❌ 选择出错，请重试"))
 
     def configure_app(self, app_name: str) -> Dict[str, Any]:
         """配置单个应用"""
         app_info = self.app_info[app_name]
         self.console.print()
         self.console.print(
-            f"⚙️  [bold cyan]配置 {app_info['display_name']}[/bold cyan]"
+            _("⚙️  [bold cyan]配置 {0}[/bold cyan]").format(app_info["display_name"])
         )
         self.console.print()
 
@@ -331,7 +327,7 @@ class ConfigWizard:
             app_defaults = {}
 
         # 配置必需字段
-        self.console.print("📋 [yellow]必需配置项[/yellow]")
+        self.console.print(_("📋 [yellow]必需配置项[/yellow]"))
         for field in app_info["required_fields"]:
             config[field] = self._configure_field(
                 field, app_name, app_defaults.get(field)
@@ -339,11 +335,16 @@ class ConfigWizard:
 
         # 询问是否配置可选字段
         self.console.print()
-        if Confirm.ask("是否配置可选项（推荐）？", default=True):
-            self.console.print("📋 [yellow]可选配置项[/yellow]")
+        if Confirm.ask(_("是否配置可选项（推荐）？"), default=True):
+            self.console.print(_("📋 [yellow]可选配置项[/yellow]"))
             for field in app_info["optional_fields"]:
                 if Confirm.ask(
-                    f"配置 {field} ({self.field_descriptions.get(field, {}).get('description', field)})?"
+                    _("配置 {0} ({1})?").format(
+                        field,
+                        self.field_descriptions.get(field, {}).get(
+                            "description", field
+                        ),
+                    )
                 ):
                     config[field] = self._configure_field(
                         field, app_name, app_defaults.get(field)
@@ -359,14 +360,14 @@ class ConfigWizard:
             field_info: Dict[str, Any] = self.field_descriptions.get(field_name, {})
             field_type = field_info.get("type", "str")
             description = field_info.get("description", field_name)
-            prompt_text = field_info.get("prompt", f"请输入 {field_name}")
+            prompt_text = field_info.get("prompt", _("请输入 {0}").format(field_name))
             example = field_info.get("example")
             default = field_info.get("default", default_value)
 
             # 显示字段说明
             self.console.print(f"  🔧 {description}")
             if example:
-                self.console.print(f"     示例: [dim]{example}[/dim]")
+                self.console.print("     " + _("示例: [dim]{0}[/dim]").format(example))
 
             # 特殊处理不同类型的字段
             if field_name == "mode":
@@ -386,7 +387,7 @@ class ConfigWizard:
             # 重新抛出中断信号
             raise
         except Exception as e:
-            logger.debug(f"配置字段 {field_name} 时出错: {e}")
+            logger.debug(_("配置字段 {0} 时出错: {1}").format(field_name, e))
             # 返回默认值
             return default_value
 
@@ -394,48 +395,52 @@ class ConfigWizard:
         """配置下载模式"""
         modes = self.app_info[app_name]["modes"]
         try:
-            self.console.print("     可用模式:")
+            self.console.print("     " + _("可用模式:"))
             for i, mode in enumerate(modes, 1):
                 mode_desc = self._get_mode_description(mode)
                 self.console.print(f"       {i}. {mode} - {mode_desc}")
 
             while True:
                 try:
-                    choice = IntPrompt.ask("     请选择模式序号", default=1)
+                    choice = IntPrompt.ask("     " + _("请选择模式序号"), default=1)
                     if 1 <= choice <= len(modes):
                         return modes[choice - 1]
                     else:
-                        self.console.print(f"     ❌ 请输入 1-{len(modes)} 之间的数字")
+                        self.console.print(
+                            "     " + _("❌ 请输入 1-{0} 之间的数字").format(len(modes))
+                        )
                 except (KeyboardInterrupt, EOFError):
                     # 重新抛出中断信号
                     raise
                 except Exception:
-                    self.console.print("     ❌ 请输入有效的数字")
+                    self.console.print("     " + _("❌ 请输入有效的数字"))
         except (KeyboardInterrupt, EOFError):
             # 重新抛出中断信号
             raise
         except Exception as e:
-            logger.debug(f"配置模式时出错: {e}")
+            logger.debug(_("配置模式时出错: {0}").format(e))
             # 返回第一个模式作为默认值
             return modes[0] if modes else "post"
 
     def _get_mode_description(self, mode: str) -> str:
         """获取模式描述"""
         descriptions = {
-            "post": "用户主页作品",
-            "like": "用户点赞作品",
-            "live": "直播相关",
-            "music": "用户收藏音乐",
-            "one": "单个作品详情",
-            "feed": "推荐内容",
-            "friend": "好友作品",
-            "collection": "收藏作品",
-            "collects": "收藏夹作品",
-            "mix": "合集列表作品",
+            "post": _("用户主页作品"),
+            "like": _("用户点赞作品"),
+            "live": _("直播相关"),
+            "music": _("用户收藏音乐"),
+            "one": _("单个作品详情"),
+            "feed": _("推荐内容"),
+            "friend": _("好友作品"),
+            "collection": _("收藏作品"),
+            "collects": _("收藏夹作品"),
+            "mix": _("合集列表作品"),
+            "related": _("相关推荐作品"),
             # tk
-            "collect": "收藏夹作品",
+            "collect": _("收藏作品"),
+            "search": _("搜索作品"),
             # x
-            "bookmark": "用户书签推文",
+            "bookmark": _("用户书签推文"),
         }
         return descriptions.get(mode, mode)
 
@@ -459,18 +464,22 @@ class ConfigWizard:
                 return self._configure_interval_field(app_name)
             else:
                 # 默认的文本输入
-                prompt_text = field_info.get("prompt", f"请输入 {field_name}")
+                prompt_text = field_info.get(
+                    "prompt", _("请输入 {0}").format(field_name)
+                )
                 example = field_info.get("example")
 
                 if example:
-                    return Prompt.ask(f"     {prompt_text} (示例: {example})")
+                    return Prompt.ask(
+                        "     " + _("{0} (示例: {1})").format(prompt_text, example)
+                    )
                 else:
                     return Prompt.ask(f"     {prompt_text}")
         except (KeyboardInterrupt, EOFError):
             # 重新抛出中断信号
             raise
         except Exception as e:
-            logger.debug(f"配置选择字段 {field_name} 时出错: {e}")
+            logger.debug(_("配置选择字段 {0} 时出错: {1}").format(field_name, e))
             # 返回默认值 - 创建一个安全的默认字典
             field_info_safe: Dict[str, Any] = self.field_descriptions.get(
                 field_name, {}
@@ -479,29 +488,33 @@ class ConfigWizard:
 
     def _configure_naming_template(self, app_name: str) -> str:
         """配置文件命名模板"""
-        self.console.print("     可用命名模板:")
+        self.console.print("     " + _("可用命名模板:"))
 
-        app_templates = self.NAMING_TEMPLATES.get(
-            app_name, self.NAMING_TEMPLATES["douyin"]
-        )
+        templates = self.naming_templates()
+        app_templates = templates.get(app_name, templates["douyin"])
 
         for i, (template, desc) in enumerate(app_templates, 1):
             self.console.print(f"       {i}. {template} - {desc}")
 
         while True:
             try:
-                choice = IntPrompt.ask("     请选择命名模板序号", default=1)
+                choice = IntPrompt.ask("     " + _("请选择命名模板序号"), default=1)
                 if 1 <= choice <= len(app_templates):
-                    selected_template, _ = app_templates[choice - 1]
+                    selected_template, _desc = app_templates[choice - 1]
                     if selected_template == "custom":
-                        custom_template = Prompt.ask("     请输入自定义命名模板")
+                        custom_template = Prompt.ask(
+                            "     " + _("请输入自定义命名模板")
+                        )
                         # 如果用户输入为空，使用默认模板
                         if not custom_template or custom_template.strip() == "":
                             default_template = app_templates[0][
                                 0
                             ]  # 使用第一个模板作为默认
                             self.console.print(
-                                f"     💡 提示: 使用默认模板 '{default_template}'"
+                                "     "
+                                + _("💡 提示: 使用默认模板 '{0}'").format(
+                                    default_template
+                                )
                             )
                             return default_template
                         return custom_template.strip()
@@ -509,27 +522,31 @@ class ConfigWizard:
                         return selected_template
                 else:
                     self.console.print(
-                        f"     ❌ 请输入 1-{len(app_templates)} 之间的数字"
+                        "     "
+                        + _("❌ 请输入 1-{0} 之间的数字").format(len(app_templates))
                     )
             except EOFError:
                 # 输入已结束（例如在管道中运行）时交给 run 处理，此前这里会无限重试
                 raise
             except Exception:
-                self.console.print("     ❌ 请输入有效的数字")
+                self.console.print("     " + _("❌ 请输入有效的数字"))
 
     def _configure_path_field(self, app_name: str) -> str:
         """配置下载路径"""
-        self.console.print("     常用路径选项:")
+        self.console.print("     " + _("常用路径选项:"))
 
         common_paths = [
-            (".", "当前目录"),
-            ("Download", "Download文件夹"),
-            (f"Download/{app_name.title()}", f"Download/{app_name.title()}文件夹"),
-            ("~/Downloads", "用户下载文件夹"),
+            (".", _("当前目录")),
+            ("Download", _("Download文件夹")),
+            (
+                f"Download/{app_name.title()}",
+                _("Download/{0}文件夹").format(app_name.title()),
+            ),
+            ("~/Downloads", _("用户下载文件夹")),
         ]
         if sys.platform == "win32":
-            common_paths.append(("D:/Downloads", "D盘下载文件夹"))
-        common_paths.append(("custom", "自定义路径"))
+            common_paths.append(("D:/Downloads", _("D盘下载文件夹")))
+        common_paths.append(("custom", _("自定义路径")))
 
         for i, (path, desc) in enumerate(common_paths, 1):
             self.console.print(f"       {i}. {path} - {desc}")
@@ -537,91 +554,109 @@ class ConfigWizard:
         while True:
             try:
                 choice = IntPrompt.ask(
-                    "     请选择路径选项", default=2
+                    "     " + _("请选择路径选项"), default=2
                 )  # 默认选择Download
                 if 1 <= choice <= len(common_paths):
-                    selected_path, _ = common_paths[choice - 1]
+                    selected_path, _desc = common_paths[choice - 1]
                     if selected_path == "custom":
-                        custom_path = Prompt.ask("     请输入自定义路径")
+                        custom_path = Prompt.ask("     " + _("请输入自定义路径"))
                         # 如果用户输入为空，使用默认路径
                         if not custom_path or custom_path.strip() == "":
-                            self.console.print("     💡 提示: 使用默认路径 'Download'")
+                            self.console.print(
+                                "     " + _("💡 提示: 使用默认路径 'Download'")
+                            )
                             return "Download"
                         return custom_path.strip()
                     else:
                         return selected_path
                 else:
                     self.console.print(
-                        f"     ❌ 请输入 1-{len(common_paths)} 之间的数字"
+                        "     "
+                        + _("❌ 请输入 1-{0} 之间的数字").format(len(common_paths))
                     )
             except EOFError:
                 # 输入已结束（例如在管道中运行）时交给 run 处理，此前这里会无限重试
                 raise
             except Exception:
-                self.console.print("     ❌ 请输入有效的数字")
+                self.console.print("     " + _("❌ 请输入有效的数字"))
 
     def _configure_cookie_field(self, app_name: str) -> str:
         """配置Cookie字段"""
-        self.console.print("     Cookie配置选项:")
-        self.console.print("       1. 暂时跳过（后续手动配置）")
-        self.console.print("       2. 从浏览器复制Cookie")
-        self.console.print("       3. 从文件读取Cookie")
+        self.console.print("     " + _("Cookie配置选项:"))
+        self.console.print("       " + _("1. 暂时跳过（后续手动配置）"))
+        self.console.print("       " + _("2. 从浏览器复制Cookie"))
+        self.console.print("       " + _("3. 从文件读取Cookie"))
 
         while True:
             try:
-                choice = IntPrompt.ask("     请选择Cookie配置方式", default=1)
+                choice = IntPrompt.ask("     " + _("请选择Cookie配置方式"), default=1)
                 if choice == 1:
-                    self.console.print("     💡 提示: 可在配置文件中手动添加Cookie")
+                    self.console.print(
+                        "     " + _("💡 提示: 可在配置文件中手动添加Cookie")
+                    )
                     return ""
                 elif choice == 2:
-                    self.console.print("     📋 请从浏览器开发者工具中复制Cookie:")
-                    self.console.print(f"        1. 打开 {app_name} 网页")
-                    self.console.print("        2. 按F12打开开发者工具")
-                    self.console.print("        3. 在Network标签中找到请求")
-                    self.console.print("        4. 复制Cookie字段的值")
-                    return Prompt.ask("     请粘贴Cookie", default="")
+                    self.console.print(
+                        "     " + _("📋 请从浏览器开发者工具中复制Cookie:")
+                    )
+                    self.console.print(
+                        "        " + _("1. 打开 {0} 网页").format(app_name)
+                    )
+                    self.console.print("        " + _("2. 按F12打开开发者工具"))
+                    self.console.print("        " + _("3. 在Network标签中找到请求"))
+                    self.console.print("        " + _("4. 复制Cookie字段的值"))
+                    return Prompt.ask("     " + _("请粘贴Cookie"), default="")
                 elif choice == 3:
-                    file_path = Prompt.ask("     请输入Cookie文件路径")
+                    file_path = Prompt.ask("     " + _("请输入Cookie文件路径"))
                     # 如果用户输入为空，返回空字符串
                     if not file_path or file_path.strip() == "":
-                        self.console.print("     💡 提示: 已跳过Cookie配置")
+                        self.console.print("     " + _("💡 提示: 已跳过Cookie配置"))
                         return ""
 
                     try:
                         with open(file_path, "r", encoding="utf-8") as f:
                             cookie_content = f.read().strip()
                         self.console.print(
-                            f"     ✅ 已读取Cookie文件: {len(cookie_content)} 字符"
+                            "     "
+                            + _("✅ 已读取Cookie文件: {0} 字符").format(
+                                len(cookie_content)
+                            )
                         )
                         return cookie_content
                     except FileNotFoundError:
-                        self.console.print(f"     ❌ 文件不存在: {file_path}")
+                        self.console.print(
+                            "     " + _("❌ 文件不存在: {0}").format(file_path)
+                        )
                         continue
                     except PermissionError:
-                        self.console.print(f"     ❌ 没有权限读取文件: {file_path}")
+                        self.console.print(
+                            "     " + _("❌ 没有权限读取文件: {0}").format(file_path)
+                        )
                         continue
                     except Exception as e:
-                        self.console.print(f"     ❌ 读取文件失败: {e}")
+                        self.console.print(
+                            "     " + _("❌ 读取文件失败: {0}").format(e)
+                        )
                         continue
                 else:
-                    self.console.print("     ❌ 请输入 1-3 之间的数字")
+                    self.console.print("     " + _("❌ 请输入 1-3 之间的数字"))
             except EOFError:
                 # 输入已结束（例如在管道中运行）时交给 run 处理，此前这里会无限重试
                 raise
             except Exception:
-                self.console.print("     ❌ 请输入有效的数字")
+                self.console.print("     " + _("❌ 请输入有效的数字"))
 
     def _configure_max_counts_field(self, app_name: str) -> int:
         """配置最大下载数量"""
-        self.console.print("     下载数量选项:")
+        self.console.print("     " + _("下载数量选项:"))
 
         count_options = [
-            (0, "不限制数量"),
-            (10, "10个作品"),
-            (50, "50个作品"),
-            (100, "100个作品"),
-            (500, "500个作品"),
-            (-1, "自定义数量"),
+            (0, _("不限制数量")),
+            (10, _("10个作品")),
+            (50, _("50个作品")),
+            (100, _("100个作品")),
+            (500, _("500个作品")),
+            (-1, _("自定义数量")),
         ]
 
         for i, (count, desc) in enumerate(count_options, 1):
@@ -629,33 +664,34 @@ class ConfigWizard:
 
         while True:
             try:
-                choice = IntPrompt.ask("     请选择下载数量", default=1)
+                choice = IntPrompt.ask("     " + _("请选择下载数量"), default=1)
                 if 1 <= choice <= len(count_options):
-                    selected_count, _ = count_options[choice - 1]
+                    selected_count, _desc = count_options[choice - 1]
                     if selected_count == -1:
-                        return IntPrompt.ask("     请输入自定义数量", default=0)
+                        return IntPrompt.ask("     " + _("请输入自定义数量"), default=0)
                     else:
                         return selected_count
                 else:
                     self.console.print(
-                        f"     ❌ 请输入 1-{len(count_options)} 之间的数字"
+                        "     "
+                        + _("❌ 请输入 1-{0} 之间的数字").format(len(count_options))
                     )
             except EOFError:
                 # 输入已结束（例如在管道中运行）时交给 run 处理，此前这里会无限重试
                 raise
             except Exception:
-                self.console.print("     ❌ 请输入有效的数字")
+                self.console.print("     " + _("❌ 请输入有效的数字"))
 
     def _configure_timeout_field(self, app_name: str) -> int:
         """配置超时时间"""
-        self.console.print("     超时时间选项:")
+        self.console.print("     " + _("超时时间选项:"))
 
         timeout_options = [
-            (5, "5秒 (较快网络)"),
-            (10, "10秒 (推荐)"),
-            (30, "30秒 (慢速网络)"),
-            (60, "60秒 (很慢网络)"),
-            (-1, "自定义时间"),
+            (5, _("5秒 (较快网络)")),
+            (10, _("10秒 (推荐)")),
+            (30, _("30秒 (慢速网络)")),
+            (60, _("60秒 (很慢网络)")),
+            (-1, _("自定义时间")),
         ]
 
         for i, (timeout, desc) in enumerate(timeout_options, 1):
@@ -663,36 +699,39 @@ class ConfigWizard:
 
         while True:
             try:
-                choice = IntPrompt.ask("     请选择超时时间", default=2)  # 默认10秒
+                choice = IntPrompt.ask(
+                    "     " + _("请选择超时时间"), default=2
+                )  # 默认10秒
                 if 1 <= choice <= len(timeout_options):
-                    selected_timeout, _ = timeout_options[choice - 1]
+                    selected_timeout, _desc = timeout_options[choice - 1]
                     if selected_timeout == -1:
                         return IntPrompt.ask(
-                            "     请输入自定义超时时间(秒)", default=10
+                            "     " + _("请输入自定义超时时间(秒)"), default=10
                         )
                     else:
                         return selected_timeout
                 else:
                     self.console.print(
-                        f"     ❌ 请输入 1-{len(timeout_options)} 之间的数字"
+                        "     "
+                        + _("❌ 请输入 1-{0} 之间的数字").format(len(timeout_options))
                     )
             except EOFError:
                 # 输入已结束（例如在管道中运行）时交给 run 处理，此前这里会无限重试
                 raise
             except Exception:
-                self.console.print("     ❌ 请输入有效的数字")
+                self.console.print("     " + _("❌ 请输入有效的数字"))
 
     def _configure_interval_field(self, app_name: str) -> str:
         """配置日期区间字段"""
-        self.console.print("     日期区间选项:")
+        self.console.print("     " + _("日期区间选项:"))
 
         interval_options = [
-            ("all", "下载所有作品"),
-            ("2025-01-01|2025-12-31", "2025年全年"),
-            ("2024-01-01|2024-12-31", "2024年全年"),
-            ("recent_month", "最近一个月"),
-            ("recent_week", "最近一周"),
-            ("custom", "自定义日期区间"),
+            ("all", _("下载所有作品")),
+            ("2025-01-01|2025-12-31", _("2025年全年")),
+            ("2024-01-01|2024-12-31", _("2024年全年")),
+            ("recent_month", _("最近一个月")),
+            ("recent_week", _("最近一周")),
+            ("custom", _("自定义日期区间")),
         ]
 
         for i, (interval, desc) in enumerate(interval_options, 1):
@@ -700,22 +739,22 @@ class ConfigWizard:
 
         while True:
             try:
-                choice = IntPrompt.ask("     请选择日期区间", default=1)
+                choice = IntPrompt.ask("     " + _("请选择日期区间"), default=1)
                 if 1 <= choice <= len(interval_options):
-                    selected_interval, _ = interval_options[choice - 1]
+                    selected_interval, _desc = interval_options[choice - 1]
                     if selected_interval == "custom":
                         self.console.print(
-                            "     请输入日期区间格式: YYYY-MM-DD|YYYY-MM-DD"
+                            "     " + _("请输入日期区间格式: YYYY-MM-DD|YYYY-MM-DD")
                         )
-                        self.console.print("     示例: 2025-01-01|2025-12-31")
+                        self.console.print("     " + _("示例: 2025-01-01|2025-12-31"))
                         custom_interval = Prompt.ask(
-                            "     请输入自定义日期区间", default=""
+                            "     " + _("请输入自定义日期区间"), default=""
                         )
 
                         # 如果用户输入为空，返回"all"
                         if not custom_interval or custom_interval.strip() == "":
                             self.console.print(
-                                "     💡 提示: 使用默认值 'all' (下载所有作品)"
+                                "     " + _("💡 提示: 使用默认值 'all' (下载所有作品)")
                             )
                             return "all"
 
@@ -735,12 +774,14 @@ class ConfigWizard:
                                 return custom_interval
                             except ValueError:
                                 self.console.print(
-                                    "     ❌ 日期格式错误，请使用 YYYY-MM-DD 格式"
+                                    "     "
+                                    + _("❌ 日期格式错误，请使用 YYYY-MM-DD 格式")
                                 )
                                 continue
                         else:
                             self.console.print(
-                                "     ❌ 格式错误，请使用 开始日期|结束日期 格式"
+                                "     "
+                                + _("❌ 格式错误，请使用 开始日期|结束日期 格式")
                             )
                             continue
                     elif selected_interval == "recent_month":
@@ -757,18 +798,19 @@ class ConfigWizard:
                         return selected_interval
                 else:
                     self.console.print(
-                        f"     ❌ 请输入 1-{len(interval_options)} 之间的数字"
+                        "     "
+                        + _("❌ 请输入 1-{0} 之间的数字").format(len(interval_options))
                     )
             except EOFError:
                 # 输入已结束（例如在管道中运行）时交给 run 处理，此前这里会无限重试
                 raise
             except Exception:
-                self.console.print("     ❌ 请输入有效的数字")
+                self.console.print("     " + _("❌ 请输入有效的数字"))
 
     def preview_config(self, config_data: Dict[str, Dict]) -> bool:
         """预览配置并确认"""
         self.console.print()
-        self.console.print("📋 [bold cyan]配置预览[/bold cyan]")
+        self.console.print(_("📋 [bold cyan]配置预览[/bold cyan]"))
         self.console.print()
 
         for app_name, app_config in config_data.items():
@@ -787,7 +829,7 @@ class ConfigWizard:
             self.console.print(panel)
 
         self.console.print()
-        return Confirm.ask("确认以上配置？", default=True)
+        return Confirm.ask(_("确认以上配置？"), default=True)
 
     def save_config(self, config_data: Dict[str, Dict], output_path: str):
         """保存配置文件"""
@@ -803,28 +845,35 @@ class ConfigWizard:
             # 写入配置文件
             with open(output_path_obj, "w", encoding="utf-8") as f:
                 # 添加文件头注释
-                f.write("# F2 配置文件\n")
-                f.write("# 由配置向导生成，包含详细的配置说明\n")
-                f.write("# 更多信息请访问: https://f2.wiki/\n\n")
+                header = (
+                    _("F2 配置文件"),
+                    _("由配置向导生成"),
+                    _("更多信息请访问: https://f2.wiki/"),
+                )
+                f.write("".join(f"# {line}\n" for line in header) + "\n")
 
                 # 写入配置数据
                 self.yaml.dump(commented_config, f)
 
             self.console.print()
             self.console.print(
-                f"✅ [bold green]配置文件已保存至: {output_path_obj.absolute()}[/bold green]"
+                _("✅ [bold green]配置文件已保存至: {0}[/bold green]").format(
+                    output_path_obj.absolute()
+                )
             )
 
             # 显示使用提示
             self.console.print()
-            self.console.print("🚀 [bold cyan]使用方法[/bold cyan]")
+            self.console.print(_("🚀 [bold cyan]使用方法[/bold cyan]"))
             for app_name in config_data.keys():
                 self.console.print(f"   f2 {app_name} -c {output_path}")
 
             return True
 
         except Exception as e:
-            self.console.print(f"❌ [bold red]保存配置文件失败: {e}[/bold red]")
+            self.console.print(
+                _("❌ [bold red]保存配置文件失败: {0}[/bold red]").format(e)
+            )
             return False
 
     def _add_config_comments(self, config_data: Dict[str, Dict]) -> Dict:
@@ -858,10 +907,10 @@ class ConfigWizard:
 
             # 预览配置
             if not self.preview_config(config_data):
-                if Confirm.ask("是否重新配置？"):
+                if Confirm.ask(_("是否重新配置？")):
                     return self.run(output, apps)  # 递归重新开始
                 else:
-                    self.console.print("❌ 配置已取消")
+                    self.console.print(_("❌ 配置已取消"))
                     return False
 
             # 询问保存路径（命令行用 -o 指定时不再询问；此前 -o 只被打印出来）
@@ -870,7 +919,7 @@ class ConfigWizard:
                 self.console.print()
                 default_filename = f"f2_config_{len(selected_apps)}apps.yaml"
                 output_path = Prompt.ask(
-                    "请输入配置文件保存路径", default=default_filename
+                    _("请输入配置文件保存路径"), default=default_filename
                 )
 
             # 保存配置
@@ -879,23 +928,23 @@ class ConfigWizard:
         except KeyboardInterrupt:
             # 优雅处理用户中断
             print("\n")
-            print("❌ 配置已取消")
+            print(_("❌ 配置已取消"))
             return False
         except EOFError:
             # 处理EOF错误（比如在管道中运行时）
             print("\n")
-            print("❌ 配置已中断")
+            print(_("❌ 配置已中断"))
             return False
         except Exception as e:
             # 简化错误信息，只记录详细日志
             print("\n")
-            print("❌ 配置向导出现错误")
-            logger.debug(f"配置向导异常详情: {e}")
-            trace_logger.error(f"配置向导异常: {traceback.format_exc()}")
+            print(_("❌ 配置向导出现错误"))
+            logger.debug(_("配置向导异常详情: {0}").format(e))
+            trace_logger.error(_("配置向导异常: {0}").format(traceback.format_exc()))
             return False
 
 
-@click.command()
+@click.command(help=_("交互式生成 F2 配置文件"))
 @click.option("--output", "-o", help=_("输出配置文件路径"))
 def config_wizard(output: Optional[str]):
     """
@@ -906,27 +955,27 @@ def config_wizard(output: Optional[str]):
 
         if output:
             # 如果指定了输出路径，直接使用
-            print(f"📁 配置文件将保存至: {output}")
+            print(_("📁 配置文件将保存至: {0}").format(output))
 
         success = wizard.run(output)
 
         if success:
             print()
-            print("🎉 配置完成！享受使用 F2 吧！")
+            print(_("🎉 配置完成！享受使用 F2 吧！"))
         else:
             # 配置未完成，静默退出
             raise click.Abort()
 
     except KeyboardInterrupt:
-        print("\n❌ 配置已取消")
+        print("\n" + _("❌ 配置已取消"))
         raise click.Abort()
     except click.Abort:
         # 重新抛出 Abort 异常，让 Click 处理
         raise
     except Exception as e:
         # 简化错误信息
-        logger.debug(f"配置向导出现异常: {e}")
-        print("❌ 配置向导出现错误，请重试")
+        logger.debug(_("配置向导出现异常: {0}").format(e))
+        print(_("❌ 配置向导出现错误，请重试"))
         raise click.Abort()
 
 
