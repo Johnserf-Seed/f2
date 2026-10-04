@@ -4,9 +4,51 @@ import logging
 import re
 from typing import Any, Iterable, List
 
+# 各平台的登录 cookie，出现在 cookie 串或 名称=值 中时打码
+LOGIN_COOKIE_NAMES = (
+    # 推特
+    "auth_token",
+    "ct0",
+    "kdt",
+    "twid",
+    "auth_multi",
+    # 微博
+    "SUB",
+    "SUBP",
+    "SRT",
+    "SRF",
+    "SCF",
+    "WBPSESS",
+    "_T_WM",
+    # 抖音与 TikTok
+    "sessionid_ss",
+    "sid_tt",
+    "sid_guard",
+    "uid_tt",
+    "uid_tt_ss",
+    "sid_ucp_v1",
+    "ssid_ucp_v1",
+    "sid_ucp_sso_v1",
+    "ssid_ucp_sso_v1",
+    "sso_uid_tt",
+    "sso_uid_tt_ss",
+    "toutiao_sso_user",
+    "toutiao_sso_user_ss",
+    "multi_sids",
+    "cmpl_token",
+    "d_ticket",
+    "n_mh",
+    "passport_csrf_token_default",
+    "tt_chain_token",
+    "tt_csrf_token",
+    "csrf_session_id",
+    "bd_ticket_guard_client_data",
+)
+
 # 键名（不区分大小写，"-" 视同 "_"）命中即视为敏感配置项
 SENSITIVE_KEYS = frozenset(
-    {
+    {name.lower() for name in LOGIN_COOKIE_NAMES}
+    | {
         "cookie",
         "cookies",
         "key",
@@ -30,13 +72,41 @@ SENSITIVE_KEY_SUFFIXES = ("_key", "_token", "_cookie", "_password", "_secret")
 
 # 形如 scheme://user:password@host 的代理地址，只脱敏凭据部分
 _URL_CREDENTIALS = re.compile(r"(\w+://)([^/\s:@]+):([^/\s@]+)@")
-# 文本里的 名称=值 / 名称: 值 / 名称：值（cookie 串、token、密钥、密码）
-_KEY_VALUE = re.compile(
-    r"(?i)(\b(?:cookie|msToken|ttwid|odin_tt|sessionid|s_v_web_id|passport_csrf_token"
-    r"|access_token|refresh_token|csrf_token|api_key|apikey|token|key|password|passwd"
-    r"|secret|authorization)\b|密钥|密码)"
-    r"(\s*[=:：]\s*)"
-    r"([^;&,\s'\"}\]]+)"
+_SECRET_NAMES = "|".join(
+    re.escape(name)
+    for name in (
+        *LOGIN_COOKIE_NAMES,
+        "cookie",
+        "msToken",
+        "ttwid",
+        "odin_tt",
+        "sessionid",
+        "s_v_web_id",
+        "passport_csrf_token",
+        "access_token",
+        "refresh_token",
+        "csrf_token",
+        "api_key",
+        "apikey",
+        "token",
+        "key",
+        "password",
+        "passwd",
+        "secret",
+        "authorization",
+    )
+)
+# 一次扫描处理两种写法，打码后的值不会被再次打码
+_SECRETS = re.compile(
+    r"(?i)"
+    # 整个 cookie 串：Cookie: a=1; b=2，以及请求头字典、JSON 中的 'Cookie': 'a=1; b=2'
+    r"(?P<cookie>\bcookies?\b['\"]?\s*[=:：]\s*)"
+    r"(?:(?P<quote>['\"])(?P<quoted>[^'\"]+)(?P=quote)"
+    r"|(?P<items>[^\s;=,'\"]+=[^\s;,'\"]*(?:;\s*[^\s;=,'\"]+=[^\s;,'\"]*)*))"
+    # 名称=值 / 名称: 值 / 名称：值（cookie 中的各项、token、密钥、密码），名称与值可以带引号
+    rf"|(?P<name>\b(?:{_SECRET_NAMES})\b|密钥|密码)"
+    r"(?P<sep>['\"]?\s*[=:：]\s*['\"]?)"
+    r"(?P<value>(?:bearer\s+|basic\s+)?[^;&,\s'\"}\]]+)"
 )
 
 
@@ -69,14 +139,21 @@ def redact_text(text: str) -> str:
     """
     脱敏一段文本里的凭据 (Redact credentials embedded in free text)
 
-    处理代理地址中的用户名密码、cookie 串里的各项、以及 token/密钥/密码 的 名称=值 写法。
+    处理代理地址中的用户名密码、整个 cookie 串、cookie 中各平台的登录字段，以及
+    token/密钥/密码 的 名称=值 写法（包括请求头字典、JSON 中带引号的写法）。
     """
 
-    def _mask_kv(match: "re.Match[str]") -> str:
-        return f"{match.group(1)}{match.group(2)}{mask_secret(match.group(3))}"
+    def _mask(match: "re.Match[str]") -> str:
+        if match.group("quoted"):
+            quote = match.group("quote")
+            secret = mask_secret(match.group("quoted"))
+            return f"{match.group('cookie')}{quote}{secret}{quote}"
+        if match.group("items"):
+            return f"{match.group('cookie')}{mask_secret(match.group('items'))}"
+        return f"{match.group('name')}{match.group('sep')}{mask_secret(match.group('value'))}"
 
     text = _URL_CREDENTIALS.sub(r"\1***:***@", text)
-    return _KEY_VALUE.sub(_mask_kv, text)
+    return _SECRETS.sub(_mask, text)
 
 
 def redact_config(data: Any) -> Any:

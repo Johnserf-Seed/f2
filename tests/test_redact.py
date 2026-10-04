@@ -2,6 +2,8 @@
 
 import logging
 
+import pytest
+
 from f2.log.logger import logger, trace_logger
 from f2.log.redact import (
     SecretRedactFilter,
@@ -103,3 +105,85 @@ def test_f2_loggers_redact_before_propagation(caplog):
     assert "abcdefghijklmnopqrstuvwxyz" not in caplog.text
     assert "passw0rd" not in caplog.text
     assert "http://***:***@proxy:3128" in caplog.text
+
+
+# ---------------- 各平台的登录 cookie ----------------
+
+SECRET = "SECRETVALUE0123456789"
+LOGIN_COOKIES = {
+    "推特": ["auth_token", "ct0", "kdt", "twid"],
+    "微博": ["SUB", "SUBP", "SRT", "SRF", "SCF", "WBPSESS"],
+    "抖音与 TikTok": [
+        "sessionid_ss",
+        "sid_tt",
+        "sid_guard",
+        "uid_tt",
+        "sid_ucp_v1",
+        "tt_chain_token",
+        "tt_csrf_token",
+        "multi_sids",
+    ],
+}
+
+
+@pytest.mark.parametrize(
+    "name", [name for names in LOGIN_COOKIES.values() for name in names]
+)
+def test_login_cookie_items_are_masked(name):
+    # 此前这些字段在 cookie 串里原样输出
+    masked = redact_text(f"{name}={SECRET}; IsDouyinActive=true")
+
+    assert SECRET[4:] not in masked
+    assert masked.startswith(f"{name}=SECR***")
+    assert masked.endswith("; IsDouyinActive=true")
+    assert is_sensitive_key(name)
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        f"Cookie: guest_id=v1%3A{SECRET}; lang=en",
+        f"{{'User-Agent': 'UA', 'Cookie': 'guest_id={SECRET}; lang=en'}}",
+        f'{{"cookie": "guest_id={SECRET}; lang=en"}}',
+        f"Set-Cookie: guest_id={SECRET}; Path=/; HttpOnly",
+    ],
+)
+def test_whole_cookie_string_is_masked(text):
+    # 整个 cookie 串打码，不依赖字段名单；请求头字典与 JSON 中带引号的写法此前不会匹配
+    masked = redact_text(text)
+
+    assert SECRET[4:] not in masked
+    assert "lang=en" not in masked
+
+
+def test_quoted_header_values_are_masked():
+    headers = {"X-Csrf-Token": SECRET, "Authorization": f"Bearer {SECRET}"}
+
+    masked = redact_text(str(headers))
+
+    assert SECRET[4:] not in masked
+    assert masked == (
+        "{'X-Csrf-Token': 'SECR***(len=21)', 'Authorization': 'Bear***(len=28)'}"
+    )
+
+
+def test_masked_values_keep_their_length():
+    # cookie 串整体打码后不会再按“名称=值”打码一次，长度信息保持正确
+    cookie = f"cookie=sessionid={SECRET}; lang=en"
+
+    assert redact_text(cookie) == "cookie=sess***(len=40)"
+
+
+def test_words_that_only_look_like_cookie_names_are_kept():
+    text = "Subtitle: hello; submit: ok; monkey: 1; 自动获取Cookie失败：浏览器被占用"
+
+    assert redact_text(text) == text
+
+
+def test_logged_headers_are_redacted(caplog):
+    headers = {"Cookie": f"auth_token={SECRET}; ct0={SECRET}", "x-csrf-token": SECRET}
+
+    with caplog.at_level(logging.DEBUG, logger="f2"):
+        logger.debug("请求头：%s", headers)
+
+    assert SECRET[4:] not in caplog.text
