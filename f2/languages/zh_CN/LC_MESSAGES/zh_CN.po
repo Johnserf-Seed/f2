@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-04 10:21-0700\n"
+"POT-Creation-Date: 2026-10-04 12:11-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -199,10 +199,6 @@ msgstr "代理类型不支持，请使用http、https、socks4或socks5"
 msgid "代理地址格式错误，正确格式为: host:port"
 msgstr "代理地址格式错误，正确格式为: host:port"
 
-#: f2/apps/bark/cli.py
-msgid "代理端口必须是数字"
-msgstr "代理端口必须是数字"
-
 #: f2/apps/bark/cli.py f2/apps/douyin/cli.py f2/apps/tiktok/cli.py
 #: f2/apps/twitter/cli.py f2/apps/weibo/cli.py
 msgid "代理服务器不可用"
@@ -318,7 +314,8 @@ msgstr "不能同时初始化和更新配置文件"
 msgid "要更新配置，首先需要使用'-c'选项提供一个自定义配置文件路径"
 msgstr "要更新配置，首先需要使用'-c'选项提供一个自定义配置文件路径"
 
-#: f2/apps/bark/cli.py
+#: f2/apps/bark/cli.py f2/apps/douyin/cli.py f2/apps/tiktok/cli.py
+#: f2/apps/twitter/cli.py f2/apps/weibo/cli.py
 msgid "代理地址格式错误"
 msgstr "代理地址格式错误"
 
@@ -4818,4 +4815,7 @@ msgstr "无效的时间戳字符串"
 
 #~ msgid "该用户没有公开喜欢的推文"
 #~ msgstr "该用户没有公开喜欢的推文"
+
+#~ msgid "代理端口必须是数字"
+#~ msgstr "代理端口必须是数字"
 

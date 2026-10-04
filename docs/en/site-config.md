@@ -284,6 +284,12 @@ app_name:
     rdns: true             # Remote DNS resolution (SOCKS proxies only)
 ```
 
+::: tip :bulb: Tip
+- Write the username and password as they are; characters such as `@`, `:` and `/` do not need to be URL-encoded. On the command line, use `--proxies socks5 username:password@127.0.0.1:1080`.
+- Values that were already URL-encoded still work, so when a `%` in the original value is followed by two hexadecimal characters (such as `%41`), write that `%` as `%25`.
+- Live comment (danmaku) connections are opened by websockets, whose versions before 17.2 cannot parse a password containing `/`, `?` or `#`; upgrade websockets if you run into this.
+:::
+
 ### Proxy types
 
 | Type | Description | Use case |

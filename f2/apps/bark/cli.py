@@ -16,7 +16,7 @@ from f2.utils.config.conf_manager import ConfigManager, get_f2_setting
 from f2.utils.config.merge import coerce_bool_options, merge_config
 from f2.utils.core.adapters import adapt_validation_call
 from f2.utils.file.path import get_resource_path
-from f2.utils.http.proxy import check_proxy_avail
+from f2.utils.http.proxy import check_proxy_avail, parse_proxy_address
 
 
 def handler_help(
@@ -122,23 +122,11 @@ def validate_proxies(
                 _("代理类型不支持，请使用http、https、socks4或socks5")
             )
 
-        # 验证代理地址格式
-        if ":" not in proxy_address:
-            raise click.BadParameter(_("代理地址格式错误，正确格式为: host:port"))
-
-        # 解析主机和端口
+        # 解析代理地址，支持 username:password@host:port
         try:
-            host, port = proxy_address.split(":", 1)
-            port = int(port)
+            proxy_config = parse_proxy_address(proxy_type, proxy_address)
         except ValueError:
-            raise click.BadParameter(_("代理端口必须是数字"))
-
-        # 构建新格式的代理配置
-        proxy_config = {
-            "type": proxy_type,
-            "host": host,
-            "port": port,
-        }
+            raise click.BadParameter(_("代理地址格式错误，正确格式为: host:port"))
 
         # 校验代理服务器是否可用
         if not check_proxy_avail(
@@ -385,15 +373,8 @@ def bark(
         elif (
             isinstance(kwargs["proxies"], (tuple, list)) and len(kwargs["proxies"]) >= 2
         ):
-            proxy_type, proxy_address = kwargs["proxies"]
             try:
-                host, port = proxy_address.split(":", 1)
-                port = int(port)
-                kwargs["proxies"] = {
-                    "type": proxy_type,
-                    "host": host,
-                    "port": port,
-                }
+                kwargs["proxies"] = parse_proxy_address(*kwargs["proxies"][:2])
             except ValueError:
                 logger.error(_("代理地址格式错误"))
                 ctx.abort()
@@ -405,7 +386,12 @@ def bark(
 
     # 添加代理验证逻辑（使用新格式）
     proxy_config = kwargs.get("proxies", {})
-    if proxy_config and isinstance(proxy_config, dict):
+    # 命令行 --proxies 指定的代理已在 validate_proxies 中检查过
+    if (
+        proxy_config
+        and isinstance(proxy_config, dict)
+        and proxy_config is not ctx.params.get("proxies")
+    ):
         # 检查是否有有效的代理配置
         proxy_type = proxy_config.get("type")
         proxy_host = proxy_config.get("host")

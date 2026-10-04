@@ -19,7 +19,7 @@ from f2.utils.core.adapters import adapt_validation_call
 from f2.utils.file.path import get_resource_path
 from f2.utils.http.browser import get_cookie_from_browser
 from f2.utils.http.cookie import split_dict_cookie
-from f2.utils.http.proxy import check_proxy_avail
+from f2.utils.http.proxy import check_proxy_avail, parse_proxy_address
 from f2.utils.string.validator import check_invalid_naming
 
 # import asyncio
@@ -159,16 +159,15 @@ def validate_proxies(
                 _("代理类型不支持，请使用http、https、socks4或socks5")
             )
 
-        # 验证代理地址格式
-        if ":" not in proxy_address:
+        # 解析代理地址，支持 username:password@host:port
+        try:
+            proxy_config = parse_proxy_address(proxy_type, proxy_address)
+        except ValueError:
             raise click.BadParameter(_("代理地址格式错误，正确格式为: host:port"))
-
-        # 构建代理URL
-        proxy_url = f"{proxy_type}://{proxy_address}"
 
         # 校验代理服务器是否可用
         if not check_proxy_avail(
-            proxy_url,
+            proxy_config,
             verify=(
                 False if ctx.params.get("insecure") else get_f2_setting("verify", True)
             ),
@@ -176,14 +175,7 @@ def validate_proxies(
         ):
             raise click.BadParameter(_("代理服务器不可用"))
 
-        # 返回新的代理配置格式 - 确保格式正确
-        return {
-            "type": proxy_type,
-            f"{proxy_type}://": proxy_url,
-            # 兼容旧格式
-            "http://": proxy_url,
-            "https://": proxy_url,
-        }
+        return proxy_config
 
     return value
 
@@ -434,18 +426,11 @@ def douyin(
         elif (
             isinstance(kwargs["proxies"], (tuple, list)) and len(kwargs["proxies"]) >= 2
         ):
-            proxy_url = kwargs["proxies"][1]  # 第二个元素是地址
-            proxy_type = kwargs["proxies"][0]  # 第一个元素是类型
-            kwargs["proxies"] = {
-                "type": proxy_type,
-                f"{proxy_type}://": f"{proxy_type}://{proxy_url}",
-                "http://": (
-                    f"{proxy_type}://{proxy_url}" if proxy_type == "http" else None
-                ),
-                "https://": (
-                    f"{proxy_type}://{proxy_url}" if proxy_type == "https" else None
-                ),
-            }
+            try:
+                kwargs["proxies"] = parse_proxy_address(*kwargs["proxies"][:2])
+            except ValueError:
+                logger.error(_("代理地址格式错误"))
+                ctx.abort()
 
     # 从低频配置开始到高频配置再到cli参数，逐级覆盖，如果键值不存在使用父级的键值
     kwargs = merge_config(main_conf, custom_conf, **kwargs)
@@ -454,7 +439,12 @@ def douyin(
 
     # 添加代理验证逻辑
     proxy_config = kwargs.get("proxies", {})
-    if proxy_config and isinstance(proxy_config, dict):
+    # 命令行 --proxies 指定的代理已在 validate_proxies 中检查过
+    if (
+        proxy_config
+        and isinstance(proxy_config, dict)
+        and proxy_config is not ctx.params.get("proxies")
+    ):
         # 检查是否有有效的代理配置
         proxy_type = proxy_config.get("type")
         proxy_host = proxy_config.get("host")

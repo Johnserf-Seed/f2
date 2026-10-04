@@ -97,6 +97,34 @@ def proxy_url_from_config(proxies: Any) -> Optional[str]:
     return proxies.get("http://") or None
 
 
+def parse_proxy_address(proxy_type: str, address: str) -> Dict[str, Any]:
+    """
+    命令行中的代理地址转换为代理配置 (Proxy configuration from a command line address)
+
+    地址形如 host:port 或 username:password@host:port。用户名与主机按最后一个 @ 分开，
+    密码中有 @ 时也能识别。
+
+    Args:
+        proxy_type (str): 代理类型 (Proxy type)
+        address (str): 代理地址 (Proxy address)
+
+    Returns:
+        Dict[str, Any]: 与配置文件中 proxies 格式相同的配置 (Config in the proxies format)
+
+    Raises:
+        ValueError: 缺少端口，或端口不是 1–65535 之间的数字
+    """
+    userinfo, _at, hostport = address.rpartition("@")
+    host, _colon, port = hostport.rpartition(":")
+    if not host or not port.isdigit() or not 0 < int(port) < 65536:
+        raise ValueError(address)
+
+    config: Dict[str, Any] = {"type": proxy_type, "host": host, "port": int(port)}
+    if userinfo:
+        config["username"], _colon, config["password"] = userinfo.partition(":")
+    return config
+
+
 def check_proxy_avail(
     proxy_config: Union[Dict[str, str], ProxyConfig, str],
     test_url: str = "https://httpbin.org/ip",
