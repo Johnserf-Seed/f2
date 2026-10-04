@@ -6,6 +6,8 @@
 
 ## [Unreleased]
 
+- 修复配置向导的几个问题：`f2 config-wizard -o` 与 `-a` 只被打印出来，向导仍然询问保存路径并让用户选择平台；推特命名模板 `{user_name}_{create}` 中的字段不存在，按它生成的配置下载时报错；输入结束（例如在管道中运行）时各输入循环无限重试。同时补上抖音的 `feed` 模式与最大下载数量，`D:/Downloads` 只在 Windows 上提供。
+- 下载路径支持以 `~` 开头的用户目录：此前配置 `path: ~/Downloads` 会保存到当前目录下名为 `~` 的目录中。
 - 修复运行结束时 httpx 客户端没有关闭：获取 ID、token 与访客 cookie 的类方法每次调用都新建客户端，handler 的下载器也没有关闭，连接要等事件循环关闭后才被回收，Windows 上退出时会报 `Event loop is closed`。现在用完即关闭，各应用的 `main` 结束时（包括出错）关闭下载器。
 - 修复获取用户、作品等 ID 的请求不使用应用配置与 `--proxies` 中的代理：抖音、TikTok、推特从链接获取 sec_user_id、sec_uid、作品 ID、合集 ID、直播间号、用户名与推文 ID 时只用客户端配置中的代理（默认为空），只在 F2 中配置了代理、没有系统代理时这些请求直连，TikTok 的主页、喜欢等模式在获取 sec_uid 时就失败。相关类方法增加可选参数 `proxies`，没有配置代理时仍使用客户端配置中的代理。
 - 日志脱敏补充整个 cookie 串与各平台的登录字段：此前 cookie 串里推特的 `auth_token`、`ct0`，微博的 `SUB`、`SUBP`，抖音与 TikTok 的 `sid_tt`、`sid_guard`、`tt_chain_token` 等字段原样输出，请求头字典与 JSON 中带引号的写法也不会匹配。现在整串打码，并补充各平台的登录字段。
