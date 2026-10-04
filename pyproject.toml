@@ -85,8 +85,8 @@ dependencies = [
     "pydantic>=2.12,<3; python_version >= '3.14'",
     "websockets<13.0",
     "websockets_proxy>=0.1.2,<0.2",
-    # 生成的 *_pb2.py 与 protobuf 运行时大版本必须一致
-    "protobuf>=5.29.6,<6",
+    # *_pb2.py 由 protoc 5.29.3 生成，运行时版本不能低于它；6.x、7.x 实测可以直接使用
+    "protobuf>=5.29.6,<8",
     "gmssl>=3.2.2,<4",
     "cryptography>=44.0.1,<51",
     "packaging>=24.0",
