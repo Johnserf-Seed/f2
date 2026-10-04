@@ -1,7 +1,9 @@
 # path: f2/utils/http/impersonate.py
 
 import functools
+import urllib.request
 from typing import Any, Dict, Optional, Tuple, Union
+from urllib.parse import urlparse
 
 import httpx
 
@@ -37,6 +39,33 @@ def _warn_missing_once() -> None:
             "请执行 pip install curl_cffi 后重试"
         )
     )
+
+
+def environment_proxy(url: str) -> Optional[str]:
+    """
+    环境变量与系统设置中适用于该地址的代理，与 httpx 默认使用的一致
+    (The proxy from the environment or system settings that httpx would use for the URL)
+
+    libcurl 只读取环境变量，不读取 macOS、Windows 系统设置中的代理：没有在 F2 中配置代理、
+    只开了系统代理（如 Clash 的系统代理模式）时，curl_cffi 发出的请求会直连。
+
+    Args:
+        url (str): 请求地址 (Request URL)
+
+    Returns:
+        Optional[str]: 代理地址，没有代理或该地址不走代理时为 None
+    """
+    parsed = urlparse(url)
+    try:
+        if parsed.hostname and urllib.request.proxy_bypass(parsed.hostname):
+            return None
+        proxies = urllib.request.getproxies()
+    except Exception:  # 读取系统设置失败时按没有代理处理
+        return None
+    proxy = proxies.get(parsed.scheme) or proxies.get("all")
+    if proxy and "://" not in proxy:
+        proxy = f"http://{proxy}"
+    return proxy or None
 
 
 def _curl_timeout(

@@ -57,7 +57,10 @@ from f2.crawlers.websocket_crawler import WebSocketCrawler
 from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
 from f2.utils.http.endpoint import BaseEndpointManager
-from f2.utils.http.impersonate import create_impersonate_transport
+from f2.utils.http.impersonate import (
+    create_impersonate_transport,
+    environment_proxy,
+)
 
 
 class TiktokCrawler(BaseCrawler):
@@ -77,12 +80,14 @@ class TiktokCrawler(BaseCrawler):
         (Send TikTok API requests through a transport that impersonates Chrome)
 
         httpx 发出的请求即使签名正确也只会得到 200 空内容；视频 CDN 等其他域名仍使用 httpx，
-        未安装 curl_cffi 时全部使用 httpx。
+        未安装 curl_cffi 时全部使用 httpx。没有在 F2 中配置代理时，与 httpx 一样使用
+        环境变量与系统设置中的代理（libcurl 不读取系统设置）。
         """
         mounts = super()._create_mount(async_mode)
         if async_mode:
             transport = create_impersonate_transport(
-                proxy=self._get_proxy_config(),
+                proxy=self._get_proxy_config()
+                or environment_proxy("https://www.tiktok.com/"),
                 verify=self._verify,
                 max_clients=self._max_connections,
             )
