@@ -6,6 +6,8 @@
 
 ## [Unreleased]
 
+- 直播弹幕改用 websockets 新版 asyncio 接口，支持 websockets 15–17（此前限制在 13 以下）：websockets 14 起顶层的 `connect`、`serve` 换成新版实现，F2 传入的 `extra_headers` 会直接报错。15 起原生支持 HTTP 与 SOCKS 代理，去掉依赖旧版实现的 `websockets_proxy`；配置了代理时使用它（新格式 `type`、`host`、`port` 的代理配置此前在弹幕连接中被忽略），否则使用环境变量与系统设置中的代理。服务器持续拒绝握手时不再无限重试，最多尝试 3 次。真实抖音直播间实测弹幕接收与本地转发正常。
+- protobuf 放宽到 7.x：直播消息的生成代码由 protoc 5.29.3 生成，6.x、7.x 运行时都能直接使用，无需重新生成；新增用录制的直播间消息检查解析结果的测试，CI 另用 websockets、protobuf 的最低版本运行一次离线测试。
 - 推特从网页脚本获取的 queryId 缓存到本地，直到下次更新：内置 queryId 失效后，此前每次运行都要先请求一次失效的地址，再下载约 1.6 MB 的网页脚本。现在获取到的值写入 `~/.f2/cache/twitter_graphql.json` 并记录它替换的内置值，内置值不变时之后的运行直接使用；X 再次更换时重新获取；F2 更新内置值后旧记录不再使用，仍然内置优先。内置 queryId 集中到 `f2.apps.twitter.api.QUERY_IDS`，接口地址由它生成。
 - 修复环境变量或系统设置中的代理覆盖了 F2 中配置的代理：httpx 默认读取环境与系统代理并挂在 `http://`、`https://` 上，比 F2 挂在 `all://` 上的配置更具体，接口与下载请求都改走环境或系统代理，配置的 HTTP 与 SOCKS 代理不生效。现在配置了代理时不再读取环境与系统代理。
 - 修复只开系统代理时 TikTok 接口请求不走代理：TikTok 接口由 curl_cffi 发送，libcurl 不读取 macOS、Windows 系统设置中的代理，没有在 F2 中配置代理时这部分请求直连。现在与 httpx 一样使用环境变量与系统设置中的代理。
