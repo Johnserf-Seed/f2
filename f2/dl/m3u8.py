@@ -35,6 +35,7 @@ class M3U8DownloadMixin:
     progress: Any
     # 由 BaseCrawler 提供，这里只声明类型，定义方法会在 MRO 中覆盖它
     _create_mount: Callable[..., dict]
+    _trust_env: Callable[[], bool]
 
     @abstractmethod
     def _ensure_path(self, path: Union[str, Path]) -> Path: ...
@@ -129,6 +130,7 @@ class M3U8DownloadMixin:
                                     self.proxies,
                                     verify=self._verify,
                                     mounts=self._create_mount(async_mode=True),
+                                    trust_env=self._trust_env(),
                                 )
                                 if ts_content_length == 0:
                                     ts_content_length = default_chunks

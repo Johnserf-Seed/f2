@@ -539,6 +539,7 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
                         self.proxies,
                         verify=self._verify,
                         mounts=self._create_mount(async_mode=True),
+                        trust_env=self._trust_env(),
                     )
 
                     if content_length == 0:

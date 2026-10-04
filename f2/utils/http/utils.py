@@ -22,6 +22,7 @@ async def get_content_length(
     max_retries: int = 3,
     verify: Union[bool, str] = True,
     mounts: Optional[dict] = None,
+    trust_env: bool = True,
 ) -> int:
     """
     获取给定URL的Content-Length，使用HEAD请求重试，失败后退避到GET请求
@@ -34,6 +35,8 @@ async def get_content_length(
         verify (Union[bool, str], optional): TLS 证书校验，True / False / CA 证书路径，默认为 True
         mounts (Optional[dict], optional): 下载器客户端的传输层挂载（BaseCrawler._create_mount），
             传入时与下载请求使用相同的代理设置，不再读取 proxies
+        trust_env (bool, optional): 是否使用环境变量与系统设置中的代理，与下载器的客户端一致
+            （BaseCrawler._trust_env），配置了代理时应为 False
 
     Returns:
         int: 文件的Content-Length，单位为字节
@@ -74,6 +77,7 @@ async def get_content_length(
         timeout=timeout_config,
         transport=transport,
         mounts=mounts,
+        trust_env=trust_env,
         verify=verify,
         follow_redirects=True,
         limits=httpx.Limits(max_connections=10, max_keepalive_connections=5),

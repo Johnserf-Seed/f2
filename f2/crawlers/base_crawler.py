@@ -155,6 +155,15 @@ class BaseCrawler:
 
         return None
 
+    def _trust_env(self) -> bool:
+        """
+        是否使用环境变量与系统设置中的代理 (Whether to use proxies from the environment)
+
+        F2 中配置了代理时不使用：httpx 把环境与系统代理挂在 http://、https:// 上，
+        比 F2 挂在 all:// 上的传输层更具体，此前会覆盖配置的代理。
+        """
+        return self._get_proxy_config() is None
+
     def _create_mount(self, async_mode=False) -> dict:
         """
         创建挂载配置，根据 async_mode 切换异步或同步的 HTTPTransport
@@ -215,6 +224,7 @@ class BaseCrawler:
                     headers=self.crawler_headers,
                     mounts=self._create_mount(async_mode=True),
                     timeout=self.timeout,
+                    trust_env=self._trust_env(),
                 )
             except UnicodeEncodeError:
                 raise InvalidEncodingError
@@ -228,6 +238,7 @@ class BaseCrawler:
                     headers=self.crawler_headers,
                     mounts=self._create_mount(),
                     timeout=self.timeout,
+                    trust_env=self._trust_env(),
                 )
             except UnicodeEncodeError:
                 raise InvalidEncodingError

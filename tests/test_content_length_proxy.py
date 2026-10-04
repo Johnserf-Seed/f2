@@ -70,11 +70,14 @@ class DummyProgress:
         return None
 
 
+NONE = {"http://": None, "https://": None}
+
+
 @pytest.mark.parametrize(
     "proxies, transport_type",
     [
         # 不配置代理时与下载请求一样直连或走系统代理
-        ({"http://": None, "https://": None}, httpx.AsyncHTTPTransport),
+        (NONE, httpx.AsyncHTTPTransport),
         # 新格式的 SOCKS 代理此前在获取文件大小时被忽略
         ({"type": "socks5", "host": "127.0.0.1", "port": 1080}, AsyncProxyTransport),
     ],
@@ -98,3 +101,5 @@ async def test_downloader_reuses_its_transport(
     await downloader.close()
 
     assert isinstance(received[0]["mounts"]["all://"], transport_type)
+    # 配置了代理时与下载请求一样不再读取环境与系统代理
+    assert received[0]["trust_env"] is (proxies is NONE)
