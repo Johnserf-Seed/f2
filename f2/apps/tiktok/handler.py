@@ -146,6 +146,12 @@ class TiktokHandler:
         if not secUid and not uniqueId:
             raise ValueError(_("至少提供 secUid 或 uniqueId 中的一个参数"))
 
+        # 用户信息接口对游客 cookie 只返回空内容，主页、合集等模式此前在这一步就失败；
+        # get_secuid 刚打开过主页时，直接使用主页中的用户信息（结构与接口响应相同）
+        cached = SecUserIdFetcher.cached_user_detail(secUid) if secUid else None
+        if cached and UserProfileFilter(cached).uniqueId is not None:
+            return UserProfileFilter(cached)
+
         async with TiktokCrawler(self.kwargs) as crawler:
             params = UserProfile(secUid=secUid, uniqueId=uniqueId)
             response = await crawler.fetch_user_profile(params)
@@ -591,17 +597,19 @@ class TiktokHandler:
             _("结束处理用户点赞的作品，共处理 {0} 个作品").format(videos_collected)
         )
 
-        # 点赞接口中没有当前用户的相关信息，因此无法获取nickname_raw
-        user = await self.fetch_user_profile(secUid=secUid)
-        await self._send_bark_notification(
-            _("[TikTok] 点赞作品下载"),
-            _("用户：{0}\n" "作品数：{1}\n" "下载时间：{2}").format(
-                user.nickname_raw,
-                videos_collected,
-                timestamp_2_str(get_timestamp("sec")),
-            ),
-            group="TikTok",
-        )
+        # 点赞接口中没有当前用户的相关信息，因此无法获取nickname_raw；
+        # 只在需要发送通知时获取，此前即使关闭了 Bark 也会请求，失败时整个模式报错
+        if self.enable_bark:
+            user = await self.fetch_user_profile(secUid=secUid)
+            await self._send_bark_notification(
+                _("[TikTok] 点赞作品下载"),
+                _("用户：{0}\n" "作品数：{1}\n" "下载时间：{2}").format(
+                    user.nickname_raw,
+                    videos_collected,
+                    timestamp_2_str(get_timestamp("sec")),
+                ),
+                group="TikTok",
+            )
 
     @mode_handler("collect")
     async def handle_user_collect(self):

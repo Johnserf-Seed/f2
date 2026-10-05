@@ -3,9 +3,10 @@
 import asyncio
 import json
 import re
+import time
 import traceback
 from pathlib import Path
-from typing import Optional, Union
+from typing import Dict, Optional, Tuple, Union
 from urllib.parse import quote
 
 import httpx
@@ -625,6 +626,10 @@ class SecUserIdFetcher(BaseCrawler):
     _TIKTOK_UNIQUEID_PARREN = re.compile(r"/@([^/?]*)")
     _TIKTOK_NOTFOUND_PARREN = re.compile(r"notfound")
 
+    # 主页 HTML 中的用户信息（webapp.user-detail，与用户信息接口的响应结构相同），按 sec_uid 缓存
+    _USER_DETAIL_TTL = 600
+    _user_details: Dict[str, Tuple[float, dict]] = {}
+
     proxies = ClientConfManager.proxies()
 
     def __init__(self, proxies: Optional[dict] = None):
@@ -711,6 +716,8 @@ class SecUserIdFetcher(BaseCrawler):
                     user_detail = default_scope.get("webapp.user-detail", {})
                     user_info = user_detail.get("userInfo", {}).get("user", {})
                     sec_uid = user_info.get("secUid", None)
+                    if sec_uid:
+                        cls._user_details[sec_uid] = (time.monotonic(), user_detail)
 
                 if sec_uid is None:
                     raise ValueError(_("获取 {0} 失败").format("sec_uid"))
@@ -766,6 +773,23 @@ class SecUserIdFetcher(BaseCrawler):
             )
         finally:
             await instance.close()
+
+    @classmethod
+    def cached_user_detail(cls, sec_uid: str) -> Optional[dict]:
+        """
+        get_secuid 打开主页时取得的用户信息，10 分钟内有效 (User detail seen on the profile page)
+
+        用户信息接口对游客 cookie 只返回空内容，而主页 HTML 中的用户信息游客也能取得，
+        结构与接口响应相同（userInfo.user、userInfo.stats）。
+
+        Returns:
+            Optional[dict]: 用户信息，没有或已过期时为 None
+        """
+        cached = cls._user_details.get(sec_uid)
+        if not cached or time.monotonic() - cached[0] > cls._USER_DETAIL_TTL:
+            cls._user_details.pop(sec_uid, None)
+            return None
+        return cached[1]
 
     @classmethod
     async def get_all_secuid(cls, urls: list, proxies: Optional[dict] = None) -> list:

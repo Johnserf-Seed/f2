@@ -128,3 +128,24 @@ async def test_no_wait_after_reaching_max_counts(
     [page async for page in getattr(handler, name)(*args)]
 
     assert waits == []
+
+
+# ---------------- 用户信息 ----------------
+
+
+async def test_like_videos_skip_profile_without_bark(monkeypatch):
+    # 此前即使关闭了 Bark 也会在结束时请求用户信息，游客 cookie 下这一步失败，整个模式报错
+    for name in PARAM_MODELS:
+        monkeypatch.setattr(tiktok_handler, name, types.SimpleNamespace)
+    handler = tiktok_handler.TiktokHandler(dict(KWARGS))
+    handler.enable_bark = False
+
+    async def profile(*args, **kwargs):
+        raise AssertionError("关闭 Bark 时不应请求用户信息")
+
+    monkeypatch.setattr(handler, "fetch_user_profile", profile)
+    use_pages(monkeypatch, [item_page(2) | {"hasMore": False}])
+
+    pages = [page async for page in handler.fetch_user_like_videos("sec-uid", 0, 30, 5)]
+
+    assert [len(page.aweme_id) for page in pages] == [2]
