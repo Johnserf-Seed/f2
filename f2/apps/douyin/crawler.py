@@ -505,6 +505,8 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
 
             # 并发处理每个消息
             tasks = []
+            # 与 tasks 一一对应。没有回调的消息不进 tasks，不能再用下标回查 messages
+            methods = []
             for msg in payload_package.messages:
                 method = msg.method
                 payload = msg.payload
@@ -513,6 +515,7 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
                 if method in self.callbacks:
                     # 创建异步任务
                     tasks.append(self.callbacks[method](data=payload))
+                    methods.append(method)
                 else:
                     logger.warning(
                         _(
@@ -525,12 +528,12 @@ class DouyinWebSocketCrawler(WebSocketCrawler):
                 results = await asyncio.gather(*tasks, return_exceptions=True)
 
                 # 处理每个任务的结果
-                for i, result in enumerate(results):
+                for method, result in zip(methods, results):
                     if isinstance(result, Exception):
                         logger.error(
                             _(
                                 "[HandleWssMessage] [⚠️ 回调执行出错] | [方法：{0}] | [错误：{1}]"
-                            ).format(payload_package.messages[i].method, result)
+                            ).format(method, result)
                         )
                     else:
                         if result is not None:

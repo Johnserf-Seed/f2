@@ -241,7 +241,8 @@ class TiktokWebSocketCrawler(WebSocketCrawler):
 
             logger.debug(_("[WssPackage] [📦Wss包] | [{0}]").format(wss_package))
 
-            # 检查数据是否为 gzip 格式
+            # 检查数据是否为 gzip 格式。连接后的第一帧（只要求 ack、没有消息）不压缩，
+            # 直接解析即可，此前每次连接都会因此报一条解压缩出错的警告
             if wss_package.payload[:2] == b"\x1f\x8b":
                 try:
                     decompressed = gzip.decompress(wss_package.payload)
@@ -249,7 +250,6 @@ class TiktokWebSocketCrawler(WebSocketCrawler):
                     trace_logger.error(traceback.format_exc())
                     return
             else:
-                logger.warning(_("解压缩数据时出错，数据不是 gzip 格式，无法解压缩"))
                 decompressed = wss_package.payload
 
             payload_package = Response()
@@ -265,6 +265,8 @@ class TiktokWebSocketCrawler(WebSocketCrawler):
 
             # 处理每个消息
             tasks = []
+            # 与 tasks 一一对应。没有回调的消息不进 tasks，不能再用下标回查 messages
+            methods = []
             for msg in payload_package.messages:
                 method = msg.method
                 payload = msg.payload
@@ -273,6 +275,7 @@ class TiktokWebSocketCrawler(WebSocketCrawler):
                 if method in self.callbacks:
                     # 创建异步任务
                     tasks.append(self.callbacks[method](data=payload))
+                    methods.append(method)
                 else:
                     logger.warning(
                         _(
@@ -285,12 +288,12 @@ class TiktokWebSocketCrawler(WebSocketCrawler):
                 results = await asyncio.gather(*tasks, return_exceptions=True)
 
                 # 处理每个任务的结果
-                for i, result in enumerate(results):
+                for method, result in zip(methods, results):
                     if isinstance(result, Exception):
                         logger.error(
                             _(
                                 "[HandleWssMessage] [⚠️ 回调执行出错] | [方法：{0}] | [错误：{1}]"
-                            ).format(payload_package.messages[i].method, result)
+                            ).format(method, result)
                         )
                     else:
                         if result is not None:

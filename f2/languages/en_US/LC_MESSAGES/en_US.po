@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-04 18:12-0700\n"
+"POT-Creation-Date: 2026-10-04 18:35-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -2609,10 +2609,6 @@ msgstr "Live status check API endpoint: {0}"
 #, python-brace-format
 msgid "直播弹幕接口地址：{0}"
 msgstr "Live danmaku API endpoint: {0}"
-
-#: f2/apps/tiktok/crawler.py
-msgid "解压缩数据时出错，数据不是 gzip 格式，无法解压缩"
-msgstr "Failed to decompress the data: it is not in gzip format"
 
 #: f2/apps/tiktok/crawler.py
 msgid "[SendPing] [📤发送ping包]"
@@ -5895,4 +5891,7 @@ msgstr "Invalid timestamp string"
 
 #~ msgid "代理端口必须是数字"
 #~ msgstr "The proxy port must be a number"
+
+#~ msgid "解压缩数据时出错，数据不是 gzip 格式，无法解压缩"
+#~ msgstr "Failed to decompress the data: it is not in gzip format"
 
