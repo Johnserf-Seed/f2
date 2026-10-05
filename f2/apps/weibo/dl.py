@@ -116,11 +116,15 @@ class WeiboDownloader(BaseDownloader):
             await self.download_desc()
 
         # 检查微博是否有图片；视频的 page_info.type 既可能是整数 11，也可能是字符串 "11"（#249）。
-        # 视频微博的 pic_ids 是空列表而不是缺失，此前按 None 判断，视频从未被下载
+        # 视频微博的 pic_ids 是空列表而不是缺失，此前按 None 判断，视频从未被下载。
+        # 部分视频的 page_info.type 是 5，结构相同，有播放地址时同样按视频下载
         if (
             not self.weibo_data_dict.get("weibo_pic_num")
             and not weibo_data_dict.get("weibo_pic_ids")
-            and str(weibo_data_dict.get("is_video")) == "11"
+            and (
+                weibo_data_dict.get("playback_list")
+                or str(weibo_data_dict.get("is_video")) == "11"
+            )
         ):
             await self.download_video()
         else:

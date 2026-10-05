@@ -74,12 +74,34 @@ VIDEO = status(
         },
     },
 )
+# 部分视频的 page_info.type 是整数 5，结构与 "11" 相同
+VIDEO_TYPE_5 = status(
+    pic_ids=[],
+    pic_num=0,
+    page_info={
+        "type": 5,
+        "object_type": "video",
+        "media_info": {
+            "playback_list": [
+                {"play_info": {"url": "https://f.video.weibocdn.com/2.mp4"}}
+            ]
+        },
+    },
+)
 PHOTOS = status(pic_ids=["870dd2b6gy1h6ldat37sfj20zj1be78j"], pic_num=1)
+TEXT = status(pic_ids=[], pic_num=0)
 
 
 @pytest.mark.parametrize("mode", ["one", "post"])
 @pytest.mark.parametrize(
-    "weibo, expected", [(VIDEO, "video"), (PHOTOS, "images")], ids=["video", "photos"]
+    "weibo, expected",
+    [
+        (VIDEO, "video"),
+        (VIDEO_TYPE_5, "video"),
+        (PHOTOS, "images"),
+        (TEXT, "images"),
+    ],
+    ids=["video", "video-type-5", "photos", "text"],
 )
 async def test_weibo_media_type_from_api_data(tmp_path, mode, weibo, expected):
     # #249：视频微博的 pic_ids 是空列表，单条微博的 is_video 还按列表取值（["11"]），
