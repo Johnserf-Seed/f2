@@ -112,8 +112,12 @@ class TwitterDownloader(BaseDownloader):
 
         # 构建文件夹路径
         self.base_path = (
-            user_path
-            / format_file_name(kwargs.get("naming", "{create}_{desc}"), tweet_data_dict)
+            self._folder_path(
+                user_path,
+                format_file_name(
+                    kwargs.get("naming", "{create}_{desc}"), tweet_data_dict
+                ),
+            )
             if kwargs.get("folderize")
             else user_path
         )

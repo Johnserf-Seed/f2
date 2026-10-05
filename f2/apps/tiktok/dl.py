@@ -198,8 +198,12 @@ class TiktokDownloader(BaseDownloader):
 
         # 构建文件夹路径
         base_path = (
-            user_path
-            / format_file_name(kwargs.get("naming", "{create}_{desc}"), aweme_data_dict)
+            self._folder_path(
+                user_path,
+                format_file_name(
+                    kwargs.get("naming", "{create}_{desc}"), aweme_data_dict
+                ),
+            )
             if kwargs.get("folderize")
             else user_path
         )
@@ -348,7 +352,11 @@ class TiktokDownloader(BaseDownloader):
         )
 
         # 构建文件夹路径
-        base_path = user_path / formated_name if kwargs.get("folderize") else user_path
+        base_path = (
+            self._folder_path(user_path, formated_name)
+            if kwargs.get("folderize")
+            else user_path
+        )
 
         webcast_name = f"{formated_name}_live"
         webcast_url = webcast_data_dict.get("live_hls_url", None)

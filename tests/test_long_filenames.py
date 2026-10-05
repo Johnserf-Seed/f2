@@ -1,8 +1,14 @@
 # path: tests/test_long_filenames.py
 
+from pathlib import Path
+
 import pytest
 
+from f2.apps.douyin.dl import DouyinDownloader
 from f2.apps.douyin.utils import format_file_name as douyin_format_file_name
+from f2.apps.tiktok.dl import TiktokDownloader
+from f2.apps.twitter.dl import TwitterDownloader
+from f2.apps.weibo.dl import WeiboDownloader
 from f2.dl.base_downloader import BaseDownloader
 from f2.utils.core.run_report import collect_run_report
 from f2.utils.file import path as path_module
@@ -172,3 +178,161 @@ async def test_download_targets_use_long_path_on_windows(downloader, monkeypatch
     base = "C:\\Users\\f2\\Download\\douyin\\post\\" + "昵称" * 20
     file_path, full_path = downloader._build_target(base, "d" * 200, ".mp4")
     assert str(full_path) == "\\\\?\\" + base + "\\" + file_path
+
+
+# ---------------- folderize 的作品目录 ----------------
+
+CREATED = "2024-09-05 18-40-18"
+NICKNAME = "每天有氧😭精神状态" * 2
+DESC = "每天有氧 #健身打卡 " * 30  # 文案按 200 字节截断，加上昵称后仍超过 255 字节
+VIDEO = "https://cdn.example/1.mp4"
+APP_KWARGS = {
+    "headers": {"User-Agent": "f2-test"},
+    "cookie": "a=b",
+    "proxies": {"http://": None, "https://": None},
+    "naming": "{create}_{nickname}_{desc}",
+    "folderize": True,
+}
+
+
+async def no_db(*args, **kwargs):
+    return None
+
+
+def record_folders(monkeypatch, downloader_class, methods):
+    folders = []
+
+    async def record(self, label, content, base_path, *args, **kwargs):
+        folders.append(Path(base_path))
+
+    for method in methods:
+        monkeypatch.setattr(downloader_class, method, record)
+    # 抖音、TikTok 结束时会在当前目录的用户数据库中记录最后一个作品
+    if hasattr(downloader_class, "save_last_aweme_id"):
+        monkeypatch.setattr(downloader_class, "save_last_aweme_id", no_db)
+    return folders
+
+
+def assert_folders_fit(folders, user_path):
+    assert folders
+    for folder in folders:
+        assert folder.parent == user_path
+        assert size(folder.name) <= FILENAME_BYTE_LIMIT
+        assert folder.name.startswith(f"{CREATED}_{NICKNAME}")
+
+
+@pytest.mark.parametrize(
+    "downloader_class, data",
+    [
+        (
+            DouyinDownloader,
+            {
+                "aweme_id": "1",
+                "sec_user_id": "s",
+                "private_status": 0,
+                "aweme_type": 0,
+                "video_play_addr": VIDEO,
+                "create_time": CREATED,
+                "nickname": NICKNAME,
+                "desc": DESC,
+            },
+        ),
+        (
+            TiktokDownloader,
+            {
+                "aweme_id": "1",
+                "secUid": "s",
+                "privateItem": False,
+                "secret": False,
+                "video_playAddr": VIDEO,
+                "createTime": CREATED,
+                "nickname": NICKNAME,
+                "desc": DESC,
+            },
+        ),
+        (
+            WeiboDownloader,
+            {
+                "weibo_id": "1",
+                "uid": "u",
+                "weibo_pic_num": 0,
+                "is_video": 11,
+                "playback_list": VIDEO,
+                "weibo_created_at": CREATED,
+                "nickname": NICKNAME,
+                "weibo_desc": DESC,
+            },
+        ),
+        (
+            TwitterDownloader,
+            {
+                "user_id": "1",
+                "tweet_id": "2",
+                "tweet_media": [{"type": "video", "url": VIDEO}],
+                "tweet_created_at": CREATED,
+                "nickname": NICKNAME,
+                "tweet_desc": DESC,
+            },
+        ),
+    ],
+    ids=["douyin", "tiktok", "weibo", "twitter"],
+)
+async def test_folderize_folder_name_fits(
+    monkeypatch, tmp_path, downloader_class, data
+):
+    # #179：此前只截断文件名，作品目录名超过 255 字节时在 NAS 等文件系统上无法创建，
+    # 这个作品的文件全部保存失败
+    folders = record_folders(
+        monkeypatch,
+        downloader_class,
+        ("initiate_download", "initiate_static_download"),
+    )
+    downloader = downloader_class(dict(APP_KWARGS))
+    try:
+        await downloader.handler_download(dict(APP_KWARGS), data, tmp_path)
+    finally:
+        await downloader.close()
+
+    assert_folders_fit(folders, tmp_path)
+
+
+@pytest.mark.parametrize(
+    "downloader_class, data",
+    [
+        (
+            DouyinDownloader,
+            {
+                "m3u8_pull_url": {"FULL_HD1": "https://cdn.example/a.m3u8"},
+                "nickname": NICKNAME,
+                "live_title": "直播标题" * 15,
+            },
+        ),
+        (
+            TiktokDownloader,
+            {
+                "live_hls_url": "https://cdn.example/a.m3u8",
+                "nickname": NICKNAME,
+                "live_title": "直播标题" * 15,
+            },
+        ),
+    ],
+    ids=["douyin", "tiktok"],
+)
+async def test_folderize_live_folder_name_fits(
+    monkeypatch, tmp_path, downloader_class, data
+):
+    folders = record_folders(monkeypatch, downloader_class, ("initiate_m3u8_download",))
+    # 直播的创建时间取当前时间
+    monkeypatch.setattr(
+        "f2.apps.douyin.dl.timestamp_2_str", lambda *args, **kwargs: CREATED
+    )
+    monkeypatch.setattr(
+        "f2.apps.tiktok.dl.timestamp_2_str", lambda *args, **kwargs: CREATED
+    )
+    downloader = downloader_class(dict(APP_KWARGS))
+    try:
+        await downloader.handler_stream(dict(APP_KWARGS), data, tmp_path)
+    finally:
+        await downloader.close()
+
+    assert_folders_fit(folders, tmp_path)

@@ -106,6 +106,16 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
         file_path = fit_filename(file_name, file_suffix or "")
         return file_path, long_path(self._ensure_path(base_path) / file_path)
 
+    @staticmethod
+    def _folder_path(user_path: Union[str, Path], folder_name: str) -> Path:
+        """
+        folderize 时作品目录的路径 (Path of the per-item folder used by folderize)
+
+        目录名与文件名一样不超过 255 字节：此前只截断了文件名，命名模板较长时（如带上昵称），
+        在按字节限制名称长度的文件系统（如 NAS）上无法创建作品目录，作品的文件全部保存失败。
+        """
+        return Path(user_path) / fit_filename(folder_name)
+
     async def _record_local_file_error(
         self, task_id: TaskID, full_path: Path, error: OSError
     ) -> None:

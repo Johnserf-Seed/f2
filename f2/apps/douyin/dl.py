@@ -155,8 +155,12 @@ class DouyinDownloader(BaseDownloader):
             user_path (Any): 用户目录路径
         """
         self.base_path = (
-            user_path
-            / format_file_name(kwargs.get("naming", "{create}_{desc}"), aweme_data_dict)
+            self._folder_path(
+                user_path,
+                format_file_name(
+                    kwargs.get("naming", "{create}_{desc}"), aweme_data_dict
+                ),
+            )
             if kwargs.get("folderize")
             else user_path
         )
@@ -440,7 +444,7 @@ class DouyinDownloader(BaseDownloader):
 
         # 构建文件夹路径
         base_path = (
-            user_path / music_data_dict.get("title")
+            self._folder_path(user_path, music_data_dict.get("title", ""))
             if kwargs.get("folderize")
             else user_path
         )
@@ -556,9 +560,11 @@ class DouyinDownloader(BaseDownloader):
         }
         # 构建文件夹路径
         base_path = (
-            user_path
-            / format_file_name(
-                kwargs.get("naming", "{create}_{desc}"), custom_fields=custom_fields
+            self._folder_path(
+                user_path,
+                format_file_name(
+                    kwargs.get("naming", "{create}_{desc}"), custom_fields=custom_fields
+                ),
             )
             if kwargs.get("folderize")
             else user_path
