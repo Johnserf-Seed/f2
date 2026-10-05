@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-04 18:08-0700\n"
+"POT-Creation-Date: 2026-10-04 18:12-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -1571,6 +1571,11 @@ msgstr "作品 {0} 不属于任何合集"
 #: f2/apps/douyin/handler.py
 msgid "正在从合集作品里获取sec_user_id"
 msgstr "正在从合集作品里获取sec_user_id"
+
+#: f2/apps/douyin/handler.py
+#, python-brace-format
+msgid "获取合集 {0} 失败，接口状态码 {1}：合集可能已删除或当前不可见"
+msgstr "获取合集 {0} 失败，接口状态码 {1}：合集可能已删除或当前不可见"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format

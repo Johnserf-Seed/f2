@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-04 18:08-0700\n"
+"POT-Creation-Date: 2026-10-04 18:12-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -1684,6 +1684,13 @@ msgstr "Post {0} does not belong to any mix"
 #: f2/apps/douyin/handler.py
 msgid "正在从合集作品里获取sec_user_id"
 msgstr "Getting sec_user_id from the mix posts"
+
+#: f2/apps/douyin/handler.py
+#, python-brace-format
+msgid "获取合集 {0} 失败，接口状态码 {1}：合集可能已删除或当前不可见"
+msgstr ""
+"Failed to fetch mix {0}, API status code {1}: the mix may have been "
+"deleted or is not visible"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format

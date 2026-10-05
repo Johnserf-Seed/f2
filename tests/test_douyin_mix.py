@@ -108,7 +108,7 @@ async def test_mix_mode_reports_empty_mix(monkeypatch):
         return PLAYLET_ID
 
     async def fetch_user_mix_videos(self, mix_id, *args, **kwargs):
-        yield SimpleNamespace(sec_user_id=[])
+        yield SimpleNamespace(sec_user_id=[], status_code=0)
 
     monkeypatch.setattr(douyin_handler.MixIdFetcher, "get_mix_id", get_mix_id)
     monkeypatch.setattr(
@@ -117,6 +117,23 @@ async def test_mix_mode_reports_empty_mix(monkeypatch):
 
     # 此前合集为空时 sec_user_id 未赋值，会抛出 UnboundLocalError
     with pytest.raises(APIResponseError, match=PLAYLET_ID):
+        await make_handler().handle_user_mix()
+
+
+async def test_mix_mode_reports_api_error_status(monkeypatch):
+    # 合集已删除或不可见时接口返回 status_code 4，此前同样提示“合集中没有作品”
+    async def get_mix_id(url, proxies=None):
+        return PLAYLET_ID
+
+    async def fetch_user_mix_videos(self, mix_id, *args, **kwargs):
+        yield SimpleNamespace(sec_user_id=[], status_code=4)
+
+    monkeypatch.setattr(douyin_handler.MixIdFetcher, "get_mix_id", get_mix_id)
+    monkeypatch.setattr(
+        douyin_handler.DouyinHandler, "fetch_user_mix_videos", fetch_user_mix_videos
+    )
+
+    with pytest.raises(APIResponseError, match="接口状态码 4"):
         await make_handler().handle_user_mix()
 
 

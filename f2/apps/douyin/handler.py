@@ -1371,13 +1371,22 @@ class DouyinHandler:
             if not mix_id:
                 raise APIResponseError(_("作品 {0} 不属于任何合集").format(aweme_id))
 
+        status_code = None
         if not sec_user_id:
             async for aweme_data in self.fetch_user_mix_videos(mix_id, 0, 20, 1):
                 logger.info(_("正在从合集作品里获取sec_user_id"))
+                status_code = aweme_data.status_code
                 sec_user_ids = aweme_data.sec_user_id or []  # 注意这里是一个列表
                 sec_user_id = sec_user_ids[0] if sec_user_ids else None
                 break
         if not sec_user_id:
+            # 合集已删除或不可见时接口返回非 0 的 status_code，此前同样提示“合集中没有作品”
+            if status_code not in (None, 0):
+                raise APIResponseError(
+                    _(
+                        "获取合集 {0} 失败，接口状态码 {1}：合集可能已删除或当前不可见"
+                    ).format(mix_id, status_code)
+                )
             raise APIResponseError(_("合集 {0} 中没有作品").format(mix_id))
 
         async with AsyncUserDB("douyin_users.db") as db:
