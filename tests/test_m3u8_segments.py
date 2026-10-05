@@ -7,6 +7,7 @@ import pytest
 
 import f2.dl.m3u8 as m3u8_module
 from f2.apps.douyin.dl import DouyinDownloader
+from f2.apps.tiktok.dl import TiktokDownloader
 from f2.utils.core.signal import SignalManager
 
 KWARGS = {
@@ -63,7 +64,7 @@ def downloader(monkeypatch, record_waits):
 
 async def test_interrupted_segment_is_not_written_twice(downloader, tmp_path):
     # 此前片段下载到一半超时时，前 4 个字节已写入文件，下一轮重新下载又追加一遍
-    target = tmp_path / "live.flv"
+    target = tmp_path / "live.ts"
     task_id = await downloader.progress.add_task(
         description="live", filename=target.name, total=None
     )
@@ -135,7 +136,7 @@ async def test_playlist_is_fetched_with_the_downloader_client(
             "/live/seg-1.ts": [httpx.Response(200, content=DATA)],
         },
     )
-    target = tmp_path / "live.flv"
+    target = tmp_path / "live.ts"
 
     await record(downloader, target)
 
@@ -167,7 +168,7 @@ async def test_network_error_does_not_end_the_recording(
             "/live/seg-1.ts": [httpx.Response(200, content=DATA)],
         },
     )
-    target = tmp_path / "live.flv"
+    target = tmp_path / "live.ts"
 
     await record(downloader, target)
 
@@ -185,7 +186,39 @@ async def test_repeated_network_errors_fail_the_recording(
     failed = []
     monkeypatch.setattr(m3u8_module, "record_failed_download", failed.append)
 
-    await record(downloader, tmp_path / "live.flv")
+    await record(downloader, tmp_path / "live.ts")
 
     assert len(requests) == m3u8_module.MAX_PLAYLIST_ERRORS
-    assert failed == [str(tmp_path / "live.flv")]
+    assert failed == [str(tmp_path / "live.ts")]
+
+
+# ---------------- 录像的扩展名 ----------------
+
+
+@pytest.mark.parametrize(
+    "downloader_class, webcast",
+    [
+        (
+            DouyinDownloader,
+            {"m3u8_pull_url": {"FULL_HD1": "https://cdn.example/a.m3u8"}},
+        ),
+        (TiktokDownloader, {"live_hls_url": "https://cdn.example/a.m3u8"}),
+    ],
+    ids=["douyin", "tiktok"],
+)
+async def test_hls_recording_is_saved_as_ts(
+    monkeypatch, tmp_path, downloader_class, webcast
+):
+    # HLS 流录下来是 MPEG-TS，此前存成 .flv，按扩展名识别格式的播放器打不开
+    suffixes = []
+
+    async def initiate(self, label, url, base_path, name, suffix, **kwargs):
+        suffixes.append(suffix)
+
+    monkeypatch.setattr(downloader_class, "initiate_m3u8_download", initiate)
+    downloader = downloader_class(KWARGS)
+
+    await downloader.handler_stream(KWARGS | {"naming": "{create}"}, webcast, tmp_path)
+    await downloader.close()
+
+    assert suffixes == [".ts"]

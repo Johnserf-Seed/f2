@@ -575,11 +575,12 @@ class DouyinDownloader(BaseDownloader):
         # 设置回调函数需要的user_id
         self._live_status_callback_user_id = webcast_data_dict.get("user_id", "")
 
+        # HLS 流录下来是 MPEG-TS，此前存成 .flv，按扩展名识别格式的播放器打不开
         await self.initiate_m3u8_download(
             _("直播"),
             webcast_url,
             base_path,
             webcast_name,
-            ".flv",
+            ".ts",
             stream_status_callback=self._check_live_status_callback,
         )

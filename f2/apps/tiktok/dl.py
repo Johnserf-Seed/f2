@@ -355,8 +355,9 @@ class TiktokDownloader(BaseDownloader):
 
         # 检查直播流URL是否有效
         if webcast_url is not None and isinstance(webcast_url, str):
+            # HLS 流录下来是 MPEG-TS，此前存成 .flv，按扩展名识别格式的播放器打不开
             await self.initiate_m3u8_download(
-                _("直播"), webcast_url, base_path, webcast_name, ".flv"
+                _("直播"), webcast_url, base_path, webcast_name, ".ts"
             )
         else:
             logger.warning(_("直播流URL无效，无法下载"))
