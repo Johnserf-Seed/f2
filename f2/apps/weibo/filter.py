@@ -2,7 +2,7 @@
 
 from typing import List
 
-from f2.apps.weibo.utils import extract_desc
+from f2.apps.weibo.utils import extract_desc, mix_media_video_urls
 from f2.utils.json.filter import JSONModel, filter_to_list
 from f2.utils.string.formatter import replaceT
 from f2.utils.time.timestamp import timestamp_2_str
@@ -247,6 +247,11 @@ class WeiboDetailFilter(JSONModel):
         # 每个图片的信息都是pic_ids作为下标的
         return self._get_attr_value("$.pic_infos")
 
+    @property
+    def weibo_mix_videos(self):
+        # 图片与视频混排时 pic_ids 只有图片，视频在 mix_media_info 中
+        return mix_media_video_urls(self._get_attr_value("$.mix_media_info.items"))
+
     # VIDEO
     @property
     def is_video(self):
@@ -393,6 +398,17 @@ class UserWeiboFilter(JSONModel):
     def weibo_pic_infos(self):
         # 以图片 ID 为键，type 为 pic、gif 或 livephoto
         return self._get_list_attr_value("$.data.list[*].pic_infos")
+
+    @property
+    def weibo_mix_videos(self):
+        # 图片与视频混排时 pic_ids 只有图片，视频在 mix_media_info 中
+        return [
+            mix_media_video_urls(items)
+            for items in self._get_list_attr_value(
+                "$.data.list[*].mix_media_info.items"
+            )
+            or []
+        ]
 
     @property
     def weibo_location(self):

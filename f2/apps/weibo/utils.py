@@ -627,6 +627,37 @@ def filter_weibos_by_interval(
     return kept, last_regular_ts is not None and last_regular_ts < start
 
 
+def mix_media_video_urls(items: Any) -> List[List[str]]:
+    """
+    图片与视频混排的微博中每个视频的播放地址 (Playback URLs of the videos in a mixed media weibo)
+
+    这类微博的 pic_ids 只有其中的图片，视频在 mix_media_info.items 中，结构与视频微博的 page_info 相同。
+
+    Args:
+        items: mix_media_info.items
+
+    Returns:
+        List[List[str]]: 每个视频一个地址列表，按清晰度从高到低排列
+    """
+    if not isinstance(items, list):
+        return []
+
+    videos = []
+    for item in items:
+        if not isinstance(item, dict) or item.get("type") != "video":
+            continue
+        media_info = (item.get("data") or {}).get("media_info") or {}
+        urls: List[str] = []
+        for playback in media_info.get("playback_list") or []:
+            if isinstance(playback, dict):
+                url = (playback.get("play_info") or {}).get("url")
+                if url:
+                    urls.append(url)
+        if urls:
+            videos.append(urls)
+    return videos
+
+
 def extract_desc(text):
     """
     提取微博标题，抛弃从 "http" 开始及其后的内容，包括其前一个空格。

@@ -129,6 +129,7 @@ class WeiboDownloader(BaseDownloader):
             await self.download_video()
         else:
             await self.download_images()
+            await self.download_mix_videos()
 
         return
 
@@ -173,6 +174,25 @@ class WeiboDownloader(BaseDownloader):
         await self.initiate_static_download(
             _("文案"), desc_content, self.base_path, desc_name, ".txt"
         )
+
+    async def download_mix_videos(self):
+        """
+        下载图片与视频混排的微博中的视频，只有一个时文件名以 _video 结尾，多个时依次编号
+
+        这类微博的 pic_ids 只有其中的图片，此前视频被直接丢掉
+        """
+        videos = self.weibo_data_dict.get("weibo_mix_videos") or []
+        if not videos:
+            return
+
+        name = format_file_name(
+            self.kwargs.get("naming", "{create}_{desc}"), self.weibo_data_dict
+        )
+        for i, video_urls in enumerate(videos, start=1):
+            suffix = "_video" if len(videos) == 1 else f"_video_{i}"
+            await self.initiate_download(
+                _("视频"), video_urls, self.base_path, name + suffix, ".mp4"
+            )
 
     async def download_images(self):
         if not self.weibo_data_dict.get("weibo_pic_ids"):
