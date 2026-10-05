@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-04 18:35-0700\n"
+"POT-Creation-Date: 2026-10-05 13:51-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -3595,6 +3595,11 @@ msgstr "Invalid link, please check it"
 #, python-brace-format
 msgid "微博 {0} 无查看权限，请配置Cookie"
 msgstr "No permission to view Weibo post {0}, please configure a cookie"
+
+#: f2/apps/weibo/handler.py
+#, python-brace-format
+msgid "无法获取微博 {0}：{1}（error_code：{2}）"
+msgstr "Failed to get Weibo post {0}: {1} (error_code: {2})"
 
 #: f2/apps/weibo/handler.py
 msgid "`weibo_id`不能为空"

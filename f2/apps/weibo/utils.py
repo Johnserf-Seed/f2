@@ -638,6 +638,10 @@ def extract_desc(text):
         str: 提取后的标题
     """
 
+    # 不可见或已删除的微博没有正文
+    if not text:
+        return ""
+
     text = text.strip()  # 去掉两端空格
     http_index = text.find("http")  # 查找 "http" 的起始位置
 

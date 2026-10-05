@@ -279,6 +279,16 @@ class WeiboHandler:
             await self.downloader.close()
             return
 
+        # 其他原因（如“由于博主设置，目前内容暂不可见。”）直接给出接口的说明
+        if weibo.status != 1:
+            logger.error(
+                _("无法获取微博 {0}：{1}（error_code：{2}）").format(
+                    weibo_id, weibo.message, weibo.error_code
+                )
+            )
+            await self.downloader.close()
+            return
+
         async with AsyncUserDB("weibo_users.db") as audb:
             user_path = await self.get_or_add_user_data(self.kwargs, weibo.uid, audb)
 
@@ -306,6 +316,11 @@ class WeiboHandler:
             params = WeiboDetail(id=weibo_id)
             response = await crawler.fetch_weibo_detail(params)
             weibo = WeiboDetailFilter(response)
+
+        # 微博不可见、已删除或没有查看权限时接口返回 ok=0 与原因，没有正文；
+        # 此前在下面读取文案时报 AttributeError，现在交给调用方按 error_code 处理
+        if weibo.status != 1:
+            return weibo
 
         logger.debug(
             f"微博ID: {weibo.weibo_id}, 文案: {weibo.weibo_desc}, 发布时间: {weibo.weibo_created_at}"
