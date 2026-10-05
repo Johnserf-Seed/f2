@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-04 16:12-0700\n"
+"POT-Creation-Date: 2026-10-04 17:51-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -2786,6 +2786,13 @@ msgstr ""
 "Caption: {1}\n"
 "Author: {2}\n"
 "Download time: {3}"
+
+#: f2/apps/tiktok/handler.py
+#, python-brace-format
+msgid "连续 {0} 页没有返回作品，停止翻页：列表可能没有公开，或 cookie 没有查看权限"
+msgstr ""
+"No posts in {0} consecutive pages, stopped paging: the list may not be "
+"public, or the cookie may not have permission to view it"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format

@@ -130,7 +130,30 @@ async def test_no_wait_after_reaching_max_counts(
     assert waits == []
 
 
-# ---------------- 用户信息 ----------------
+# ---------------- 空页面 ----------------
+
+
+def empty_page(cursor):
+    # 喜欢列表没有公开时，接口返回不含 itemList、hasMore 为真且游标不断变化的页面
+    return {"statusCode": 0, "hasMore": True, "cursor": str(cursor)}
+
+
+@pytest.mark.parametrize(
+    "name, args",
+    [(g[0], g[1]) for g in GENERATORS if g[0] != "fetch_search_videos"],
+    ids=[g[0] for g in GENERATORS if g[0] != "fetch_search_videos"],
+)
+async def test_stops_after_consecutive_empty_pages(handler, monkeypatch, name, args):
+    # 此前一直请求下去（实测喜欢列表 170 秒内请求了一百多次）
+    crawler = use_pages(monkeypatch, [empty_page(100 + i) for i in range(10)])
+    warnings = []
+    monkeypatch.setattr(tiktok_handler.logger, "warning", warnings.append)
+
+    pages = [page async for page in getattr(handler, name)(*args[:-1], float("inf"))]
+
+    assert pages == []
+    assert len(crawler.calls) == tiktok_handler.MAX_EMPTY_PAGES
+    assert any("没有返回作品" in w for w in warnings)
 
 
 async def test_like_videos_skip_profile_without_bark(monkeypatch):

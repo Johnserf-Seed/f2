@@ -64,6 +64,10 @@ TK_LIVE_STATUS_MAPPING = {
 }
 
 
+# 连续这么多页没有作品时停止翻页
+MAX_EMPTY_PAGES = 3
+
+
 def _next_cursor(page: Any, current: Any) -> Optional[int]:
     """
     计算下一页的游标，没有下一页时返回 None（#270）
@@ -396,6 +400,8 @@ class TiktokHandler:
 
         logger.info(_("处理用户：{0} 发布的作品").format(secUid))
 
+        empty_pages = 0
+
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
@@ -422,12 +428,23 @@ class TiktokHandler:
 
             if not video.has_aweme:
                 logger.info(_("第 {0} 页没有找到作品").format(cursor))
+                # 接口一直返回带新游标、hasMore 为真的空页面时，此前会不间断地无限请求
+                empty_pages += 1
+                if empty_pages >= MAX_EMPTY_PAGES:
+                    logger.warning(
+                        _(
+                            "连续 {0} 页没有返回作品，停止翻页：列表可能没有公开，或 cookie 没有查看权限"
+                        ).format(empty_pages)
+                    )
+                    break
                 next_cursor = _next_cursor(video, cursor)
                 if next_cursor is None:
                     logger.info(_("用户：{0} 所有作品采集完毕").format(secUid))
                     break
                 cursor = next_cursor
                 continue
+
+            empty_pages = 0
 
             # 只在本页有作品时更新昵称
             if video.nickname_raw:
@@ -535,6 +552,8 @@ class TiktokHandler:
 
         logger.info(_("处理用户：{0} 点赞的作品").format(secUid))
 
+        empty_pages = 0
+
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
@@ -556,6 +575,7 @@ class TiktokHandler:
                 like = UserPostFilter(response)
 
             if like.has_aweme:
+                empty_pages = 0
                 logger.debug(_("当前请求的cursor：{0}").format(cursor))
                 logger.debug(
                     _("作品ID：{0} 作品文案：{1} 作者：{2}").format(
@@ -574,6 +594,16 @@ class TiktokHandler:
 
             else:
                 logger.debug(_("第 {0} 页没有找到作品").format(cursor))
+
+                # 列表没有公开等情况下接口一直返回带新游标、hasMore 为真的空页面，此前会无限请求
+                empty_pages += 1
+                if empty_pages >= MAX_EMPTY_PAGES:
+                    logger.warning(
+                        _(
+                            "连续 {0} 页没有返回作品，停止翻页：列表可能没有公开，或 cookie 没有查看权限"
+                        ).format(empty_pages)
+                    )
+                    break
 
                 if not like.hasMore and str(like.api_status_code) == "0":
                     logger.debug(_("用户：{0} 所有作品采集完毕").format(secUid))
@@ -668,6 +698,8 @@ class TiktokHandler:
 
         logger.info(_("处理用户：{0} 收藏的作品").format(secUid))
 
+        empty_pages = 0
+
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
@@ -689,6 +721,7 @@ class TiktokHandler:
                 collect = UserPostFilter(response)
 
             if collect.has_aweme:
+                empty_pages = 0
                 logger.debug(_("当前请求的cursor：{0}").format(cursor))
                 logger.debug(
                     _("作品ID：{0} 作品文案：{1} 作者：{2}").format(
@@ -708,6 +741,16 @@ class TiktokHandler:
 
             else:
                 logger.debug(_("第 {0} 页没有找到作品").format(cursor))
+
+                # 列表没有公开等情况下接口一直返回带新游标、hasMore 为真的空页面，此前会无限请求
+                empty_pages += 1
+                if empty_pages >= MAX_EMPTY_PAGES:
+                    logger.warning(
+                        _(
+                            "连续 {0} 页没有返回作品，停止翻页：列表可能没有公开，或 cookie 没有查看权限"
+                        ).format(empty_pages)
+                    )
+                    break
 
                 if not collect.hasMore and str(collect.api_status_code) == "0":
                     logger.debug(_("用户：{0} 所有作品采集完毕").format(secUid))
@@ -909,6 +952,8 @@ class TiktokHandler:
 
         logger.info(_("处理合集: {0} 的作品").format(mixId))
 
+        empty_pages = 0
+
         while videos_collected < max_counts:
             current_request_size = min(page_counts, max_counts - videos_collected)
 
@@ -930,6 +975,7 @@ class TiktokHandler:
                 mix = UserMixFilter(response)
 
             if mix.has_aweme:
+                empty_pages = 0
                 logger.debug(_("当前请求的cursor: {0}").format(cursor))
                 logger.debug(
                     _("作品ID: {0} 作品文案: {1} 作者: {2}").format(
@@ -948,6 +994,16 @@ class TiktokHandler:
 
             else:
                 logger.debug(_("第 {0} 页没有找到作品").format(cursor))
+
+                # 列表没有公开等情况下接口一直返回带新游标、hasMore 为真的空页面，此前会无限请求
+                empty_pages += 1
+                if empty_pages >= MAX_EMPTY_PAGES:
+                    logger.warning(
+                        _(
+                            "连续 {0} 页没有返回作品，停止翻页：列表可能没有公开，或 cookie 没有查看权限"
+                        ).format(empty_pages)
+                    )
+                    break
 
                 if not mix.hasMore and str(mix.api_status_code) == "0":
                     logger.debug(_("合集: {0} 所有作品采集完毕").format(mixId))
