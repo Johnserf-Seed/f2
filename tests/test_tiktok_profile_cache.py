@@ -123,3 +123,19 @@ async def test_profile_comes_from_posts_for_user_links(monkeypatch):
 
     assert (user.uniqueId, user.videoCount) == ("nasa", 7)
     assert SecUserIdFetcher.cached_user_detail("MS4wLjABAAAA-nasa") is not None
+
+
+async def test_profile_by_unique_id_comes_from_the_profile_page(
+    profile_page, monkeypatch
+):
+    # 直播、单个作品模式只有 uniqueId，此前直接请求对游客返回空内容的用户信息接口
+    monkeypatch.setattr(tiktok_handler, "TiktokCrawler", NoApiCrawler)
+    handler = tiktok_handler.TiktokHandler(dict(KWARGS))
+
+    user = await handler.fetch_user_profile(uniqueId="nasa")
+
+    assert (user.uniqueId, user.secUid, user.nickname) == (
+        "nasa",
+        "MS4wLjABAAAA-nasa",
+        "NASA",
+    )

@@ -1,6 +1,6 @@
 # path: f2/apps/tiktok/filter.py
 
-from typing import List
+from typing import List, Optional
 
 from f2.utils.json.escape import unescape_json
 from f2.utils.json.filter import JSONModel, filter_to_list
@@ -1034,17 +1034,45 @@ class UserLiveFilter(JSONModel):
             return {}
         return unescape_json(stream_data)
 
+    # 依次选择的清晰度；ao 为纯音频，不参与选择
+    _LIVE_QUALITY_ORDER = ("origin", "uhd", "hd", "sd", "ld")
+
     @property
-    def live_flv_url(self):
+    def live_quality(self) -> Optional[str]:
+        """
+        直播流中可用的最高清晰度 (The best quality available in the stream data)
+
+        此前固定读取 origin（原画），而实测多数直播只提供 hd 与 ao，
+        取不到直播流地址，录制直接提示地址无效。
+        """
+        streams = self.live_stream_data.get("data") or {}
+        available = [
+            key
+            for key, value in streams.items()
+            if key != "ao" and isinstance(value, dict) and value.get("main")
+        ]
+        if not available:
+            return None
+        order = self._LIVE_QUALITY_ORDER
+        return min(
+            available, key=lambda key: order.index(key) if key in order else len(order)
+        )
+
+    def _live_url(self, kind: str) -> Optional[str]:
+        quality = self.live_quality
+        if quality is None:
+            return None
         return JSONModel(self.live_stream_data)._get_attr_value(
-            "$.data.origin.main.flv"
+            f"$.data.{quality}.main.{kind}"
         )
 
     @property
+    def live_flv_url(self):
+        return self._live_url("flv")
+
+    @property
     def live_hls_url(self):
-        return JSONModel(self.live_stream_data)._get_attr_value(
-            "$.data.origin.main.hls"
-        )
+        return self._live_url("hls")
 
     def _to_raw(self) -> dict:
         return self._data

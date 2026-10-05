@@ -2614,6 +2614,11 @@ msgstr "至少提供 secUid 或 uniqueId 中的一个参数"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
+msgid "从主页获取用户信息失败：{0}"
+msgstr "从主页获取用户信息失败：{0}"
+
+#: f2/apps/tiktok/handler.py
+#, python-brace-format
 msgid "从主页作品获取用户信息失败：{0}"
 msgstr "从主页作品获取用户信息失败：{0}"
 

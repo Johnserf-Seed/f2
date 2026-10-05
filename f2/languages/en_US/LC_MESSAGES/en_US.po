@@ -2765,6 +2765,11 @@ msgstr "Provide at least one of secUid or uniqueId"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
+msgid "从主页获取用户信息失败：{0}"
+msgstr "Failed to get the user data from the profile page: {0}"
+
+#: f2/apps/tiktok/handler.py
+#, python-brace-format
 msgid "从主页作品获取用户信息失败：{0}"
 msgstr "Failed to get the user data from the posts on the profile: {0}"
 

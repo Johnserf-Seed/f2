@@ -161,6 +161,19 @@ class TiktokHandler:
             detail = await self._user_detail_from_posts(secUid)
             if detail is not None:
                 return UserProfileFilter(detail)
+        # 只有 uniqueId 时（如直播模式）打开主页取得用户信息
+        elif uniqueId:
+            try:
+                sec_uid = await SecUserIdFetcher.get_secuid(
+                    f"https://www.tiktok.com/@{uniqueId}",
+                    proxies=self.kwargs.get("proxies"),
+                )
+            except APIError as e:
+                logger.debug(_("从主页获取用户信息失败：{0}").format(e))
+            else:
+                cached = SecUserIdFetcher.cached_user_detail(sec_uid)
+                if cached and UserProfileFilter(cached).uniqueId is not None:
+                    return UserProfileFilter(cached)
 
         async with TiktokCrawler(self.kwargs) as crawler:
             params = UserProfile(secUid=secUid, uniqueId=uniqueId)
