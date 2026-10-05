@@ -718,6 +718,13 @@ class SecUserIdFetcher(BaseCrawler):
                     sec_uid = user_info.get("secUid", None)
                     if sec_uid:
                         cls._user_details[sec_uid] = (time.monotonic(), user_detail)
+                    else:
+                        # 账号不存在或被封禁时主页仍返回 200，只在 statusCode 中说明（如 10221、209002）
+                        raise APINotFoundError(
+                            _(
+                                "主页中没有用户信息（statusCode：{0}），账号可能不存在、已被封禁或在当前地区不可见"
+                            ).format(user_detail.get("statusCode"))
+                        )
 
                 if sec_uid is None:
                     raise ValueError(_("获取 {0} 失败").format("sec_uid"))
@@ -773,6 +780,11 @@ class SecUserIdFetcher(BaseCrawler):
             )
         finally:
             await instance.close()
+
+    @classmethod
+    def remember_user_detail(cls, sec_uid: str, detail: dict) -> None:
+        """缓存用户信息，供 cached_user_detail 使用 (Cache a user detail)"""
+        cls._user_details[sec_uid] = (time.monotonic(), detail)
 
     @classmethod
     def cached_user_detail(cls, sec_uid: str) -> Optional[dict]:

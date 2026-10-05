@@ -43,7 +43,7 @@ from f2.apps.tiktok.utils import (
     normalize_cursor,
 )
 from f2.cli.cli_console import RichConsoleManager
-from f2.exceptions.api_exceptions import APIResponseError
+from f2.exceptions.api_exceptions import APIError, APIResponseError
 from f2.exceptions.base import F2Error
 from f2.i18n.translator import _
 from f2.log.logger import logger
@@ -156,6 +156,12 @@ class TiktokHandler:
         if cached and UserProfileFilter(cached).uniqueId is not None:
             return UserProfileFilter(cached)
 
+        # /user/<secUid> 形式的链接不会打开主页，没有可用的缓存：使用主页作品中的作者信息
+        if secUid:
+            detail = await self._user_detail_from_posts(secUid)
+            if detail is not None:
+                return UserProfileFilter(detail)
+
         async with TiktokCrawler(self.kwargs) as crawler:
             params = UserProfile(secUid=secUid, uniqueId=uniqueId)
             response = await crawler.fetch_user_profile(params)
@@ -165,6 +171,34 @@ class TiktokHandler:
                     _("`fetch_user_profile`请求失败，请更换cookie或稍后再试")
                 )
             return UserProfileFilter(response)
+
+    async def _user_detail_from_posts(self, secUid: str) -> Optional[dict]:
+        """
+        主页作品中的作者信息 (User detail taken from the author of the user's posts)
+
+        作品中的 author 与 authorStats 与用户信息接口响应中的 userInfo.user、userInfo.stats
+        结构相同；用户没有公开作品或请求失败时返回 None。取到后同样缓存。
+        """
+        async with TiktokCrawler(self.kwargs) as crawler:
+            try:
+                response = await crawler.fetch_user_post(
+                    UserPost(secUid=secUid, cursor=0, count=1)
+                )
+            except APIError as e:
+                logger.debug(_("从主页作品获取用户信息失败：{0}").format(e))
+                return None
+
+        items = response.get("itemList") or []
+        author = items[0].get("author") if items else None
+        if not author or author.get("secUid") != secUid:
+            return None
+
+        detail = {
+            "statusCode": 0,
+            "userInfo": {"user": author, "stats": items[0].get("authorStats") or {}},
+        }
+        SecUserIdFetcher.remember_user_detail(secUid, detail)
+        return detail
 
     async def get_or_add_user_data(
         self,

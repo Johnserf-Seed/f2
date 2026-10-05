@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-04 17:51-0700\n"
+"POT-Creation-Date: 2026-10-04 17:57-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -2613,6 +2613,11 @@ msgstr "至少提供 secUid 或 uniqueId 中的一个参数"
 
 #: f2/apps/tiktok/handler.py
 #, python-brace-format
+msgid "从主页作品获取用户信息失败：{0}"
+msgstr "从主页作品获取用户信息失败：{0}"
+
+#: f2/apps/tiktok/handler.py
+#, python-brace-format
 msgid "无效的aweme_id: {0}"
 msgstr "无效的aweme_id: {0}"
 
@@ -2896,6 +2901,11 @@ msgstr "页面不可用，可能是由于区域限制（代理）造成的。类
 #, python-brace-format
 msgid "未在响应中找到 {0}，请检查链接。类名：{1}"
 msgstr "未在响应中找到 {0}，请检查链接。类名：{1}"
+
+#: f2/apps/tiktok/utils.py
+#, python-brace-format
+msgid "主页中没有用户信息（statusCode：{0}），账号可能不存在、已被封禁或在当前地区不可见"
+msgstr "主页中没有用户信息（statusCode：{0}），账号可能不存在、已被封禁或在当前地区不可见"
 
 #: f2/apps/tiktok/utils.py
 #, python-brace-format
