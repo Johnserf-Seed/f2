@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-05 13:51-0700\n"
+"POT-Creation-Date: 2026-10-05 14:08-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -3550,6 +3550,11 @@ msgstr "Quality list: {0}, bitrate list: {1}"
 #, python-brace-format
 msgid "{0} 该微博无法下载，需要在微博客户端查看"
 msgstr "{0} This Weibo post cannot be downloaded; view it in the Weibo app"
+
+#: f2/apps/weibo/dl.py
+#, python-brace-format
+msgid "{0} 该微博没有图片或视频，只保存文案"
+msgstr "{0} This Weibo post has no images or video; only its text is saved"
 
 #: f2/apps/weibo/dl.py
 #, python-brace-format

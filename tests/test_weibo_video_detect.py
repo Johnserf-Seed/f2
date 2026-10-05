@@ -1,5 +1,7 @@
 # path: tests/test_weibo_video_detect.py
 
+import logging
+
 import pytest
 
 from f2.apps.weibo.dl import WeiboDownloader
@@ -112,3 +114,22 @@ async def test_weibo_media_type_from_api_data(tmp_path, mode, weibo, expected):
         [data] = UserWeiboFilter({"ok": 1, "data": {"list": [weibo]}})._to_list()
 
     assert await downloaded(tmp_path, data) == ["desc", expected]
+
+
+@pytest.mark.parametrize("pic_num, warned", [(0, False), (3, True)])
+async def test_only_weibos_with_pictures_warn_about_missing_ids(
+    caplog, pic_num, warned
+):
+    # 纯文字微博只保存文案，此前也提示“该微博无法下载，需要在微博客户端查看”
+    downloader = WeiboDownloader({"cookie": "a=b"})
+    downloader.weibo_id = "1"
+    downloader.weibo_data_dict = {"weibo_pic_ids": [], "weibo_pic_num": pic_num}
+
+    with caplog.at_level(logging.DEBUG):
+        await downloader.download_images()
+    await downloader.close()
+
+    warnings = [
+        r for r in caplog.records if r.name == "f2" and r.levelno == logging.WARNING
+    ]
+    assert bool(warnings) is warned

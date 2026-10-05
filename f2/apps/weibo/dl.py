@@ -176,9 +176,15 @@ class WeiboDownloader(BaseDownloader):
 
     async def download_images(self):
         if not self.weibo_data_dict.get("weibo_pic_ids"):
-            logger.warning(
-                _("{0} 该微博无法下载，需要在微博客户端查看").format(self.weibo_id)
-            )
+            # 有图片却没有返回图片 ID 时才需要到客户端查看；纯文字微博此前也报这条警告
+            if self.weibo_data_dict.get("weibo_pic_num"):
+                logger.warning(
+                    _("{0} 该微博无法下载，需要在微博客户端查看").format(self.weibo_id)
+                )
+            else:
+                logger.debug(
+                    _("{0} 该微博没有图片或视频，只保存文案").format(self.weibo_id)
+                )
             return
 
         for i, image_url in enumerate(self.weibo_data_dict.get("weibo_pic_ids", [])):
