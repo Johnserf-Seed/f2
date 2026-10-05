@@ -390,6 +390,11 @@ class UserWeiboFilter(JSONModel):
         return self._get_list_attr_value("$.data.list[*].pic_num")
 
     @property
+    def weibo_pic_infos(self):
+        # 以图片 ID 为键，type 为 pic、gif 或 livephoto
+        return self._get_list_attr_value("$.data.list[*].pic_infos")
+
+    @property
     def weibo_location(self):
         return self._get_list_attr_value("$.data.list[*].region_name")
 

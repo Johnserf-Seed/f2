@@ -187,6 +187,10 @@ class WeiboDownloader(BaseDownloader):
                 )
             return
 
+        # 动图的原图是 GIF，此前一律存成 .jpg
+        pic_infos = self.weibo_data_dict.get("weibo_pic_infos")
+        if not isinstance(pic_infos, dict):
+            pic_infos = {}
         for i, image_url in enumerate(self.weibo_data_dict.get("weibo_pic_ids", [])):
             image_name = (
                 format_file_name(
@@ -194,10 +198,12 @@ class WeiboDownloader(BaseDownloader):
                 )
                 + f"_image_{i + 1}"
             )
+            pic_type = (pic_infos.get(image_url) or {}).get("type")
+            image_suffix = ".gif" if pic_type == "gif" else ".jpg"
             image_url = WeiboAPIEndpoints.LARGEST + f"/{image_url}"
             if image_url is not None:
                 await self.initiate_download(
-                    _("图片"), image_url, self.base_path, image_name, ".jpg"
+                    _("图片"), image_url, self.base_path, image_name, image_suffix
                 )
             else:
                 logger.warning(
