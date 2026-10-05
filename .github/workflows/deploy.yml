@@ -34,7 +34,7 @@ jobs:
           fetch-depth: 0 # 如果未启用 lastUpdated，则不需要
 
       # v6 会先装 pnpm 11 再切换到指定版本，旧版本 pnpm 用已升级到 Node 24 的 v5 即可
-      - uses: pnpm/action-setup@v5
+      - uses: pnpm/action-setup@v6
         with:
           version: 9
           run_install: false
