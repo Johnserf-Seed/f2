@@ -51,6 +51,25 @@ def _isolated_user_dir(tmp_path_factory: pytest.TempPathFactory, monkeypatch):
     monkeypatch.setattr(user_config, "user_config_dir", lambda: home)
 
 
+@pytest.fixture(autouse=True)
+def _no_cli_log_files(monkeypatch: pytest.MonkeyPatch):
+    """
+    进程内调用 CLI 的用例不写日志文件
+
+    此前每次运行测试都在当前目录的 logs 下新增两个日志文件，同一进程中之后的用例日志也写进去，
+    开启文件日志时的清理还会删掉开发者在仓库根目录运行 f2 留下的旧日志。
+    写日志文件的行为由 test_cli_logging 在子进程的临时目录中检查。
+    """
+    from f2.cli import cli_commands
+
+    setup = cli_commands.setup_cli_logging
+    monkeypatch.setattr(
+        cli_commands,
+        "setup_cli_logging",
+        lambda log_to_file=True: setup(log_to_file=False),
+    )
+
+
 @pytest.fixture
 def record_waits(monkeypatch: pytest.MonkeyPatch):
     """把模块中的 asyncio.sleep 换成只记录时长的替身，返回记录列表；不影响全局的 asyncio"""
