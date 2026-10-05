@@ -2,6 +2,7 @@
 
 
 import re
+import sys
 from typing import Any, List, Optional, Union, overload
 
 
@@ -68,6 +69,11 @@ _FILENAME_CHAR_MAP = str.maketrans(
 )
 # 其余控制字符在文件名中不可见，Windows 也不允许，直接去掉
 _CONTROL_CHARS_PATTERN = re.compile(r"[\x00-\x1f\x7f]")
+# Windows 的保留设备名，带扩展名同样不能作为文件名或目录名（如作者昵称为 con 时无法建立用户目录）
+_WINDOWS_RESERVED_NAMES = re.compile(
+    r"(?i)(con|prn|aux|nul|com[0-9¹²³]|lpt[0-9¹²³])(\..*)?"
+)
+_IS_WINDOWS = sys.platform == "win32"
 
 
 def _replace_filename_chars(text: str) -> str:
@@ -75,7 +81,14 @@ def _replace_filename_chars(text: str) -> str:
     # Windows 不允许文件名以空格或点结尾，开头的空格也容易被忽略
     result = result.strip().rstrip(". ")
     # 非空内容被清空时（例如昵称全是点）用下划线兜底，避免目录名为空
-    return result or ("_" if text else "")
+    if not result:
+        return "_" if text else ""
+    # 只在 Windows 上处理：其他系统可以使用这些名称，已下载的文件名保持不变
+    reserved = _WINDOWS_RESERVED_NAMES.fullmatch(result) if _IS_WINDOWS else None
+    if reserved:
+        # Windows 只看第一个点之前的部分（NUL.txt 等同于 NUL），下划线要加在设备名后面
+        result = f"{reserved.group(1)}_{reserved.group(2) or ''}"
+    return result
 
 
 def replaceT(obj: Union[str, Any]) -> Union[str, Any]:
