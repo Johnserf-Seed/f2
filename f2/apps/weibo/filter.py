@@ -250,7 +250,9 @@ class WeiboDetailFilter(JSONModel):
     # VIDEO
     @property
     def is_video(self):
-        return self._get_list_attr_value("$.page_info.type")
+        # 单条微博只有一个 page_info，与主页列表中每条的取值一致返回单个值；
+        # 此前按列表取值得到 ["11"]，下载时从不被识别为视频
+        return self._get_attr_value("$.page_info.type")
 
     @property
     def bitrate_list(self):
