@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-04 17:57-0700\n"
+"POT-Creation-Date: 2026-10-04 18:08-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -4773,6 +4773,11 @@ msgstr "[red]m3u8文件下载失败，但文件已保存[/red]"
 #, python-brace-format
 msgid "直播流文件已保存到：{0}"
 msgstr "直播流文件已保存到：{0}"
+
+#: f2/dl/m3u8.py
+#, python-brace-format
+msgid "刷新直播流的播放列表失败（第 {0} 次），稍后重试：{1}"
+msgstr "刷新直播流的播放列表失败（第 {0} 次），稍后重试：{1}"
 
 #: f2/dl/m3u8.py
 #, python-brace-format

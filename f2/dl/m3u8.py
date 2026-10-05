@@ -22,6 +22,10 @@ from f2.utils.http.utils import (
 )
 
 MAX_SEGMENT_COUNT = 1000
+# 刷新播放列表连续遇到网络错误时，超过这个次数才判定录制失败
+MAX_PLAYLIST_ERRORS = 3
+# 网络错误后再次刷新播放列表前等待的秒数
+PLAYLIST_RETRY_DELAY = 2
 
 
 class M3U8DownloadMixin:
@@ -56,6 +60,19 @@ class M3U8DownloadMixin:
             request.headers.pop(name, None)
         return request
 
+    async def _fetch_playlist(self, url: str) -> httpx.Response:
+        """
+        用下载器的客户端请求 m3u8 文件 (Fetch an m3u8 playlist with the downloader's client)
+
+        与 TS 片段一样去掉 Referer、Cookie 并设置超时；此前由 m3u8 库用 urllib 请求，
+        不经过配置的代理、没有超时，还会阻塞事件循环。
+        """
+        response = await self.aclient.send(
+            self._build_segment_request(url), follow_redirects=True
+        )
+        response.raise_for_status()
+        return response
+
     async def download_m3u8_stream(
         self,
         task_id: TaskID,
@@ -77,10 +94,14 @@ class M3U8DownloadMixin:
             total_downloaded = 10240000
             default_chunks = 409600
             downloaded_segments: Set = set()
+            playlist_errors = 0
 
             while not SignalManager.is_shutdown_signaled():
                 try:
-                    segments = await get_segments_from_m3u8(url)
+                    segments = await get_segments_from_m3u8(
+                        url, fetch=self._fetch_playlist
+                    )
+                    playlist_errors = 0
 
                     if not segments:
                         logger.debug(_("m3u8片段为空，直播流已结束"))
@@ -250,6 +271,28 @@ class M3U8DownloadMixin:
                         visible=False,
                     )
                     logger.debug(_("直播流文件已保存到：{0}").format(full_path))
+                    return
+
+                except httpx.TransportError as e:
+                    # 网络抖动时重试，此前加载失败会被当作直播结束，录制提前停止
+                    playlist_errors += 1
+                    trace_logger.error(traceback.format_exc())
+                    if playlist_errors < MAX_PLAYLIST_ERRORS:
+                        logger.warning(
+                            _(
+                                "刷新直播流的播放列表失败（第 {0} 次），稍后重试：{1}"
+                            ).format(playlist_errors, e)
+                        )
+                        await asyncio.sleep(PLAYLIST_RETRY_DELAY)
+                        continue
+                    logger.error(_("m3u8文件解析失败：{0}").format(e))
+                    record_failed_download(str(full_path))
+                    await self.progress.update(
+                        task_id,
+                        description=_("[red][  失败  ]：[/red]"),
+                        filename=trim_filename(full_path.name, 45),
+                        state="completed",
+                    )
                     return
 
                 except Exception as e:

@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-04 17:57-0700\n"
+"POT-Creation-Date: 2026-10-04 18:08-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -5007,6 +5007,13 @@ msgstr "[red]The m3u8 download failed, but the file has been saved[/red]"
 #, python-brace-format
 msgid "直播流文件已保存到：{0}"
 msgstr "Livestream file saved to: {0}"
+
+#: f2/dl/m3u8.py
+#, python-brace-format
+msgid "刷新直播流的播放列表失败（第 {0} 次），稍后重试：{1}"
+msgstr ""
+"Failed to refresh the livestream playlist (attempt {0}), retrying "
+"shortly: {1}"
 
 #: f2/dl/m3u8.py
 #, python-brace-format

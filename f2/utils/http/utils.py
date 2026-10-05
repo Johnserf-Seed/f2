@@ -3,7 +3,7 @@
 import asyncio
 import traceback
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Awaitable, Callable, List, Optional, Union
 from urllib.error import HTTPError
 
 import httpx
@@ -298,8 +298,16 @@ def get_chunk_size(file_size: int) -> int:
         return 1 * 1024 * 1024  # 使用1MB的块大小 (Use a chunk size of 1MB)
 
 
+# 不经过下载器时加载 m3u8 文件的超时（秒）
+M3U8_LOAD_TIMEOUT = 15
+
+
 async def get_segments_from_m3u8(
-    url: str, visited_urls: Optional[set] = None, depth: int = 0, max_depth: int = 5
+    url: str,
+    visited_urls: Optional[set] = None,
+    depth: int = 0,
+    max_depth: int = 5,
+    fetch: Optional[Callable[[str], Awaitable[httpx.Response]]] = None,
 ) -> Optional[List[Segment]]:
     """
     从给定的m3u8文件中获取segments，支持嵌套m3u8文件并防止无限递归
@@ -309,6 +317,8 @@ async def get_segments_from_m3u8(
         visited_urls (Optional[set]): 已访问过的URL集合，用于防止循环引用
         depth (int): 当前递归深度
         max_depth (int): 最大递归深度，默认为5
+        fetch: 请求 m3u8 文件的函数，下载器传入自己的客户端（使用配置的代理、证书校验与超时），
+            请求失败时抛出 httpx 异常，交给调用方区分直播结束与网络错误；为空时用 m3u8 库加载
 
     Returns:
         Optional[List[Segment]]: m3u8文件中的segments列表，如果加载失败则返回None
@@ -331,9 +341,17 @@ async def get_segments_from_m3u8(
 
     visited_urls.add(url)
 
-    # 应该先测试m3u8文件是否存在，以避免出现错误
+    if fetch is not None:
+        response = await fetch(url)
+        m3u8_obj = m3u8.loads(response.text, uri=str(response.url))
+        return await _segments_or_nested(
+            m3u8_obj, visited_urls, depth, max_depth, fetch
+        )
+
+    # 应该先测试m3u8文件是否存在，以避免出现错误；m3u8 库用 urllib 同步请求，放到线程中执行，
+    # 并设置超时，此前会阻塞事件循环，服务器不响应时一直等待
     try:
-        m3u8_obj = m3u8.load(url)
+        m3u8_obj = await asyncio.to_thread(m3u8.load, url, timeout=M3U8_LOAD_TIMEOUT)
     except HTTPError as e:
         trace_logger.error(_("无法加载m3u8文件：{0}，错误详情：{1}").format(url, e))
         trace_logger.error(traceback.format_exc())
@@ -343,6 +361,17 @@ async def get_segments_from_m3u8(
         trace_logger.error(traceback.format_exc())
         return None
 
+    return await _segments_or_nested(m3u8_obj, visited_urls, depth, max_depth)
+
+
+async def _segments_or_nested(
+    m3u8_obj: m3u8.M3U8,
+    visited_urls: set,
+    depth: int,
+    max_depth: int,
+    fetch: Optional[Callable[[str], Awaitable[httpx.Response]]] = None,
+) -> Optional[List[Segment]]:
+    """m3u8 文件中的 segments；没有时按带宽选择嵌套的 playlist 继续获取"""
     # 如果没有segments说明m3u8可能存在嵌套, 需要尝试获取嵌套的m3u8文件
     segments = m3u8_obj.segments
     if not segments:
@@ -389,7 +418,7 @@ async def get_segments_from_m3u8(
 
         # 递归获取嵌套的segments
         segments = await get_segments_from_m3u8(
-            nested_m3u8_url, visited_urls, depth + 1, max_depth
+            nested_m3u8_url, visited_urls, depth + 1, max_depth, fetch
         )
 
         # 再次检查segments是否存在
