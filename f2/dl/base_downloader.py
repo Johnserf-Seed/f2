@@ -106,6 +106,33 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
         file_path = fit_filename(file_name, file_suffix or "")
         return file_path, long_path(self._ensure_path(base_path) / file_path)
 
+    # Content-Type 对应的图片扩展名
+    IMAGE_SUFFIXES = {
+        "image/jpeg": ".jpeg",
+        "image/png": ".png",
+        "image/webp": ".webp",
+        "image/gif": ".gif",
+        "image/avif": ".avif",
+        "image/heic": ".heic",
+    }
+
+    async def _image_suffix(self, url: str, default: str) -> str:
+        """
+        按服务器返回的 Content-Type 决定图片的扩展名 (Choose an image suffix by Content-Type)
+
+        格式因作品而异、地址里又看不出来时使用，例如抖音的动态封面有 JPEG、PNG、WebP 与 WebP 动图。
+        请求失败或类型未知时返回 default。
+        """
+        try:
+            response = await self.aclient.head(url, follow_redirects=True)
+        except httpx.HTTPError as e:
+            logger.debug(_("获取图片类型失败：{0}").format(e))
+            return default
+        content_type = response.headers.get("content-type", "")
+        return self.IMAGE_SUFFIXES.get(
+            content_type.split(";")[0].strip().lower(), default
+        )
+
     @staticmethod
     def _folder_path(user_path: Union[str, Path], folder_name: str) -> Path:
         """

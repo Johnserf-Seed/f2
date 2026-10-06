@@ -253,27 +253,32 @@ class DouyinDownloader(BaseDownloader):
         dynamic_cover_url = self.aweme_data_dict.get(
             "dynamic_cover"
         )  # 动态封面（通常质量更好）
-        static_cover_url = self.aweme_data_dict.get("cover")  # 静态封面（webp格式）
+        static_cover_url = self.aweme_data_dict.get("cover")  # 静态封面
 
+        # 封面的格式因作品而异，地址里看不出来：实测动态封面有 JPEG、PNG、WebP 与 WebP 动图，
+        # 静态封面是 JPEG。此前一律按 .gif、.webp 保存，扩展名与内容不符，现在按服务器返回的类型命名
         # 尝试按优先级下载不同类型的封面
         if animated_cover_url:
             logger.debug(_("[{0}] 正在下载动画封面").format(self.aweme_id))
+            suffix = await self._image_suffix(animated_cover_url, ".gif")
             await self.initiate_download(
-                _("动画封面"), animated_cover_url, self.base_path, cover_name, ".gif"
+                _("动画封面"), animated_cover_url, self.base_path, cover_name, suffix
             )
         elif dynamic_cover_url:
             logger.debug(
                 _("[{0}] 没有动画封面，正在下载动态封面").format(self.aweme_id)
             )
+            suffix = await self._image_suffix(dynamic_cover_url, ".jpeg")
             await self.initiate_download(
-                _("动态封面"), dynamic_cover_url, self.base_path, cover_name, ".gif"
+                _("动态封面"), dynamic_cover_url, self.base_path, cover_name, suffix
             )
         elif static_cover_url:
             logger.debug(
                 _("[{0}] 没有动画或动态封面，正在下载静态封面").format(self.aweme_id)
             )
+            suffix = await self._image_suffix(static_cover_url, ".jpeg")
             await self.initiate_download(
-                _("静态封面"), static_cover_url, self.base_path, cover_name, ".webp"
+                _("静态封面"), static_cover_url, self.base_path, cover_name, suffix
             )
         else:
             logger.warning(_("[{0}] 该作品没有任何可用的封面").format(self.aweme_id))
