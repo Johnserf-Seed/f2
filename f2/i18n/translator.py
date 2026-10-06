@@ -211,7 +211,7 @@ class TranslationManager:
         # 验证语言是否被支持
         supported_languages = self.config.get("supported_languages", ["zh_CN", "en_US"])
         if lang not in supported_languages:
-            raise ValueError(f"不支持的语言: {lang}")
+            raise ValueError(_("不支持的语言：{0}").format(lang))
 
         self.lang = lang
         self.load_translations(lang)

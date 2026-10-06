@@ -72,7 +72,7 @@ class ModelManager:
             return base_endpoint
 
         if not isinstance(params, dict):
-            raise ValueError("参数必须是字典类型")
+            raise ValueError(_("参数必须是字典类型"))
 
         param_str = "&".join([f"{k}={v}" for k, v in params.items()])
         # 检查base_endpoint是否已有查询参数 (Check if base_endpoint already has query parameters)
@@ -366,10 +366,10 @@ class WeiboScreenNameFetcher:
             str: 解码后的微博名称 (Decoded Weibo name)
         """
         if not url:
-            raise ValueError("微博链接不能为空")
+            raise ValueError(_("微博链接不能为空"))
 
         if not isinstance(url, str):
-            raise TypeError("参数必须是字符串类型")
+            raise TypeError(_("参数必须是字符串类型"))
 
         # 提取有效URL
         extracted_url = extract_valid_urls(url)

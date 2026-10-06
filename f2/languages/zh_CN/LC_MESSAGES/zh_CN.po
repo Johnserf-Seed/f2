@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-05 18:59-0700\n"
+"POT-Creation-Date: 2026-10-05 19:03-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -2287,6 +2287,7 @@ msgid "生成X-Bogus失败: {0})"
 msgstr "生成X-Bogus失败: {0})"
 
 #: f2/apps/douyin/utils.py f2/apps/tiktok/utils.py f2/apps/twitter/utils.py
+#: f2/apps/weibo/utils.py
 msgid "参数必须是字典类型"
 msgstr "参数必须是字典类型"
 
@@ -4350,6 +4351,16 @@ msgid "无法获取GET数据，请检查网络连接和参数"
 msgstr "无法获取GET数据，请检查网络连接和参数"
 
 #: f2/crawlers/base_crawler.py
+#, python-brace-format
+msgid "请求超时：{0}"
+msgstr "请求超时：{0}"
+
+#: f2/crawlers/base_crawler.py
+#, python-brace-format
+msgid "请求超时，已重试 {0} 次：{1}"
+msgstr "请求超时，已重试 {0} 次：{1}"
+
+#: f2/crawlers/base_crawler.py
 msgid "无法获取POST数据，请检查网络连接和参数"
 msgstr "无法获取POST数据，请检查网络连接和参数"
 
@@ -4822,6 +4833,11 @@ msgstr "请检查配置文件格式是否正确，使用默认配置"
 msgid "请检查配置文件路径是否正确"
 msgstr "请检查配置文件路径是否正确"
 
+#: f2/i18n/translator.py
+#, python-brace-format
+msgid "不支持的语言：{0}"
+msgstr "不支持的语言：{0}"
+
 #: f2/utils/version.py
 msgid "取消检查更新"
 msgstr "取消检查更新"
@@ -4976,6 +4992,14 @@ msgid "已取消更新配置文件!"
 msgstr "已取消更新配置文件!"
 
 #: f2/utils/config/merge.py
+msgid "主配置参数不能为空，请检查配置文件是否正确加载"
+msgstr "主配置参数不能为空，请检查配置文件是否正确加载"
+
+#: f2/utils/config/merge.py
+msgid "自定义配置参数不能为空或空字典，请提供有效的自定义配置"
+msgstr "自定义配置参数不能为空或空字典，请提供有效的自定义配置"
+
+#: f2/utils/config/merge.py
 #, python-brace-format
 msgid "配置项 {0} 只能是 true/false 或 yes/no"
 msgstr "配置项 {0} 只能是 true/false 或 yes/no"
@@ -5035,6 +5059,10 @@ msgstr "不是有效的签名信封"
 #: f2/utils/crypto/bytedance/xgnarly.py
 msgid "找不到满足密钥关系的插入位置"
 msgstr "找不到满足密钥关系的插入位置"
+
+#: f2/utils/file/path.py
+msgid "kwargs 参数必须是字典"
+msgstr "kwargs 参数必须是字典"
 
 #: f2/utils/file/path.py
 #, python-brace-format

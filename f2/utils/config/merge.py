@@ -32,10 +32,10 @@ def merge_config(
         ValueError: 当主配置或自定义配置为空时抛出错误。
     """
     if not main_conf:
-        raise ValueError("主配置参数不能为空，请检查配置文件是否正确加载")
+        raise ValueError(_("主配置参数不能为空，请检查配置文件是否正确加载"))
 
     if not custom_conf:
-        raise ValueError("自定义配置参数不能为空或空字典，请提供有效的自定义配置")
+        raise ValueError(_("自定义配置参数不能为空或空字典，请提供有效的自定义配置"))
 
     # 合并主配置和自定义配置
     merged_conf = {}

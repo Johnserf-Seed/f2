@@ -62,7 +62,7 @@ def long_path(path: Union[str, Path]) -> Path:
 def _app_folder_path(kwargs: dict, app_name: str) -> Path:
     # 确定函数参数是否正确
     if not isinstance(kwargs, dict):
-        raise TypeError("kwargs 参数必须是字典")
+        raise TypeError(_("kwargs 参数必须是字典"))
 
     # 创建基础路径并添加应用名；展开 ~，此前配置 ~/Downloads 会在当前目录下建出名为 ~ 的目录
     return (Path(kwargs.get("path", "Download")).expanduser() / app_name).resolve()

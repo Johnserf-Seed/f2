@@ -821,7 +821,7 @@ class SecUserIdFetcher(BaseCrawler):
         """
 
         if not isinstance(urls, list):
-            raise TypeError("参数必须是列表类型")
+            raise TypeError(_("参数必须是列表类型"))
 
         urls = extract_valid_urls(urls)
 
@@ -1073,7 +1073,7 @@ class AwemeIdFetcher(BaseCrawler):
         """
 
         if not isinstance(url, str):
-            raise TypeError("输入参数必须是字符串")
+            raise TypeError(_("输入参数必须是字符串"))
 
         extracted_url = extract_valid_urls(url)
 

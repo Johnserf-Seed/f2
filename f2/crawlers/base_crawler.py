@@ -475,10 +475,10 @@ class BaseCrawler:
                 return response
 
             except httpx.TimeoutException:
-                logger.error(f"请求超时: {url}")
+                logger.error(_("请求超时：{0}").format(url))
                 if attempt == self._max_retries - 1:
                     raise APIConnectionError(
-                        f"请求超时，已重试 {self._max_retries} 次: {url}"
+                        _("请求超时，已重试 {0} 次：{1}").format(self._max_retries, url)
                     )
                 await asyncio.sleep(self._timeout)
 
