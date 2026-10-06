@@ -121,10 +121,10 @@ async def test_cipher_notification_warns_on_ecb(fake_crawler, caplog):
 class RecordingHandler(bark_handler.BarkHandler):
     """记录走了加密还是普通通知"""
 
-    async def cipher_bark_notification(self):
+    async def cipher_bark_notification(self, params=None):
         self.sent = "cipher"
 
-    async def _send_bark_notification(self, send_method):
+    async def _send_bark_notification(self, send_method, params=None):
         self.sent = "plain"
 
 

@@ -172,7 +172,7 @@ async def test_douyin_one_mode_propagates_api_errors(monkeypatch):
 
 
 async def test_bark_command_raises_when_sending_fails(monkeypatch):
-    async def failed_send(self, send_method):
+    async def failed_send(self, send_method, params=None):
         return BarkNotificationFilter(None)
 
     monkeypatch.setattr(

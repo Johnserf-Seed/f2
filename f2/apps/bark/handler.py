@@ -22,34 +22,33 @@ class BarkHandler:
         kwargs = kwargs or {}
         self.kwargs = kwargs
 
-    async def _send_bark_notification(self, send_method: str) -> BarkNotificationFilter:
+    async def _send_bark_notification(
+        self, send_method: str, params: Optional[dict] = None
+    ) -> BarkNotificationFilter:
         """
         发送Bark通知的辅助方法。
 
         Args:
             send_method (str): 调用的发送方法（"fetch" 或 "post"）
-            kwargs (dict): 通知参数
+            params (dict): 本次通知的参数，默认使用初始化时的配置
 
         Returns:
             BarkNotificationFilter: 处理后的Bark通知过滤结果
         """
         logger.debug(_("正在发送 Bark 通知"))
 
-        # 确保 kwargs 不为 None
-        if self.kwargs is None:
-            self.kwargs = {}
-
-        # 获取并确保 body 存在
-        self.kwargs["body"] = self.kwargs.get("body", _("无内容"))
+        # 复制一份再补全，不改动实例上的配置
+        params = dict(self.kwargs if params is None else params)
+        params["body"] = params.get("body", _("无内容"))
 
         try:
-            async with BarkCrawler(self.kwargs) as crawler:
-                params = BarkModel(**self.kwargs)
+            async with BarkCrawler(params) as crawler:
+                bark_params = BarkModel(**params)
                 # 动态调用发送方法
                 if send_method == "fetch":
-                    response = await crawler.fetch_bark_notification(params)
+                    response = await crawler.fetch_bark_notification(bark_params)
                 elif send_method == "post":
-                    response = await crawler.post_bark_notification(params)
+                    response = await crawler.post_bark_notification(bark_params)
                 else:
                     raise ValueError(_("无效的发送方法：{0}").format(send_method))
 
@@ -57,7 +56,7 @@ class BarkHandler:
                 # 原本status_code应该放接口code中，但由于bark接口将响应的状态码直接设置为了响应的code
                 # 所以这里不判断code
                 logger.info(_("Bark通知发送成功，时间：{0}").format(bark.timestamp))
-                logger.debug(_("Bark通知内容：{0}").format(self.kwargs["body"]))
+                logger.debug(_("Bark通知内容：{0}").format(params["body"]))
                 return bark
 
         except Exception as e:
@@ -77,17 +76,22 @@ class BarkHandler:
         return await self._send_bark_notification("post")
 
     @mode_handler("cipher")
-    async def cipher_bark_notification(self) -> BarkNotificationFilter:
-        """用于发送加密 Bark 通知"""
+    async def cipher_bark_notification(
+        self, params: Optional[dict] = None
+    ) -> BarkNotificationFilter:
+        """
+        用于发送加密 Bark 通知
+
+        Args:
+            params (dict): 本次通知的参数，默认使用初始化时的配置
+        """
 
         logger.debug(_("正在发送 Bark 加密通知"))
 
-        # 确保 kwargs 不为 None
-        if self.kwargs is None:
-            self.kwargs = {}
+        params = dict(self.kwargs if params is None else params)
 
         # 获取 Bark 加密设置参数
-        encryption = self.kwargs.get("encryption")
+        encryption = params.get("encryption")
         if not encryption:
             raise ValueError(_("Bark 加密配置缺失"))
 
@@ -133,10 +137,10 @@ class BarkHandler:
         )
 
         try:
-            async with BarkCrawler(self.kwargs) as crawler:
+            async with BarkCrawler(params) as crawler:
                 # 对原始 params 进行加密
                 plaintext = json.dumps(
-                    BarkModel(**self.kwargs).model_dump(), ensure_ascii=False
+                    BarkModel(**params).model_dump(), ensure_ascii=False
                 ).encode("utf-8")
                 encrypted_params = aes.aes_encrypt(plaintext)
 
@@ -152,7 +156,7 @@ class BarkHandler:
                 logger.info(
                     _("Bark 加密通知发送成功，时间：{0}").format(bark.timestamp)
                 )
-                logger.debug(_("Bark 加密通知内容：{0}").format(self.kwargs["body"]))
+                logger.debug(_("Bark 加密通知内容：{0}").format(params.get("body")))
                 return bark
         except Exception as e:
             trace_logger.error(traceback.format_exc())
@@ -179,24 +183,22 @@ class BarkHandler:
         Returns:
             BarkNotificationFilter: Bark通知过滤器，包含结果数据的_to_raw()、_to_dict()方法
         """
-        # 确保 self.kwargs 不为 None
-        if self.kwargs is None:
-            self.kwargs = {}
-
-        self.kwargs.update({"title": title, "body": body, **kwargs})
+        # 每次通知单独组装参数：此前写回 self.kwargs，上一条通知的参数会带到下一条，
+        # 同一个实例并发发送时还会互相覆盖标题与正文
+        params = {**self.kwargs, "title": title, "body": body, **kwargs}
 
         # 加密配置来自客户端配置（conf.yaml 的 f2.bark.encryption），也可以随本次调用传入；
         # 此前只看调用时传入的参数，各应用下载完成后的通知从不加密
-        encryption = self.kwargs.get("encryption") or {}
+        encryption = params.get("encryption") or {}
 
         # 检查是否启用加密通知并设置了加密密钥
         if ClientConfManager.enable_encryption() and encryption.get("key"):
             logger.debug(_("已设置加密密钥，使用加密通知"))
-            return await self.cipher_bark_notification()
+            return await self.cipher_bark_notification(params)
 
         # 使用普通通知
         logger.debug(_("未设置加密密钥，改用普通通知"))
-        return await self._send_bark_notification(send_method)
+        return await self._send_bark_notification(send_method, params)
 
 
 async def main(kwargs):
