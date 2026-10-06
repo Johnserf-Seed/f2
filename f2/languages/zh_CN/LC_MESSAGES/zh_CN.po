@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-05 19:08-0700\n"
+"POT-Creation-Date: 2026-10-05 19:32-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -5003,6 +5003,16 @@ msgstr "自定义配置参数不能为空或空字典，请提供有效的自定
 #, python-brace-format
 msgid "配置项 {0} 只能是 true/false 或 yes/no"
 msgstr "配置项 {0} 只能是 true/false 或 yes/no"
+
+#: f2/utils/config/merge.py
+#, python-brace-format
+msgid "配置项 {0} 必须是数字，当前为 {1}"
+msgstr "配置项 {0} 必须是数字，当前为 {1}"
+
+#: f2/utils/config/merge.py
+#, python-brace-format
+msgid "配置项 {0} 不能小于 {1}，当前为 {2}"
+msgstr "配置项 {0} 不能小于 {1}，当前为 {2}"
 
 #: f2/utils/crypto/aes.py
 msgid "算法必须为 'AES128', 'AES192' 或 'AES256'。"

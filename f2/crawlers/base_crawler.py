@@ -22,6 +22,7 @@ from f2.exceptions.api_exceptions import (
 from f2.exceptions.conf_exceptions import InvalidEncodingError
 from f2.i18n.translator import _
 from f2.log.logger import logger
+from f2.utils.config.merge import check_number_options
 from f2.utils.http.proxy import proxy_url_from_config
 
 
@@ -96,6 +97,12 @@ class BaseCrawler:
 
         # 爬虫请求头 / Crawler request header
         self.crawler_headers = crawler_headers or {}
+
+        # 这几项为 0 或负数时，此前 max_tasks 会让下载一直等待、程序卡住，max_retries
+        # 会让请求根本不发出；timeout 等其余配置项由命令行检查
+        kwargs = check_number_options(
+            dict(kwargs), names=("max_tasks", "max_connections", "max_retries")
+        )
 
         # 异步的任务数 / Number of asynchronous tasks
         self._max_tasks = kwargs.get("max_tasks", 10)

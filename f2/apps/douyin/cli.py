@@ -14,7 +14,11 @@ from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
 from f2.log.redact import redact_config
 from f2.utils.config.conf_manager import ConfigManager, get_f2_setting
-from f2.utils.config.merge import coerce_bool_options, merge_config
+from f2.utils.config.merge import (
+    check_number_options,
+    coerce_bool_options,
+    merge_config,
+)
 from f2.utils.core.adapters import adapt_validation_call
 from f2.utils.file.path import get_resource_path
 from f2.utils.http.browser import get_cookie_from_browser
@@ -417,6 +421,8 @@ def douyin(
 
     if update_config:  # 如果指定了 update_config，更新配置文件
         update_manger = ConfigManager(config)
+        # 先检查数字配置项，避免把 0 或负数写进配置文件
+        check_number_options(kwargs)
         update_manger.update_config_with_args("douyin", **kwargs)
         return
 
@@ -443,6 +449,7 @@ def douyin(
     kwargs = merge_config(main_conf, custom_conf, **kwargs)
     # 配置文件中的 yes/no 会被读成字符串，按命令行布尔选项转换
     kwargs = coerce_bool_options(ctx.command.params, kwargs)
+    kwargs = check_number_options(kwargs)
 
     # 添加代理验证逻辑
     proxy_config = kwargs.get("proxies", {})

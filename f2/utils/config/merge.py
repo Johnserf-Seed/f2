@@ -1,6 +1,6 @@
 # path: f2/utils/config/merge.py
 
-from typing import Any, Dict, Iterable
+from typing import Any, Dict, Iterable, Optional
 
 import click
 
@@ -109,4 +109,68 @@ def coerce_bool_options(
                 value=value,
             )
         conf[name] = converted
+    return conf
+
+
+# 数字类配置项允许的最小值；max_counts 为 0 表示不限制
+NUMBER_OPTION_MINIMUMS: Dict[str, int] = {
+    "timeout": 1,
+    "max_retries": 1,
+    "max_connections": 1,
+    "max_tasks": 1,
+    "page_counts": 1,
+    "max_counts": 0,
+}
+# 可以是小数的数字配置项
+FLOAT_OPTIONS = frozenset({"timeout"})
+
+
+def check_number_options(
+    conf: Dict[str, Any], names: Optional[Iterable[str]] = None
+) -> Dict[str, Any]:
+    """
+    检查数字类配置项的取值 (Check the values of numeric settings)
+
+    此前 max_tasks 为 0 时下载一直等待、程序卡住，为负数时报 Semaphore 的 ValueError；
+    timeout 为 0 时每个请求都立即超时，max_retries 为 0 时请求根本不发出，却只提示检查网络。
+    命令行的值已由 click 转为整数，这里同时处理配置文件中写成字符串的数字。
+
+    Args:
+        conf (Dict[str, Any]): 合并后的配置 (Merged configuration)
+        names (Iterable[str]): 只检查这些配置项，默认检查全部 (Settings to check, all by default)
+
+    Returns:
+        Dict[str, Any]: 数字已转换的配置 (The configuration with numbers converted)
+
+    Raises:
+        ConfError: 值不是数字、应为整数却有小数或小于允许的最小值时
+    """
+    for name in NUMBER_OPTION_MINIMUMS if names is None else names:
+        minimum = NUMBER_OPTION_MINIMUMS[name]
+        value = conf.get(name)
+        if value is None:
+            continue
+        try:
+            if isinstance(value, bool):
+                raise ValueError(value)
+            number = (
+                value if isinstance(value, (int, float)) else float(str(value).strip())
+            )
+            if name not in FLOAT_OPTIONS:
+                if number != int(number):
+                    raise ValueError(value)
+                number = int(number)
+        except (ValueError, OverflowError):
+            raise ConfError(
+                _("配置项 {0} 必须是数字，当前为 {1}").format(name, value),
+                key=name,
+                value=value,
+            ) from None
+        if number < minimum:
+            raise ConfError(
+                _("配置项 {0} 不能小于 {1}，当前为 {2}").format(name, minimum, value),
+                key=name,
+                value=value,
+            )
+        conf[name] = number
     return conf
