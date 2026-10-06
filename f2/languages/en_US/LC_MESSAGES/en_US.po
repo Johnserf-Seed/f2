@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-05 19:43-0700\n"
+"POT-Creation-Date: 2026-10-05 19:58-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -5336,6 +5336,11 @@ msgstr "No insertion position satisfies the key relation"
 #: f2/utils/file/path.py
 msgid "kwargs 参数必须是字典"
 msgstr "kwargs must be a dictionary"
+
+#: f2/utils/file/path.py
+#, python-brace-format
+msgid "无法创建下载目录 {0}：{1}"
+msgstr "Cannot create the download folder {0}: {1}"
 
 #: f2/utils/file/path.py
 #, python-brace-format

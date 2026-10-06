@@ -27,7 +27,11 @@ from f2.utils.config.conf_manager import ConfigManager
 from f2.utils.crypto.bytedance.xbogus import XBogus as XB
 from f2.utils.crypto.bytedance.xgnarly import XGnarly
 from f2.utils.file.name import split_filename
-from f2.utils.file.path import get_user_folder_path, migrate_user_folders
+from f2.utils.file.path import (
+    get_user_folder_path,
+    make_user_folder,
+    migrate_user_folders,
+)
 from f2.utils.http.cookie import join_set_cookie_headers, parse_cookie_str
 from f2.utils.http.proxy import prefer_proxies
 from f2.utils.string.formatter import extract_valid_urls
@@ -1531,7 +1535,7 @@ def create_user_folder(kwargs: dict, uniqueId: Union[str, int]) -> Path:
     user_path = get_user_folder_path(kwargs, "tiktok", uniqueId)
 
     # 创建目录
-    user_path.mkdir(parents=True, exist_ok=True)
+    make_user_folder(user_path, kwargs)
 
     return user_path
 

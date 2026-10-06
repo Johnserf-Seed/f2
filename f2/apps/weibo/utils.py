@@ -22,7 +22,11 @@ from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.config.conf_manager import ConfigManager
 from f2.utils.file.name import split_filename
-from f2.utils.file.path import get_user_folder_path, migrate_user_folders
+from f2.utils.file.path import (
+    get_user_folder_path,
+    make_user_folder,
+    migrate_user_folders,
+)
 from f2.utils.http.cookie import join_set_cookie_headers
 from f2.utils.string.formatter import extract_valid_urls
 
@@ -538,7 +542,7 @@ def create_user_folder(kwargs: dict, nickname: Union[str, int]) -> Path:
     user_path = get_user_folder_path(kwargs, "weibo", nickname)
 
     # 创建目录
-    user_path.mkdir(parents=True, exist_ok=True)
+    make_user_folder(user_path, kwargs)
 
     return user_path
 

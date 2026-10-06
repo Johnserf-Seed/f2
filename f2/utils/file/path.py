@@ -7,6 +7,7 @@ from importlib.resources import files
 from pathlib import Path
 from typing import List, Optional, Union
 
+from f2.exceptions.conf_exceptions import ConfError
 from f2.i18n.translator import _
 from f2.log.logger import logger
 
@@ -103,6 +104,34 @@ def get_user_folder_path(
 
     # 获取绝对路径
     return user_path.resolve()
+
+
+def make_user_folder(user_path: Path, kwargs: dict) -> Path:
+    """
+    创建用户目录 (Create the user folder)
+
+    保存路径中有同名的文件、没有写入权限或位于只读位置时，此前 mkdir 直接抛出 OSError，
+    命令行打印完整堆栈；现在报配置错误，说明是哪个目录、为什么不能创建。
+
+    Args:
+        user_path (Path): 用户目录 (User folder)
+        kwargs (dict): 配置参数，报错时给出其中的 path (Conf parameters)
+
+    Returns:
+        Path: 创建好的用户目录 (The created user folder)
+
+    Raises:
+        ConfError: 目录无法创建时 (When the folder cannot be created)
+    """
+    try:
+        user_path.mkdir(parents=True, exist_ok=True)
+    except OSError as e:
+        raise ConfError(
+            _("无法创建下载目录 {0}：{1}").format(user_path, e.strerror or e),
+            key="path",
+            value=kwargs.get("path"),
+        ) from e
+    return user_path
 
 
 def _mode_folder_paths(kwargs: dict, app_name: str) -> List[Path]:

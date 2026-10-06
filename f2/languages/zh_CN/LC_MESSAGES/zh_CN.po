@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-05 19:43-0700\n"
+"POT-Creation-Date: 2026-10-05 19:58-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -5078,6 +5078,11 @@ msgstr "找不到满足密钥关系的插入位置"
 #: f2/utils/file/path.py
 msgid "kwargs 参数必须是字典"
 msgstr "kwargs 参数必须是字典"
+
+#: f2/utils/file/path.py
+#, python-brace-format
+msgid "无法创建下载目录 {0}：{1}"
+msgstr "无法创建下载目录 {0}：{1}"
 
 #: f2/utils/file/path.py
 #, python-brace-format
