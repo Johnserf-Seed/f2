@@ -130,6 +130,8 @@ class DouyinHandler:
 
     # 相关推荐的 filterGids 最多带上最近多少个作品 ID（每个约 20 个字符）
     RELATED_FILTER_LIMIT = 200
+    # 作品弹幕连续多少页没有弹幕时停止
+    MAX_EMPTY_DANMAKU_PAGES = 3
 
     def __init__(self, kwargs: Optional[dict] = None) -> None:
         kwargs = kwargs or {}
@@ -2564,6 +2566,7 @@ class DouyinHandler:
 
         max_counts = max_counts or float("inf")
         danmaku_collected = 0
+        empty_pages = 0
 
         logger.info(_("处理作品：{0} 的弹幕").format(aweme_id))
 
@@ -2610,7 +2613,15 @@ class DouyinHandler:
 
             # 更新已经处理的弹幕数量
             danmaku_collected += len(danmaku.danmaku_id)
-            offset += danmaku_collected
+            # offset 按请求的数量前进：接口按窗口返回，部分弹幕被过滤时一页不足请求数量，
+            # 按返回条数前进会与上一页重叠；此前加上的是累计数量，第 3 页起会跳过中间的弹幕
+            offset += int(current_request_size)
+
+            # 窗口内的弹幕可能都被过滤，连续多页没有弹幕时停止，避免无限请求
+            empty_pages = 0 if danmaku.danmaku_id else empty_pages + 1
+            if empty_pages >= self.MAX_EMPTY_DANMAKU_PAGES:
+                logger.info(_("已获取全部弹幕"))
+                break
 
             # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
             if danmaku_collected >= max_counts:
