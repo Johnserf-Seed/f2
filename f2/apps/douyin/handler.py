@@ -128,6 +128,9 @@ class DouyinHandler:
         "images_video",
     ]
 
+    # 相关推荐的 filterGids 最多带上最近多少个作品 ID（每个约 20 个字符）
+    RELATED_FILTER_LIMIT = 200
+
     def __init__(self, kwargs: Optional[dict] = None) -> None:
         kwargs = kwargs or {}
         self.kwargs = kwargs
@@ -1900,8 +1903,12 @@ class DouyinHandler:
 
         max_counts = max_counts or float("inf")
         videos_collected = 0
-        # aweme_id,awme_id,aweme_id...
-        filterGids = filterGids or f"{aweme_id},"
+        # 已经出现过的作品，包括当前作品。此前 filterGids 每页只带上一页的作品 ID，
+        # 实测从第 3 页起大部分作品与前面重复，重复的也计入 max_counts
+        seen_ids: List[str] = [str(aweme_id)]
+        for gid in filterGids.split(","):
+            if gid and gid not in seen_ids:
+                seen_ids.append(gid)
 
         logger.info(_("处理作品: {0} 的相关推荐").format(aweme_id))
 
@@ -1918,17 +1925,37 @@ class DouyinHandler:
             )
 
             async with DouyinCrawler(self.kwargs) as crawler:
+                # 只带最近的作品，避免请求地址过长
+                gids = ",".join(seen_ids[-self.RELATED_FILTER_LIMIT :]) + ","
                 params = PostRelated(
                     count=int(current_request_size),
                     aweme_id=aweme_id,
-                    filterGids=quote(filterGids),
+                    filterGids=quote(gids),
                 )
                 response = await crawler.fetch_post_related(params)
+                # 接口仍可能返回出现过的作品，去掉后再计数
+                if isinstance(response.get("aweme_list"), list):
+                    response["aweme_list"] = [
+                        item
+                        for item in response["aweme_list"]
+                        if str((item or {}).get("aweme_id")) not in seen_ids
+                    ]
                 response = limit_page_items(
                     response, "aweme_list", max_counts - videos_collected
                 )
                 related = PostRelatedFilter(response)
-                yield related
+
+            new_ids = [str(gid) for gid in related.aweme_id or []]
+            # 相关推荐几乎总是 has_more，没有新作品时停止，避免无限请求
+            if not new_ids:
+                logger.info(_("作品: {0} 没有更多新的相关推荐").format(aweme_id))
+                break
+            yield related
+
+            # 更新已经处理的作品数量 (Update the number of videos processed)
+            videos_collected += len(new_ids)
+            # 更新过滤的作品ID (Update the filtered video ID)
+            seen_ids.extend(new_ids)
 
             if not related.has_more:
                 logger.info(_("作品: {0} 的所有相关推荐采集完毕").format(aweme_id))
@@ -1940,12 +1967,6 @@ class DouyinHandler:
                     related.aweme_id, related.desc, related.nickname
                 )
             )
-
-            # 更新已经处理的作品数量 (Update the number of videos processed)
-            videos_collected += len(related.aweme_id)
-
-            # 更新过滤的作品ID (Update the filtered video ID)
-            filterGids = ",".join([str(aweme_id) for aweme_id in related.aweme_id])
 
             # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
             if videos_collected >= max_counts:
