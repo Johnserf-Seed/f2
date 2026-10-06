@@ -106,32 +106,62 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
         file_path = fit_filename(file_name, file_suffix or "")
         return file_path, long_path(self._ensure_path(base_path) / file_path)
 
-    # Content-Type 对应的图片扩展名
-    IMAGE_SUFFIXES = {
-        "image/jpeg": ".jpeg",
-        "image/png": ".png",
-        "image/webp": ".webp",
-        "image/gif": ".gif",
-        "image/avif": ".avif",
-        "image/heic": ".heic",
-    }
+    # 读取文件开头多少字节来识别格式
+    MAGIC_SIZE = 32
 
-    async def _image_suffix(self, url: str, default: str) -> str:
-        """
-        按服务器返回的 Content-Type 决定图片的扩展名 (Choose an image suffix by Content-Type)
+    @staticmethod
+    def _suffix_from_magic(head: bytes) -> Optional[str]:
+        """按文件开头的特征字节识别格式，返回扩展名；无法识别时返回 None"""
+        if head.startswith(b"\xff\xd8\xff"):
+            return ".jpeg"
+        if head.startswith(b"\x89PNG\r\n\x1a\n"):
+            return ".png"
+        if head[:4] == b"RIFF" and head[8:12] == b"WEBP":
+            return ".webp"
+        if head.startswith((b"GIF87a", b"GIF89a")):
+            return ".gif"
+        if head[4:8] == b"ftyp":
+            brand = head[8:12]
+            if brand in (b"M4A ", b"M4B "):
+                return ".m4a"
+            if brand in (b"avif", b"avis"):
+                return ".avif"
+            if brand in (b"heic", b"heix", b"mif1"):
+                return ".heic"
+            return None
+        # MP3：ID3 标签或 MPEG 音频帧同步字；层号为 0 的是 ADTS 封装的 AAC
+        if head.startswith(b"ID3"):
+            return ".mp3"
+        if len(head) > 1 and head[0] == 0xFF and (head[1] & 0xE0) == 0xE0:
+            return ".aac" if (head[1] & 0x06) == 0 else ".mp3"
+        return None
 
-        格式因作品而异、地址里又看不出来时使用，例如抖音的动态封面有 JPEG、PNG、WebP 与 WebP 动图。
-        请求失败或类型未知时返回 default。
+    async def _media_suffix(self, url: str, default: str) -> str:
         """
+        按文件开头的内容决定扩展名 (Choose a suffix by the first bytes of the file)
+
+        格式因作品而异、地址里又看不出来时使用：抖音的动态封面有 JPEG、PNG、WebP 与 WebP 动图，
+        TikTok 的原声有 MP3 也有 M4A，而 Content-Type 并不可靠（TikTok 的 MP3 标成 video/mp4）。
+        只读取开头几十个字节；请求失败或格式未知时返回 default。
+        """
+        head = b""
         try:
-            response = await self.aclient.head(url, follow_redirects=True)
+            async with self.aclient.stream(
+                "GET",
+                url,
+                headers={"Range": f"bytes=0-{self.MAGIC_SIZE - 1}"},
+                follow_redirects=True,
+            ) as response:
+                if response.status_code >= 400:
+                    return default
+                async for chunk in response.aiter_bytes():
+                    head += chunk
+                    if len(head) >= self.MAGIC_SIZE:
+                        break
         except httpx.HTTPError as e:
-            logger.debug(_("获取图片类型失败：{0}").format(e))
+            logger.debug(_("获取文件类型失败：{0}").format(e))
             return default
-        content_type = response.headers.get("content-type", "")
-        return self.IMAGE_SUFFIXES.get(
-            content_type.split(";")[0].strip().lower(), default
-        )
+        return self._suffix_from_magic(head[: self.MAGIC_SIZE]) or default
 
     @staticmethod
     def _folder_path(user_path: Union[str, Path], folder_name: str) -> Path:

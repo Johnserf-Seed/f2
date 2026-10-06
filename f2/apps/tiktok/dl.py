@@ -252,8 +252,10 @@ class TiktokDownloader(BaseDownloader):
 
                 music_url = aweme_data_dict.get("music_playUrl")
                 if music_url is not None:
+                    # 原声有 MP3 也有 M4A，此前一律存成 .mp3
+                    music_suffix = await self._media_suffix(music_url, ".mp3")
                     await self.initiate_download(
-                        _("原声"), music_url, base_path, music_name, ".mp3"
+                        _("原声"), music_url, base_path, music_name, music_suffix
                     )
                 else:
                     logger.warning(_("{0} 该原声已被屏蔽，无法下载").format(aweme_id))
@@ -269,8 +271,14 @@ class TiktokDownloader(BaseDownloader):
                 animated_cover_url = aweme_data_dict.get("video_dynamicCover")
                 cover_url = aweme_data_dict.get("video_cover")
                 if animated_cover_url is not None:
+                    # 动态封面有 WebP 也有 JPEG，此前一律存成 .webp
+                    cover_suffix = await self._media_suffix(animated_cover_url, ".webp")
                     await self.initiate_download(
-                        _("封面"), animated_cover_url, base_path, cover_name, ".webp"
+                        _("封面"),
+                        animated_cover_url,
+                        base_path,
+                        cover_name,
+                        cover_suffix,
                     )
                 elif cover_url is not None:
                     logger.debug(_("{0} 该作品没有动态封面").format(aweme_id))

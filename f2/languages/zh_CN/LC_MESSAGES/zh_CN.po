@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-05 17:28-0700\n"
+"POT-Creation-Date: 2026-10-05 18:59-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -4516,8 +4516,8 @@ msgstr "添加列 {0} 到表 {1} 失败: {2}"
 
 #: f2/dl/base_downloader.py
 #, python-brace-format
-msgid "获取图片类型失败：{0}"
-msgstr "获取图片类型失败：{0}"
+msgid "获取文件类型失败：{0}"
+msgstr "获取文件类型失败：{0}"
 
 #: f2/dl/base_downloader.py
 #, python-brace-format
