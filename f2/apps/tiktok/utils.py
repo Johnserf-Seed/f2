@@ -623,7 +623,7 @@ class SecUserIdFetcher(BaseCrawler):
         r"<script id=\"__UNIVERSAL_DATA_FOR_REHYDRATION__\" type=\"application/json\">(.*?)</script>"
     )
     _TIKTOK_SECUID_URL_PARREN = re.compile(r"/user/(MS4wLjABAAAA[\w-]+)")
-    _TIKTOK_UNIQUEID_PARREN = re.compile(r"/@([^/?]*)")
+    _TIKTOK_UNIQUEID_PARREN = re.compile(r"/@([^/?]+)")
     _TIKTOK_NOTFOUND_PARREN = re.compile(r"notfound")
 
     # 主页 HTML 中的用户信息（webapp.user-detail，与用户信息接口的响应结构相同），按 sec_uid 缓存
@@ -1041,7 +1041,7 @@ class AwemeIdFetcher(BaseCrawler):
     ```
     """
 
-    _TIKTOK_AWEMEID_PARREN = re.compile(r"video/(\d*)")
+    _TIKTOK_AWEMEID_PARREN = re.compile(r"video/(\d+)")
     _TIKTOK_NOTFOUND_PARREN = re.compile(r"notfound")
 
     proxies = ClientConfManager.proxies()

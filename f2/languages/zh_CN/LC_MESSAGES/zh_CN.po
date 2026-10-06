@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-05 19:03-0700\n"
+"POT-Creation-Date: 2026-10-05 19:08-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -2313,8 +2313,8 @@ msgstr "无法解析URL的主机部分。类名：{0}"
 
 #: f2/apps/douyin/utils.py
 #, python-brace-format
-msgid "未在响应的地址中找到sec_user_id，检查链接是否为用户主页类名：{0}"
-msgstr "未在响应的地址中找到sec_user_id，检查链接是否为用户主页类名：{0}"
+msgid "未在响应的地址中找到sec_user_id，检查链接是否为用户主页。类名：{0}"
+msgstr "未在响应的地址中找到sec_user_id，检查链接是否为用户主页。类名：{0}"
 
 #: f2/apps/douyin/utils.py
 msgid "获取sec_user_id失败，未知错误"

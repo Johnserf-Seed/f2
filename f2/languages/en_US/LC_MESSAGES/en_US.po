@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-05 19:03-0700\n"
+"POT-Creation-Date: 2026-10-05 19:08-0700\n"
 "PO-Revision-Date: 2025-01-01 03:34+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: en_US\n"
@@ -2440,7 +2440,7 @@ msgstr "Unable to parse the host of the URL. Class name: {0}"
 
 #: f2/apps/douyin/utils.py
 #, python-brace-format
-msgid "未在响应的地址中找到sec_user_id，检查链接是否为用户主页类名：{0}"
+msgid "未在响应的地址中找到sec_user_id，检查链接是否为用户主页。类名：{0}"
 msgstr ""
 "sec_user_id was not found in the response URL; check that the link is a "
 "user profile. Class name: {0}"

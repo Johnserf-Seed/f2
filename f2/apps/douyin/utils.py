@@ -819,8 +819,8 @@ class SecUserIdFetcher(BaseCrawler):
     ```
     """
 
-    _DOUYIN_URL_PATTERN = re.compile(r"user/([^/?]*)")
-    _REDIRECT_URL_PATTERN = re.compile(r"sec_uid=([^&]*)")
+    _DOUYIN_URL_PATTERN = re.compile(r"user/([^/?]+)")
+    _REDIRECT_URL_PATTERN = re.compile(r"sec_uid=([^&]+)")
     proxies = ClientConfManager.proxies()
 
     def __init__(self, proxies: Optional[dict] = None):
@@ -884,7 +884,7 @@ class SecUserIdFetcher(BaseCrawler):
                 else:
                     raise APIResponseError(
                         _(
-                            "未在响应的地址中找到sec_user_id，检查链接是否为用户主页类名：{0}"
+                            "未在响应的地址中找到sec_user_id，检查链接是否为用户主页。类名：{0}"
                         ).format(cls.__name__)
                     )
             response.raise_for_status()
@@ -1002,9 +1002,9 @@ class AwemeIdFetcher(BaseCrawler):
     ```
     """
 
-    _DOUYIN_VIDEO_URL_PATTERN = re.compile(r"video/([^/?]*)")
-    _DOUYIN_NOTE_URL_PATTERN = re.compile(r"note/([^/?]*)")
-    _DOUYIN_INVAILID_URL_PATTERN = re.compile(r"vid=([^/?]*)")
+    _DOUYIN_VIDEO_URL_PATTERN = re.compile(r"video/([^/?]+)")
+    _DOUYIN_NOTE_URL_PATTERN = re.compile(r"note/([^/?]+)")
+    _DOUYIN_INVAILID_URL_PATTERN = re.compile(r"vid=([^/?&]+)")
     proxies = ClientConfManager.proxies()
 
     def __init__(self, proxies: Optional[dict] = None):
@@ -1358,9 +1358,9 @@ class WebCastIdFetcher(BaseCrawler):
     ```
     """
 
-    _DOUYIN_LIVE_URL_PATTERN = re.compile(r"live/([^/?]*)")
+    _DOUYIN_LIVE_URL_PATTERN = re.compile(r"live/([^/?]+)")
     _DOUYIN_LIVE_URL_PATTERN2 = re.compile(r"http[s]?://live.douyin.com/(\d+)")
-    _DOUYIN_ROOM_URL_PATTERN = re.compile(r"reflow/([^/?]*)")
+    _DOUYIN_ROOM_URL_PATTERN = re.compile(r"reflow/([^/?]+)")
     proxies = ClientConfManager.proxies()
 
     def __init__(self, proxies: Optional[dict] = None):
