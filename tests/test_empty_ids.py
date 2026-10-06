@@ -8,6 +8,10 @@ from f2.apps.douyin.utils import SecUserIdFetcher as DouyinSecUserIdFetcher
 from f2.apps.douyin.utils import WebCastIdFetcher
 from f2.apps.tiktok.utils import AwemeIdFetcher as TiktokAwemeIdFetcher
 from f2.apps.tiktok.utils import SecUserIdFetcher as TiktokSecUserIdFetcher
+from f2.apps.twitter.utils import TweetIdFetcher
+from f2.apps.weibo.handler import WeiboHandler
+from f2.apps.weibo.utils import WeiboScreenNameFetcher, WeiboUidFetcher
+from f2.exceptions.api_exceptions import APINotFoundError
 from f2.exceptions.base import F2Error
 
 
@@ -44,3 +48,24 @@ async def test_vid_does_not_include_other_parameters():
     url = "https://www.douyin.com/?vid=7123456789012345678&from=share"
 
     assert await DouyinAwemeIdFetcher.get_aweme_id(url) == "7123456789012345678"
+
+
+async def test_tweet_link_without_id_is_rejected():
+    # 此前报错时读取只在 t.co 短链分支中赋值的 response，抛出 UnboundLocalError
+    with pytest.raises(F2Error):
+        await TweetIdFetcher.get_tweet_id("https://x.com/a/status/")
+
+
+async def test_weibo_link_without_user_is_rejected(monkeypatch):
+    # 此前两种方式都取不到用户时抛出 ValueError，命令行打印完整堆栈
+    async def not_found(cls, url):
+        raise APINotFoundError("not found")
+
+    monkeypatch.setattr(WeiboUidFetcher, "get_weibo_uid", classmethod(not_found))
+    monkeypatch.setattr(
+        WeiboScreenNameFetcher, "get_weibo_screen_name", classmethod(not_found)
+    )
+    handler = WeiboHandler({"headers": {"User-Agent": "f2-test"}, "cookie": "a=b"})
+
+    with pytest.raises(F2Error):
+        await handler.extract_weibo_uid("https://weibo.com/u/")

@@ -344,6 +344,9 @@ class TweetIdFetcher(BaseCrawler):
             raise APINotFoundError(
                 _("无法解析URL的主机部分。类名：{0}").format(cls.__name__)
             )
+        # 只有 t.co 短链需要请求；此前直接给出的推文链接没有推文 ID 时，
+        # 报错时读取不存在的 response，抛出 UnboundLocalError
+        response: Optional[httpx.Response] = None
         try:
             if "t.co" in host:
                 response = await instance.aclient.get(
@@ -359,7 +362,7 @@ class TweetIdFetcher(BaseCrawler):
                     _(
                         "未在响应的地址中找到tweet_id，检查链接是否为推文链接。类名：{0}"
                     ).format(cls.__name__),
-                    response.status_code,
+                    response.status_code if response is not None else None,
                 )
 
         except httpx.HTTPStatusError:

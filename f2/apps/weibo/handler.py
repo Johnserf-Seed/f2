@@ -208,7 +208,8 @@ class WeiboHandler:
                 )
                 return user_info.uid
             except APINotFoundError:
-                raise ValueError(_("链接错误，请检查链接是否正确"))
+                # 此前抛出 ValueError，命令行打印完整堆栈
+                raise APINotFoundError(_("链接错误，请检查链接是否正确")) from None
 
     async def get_or_add_user_data(
         self,
