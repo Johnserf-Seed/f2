@@ -1,5 +1,6 @@
 # path: tests/test_handler_pagination.py
 
+import sys
 import types
 
 import pytest
@@ -63,12 +64,14 @@ def use_pages(monkeypatch, module, crawler_name, filter_name, param_names, pages
 
 
 def capture_bark(monkeypatch, handler):
+    """记录 handler 记下的通知正文（运行结束时随结果一起发送）"""
     sent = []
 
-    async def fake_send(title, body, *args, **kwargs):
+    def fake_record(title, body, *args, **kwargs):
         sent.append(body)
 
-    monkeypatch.setattr(handler, "_send_bark_notification", fake_send)
+    module = sys.modules[type(handler).__module__]
+    monkeypatch.setattr(module, "record_notification", fake_record)
     return sent
 
 

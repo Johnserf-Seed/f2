@@ -68,7 +68,6 @@ def make_handler(**kwargs):
         {"headers": {"User-Agent": "f2-test"}, "cookie": "SUB=guest", "timeout": 0}
         | kwargs
     )
-    handler.enable_bark = False
     return handler
 
 

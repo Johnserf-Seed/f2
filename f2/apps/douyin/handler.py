@@ -8,8 +8,6 @@ from urllib.parse import quote
 
 from rich.rule import Rule
 
-from f2.apps.bark.handler import BarkHandler
-from f2.apps.bark.utils import ClientConfManager as BarkClientConfManager
 from f2.apps.douyin.algorithm.webcast_signature import DouyinWebcastSignature
 from f2.apps.douyin.crawler import DouyinCrawler, DouyinWebSocketCrawler
 from f2.apps.douyin.db import AsyncUserDB, AsyncVideoDB
@@ -91,6 +89,7 @@ from f2.exceptions.base import F2Error
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.core.decorators import get_mode_handlers, mode_handler
+from f2.utils.core.run_report import notify_now, record_notification
 from f2.utils.file.path import is_user_folder_migrated
 from f2.utils.json.filter import limit_page_items
 from f2.utils.time.timestamp import get_timestamp, parse_interval, timestamp_2_str
@@ -137,10 +136,6 @@ class DouyinHandler:
         kwargs = kwargs or {}
         self.kwargs = kwargs
         self.downloader = DouyinDownloader(self.kwargs)
-        # 初始化 Bark 通知服务
-        self.bark_kwargs = BarkClientConfManager.merge()
-        self.enable_bark = BarkClientConfManager.enable_bark()
-        self.bark_notification = BarkHandler(self.bark_kwargs)
 
     def _check_ad_user_and_exit(self, user_path_or_user) -> bool:
         """
@@ -155,33 +150,6 @@ class DouyinHandler:
         if user_path_or_user is None:
             return True
         return False
-
-    async def _send_bark_notification(
-        self,
-        title: str,
-        body: str,
-        send_method: str = "post",
-        **kwargs,
-    ) -> None:
-        """
-        发送Bark通知的辅助方法。负责自定义通知内容。
-
-        Args:
-            title (str): 通知标题
-            body (str): 通知内容
-            send_method (str): 调用的发送方法（"fetch" 或 "post"）
-            kwargs (dict): 其他通知参数
-        Returns:
-            None
-        """
-
-        if self.enable_bark:
-            await self.bark_notification.send_quick_notification(
-                title,
-                body,
-                send_method=send_method,
-                **kwargs,
-            )
 
     async def fetch_user_profile(
         self,
@@ -449,7 +417,7 @@ class DouyinHandler:
             )
         )
 
-        await self._send_bark_notification(
+        record_notification(
             _("[DouYin] 单个作品下载"),
             _(
                 "作品ID：{0}\n"
@@ -623,7 +591,7 @@ class DouyinHandler:
             _("结束处理用户发布的作品，共处理 {0} 个作品").format(videos_collected)
         )
 
-        await self._send_bark_notification(
+        record_notification(
             _("[DouYin] 主页作品下载"),
             _("用户：{0}\n" "作品数：{1}\n" "下载时间：{2}").format(
                 nickname_raw,
@@ -778,7 +746,7 @@ class DouyinHandler:
 
         # 此时确保 user 不为 None
         assert user is not None
-        await self._send_bark_notification(
+        record_notification(
             _("[DouYin] 点赞作品下载"),
             _("用户：{0}\n" "作品数：{1}\n" "下载时间：{2}").format(
                 user.nickname_raw or _("未知用户"),
@@ -905,7 +873,7 @@ class DouyinHandler:
             _("结束处理用户收藏音乐作品，共处理 {0} 个作品").format(music_collected)
         )
 
-        await self._send_bark_notification(
+        record_notification(
             _("[DouYin] 音乐收藏下载"),
             _("音乐数：{0}\n" "下载时间：{1}").format(
                 music_collected,
@@ -1036,7 +1004,7 @@ class DouyinHandler:
             _("结束处理用户收藏作品，共处理 {0} 个作品").format(videos_collected)
         )
 
-        await self._send_bark_notification(
+        record_notification(
             _("[DouYin] 收藏作品下载"),
             _("作品数：{0}\n" "下载时间：{1}").format(
                 videos_collected,
@@ -1330,7 +1298,7 @@ class DouyinHandler:
             )
         )
 
-        await self._send_bark_notification(
+        record_notification(
             _("[DouYin] 收藏夹作品下载"),
             _("收藏夹ID：{0}\n" "作品数：{1}\n" "下载时间：{2}").format(
                 collects_id,
@@ -1492,7 +1460,7 @@ class DouyinHandler:
             _("结束处理用户合集作品，共处理 {0} 个作品").format(videos_collected)
         )
 
-        await self._send_bark_notification(
+        record_notification(
             _("[DouYin] 合集作品下载"),
             _("合集ID：{0}\n" "作品数：{1}\n" "下载时间：{2}").format(
                 mix_id,
@@ -1570,10 +1538,6 @@ class DouyinHandler:
             response = await crawler.fetch_live(params)
             live = UserLiveFilter(response)
 
-        # 优化Bark通知内容
-        bark_title = (
-            "🎬 [DouYin] 直播监控" if live.live_status == 2 else "📺 [DouYin] 直播查询"
-        )
         bark_body = _(
             "🏠 房间ID: {0}\n"
             "💁 主播: {1}\n"
@@ -1591,11 +1555,14 @@ class DouyinHandler:
         logger.info(bark_body)
         logger.debug(_("结束直播信息处理"))
 
-        await self._send_bark_notification(
-            bark_title,
-            bark_body,
-            group="DouYin",
-        )
+        # 开播提醒：正在直播时立即推送，不等运行结束；未开播时只在终端显示，
+        # 此前每次查询都推送，定时检查直播的用户会不断收到“未开播”
+        if live.live_status == 2:
+            await notify_now(
+                _("🎬 [DouYin] 直播监控"),
+                bark_body,
+                group="DouYin",
+            )
 
         return live
 
@@ -1654,29 +1621,32 @@ class DouyinHandler:
         )
         logger.info(_("结束直播数据处理"))
 
-        await self._send_bark_notification(
-            _("[DouYin] 直播下载-2"),
-            _(
-                "直播ID：{0}\n"
-                "用户：{1}\n"
-                "直播间：{2}\n"
-                "状态：{3}\n"
-                "观看人数：{4}\n"
-                "下载时间：{5}"
-            ).format(
-                live.web_rid,
-                live.nickname_raw or "",
-                (
-                    live.live_title_raw[:20] + "..."
-                    if len(live.live_title_raw) > 20
-                    else live.live_title_raw
+        # 开播提醒：正在直播时立即推送，不等运行结束；未开播时只在终端显示，
+        # 此前每次查询都推送，定时检查直播的用户会不断收到“未开播”
+        if live.live_status == 2:
+            await notify_now(
+                _("[DouYin] 直播下载-2"),
+                _(
+                    "直播ID：{0}\n"
+                    "用户：{1}\n"
+                    "直播间：{2}\n"
+                    "状态：{3}\n"
+                    "观看人数：{4}\n"
+                    "下载时间：{5}"
+                ).format(
+                    live.web_rid,
+                    live.nickname_raw or "",
+                    (
+                        live.live_title_raw[:20] + "..."
+                        if len(live.live_title_raw) > 20
+                        else live.live_title_raw
+                    ),
+                    DY_LIVE_STATUS_MAPPING.get(live.live_status, _("未知状态")),
+                    live.user_count or 0,
+                    timestamp_2_str(get_timestamp("sec")),
                 ),
-                DY_LIVE_STATUS_MAPPING.get(live.live_status, _("未知状态")),
-                live.user_count or 0,
-                timestamp_2_str(get_timestamp("sec")),
-            ),
-            group="DouYin",
-        )
+                group="DouYin",
+            )
 
         return live
 
@@ -1835,7 +1805,7 @@ class DouyinHandler:
             _("结束处理用户首页推荐作品，共处理 {0} 个作品").format(videos_collected)
         )
 
-        await self._send_bark_notification(
+        record_notification(
             _("[DouYin] 推荐作品下载"),
             _("作品数：{0}\n" "下载时间：{1}").format(
                 videos_collected,
@@ -1982,7 +1952,7 @@ class DouyinHandler:
             _("结束处理作品相似推荐，共处理 {0} 个作品").format(videos_collected)
         )
 
-        await self._send_bark_notification(
+        record_notification(
             _("[DouYin] 相似推荐作品下载"),
             _("作品数：{0}\n" "下载时间：{1}").format(
                 videos_collected,
@@ -2108,7 +2078,7 @@ class DouyinHandler:
 
         logger.info(_("结束处理好友作品，共处理 {0} 个作品").format(videos_collected))
 
-        await self._send_bark_notification(
+        record_notification(
             _("[DouYin] 好友作品下载"),
             _("作品数：{0}\n" "下载时间：{1}").format(
                 videos_collected,
@@ -2216,7 +2186,7 @@ class DouyinHandler:
 
         logger.info(_("结束处理关注用户，共处理 {0} 个用户").format(users_collected))
 
-        await self._send_bark_notification(
+        record_notification(
             _("[DouYin] 关注用户采集"),
             _("关注数：{0}\n" "下载时间：{1}").format(
                 users_collected,
@@ -2313,7 +2283,7 @@ class DouyinHandler:
 
         logger.info(_("结束处理粉丝用户，共处理 {0} 个用户").format(users_collected))
 
-        await self._send_bark_notification(
+        record_notification(
             _("[DouYin] 粉丝用户采集"),
             _("粉丝数：{0}\n" "下载时间：{1}").format(
                 users_collected,
@@ -2633,7 +2603,7 @@ class DouyinHandler:
 
         logger.info(_("结束处理作品弹幕，共处理 {0} 条弹幕").format(danmaku_collected))
 
-        await self._send_bark_notification(
+        record_notification(
             _("[DouYin] 作品弹幕下载"),
             _("作品ID：{0}\n弹幕数：{1}\n下载时间：{2}").format(
                 aweme_id,
@@ -2688,7 +2658,7 @@ class DouyinHandler:
             logger.warning(_("获取弹幕失败：{0}").format(danmaku.status_msg))
             return danmaku
 
-        await self._send_bark_notification(
+        record_notification(
             _("[DouYin] 作品时间段弹幕下载"),
             _("作品ID：{0}\n弹幕数：{1}\n下载时间：{2}").format(
                 aweme_id,
@@ -2725,7 +2695,7 @@ class DouyinHandler:
             )
             logger.info(_("结束查询关注用户直播间信息"))
 
-            await self._send_bark_notification(
+            record_notification(
                 _("[DouYin] 关注用户直播采集"),
                 _(
                     "房间ID：{0}\n" "直播间：{1}\n" "观看人数：{2}\n" "下载时间：{3}"
@@ -2846,7 +2816,7 @@ class DouyinHandler:
 
         logger.info(_("结束处理作品评论，共处理 {0} 条评论").format(comments_collected))
 
-        await self._send_bark_notification(
+        record_notification(
             _("[DouYin] 作品评论下载"),
             _("评论数：{0}\n" "下载时间：{1}").format(
                 comments_collected,
@@ -2930,7 +2900,7 @@ class DouyinHandler:
 
         logger.info(_("结束处理评论回复，共处理 {0} 条回复").format(reply_collected))
 
-        await self._send_bark_notification(
+        record_notification(
             _("[DouYin] 评论回复下载"),
             _("回复数：{0}\n" "下载时间：{1}").format(
                 reply_collected,
@@ -3019,7 +2989,7 @@ class DouyinHandler:
             _("结束处理主页搜索作品，共处理 {0} 个作品").format(posts_collected)
         )
 
-        await self._send_bark_notification(
+        record_notification(
             _("[DouYin] 主页搜索作品下载"),
             _("作品数：{0}\n" "下载时间：{1}\n {2}").format(
                 posts_collected,

@@ -4,8 +4,6 @@ import asyncio
 from pathlib import Path
 from typing import Any, AsyncGenerator, Optional, Set, Tuple, Union
 
-from f2.apps.bark.handler import BarkHandler
-from f2.apps.bark.utils import ClientConfManager as BarkClientConfManager
 from f2.apps.twitter.crawler import TwitterCrawler
 from f2.apps.twitter.db import AsyncUserDB
 from f2.apps.twitter.dl import TwitterDownloader
@@ -34,6 +32,7 @@ from f2.exceptions.base import F2Error
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.core.decorators import get_mode_handlers, mode_handler
+from f2.utils.core.run_report import record_notification
 from f2.utils.file.path import is_user_folder_migrated
 from f2.utils.time.timestamp import get_timestamp, parse_interval, timestamp_2_str
 
@@ -104,37 +103,6 @@ class TwitterHandler:
         kwargs = kwargs or {}
         self.kwargs = kwargs
         self.downloader = TwitterDownloader(kwargs)
-        # 初始化 Bark 通知服务
-        self.bark_kwargs = BarkClientConfManager.merge()
-        self.enable_bark = BarkClientConfManager.enable_bark()
-        self.bark_notification = BarkHandler(self.bark_kwargs)
-
-    async def _send_bark_notification(
-        self,
-        title: str,
-        body: str,
-        send_method: str = "post",
-        **kwargs,
-    ) -> None:
-        """
-        发送Bark通知的辅助方法。负责自定义通知内容。
-
-        Args:
-            title (str): 通知标题
-            body (str): 通知内容
-            send_method (str): 调用的发送方法（"fetch" 或 "post"）
-            kwargs (dict): 其他通知参数
-        Returns:
-            None
-        """
-
-        if self.enable_bark:
-            await self.bark_notification.send_quick_notification(
-                title,
-                body,
-                send_method=send_method,
-                **kwargs,
-            )
 
     async def fetch_user_profile(
         self,
@@ -271,7 +239,7 @@ class TwitterHandler:
             )
         )
 
-        await self._send_bark_notification(
+        record_notification(
             _("[Twitter] 单个推文下载"),
             _(
                 "推文ID：{0}\n"
@@ -418,7 +386,7 @@ class TwitterHandler:
 
         logger.info(_("爬取结束，共爬取 {0} 个推文").format(tweets_collected))
 
-        await self._send_bark_notification(
+        record_notification(
             _("[Twitter] 主页推文下载"),
             _("用户：{0}\n" "推文数：{1}\n" "下载时间：{2}").format(
                 nickname_raw,
@@ -550,7 +518,7 @@ class TwitterHandler:
 
         logger.info(_("爬取结束，共爬取 {0} 个推文").format(tweets_collected))
 
-        await self._send_bark_notification(
+        record_notification(
             _("[Twitter] 喜欢推文下载"),
             _("用户ID：{0}\n" "推文数：{1}\n" "下载时间：{2}").format(
                 userId,
@@ -676,7 +644,7 @@ class TwitterHandler:
 
         logger.info(_("爬取结束，共爬取 {0} 个推文").format(tweets_collected))
 
-        await self._send_bark_notification(
+        record_notification(
             _("[Twitter] 收藏推文下载"),
             _("推文数：{0}\n" "下载时间：{1}").format(
                 tweets_collected,

@@ -50,10 +50,6 @@ def handler(monkeypatch):
     monkeypatch.setattr(douyin_handler, "FriendFeed", types.SimpleNamespace)
     handler = douyin_handler.DouyinHandler(dict(KWARGS))
 
-    async def no_bark(*args, **kwargs):
-        return None
-
-    monkeypatch.setattr(handler, "_send_bark_notification", no_bark)
     return handler
 
 

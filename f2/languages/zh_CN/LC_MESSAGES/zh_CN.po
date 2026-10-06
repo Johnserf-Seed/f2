@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  f2-translate\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-10-05 19:58-0700\n"
+"POT-Creation-Date: 2026-10-05 20:14-0700\n"
 "PO-Revision-Date: 2025-01-01 03:32+0800\n"
 "Last-Translator: JohnserfSeed <johnserf-seed@foxmail.com>\n"
 "Language: zh_CN\n"
@@ -425,7 +425,7 @@ msgstr "Bark通知发送成功，时间：{0}"
 msgid "Bark通知内容：{0}"
 msgstr "Bark通知内容：{0}"
 
-#: f2/apps/bark/handler.py
+#: f2/apps/bark/handler.py f2/apps/bark/notifier.py
 #, python-brace-format
 msgid "Bark 通知发送失败，请检查 key 和网络连接：{0}"
 msgstr "Bark 通知发送失败，请检查 key 和网络连接：{0}"
@@ -1649,6 +1649,10 @@ msgstr "未知"
 #: f2/apps/douyin/handler.py f2/apps/tiktok/handler.py
 msgid "结束直播信息处理"
 msgstr "结束直播信息处理"
+
+#: f2/apps/douyin/handler.py
+msgid "🎬 [DouYin] 直播监控"
+msgstr "🎬 [DouYin] 直播监控"
 
 #: f2/apps/douyin/handler.py
 #, python-brace-format
@@ -5018,6 +5022,36 @@ msgstr "配置项 {0} 必须是数字，当前为 {1}"
 #, python-brace-format
 msgid "配置项 {0} 不能小于 {1}，当前为 {2}"
 msgstr "配置项 {0} 不能小于 {1}，当前为 {2}"
+
+#: f2/utils/core/run_report.py
+#, python-brace-format
+msgid "{0} 小时 {1} 分 {2} 秒"
+msgstr "{0} 小时 {1} 分 {2} 秒"
+
+#: f2/utils/core/run_report.py
+#, python-brace-format
+msgid "{0} 分 {1} 秒"
+msgstr "{0} 分 {1} 秒"
+
+#: f2/utils/core/run_report.py
+#, python-brace-format
+msgid "{0} 秒"
+msgstr "{0} 秒"
+
+#: f2/utils/core/run_report.py
+#, python-brace-format
+msgid "文件：完成 {0} 个，跳过 {1} 个，失败 {2} 个；用时 {3}"
+msgstr "文件：完成 {0} 个，跳过 {1} 个，失败 {2} 个；用时 {3}"
+
+#: f2/utils/core/run_report.py
+#, python-brace-format
+msgid "{0}（运行中止）"
+msgstr "{0}（运行中止）"
+
+#: f2/utils/core/run_report.py
+#, python-brace-format
+msgid "原因：{0}"
+msgstr "原因：{0}"
 
 #: f2/utils/crypto/aes.py
 msgid "算法必须为 'AES128', 'AES192' 或 'AES256'。"

@@ -19,7 +19,11 @@ from f2.crawlers.base_crawler import BaseCrawler
 from f2.dl.m3u8 import M3U8DownloadMixin
 from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
-from f2.utils.core.run_report import record_failed_download
+from f2.utils.core.run_report import (
+    record_completed_download,
+    record_failed_download,
+    record_skipped_download,
+)
 from f2.utils.core.signal import SignalManager
 from f2.utils.file.name import fit_filename
 from f2.utils.file.path import ensure_path, long_path
@@ -630,6 +634,7 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
                                     full_path.name
                                 )
                             )
+                            record_skipped_download()
                             await self.progress.update(
                                 task_id,
                                 description=_("[green][  完成  ]：[/green]"),
@@ -657,6 +662,7 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
                                         "[green][  恢复  ]：从临时文件恢复完整文件[/green]"
                                     )
                                 )
+                                record_completed_download()
                                 await self.progress.update(
                                     task_id,
                                     description=_("[green][  完成  ]：[/green]"),
@@ -734,6 +740,7 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
                                     full_path.name
                                 )
                             )
+                            record_completed_download()
                             await self.progress.update(
                                 task_id,
                                 description=_("[green][  完成  ]：[/green]"),
@@ -837,6 +844,7 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
             await self._record_local_file_error(task_id, full_path, e)
             return
 
+        record_completed_download()
         logger.info(_("[green][  完成  ]：{0}[/green]").format(Path(full_path).name))
         await self.progress.update(
             task_id,
@@ -879,6 +887,7 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
         # Path.exists 遇到文件名过长等错误会直接抛出异常，os.path.exists 则返回 False
         if os.path.exists(full_path):
             logger.info(_("[cyan][  跳过  ]: {0}[/cyan]").format(Path(full_path).name))
+            record_skipped_download()
             task_id = await self.progress.add_task(
                 description=_("[cyan][  跳过  ]:[/cyan]"),
                 filename=trim_filename(file_path, 45),
@@ -926,6 +935,7 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
         # Path.exists 遇到文件名过长等错误会直接抛出异常，os.path.exists 则返回 False
         if os.path.exists(full_path):
             logger.info(_("[cyan][  跳过  ]: {0}[/cyan]").format(Path(full_path).name))
+            record_skipped_download()
             task_id = await self.progress.add_task(
                 description=_("[cyan][  跳过  ]:[/cyan]"),
                 filename=trim_filename(file_path, 45),
@@ -974,6 +984,7 @@ class BaseDownloader(M3U8DownloadMixin, BaseCrawler):
         # Path.exists 遇到文件名过长等错误会直接抛出异常，os.path.exists 则返回 False
         if os.path.exists(full_path):
             logger.info(_("[cyan][  跳过  ]: {0}[/cyan]").format(Path(full_path).name))
+            record_skipped_download()
             task_id = await self.progress.add_task(
                 description=_("[cyan][  跳过  ]:[/cyan]"),
                 filename=trim_filename(file_path, 45),

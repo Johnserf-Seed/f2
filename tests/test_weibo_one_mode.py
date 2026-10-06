@@ -38,7 +38,6 @@ def hidden_weibo(monkeypatch):
             "url": "https://weibo.com/1839167003/PaTOZxRJ4",
         }
     )
-    handler.enable_bark = False
     return handler
 
 

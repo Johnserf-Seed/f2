@@ -141,13 +141,9 @@ def handler(monkeypatch):
         monkeypatch.setattr(douyin_handler, name, types.SimpleNamespace)
     handler = douyin_handler.DouyinHandler(dict(KWARGS))
 
-    async def no_bark(*args, **kwargs):
-        return None
-
     async def profile(*args, **kwargs):
         return types.SimpleNamespace(nickname_raw="作者")
 
-    monkeypatch.setattr(handler, "_send_bark_notification", no_bark)
     monkeypatch.setattr(handler, "fetch_user_profile", profile)
     return handler
 

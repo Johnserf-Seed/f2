@@ -6,8 +6,6 @@ from typing import Any, AsyncGenerator, Optional, Tuple, Union
 
 from rich.rule import Rule
 
-from f2.apps.bark.handler import BarkHandler
-from f2.apps.bark.utils import ClientConfManager as BarkClientConfManager
 from f2.apps.weibo.crawler import WeiboCrawler
 from f2.apps.weibo.db import AsyncUserDB
 from f2.apps.weibo.dl import WeiboDownloader
@@ -37,6 +35,7 @@ from f2.exceptions.base import F2Error
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.core.decorators import get_mode_handlers, mode_handler
+from f2.utils.core.run_report import record_notification
 from f2.utils.file.path import is_user_folder_migrated
 from f2.utils.time.timestamp import get_timestamp, parse_interval, timestamp_2_str
 
@@ -57,10 +56,6 @@ class WeiboHandler:
     def __init__(self, kwargs) -> None:
         self.kwargs = kwargs
         self.downloader = WeiboDownloader(kwargs)
-        # 初始化 Bark 通知服务
-        self.bark_kwargs = BarkClientConfManager.merge()
-        self.enable_bark = BarkClientConfManager.enable_bark()
-        self.bark_notification = BarkHandler(self.bark_kwargs)
 
     # 只允许?uid=xxxx&screen_name=
     # 只允许?uid=xxxx
@@ -68,33 +63,6 @@ class WeiboHandler:
     # 不允许?uid=xxxx&screen_name=xxxx
     # 不允许?uid=&screen_name=xxxx
     # 💩
-
-    async def _send_bark_notification(
-        self,
-        title: str,
-        body: str,
-        send_method: str = "post",
-        **kwargs,
-    ) -> None:
-        """
-        发送Bark通知的辅助方法。负责自定义通知内容。
-
-        Args:
-            title (str): 通知标题
-            body (str): 通知内容
-            send_method (str): 调用的发送方法（"fetch" 或 "post"）
-            kwargs (dict): 其他通知参数
-        Returns:
-            None
-        """
-
-        if self.enable_bark:
-            await self.bark_notification.send_quick_notification(
-                title,
-                body,
-                send_method=send_method,
-                **kwargs,
-            )
 
     async def fetch_user_info(self, uid: str) -> UserInfoFilter:
         """
@@ -327,7 +295,7 @@ class WeiboHandler:
             f"微博ID: {weibo.weibo_id}, 文案: {weibo.weibo_desc}, 发布时间: {weibo.weibo_created_at}"
         )
 
-        await self._send_bark_notification(
+        record_notification(
             _("[Weibo] 单一微博下载"),
             _("微博ID：{0}\n" "作者：{1}\n" "文案：{2}\n" "下载时间：{3}\n").format(
                 weibo.weibo_id,
@@ -473,7 +441,7 @@ class WeiboHandler:
 
         logger.info(_("已爬取完所有微博，共处理 {0} 个微博").format(weibos_collected))
 
-        await self._send_bark_notification(
+        record_notification(
             _("[Weibo] 用户微博下载"),
             _("用户：{0}\n" "微博数：{1}\n" "下载时间：{2}\n").format(
                 nickname_raw,

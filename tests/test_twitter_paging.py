@@ -78,10 +78,6 @@ class PagedCrawler:
 def handler(monkeypatch):
     handler = twitter_handler.TwitterHandler(dict(KWARGS))
 
-    async def no_bark(*args, **kwargs):
-        return None
-
-    monkeypatch.setattr(handler, "_send_bark_notification", no_bark)
     return handler
 
 

@@ -41,6 +41,7 @@ outline: [2,3]
 
 ::: tip :bulb: Note
 - `Bark` is an integrated `iOS` notification push tool in `F2`, used to push task execution results to `iOS` devices. It can also send notifications via `CLI` mode. [CLI Guide](/guide/apps/bark/cli)
+- With `enable_bark` turned on in `conf.yaml`, each app sends one notification when a CLI run ends: the details of the mode (such as the user and the number of posts) plus the download results (files done, skipped and failed, and the time taken); if the run stops on an error, the reason is included. Livestream mode sends a reminder as soon as the stream is live. Calling methods such as `fetch_*` as a library sends no notifications; call `send_quick_notification` directly when you need one.
 - `Bark`'s `GCM` push encryption mode is still in the experimental stage. It is recommended to use `AES-256-CBC` encryption mode for now.
 - `ECB` encryption mode is not recommended; `F2` logs a security warning when it is used.
 :::

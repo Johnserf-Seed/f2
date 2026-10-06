@@ -78,13 +78,9 @@ def handler(monkeypatch):
         monkeypatch.setattr(tiktok_handler, name, types.SimpleNamespace)
     handler = tiktok_handler.TiktokHandler(dict(KWARGS))
 
-    async def no_bark(*args, **kwargs):
-        return None
-
     async def profile(*args, **kwargs):
         return types.SimpleNamespace(nickname_raw="作者")
 
-    monkeypatch.setattr(handler, "_send_bark_notification", no_bark)
     monkeypatch.setattr(handler, "fetch_user_profile", profile)
     return handler
 
@@ -161,7 +157,6 @@ async def test_like_videos_skip_profile_without_bark(monkeypatch):
     for name in PARAM_MODELS:
         monkeypatch.setattr(tiktok_handler, name, types.SimpleNamespace)
     handler = tiktok_handler.TiktokHandler(dict(KWARGS))
-    handler.enable_bark = False
 
     async def profile(*args, **kwargs):
         raise AssertionError("关闭 Bark 时不应请求用户信息")

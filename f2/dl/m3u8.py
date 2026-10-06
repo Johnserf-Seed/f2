@@ -12,7 +12,10 @@ from rich.progress import TaskID
 
 from f2.i18n.translator import _
 from f2.log.logger import logger, trace_logger
-from f2.utils.core.run_report import record_failed_download
+from f2.utils.core.run_report import (
+    record_completed_download,
+    record_failed_download,
+)
 from f2.utils.core.signal import SignalManager
 from f2.utils.http.utils import (
     get_chunk_size,
@@ -127,6 +130,7 @@ class M3U8DownloadMixin:
                                 Path(full_path).name
                             )
                         )
+                        record_completed_download()
                         await self.progress.update(
                             task_id,
                             description=_("[green][  完成  ]：[/green]"),
@@ -263,6 +267,7 @@ class M3U8DownloadMixin:
                     logger.info(
                         _("[green][  完成  ]：{0}[/green]").format(Path(full_path).name)
                     )
+                    record_completed_download()
                     await self.progress.update(
                         task_id,
                         description=_("[green][  完成  ]：[/green]"),

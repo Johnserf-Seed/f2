@@ -16,7 +16,12 @@ from f2.cli.wizard_command import config_wizard_command
 from f2.exceptions import F2Error
 from f2.i18n.translator import TranslationManager, _
 from f2.log.logger import log_setup, logger, trace_logger
-from f2.utils.core.run_report import collect_run_report
+from f2.utils.core.run_report import (
+    Notifier,
+    NullNotifier,
+    collect_run_report,
+    current_run_report,
+)
 from f2.utils.core.signal import SignalManager
 from f2.utils.version import check_f2_version, check_python_version
 
@@ -355,7 +360,15 @@ def set_cli_config(ctx: click.Context, **kwargs):
         **kwargs: 关键字参数，代表CLI的各种设置选项
     """
 
-    with collect_run_report() as report, RichConsoleManager().progress:
+    # 开启 Bark 时运行结束后发送一条结果通知；f2 bk 本身就是发送通知的命令，不再额外发送
+    if kwargs.get("app_name") == "bark":
+        notifier: Notifier = NullNotifier()
+    else:
+        from f2.apps.bark.notifier import notifier_from_config
+
+        notifier = notifier_from_config()
+
+    with collect_run_report(notifier) as report, RichConsoleManager().progress:
         try:
             asyncio.run(run_app(kwargs))
         except F2Error as e:
@@ -378,10 +391,51 @@ def set_cli_config(ctx: click.Context, **kwargs):
         ctx.exit(1)
 
 
+# 运行结果通知中使用的应用名称
+APP_LABELS = {
+    "douyin": "DouYin",
+    "tiktok": "TikTok",
+    "twitter": "Twitter",
+    "weibo": "Weibo",
+}
+
+
 async def run_app(kwargs):
     app_name = kwargs["app_name"]
     app_module = importlib.import_module(f"f2.apps.{app_name}.handler")
-    await app_module.main(kwargs)
+    try:
+        await app_module.main(kwargs)
+    except F2Error as e:
+        await send_run_notification(kwargs, e)
+        raise
+    await send_run_notification(kwargs)
+
+
+async def send_run_notification(
+    kwargs: dict, error: typing.Optional[F2Error] = None
+) -> None:
+    """
+    运行结束后发送一条结果通知 (Send one notification with the results of the run)
+
+    内容是各模式记录的文案（如作者、作品数）加上下载结果摘要，中途出错时注明原因。
+    此前各模式在获取数据时就发送通知，早于下载完成，作为库调用时也会发送。
+
+    Args:
+        kwargs (dict): 本次运行的配置
+        error (F2Error): 中止运行的错误
+    """
+    report = current_run_report()
+    if report is None:
+        return
+    app_name = kwargs.get("app_name", "")
+    default_title = "[{0}] {1}".format(
+        APP_LABELS.get(app_name, app_name), kwargs.get("mode", "")
+    )
+    notification = report.final_notification(default_title, error)
+    if notification is None:
+        return
+    options = {"group": notification.group} if notification.group else {}
+    await report.notifier.send(notification.title, notification.body, **options)
 
 
 if __name__ == "__main__":

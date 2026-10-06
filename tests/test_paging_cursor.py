@@ -75,13 +75,9 @@ def douyin(monkeypatch):
         monkeypatch.setattr(douyin_handler, name, types.SimpleNamespace)
     handler = douyin_handler.DouyinHandler(dict(KWARGS))
 
-    async def no_bark(*args, **kwargs):
-        return None
-
     async def profile(*args, **kwargs):
         return types.SimpleNamespace(nickname_raw="作者")
 
-    monkeypatch.setattr(handler, "_send_bark_notification", no_bark)
     monkeypatch.setattr(handler, "fetch_user_profile", profile)
     return handler
 
@@ -153,10 +149,6 @@ async def test_tiktok_search_stops_when_the_offset_does_not_move(monkeypatch, ca
     monkeypatch.setattr(tiktok_handler, "PostSearch", types.SimpleNamespace)
     handler = tiktok_handler.TiktokHandler(dict(KWARGS))
 
-    async def no_bark(*args, **kwargs):
-        return None
-
-    monkeypatch.setattr(handler, "_send_bark_notification", no_bark)
     crawler = use_pages(
         monkeypatch,
         tiktok_handler,

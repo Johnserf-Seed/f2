@@ -7,8 +7,6 @@ from urllib.parse import quote
 
 from rich.rule import Rule
 
-from f2.apps.bark.handler import BarkHandler
-from f2.apps.bark.utils import ClientConfManager as BarkClientConfManager
 from f2.apps.tiktok.crawler import TiktokCrawler, TiktokWebSocketCrawler
 from f2.apps.tiktok.db import AsyncUserDB, AsyncVideoDB
 from f2.apps.tiktok.dl import TiktokDownloader
@@ -48,6 +46,11 @@ from f2.exceptions.base import F2Error
 from f2.i18n.translator import _
 from f2.log.logger import logger
 from f2.utils.core.decorators import get_mode_handlers, mode_handler
+from f2.utils.core.run_report import (
+    notifications_enabled,
+    notify_now,
+    record_notification,
+)
 from f2.utils.file.path import is_user_folder_migrated
 from f2.utils.json.filter import limit_page_items
 from f2.utils.time.timestamp import get_timestamp, parse_interval, timestamp_2_str
@@ -98,37 +101,6 @@ class TiktokHandler:
         kwargs = kwargs or {}
         self.kwargs = kwargs
         self.downloader = TiktokDownloader(kwargs)
-        # 初始化 Bark 通知服务
-        self.bark_kwargs = BarkClientConfManager.merge()
-        self.enable_bark = BarkClientConfManager.enable_bark()
-        self.bark_notification = BarkHandler(self.bark_kwargs)
-
-    async def _send_bark_notification(
-        self,
-        title: str,
-        body: str,
-        send_method: str = "post",
-        **kwargs,
-    ) -> None:
-        """
-        发送Bark通知的辅助方法。负责自定义通知内容。
-
-        Args:
-            title (str): 通知标题
-            body (str): 通知内容
-            send_method (str): 调用的发送方法（"fetch" 或 "post"）
-            kwargs (dict): 其他通知参数
-        Returns:
-            None
-        """
-
-        if self.enable_bark:
-            await self.bark_notification.send_quick_notification(
-                title,
-                body,
-                send_method=send_method,
-                **kwargs,
-            )
 
     async def fetch_user_profile(
         self,
@@ -361,7 +333,7 @@ class TiktokHandler:
             )
         )
 
-        await self._send_bark_notification(
+        record_notification(
             _("[TikTok] 单个作品下载"),
             _("作品ID：{0}\n" "文案：{1}\n" "作者：{2}\n" "下载时间：{3}").format(
                 video.aweme_id,
@@ -532,7 +504,7 @@ class TiktokHandler:
             _("结束处理用户发布的作品，共处理 {0} 个作品").format(videos_collected)
         )
 
-        await self._send_bark_notification(
+        record_notification(
             _("[TikTok] 主页作品下载"),
             _("用户：{0}\n" "作品数量：{1}\n" "下载时间：{2}").format(
                 nickname_raw,
@@ -676,9 +648,9 @@ class TiktokHandler:
 
         # 点赞接口中没有当前用户的相关信息，因此无法获取nickname_raw；
         # 只在需要发送通知时获取，此前即使关闭了 Bark 也会请求，失败时整个模式报错
-        if self.enable_bark:
+        if notifications_enabled():
             user = await self.fetch_user_profile(secUid=secUid)
-            await self._send_bark_notification(
+            record_notification(
                 _("[TikTok] 点赞作品下载"),
                 _("用户：{0}\n" "作品数：{1}\n" "下载时间：{2}").format(
                     user.nickname_raw,
@@ -821,7 +793,7 @@ class TiktokHandler:
             _("结束处理用户收藏作品，共处理 {0} 个作品").format(videos_collected)
         )
 
-        await self._send_bark_notification(
+        record_notification(
             _("[TikTok] 收藏作品下载"),
             _("作品数：{0}\n" "下载时间：{1}").format(
                 videos_collected,
@@ -1074,7 +1046,7 @@ class TiktokHandler:
             _("结束处理用户合集作品，共处理 {0} 个作品").format(videos_collected)
         )
 
-        await self._send_bark_notification(
+        record_notification(
             _("[TikTok] 播放列表作品下载"),
             _("合集：{0}\n" "作品数：{1}\n" "下载时间：{2}").format(
                 mixId,
@@ -1217,7 +1189,7 @@ class TiktokHandler:
 
         logger.info(_("结束搜索，共搜索到 {0} 个作品").format(videos_collected))
 
-        await self._send_bark_notification(
+        record_notification(
             _("[TikTok] 搜索作品下载"),
             _("关键词：{0}\n" "作品数：{1}\n" "下载时间：{2}").format(
                 keyword,
@@ -1295,27 +1267,30 @@ class TiktokHandler:
         )
         logger.debug(_("结束直播信息处理"))
 
-        await self._send_bark_notification(
-            _("[TikTok] 直播下载"),
-            _(
-                "房间ID：{0}\n"
-                "直播间：{1}\n"
-                "状态：{2}\n"
-                "观看人数：{3}\n"
-                "下载时间：{4}"
-            ).format(
-                live.live_room_id,
-                (
-                    live.live_title_raw[:20] + "..."
-                    if len(live.live_title_raw) > 20
-                    else live.live_title_raw
+        # 开播提醒：正在直播时立即推送，不等运行结束；未开播时只在终端显示，
+        # 此前每次查询都推送，定时检查直播的用户会不断收到“未开播”
+        if live.live_status == 2:
+            await notify_now(
+                _("[TikTok] 直播下载"),
+                _(
+                    "房间ID：{0}\n"
+                    "直播间：{1}\n"
+                    "状态：{2}\n"
+                    "观看人数：{3}\n"
+                    "下载时间：{4}"
+                ).format(
+                    live.live_room_id,
+                    (
+                        live.live_title_raw[:20] + "..."
+                        if len(live.live_title_raw) > 20
+                        else live.live_title_raw
+                    ),
+                    TK_LIVE_STATUS_MAPPING.get(live.live_status, _("未知状态")),
+                    live.live_user_count or 0,
+                    timestamp_2_str(get_timestamp("sec")),
                 ),
-                TK_LIVE_STATUS_MAPPING.get(live.live_status, _("未知状态")),
-                live.live_user_count or 0,
-                timestamp_2_str(get_timestamp("sec")),
-            ),
-            group="TikTok",
-        )
+                group="TikTok",
+            )
 
         return live
 
