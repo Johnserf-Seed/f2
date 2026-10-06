@@ -82,9 +82,10 @@ outline: deep
 
 ### `--naming`
 
-全局作品文件命名方式。默认为 `{create}_{desc}`，支持的变量有：`{nickname}`，`{create}`，`{aweme_id}`，`{desc}`，`{uid}`。支持的分割符有：`_`，`-`。
+全局作品文件命名方式。默认为 `{create}_{desc}`，支持的变量有：`{nickname}`，`{uniqueId}`，`{create}`，`{aweme_id}`，`{desc}`，`{uid}`。支持的分割符有：`_`，`-`。
 
 - `{nickname}`：作者昵称
+- `{uniqueId}`：作者用户名（主页链接中 @ 后面的部分）
 - `{create}`：作品创建时间
 - `{aweme_id}`：作品ID
 - `{desc}`：作品文案

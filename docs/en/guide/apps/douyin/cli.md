@@ -91,13 +91,14 @@ Download mode:
 
 ### `--naming`
 
-Global work file naming method. The default is `{create}_{desc}`, supported variables include: `{nickname}`, `{create}`, `{aweme_id}`, `{desc}`, `{uid}`. Supported separators include: `_`, `-`.
+Global file naming template for posts. The default is `{create}_{desc}`, supported variables include: `{nickname}`, `{create}`, `{aweme_id}`, `{desc}`, `{caption}`, `{uid}`. Supported separators include: `_`, `-`.
 
 - `{nickname}`: author’s nickname
-- `{create}`: creation time of the work
-- `{aweme_id}`: work ID
-- `{desc}`: work copywriting
-- `{uid}`: Author ID
+- `{create}`: creation time of the post
+- `{aweme_id}`: post ID
+- `{desc}`: post caption
+- `{caption}`: the post caption without its title, often only the hashtags; the same as `{desc}` when the post has no separate title
+- `{uid}`: author ID
 
 ::: tip :bulb: Tip
 In file names, captions and nicknames keep punctuation, spaces and all scripts as they are; only characters that file systems do not allow (`\ / : * ? " < > |`) are replaced with similar full-width characters (for example `?` becomes `？`), and newlines and other control characters are turned into spaces or removed. Captions longer than 200 bytes are shortened in the middle, and so is any file name that would exceed 255 bytes with its suffix, so files can also be saved to a NAS or other file systems that limit names by bytes. On Windows, paths longer than 260 characters automatically use the long path form, so no system setting needs to be changed. Use `--desc` to save the complete original caption to a `_desc.txt` file.

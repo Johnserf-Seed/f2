@@ -118,7 +118,14 @@ def handler_naming(
         return value
 
     # 允许的模式和分隔符
-    ALLOWED_PATTERNS = ["{nickname}", "{create}", "{aweme_id}", "{desc}", "{uid}"]
+    ALLOWED_PATTERNS = [
+        "{nickname}",
+        "{create}",
+        "{aweme_id}",
+        "{desc}",
+        "{caption}",
+        "{uid}",
+    ]
     ALLOWED_SEPARATORS = ["-", "_"]
 
     # 检查命名是否符合命名规范
