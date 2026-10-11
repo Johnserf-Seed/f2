@@ -50,6 +50,15 @@ def bookmark_page(*entries):
     return {"data": {"bookmark_timeline_v2": timeline(*entries)}}
 
 
+def pinned_user_page(pin_id, *entries):
+    """主页的真实结构：置顶推文单独放在带 entry 的指令里，另一条指令只有推文与游标"""
+    page = user_page(*entries)
+    page["data"]["user"]["result"]["timeline_v2"]["timeline"]["instructions"].append(
+        {"entry": entry(pin_id, INSIDE, pinned=True)}
+    )
+    return page
+
+
 class PagedCrawler:
     """按顺序返回预设页面的爬虫替身"""
 
@@ -217,3 +226,42 @@ async def test_no_wait_after_reaching_max_counts(
     [page async for page in getattr(handler, name)(*args, 2)]
 
     assert waits == []
+
+
+async def test_post_stops_on_last_page_with_pinned_tweet(handler, monkeypatch):
+    # 末页的条目只剩每页都会返回的置顶推文与两个游标。此前按 entryId 数量判断到底
+    # （长度为 2），置顶推文占掉一条后永远判不出来，会一直重复请求同一页
+    crawler = use_pages(
+        monkeypatch,
+        [pinned_user_page("9", entry("1"), entry("2")), pinned_user_page("9")],
+    )
+
+    pages = [page async for page in handler.fetch_post_tweet("user-1", 20, "")]
+
+    assert tweet_ids(pages) == [["9", "1", "2"]]
+    assert len(crawler.calls) == 2
+
+
+async def test_only_pinned_tweet_page_is_yielded_then_stops(handler, monkeypatch):
+    # 账号只有一条置顶推文时首页即末页：先交出本页再停止，这条推文不能吞掉
+    crawler = use_pages(monkeypatch, [pinned_user_page("9")])
+
+    pages = [page async for page in handler.fetch_post_tweet("user-1", 20, "")]
+
+    assert tweet_ids(pages) == [["9"]]
+    assert len(crawler.calls) == 1
+
+
+@pytest.mark.parametrize(
+    "name, args, make_page", GENERATORS, ids=[g[0] for g in GENERATORS]
+)
+async def test_stops_when_only_cursors_are_left(
+    handler, monkeypatch, name, args, make_page
+):
+    # 没有推文、只剩游标的页表示已经翻到底，三种模式都只请求两页
+    crawler = use_pages(monkeypatch, [make_page(entry("1")), make_page()])
+
+    pages = [page async for page in getattr(handler, name)(*args)]
+
+    assert tweet_ids(pages) == [["1"]]
+    assert len(crawler.calls) == 2

@@ -223,6 +223,7 @@ async def test_twitter_first_page_end_does_not_leave_nickname_unbound(monkeypatc
                 cursorType="Bottom",
                 entryId=["cursor-top", "cursor-bottom"],
                 tweet_id=[],
+                tweet_timestamp=[],
                 tweet_desc=[],
                 nickname=[],
                 nickname_raw=[],
