@@ -97,6 +97,28 @@ def _select_tweets(
     return page._keep_tweets(kept), len(kept), reached_start
 
 
+def _reached_end(page: Any) -> bool:
+    """
+    本页是否已经翻到底 (Whether the page has reached the end)
+
+    翻到底时接口返回的页面只剩游标，主页还会带上每页都会返回的置顶推文，两者都交不出
+    新推文。只看本页的原始条目，不看日期区间与 seen 筛选后的结果：整页推文被区间筛掉
+    时并不是翻到底。
+
+    Args:
+        page (Any): 一页推文的过滤器 (Filter of a page)
+
+    Returns:
+        bool: 本页是否已经翻到底
+    """
+    tweet_ids = page.tweet_id or []
+    # 收藏的时间线没有置顶推文，缺少该属性时按普通推文处理
+    pinned = getattr(page, "tweet_pinned", None) or [False] * len(tweet_ids)
+    return page.cursorType == "Bottom" and not any(
+        tweet_id and not is_pinned for tweet_id, is_pinned in zip(tweet_ids, pinned)
+    )
+
+
 class TwitterHandler:
 
     def __init__(self, kwargs: Optional[dict] = None) -> None:
@@ -354,15 +376,13 @@ class TwitterHandler:
                 )
             )
 
-            # 当cursorType值为Bottom且entryId长度为2时，表示已经爬取完所有的推文
-            if tweet.cursorType == "Bottom" and len(tweet.entryId) == 2:
-                logger.info(_("已处理完所有发布的推文"))
-                break
-
             page, kept, reached_start = _select_tweets(
                 tweet, max_counts - tweets_collected, interval, seen
             )
-            yield page
+            at_end = _reached_end(tweet)
+            # 到底的那一页只剩每页都会返回的置顶推文与游标，没有可交出的推文
+            if kept or not at_end:
+                yield page
 
             # 只在本页有推文时更新昵称，最后一页可能不包含任何推文
             if tweet.nickname_raw:
@@ -374,6 +394,11 @@ class TwitterHandler:
 
             if reached_start:
                 logger.info(_("已获取到日期区间开始之前的推文，停止翻页"))
+                break
+
+            # 已经翻到底，交出的本页就是最后一页，不再请求下一页
+            if at_end:
+                logger.info(_("已处理完所有发布的推文"))
                 break
 
             # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
@@ -494,19 +519,22 @@ class TwitterHandler:
                 )
                 break
 
-            # 当cursorType值为Bottom且entryId长度为2时，表示已经爬取完所有的推文
-            if like.cursorType == "Bottom" and len(like.entryId) == 2:
-                logger.info(_("已处理完所有喜欢的推文"))
-                break
-
             page, kept, _reached_start = _select_tweets(
                 like, max_counts - tweets_collected, interval, seen
             )
-            yield page
+            at_end = _reached_end(like)
+            # 到底的那一页只剩游标，没有可交出的推文
+            if kept or not at_end:
+                yield page
 
             # 更新已经处理的推文数量 (Update the number of videos processed)
             tweets_collected += kept
             max_cursor = like.max_cursor
+
+            # 已经翻到底，交出的本页就是最后一页，不再请求下一页
+            if at_end:
+                logger.info(_("已处理完所有喜欢的推文"))
+                break
 
             # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
             if tweets_collected >= max_counts:
@@ -620,19 +648,22 @@ class TwitterHandler:
                 logger.error(_("该用户没有收藏的推文"))
                 break
 
-            # 当cursorType值为Bottom且entryId长度为2时，表示已经爬取完所有的推文
-            if bookmark.cursorType == "Bottom" and len(bookmark.entryId) == 2:
-                logger.info(_("已处理完所有收藏的推文"))
-                break
-
             page, kept, _reached_start = _select_tweets(
                 bookmark, max_counts - tweets_collected, interval, seen
             )
-            yield page
+            at_end = _reached_end(bookmark)
+            # 到底的那一页只剩游标，没有可交出的推文
+            if kept or not at_end:
+                yield page
 
             # 更新已经处理的推文数量 (Update the number of videos processed)
             tweets_collected += kept
             max_cursor = bookmark.max_cursor
+
+            # 已经翻到底，交出的本页就是最后一页，不再请求下一页
+            if at_end:
+                logger.info(_("已处理完所有收藏的推文"))
+                break
 
             # 已经达到最大数量时直接结束，此前还会再等待 timeout 秒
             if tweets_collected >= max_counts:
